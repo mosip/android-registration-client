@@ -19,6 +19,7 @@ import io.mosip.registration.clientmanager.dao.LanguageDao;
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
+import io.mosip.registration.clientmanager.dao.ReasonListDao;
 import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
@@ -42,6 +43,7 @@ import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.LocationHierarchy;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.clientmanager.entity.ReasonList;
 import io.mosip.registration.clientmanager.entity.ProcessSpec;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.entity.Registration;
@@ -57,7 +59,7 @@ import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.entity.CACertificateStore;
 import io.mosip.registration.keymanager.entity.KeyStore;
 
-@Database(entities = {UserToken.class, Registration.class, RegistrationCenter.class,
+@Database(entities = {UserToken.class, Registration.class, ReasonList.class, RegistrationCenter.class,
         MachineMaster.class, DocumentType.class, DynamicField.class,
         ApplicantValidDocument.class, Template.class, KeyStore.class,
         Location.class, GlobalParam.class, IdentitySchema.class, LocationHierarchy.class,
@@ -85,6 +87,8 @@ public abstract class ClientDatabase extends RoomDatabase {
     public abstract UserTokenDao userTokenDao();
 
     public abstract RegistrationDao registrationDao();
+
+    public abstract ReasonListDao reasonListDao();
 
     public abstract RegistrationCenterDao registrationCenterDao();
 

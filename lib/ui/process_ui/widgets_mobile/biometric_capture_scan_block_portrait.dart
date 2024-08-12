@@ -859,135 +859,135 @@ class _BiometricCaptureScanBlockPortraitState
                   const SizedBox(
                     height: 40,
                   ),
-                  Text(
-                    AppLocalizations.of(context)!.exception_type,
-                    style: TextStyle(
-                        fontSize: 25, fontWeight: semiBold, color: blackShade1),
-                  ),
-                  const SizedBox(
-                    height: 18,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            if (biometricAttributeData.exceptions
-                                .contains(true)) {
-                              biometricAttributeData.exceptionType =
-                                  "Permanent";
-                            }
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                (biometricAttributeData.exceptionType ==
-                                        "Permanent")
-                                    ? secondaryColors.elementAt(12)
-                                    : pureWhite),
-                            shape: MaterialStateProperty.all<OutlinedBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(36),
-                              ),
-                            ),
-                            side: MaterialStateProperty.all<BorderSide>(
-                                BorderSide(
-                                    color: secondaryColors.elementAt(12))),
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              EdgeInsets.symmetric(
-                                  horizontal: (isMobileSize) ? 10.w : 109.w,
-                                  vertical: (isMobileSize) ? 10.h : 20.h),
-                            ),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.permanent,
-                            style: TextStyle(
-                                fontSize: (isMobileSize) ? 16.h : 24.h,
-                                fontWeight: FontWeight.w400,
-                                color: (biometricAttributeData.exceptionType ==
-                                        "Permanent")
-                                    ? pureWhite
-                                    : blackShade1),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 30,
-                      ),
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            if (biometricAttributeData.exceptions
-                                .contains(true)) {
-                              biometricAttributeData.exceptionType =
-                                  "Temporary";
-                            }
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                (biometricAttributeData.exceptionType ==
-                                        "Temporary")
-                                    ? secondaryColors.elementAt(12)
-                                    : pureWhite),
-                            shape: MaterialStateProperty.all<OutlinedBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(36),
-                              ),
-                            ),
-                            side: MaterialStateProperty.all<BorderSide>(
-                                BorderSide(
-                                    color: secondaryColors.elementAt(12))),
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              EdgeInsets.symmetric(
-                                  horizontal: (isMobileSize) ? 10.w : 109.w,
-                                  vertical: (isMobileSize) ? 10.h : 20.h),
-                            ),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.temporary,
-                            style: TextStyle(
-                                fontSize: (isMobileSize) ? 16.h : 24.h,
-                                fontWeight: FontWeight.w400,
-                                color: (biometricAttributeData.exceptionType ==
-                                        "Temporary")
-                                    ? pureWhite
-                                    : blackShade1),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.comments,
-                    style: TextStyle(
-                        fontSize: 25, fontWeight: semiBold, color: blackShade1),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    enabled: false,
-                    maxLines: 10,
-                    decoration: InputDecoration(
-                      fillColor: pureWhite,
-                      hintText: AppLocalizations.of(context)!
-                          .add_comments_for_marking_the_exception,
-                      hintStyle: TextStyle(
-                          fontSize: 28,
-                          fontWeight: regular,
-                          color: secondaryColors.elementAt(1)),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6),
-                        borderSide: BorderSide(
-                          color: secondaryColors.elementAt(12),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Text(
+                  //   AppLocalizations.of(context)!.exception_type,
+                  //   style: TextStyle(
+                  //       fontSize: 25, fontWeight: semiBold, color: blackShade1),
+                  // ),
+                  // const SizedBox(
+                  //   height: 18,
+                  // ),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: OutlinedButton(
+                  //         onPressed: () {
+                  //           if (biometricAttributeData.exceptions
+                  //               .contains(true)) {
+                  //             biometricAttributeData.exceptionType =
+                  //                 "Permanent";
+                  //           }
+                  //         },
+                  //         style: ButtonStyle(
+                  //           backgroundColor: MaterialStateProperty.all<Color>(
+                  //               (biometricAttributeData.exceptionType ==
+                  //                       "Permanent")
+                  //                   ? secondaryColors.elementAt(12)
+                  //                   : pureWhite),
+                  //           shape: MaterialStateProperty.all<OutlinedBorder>(
+                  //             RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(36),
+                  //             ),
+                  //           ),
+                  //           side: MaterialStateProperty.all<BorderSide>(
+                  //               BorderSide(
+                  //                   color: secondaryColors.elementAt(12))),
+                  //           padding:
+                  //               MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  //             EdgeInsets.symmetric(
+                  //                 horizontal: (isMobileSize) ? 10.w : 109.w,
+                  //                 vertical: (isMobileSize) ? 10.h : 20.h),
+                  //           ),
+                  //         ),
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!.permanent,
+                  //           style: TextStyle(
+                  //               fontSize: (isMobileSize) ? 16.h : 24.h,
+                  //               fontWeight: FontWeight.w400,
+                  //               color: (biometricAttributeData.exceptionType ==
+                  //                       "Permanent")
+                  //                   ? pureWhite
+                  //                   : blackShade1),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     const SizedBox(
+                  //       width: 30,
+                  //     ),
+                  //     Expanded(
+                  //       child: OutlinedButton(
+                  //         onPressed: () {
+                  //           if (biometricAttributeData.exceptions
+                  //               .contains(true)) {
+                  //             biometricAttributeData.exceptionType =
+                  //                 "Temporary";
+                  //           }
+                  //         },
+                  //         style: ButtonStyle(
+                  //           backgroundColor: MaterialStateProperty.all<Color>(
+                  //               (biometricAttributeData.exceptionType ==
+                  //                       "Temporary")
+                  //                   ? secondaryColors.elementAt(12)
+                  //                   : pureWhite),
+                  //           shape: MaterialStateProperty.all<OutlinedBorder>(
+                  //             RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(36),
+                  //             ),
+                  //           ),
+                  //           side: MaterialStateProperty.all<BorderSide>(
+                  //               BorderSide(
+                  //                   color: secondaryColors.elementAt(12))),
+                  //           padding:
+                  //               MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  //             EdgeInsets.symmetric(
+                  //                 horizontal: (isMobileSize) ? 10.w : 109.w,
+                  //                 vertical: (isMobileSize) ? 10.h : 20.h),
+                  //           ),
+                  //         ),
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!.temporary,
+                  //           style: TextStyle(
+                  //               fontSize: (isMobileSize) ? 16.h : 24.h,
+                  //               fontWeight: FontWeight.w400,
+                  //               color: (biometricAttributeData.exceptionType ==
+                  //                       "Temporary")
+                  //                   ? pureWhite
+                  //                   : blackShade1),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(
+                  //   height: 40,
+                  // ),
+                  // Text(
+                  //   AppLocalizations.of(context)!.comments,
+                  //   style: TextStyle(
+                  //       fontSize: 25, fontWeight: semiBold, color: blackShade1),
+                  // ),
+                  // const SizedBox(
+                  //   height: 20,
+                  // ),
+                  // TextField(
+                  //   enabled: false,
+                  //   maxLines: 10,
+                  //   decoration: InputDecoration(
+                  //     fillColor: pureWhite,
+                  //     hintText: AppLocalizations.of(context)!
+                  //         .add_comments_for_marking_the_exception,
+                  //     hintStyle: TextStyle(
+                  //         fontSize: 28,
+                  //         fontWeight: regular,
+                  //         color: secondaryColors.elementAt(1)),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(6),
+                  //       borderSide: BorderSide(
+                  //         color: secondaryColors.elementAt(12),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               )
             : Container(

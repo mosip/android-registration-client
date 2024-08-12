@@ -8,6 +8,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/scanner/qr_code_scanner.dart';
 import 'package:registration_client/ui/widgets/validator_alert.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PreRegDataControl extends StatefulWidget {
   final Screen screen;
@@ -123,7 +124,12 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       );
                     }
                     if(e.id != "gender" && e.fieldType != "dynamic") {
-                      temp = await registrationTaskProvider.getLocationValues("$index", globalProvider.selectedLanguage);
+                      List<String> languages =[];
+                      for (var lang in globalProvider.chosenLang) {
+                        String langCode = globalProvider.langToCode(lang);
+                        languages.add(langCode);
+                      }
+                      temp = await registrationTaskProvider.getLocationValues("$index", globalProvider.selectedLanguage,languages);
                       for(var subData in temp) {
                         GenericData dataSubValue = GenericData(name: subData!.name, code: subData.code, langCode: lang);
                         if (language == lang) {
@@ -252,31 +258,35 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       ),
                       onPressed: () async {
                         widget.onFetched();
-                        globalProvider.preRegControllerRefresh = true;
                         if(preRegIdController.text.isEmpty){
+                          globalProvider.preRegControllerRefresh = true;
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Please Enter Application ID"),
+                            builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.enter_application_id),
                           );
                           globalProvider.preRegControllerRefresh = false;
                         } else if(!RegExp(r'^\d{14}$').hasMatch(preRegIdController.text)){
+                          globalProvider.preRegControllerRefresh = true;
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
+                            builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
                           );
                           globalProvider.preRegControllerRefresh = false;
                         } else {
+                          globalProvider.preRegControllerRefresh = true;
                             Map<String?, Object?> value = await context.read<
                                 RegistrationTaskProvider>()
                                 .fetchPreRegistrationDetail(
                                 preRegIdController.text);
                             if (value.isNotEmpty) {
                               widgetValue(widget.screen, value);
+                            } else {
+                              globalProvider.preRegControllerRefresh = false;
                             }
                         }
                       },
                       child: Text(
-                        "FETCH DATA",
+                        AppLocalizations.of(context)!.fetch_data,
                         style: TextStyle(fontSize: isPortrait && !isMobileSize ? 22 : 14, color: solidPrimary,fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -295,7 +305,6 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       ),
                     ),
                     onPressed: () async {
-                      globalProvider.preRegControllerRefresh = true;
                       widget.onFetched();
                       var data = await Navigator.push(
                         context,
@@ -304,12 +313,14 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                                 QRCodeScannerApp()),
                       );
                       if(data!=null && !RegExp(r'^\d{14}$').hasMatch(data)){
+                        globalProvider.preRegControllerRefresh = true;
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) => const ValidatorAlert(errorMessage: "Application ID does not exist!",subError: "Please check the entered Application ID or enter a correct ID and try to fetch it again."),
+                          builder: (BuildContext context) =>  ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
                         );
                         globalProvider.preRegControllerRefresh = false;
                       } else if(data!=null) {
+                        globalProvider.preRegControllerRefresh = true;
                         setState(() {
                           preRegIdController.text = data.toString();
                         });
@@ -320,6 +331,8 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             preRegIdController.text);
                         if (value.isNotEmpty) {
                           widgetValue(widget.screen, value);
+                        } else {
+                          globalProvider.preRegControllerRefresh = false;
                         }
                       }
                     },

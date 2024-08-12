@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
+import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
@@ -58,6 +59,10 @@ class RegistrationClientApp extends StatelessWidget {
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => AuthProvider(),
+        ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => ApprovePacketsProvider(),
         ),
       ],
       child: const BuildApp(),

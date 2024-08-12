@@ -8,12 +8,19 @@
 import '../platform_android/packet_service_impl.dart';
 
 abstract class PacketService {
-  Future<void> packetSync(String packetId);
-  Future<void> packetUpload(String packetId);
   Future<void> packetSyncAll(List<String> packetIds);
+
   Future<void> packetUploadAll(List<String> packetIds);
+
   Future<List<String?>> getAllRegistrationPacket();
-  Future<void> updatePacketStatus(String packetId, String? serverStatus, String clientStatus);
+
+  Future<List<String?>> getAllCreatedRegistrationPacket();
+
+  Future<void> updatePacketStatus(
+      String packetId, String? serverStatus, String clientStatus);
+
+  Future<void> supervisorReview(
+      String packetId, String supervisorStatus, String supervisorComment);
 
   factory PacketService() => getPacketServiceImpl();
 }

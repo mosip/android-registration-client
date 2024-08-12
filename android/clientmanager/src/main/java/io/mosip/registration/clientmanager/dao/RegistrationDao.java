@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+
 import io.mosip.registration.clientmanager.entity.Registration;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface RegistrationDao {
 
     @Query("SELECT * FROM registration order by cr_dtimes desc")
     List<Registration> findAll();
+
+    @Query("SELECT * FROM registration where client_status!='UPLOADED' AND client_status!='CREATED' order by cr_dtimes desc")
+    List<Registration> findAllNotUploaded();
 
     @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes desc limit :batchSize")
     List<Registration> findRegistrationByStatus(String status, Integer batchSize);
@@ -37,6 +41,9 @@ public interface RegistrationDao {
 
     @Query("Update registration set client_status = :clientStatus,  server_status = :serverStatus where packet_id = :packetId")
     void updateStatus(String packetId, String clientStatus, String serverStatus);
+
+    @Query("Update registration set client_status = :supervisorStatus,  client_status_comment = :supervisorComment where packet_id = :packetId")
+    void updateSupervisorReview(String packetId, String supervisorStatus, String supervisorComment);
 
     @Insert
     void insert(Registration registration);

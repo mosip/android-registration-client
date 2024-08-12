@@ -5,7 +5,11 @@
  *
 */
 
+import 'dart:developer';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
@@ -18,6 +22,8 @@ import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/platform_spi/registration_service.dart';
 
+import '../platform_android/packet_service_impl.dart';
+
 class RegistrationTaskProvider with ChangeNotifier {
   final RegistrationService registrationService = RegistrationService();
   final ProcessSpecService processSpecService = ProcessSpecService();
@@ -26,6 +32,12 @@ class RegistrationTaskProvider with ChangeNotifier {
   final DashBoard dashBoard = DashBoard();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   final DocumentCategory documentCategory = DocumentCategory();
+  static const storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  );
+
   List<Object?> _listOfProcesses = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
@@ -37,6 +49,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   String _lastSuccessfulUpdatedTime = "";
   Map<String?, Object?> _preRegistrationData = {};
 
+  int _numberOfPackets = 0;
+
   List<Object?> get listOfProcesses => _listOfProcesses;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
@@ -45,10 +59,16 @@ class RegistrationTaskProvider with ChangeNotifier {
   String get registrationStartError => _registrationStartError;
   bool get isRegistrationSaved => _isRegistrationSaved;
   String get lastSuccessfulUpdatedTime => _lastSuccessfulUpdatedTime;
+  int get numberOfPackets => _numberOfPackets;
   Map<String?, Object?> get preRegistrationData => _preRegistrationData;
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
+    notifyListeners();
+  }
+
+  setNumberOfPackets(int value) {
+    _numberOfPackets = value;
     notifyListeners();
   }
 
@@ -104,13 +124,12 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  evaluateMVELVisible(String fieldData, String expression) async {
-    return await registrationService.evaluateMVELVisible(fieldData, expression);
+  evaluateMVELVisible(String fieldData) async {
+    return await registrationService.evaluateMVELVisible(fieldData);
   }
 
-  evaluateMVELRequired(String fieldData, String expression) async {
-    return await registrationService.evaluateMVELRequired(
-        fieldData, expression);
+  evaluateMVELRequired(String fieldData) async {
+    return await registrationService.evaluateMVELRequired(fieldData);
   }
 
   setPreviewTemplate(String value) {
@@ -129,10 +148,29 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  updateTemplateStorageKey(String key) async {
+    try {
+      String? data = await storage.read(key: "acknowledgeTemplateData");
+      await storage.write(key: key, value: data);
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  deleteDefaultTemplateStored() async {
+    await storage.delete(key: "acknowledgeTemplateData");
+  }
+
   getAcknowledgementTemplate(
       bool isAcknowledgement, Map<String, String> templateValues) async {
     _acknowledgementTemplate = await registrationService.getPreviewTemplate(
         isAcknowledgement, templateValues);
+    try {
+      await storage.write(
+          key: "acknowledgeTemplateData", value: _acknowledgementTemplate);
+    } catch (e) {
+      log(e.toString());
+    }
     notifyListeners();
   }
 
@@ -184,9 +222,9 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   Future<List<GenericData?>> getLocationValues(
-      String fieldName, String langCode) async {
+      String fieldName, String langCode, List<String> languages) async {
     return await dynamicResponseService.fetchLocationValues(
-        fieldName, langCode);
+        fieldName, langCode,languages);
   }
 
   Future<List<String?>> getDocumentValues(
@@ -229,6 +267,13 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   Future<int> getPacketUploadedPendingDetails() async {
     return await dashBoard.getPacketUploadedPendingDetails();
+  }
+
+  void getApplicationUploadNumber() async {
+    List<String?> packets =
+        await PacketServiceImpl().getAllRegistrationPacket();
+    log("Number of Packets: ${packets.length}");
+    setNumberOfPackets(packets.length);
   }
 
   Future<int> getCreatedPacketDetails() async {

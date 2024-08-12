@@ -9,7 +9,7 @@
   "help": "ಸಹಾಯ",
   "mosip": "MOSIP",
   "welcome": "ಇದಕ್ಕೆ ಸ್ವಾಗತ",
-  "community_reg_text": "ಸಮುದಾಯ ನೋಂದಣಿ ಕ್ಲೈಂಟ್!",
+  "community_reg_text": "MOSIP ನೋಂದಣಿ ಗ್ರಾಹಕ!",
   "info_text": "ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಪ್ರವೇಶಿಸಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ.",
   "login_text": "ಲಾಗಿನ್ ಮಾಡಿ",
   "language": "ಭಾಷೆ",
@@ -46,12 +46,12 @@
   "sync_completed_message": "ಸಿಸ್ಟಮ್ ಕೆಲವೇ ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮರುಪ್ರಾರಂಭವಾಗುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮನ್ನು ಲಾಗಿನ್ ಪುಟಕ್ಕೆ ಮರುನಿರ್ದೇಶಿಸಲಾಗುತ್ತದೆ.",
   "sync_failed": "ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "sync_failed_message": "ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಸಿಸ್ಟಂ ನಿರ್ವಾಹಕ ಅಥವಾ ಮೇಲ್ವಿಚಾರಕರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
-  "policy_key_sync_failed":"ನೀತಿ ಕೀಲಿ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
-  "ca_certs_sync_failed":"CA ಪ್ರಮಾಣಪತ್ರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
-  "global_params_sync_failed":"ಜಾಗತಿಕ ಪರಮ್ಸ್ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
-  "user_details_sync_failed":"ಬಳಕೆದಾರ ವಿವರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
-  "id_schema_sync_failed":"IDSchena ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
-  "master_data_sync_failed":"ಮಾಸ್ಟರ್ ಡೇಟಾ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "policy_key_sync_failed": "ನೀತಿ ಕೀಲಿ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "ca_certs_sync_failed": "CA ಪ್ರಮಾಣಪತ್ರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "global_params_sync_failed": "ಜಾಗತಿಕ ಪರಮ್ಸ್ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "user_details_sync_failed": "ಬಳಕೆದಾರ ವಿವರಗಳ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "id_schema_sync_failed": "IDSchena ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+  "master_data_sync_failed": "ಮಾಸ್ಟರ್ ಡೇಟಾ ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
   "network_error": "ಯಾವುದೇ ನೆಟ್ವರ್ಕ್ ಸಿಗಲಿಲ್ಲ!",
   "delete": "ಅಳಿಸಿ",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
@@ -138,6 +138,42 @@
   },
   "synchronize_data": "ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ",
   "registration_tasks": "ನೋಂದಣಿ ಕಾರ್ಯಗಳು",
+  "manage_applications": "ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ",
+  "search_application": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ ಮೂಲಕ ಹುಡುಕಿ",
+  "upload": "ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+  "export": "ರಫ್ತು ಮಾಡಿ",
+  "number_of_application": "{number} ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತಿದೆ",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} ಅಪ್ಲಿಕೇಶನ್\u200Cಗಳನ್ನು ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "ಕ್ಲೈಂಟ್ ಸ್ಥಿತಿ",
+  "server_status": "ಸರ್ವರ್ ಸ್ಥಿತಿ",
+  "clear_filter": "Clear Filter",
+  "serial_number": "ಎಸ್.ಎನ್",
+  "application_id": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ",
+  "reg_date": "ರೆಗ್. ದಿನಾಂಕ",
+  "reg_type": "ರೆಗ್. ಪ್ರಕಾರ",
+  "operator_id": "ಆಪರೇಟರ್ ಐಡಿ",
   "operation_tasks": "ಕಾರ್ಯಾಚರಣೆಯ ಕಾರ್ಯಗಳು",
   "system_storage_usage": "ಸಿಸ್ಟಮ್ ಶೇಖರಣಾ ಬಳಕೆ",
   "download_pre_registration_data": "ಪೂರ್ವ-ನೋಂದಣಿ ಡೇಟಾವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
@@ -146,6 +182,7 @@
   "check_updates": "ನವೀಕರಣಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
   "center_remap_sync": "ಕೇಂದ್ರ ರೀಮ್ಯಾಪ್ ಸಿಂಕ್.",
   "sync_activities": "ಸಿಂಕ್ ಮಾಡಿ. ಚಟುವಟಿಕೆಗಳು",
+  "pending_approval": "ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾದಿರುವ",
   "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
   "settings": "ಸಂಯೋಜನೆಗಳು",
   "notifications": "ಅಧಿಸೂಚನೆಗಳು",
@@ -193,18 +230,18 @@
   "temporary": "ಕ್ಷಣಿಕ",
   "exceptions": "ಅಂಶಗಳು",
   "add_comments_for_marking_the_exception": "ಅಂಶವನ್ನು ಅಂಶಗೊಳಿಸಲು ಕೊರಗಳನ್ನು ಸೇರಿಸಿ",
-  "rescan":"ಮರು ಸ್ಕ್ಯಾನ್",
-  "marking_exceptions_on":"ವಿನಾಯಿತಿಗಳನ್ನು ಗುರುತಿಸಲಾಗುತ್ತಿದೆ",
-  "is_not_allowed":"ಅನುಮತಿಸಲಾಗುವುದಿಲ್ಲ",
-  "capture":"ಸೆರೆಹಿಡಿಯಿರಿ",
-  "attempts_left":"ಪ್ರಯತ್ನಗಳು ಉಳಿದಿವೆ",
+  "rescan": "ಮರು ಸ್ಕ್ಯಾನ್",
+  "marking_exceptions_on": "ವಿನಾಯಿತಿಗಳನ್ನು ಗುರುತಿಸಲಾಗುತ್ತಿದೆ",
+  "is_not_allowed": "ಅನುಮತಿಸಲಾಗುವುದಿಲ್ಲ",
+  "capture": "ಸೆರೆಹಿಡಿಯಿರಿ",
+  "attempts_left": "ಪ್ರಯತ್ನಗಳು ಉಳಿದಿವೆ",
   "left_hand": "ಎಡ ಕೈ",
   "left": "ಎಡ",
   "right": "ಬಲ",
   "right_hand": "ಬಲ ಕೈ",
   "iris": "ಐರಿಸ್",
   "thumbs": "ಬೆರಳುಗಳು",
-  "exception":"ವಿನಾಯಿತಿ",
+  "exception": "ವಿನಾಯಿತಿ",
   "face": "ಮುಖ",
   "preview_page": "ಪೂರ್ವದರು",
   "packet_auth_page": "ಪ್ರಮಾಣಿಕತೆ",
@@ -235,6 +272,14 @@
   "help_topics": "ಸಹಾಯ ವಿಷಯಗಳು",
   "onboard_request_message": "ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನಿಮ್ಮನ್ನು ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಲು ದಯವಿಟ್ಟು \"ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ\" ಬಟನ್ ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.",
   "hello_s": "ನಮಸ್ಕಾರ ",
+  "approve": "ಅನುಮೋದಿಸಿ",
+  "reject": "ತಿರಸ್ಕರಿಸು",
+  "reject_dialog_heading": "ಪ್ಯಾಕೆಟ್ ಅನ್ನು ತಿರಸ್ಕರಿಸುವುದೇ?",
+  "reject_dialog_subheading": "ದಯವಿಟ್ಟು ಪ್ಯಾಕೆಟ್ ನಿರಾಕರಣೆಗೆ ಕಾರಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ. ನಿಮ್ಮ ವಿಮರ್ಶೆಯನ್ನು ಅನುಮೋದಿಸಲು ಅಥವಾ ನಂತರ ಪರಿಶೀಲನೆಯ ಸ್ಥಿತಿಯನ್ನು ಮರುಹೊಂದಿಸಲು ನೀವು ಬದಲಾಯಿಸಬಹುದು.",
+  "reason_rejection": "ನಿರಾಕರಣೆಗೆ ಕಾರಣ",
+  "no_reason_selected": "ದಯವಿಟ್ಟು ಕಾರಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ...",
+  "supervisor_auth_heading": "ಮೇಲ್ವಿಚಾರಕರ ದೃಢೀಕರಣ",
+  "supervisor_auth_subheading": "ಗುಪ್ತಪದವನ್ನು ಬಳಸಿಕೊಂಡು ಮೇಲ್ವಿಚಾರಕರ ದೃಢೀಕರಣ",
   "uin_number": "UIN ಸಂಖ್ಯೆ",
   "valid_uin": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ UIN ಅನ್ನು ನಮೂದಿಸಿ",
   "enter_uin": "UIN ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
@@ -257,5 +302,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "fetch_data": "ಡೇಟಾವನ್ನು ಪಡೆದುಕೊಳ್ಳಿ",
+  "application_id_not_exist": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ!",
+  "correct_application_id": "ದಯವಿಟ್ಟು ನಮೂದಿಸಿದ ಅಪ್ಲಿಕೇಶನ್ ಐಡಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಸರಿಯಾದ ಐಡಿಯನ್ನು ನಮೂದಿಸಿ ಮತ್ತು ಅದನ್ನು ಮತ್ತೆ ಪಡೆಯಲು ಪ್ರಯತ್ನಿಸಿ.",
+  "enter_application_id": "ದಯವಿಟ್ಟು ಅಪ್ಲಿಕೇಶನ್ ಐಡಿಯನ್ನು ನಮೂದಿಸಿ",
+  "okay": "ಸರಿ"
 }

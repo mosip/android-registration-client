@@ -27,6 +27,7 @@ import io.mosip.registration.clientmanager.repository.JobTransactionRepository;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
 import io.mosip.registration.clientmanager.repository.LocationRepository;
 import io.mosip.registration.clientmanager.repository.MachineRepository;
+import io.mosip.registration.clientmanager.repository.ReasonListRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
@@ -147,6 +148,7 @@ public class AppModule {
     @Provides
     public MasterDataService provideMasterDataService(ObjectMapper objectMapper, SyncRestService syncRestService, ClientCryptoManagerService clientCryptoManagerService,
                                                       MachineRepository machineRepository,
+                                                      ReasonListRepository reasonListRepository,
                                                       RegistrationCenterRepository registrationCenterRepository,
                                                       DocumentTypeRepository documentTypeRepository,
                                                       ApplicantValidDocRepository applicantValidDocRepository,
@@ -163,7 +165,7 @@ public class AppModule {
                                                       JobManagerService jobManagerService,
                                                       FileSignatureDao fileSignatureDao) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
-                machineRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
+                machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
                 certificateManagerService, languageRepository, jobManagerService, fileSignatureDao);
@@ -260,9 +262,9 @@ public class AppModule {
     @Singleton
     UserOnboardService provideUserOnboardService(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                  CertificateManagerService certificateManagerService,
-                                                 SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService,UserDetailRepository userDetailRepository) {
+                                                 SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
         return new UserOnboardService(appContext, objectMapper, auditManagerService, certificateManagerService, syncRestService,
-                cryptoManagerService, registrationService, userBiometricRepository, clientCryptoManagerService,userDetailRepository);
+                cryptoManagerService, registrationService, userBiometricRepository, clientCryptoManagerService, userDetailRepository);
     }
 
     @Provides
@@ -274,18 +276,21 @@ public class AppModule {
     @Provides
     @Singleton
     PreRegistrationDataSyncService PreRegistrationDataSyncService(PreRegistrationDataSyncDao preRegistrationDao, MasterDataService masterDataService, SyncRestService syncRestService, PreRegZipHandlingService preRegZipHandlingService, PreRegistrationList preRegistration, GlobalParamRepository globalParamRepository) {
-        return new PreRegistrationDataSyncServiceImpl(appContext, preRegistrationDao, masterDataService, syncRestService,preRegZipHandlingService,preRegistration,globalParamRepository);
+        return new PreRegistrationDataSyncServiceImpl(appContext, preRegistrationDao, masterDataService, syncRestService, preRegZipHandlingService, preRegistration, globalParamRepository);
     }
+
     @Provides
     @Singleton
     PreRegistrationDataSyncDao PreRegistrationDataSyncDao(PreRegistrationDataSyncRepositoryDao preRegistrationRepositoryDao) {
         return new PreRegistrationDataSyncDaoImpl(preRegistrationRepositoryDao);
     }
+
     @Provides
     @Singleton
     PreRegZipHandlingService PreRegZipHandlingService(ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade, RegistrationService registrationService, CryptoManagerService cryptoManagerService, PacketKeeper packetKeeper, IPacketCryptoService iPacketCryptoService, MasterDataService masterDataService) {
-        return new PreRegZipHandlingServiceImpl(appContext, applicantValidDocumentDao,identitySchemaService,clientCryptoFacade,registrationService,cryptoManagerService,packetKeeper,iPacketCryptoService,masterDataService);
+        return new PreRegZipHandlingServiceImpl(appContext, applicantValidDocumentDao, identitySchemaService, clientCryptoFacade, registrationService, cryptoManagerService, packetKeeper, iPacketCryptoService, masterDataService);
     }
+
     @Provides
     @Singleton
     PreRegistrationList PreRegistrationList() {
