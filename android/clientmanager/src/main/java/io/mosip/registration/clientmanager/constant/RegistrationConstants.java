@@ -22,6 +22,9 @@ public class RegistrationConstants {
     public static final List<String> FACE_ATTR = Arrays.asList("");
     public static final List<String> EXCEPTION_PHOTO_ATTR = Arrays.asList("unknown");
 
+    public static String DEDUPLICATION_ENABLE_FLAG = "mosip.registration.mds.deduplication.enable.flag";
+    public static final String ENABLE = "Y";
+    public static final String DISABLE = "N";
 
     //SBI intents
     public static final String DISCOVERY_INTENT_ACTION = "io.sbi.device";
@@ -77,4 +80,8 @@ public class RegistrationConstants {
     public static final String PRE_REGISTRATION_DUMMY_ID = "mosip.pre-registration.datasync.fetch.ids";
     public static final String VER = "1.0";
     public static final String PRE_REG_DAYS_LIMIT = "mosip.registration.pre_reg_no_of_days_limit";
+
+    public static final String UI_SCHEMA_SUBTYPE_FULL_NAME = "name";
+    public static final String UI_SCHEMA_SUBTYPE_EMAIL = "Email";
+    public static final String UI_SCHEMA_SUBTYPE_PHONE = "Phone";
 }

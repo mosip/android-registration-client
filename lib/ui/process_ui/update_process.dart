@@ -25,8 +25,6 @@ import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 
-import 'package:registration_client/ui/common/tablet_header.dart';
-import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
 import 'package:registration_client/ui/post_registration/preview_page.dart';
@@ -408,6 +406,9 @@ class _UpdateProcessState extends State<UpdateProcess>
 
     customValidation(int currentIndex) async {
       if (currentIndex == 0) {
+        if (globalProvider.updateUINNumber.isEmpty) {
+          return false;
+        }
         return true;
       }
       if (globalProvider.newProcessTabIndex < size) {
@@ -533,7 +534,8 @@ class _UpdateProcessState extends State<UpdateProcess>
     customValidation(globalProvider.newProcessTabIndex).then((value) {
       if (globalProvider.newProcessTabIndex == 0) {
         if (!fieldSelectionCompleted) {
-          continueButton = globalProvider.updateFieldKey.currentState != null &&
+          continueButton = value &&
+              globalProvider.updateFieldKey.currentState != null &&
               globalProvider.updateFieldKey.currentState!.validate();
         } else {
           continueButton = true;
@@ -724,14 +726,14 @@ class _UpdateProcessState extends State<UpdateProcess>
               ),
               child: Column(
                 children: [
-                  isPortrait
-                      ? const SizedBox()
-                      : const Column(
-                          children: [
-                            TabletHeader(),
-                            TabletNavbar(),
-                          ],
-                        ),
+                  // isPortrait
+                  //     ? const SizedBox()
+                  //     : const Column(
+                  //         children: [
+                  //          // TabletHeader(),
+                  //           TabletNavbar(),
+                  //         ],
+                  //       ),
                   Container(
                     padding: isMobile && !isMobileSize
                         ? const EdgeInsets.fromLTRB(0, 46, 0, 0)

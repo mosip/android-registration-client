@@ -130,68 +130,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     }
   }
 
-  _saveConsentScreenHeaders() async {
-    for (var header in lang) {
-      await _saveHeader("consentScreenName_$header",
-          AppLocalizations.of(context)!.consentScreenName(header));
-    }
-  }
-
-  _saveDemographicScreenHeaders() async {
-    for (var header in lang) {
-      await _saveHeader("demographicsScreenName_$header",
-          AppLocalizations.of(context)!.demographicsScreenName(header));
-    }
-  }
-
-  _saveDocumentScreenHeaders() async {
-    for (var header in lang) {
-      await _saveHeader("documentsScreenName_$header",
-          AppLocalizations.of(context)!.documentsScreenName(header));
-    }
-  }
-
-  _saveBiometricScreenHeaders() async {
-    for (var header in lang) {
-      await _saveHeader("biometricsScreenName_$header",
-          AppLocalizations.of(context)!.biometricsScreenName(header));
-    }
-  }
-
-  _saveHeader(String id, String value) async {
-    await context
-        .read<GlobalProvider>()
-        .saveScreenHeaderToGlobalParam(id, value);
-  }
-
-  _initializeBiometricThresholdData() async {
-    await context.read<GlobalProvider>().getThresholdValues();
-  }
-
-  _initializeMachineData() async {
-    await context.read<GlobalProvider>().setMachineDetails();
-  }
-
-  // _initializeAppLanguageData() async {
-  //   await context.read<GlobalProvider>().initializeLanguageDataList();
-  // }
-
-  _initializeLocationHierarchy() async {
-    await context.read<GlobalProvider>().initializeLocationHierarchyMap();
-  }
-
-  _loginPageLoadedAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-LOAD-001", "REG-MOD-101");
-  }
-
-  _longPressLogoAudit() async {
-    await context
-        .read<GlobalProvider>()
-        .getAudit("REG-AUTH-002", "REG-MOD-101");
-  }
-
   @override
   Widget build(BuildContext context) {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
@@ -220,35 +158,35 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                     SizedBox(
                       height: 20.h,
                     ),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: isMobile ? 20.w : 80.w),
-                      child: InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: isMobileSize ? 46.h : 62.h,
-                          width: 129.w,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(
-                              color: appWhite,
-                            ),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(5),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(appLocalizations.help,
-                                style: isMobile && !isMobileSize
-                                    ? AppTextStyle.tabletPortraitHelpText
-                                    : AppTextStyle.mobileHelpText),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   alignment: Alignment.centerRight,
+                    //   padding: EdgeInsets.symmetric(
+                    //       horizontal: isMobile ? 20.w : 80.w),
+                    //   child: InkWell(
+                    //     onTap: () {},
+                    //     child: Container(
+                    //       height: isMobileSize ? 46.h : 62.h,
+                    //       width: 129.w,
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.transparent,
+                    //         border: Border.all(
+                    //           color: appWhite,
+                    //         ),
+                    //         borderRadius: const BorderRadius.all(
+                    //           Radius.circular(5),
+                    //         ),
+                    //       ),
+                    //       child: Center(
+                    //         child: Text(appLocalizations.help,
+                    //             style: isMobile && !isMobileSize
+                    //                 ? AppTextStyle.tabletPortraitHelpText
+                    //                 : AppTextStyle.mobileHelpText),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
-                      height: isMobileSize ? 72.h : 86.h,
+                      height: isMobileSize ? 78.h : 86.h,
                     ),
                     Flexible(
                       child: Column(
@@ -322,22 +260,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     );
   }
 
-  _onLoginButtonPressed() async {
-    await _getLoginAction();
-    await _initializeBiometricThresholdData();
-  }
-
-  _authenticateUser(bool isConnected) async {
-    await context
-        .read<AuthProvider>()
-        .authenticateUser(username, password, isConnected);
-  }
-
-  _getIsConnected() {
-    return context.read<ConnectivityProvider>().isConnected;
-  }
-
   _getLoginAction() async {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
       _showInSnackBar(appLocalizations.password_required);
@@ -416,45 +340,14 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   _showErrorInSnackbar() {
     String errorMsg = authProvider.loginError;
-    String snackbarText = "";
-
-    switch (errorMsg) {
-      case "REG_TRY_AGAIN":
-        snackbarText = appLocalizations.login_failed;
-        break;
-
-      case "REG_INVALID_REQUEST":
-        snackbarText = appLocalizations.password_incorrect;
-        break;
-
-      case "REG_MACHINE_NOT_FOUND":
-        snackbarText = appLocalizations.machine_not_found;
-        break;
-
-      case "REG_NETWORK_ERROR":
-        snackbarText = appLocalizations.network_error;
-        break;
-
-      case "REG_CRED_EXPIRED":
-        snackbarText = appLocalizations.cred_expired;
-        break;
-
-      case "REG_MACHINE_INACTIVE":
-        snackbarText = appLocalizations.machine_inactive;
-        break;
-
-      case "REG_CENTER_INACTIVE":
-        snackbarText = appLocalizations.center_inactive;
-        break;
-
-      case "":
-        return;
-
-      default:
-        snackbarText = errorMsg;
-        break;
+    if (errorMsg == "") {
+      return;
     }
-
+    String snackbarText = "";
+    snackbarText = appLocalizations.errors(errorMsg);
+    if (snackbarText == "Some error occurred!") {
+      snackbarText = errorMsg;
+    }
     _showInSnackBar(snackbarText);
   }
 
@@ -609,7 +502,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   isDisabled: password.isEmpty || password.length > 50,
                   onTapLogin: () async {
                     await _getLoginAction();
-                    await _initializeBiometricThresholdData();
+                    await globalProvider.getThresholdValues();
                   },
                   isMobile: isMobile,
                   onTapBack: () {

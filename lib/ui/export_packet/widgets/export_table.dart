@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../provider/export_packet_provider.dart';
 import '../../../utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ExportTable extends StatelessWidget {
   const ExportTable({super.key});
@@ -39,13 +40,13 @@ class ExportTable extends StatelessWidget {
                     title:  Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        SizedBox(width: tableWidth/35, child: Text("S.no", textAlign: TextAlign.center, style: textTheme)) ,
-                        SizedBox(width: tableWidth/5.5, child: Text("Application ID", textAlign: TextAlign.center, style: textTheme)),
-                        SizedBox(width: tableWidth/9, child: Text("Reg. Date", textAlign: TextAlign.center, style: textTheme)),
-                        SizedBox(width: tableWidth/15, child: Text("Reg. Type",textAlign: TextAlign.center, style: textTheme)),
-                        SizedBox(width: tableWidth/9, child: Text("Client Status",textAlign: TextAlign.center, style: textTheme)),
-                        SizedBox(width: tableWidth/9, child: Text("Server Status",textAlign: TextAlign.center, style: textTheme)),
-                        SizedBox(width: tableWidth/15, child: Text("Operator ID",textAlign: TextAlign.center, style: textTheme)),
+                        SizedBox(width: tableWidth/35, child: Text(AppLocalizations.of(context)!.serial_number, textAlign: TextAlign.center, style: textTheme)) ,
+                        SizedBox(width: tableWidth/5.5, child: Text(AppLocalizations.of(context)!.application_id, textAlign: TextAlign.center, style: textTheme)),
+                        SizedBox(width: tableWidth/9, child: Text(AppLocalizations.of(context)!.reg_date, textAlign: TextAlign.center, style: textTheme)),
+                        SizedBox(width: tableWidth/15, child: Text(AppLocalizations.of(context)!.reg_type,textAlign: TextAlign.center, style: textTheme)),
+                        SizedBox(width: tableWidth/9, child: Text(AppLocalizations.of(context)!.client_status,textAlign: TextAlign.center, style: textTheme)),
+                        SizedBox(width: tableWidth/9, child: Text(AppLocalizations.of(context)!.server_status,textAlign: TextAlign.center, style: textTheme)),
+                        SizedBox(width: tableWidth/15, child: Text(AppLocalizations.of(context)!.operator_id,textAlign: TextAlign.center, style: textTheme)),
                       ],
                     ),
                     onTap: () {

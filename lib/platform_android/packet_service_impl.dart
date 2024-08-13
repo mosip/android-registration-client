@@ -16,30 +16,6 @@ import 'package:registration_client/platform_spi/packet_service.dart';
 
 class PacketServiceImpl implements PacketService {
   @override
-  Future<void> packetSync(String packetId) async {
-    try {
-      await PacketAuthApi().syncPacket(packetId);
-      log("Sucess Sync packet");
-    } on PlatformException {
-      debugPrint('PacketAuthenticationApi call failed!');
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  @override
-  Future<void> packetUpload(String packetId) async {
-    try {
-      await PacketAuthApi().uploadPacket(packetId);
-      log("Sucess Upload packet");
-    } on PlatformException {
-      debugPrint('PacketAuthenticationApi call failed!');
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  @override
   Future<List<String?>> getAllRegistrationPacket() async {
     List<String?> packetStatus = [];
 
@@ -54,9 +30,25 @@ class PacketServiceImpl implements PacketService {
   }
 
   @override
-  Future<void> updatePacketStatus(String packetId, String? serverStatus, String clientStatus) async {
+  Future<List<String?>> getAllCreatedRegistrationPacket() async {
+    List<String?> packetStatus = [];
+
     try {
-      await PacketAuthApi().updatePacketStatus(packetId, serverStatus, clientStatus);
+      packetStatus = await PacketAuthApi().getAllCreatedRegistrationPacket();
+    } on PlatformException {
+      debugPrint('PacketAuthenticationApi call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return packetStatus;
+  }
+
+  @override
+  Future<void> updatePacketStatus(
+      String packetId, String? serverStatus, String clientStatus) async {
+    try {
+      await PacketAuthApi()
+          .updatePacketStatus(packetId, serverStatus, clientStatus);
       log("Sucess Status updated");
     } on PlatformException {
       debugPrint('PacketAuthenticationApi call failed!');
@@ -89,6 +81,19 @@ class PacketServiceImpl implements PacketService {
     }
   }
 
+  @override
+  Future<void> supervisorReview(String packetId, String supervisorStatus,
+      String supervisorComment) async {
+    try {
+      await PacketAuthApi()
+          .supervisorReview(packetId, supervisorStatus, supervisorComment);
+      log("Sucess Status updated");
+    } on PlatformException {
+      debugPrint('PacketAuthenticationApi call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }
 
 PacketService getPacketServiceImpl() => PacketServiceImpl();

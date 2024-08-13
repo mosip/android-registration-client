@@ -1,5 +1,13 @@
 package io.mosip.registration.clientmanager.service;
 
+import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_EXCEPTION;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_FORCE_CAPTURED;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_PAYLOAD;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_RETRIES;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_SDK_SCORE;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_SPEC_VERSION;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -8,6 +16,30 @@ import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
+
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.mosip.biometrics.util.face.FaceBDIR;
 import io.mosip.registration.clientmanager.BuildConfig;
@@ -18,9 +50,11 @@ import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
+import io.mosip.registration.clientmanager.exception.RegBaseCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
@@ -30,30 +64,23 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.*;
-import io.mosip.registration.packetmanager.dto.PacketWriter.*;
-import io.mosip.registration.packetmanager.util.DateUtils;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BDBInfo;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIR;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.BIRInfo;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.ProcessedLevelType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.PurposeType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.QualityType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.RegistryIDType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.VersionType;
+import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
+import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
+import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
+import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
+import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 import lombok.NonNull;
-
-import org.json.JSONObject;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.*;
-
-import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
-import static io.mosip.registration.packetmanager.util.PacketManagerConstant.*;
 
 @Singleton
 public class RegistrationServiceImpl implements RegistrationService {
@@ -230,13 +257,63 @@ public class RegistrationServiceImpl implements RegistrationService {
             JSONObject additionalInfo = new JSONObject();
             additionalInfo.put("langCode", this.registrationDto.getSelectedLanguages().get(0));
             //TODO add name, phone and email in additional info
+            List<String> fullName = new ArrayList<>();
+            String fullNameKey = getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_FULL_NAME);
+            if(fullNameKey != null) {
+                List<String> fullNameKeys = Arrays.asList(fullNameKey.split(RegistrationConstants.COMMA));
+                for (String key : fullNameKeys) {
+                    Object fullNameObj = this.registrationDto.getDemographics().get(key);
+                    fullName.add(getAdditionalInfo(fullNameObj));
+                }
+            }
 
+            Object emailObj = this.registrationDto.getDemographics().get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_EMAIL));
+            Object phoneObj = this.registrationDto.getDemographics().get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_PHONE));
+
+            additionalInfo.put("name", String.join(" ", fullName));
+            additionalInfo.put("email", getAdditionalInfo(emailObj));
+            additionalInfo.put("phone", getAdditionalInfo(phoneObj));
+            
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
                     centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo);
 
 //        } finally {
             clearRegistration();
 //        }
+    }
+
+    private String getKey(RegistrationDto registrationDTO, String subType) throws Exception {
+        List<String> key = new ArrayList<>();
+        List<FieldSpecDto> schemaFields = identitySchemaRepository.getProcessSpecFields(context, registrationDTO.getProcess());
+        for (FieldSpecDto schemaField : schemaFields) {
+            if (schemaField.getSubType() != null && schemaField.getSubType().equalsIgnoreCase(subType)) {
+                if (subType.equalsIgnoreCase(RegistrationConstants.UI_SCHEMA_SUBTYPE_FULL_NAME)) {
+                    key.add(schemaField.getId());
+                } else {
+                    key.add(schemaField.getId());
+                    break;
+                }
+            }
+        }
+        return String.join(RegistrationConstants.COMMA, key);
+    }
+
+    private String getAdditionalInfo(Object fieldValue) {
+        if(fieldValue == null) { return null; }
+
+        if (fieldValue instanceof List<?>) {
+            Optional<SimpleType> demoValueInRequiredLang = ((List<SimpleType>) fieldValue).stream()
+                    .filter(valueDTO -> valueDTO.getLanguage().equals(this.registrationDto.getSelectedLanguages().get(0))).findFirst();
+
+            if (demoValueInRequiredLang.isPresent()) {
+                return demoValueInRequiredLang.get().getValue();
+            }
+        }
+
+        if (fieldValue instanceof String) {
+            return (String) fieldValue;
+        }
+        return null;
     }
 
     private byte[] convertImageToBytes(String bioValue) {
