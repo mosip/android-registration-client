@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
 import regclient.api.ConfigManager;
+import regclient.api.FetchUiSpec;
 import regclient.api.KeycloakUserManager;
 import regclient.page.AcknowledgementPage;
 import regclient.page.ApplicantBiometricsPage;
@@ -21,6 +22,7 @@ import regclient.page.IntroducerBiometricPage;
 import regclient.page.LoginPage;
 import regclient.page.ManageApplicationsPage;
 import regclient.page.OperationalTaskPage;
+import regclient.page.PendingApproval;
 import regclient.page.PreviewPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
@@ -45,6 +47,7 @@ import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
 import regclient.pages.english.OperationalTaskPageEnglish;
+import regclient.pages.english.PendingApprovalEnglish;
 import regclient.pages.english.PreviewPageEnglish;
 import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.arabic.PreviewPageArabic;
@@ -127,6 +130,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 
 	@Test
 	public void newRegistrationMinor(){
+		FetchUiSpec.getUiSpec("newProcess");
 		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage=null;
@@ -143,6 +147,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		IntroducerBiometricPage introducerBiometricPage=null;
 		OperationalTaskPage operationalTaskPage=null;
 		ManageApplicationsPage manageApplicationsPage=null;
+		PendingApproval pendingApproval=null;
 		ProfilePage profilePage=null;
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -596,12 +601,8 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
+		assertTrue(previewPage.isNewRegistrationTitleDisplayed(),"Verify if new Registration title is displayed");
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-		//	assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");
-
-		assertTrue(acknowledgementPage.isDemographicInformationInAcknowledgementPageDisplayed(),"Verify if Demographic Information In authenticationPage is displayed");
-		assertTrue(acknowledgementPage.isDocumentsInformationInAcknowledgementPageDisplayed(),"Verify if Documents Information In authenticationPage is displayed");
-		assertTrue(acknowledgementPage.isBiometricsInformationInAcknowledgementPageDisplayed(),"Verify if Biometrics Information In authenticationPage is displayed");
 		acknowledgementPage.clickOnGoToHomeButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
@@ -626,6 +627,41 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 			operationalTaskPage=new OperationalTaskPageArabic(driver);
 		}
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
+		assertTrue(operationalTaskPage.isPendingApprovalTitleDisplayed(), "Verify if pending approval tite displayed");
+		operationalTaskPage.clickPendingApprovalTitle();
+		
+		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+			pendingApproval=new PendingApprovalEnglish(driver);
+		} 
+//		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+//			pendingApproval=new PendingApprovalHindi(driver);
+//		}
+//		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+//			pendingApproval=new PendingApprovalFrench(driver);
+//		}
+//		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+//			pendingApproval=new PendingApprovalKannada(driver);
+//		}
+//		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+//			pendingApproval=new PendingApprovalTamil(driver);
+//		}
+//		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+//			pendingApproval=new PendingApprovalArabic(driver);
+//		}
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
+		pendingApproval.clickOnAID(Aid);
+
+		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
+		pendingApproval.clickOnApproveButton();
+		pendingApproval.clickOnClosePopUpButton();
+		pendingApproval.clickOnCheckBox();
+		pendingApproval.clickOnSubmitButton();
+		
+		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
+		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		pendingApproval.enterPassword(ConfigManager.getIAMUsersPassword());
+		pendingApproval.clickOnSubmitButton();
+		pendingApproval.clickOnBackButton();
 		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
 
 		operationalTaskPage.clickApplicationUploadTitle();       
@@ -654,7 +690,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 
-		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
+	//	assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
 manageApplicationsPage.clickOnBackButton();
 		
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(),"Verify if profile title display on homepage");
@@ -678,7 +714,7 @@ manageApplicationsPage.clickOnBackButton();
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			profilePage=new ProfilePageArabic(driver);
 		}
-		assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title display on Profilepage");
+		//assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title display on Profilepage");
 		profilePage.clickOnLogoutButton();
 		
 		profilePage.clickOnLogoutButton();

@@ -5,8 +5,11 @@ import io.appium.java_client.HidesKeyboard;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.netty.handler.timeout.TimeoutException;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
@@ -91,6 +94,17 @@ public class BasePage {
 		element.sendKeys(text);
 		waitTime(1);
 		((HidesKeyboard) driver).hideKeyboard();
+	}
+	
+	protected void sendKeysToTextBox(WebElement element, String text) {
+		this.waitForElementToBeVisible(element);
+		element.click();
+		waitTime(1);
+		element.clear();
+		waitTime(1);
+		element.sendKeys(text);
+		waitTime(1);
+		driver.navigate().back();	
 	}
 
 	protected String getTextFromLocator(WebElement element) {
@@ -248,5 +262,78 @@ public class BasePage {
 	public static String getName() {
 		return name;
 	}
+	
+	public WebElement findElementWithRetry(By by) {
+	    int MAX_RETRIES = 10;
+	    int RETRY_DELAY_MS = 1000;
+	    WebElement element = null;
 
+	    for (int i = 0; i < MAX_RETRIES; i++) {
+	        try {
+	            element = driver.findElement(by);
+	            break; // Exit loop if the element is found
+	        } catch (NoSuchElementException e) {
+	            if (i < MAX_RETRIES - 1) {
+	                try {
+	                    Thread.sleep(RETRY_DELAY_MS); // Wait before retrying
+	                } catch (InterruptedException ie) {
+	                    Thread.currentThread().interrupt(); // Restore interrupted status
+	                }
+	                swipeOrScroll(); // Call swipeOrScroll() after retry attempt fails
+	            } else {
+	                System.out.println("Element not found after " + MAX_RETRIES + " attempts.");
+	                throw e; // Optionally re-throw the exception if all retries fail
+	            }
+	        }
+	    }
+
+	    return element;
+	}
+
+	 
+	 public WebElement findElement(By by) {
+		    int MAX_RETRIES = 10;
+		    int RETRY_DELAY_MS = 1000;
+		    WebElement element = null;
+
+		    for (int i = 0; i < MAX_RETRIES; i++) {
+		        try {
+		            element = driver.findElement(by);
+		            break; // Exit loop if the element is found
+		        } catch (NoSuchElementException e) {
+		            if (i < MAX_RETRIES - 1) {
+		                try {
+		                    Thread.sleep(RETRY_DELAY_MS); // Wait before retrying
+		                } catch (InterruptedException ie) {
+		                    Thread.currentThread().interrupt(); // Restore interrupted status
+		                }
+		            } else {
+		                throw new NoSuchElementException("Element not found after " + MAX_RETRIES + " attempts.");
+		            }
+		        }
+		    }
+
+		    return element;
+		}
+
+	 
+	 protected boolean isElementDisplayed(By by) {
+			try {
+				waitForElementToBeVisible(driver.findElement(by));
+				driver.findElement(by).isDisplayed();
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+	 
+	 protected void clickAtCoordinates(int x, int y) {
+		    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		    Sequence clickSequence = new Sequence(finger, 1)
+		            .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y)) // Move to x, y coordinates
+		            .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg())) // Press down at x, y coordinates
+		            .addAction(new Pause(finger, Duration.ofMillis(200))) // Pause for 200ms
+		            .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())); // Release at x, y coordinates
+		    driver.perform(Collections.singletonList(clickSequence));
+		}
 }

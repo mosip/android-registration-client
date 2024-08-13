@@ -3,14 +3,14 @@ package regclient.pages.arabic;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
+import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
-	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'المقاييس الحيوية المقدّمة ')]")
-	private WebElement introducerBiometricPageTitle;
 	
 	@AndroidFindBy(accessibility = "القزحية مسح")
 	private WebElement irisScanButton;;
@@ -102,7 +102,7 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 	
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageArabic(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 	
 	public void clickOnZoomButton() {
@@ -127,11 +127,12 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 	
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageArabic(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  boolean isIntroducerBiometricsPageDisplyed() {
-		return isElementDisplayed(introducerBiometricPageTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerBiometrics")+"\")")));
 	}
 	
 	public  boolean isExceptionTypeTitleDisplyed() {
@@ -181,4 +182,5 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 	public  boolean isExceptionScan() {
 		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
+
 }

@@ -4,62 +4,17 @@ package regclient.pages.french;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.UpdateUINPage;
+import regclient.pages.english.ConsentPageEnglish;
 
 public class UpdateUINPageFrench extends UpdateUINPage{
 	
-	@AndroidFindBy(accessibility = "Mettre à jour l'UIN")
-	private WebElement updateUINTitle;
-	
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement UINNumberTextBox;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Consentement\")")
-	private WebElement consentButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"langue préférée\")")
-	private WebElement preferredLanguageButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Nom complet\")")
-	private WebElement fullNameButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Date de naissance\")")
-	private WebElement DOBButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Genre\")")
-	private WebElement genderButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Adresse\")")
-	private WebElement addressButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"État civil\")")
-	private WebElement maritalStatusButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Langue du candidat\")")
-	private WebElement applicantLanguageButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Statut de résidence\")")
-	private WebElement residenceStatusButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Emplacement\")")
-	private WebElement locationButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Téléphone\")")
-	private WebElement phoneButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"E-mail\")")
-	private WebElement emailButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Détails de l'introducteur\")")
-	private WebElement introducerDetailsButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Biométrie\")")
-	private WebElement biometricsButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Documents\")")
-	private WebElement documentsButton;
 	
 	@AndroidFindBy(accessibility = "CONTINUER")
 	private WebElement continueButton;
@@ -71,228 +26,194 @@ public class UpdateUINPageFrench extends UpdateUINPage{
 		super(driver);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isUpdateMyUINTitleDisplayed() {
-		return isElementDisplayed(updateUINTitle);
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
-	
 	public  void enterUIN(String UIN) {
 		clickAndsendKeysToTextBox(UINNumberTextBox,UIN);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnConsentButton() {
-		if(!isElementDisplayedOnScreen(consentButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(consentButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("consentText")+"\")")));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isConsentTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(consentButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(consentButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("consentText")+"\")")));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnPreferredLanguageButton() {
-		if(!isElementDisplayedOnScreen(preferredLanguageButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(preferredLanguageButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("preferredLang")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isPreferredLanguageTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(preferredLanguageButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(preferredLanguageButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("preferredLang")+"\")")));
+
 	}
 		
+	@SuppressWarnings("deprecation")
 	public  void clickOnFullNameButton() {
-		if(!isElementDisplayedOnScreen(fullNameButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(fullNameButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("fullName")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isFullNameTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(fullNameButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(fullNameButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("fullName")+"\")")));
+
 	}
 	
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnDOBButton() {
-		if(!isElementDisplayedOnScreen(DOBButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(DOBButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("dateOfBirth")+"\")")));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isDOBTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(DOBButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(DOBButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("dateOfBirth")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnGenderButton() {
-		if(!isElementDisplayedOnScreen(genderButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(genderButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("gender")+"\")")));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isnGenderTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(genderButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(genderButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("gender")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnAddressButton() {
-		if(!isElementDisplayedOnScreen(addressButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(addressButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("permanentAddress")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isAddressTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(addressButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(addressButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("permanentAddress")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnMaritalStatusButton() {
-		if(!isElementDisplayedOnScreen(maritalStatusButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(maritalStatusButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("maritalStatus")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isMaritalStatusTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(maritalStatusButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(maritalStatusButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("maritalStatus")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnApplicantLanguageButton() {
-		if(!isElementDisplayedOnScreen(applicantLanguageButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(applicantLanguageButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("applicantLanguage")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isApplicantLanguageTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(applicantLanguageButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(applicantLanguageButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("applicantLanguage")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnResidenceStatusButton() {
-		if(!isElementDisplayedOnScreen(residenceStatusButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(residenceStatusButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("residenceStatus")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isResidenceStatusTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(residenceStatusButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(residenceStatusButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("residenceStatus")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnLocationButton() {
-		if(!isElementDisplayedOnScreen(locationButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(locationButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("region")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isLocationTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(locationButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(locationButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("region")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnPhoneButton() {
-		if(!isElementDisplayedOnScreen(phoneButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(phoneButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("phone")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isPhoneTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(phoneButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(phoneButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("phone")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnEmailButton() {
-		if(!isElementDisplayedOnScreen(emailButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(emailButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("email")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isEmailTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(emailButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(emailButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("email")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnIntroducerDetailsButton() {
-		if(!isElementDisplayedOnScreen(introducerDetailsButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(introducerDetailsButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("introducerName")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isIntroducerDetailsTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(introducerDetailsButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(introducerDetailsButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("introducerName")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnBiometricsButton() {
-		if(!isElementDisplayedOnScreen(biometricsButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(biometricsButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("individualBiometrics")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isnBiometricsTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(biometricsButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(biometricsButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("individualBiometrics")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  void clickOnDocumentsButton() {
-		if(!isElementDisplayedOnScreen(documentsButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(documentsButton);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("proofOfAddress")+"\")")));
+
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isDocumentsTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(documentsButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(documentsButton);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("proofOfAddress")+"\")")));
+
 	}
 
 	public  ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new ConsentPageFrench(driver);
+		return new ConsentPageEnglish(driver);
 	}
 	
 	public boolean isInvalidUINErrorMessageDisplayed() {

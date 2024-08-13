@@ -1,9 +1,13 @@
 package regclient.pages.french;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.BaseTestCase;
+import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
@@ -12,147 +16,18 @@ import regclient.pages.english.DocumentuploadPageEnglish;
 
 public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Nom complet\"))")
-	private WebElement demographicDetailspage;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Consentement\"))")
-	private WebElement consentTitle;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Nom complet\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement fullNameTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Nom complet\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement fullNameTextBoxSecondLanguage;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")
-	private WebElement ageTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement addressLine1TextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement addressLine2TextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement addressLine3TextBox;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement addressLine1TextBoxSecondLangauge;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement addressLine2TextBoxSecondLangauge;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement addressLine3TextBoxSecondLangauge;
-
 	@AndroidFindBy(accessibility = "Mâle")
 	private WebElement maleButton;
 
 	@AndroidFindBy(accessibility = "Femelle")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"État civil\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectMaritalStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Statut de résidence\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectResidentStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Région\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectRegionStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Province\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectProvinceStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Ville\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectCityStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Zone\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectZoneStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Postale\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectPostal;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
-	private WebElement selectPostalCode;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-étranger\")")
-	private WebElement nonForeignerValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Étrangère\")")
-	private WebElement foreignerValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Seule\")")
-	private WebElement singleValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Rabat-Salé-Kénitra\")")
-	private WebElement rabatSaleKenitraValueFromDropdown;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Kénitra\")]")
-	private WebElement kenitraValueFromDropdown;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Rabat\")]")
-	private WebElement rabatValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ben Mansour\")")
-	private WebElement benMansourFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Statut de résidence\")")
-	private WebElement residenceStatusHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Région\")")
-	private WebElement regionHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Province\")")
-	private WebElement provinceHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ville\")")
-	private WebElement cityHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Zone\")")
-	private WebElement zoneHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Postale\")")
-	private WebElement postalCodeHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Téléphoner\")")
-	private WebElement mobileNumberHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"E-mail\")")
-	private WebElement emailHeader;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"nom del'introducteur\")")
-	private WebElement introducerNameHeader;
-	
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Introducteur RID\")")
-	private WebElement introducerRidHeader;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Téléphoner\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
-	private WebElement mobileNumberTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"E-mail\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement emailIdTextBox;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"nom del'introducteur\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement introducerNameTextBox;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"nom del'introducteur\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement introducerNameTextBoxSecondLangauge;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducteur RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement introducerRidTextBox;
-
 	@AndroidFindBy(accessibility = "CONTINUER")
 	private WebElement continueButton;
 	
 	@AndroidFindBy(accessibility = "Entrée invalide")
 	private WebElement errorMessageInvalidInputText;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
-	private WebElement calenderIcon;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
-	private WebElement getSelectedDate;
-	
+
 	@AndroidFindBy(accessibility = "Fond")
 	private WebElement backgroundScreen;
 	
@@ -163,7 +38,9 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 		super(driver);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isDemographicDetailsPageDisplayed() {
+		WebElement  demographicDetailspage = findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))"));
 		return isElementDisplayed(demographicDetailspage);
 	}
 
@@ -171,136 +48,133 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 		return isElementDisplayed(errorMessageInvalidInputText);
 	}
 
+	@SuppressWarnings("deprecation")
 	public  ConsentPage clickOnConsentPageTitle() {
+		WebElement  consentTitle = findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("consentdet") + "\"))"));
 		clickOnElement(consentTitle);
 		return new ConsentPageEnglish(driver);
 	}
 
 	public  void enterFullName(String fullName) {
-		clickAndsendKeysToTextBox(fullNameTextBox,fullName);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("fullName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),fullName);
 	}
 
 	public  void enterAddressLine1(String addressLine1) {
-		if(!isElementDisplayedOnScreen(addressLine1TextBox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(addressLine1TextBox,addressLine1);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine1") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),addressLine1);
 	}
 
 	public  void enterAddressLine2(String addressLine2) {
-		if(!isElementDisplayedOnScreen(addressLine2TextBox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(addressLine2TextBox,addressLine2);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine2") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),addressLine2);
 	}
 
 	public  void enterAddressLine3(String addressLine3) {
-		if(!isElementDisplayedOnScreen(addressLine3TextBox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(addressLine3TextBox,addressLine3);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine3") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),addressLine3);
 	}
 
 	public  void enterAge(String age) {
-		clickAndsendKeysToTextBox(ageTextBox,age);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId("dateOfBirth") +"\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")),age);
 	}
 
 	public boolean checkFullNameSecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(fullNameTextBoxSecondLanguage)==null || getTextFromLocator(fullNameTextBoxSecondLanguage)=="" )
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("fullName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("fullName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
 			return	false;
 		else
 			return	true;
 	}
 
 	public boolean checkAddress1SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine1TextBoxSecondLangauge)==null || getTextFromLocator(addressLine1TextBoxSecondLangauge)=="" )
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine1") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine1") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
 			return	false;
 		else
 			return	true;
 	}
 
 	public boolean checkAddress2SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine2TextBoxSecondLangauge)==null || getTextFromLocator(addressLine2TextBoxSecondLangauge)=="" )
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine2") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine2") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
 			return	false;
 		else
 			return	true;
 	}
 
 	public boolean checkAddress3SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine3TextBoxSecondLangauge)==null || getTextFromLocator(addressLine3TextBoxSecondLangauge)=="" )
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine3") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("addressLine3") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
 			return	false;
 		else
 			return	true;
 	}
 
 	public boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull() {
-		if(getTextFromLocator(introducerNameTextBoxSecondLangauge)==null || getTextFromLocator(introducerNameTextBoxSecondLangauge)=="" )
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("introducerName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("introducerName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
 			return	false;
 		else
 			return	true;
 	}
+
+	@SuppressWarnings("deprecation")
 	public boolean isResidenceStatusHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(residenceStatusHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(residenceStatusHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("residenceStatus")+"\")")));
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isRegionHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(regionHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(regionHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("region")+"\")")));
+
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isProvinceHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(provinceHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(provinceHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("province")+"\")")));
+
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isCityHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(cityHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(cityHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("city")+"\")")));
+
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isPostalCodeHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(postalCodeHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(postalCodeHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("postalCode")+"\")")));
+
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isMobileNumberHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(mobileNumberHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(mobileNumberHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("phone")+"\")")));
+
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isZoneHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(zoneHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(zoneHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("zone")+"\")")));
+
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isEmailHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(emailHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(emailHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("email")+"\")")));
+
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isIntroducerNameHeaderDisplayed() {
-		return isElementDisplayed(introducerNameHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerName")+"\")")));
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isIntroducerRidHeaderDisplayed() {
-		return isElementDisplayed(introducerRidHeader);
+		waitTime(2);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerRID")+"\")")));
 	}
 
 	public  void selectGender(String gender) {
@@ -311,103 +185,101 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	}
 
 	public  void selectMaritalStatus() {
+		WebElement selectMaritalStatus=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId("maritalStatus")+"\")]/parent::android.view.View/parent::android.widget.Button"));
 		clickOnElement(selectMaritalStatus);
-		if(!isElementDisplayedOnScreen(singleValueFromDropdown)) {
+		waitTime(2);
+		if(!isElementDisplayed(selectMaritalStatus)) {
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}else {
 			swipeOrScroll();
 			clickOnElement(selectMaritalStatus);
-			clickOnElement(singleValueFromDropdown);
-		}else
-			clickOnElement(singleValueFromDropdown);
+			waitTime(2);
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}
 	}
 
 	public  void selectResidenceStatus(String ResidenceStatus) {
+		WebElement selectResidentStatus=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId("residenceStatus")+"\")]/parent::android.view.View/parent::android.widget.Button"));
 		clickOnElement(selectResidentStatus);
-		if(ResidenceStatus.equalsIgnoreCase("Foreigner")) {
-			if(!isElementDisplayedOnScreen(foreignerValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectResidentStatus);
-				clickOnElement(foreignerValueFromDropdown);
-			}else
-				clickOnElement(foreignerValueFromDropdown);
+		waitTime(2);
+		if(!isElementDisplayed(selectResidentStatus)) {				
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
 		}else {
-			if(!isElementDisplayedOnScreen(nonForeignerValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectResidentStatus);
-				clickOnElement(nonForeignerValueFromDropdown);
-			}else
-				clickOnElement(nonForeignerValueFromDropdown);
+			swipeOrScroll();
+			clickOnElement(selectResidentStatus);
+			waitTime(2);
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
 		}
-
 	}
 
 	public  void selectRegionStatus(String region) {
+		WebElement selectRegionStatus=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId("region")+"\")]/parent::android.view.View/parent::android.widget.Button"));
 		clickOnElement(selectRegionStatus);
-		if(region.equalsIgnoreCase("Rabat Sale Kenitra")) {
-			if(!isElementDisplayedOnScreen(rabatSaleKenitraValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectRegionStatus);
-				clickOnElement(rabatSaleKenitraValueFromDropdown);
-			}else {
-				clickOnElement(rabatSaleKenitraValueFromDropdown);
-			}
+		waitTime(2);
+		if(!isElementDisplayed(selectRegionStatus)) {				
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \"-\")]")));
+		}else {
+			swipeOrScroll();
+			clickOnElement(selectRegionStatus);
+			waitTime(2);
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \"-\")]")));
 		}
-
 	}
 
 	public  void selectProvinceStatus(String province) {
+		WebElement selectProvinceStatus=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId("province")+"\")]/parent::android.view.View/parent::android.widget.Button"));
 		clickOnElement(selectProvinceStatus);
-		if(province.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayed(kenitraValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectProvinceStatus);
-				clickOnElement(kenitraValueFromDropdown);
-			}else
-				clickOnElement(kenitraValueFromDropdown);
-		if(province.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayed(rabatValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectProvinceStatus);
-				clickOnElement(rabatValueFromDropdown);
-			}else
-				clickOnElement(rabatValueFromDropdown);
+		waitTime(2);
+		if(!isElementDisplayed(selectProvinceStatus)) {				
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}else {
+			swipeOrScroll();
+			clickOnElement(selectProvinceStatus);
+			waitTime(2);
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}
 	}
 
 	public  void selectCityStatus(String city) {
+		WebElement selectCityStatus=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId("city")+"\")]/parent::android.view.View/parent::android.widget.Button"));
 		clickOnElement(selectCityStatus);
-		if(city.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayed(kenitraValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectCityStatus);
-				clickOnElement(kenitraValueFromDropdown);
-			}else
-				clickOnElement(kenitraValueFromDropdown);
-		if(city.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayed(rabatValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectCityStatus);
-				clickOnElement(rabatValueFromDropdown);
-			}else
-				clickOnElement(rabatValueFromDropdown);
+		waitTime(2);
+		if(!isElementDisplayed(selectCityStatus)) {				
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}else {
+			swipeOrScroll();
+			clickOnElement(selectCityStatus);
+			waitTime(2);
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}
 	}
 
 	public  void selectZoneStatus() {
+		WebElement selectZoneStatus=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId("zone")+"\")]/parent::android.view.View/parent::android.widget.Button"));
 		clickOnElement(selectZoneStatus);
-		if(!isElementDisplayedOnScreen(benMansourFromDropdown)) {
+		waitTime(2);
+		if(!isElementDisplayed(selectZoneStatus)) {				
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}else {
 			swipeOrScroll();
 			clickOnElement(selectZoneStatus);
-			clickOnElement(benMansourFromDropdown);
-		}else
-			clickOnElement(benMansourFromDropdown);
+			waitTime(2);
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}
 	}
 
 	public  void selectPostalStatus() {
+		WebElement selectPostal=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId("postalCode")+"\")]/parent::android.view.View/parent::android.widget.Button"));
 		clickOnElement(selectPostal);
-		if(!isElementDisplayedOnScreen(selectPostalCode)) {
+		waitTime(2);
+		if(!isElementDisplayed(selectPostal)) {				
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}else {
 			swipeOrScroll();
 			clickOnElement(selectPostal);
-			clickOnElement(selectPostalCode);
-		}else
-			clickOnElement(selectPostalCode);
+			waitTime(2);
+			clickOnElement(findElement(By.xpath("//android.view.View[contains(@content-desc, \" \")]")));
+		}
 	}
 
 	public  DocumentUploadPage clickOnContinueButton() {
@@ -417,39 +289,25 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	}
 
 	public  void enterMobileNumber(String mobileNumber) {
-		if(!isElementDisplayedOnScreen(mobileNumberTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(mobileNumberTextBox,mobileNumber);
-		}else
-			clickAndsendKeysToTextBox(mobileNumberTextBox,mobileNumber);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId("phone") +"\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")),mobileNumber);
+
 	}
 
 	public  void enterEmailID(String EmailID) {
-		if(!isElementDisplayedOnScreen(emailIdTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
-		}else
-			clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId("email") +"\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")),EmailID);
+
 	}
 
 	public  void enterIntroducerName(String introducerName) {
-		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
-		}else
-			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId("introducerName") +"\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),introducerName);
 	}
 
 	public  void enterIntroducerRid(String introducerRid) {
-		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
-		}else
-			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
+		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId("introducerRID") +"\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),introducerRid);
 	}
 
 	public  void selectCurrentCalenderDate() {
-		clickOnElement(calenderIcon);		
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId("dateOfBirth") +"\")]/parent::android.view.View/following-sibling::android.view.View")));		
 	}
 
 	public  void closeCalender() {
@@ -457,13 +315,12 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage{
 	}
 
 	public  boolean checkDateFormatAndCurrectDate() {
-		getTextFromLocator(getSelectedDate);
-		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId("dateOfBirth") +"\")]/parent::android.view.View/following-sibling::android.view.View"))).equalsIgnoreCase(getCurrentDate())) 
 			return	true;
 		else
 			return false;
 	}
-	
+
 	public boolean isPreRegFetchDataTextBoxDisplay() {
 		return isElementDisplayed(fetchDataButton);
 	}

@@ -4,7 +4,9 @@ package regclient.pages.english;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.AcknowledgementPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
@@ -32,9 +34,6 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
 	private WebElement biometricsInformationInAcknowledgementPage;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Demographic Details\"))")
-	private WebElement demographicDetailsTitle;
 	
 	@AndroidFindBy(accessibility = "Sync Packet")
 	private WebElement syncPacketButton;
@@ -79,8 +78,9 @@ public class AcknowledgementPageEnglish extends AcknowledgementPage {
 		return isElementDisplayed(biometricsInformationInAcknowledgementPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
-		clickOnElement(demographicDetailsTitle);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
 		return new DemographicDetailsPageEnglish(driver);
 	}
 	

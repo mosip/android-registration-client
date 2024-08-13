@@ -3,15 +3,15 @@ package regclient.pages.kannada;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
+import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'ಅರ್ಜಿದಾರ ಬಯೋಮೆಟ್ರಿಕ್ಸ್')]")
-	private WebElement applicantBiometricsPageTitle;
-	
 	@AndroidFindBy(accessibility = "ಐರಿಸ್ ಸ್ಕ್ಯಾನ್")
 	private WebElement irisScanButton;
 	
@@ -99,9 +99,6 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"ಅಂಶಗಳು\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'ಅಥೆನ್ ಟಿಕೇಶನ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್')]")
-	private WebElement authenticationBiometricsPageTitle;
-	
 	public ApplicantBiometricsPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -116,29 +113,29 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	public void clickOnScanButton() {
 		clickOnElement(scanButton);
 	}	
-	
+
 	public void clickOnExceptionTypePermanentButton() {
 		if(!isElementDisplayedOnScreen(permanentButton)) {
 			swipeOrScroll();
 		}
 		clickOnElement(permanentButton);
 	}
-	
+
 	public void clickOnExceptionTypeTemporaryButton() {
 		if(!isElementDisplayedOnScreen(temporaryButton)) {
 			swipeOrScroll();
 		}
 		clickOnElement(temporaryButton);	
 	}
-	
+
 	public void markOneEyeException() {
 		clickOnElement(oneEyeException);
 	}
-	
+
 	public void markOneFingureException() {
 		clickOnElement(firstFingureExceptionImage);
 	}
-	
+
 	public void markFourFingureExceptionThenRemoveOne() {
 		clickOnElement(firstFingureExceptionImage);
 		clickOnElement(secondFingureExceptionImage);
@@ -146,105 +143,111 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 		clickOnElement(forthFingureExceptionImage);
 		clickOnElement(firstFingureExceptionImage);
 	}
-	
+
 	public void clickOnClosePopUp() {
 		clickOnElement(popUpCloseButton);
 	}
-	
+
 	public void clickOnMarkExceptionButton() {
 		clickOnElement(markExceptionButton);
 	}
-	
+
 	public void clickOnIrisScanButton() {
 		clickOnElement(irisScanButton);
 	}
-	
+
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageKannada(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
-	
+
 	public void clickOnZoomButton() {
 		clickOnElement(zoomButton);
 	}
-	
+
 	public void clickOnIrisScanTitle() {
 		clickOnElement(irisScanButtonTitle);
 	}
-	
+
 	public void clickOnRightHandScanTitle() {
 		clickOnElement(rightHandScanTitle);
 	}
-	
+
 	public void clickOnleftHandScanTitle() {
 		clickOnElement(leftHandScanTitle);
 	}
-	
+
 	public void clickOnThumbsScanTitle() {
 		clickOnElement(thumbsScanTitle);
 	}
-	
+
 	public void closeScanCapturePopUp() {
 		driver.navigate().back();
 	}
-	
+
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageKannada(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	public  boolean isApplicantBiometricsPageDisplyed() {
-		return isElementDisplayed(applicantBiometricsPageTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
 	}
-	
+
+	@SuppressWarnings("deprecation")
+	public  boolean isAuthenticationBiometricsPageDisplyed() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualAuthBiometrics") + "\"))")));
+	}
+
 	public  boolean isExceptionTypeTitleDisplyed() {
 		return isElementDisplayed(exceptionTypeTitle);
 	}
-	
+
 	public  boolean isRightHandScanTitleDisplyed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
-	
+
 	public  boolean isLeftHandScanTitleDisplyed() {
 		return isElementDisplayed(leftHandScanTitle);
 	}
-	
+
 	public  boolean isThumbsScanTitleDisplyed() {
 		return isElementDisplayed(thumbsScanTitle);
 	}
-	
+
 	public  boolean isFaceScanTitleDisplyed() {
 		return isElementDisplayed(faceScanTitle);
 	}
-	
+
 	public  boolean isExceptionScanTitleDisplyed() {
 		return isElementDisplayed(exceptionScanTitle);
 	}
-	
+
 	public  boolean isIrisScan() {
 		return isElementDisplayed(irisCapturerHeader,2000);
 	}
-	
+
 	public  boolean isRightHandScan() {
 		return isElementDisplayed(rightHandCapturerHeader,2000);
 	}
-	
+
 	public  boolean isLeftHandScan() {
 		return isElementDisplayed(leftHandCapturerHeader,2000);
 	}
-	
+
 	public  boolean isThumbsScan() {
 		return isElementDisplayed(thumbsCapturerHeader,2000);
 	}
-	
+
 	public  boolean isFaceScan() {
 		return isElementDisplayed(faceCapturerHeader,2000);
 	}
-	
+
 	public  boolean isExceptionScan() {
 		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
-	
+
 	public  boolean isCommentHeaderDisplyed() {
 		return isElementDisplayed(commentsHeader);
 	}
@@ -255,9 +258,5 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
-	}
-	
-	public  boolean isAuthenticationBiometricsPageDisplyed() {
-		return isElementDisplayed(authenticationBiometricsPageTitle);
 	}
 }

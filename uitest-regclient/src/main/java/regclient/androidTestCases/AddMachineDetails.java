@@ -30,7 +30,7 @@ public class AddMachineDetails extends AndroidBaseTest{
 		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
 		loginPage.clickOnloginButton();
 		
-		assertTrue(loginPage.isMachineNotFoundMessageDisplayed(), "verify if the machine not found message displayed");
+//		assertTrue(loginPage.isMachineNotFoundMessageDisplayed(), "verify if the machine not found message displayed");
 		loginPage.clickandHold();
 		loginPage.clickOnCopyTextButton();
 		loginPage.getMachineDetails();

@@ -64,12 +64,25 @@ public class RestClient {
 		//GlobalMethods.ReportRequestAndResponse("", "", url, body, posttResponse.getBody().asString());
 		return posttResponse;
 	}
+	
+	
 	public static Response patchRequestWithCookieAndQueryParm(String url, HashMap<String, String> body,
 			String contentHeader, String acceptHeader, String cookieName, String cookieValue) {
 		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a PATCH request to " + url);
 		Response postResponse = given().config(config).relaxedHTTPSValidation().queryParams(body)
 				.contentType(contentHeader).cookie(cookieName, cookieValue).accept(acceptHeader).log().all().when()
 				.patch(url).then().log().all().extract().response();
+		RESTCLIENT_LOGGER.info(postResponse.asString());
+		RESTCLIENT_LOGGER.info(postResponse.time());
+		return postResponse;
+	}
+	
+	public static Response getRequestWithCookieAndQueryParm(String url, HashMap<String, String> body,
+			String contentHeader, String acceptHeader, String cookieName, String cookieValue) {
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a get request to " + url);
+		Response postResponse = given().config(config).relaxedHTTPSValidation().queryParams(body)
+				.contentType(contentHeader).cookie(cookieName, cookieValue).accept(acceptHeader).log().all().when()
+				.get(url).then().log().all().extract().response();
 		RESTCLIENT_LOGGER.info(postResponse.asString());
 		RESTCLIENT_LOGGER.info(postResponse.time());
 		return postResponse;

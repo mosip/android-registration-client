@@ -16,6 +16,9 @@ public class CameraPage  extends BasePage{
 		if(!TestDataReader.readData("okButton").equals("")) {
 			waitTime(2);
 			clickOnElement(driver.findElement(By.id(TestDataReader.readData("okButton"))));		
+		}else {
+			waitTime(7);
+			clickAtCoordinates(633,2042);
 		}
 	}
 	

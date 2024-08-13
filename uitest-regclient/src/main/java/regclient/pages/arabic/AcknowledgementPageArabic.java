@@ -3,10 +3,13 @@ package regclient.pages.arabic;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.AcknowledgementPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
+import regclient.pages.english.DemographicDetailsPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class AcknowledgementPageArabic extends AcknowledgementPage {
@@ -23,9 +26,6 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 	@AndroidFindBy(accessibility = "اذهب إلى المنزل")
 	private WebElement goToHomeButton;
 	
-	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc=\"تسجيل جديد\"]")
-	private WebElement newRegistrationButton;
-	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
 	private WebElement demographicInformationInAcknowledgementPage;
 	
@@ -34,9 +34,6 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
 	private WebElement biometricsInformationInAcknowledgementPage;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"التفاصيل الديموغرافية\"))")
-	private WebElement demographicDetailsTitle;
 	
 	@AndroidFindBy(accessibility = "حزمة المزامنة")
 	private WebElement syncPacketButton;
@@ -75,16 +72,19 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 		return isElementDisplayed(biometricsInformationInAcknowledgementPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
-		clickOnElement(demographicDetailsTitle);
-		return new DemographicDetailsPageArabic(driver);
-	}
-	public String getAID() {
-		return getTextFromLocator(applicationID);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
+		return new DemographicDetailsPageEnglish(driver);
 	}
 	
+
 	public void clickOnSyncPacketButton() {
 		waitTime(10);
 		clickOnElement(syncPacketButton);
+	}
+	
+	public String getAID() {
+		return getTextFromLocator(applicationID);
 	}
 }

@@ -17,9 +17,8 @@ public class TestRunner {
 	
 	public static String jarUrl = TestRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {	
 		AdminTestUtil.initialize();
-
 		File homeDir = null;
 		TestNG runner = new TestNG();
 		if(!ConfigManager.gettestcases().equals("")) {

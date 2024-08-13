@@ -3,19 +3,17 @@ package regclient.pages.kannada;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
+import regclient.pages.english.DemographicDetailsPageEnglish;
+import regclient.pages.english.RegistrationTasksPageEnglish;
 
 
 public class ConsentPageKannada extends ConsentPage{
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ಒಪ್ಪಿಗೆ\"))")
-	private WebElement consentPage;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().className(\"android.widget.CheckBox\"))")
-	private WebElement termAndConditionCheckBox;
 
 	@AndroidFindBy(accessibility = "ಮಾಹಿತಿ ನೀಡಲಾಗಿದೆ")
 	private WebElement informedButton;
@@ -23,41 +21,38 @@ public class ConsentPageKannada extends ConsentPage{
 	@AndroidFindBy(accessibility = "ರದ್ದುಮಾಡು")
 	private WebElement cancelButton;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ನನ್ನ ಪಿಐಐ ಹಂಚಿಕೊಳ್ಳಲು ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ\"))")
-	private WebElement checkBoxDiscription;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN ನವೀಕರಿಸಿ\"))")
-	private WebElement updateUINTitle;
-
-	
 	public ConsentPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isConsentPageDisplayed() {
-		return isElementDisplayed(consentPage);
+			return isElementDisplayed(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("consentdet") + "\"))"));		
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isCheckBoxReadable() {
-		return isElementDisplayed(checkBoxDiscription);
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("consent") + "\"))")));
 	}
-
+	
 	public  boolean isInformedButtonEnabled() {
 		return isElementEnabled(informedButton);
 	}
 
 	public  DemographicDetailsPage clickOnInformedButton() {
 		clickOnElement(informedButton);
-		return new DemographicDetailsPageKannada(driver);
-	}
-	
-	public RegistrationTasksPage clickOnCancelButton() {
-		clickOnElement(cancelButton);
-		return new  RegistrationTasksPageKannada(driver);
-	}
-	
-	public boolean updateUINTitleDisplayed() {
-		return isElementDisplayed(updateUINTitle);
+		return new DemographicDetailsPageEnglish(driver);
 	}
 
+
+	public RegistrationTasksPage clickOnCancelButton() {
+		clickOnElement(cancelButton);
+		return new  RegistrationTasksPageEnglish(driver);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
+	}
+	
 }

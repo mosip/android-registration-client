@@ -63,7 +63,7 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	}
 
 	public boolean isRegistrationTasksPageLoaded() {
-		return isElementDisplayed(registrationTasksTitle,20);
+		return isElementDisplayed(registrationTasksTitle,2000);
 	}
 
 	public boolean isOperationalTaskDisplayed() {

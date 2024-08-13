@@ -1,10 +1,14 @@
 package regclient.api;
 
 
+import regclient.utils.TestDataReader;
 import regclient.utils.TestRunner;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
+
+import io.restassured.response.Response;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.ws.rs.core.MediaType;
 
 
 public class BaseTestCase {
@@ -45,14 +51,6 @@ public class BaseTestCase {
 	public static String perpetualVid="";
 	public static String onetimeuseVid="";
 	public static String temporaryVid="";
-
-
-	public static void main( String[] args ) {
-
-
-
-	}
-
 	
 
 	public static String getOSType() {
@@ -120,6 +118,42 @@ public class BaseTestCase {
 
 	public static JSONObject getRequestJson(String filepath) {
 		return kernelCmnLib.readJsonData(filepath, true);
+
+	}
+	
+	public static String GethierarchyName(int locationHierarchyLevels) {
+		kernelAuthLib = new KernelAuthentication();
+		String token = kernelAuthLib.getTokenByRole("admin");
+		String url = ApplnURI + props.getProperty("locationhierarchy");
+		Response response = RestClient.getRequestWithCookie(url+GethierarchyLevelName(locationHierarchyLevels), MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON,"Authorization", token);
+		org.json.JSONObject responseJson = new org.json.JSONObject(response.asString());
+		org.json.JSONObject responseObj = responseJson.getJSONObject("response");
+		JSONArray responseArray = responseObj.getJSONArray("locations");
+
+		for (int i = 0, size = responseArray.length(); i < size; i++) {
+			org.json.JSONObject idItem = responseArray.getJSONObject(i);
+			String lang = idItem.getString("langCode");
+			String hierarchyName = idItem.getString("name");
+			if (lang.equals(TestDataReader.readData("language"))) {
+				return hierarchyName;
+			}
+
+		}
+		return null;
+
+	}
+	
+	public static String GethierarchyLevelName(int locationHierarchyLevels) {
+		kernelAuthLib = new KernelAuthentication();
+		String token = kernelAuthLib.getTokenByRole("admin");
+		String url = ApplnURI + props.getProperty("locationHierarchyLevels");
+		Response response = RestClient.getRequestWithCookie(url+locationHierarchyLevels+"/"+TestDataReader.readData("language"), MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON,"Authorization", token);
+		org.json.JSONObject responseJson = new org.json.JSONObject(response.asString());
+		org.json.JSONObject responseObj = responseJson.getJSONObject("response");
+		JSONArray responseArray = responseObj.getJSONArray("locationHierarchyLevels");
+		org.json.JSONObject idItem = responseArray.getJSONObject(0);
+		String hierarchyLevelName = idItem.getString("hierarchyLevelName");
+		return hierarchyLevelName;
 
 	}
 }
