@@ -408,6 +408,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
                     break;
                   }
+                  if(globalProvider.isValidBiometricCapture){
+                    isValid = false;
+                    break;
+                  }
                 }
               }
             }
@@ -462,6 +466,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           count) {
                         isValid = false;
 
+                        break;
+                      }
+                      if(globalProvider.isValidBiometricCapture){
+                        isValid = false;
                         break;
                       }
                     }
