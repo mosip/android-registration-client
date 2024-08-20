@@ -23,6 +23,7 @@ class OperationalTasks extends StatefulWidget {
     super.key,
     required this.operationalTasks,
   });
+
   final List<Map<String, dynamic>> operationalTasks;
 
   @override
@@ -195,6 +196,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
                     ontap: () async {
                       return widget.operationalTasks[index]["onTap"](context);
                     },
+                    subtitle: widget.operationalTasks[index]["subtitle"],
                   ),
                 )
               : TaskCard(
