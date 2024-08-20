@@ -37,6 +37,8 @@ class BiometricCaptureScanBlockPortrait extends StatefulWidget {
 class _BiometricCaptureScanBlockPortraitState
     extends State<BiometricCaptureScanBlockPortrait> {
   bool isPortrait = true;
+  late GlobalProvider globalProvider;
+
   @override
   void initState() {
     // SystemChrome.setPreferredOrientations([
@@ -47,6 +49,7 @@ class _BiometricCaptureScanBlockPortraitState
     context
         .read<BiometricCaptureControlProvider>()
         .biometricCaptureScanBlockTabIndex = 1;
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
 
     super.initState();
   }
@@ -191,7 +194,32 @@ class _BiometricCaptureScanBlockPortraitState
   _showScanDialogBox(List<Uint8List?> temp) async {
     int currentAttemptNo = await BiometricsApi().getBioAttempt(
         widget.field.id!, biometricAttributeData.title.replaceAll(" ", ""));
+    globalProvider.isValidBiometricCapture = validateCaptureException();
     _showCustomAlert(currentAttemptNo, temp);
+  }
+
+  bool validateCaptureException(){
+    return (
+        (context.read<BiometricCaptureControlProvider>().iris.isScanned) &&
+            (context.read<BiometricCaptureControlProvider>().iris.qualityPercentage <=
+                int.parse(context.read<BiometricCaptureControlProvider>().iris.thresholdPercentage)) ||
+
+            (context.read<BiometricCaptureControlProvider>().rightHand.isScanned) &&
+                (context.read<BiometricCaptureControlProvider>().rightHand.qualityPercentage <=
+                    int.parse(context.read<BiometricCaptureControlProvider>().rightHand.thresholdPercentage)) ||
+
+            (context.read<BiometricCaptureControlProvider>().leftHand.isScanned) &&
+                (context.read<BiometricCaptureControlProvider>().leftHand.qualityPercentage <=
+                    int.parse(context.read<BiometricCaptureControlProvider>().leftHand.thresholdPercentage)) ||
+
+            (context.read<BiometricCaptureControlProvider>().thumbs.isScanned) &&
+                (context.read<BiometricCaptureControlProvider>().thumbs.qualityPercentage <=
+                    int.parse(context.read<BiometricCaptureControlProvider>().thumbs.thresholdPercentage)) ||
+
+            (context.read<BiometricCaptureControlProvider>().face.isScanned) &&
+                (context.read<BiometricCaptureControlProvider>().face.qualityPercentage <=
+                    int.parse(context.read<BiometricCaptureControlProvider>().face.thresholdPercentage))
+    );
   }
 
   noOfTrue(List<bool> list) {

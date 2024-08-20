@@ -162,14 +162,14 @@ class _HomePageState extends State<HomePage> {
                 .toString()
             : "Last Sync time not found",
       },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.download_pre_registration_data,
-        "onTap": () {},
-        "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
-      },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.download_pre_registration_data,
+      //   "onTap": () {},
+      //   "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
+      // },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",
@@ -203,30 +203,30 @@ class _HomePageState extends State<HomePage> {
         "subtitle":
             "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
       },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Onboarding Yourself.svg",
-        ),
-        "title": appLocalizations.check_updates,
-        "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.center_remap_sync,
-        "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.sync_activities,
-        "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Onboarding Yourself.svg",
+      //   ),
+      //   "title": appLocalizations.check_updates,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.center_remap_sync,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.sync_activities,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
       if (Provider.of<AuthProvider>(context, listen: false).isSupervisor)
         {
           "icon": SvgPicture.asset(
