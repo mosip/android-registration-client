@@ -139,6 +139,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                   const SizedBox(height: 24.0),
                   Text(
                     AppLocalizations.of(context)!.supervisor_auth_heading,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontSize: 28.0, fontWeight: FontWeight.bold),
                   ),
