@@ -49,10 +49,17 @@ class GlobalProvider with ChangeNotifier {
   String get onboardingProcessName => _onboardingProcessName;
   bool get isPageChanged => _isPageChanged;
   bool _preRegControllerRefresh = false;
+  bool _isValidBiometricCapture = false;
+  bool get isValidBiometricCapture => _isValidBiometricCapture;
   bool get preRegControllerRefresh => _preRegControllerRefresh;
 
   set isPageChanged(bool value) {
     _isPageChanged = value;
+    notifyListeners();
+  }
+
+  set isValidBiometricCapture(bool value) {
+    _isValidBiometricCapture = value;
     notifyListeners();
   }
 
