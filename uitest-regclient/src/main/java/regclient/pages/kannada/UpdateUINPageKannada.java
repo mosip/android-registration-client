@@ -58,13 +58,13 @@ public class UpdateUINPageKannada extends UpdateUINPage{
 		
 	@SuppressWarnings("deprecation")
 	public  void clickOnFullNameButton() {
-		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("fullName")+"\")")));
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("firstName")+"\")")));
 
 	}
 	
 	@SuppressWarnings("deprecation")
 	public boolean isFullNameTitleDisplayed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("fullName")+"\")")));
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("firstName")+"\")")));
 
 	}
 	

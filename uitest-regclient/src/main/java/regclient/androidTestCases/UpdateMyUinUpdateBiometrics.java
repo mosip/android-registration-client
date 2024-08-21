@@ -35,6 +35,7 @@ import regclient.pages.arabic.DocumentuploadPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
+import regclient.pages.arabic.PendingApprovalArabic;
 import regclient.pages.arabic.PreviewPageArabic;
 import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
@@ -66,6 +67,7 @@ import regclient.pages.french.DocumentUploadPageFrench;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.ManageApplicationsPageFrench;
 import regclient.pages.french.OperationalTaskPageFrench;
+import regclient.pages.french.PendingApprovalFrench;
 import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.ProfilePageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
@@ -81,6 +83,7 @@ import regclient.pages.hindi.DocumentUploadPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.ManageApplicationsPageHindi;
 import regclient.pages.hindi.OperationalTaskPageHindi;
+import regclient.pages.hindi.PendingApprovalHindi;
 import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.ProfilePageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
@@ -96,6 +99,7 @@ import regclient.pages.kannada.DocumentuploadPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.ManageApplicationsPageKannada;
 import regclient.pages.kannada.OperationalTaskPageKannada;
+import regclient.pages.kannada.PendingApprovalKannada;
 import regclient.pages.kannada.PreviewPageKannada;
 import regclient.pages.kannada.ProfilePageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
@@ -111,6 +115,7 @@ import regclient.pages.tamil.DocumentuploadPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.ManageApplicationsPageTamil;
 import regclient.pages.tamil.OperationalTaskPageTamil;
+import regclient.pages.tamil.PendingApprovalTamil;
 import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
@@ -503,21 +508,21 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			pendingApproval=new PendingApprovalEnglish(driver);
 		} 
-//		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-//			pendingApproval=new PendingApprovalHindi(driver);
-//		}
-//		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-//			pendingApproval=new PendingApprovalFrench(driver);
-//		}
-//		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-//			pendingApproval=new PendingApprovalKannada(driver);
-//		}
-//		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-//			pendingApproval=new PendingApprovalTamil(driver);
-//		}
-//		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-//			pendingApproval=new PendingApprovalArabic(driver);
-//		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			pendingApproval=new PendingApprovalHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			pendingApproval=new PendingApprovalFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			pendingApproval=new PendingApprovalKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			pendingApproval=new PendingApprovalTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			pendingApproval=new PendingApprovalArabic(driver);
+		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 		pendingApproval.clickOnAID(Aid);
 

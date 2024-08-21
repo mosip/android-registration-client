@@ -55,7 +55,9 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	}
 
 	public  void enterFullName(String fullName) {
-		clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("fullName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),fullName);
+		clickAndsendKeysToTextBox(findElement(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("firstName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),fullName);
+		clickAndsendKeysToTextBox(findElement(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("lastName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),fullName);
+
 	}
 
 	public  void enterAddressLine1(String addressLine1) {
@@ -75,7 +77,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 	}
 
 	public boolean checkFullNameSecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("fullName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("fullName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("firstName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId("firstName") + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
 			return	false;
 		else
 			return	true;
@@ -111,68 +113,68 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage{
 
 	@SuppressWarnings("deprecation")
 	public boolean isResidenceStatusHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("residenceStatus")+"\")")));
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isRegionHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("region")+"\")")));
 
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isProvinceHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("province")+"\")")));
 
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isCityHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("city")+"\")")));
 
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isPostalCodeHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("postalCode")+"\")")));
 
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isMobileNumberHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("phone")+"\")")));
 
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isZoneHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("zone")+"\")")));
 
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isEmailHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("email")+"\")")));
 
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isIntroducerNameHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerName")+"\")")));
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isIntroducerRidHeaderDisplayed() {
-		waitTime(2);
+		waitTime(3);
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerRID")+"\")")));
 	}
 

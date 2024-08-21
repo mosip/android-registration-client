@@ -23,9 +23,7 @@ public class FetchUiSpec extends BaseTestCase{
 			String token = kernelAuthLib.getTokenByRole("globalAdmin");
 			String url = ApplnURI + "/v1/masterdata/uispec/registration-client/latest";
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("version","1.100");
 			map.put("type", type);
-			map.put("idSchemaVersion", "0.2");
 			Response response = RestClient.getRequestWithCookieAndQueryParm(url, map, MediaType.APPLICATION_JSON,
 					MediaType.APPLICATION_JSON, "Authorization", token);
 			UiSpec= response.asString();
@@ -33,9 +31,7 @@ public class FetchUiSpec extends BaseTestCase{
 			String token = kernelAuthLib.getTokenByRole("globalAdmin");
 			String url = ApplnURI + "/v1/masterdata/uispec/registration-client/latest";
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("version","0.7");
 			map.put("type", type);
-			map.put("idSchemaVersion", "0.2");
 			Response response = RestClient.getRequestWithCookieAndQueryParm(url, map, MediaType.APPLICATION_JSON,
 					MediaType.APPLICATION_JSON, "Authorization", token);
 			UiSpec= response.asString();

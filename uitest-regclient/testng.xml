@@ -43,7 +43,7 @@
 			</class>
 			<class name="regclient.androidTestCases.UpdateMyUinMinor">
 				<methods>
-					<include name="updateMyUinInfant" />
+					<include name="updateMyUinMinor" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.UpdateMyUINUpdateDemographicDetails">
