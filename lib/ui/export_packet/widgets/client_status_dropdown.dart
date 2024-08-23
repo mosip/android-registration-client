@@ -23,20 +23,27 @@ class ClientStatusDropdown extends StatelessWidget {
           underline: const SizedBox.shrink(),
           dropdownColor: Colors.white,
           padding: const EdgeInsets.all(16),
-          items:  [
-             DropdownMenuItem(value: null, child: Text(AppLocalizations.of(context)!.client_status)),
-            DropdownMenuItem(value: ClientStatus.CREATED.name, child: const Text("Created")),
-            DropdownMenuItem(value: ClientStatus.APPROVED.name, child: const Text("Approved")),
-            DropdownMenuItem(value: ClientStatus.REJECTED.name, child: const Text("Rejected")),
-            DropdownMenuItem(value: ClientStatus.SYNCED.name, child: const Text("Synced")),
-            DropdownMenuItem(value: ClientStatus.EXPORTED.name, child: const Text("Exported")),
+          items: [
+            DropdownMenuItem(
+                value: null,
+                child: Text(AppLocalizations.of(context)!.client_status)),
+            DropdownMenuItem(
+                value: ClientStatus.APPROVED.name,
+                child: const Text("Approved")),
+            DropdownMenuItem(
+                value: ClientStatus.REJECTED.name,
+                child: const Text("Rejected")),
+            DropdownMenuItem(
+                value: ClientStatus.SYNCED.name, child: const Text("Synced")),
+            DropdownMenuItem(
+                value: ClientStatus.EXPORTED.name,
+                child: const Text("Exported")),
             // Add more items as needed
           ],
           onChanged: (String? newValue) {
             context.read<ExportPacketsProvider>().changeClientStatus(newValue);
             context.read<ExportPacketsProvider>().filterSearchList();
           },
-        )
-    );
+        ));
   }
 }
