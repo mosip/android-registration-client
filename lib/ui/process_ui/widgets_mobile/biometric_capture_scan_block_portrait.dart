@@ -1486,19 +1486,19 @@ class _BiometricCaptureScanBlockPortraitState
                 showDialog<String>(
                   context: context,
                   barrierDismissible: true,
-                  builder: (BuildContext context) => SingleChildScrollView(
-                    child: Center(
-                      child: StatefulBuilder(
-                        builder: (context,alertState) {
-                          return AlertDialog(
-                            insetPadding: EdgeInsets.symmetric(
-                                vertical: (isMobileSize) ? 10 : 24,
-                                horizontal: (isMobileSize) ? 10 : 40),
-                            content: Container(
-                              height: (isMobileSize) ? 500 : 720,
-                              width: (isMobileSize) ? 404 : 760,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12)),
+                  builder: (BuildContext context) => StatefulBuilder(
+                    builder: (context, StateSetter setStateAlert) {
+                      return Center(
+                        child: AlertDialog(
+                          insetPadding: EdgeInsets.symmetric(
+                              vertical: (isMobileSize) ? 10 : 24,
+                              horizontal: (isMobileSize) ? 10 : 40),
+                          content: Container(
+                            height: (isMobileSize) ? 500 : 720,
+                            width: (isMobileSize) ? 404 : 760,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12)),
+                            child: SingleChildScrollView(
                               child: Column(
                                 children: [
                                   Row(
@@ -1620,7 +1620,8 @@ class _BiometricCaptureScanBlockPortraitState
                                               }
                                               updateExceptionList("Right Hand");
                                               proofOfExceptionList("Right Hand");
-                                              alertState(() {});
+                                              setState(() {});
+                                              setStateAlert(() {});
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_1.svg",
@@ -1706,7 +1707,8 @@ class _BiometricCaptureScanBlockPortraitState
                                               }
                                               updateExceptionList("Right Hand");
                                               proofOfExceptionList("Right Hand");
-                                              alertState(() {});
+                                              setState(() {});
+                                              setStateAlert(() {});
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_2.svg",
@@ -1792,7 +1794,8 @@ class _BiometricCaptureScanBlockPortraitState
                                               }
                                               updateExceptionList("Right Hand");
                                               proofOfExceptionList("Right Hand");
-                                              alertState(() {});
+                                              setState(() {});
+                                              setStateAlert(() {});
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_3.svg",
@@ -1878,7 +1881,8 @@ class _BiometricCaptureScanBlockPortraitState
                                               }
                                               updateExceptionList("Right Hand");
                                               proofOfExceptionList("Right Hand");
-                                              alertState(() {});
+                                              setState(() {});
+                                              setStateAlert(() {});
                                             },
                                             child: SvgPicture.asset(
                                               "assets/svg/RH_4.svg",
@@ -1895,10 +1899,10 @@ class _BiometricCaptureScanBlockPortraitState
                                 ],
                               ),
                             ),
-                          );
-                        }
-                      ),
-                    ),
+                          ),
+                        ),
+                      );
+                    }
                   ),
                 );
               },
@@ -2198,7 +2202,7 @@ class _BiometricCaptureScanBlockPortraitState
                     showDialog<String>(
                       context: context,
                       builder: (context) => StatefulBuilder(
-                          builder: (context,alertState) {
+                          builder: (context, StateSetter setStateAlert) {
                           return AlertDialog(
                             content: Container(
                               height: (isMobileSize) ? 500 : 720,
@@ -2332,7 +2336,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                 }
                                                 updateExceptionList("Left Hand");
                                                 proofOfExceptionList("Left Hand");
-                                                alertState(() {});
+                                                setState(() {});
+                                                setStateAlert(() {});
                                               },
                                               child: SvgPicture.asset(
                                                 "assets/svg/LH_1.svg",
@@ -2423,7 +2428,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                 }
                                                 updateExceptionList("Left Hand");
                                                 proofOfExceptionList("Left Hand");
-                                                alertState(() {});
+                                                setState(() {});
+                                                    setStateAlert(() {});
                                               },
                                               child: SvgPicture.asset(
                                                 "assets/svg/LH_2.svg",
@@ -2513,7 +2519,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                 }
                                                 updateExceptionList("Left Hand");
                                                 proofOfExceptionList("Left Hand");
-                                                alertState(() {});
+                                                setState(() {});
+                                                    setStateAlert(() {});
                                               },
                                               child: SvgPicture.asset(
                                                 "assets/svg/LH_3.svg",
@@ -2603,7 +2610,8 @@ class _BiometricCaptureScanBlockPortraitState
                                                 }
                                                 updateExceptionList("Left Hand");
                                                 proofOfExceptionList("Left Hand");
-                                                alertState(() {});
+                                                setState(() {});
+                                                    setStateAlert(() {});
                                               },
                                               child: SvgPicture.asset(
                                                 "assets/svg/LH_4.svg",
