@@ -208,6 +208,7 @@ class _UpdateProcessState extends State<UpdateProcess>
   }
 
   bool continueButton = false;
+
   @override
   Widget build(BuildContext context) {
     postRegistrationTabs = [
@@ -641,6 +642,8 @@ class _UpdateProcessState extends State<UpdateProcess>
                           onPressed: () async {
                             if (fieldSelectionCompleted) {
                               registrationTaskProvider.addConsentField("Y");
+                              await DemographicsApi().addDemographicField(
+                                  "UIN", globalProvider.updateUINNumber);
                               await DemographicsApi()
                                   .addDemographicField("consent", "true");
                             }
