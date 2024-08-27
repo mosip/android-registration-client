@@ -518,6 +518,12 @@ class _UpdateProcessState extends State<UpdateProcess>
             return;
           }
           globalProvider.setRegId(registrationSubmitResponse.rId);
+
+          // Updating key to packetId after success creation of packet
+          registrationTaskProvider
+              .updateTemplateStorageKey(registrationSubmitResponse.rId);
+          registrationTaskProvider.deleteDefaultTemplateStored();
+
           setState(() {
             username = '';
             password = '';
