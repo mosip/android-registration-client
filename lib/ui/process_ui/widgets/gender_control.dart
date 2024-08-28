@@ -144,7 +144,8 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
       String fieldId, String langCode) async {
     // Fetch all languages in parallel
     List<String> chosenLangs = globalProvider.chosenLang;
-    List<Future<List<DynamicFieldData?>>> futures = chosenLangs.map((lang) async {
+    List<Future<List<DynamicFieldData?>>> futures =
+        chosenLangs.map((lang) async {
       String langC = globalProvider.langToCode(lang);
       List<DynamicFieldData?> data = await registrationTaskProvider
           .getFieldValues(fieldId, langC, globalProvider.chosenLang);
@@ -161,6 +162,11 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     // Process the data into the desired format
     List<Map<String, String?>> labels = [];
     int itemCount = labelsData.isNotEmpty ? labelsData[0].length : 0;
+    for (var element in labelsData) {
+      if (element.length < itemCount) {
+        itemCount = element.length;
+      }
+    }
     for (var i = 0; i < itemCount; i++) {
       Map<String, String?> labelMap = {};
       for (var j = 0; j < chosenLangs.length; j++) {
@@ -171,7 +177,6 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
 
     return labels;
   }
-
 
   @override
   Widget build(BuildContext context) {

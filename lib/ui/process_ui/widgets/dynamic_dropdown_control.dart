@@ -60,13 +60,13 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
           for (var item in temp) {
             if (item!.code == value.code) {
               registrationTaskProvider.addSimpleTypeDemographicField(
-                  widget.field.id ?? "", item.name, code);
+                  widget.field.id ?? "", value.code, code);
             }
           }
         }
       } else {
         registrationTaskProvider.addDemographicField(
-            widget.field.id ?? "", value.name);
+            widget.field.id ?? "", value.code);
       }
     }
   }
