@@ -117,13 +117,13 @@ class _MachineKeysState extends State<MachineKeys> {
                 });
               },
             ),
-            SizedBox(
-              height: 20.h,
-            ),
-            _downloadButton(
-              title: appLocalizations.share,
-              onTap: () {},
-            ),
+            // SizedBox(
+            //   height: 20.h,
+            // ),
+            // _downloadButton(
+            //   title: appLocalizations.share,
+            //   onTap: () {},
+            // ),
             SizedBox(
               height: 30.h,
             ),
