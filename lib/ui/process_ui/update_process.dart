@@ -649,7 +649,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                             if (fieldSelectionCompleted) {
                               registrationTaskProvider.addConsentField("Y");
                               await DemographicsApi().addDemographicField(
-                                  "UIN", globalProvider.updateUINNumber);
+                                  "nrcId", globalProvider.updateUINNumber);
                               await DemographicsApi()
                                   .addDemographicField("consent", "true");
                             }

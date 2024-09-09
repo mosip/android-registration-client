@@ -31,8 +31,8 @@ class CustomLabel extends StatelessWidget {
           Text(
             globalProvider.chooseLanguage(field.label!),
             style: TextStyle(
-                fontSize: isPortrait && !isMobileSize ? 18 : 14,
-                fontWeight: semiBold),
+                fontSize: isPortrait && !isMobileSize ? 20 : 16,
+                fontWeight: bold),
           ),
           const SizedBox(
             width: 5,
