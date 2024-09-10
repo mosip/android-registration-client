@@ -184,8 +184,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 child: Text(
                   _getDataEntryLabel(),
                   style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 16,
-                    fontWeight: semiBold,
+                    fontSize: isMobileSize ? 15 : 18,
+                    fontWeight: bold,
                   ),
                 ),
               ),
@@ -238,7 +238,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                 child: Text(
                   _getNotificationLabel(),
                   style: TextStyle(
-                    fontSize: isMobileSize ? 10 : 16,
+                    fontSize: isMobileSize ? 15 : 18,
                     fontWeight: semiBold,
                   ),
                 ),

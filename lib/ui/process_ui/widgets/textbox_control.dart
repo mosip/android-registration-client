@@ -16,6 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:provider/provider.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -43,6 +44,7 @@ class _TextBoxControlState extends State<TextBoxControl>
   Map<String, TextEditingController> controllerMap = {};
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
+  String countryCode = "";
 
   @override
   void initState() {
@@ -50,6 +52,7 @@ class _TextBoxControlState extends State<TextBoxControl>
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
     super.initState();
+    getCountryCode(globalProvider.selectedLanguage);
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
         if (mounted) {
@@ -118,6 +121,28 @@ class _TextBoxControlState extends State<TextBoxControl>
       }
     }
     return response;
+  }
+
+  void getCountryCode(String lang) async {
+    List<DynamicFieldData?> data =
+    await _getFieldValues("countryCode", lang);
+    for (var element in data) {
+      setState(() {
+        countryCode = element!.name;
+        debugPrint("countryCode.........."+countryCode);
+      });
+    }
+  }
+
+  Future<List<DynamicFieldData?>> _getFieldValues(
+      String fieldId, String langCode) async {
+    List<String> selectedLang = [];
+    for (var lang in globalProvider.chosenLang) {
+      String langCode = globalProvider.langToCode(lang);
+      selectedLang.add(langCode);
+    }
+    return await registrationTaskProvider.getFieldValues(
+        fieldId, langCode, selectedLang);
   }
 
   @override
@@ -236,7 +261,23 @@ class _TextBoxControlState extends State<TextBoxControl>
                     textAlign: Bidi.isRtlLanguage(lang.substring(0, 2))
                         ? TextAlign.right
                         : TextAlign.left,
-                    decoration: InputDecoration(
+                    decoration: (widget.e.subType == "Phone" && countryCode!= "")?
+                    InputDecoration(
+                     prefixIcon:Padding(
+                     padding: const EdgeInsets.all(10),
+                     child: Text(countryCode,style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18))),
+                     prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                     border: OutlineInputBorder(
+                     borderRadius: BorderRadius.circular(8.0),
+                     borderSide:
+                       const BorderSide(color: appGreyShade, width: 1),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                    vertical: 14, horizontal: 16),
+                    hintText: widget.e.label![lang],
+                    hintStyle:
+                   const TextStyle(color: appBlackShade3, fontSize: 14),
+                   ):InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                         borderSide:

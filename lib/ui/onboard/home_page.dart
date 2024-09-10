@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
     syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
     syncProvider.isSyncAndUploadInProgress = false;
-    await syncProvider.getPreRegistrationIds();
+    //await syncProvider.getPreRegistrationIds();
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);

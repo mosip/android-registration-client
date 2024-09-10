@@ -8,10 +8,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-String appIcon = 'assets/images/MOSIP Logo@2x.png';
-String appIconLogoOnly = 'assets/images/MOSIP Logo Only.png';
+String appIcon = 'assets/images/zambia Logo.png';
+String appIconLogoOnly = 'assets/images/zambia Logo.png';
 String buildingsX = 'assets/images/buildings.png';
-String buildingsXX = 'assets/images/buildings@2x.png';
+String buildingsXX = 'assets/images/zambia-background-image.jpg';
 double appIconScale = 8;
 String dashboardIcon = 'assets/svg/Dashboard.svg';
 String notificationIcon = 'assets/svg/Notifications.svg';

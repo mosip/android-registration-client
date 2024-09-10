@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           children: [
             Positioned(
               bottom: 0,
-              left: 16.w,
+              //left: 16.w,
               child: _getBuildingsImage(),
             ),
             SizedBox(
@@ -531,9 +531,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _appCombinedTextComponent(),
+        //_appCombinedTextComponent(),
         SizedBox(
-          height: isMobileSize ? 40.h : 70.h,
+          height: isMobileSize ? 100.h : 70.h,
         ),
         _loginComponent(),
       ],
@@ -550,7 +550,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
             children: [
               SizedBox(
                 width: 399.w,
-                child: _appCombinedTextComponent(),
+                //child: _appCombinedTextComponent(),
               ),
               SizedBox(
                 height: 100.h,
@@ -568,10 +568,10 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   Widget _getBuildingsImage() {
     return SizedBox(
-      height: isMobile ? (350.48).h : (293.48).h,
-      width: isMobile ? (478.28).w : (400.28).w,
+      height: isMobile ? MediaQuery.of(context).size.height : MediaQuery.of(context).size.height,
+      width: isMobile ? (478.28).w : MediaQuery.of(context).size.width,
       child: Image.asset(
-        isMobile ? buildingsX : buildingsXX,
+        isMobile ? buildingsXX : buildingsXX,
         fit: BoxFit.fill,
       ),
     );
