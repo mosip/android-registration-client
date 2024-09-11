@@ -57,7 +57,6 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   }
 
   Widget widgetType(Field e) {
-    debugPrint("UI spec"+e.toString());
     RegExp regexPattern = RegExp(r'^.*$');
 
     if (e.validators != null && e.validators!.isNotEmpty) {
