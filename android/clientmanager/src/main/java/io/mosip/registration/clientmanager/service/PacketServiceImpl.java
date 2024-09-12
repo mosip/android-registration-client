@@ -111,7 +111,7 @@ public class PacketServiceImpl implements PacketService {
 
         Registration registration = registrationRepository.getRegistration(packetId);
 
-        if(registration.getClientStatus() != null && String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.CREATED.name())) {
+        if (registration.getClientStatus() != null && String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.CREATED.name())) {
             Log.i(TAG, "Packet not reviewed >> " + registration.getClientStatus());
             callBack.onComplete(packetId, PacketTaskStatus.SYNC_FAILED);
             return;
@@ -243,7 +243,12 @@ public class PacketServiceImpl implements PacketService {
                         callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_COMPLETED);
 //                        Toast.makeText(context, "Packet uploaded successfully", Toast.LENGTH_LONG).show();
                     } else {
-                        callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
+                        if (String.valueOf(error.getErrorCode()).equals("RPR-PKR-005")) {
+                            registrationRepository.updateStatus(packetId, null, PacketClientStatus.UPLOADED.name());
+                            callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_ALREADY_COMPLETED);
+                        } else {
+                            callBack.onComplete(packetId, PacketTaskStatus.UPLOAD_FAILED);
+                        }
 //                        Toast.makeText(context, "Packet uploaded failed : " + error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 } else {
