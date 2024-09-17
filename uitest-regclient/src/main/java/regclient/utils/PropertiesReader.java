@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class PropertiesReader {
-    private static final String PROPERTY_FILE = System.getProperty("user.dir") + "/src/main/resources/config.properties";
+    private static final String PROPERTY_FILE = TestRunner.getResourcePath() + "/config.properties";
 
     private final Properties props;
 

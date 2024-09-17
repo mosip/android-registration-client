@@ -21,6 +21,9 @@ public class OperationalTaskPageArabic extends OperationalTaskPage{
 	@AndroidFindBy(accessibility = "تحميل التطبيق")
 	private WebElement applicationUploadTitle;
 	
+	@AndroidFindBy(accessibility = "ما زال يحتاج بتصدير")
+	private WebElement pendingApprovalTitle;
+	
 	public OperationalTaskPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -56,6 +59,17 @@ public class OperationalTaskPageArabic extends OperationalTaskPage{
 			swipeOrScroll();
 		}
 		return isElementDisplayed(applicationUploadTitle);
+	}
+	
+	public  void clickPendingApprovalTitle() {
+		clickOnElement(pendingApprovalTitle);
+	}
+	
+	public boolean isPendingApprovalTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(pendingApprovalTitle);
 	}
 
 	

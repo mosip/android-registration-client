@@ -1,10 +1,7 @@
 {
-    "username": "9343",
-    "onBoardUsername":"9657",
     "UIN": "3054097528",
     "UINinfant": "5074162518",
     "UINminor": "2312798573",
-    "password": "admin123",
     "language": "eng",
     "defaultlanguage": "eng",
     "notificationLanguage": "eng",
@@ -15,15 +12,10 @@
     "editData": "asdfgh",
     "gender": "female",
     "address": "banglore",
-    "residenceStatus": "Non-Foreigner",
-    "region": "Rabat Sale Kenitra",
-    "province": "Kenitra",
-    "city": "Kenitra",
     "mobileNumber": "9876543210",
     "emailId": "abc@gmail.com",
     "RID": "10001105671003120240215071549",
-    "nonRegisteredUsername": "123456789",
-    "InvalidPassword": "123456789",
-    "comments":"asdfgh",
-    "env":"qa-platform1-mosip.net"
+    "comments": "asdfgh",
+    "id": "com.motorola.camera3:id/capture_bar_shutter_button",
+    "okButton": ""
 }

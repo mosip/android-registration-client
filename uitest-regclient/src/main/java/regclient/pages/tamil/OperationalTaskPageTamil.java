@@ -22,6 +22,9 @@ public class OperationalTaskPageTamil extends OperationalTaskPage{
 	@AndroidFindBy(accessibility = "விண்ணப்பப் பதிவேற்றம்")
 	private WebElement applicationUploadTitle;
 	
+	@AndroidFindBy(accessibility = "நிலுவையிலுள்ள ஒப்புதல்")
+	private WebElement pendingApprovalTitle;
+	
 	public OperationalTaskPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -59,6 +62,17 @@ public class OperationalTaskPageTamil extends OperationalTaskPage{
 			swipeOrScroll();
 		}
 		return isElementDisplayed(applicationUploadTitle);
+	}
+	
+	public  void clickPendingApprovalTitle() {
+		clickOnElement(pendingApprovalTitle);
+	}
+	
+	public boolean isPendingApprovalTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(pendingApprovalTitle);
 	}
 
 }
