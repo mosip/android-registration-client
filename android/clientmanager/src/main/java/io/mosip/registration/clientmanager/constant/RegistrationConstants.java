@@ -1,5 +1,8 @@
 package io.mosip.registration.clientmanager.constant;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -84,4 +87,5 @@ public class RegistrationConstants {
     public static final String UI_SCHEMA_SUBTYPE_FULL_NAME = "name";
     public static final String UI_SCHEMA_SUBTYPE_EMAIL = "Email";
     public static final String UI_SCHEMA_SUBTYPE_PHONE = "Phone";
+    public static final List<String> SELECTED_HANDLES = Arrays.asList("mosip.registration.default-selected-handle-fields".split(","));
 }
