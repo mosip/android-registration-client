@@ -24,6 +24,7 @@ class UpdateFieldSelector extends StatefulWidget {
     super.key,
     required this.process,
   });
+
   final Process process;
 
   @override
@@ -76,6 +77,9 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
 
   _getFieldTitle(Field field) {
     String title = "";
+    if (field.groupLabel == null) {
+      return field.group;
+    }
     for (var element in globalProvider.chosenLang) {
       String code = globalProvider.languageToCodeMapper[element]!;
       if (field.groupLabel![code] != null) {
@@ -174,8 +178,6 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       controller: controller,
                       onChanged: (value) {
                         globalProvider.updateUINNumber = value;
-                        registrationTaskProvider.addDemographicField(
-                            "UIN", value);
                       },
                       validator: (value) {
                         if (value == null) {
