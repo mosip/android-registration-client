@@ -86,5 +86,8 @@ public abstract class DemographicDetailsPage extends BasePage{
 	public abstract boolean checkAddress3SecondLanguageTextBoxNotNull();
 
 	public abstract boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull();
+	
+	public abstract boolean isPreRegFetchDataTextBoxDisplay();
+
 
 }

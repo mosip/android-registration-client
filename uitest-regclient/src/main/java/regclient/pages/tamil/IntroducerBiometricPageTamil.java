@@ -3,14 +3,14 @@ package regclient.pages.tamil;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
+import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
-	
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'அறிமுகம் பயோமெட்ரிக்ஸ்')]")
-	private WebElement introducerBiometricPageTitle;
 	
 	@AndroidFindBy(accessibility = "ஐரிஸ் ஊடுகதிர்")
 	private WebElement irisScanButton;
@@ -102,7 +102,7 @@ public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
 	
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageTamil(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 	
 	public void clickOnZoomButton() {
@@ -127,11 +127,12 @@ public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
 	
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageTamil(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  boolean isIntroducerBiometricsPageDisplyed() {
-		return isElementDisplayed(introducerBiometricPageTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerBiometrics")+"\")")));
 	}
 	
 	public  boolean isExceptionTypeTitleDisplyed() {

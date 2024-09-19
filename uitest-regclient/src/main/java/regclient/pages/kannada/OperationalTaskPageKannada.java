@@ -22,6 +22,9 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 	
 	@AndroidFindBy(accessibility = "ಅಪ್ಲಿಕೇಶನ್ ಅಪ್ಲೋಡ್")
 	private WebElement applicationUploadTitle;
+	
+	@AndroidFindBy(accessibility = "ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾದಿರುವ")
+	private WebElement pendingApprovalTitle;
 
 	public OperationalTaskPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -60,6 +63,17 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 			swipeOrScroll();
 		}
 		return isElementDisplayed(applicationUploadTitle);
+	}
+	
+	public  void clickPendingApprovalTitle() {
+		clickOnElement(pendingApprovalTitle);
+	}
+	
+	public boolean isPendingApprovalTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(pendingApprovalTitle);
 	}
 
 }

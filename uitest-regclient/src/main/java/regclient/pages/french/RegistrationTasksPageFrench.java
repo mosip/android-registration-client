@@ -46,6 +46,12 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 	@AndroidFindBy(accessibility = "Mettre à jour l'UIN")
 	private WebElement updateUinButton;
 	
+	@AndroidFindBy(accessibility = "UIN perdu")
+	private WebElement lostUinButton;
+	
+	@AndroidFindBy(accessibility = "Correction biométrique")
+	private WebElement biometricCorrectionButton;
+	
 	public  SelectLanguagePage clickOnNewRegistrationButton() {
 		clickOnElement(newRegistrationButton);
 		return new SelectLanguagePageFrench(driver);
@@ -97,5 +103,17 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 	public  SelectLanguagePage clickUpdateMyUINButton() {
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageFrench(driver);
+	}
+	
+	public boolean isUpdateUINTitleDisplayed() {
+		return isElementDisplayed(updateUinButton);
+	}
+	
+	public boolean isLostUINTitleDisplayed() {
+		return isElementDisplayed(lostUinButton);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionButton);
 	}
 }

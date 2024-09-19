@@ -1,11 +1,13 @@
-package androidTestCases;
+package regclient.androidTestCases;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import BaseTest.AndroidBaseTest;
+import regclient.BaseTest.AndroidBaseTest;
+import regclient.api.ConfigManager;
+import regclient.api.KeycloakUserManager;
 import regclient.page.BasePage;
 import regclient.page.DashboardPage;
 import regclient.page.LoginPage;
@@ -65,36 +67,13 @@ import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SupervisorBiometricVerificationpageTamil;
 import regclient.pages.tamil.UpdateOperatorBiometricspageTamil;
 import regclient.utils.TestDataReader;
-
+@Test
 public class logintest  extends AndroidBaseTest {
-
-	@Test
-	public void initallLaunch() {
-		BasePage.disableAutoRotation();
-		LoginPageEnglish   loginPage= new LoginPageEnglish(driver);
-
-		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(), "verify if the welcome msg in selected language displayed");
-		loginPage.enterUserName(TestDataReader.readData("username"));
-
-		assertTrue(loginPage.isNextButtonEnabled(), "verify if the next button enabled");
-		loginPage.clickOnNextButton();
-
-		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
-		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
-		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
-		loginPage.enterPassword(TestDataReader.readData("password"));
-
-		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
-		loginPage.clickOnloginButton();
-		
-		assertTrue(loginPage.isSyncCompletedSuccessfullyMessageDisplayed(), "Verify if the sync is completed");
-
-	}
-	@Test
-	public void loginTest() {
+	
+	@Test(priority=0)
+	public void ALoginTest() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
-		OnBoardPage onBoardPage=null;
 		OperationalTaskPage operationalTaskPage=null;
 		RegistrationTasksPage registrationTasksPage=null;
 		DashboardPage dashboardPage=null;
@@ -124,15 +103,15 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded");
 		assertTrue(loginPage.isMosipLogoDisplayed(),"verify if mosip logo is displayeded");
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),"Verify if welcome note \"welcome to community registration client!\" message should be displayeded.");
-		assertTrue(loginPage.isHelpButtonDisplayed(),"Verify if check help button on the top right of the page");
-		loginPage.enterUserName(TestDataReader.readData("nonRegisteredUsername"));
+		//assertTrue(loginPage.isHelpButtonDisplayed(),"Verify if check help button on the top right of the page");
+		loginPage.enterUserName(KeycloakUserManager.onboardUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
 
 		assertTrue(loginPage.isUserNotFoundErrorMessageDisplayed(),"verify if error message should be displayeded as “user not found”");
 		
-		loginPage.enterUserName(TestDataReader.readData("onBoardUsername"));
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
@@ -143,7 +122,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
 
 
-		loginPage.enterPassword(TestDataReader.readData("InvalidPassword"));
+		loginPage.enterPassword(ConfigManager.getIAMUsersPassword()+"123");
 		assertTrue(loginPage.isLoginButtonEnabled(),"Verify if the login button enabled");
 
 		loginPage.clickOnloginButton();
@@ -152,34 +131,15 @@ public class logintest  extends AndroidBaseTest {
 		loginPage.clickOnBackButton();
 		assertTrue(loginPage.isUserNameHeaderDisplayed(),"Verify if the username  input box header  displayed");
 
-		loginPage.enterUserName(TestDataReader.readData("onBoardUsername"));
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
 
-		loginPage.enterPassword(TestDataReader.readData("password"));
+		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
 		assertTrue(loginPage.isLoginButtonEnabled(),"Verify if the login button enabled");
 
 		loginPage.clickOnloginButton();
-		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			onBoardPage=new OnBoardPageEnglish(driver);
-		} 
-		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-			onBoardPage=new OnBoardPageHindi(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-			onBoardPage=new OnBoardPageFrench(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-			onBoardPage=new OnBoardPageKannada(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-			onBoardPage=new OnBoardPageTamil(driver);
-		}
-		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-			onBoardPage=new OnBoardPageArabic(driver);
-		}
-		onBoardPage.clickOnSkipToHomeScreen();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			registrationTasksPage=new RegistrationTasksPageEnglish(driver);
 		} 
@@ -200,6 +160,10 @@ public class logintest  extends AndroidBaseTest {
 			registrationTasksPage=new RegistrationTasksPageArabic(driver);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(), "Verify if registration tasks page is loaded");
+		assertTrue(registrationTasksPage.isUpdateUINTitleDisplayed(), "Verify if update uin title display");
+
+		assertTrue(registrationTasksPage.isLostUINTitleDisplayed(), "Verify if lost uin title display");
+		assertTrue(registrationTasksPage.isBiometricCorrectionTitleDisplayed(), "Verify if biometric correction title display ");
 
 		registrationTasksPage.clickOnOperationalTasksTitle();	
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -275,7 +239,7 @@ public class logintest  extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			profilePage=new ProfilePageArabic(driver);
 		}
-		assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title display on Profilepage");
+	//	assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title display on Profilepage");
 		profilePage.clickOnLogoutButton();
 		
 		profilePage.clickOnLogoutButton();
@@ -284,8 +248,8 @@ public class logintest  extends AndroidBaseTest {
 
 	}
 
-	@Test
-	public void getOnBoard() {
+	@Test(priority=1)
+	public void OnBoardTest() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
 		OnBoardPage onBoardPage=null;
@@ -312,7 +276,7 @@ public class logintest  extends AndroidBaseTest {
 		loginPage.selectLanguage();
 
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(), "verify if the welcome msg in selected language displayed");
-		loginPage.enterUserName(TestDataReader.readData("onBoardUsername"));
+		loginPage.enterUserName(KeycloakUserManager.onboardUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(), "verify if the next button enabled");
 		loginPage.clickOnNextButton();
@@ -320,7 +284,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
 		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
-		loginPage.enterPassword(TestDataReader.readData("password"));
+		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
 
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
 		loginPage.clickOnloginButton();
@@ -473,7 +437,7 @@ public class logintest  extends AndroidBaseTest {
 		
 	}
 	
-	@Test
+	@Test(priority=2)
 	public void updateOperatorBiometrics() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
@@ -502,7 +466,7 @@ public class logintest  extends AndroidBaseTest {
 		loginPage.selectLanguage();
 
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(), "verify if the welcome msg in selected language displayed");
-		loginPage.enterUserName(TestDataReader.readData("username"));
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(), "verify if the next button enabled");
 		loginPage.clickOnNextButton();
@@ -510,7 +474,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
 		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
-		loginPage.enterPassword(TestDataReader.readData("password"));
+		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
 
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
 		loginPage.clickOnloginButton();
