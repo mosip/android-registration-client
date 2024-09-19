@@ -93,6 +93,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
         if (e.subType == "gender" || e.subType == "residenceStatus") {
           return RadioButtonControl(field: e);
         }
+        //feature will implement
+        if (e.subType == "selectedHandles") {
+          return const SizedBox.shrink();
+        }
         return Text("${e.controlType}");
       case "textbox":
         return TextBoxControl(e: e, validation: regexPattern);

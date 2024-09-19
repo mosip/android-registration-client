@@ -3,7 +3,7 @@ name: Build Android Registration-Client
 on:
   push:
     branches:
-      - release-0.9.x
+      - release*
       - develop
 
 jobs:
