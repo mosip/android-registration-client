@@ -105,4 +105,14 @@ public class GlobalParamRepository {
     public String getCachedStringMAVELScript(){
         return globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
     }
+
+    public List<String> getSelectedHandles() {
+        String value = globalParamMap.getOrDefault(RegistrationConstants.SELECTED_HANDLES, "");
+        return Arrays.asList(value.split(RegistrationConstants.COMMA)).stream()
+                .map(String::trim)
+                .filter(item-> !item.isEmpty())
+                .map(String::toLowerCase)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }
