@@ -111,7 +111,6 @@ public class GlobalParamRepository {
         return Arrays.asList(value.split(RegistrationConstants.COMMA)).stream()
                 .map(String::trim)
                 .filter(item-> !item.isEmpty())
-                .map(String::toLowerCase)
                 .distinct()
                 .collect(Collectors.toList());
     }
