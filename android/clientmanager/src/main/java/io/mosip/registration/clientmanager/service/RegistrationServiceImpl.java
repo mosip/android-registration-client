@@ -202,7 +202,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 switch (this.registrationDto.getFlowType()) {
                     case "Update":
                         if (this.registrationDto.getDemographics().get(fieldName) != null && (this.registrationDto.getUpdatableFields().contains(fieldName) ||
-                                fieldName.equals("UIN")))
+                                fieldName.equals("nrcId")))
                             packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
                         break;
                     case "Correction":
