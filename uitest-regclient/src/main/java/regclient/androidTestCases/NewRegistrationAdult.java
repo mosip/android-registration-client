@@ -278,39 +278,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			demographicPage=new DemographicDetailsPageArabic(driver);
 		}
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
-		demographicPage.enterFullName(TestDataReader.readData("fullname"));
+		demographicPage.fillDemographicDetailsPage("adult");
 
-		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
-		demographicPage.enterAge(TestDataReader.readData("adultage"));
-		demographicPage.selectGender(TestDataReader.readData("gender"));
-		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
-		demographicPage.enterAddressLine2(TestDataReader.readData("address"));
-		demographicPage.enterAddressLine3(TestDataReader.readData("address"));
-		demographicPage.selectMaritalStatus();
-
-		assertTrue(demographicPage.isResidenceStatusHeaderDisplayed(),"Verify if residence status header is displayed");
-		demographicPage.selectResidenceStatus(TestDataReader.readData("residenceStatus"));
-
-		assertTrue(demographicPage.isRegionHeaderDisplayed(),"Verify if region status header is displayed");
-		demographicPage.selectRegionStatus(TestDataReader.readData("region"));
-
-		assertTrue(demographicPage.isProvinceHeaderDisplayed(),"Verify if province status header is displayed");
-		demographicPage.selectProvinceStatus(TestDataReader.readData("province"));
-
-		assertTrue(demographicPage.isCityHeaderDisplayed(),"Verify if city header is displayed");
-		demographicPage.selectCityStatus(TestDataReader.readData("city"));
-
-		assertTrue(demographicPage.isZoneHeaderDisplayed(),"Verify if zone header is displayed");
-		demographicPage.selectZoneStatus();
-
-		assertTrue(demographicPage.isPostalCodeHeaderDisplayed(),"Verify if postal code header is displayed");
-		demographicPage.selectPostalStatus();
-
-		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
-		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
-
-		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
-		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			documentuploadPage=new DocumentuploadPageEnglish(driver);
@@ -615,7 +584,11 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
 		pendingApproval.clickOnClosePopUpButton();
+
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed after approving packet");
 		pendingApproval.clickOnCheckBox();
+
+		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
 		pendingApproval.clickOnSubmitButton();
 
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
@@ -830,42 +803,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			demographicPage=new DemographicDetailsPageArabic(driver);
 		}
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
-		demographicPage.enterFullName(TestDataReader.readData("fullname"));
+		demographicPage.fillDemographicDetailsPage("adult");
 
-		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
-		demographicPage.enterAge(TestDataReader.readData("adultage"));
-		demographicPage.selectGender(TestDataReader.readData("gender"));
-		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
-		demographicPage.enterAddressLine2(TestDataReader.readData("address"));
-		demographicPage.enterAddressLine3(TestDataReader.readData("address"));
-		demographicPage.selectMaritalStatus();
-
-		assertTrue(demographicPage.isResidenceStatusHeaderDisplayed(),"Verify if residence status header is displayed");
-		demographicPage.selectResidenceStatus(TestDataReader.readData("residenceStatus"));
-
-		assertTrue(demographicPage.isRegionHeaderDisplayed(),"Verify if region status header is displayed");
-		demographicPage.selectRegionStatus(TestDataReader.readData("region"));
-
-		assertTrue(demographicPage.isProvinceHeaderDisplayed(),"Verify if province status header is displayed");
-		demographicPage.selectProvinceStatus(TestDataReader.readData("province"));
-
-		assertTrue(demographicPage.isCityHeaderDisplayed(),"Verify if city header is displayed");
-		demographicPage.selectCityStatus(TestDataReader.readData("city"));
-
-		assertTrue(demographicPage.isZoneHeaderDisplayed(),"Verify if zone header is displayed");
-		demographicPage.selectZoneStatus();
-
-		assertTrue(demographicPage.isPostalCodeHeaderDisplayed(),"Verify if postal code header is displayed");
-		demographicPage.selectPostalStatus();
-
-		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
-		demographicPage.enterMobileNumber(TestDataReader.readData("fullname"));
-
-		assertTrue(demographicPage.isErrorMessageInvalidInputTextDisplayed(),"Verify if invalid text error message text  is displayed");
-		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
-
-		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
-		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			documentuploadPage=new DocumentuploadPageEnglish(driver);
@@ -1103,21 +1042,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		previewPage.clickOnDemographicDetailsTitle();
 
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
-		demographicPage.enterFullName(TestDataReader.readData("editData"));
-		demographicPage.enterAge(TestDataReader.readData("minorAge"));
-		demographicPage.enterAddressLine1(TestDataReader.readData("editData"));
-		demographicPage.enterAddressLine2(TestDataReader.readData("editData"));
-		demographicPage.enterAddressLine3(TestDataReader.readData("editData"));
-
-		assertTrue(demographicPage.isIntroducerNameHeaderDisplayed(),"Verify if introducer name header is displayed");
-		demographicPage.enterIntroducerName(TestDataReader.readData("fullname"));
-
-		assertTrue(demographicPage.checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull(),"Verify if introduceR name is enter in second language text box");
-
-		assertTrue(demographicPage.isIntroducerRidHeaderDisplayed(),"Verify if introducer rid header is displayed");
-		demographicPage.enterIntroducerRid(TestDataReader.readData("RID"));
-
-
+		demographicPage.fillDemographicDetailsPage("minor");
 		demographicPage.clickOnContinueButton();
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -1406,7 +1331,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			acknowledgementPage=new AcknowledgementPageArabic(driver);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),"Verify if acknowledgement details page is displayed");
-		//assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code image  is displayed");		
 
 		acknowledgementPage.clickOnGoToHomeButton();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),"Verify if registration tasks page is loaded");
@@ -1450,28 +1374,32 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			pendingApproval=new PendingApprovalEnglish(driver);
 		} 
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
-		//			pendingApproval=new PendingApprovalHindi(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
-		//			pendingApproval=new PendingApprovalFrench(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
-		//			pendingApproval=new PendingApprovalKannada(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
-		//			pendingApproval=new PendingApprovalTamil(driver);
-		//		}
-		//		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
-		//			pendingApproval=new PendingApprovalArabic(driver);
-		//		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("hin")){
+			pendingApproval=new PendingApprovalHindi(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("fra")){
+			pendingApproval=new PendingApprovalFrench(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("kan")){
+			pendingApproval=new PendingApprovalKannada(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("tam")){
+			pendingApproval=new PendingApprovalTamil(driver);
+		}
+		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+			pendingApproval=new PendingApprovalArabic(driver);
+		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 		pendingApproval.clickOnAID(Aid);
 
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
 		pendingApproval.clickOnClosePopUpButton();
+
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed after approving packet");
 		pendingApproval.clickOnCheckBox();
+
+		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
 		pendingApproval.clickOnSubmitButton();
 
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
@@ -1507,8 +1435,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 
-		//		manageApplicationsPage.selectUploadedOptionDropdown();
-		//		assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
 	}
 
 }

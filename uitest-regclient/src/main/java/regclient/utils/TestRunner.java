@@ -12,7 +12,6 @@ import org.testng.xml.XmlTest;
 import regclient.api.AdminTestUtil;
 import regclient.api.BaseTestCase;
 import regclient.api.ConfigManager;
-import regclient.api.FetchUiSpec;
 
 public class TestRunner {
 	

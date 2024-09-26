@@ -37,9 +37,6 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	@AndroidFindBy(accessibility = "Biometric correction")
 	private WebElement biometricCorrectionButton;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.ImageView\").instance(0)")
-	private WebElement synchronizeDataButton ;
-
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Policy key Sync Completed\"]")
 	private WebElement policykeySyncCompletedMessage ;
 
@@ -48,6 +45,9 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
 	private WebElement scriptSyncCompletedMessage ;
+	
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchronize Data\")")
+	private WebElement synchronizeDataButton ;
 
 	public RegistrationTasksPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -116,6 +116,19 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	
 	public boolean isBiometricCorrectionTitleDisplayed() {
 		return isElementDisplayed(biometricCorrectionButton);
+	}
+	
+	public  void clickSynchronizeDataButton() {
+		clickOnElement(synchronizeDataButton);
+		waitTime(50);
+	}
+	
+	public boolean checkLastSyncDate() {
+		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
+		if(contentDesc.contains("Synchronize Data\n"+getCurrentDateWord()+","))
+			return true;
+		else
+			return false;
 	}
 
 }

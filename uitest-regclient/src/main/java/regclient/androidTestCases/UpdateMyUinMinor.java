@@ -268,23 +268,10 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		assertTrue(updateUINPage.isInvalidUINErrorMessageDisplayed(),"verify if after enter invalid uin it should give error message  ");
 		updateUINPage.enterUIN(TestDataReader.readData("UINminor"));
 
-		assertTrue(updateUINPage.isConsentTitleDisplayed(),"verify if the consent title diplayed displayed");
-		updateUINPage.clickOnConsentButton();
-
-		assertTrue(updateUINPage.isFullNameTitleDisplayed(),"verify if fill name title  is displayed");
-		updateUINPage.clickOnFullNameButton();
-
-		assertTrue(updateUINPage.isDOBTitleDisplayed(),"verify if the dob title is displayed");
-		updateUINPage.clickOnDOBButton();
-
-		assertTrue(updateUINPage.isnGenderTitleDisplayed(),"verify if the gender title is displayed");
-		updateUINPage.clickOnGenderButton();
-
-		assertTrue(updateUINPage.isnBiometricsTitleDisplayed(),"verify if the biometrics title is displayed");
-		updateUINPage.clickOnBiometricsButton();
-
-		assertTrue(updateUINPage.isDocumentsTitleDisplayed(),"verify if the document title is displayed");
-		updateUINPage.clickOnDocumentsButton();	
+		updateUINPage.selectUpdateValue("consentdet");
+		updateUINPage.selectUpdateValue("DemographicDetails");
+		updateUINPage.selectUpdateValue("BiometricDetails");
+		updateUINPage.selectUpdateValue("Documents");
 
 		updateUINPage.clickOnContinueButton();
 
@@ -334,11 +321,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		demographicPage.clickOnContinueButton();
 
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed after clicking disable continue button");
-		demographicPage.enterFullName(TestDataReader.readData("fullname"));
-
-		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
-		demographicPage.enterAge(TestDataReader.readData("minorAge"));
-		demographicPage.selectGender(TestDataReader.readData("gender"));
+		demographicPage.fillDemographicDetailsPage("minor");
 
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -493,13 +476,13 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 			documentuploadPage=new DocumentuploadPageArabic(driver);
 		}
 		documentuploadPage.clickOnContinueButton();
-
+		
 		assertTrue(consentPage.updateUINTitleDisplayed(),"Verify if new update uin title is displayed");
-		documentuploadPage.selectIdentityProof();
+		documentuploadPage.selectAddressProof();
 		documentuploadPage.closePopUpClose();
 
-		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
-		CameraPage cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		CameraPage cameraPage=documentuploadPage.clickOnAddressProofScanButton();
 
 		cameraPage.clickimage();
 		cameraPage.clickOkButton();
@@ -521,6 +504,20 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			identityProofPage=new IdentityProofPageArabic(driver);
 		}
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+		
+		assertTrue(consentPage.updateUINTitleDisplayed(),"Verify if new update uin title is displayed");
+		documentuploadPage.selectIdentityProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+
+		cameraPage.clickimage();
+		cameraPage.clickOkButton();
+		
 		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
 		identityProofPage.cropCaptureImage();
 		identityProofPage.clickOnSaveButton();
@@ -671,9 +668,14 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		pendingApproval.clickOnAID(Aid);
 
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
+		assertTrue(pendingApproval.isRejectButtonDisplayed(), "Verify if  reject button  displayed");
 		pendingApproval.clickOnApproveButton();
 		pendingApproval.clickOnClosePopUpButton();
+		
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed after approving packet");
 		pendingApproval.clickOnCheckBox();
+		
+		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
 		pendingApproval.clickOnSubmitButton();
 		
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
@@ -706,6 +708,8 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if  packet is approved after approve in pending approval");
+
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 

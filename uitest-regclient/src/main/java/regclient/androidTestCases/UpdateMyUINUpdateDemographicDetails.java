@@ -256,24 +256,9 @@ public class UpdateMyUINUpdateDemographicDetails extends AndroidBaseTest {
 
 		assertTrue(updateUINPage.isUpdateMyUINTitleDisplayed(),"verify if the update my uin page is still displayed after clicking continue button ");
 		updateUINPage.enterUIN(TestDataReader.readData("UIN"));
-
-		assertTrue(updateUINPage.isConsentTitleDisplayed(),"verify if the consent title diplayed displayed");
-		updateUINPage.clickOnConsentButton();
-
-		assertTrue(updateUINPage.isFullNameTitleDisplayed(),"verify if fill name title  is displayed");
-		updateUINPage.clickOnFullNameButton();
-
-		assertTrue(updateUINPage.isDOBTitleDisplayed(),"verify if the dob title is displayed");
-		updateUINPage.clickOnDOBButton();
-
-		assertTrue(updateUINPage.isnGenderTitleDisplayed(),"verify if the gender title is displayed");
-		updateUINPage.clickOnGenderButton();
-
-		assertTrue(updateUINPage.isPhoneTitleDisplayed(),"verify if the phone title is displayed");
-		updateUINPage.clickOnPhoneButton();
-
-		assertTrue(updateUINPage.isEmailTitleDisplayed(),"verify if the email is displayed");
-		updateUINPage.clickOnEmailButton();
+		
+		updateUINPage.selectUpdateValue("consentdet");
+		updateUINPage.selectUpdateValue("DemographicDetails");
 
 		updateUINPage.clickOnContinueButton();
 
@@ -323,17 +308,7 @@ public class UpdateMyUINUpdateDemographicDetails extends AndroidBaseTest {
 		demographicPage.clickOnContinueButton();
 
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed after clicking disable continue button");
-		demographicPage.enterFullName(TestDataReader.readData("fullname"));
-
-		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
-		demographicPage.enterAge(TestDataReader.readData("adultage"));
-		demographicPage.selectGender(TestDataReader.readData("gender"));
-
-		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
-		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
-
-		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
-		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
+		demographicPage.fillDemographicDetailsPage("adult");
 
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -399,7 +374,6 @@ public class UpdateMyUINUpdateDemographicDetails extends AndroidBaseTest {
 		assertTrue(biometricDetailsPage.isAuthenticationBiometricTitleDisplayed(),"Verify if biometric details page is displayed without upload doccument");
 		biometricDetailsPage.clickOnContinueButton();
 
-
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			documentuploadPage=new DocumentuploadPageEnglish(driver);
 		} 
@@ -421,11 +395,11 @@ public class UpdateMyUINUpdateDemographicDetails extends AndroidBaseTest {
 		documentuploadPage.clickOnContinueButton();
 
 		assertTrue(consentPage.updateUINTitleDisplayed(),"Verify if new update uin title is displayed");
-		documentuploadPage.selectIdentityProof();
+		documentuploadPage.selectAddressProof();
 		documentuploadPage.closePopUpClose();
 
-		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
-		CameraPage cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		CameraPage cameraPage=documentuploadPage.clickOnAddressProofScanButton();
 
 		cameraPage.clickimage();
 		cameraPage.clickOkButton();
@@ -447,6 +421,20 @@ public class UpdateMyUINUpdateDemographicDetails extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			identityProofPage=new IdentityProofPageArabic(driver);
 		}
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+		
+		assertTrue(consentPage.updateUINTitleDisplayed(),"Verify if new update uin title is displayed");
+		documentuploadPage.selectIdentityProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
+		cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+
+		cameraPage.clickimage();
+		cameraPage.clickOkButton();
+		
 		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
 		identityProofPage.cropCaptureImage();
 		identityProofPage.clickOnSaveButton();
@@ -585,7 +573,11 @@ public class UpdateMyUINUpdateDemographicDetails extends AndroidBaseTest {
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
 		pendingApproval.clickOnClosePopUpButton();
+		
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed after approving packet");
 		pendingApproval.clickOnCheckBox();
+		
+		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
 		pendingApproval.clickOnSubmitButton();
 		
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
@@ -618,6 +610,8 @@ public class UpdateMyUINUpdateDemographicDetails extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if  packet is approved after approve in pending approval");
+
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 

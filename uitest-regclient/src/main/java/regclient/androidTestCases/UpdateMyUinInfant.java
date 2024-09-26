@@ -264,23 +264,11 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		assertTrue(updateUINPage.isUpdateMyUINTitleDisplayed(),"verify if the update my uin page is still displayed after clicking continue button ");
 		updateUINPage.enterUIN(TestDataReader.readData("UINinfant"));
 
-		assertTrue(updateUINPage.isConsentTitleDisplayed(),"verify if the consent title diplayed displayed");
-		updateUINPage.clickOnConsentButton();
-
-		assertTrue(updateUINPage.isFullNameTitleDisplayed(),"verify if fill name title  is displayed");
-		updateUINPage.clickOnFullNameButton();
-
-		assertTrue(updateUINPage.isDOBTitleDisplayed(),"verify if the dob title is displayed");
-		updateUINPage.clickOnDOBButton();
-
-		assertTrue(updateUINPage.isnGenderTitleDisplayed(),"verify if the gender title is displayed");
-		updateUINPage.clickOnGenderButton();
-
-		assertTrue(updateUINPage.isnBiometricsTitleDisplayed(),"verify if the biometrics title is displayed");
-		updateUINPage.clickOnBiometricsButton();
-
-		assertTrue(updateUINPage.isDocumentsTitleDisplayed(),"verify if the document title is displayed");
-		updateUINPage.clickOnDocumentsButton();	
+		updateUINPage.selectUpdateValue("consentdet");
+		updateUINPage.selectUpdateValue("DemographicDetails");
+		updateUINPage.selectUpdateIntroducerDetails();
+		updateUINPage.selectUpdateValue("BiometricDetails");
+		updateUINPage.selectUpdateValue("Documents");
 
 		updateUINPage.clickOnContinueButton();
 
@@ -330,11 +318,8 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		demographicPage.clickOnContinueButton();
 
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed after clicking disable continue button");
-		demographicPage.enterFullName(TestDataReader.readData("fullname"));
-
-		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
-		demographicPage.enterAge(TestDataReader.readData("infantAge"));
-		demographicPage.selectGender(TestDataReader.readData("gender"));
+		demographicPage.fillDemographicDetailsPage("infant");
+		demographicPage.fillIntroducerDetailsInDemographicDetailsPage("minor");
 
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -435,11 +420,11 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		documentuploadPage.clickOnContinueButton();
 
 		assertTrue(consentPage.updateUINTitleDisplayed(),"Verify if new update uin title is displayed");
-		documentuploadPage.selectIdentityProof();
+		documentuploadPage.selectAddressProof();
 		documentuploadPage.closePopUpClose();
 
-		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
-		CameraPage cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+		assertTrue(documentuploadPage.isScanButtonAddressProofEnabled(),"Verify if scan  button enabled");
+		CameraPage cameraPage=documentuploadPage.clickOnAddressProofScanButton();
 
 		cameraPage.clickimage();
 		cameraPage.clickOkButton();
@@ -461,6 +446,19 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 			identityProofPage=new IdentityProofPageArabic(driver);
 		}
+		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+		identityProofPage.cropCaptureImage();
+		documentuploadPage=identityProofPage.clickOnSaveButton();
+		
+		assertTrue(consentPage.updateUINTitleDisplayed(),"Verify if new update uin title is displayed");
+		documentuploadPage.selectIdentityProof();
+		documentuploadPage.closePopUpClose();
+
+		assertTrue(documentuploadPage.isScanButtonIdentityProofEnabled(),"Verify if scan  button enabled");
+	    cameraPage=documentuploadPage.clickOnScanButtonIdentityProof();
+
+		cameraPage.clickimage();
+		cameraPage.clickOkButton();
 		assertTrue(identityProofPage.isRetakeButtonDisplayed(),"Verify if retake  button displayed");
 		identityProofPage.cropCaptureImage();
 		identityProofPage.clickOnSaveButton();
@@ -608,18 +606,27 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 			pendingApproval=new PendingApprovalArabic(driver);
 		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
+		pendingApproval.enterAID(Aid);
+		
+		assertTrue(pendingApproval.isClientStatusDisplayed(), "Verify if pending approval page show client status");
+		assertTrue(pendingApproval.isReviewStatusDisplayed(), "Verify if pending approval page show review status");				
 		pendingApproval.clickOnAID(Aid);
-
+			
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
 		pendingApproval.clickOnClosePopUpButton();
+		
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed after approving packet");
 		pendingApproval.clickOnCheckBox();
+		
+		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
 		pendingApproval.clickOnSubmitButton();
 		
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
+		
 		pendingApproval.clickOnBackButton();
 		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
 
@@ -646,6 +653,8 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if  packet is approved after approve in pending approval");
+
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 

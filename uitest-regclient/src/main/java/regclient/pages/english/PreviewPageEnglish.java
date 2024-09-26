@@ -63,11 +63,13 @@ public class PreviewPageEnglish extends PreviewPage {
 		return isElementDisplayed(findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("NEW") + "\"))")));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean updateUINTitleDisplayed() {
 		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 	
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
+		waitTime(1);
 		return isElementDisplayed(applicationIDPreviewPage);
 	}
 	

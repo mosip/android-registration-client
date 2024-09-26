@@ -274,46 +274,8 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 			demographicPage=new DemographicDetailsPageArabic(driver);
 		}
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
-		demographicPage.enterFullName(TestDataReader.readData("fullname"));
+		demographicPage.fillDemographicDetailsPage("minor");
 
-		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
-		demographicPage.enterAge(TestDataReader.readData("minorAge"));
-		demographicPage.selectGender(TestDataReader.readData("gender"));
-		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
-		demographicPage.enterAddressLine2(TestDataReader.readData("address"));
-		demographicPage.enterAddressLine3(TestDataReader.readData("address"));
-		demographicPage.selectMaritalStatus();
-
-		assertTrue(demographicPage.isResidenceStatusHeaderDisplayed(),"Verify if residence status header is displayed");
-		demographicPage.selectResidenceStatus(TestDataReader.readData("residenceStatus"));
-
-		assertTrue(demographicPage.isRegionHeaderDisplayed(),"Verify if region status header is displayed");
-		demographicPage.selectRegionStatus(TestDataReader.readData("region"));
-
-		assertTrue(demographicPage.isProvinceHeaderDisplayed(),"Verify if province status header is displayed");
-		demographicPage.selectProvinceStatus(TestDataReader.readData("province"));
-
-
-		assertTrue(demographicPage.isCityHeaderDisplayed(),"Verify if city header is displayed");
-		demographicPage.selectCityStatus(TestDataReader.readData("city"));
-
-		assertTrue(demographicPage.isZoneHeaderDisplayed(),"Verify if zone header is displayed");
-		demographicPage.selectZoneStatus();
-
-		assertTrue(demographicPage.isPostalCodeHeaderDisplayed(),"Verify if postal code header is displayed");
-		demographicPage.selectPostalStatus();
-
-		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
-		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
-
-		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
-		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
-
-		assertTrue(demographicPage.isIntroducerNameHeaderDisplayed(),"Verify if introducer name header is displayed");
-		demographicPage.enterIntroducerName(TestDataReader.readData("fullname"));
-
-		assertTrue(demographicPage.isIntroducerRidHeaderDisplayed(),"Verify if introducer rid header is displayed");
-		demographicPage.enterIntroducerRid(TestDataReader.readData("RID"));
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			documentuploadPage=new DocumentuploadPageEnglish(driver);
@@ -724,7 +686,11 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
 		pendingApproval.clickOnClosePopUpButton();
+		
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed after approving packet");
 		pendingApproval.clickOnCheckBox();
+		
+		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
 		pendingApproval.clickOnSubmitButton();
 		
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
@@ -757,10 +723,11 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if  packet is approved after approve in pending approval");
+
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 
-		//assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
 		manageApplicationsPage.clickClientStatusDropdown();
 
 		assertTrue(manageApplicationsPage.isCreatedDropdownOptionDisplayed(), "Verify if Created Dropdown Option Displayed displayed");

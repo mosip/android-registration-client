@@ -573,6 +573,10 @@ public class ConfigManager {
 		return preconfiguredOtp;
 
 	}
+	
+	public static String getEnv() {
+		return db_domain;
+	}
 
 	public static String getRolesForUser() {
 		propsKernel = getproperty(TestRunner.getResourcePath() + "/" + "/config/Kernel.properties");

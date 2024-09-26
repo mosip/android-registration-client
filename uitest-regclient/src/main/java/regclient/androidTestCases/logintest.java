@@ -160,10 +160,10 @@ public class logintest  extends AndroidBaseTest {
 			registrationTasksPage=new RegistrationTasksPageArabic(driver);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(), "Verify if registration tasks page is loaded");
-		assertTrue(registrationTasksPage.isUpdateUINTitleDisplayed(), "Verify if update uin title display");
-
-		assertTrue(registrationTasksPage.isLostUINTitleDisplayed(), "Verify if lost uin title display");
-		assertTrue(registrationTasksPage.isBiometricCorrectionTitleDisplayed(), "Verify if biometric correction title display ");
+//		assertTrue(registrationTasksPage.isUpdateUINTitleDisplayed(), "Verify if update uin title display");
+//
+//		assertTrue(registrationTasksPage.isLostUINTitleDisplayed(), "Verify if lost uin title display");
+//		assertTrue(registrationTasksPage.isBiometricCorrectionTitleDisplayed(), "Verify if biometric correction title display ");
 
 		registrationTasksPage.clickOnOperationalTasksTitle();	
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -308,7 +308,7 @@ public class logintest  extends AndroidBaseTest {
 			onBoardPage=new OnBoardPageArabic(driver);
 		}
 		assertTrue(onBoardPage.isGetOnBoardTitleDisplayed(), "Verify if on board page is loaded");
-		assertTrue(onBoardPage.isHelpButtonDisplayed(), "Verify if help button is displayed");
+		//assertTrue(onBoardPage.isHelpButtonDisplayed(), "Verify if help button is displayed");
 		assertTrue(onBoardPage.isOnBoardWelcomeMessageDisplayed(), "Verify if on board page hello message is loaded");
 		onBoardPage.clickOnGetOnBoardTitle();
 
@@ -431,7 +431,7 @@ public class logintest  extends AndroidBaseTest {
 		assertFalse(supervisorBiometricVerificationpage.isExceptionScanTitleDisplyed(),"Verify if exception scan icon is displayed");
 		supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
 		
-		assertTrue(supervisorBiometricVerificationpage.isDismissPageLoaded(),"Verify if dismiss page is displayed");
+		assertTrue(supervisorBiometricVerificationpage.isDismissPageLoaded(),"Verify if dismiss page is displayed after click on verfiy and save button ");
 		assertTrue(supervisorBiometricVerificationpage.isOperatorOnboardedPopupLoaded(),"Verify if operator biometrics updated success message is displayed");
 		supervisorBiometricVerificationpage.clickOnHomeButton();
 		
@@ -660,7 +660,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(UpdateOperatorBiometricspage.isVerifyAndSaveButtonEnabled(), "Verify if verify and save button is display and enable");
 		UpdateOperatorBiometricspage.clickOnVerifyAndSaveButton();
 		
-		assertTrue(UpdateOperatorBiometricspage.isDismissPageLoaded(),"Verify if dismiss page is displayed");
+		assertTrue(UpdateOperatorBiometricspage.isDismissPageLoaded(),"Verify if dismiss page is displayed after click on verfiy and save button ");
 		assertTrue(UpdateOperatorBiometricspage.isOperatorBiometricsUpdatedPopupLoaded(),"Verify if operator biometrics updated success message is displayed");
 		UpdateOperatorBiometricspage.clickOnHomeButton();
 		

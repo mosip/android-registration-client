@@ -271,53 +271,8 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 			demographicPage=new DemographicDetailsPageArabic(driver);
 		}
 		assertTrue(demographicPage.isDemographicDetailsPageDisplayed(),"Verify if demographic details page is displayed");
-		demographicPage.enterFullName(TestDataReader.readData("fullname"));
+		demographicPage.fillDemographicDetailsPage("minor");
 
-		assertTrue(demographicPage.checkFullNameSecondLanguageTextBoxNotNull(),"Verify if first name is enter in second language text box");
-		demographicPage.enterAge(TestDataReader.readData("minorAge"));
-		demographicPage.selectGender(TestDataReader.readData("gender"));
-		demographicPage.enterAddressLine1(TestDataReader.readData("address"));
-
-		assertTrue(demographicPage.checkAddress1SecondLanguageTextBoxNotNull(),"Verify if address1 is enter in second language text box");
-		demographicPage.enterAddressLine2(TestDataReader.readData("address"));
-
-		assertTrue(demographicPage.checkAddress2SecondLanguageTextBoxNotNull(),"Verify if address2 is enter in second language text box");
-		demographicPage.enterAddressLine3(TestDataReader.readData("address"));
-
-		assertTrue(demographicPage.checkAddress3SecondLanguageTextBoxNotNull(),"Verify if address3 is enter in second language text box");
-		demographicPage.selectMaritalStatus();
-
-		assertTrue(demographicPage.isResidenceStatusHeaderDisplayed(),"Verify if residence status header is displayed");
-		demographicPage.selectResidenceStatus(TestDataReader.readData("residenceStatus"));
-
-		assertTrue(demographicPage.isRegionHeaderDisplayed(),"Verify if region status header is displayed");
-		demographicPage.selectRegionStatus(TestDataReader.readData("region"));
-
-		assertTrue(demographicPage.isProvinceHeaderDisplayed(),"Verify if province status header is displayed");
-		demographicPage.selectProvinceStatus(TestDataReader.readData("province"));
-
-		assertTrue(demographicPage.isCityHeaderDisplayed(),"Verify if city header is displayed");
-		demographicPage.selectCityStatus(TestDataReader.readData("city"));
-
-		assertTrue(demographicPage.isZoneHeaderDisplayed(),"Verify if zone header is displayed");
-		demographicPage.selectZoneStatus();
-
-		assertTrue(demographicPage.isPostalCodeHeaderDisplayed(),"Verify if postal code header is displayed");
-		demographicPage.selectPostalStatus();
-
-		assertTrue(demographicPage.isMobileNumberHeaderDisplayed(),"Verify if mobile number header is displayed");
-		demographicPage.enterMobileNumber(TestDataReader.readData("mobileNumber"));
-
-		assertTrue(demographicPage.isEmailHeaderDisplayed(),"Verify if email header is displayed");
-		demographicPage.enterEmailID(TestDataReader.readData("emailId"));
-
-		assertTrue(demographicPage.isIntroducerNameHeaderDisplayed(),"Verify if introducer name header is displayed");
-		demographicPage.enterIntroducerName(TestDataReader.readData("fullname"));
-
-		assertTrue(demographicPage.checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull(),"Verify if introduceR name is enter in second language text box");
-
-		assertTrue(demographicPage.isIntroducerRidHeaderDisplayed(),"Verify if introducer rid header is displayed");
-		demographicPage.enterIntroducerRid(TestDataReader.readData("RID"));
 		demographicPage.clickOnContinueButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			documentuploadPage=new DocumentuploadPageEnglish(driver);
@@ -634,7 +589,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 		assertTrue(operationalTaskPage.isPendingApprovalTitleDisplayed(), "Verify if pending approval tite displayed");
 		operationalTaskPage.clickPendingApprovalTitle();
-		
+
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			pendingApproval=new PendingApprovalEnglish(driver);
 		} 
@@ -657,11 +612,20 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		pendingApproval.clickOnAID(Aid);
 
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
-		pendingApproval.clickOnApproveButton();
+		pendingApproval.clickOnRejectButton();
+
+		assertTrue(pendingApproval.isRejectPacketTitleDisplayed(), "Verify if reject page is display after click on reject button displayed");
+		pendingApproval.selectRejectionReasonDropdown();
+
+		pendingApproval.clickOnRejectButton();		
 		pendingApproval.clickOnClosePopUpButton();
+
+		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed after approving packet");
 		pendingApproval.clickOnCheckBox();
+
+		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
 		pendingApproval.clickOnSubmitButton();
-		
+
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ConfigManager.getIAMUsersPassword());
@@ -692,15 +656,15 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketRejected(Aid), "Verify if  packet is rejected or not in manage application page");
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 
-	//	assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet upload is done");
-manageApplicationsPage.clickOnBackButton();
-		
+		manageApplicationsPage.clickOnBackButton();
+
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(),"Verify if profile title display on homepage");
 		registrationTasksPage.clickProfileButton();
-		
+
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			profilePage=new ProfilePageEnglish(driver);
 		} 
@@ -721,9 +685,9 @@ manageApplicationsPage.clickOnBackButton();
 		}
 		//assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title display on Profilepage");
 		profilePage.clickOnLogoutButton();
-		
+
 		profilePage.clickOnLogoutButton();
-		
+
 		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded in Selected language");
 
 	}

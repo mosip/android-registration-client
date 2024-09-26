@@ -5,17 +5,6 @@
     "language": "eng",
     "defaultlanguage": "eng",
     "notificationLanguage": "eng",
-    "fullname": "abcd",
-    "adultage": "20",
-    "infantAge": "4",
-    "minorAge": "12",
-    "editData": "asdfgh",
-    "gender": "female",
-    "address": "banglore",
-    "mobileNumber": "9876543210",
-    "emailId": "abc@gmail.com",
     "RID": "10001105671003120240215071549",
-    "comments": "asdfgh",
-    "id": "com.motorola.camera3:id/capture_bar_shutter_button",
-    "okButton": ""
+    "id": "com.motorola.camera3:id/capture_bar_shutter_button"
 }
