@@ -28,5 +28,7 @@ public abstract class DemographicDetailsPage extends BasePage{
 	public abstract boolean checkDateFormatAndCurrectDate(String id);
 	
 	public abstract void fillIntroducerDetailsInDemographicDetailsPage(String age);
+	
+	public abstract  boolean isContinueButtonEnable();
 
 }

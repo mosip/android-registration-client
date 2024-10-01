@@ -28,7 +28,7 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	@AndroidFindBy(accessibility = "New Registration")
 	private WebElement newRegistrationButton;
 	
-	@AndroidFindBy(accessibility = "Update UIN")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Update\")")
 	private WebElement updateUinButton;
 	
 	@AndroidFindBy(accessibility = "Lost UIN")

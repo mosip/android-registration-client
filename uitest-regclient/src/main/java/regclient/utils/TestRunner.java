@@ -12,6 +12,7 @@ import org.testng.xml.XmlTest;
 import regclient.api.AdminTestUtil;
 import regclient.api.BaseTestCase;
 import regclient.api.ConfigManager;
+import regclient.api.FetchUiSpec;
 
 public class TestRunner {
 	
@@ -19,6 +20,8 @@ public class TestRunner {
 	
 	public static void main(String[] args) {	
 		AdminTestUtil.initialize();
+		FetchUiSpec.getUiSpec("newProcess");
+		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		File homeDir = null;
 		TestNG runner = new TestNG();
 		if(!ConfigManager.gettestcases().equals("")) {

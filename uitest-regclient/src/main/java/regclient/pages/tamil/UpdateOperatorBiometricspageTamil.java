@@ -384,4 +384,8 @@ public class UpdateOperatorBiometricspageTamil extends UpdateOperatorBiometricsp
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 }

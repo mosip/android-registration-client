@@ -21,6 +21,11 @@ import regclient.utils.TestDataReader;
 public class FetchUiSpec extends BaseTestCase{
 
 	public static String UiSpec;
+	public static String eye = "no";
+	public static String rightHand = "no";
+	public static String leftHand = "no";
+	public static String thumb = "no";
+	public static String face = "no";
 
 	public static void getUiSpec(String type) {
 		if(type.equals("newProcess")) {
@@ -42,6 +47,27 @@ public class FetchUiSpec extends BaseTestCase{
 		}
 	}
 
+	public static List<String> getAllScreenOrder() {
+		  List<String> screenNames = new ArrayList<>();
+
+	        JSONObject jsonObject = new JSONObject(UiSpec);
+	        JSONArray responseArray = jsonObject.getJSONArray("response");
+
+	        JSONArray jsonSpecArray = responseArray.getJSONObject(0).getJSONArray("jsonSpec");
+	        JSONObject specObject = jsonSpecArray.getJSONObject(0).getJSONObject("spec");
+	        JSONArray screensArray = specObject.getJSONArray("screens");
+
+	        for (int i = 0; i < screensArray.length(); i++) {
+	            JSONObject screen = screensArray.getJSONObject(i);
+	            String name = screen.getString("name");
+	            screenNames.add(name);
+	        }
+
+	        return screenNames;
+	    }
+
+	
+	
 	public static String getScreenTitle(String ScreenName) {
 		String screenTitle=null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -140,6 +166,32 @@ public class FetchUiSpec extends BaseTestCase{
 			e.printStackTrace();
 		}
 		return controlType;
+
+	}
+	
+	public static String getRequiredGroupName(String Id) { 
+		String group = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			JsonNode rootNode = mapper.readTree(UiSpec);
+			JsonNode responseNode = rootNode.path("response").get(0);
+			JsonNode screensNode = responseNode.path("jsonSpec").get(0).path("spec").path("screens");
+
+			for (JsonNode screenNode : screensNode) {
+				JsonNode fieldsNode = screenNode.path("fields");
+
+				for (JsonNode fieldNode : fieldsNode) {
+					String id = fieldNode.path("id").asText();
+					if (Id.equals(id)) {
+						group = fieldNode.path("group").asText();
+						break;
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return group;
 
 	}
 
@@ -340,6 +392,9 @@ public class FetchUiSpec extends BaseTestCase{
 		for(String id:idList ) {
 			if(FetchUiSpec.getRequiredTypeUsingId(id)) {
 				String groupLabel =getGroupValueUsingId(id );
+				if (groupLabel.equals(null)||groupLabel.equals("")) {
+					groupLabel =getRequiredGroupName(id);
+				}
 				groupLabelList.add(groupLabel);
 			}else if(id.equals("residenceStatus")) {
 				String groupLabel =getGroupValueUsingId(id );
@@ -353,4 +408,69 @@ public class FetchUiSpec extends BaseTestCase{
 		return groupLabelList;
 	}
 
+	public static void getBiometricDetails(String biometricId) {
+        List<String> bioAttributes = new ArrayList<>();
+
+        JSONObject rootObject = new JSONObject(UiSpec);
+        JSONArray responseArray = rootObject.getJSONArray("response");
+
+        for (int i = 0; i < responseArray.length(); i++) {
+            JSONObject responseObject = responseArray.getJSONObject(i);
+            JSONArray jsonSpecArray = responseObject.getJSONArray("jsonSpec");
+
+            for (int j = 0; j < jsonSpecArray.length(); j++) {
+                JSONObject specObject = jsonSpecArray.getJSONObject(j);
+                if (specObject.getString("type").equals("newProcess")) {
+                    JSONObject specDetails = specObject.getJSONObject("spec");
+                    JSONArray screensArray = specDetails.getJSONArray("screens");
+
+                    for (int k = 0; k < screensArray.length(); k++) {
+                        JSONObject screenObject = screensArray.getJSONObject(k);
+                        JSONArray fieldsArray = screenObject.getJSONArray("fields");
+
+                        for (int l = 0; l < fieldsArray.length(); l++) {
+                            JSONObject fieldObject = fieldsArray.getJSONObject(l);
+
+                            if (fieldObject.getString("id").equals(biometricId)) {
+                                JSONArray bioArray = fieldObject.getJSONArray("bioAttributes");
+
+                                for (int m = 0; m < bioArray.length(); m++) {
+                                    bioAttributes.add(bioArray.getString(m));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (String attribute : bioAttributes) {
+            switch (attribute) {
+                case "leftEye":
+                case "rightEye":
+                    eye = "yes";
+                    break;
+                case "rightIndex":
+                case "rightLittle":
+                case "rightRing":
+                case "rightMiddle":
+                    rightHand = "yes";
+                    break;
+                case "leftIndex":
+                case "leftLittle":
+                case "leftRing":
+                case "leftMiddle":
+                    leftHand = "yes";
+                    break;
+                case "leftThumb":
+                case "rightThumb":
+                    thumb = "yes";
+                    break;
+                case "face":
+                    face = "yes";
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

@@ -67,6 +67,11 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage{
 		return new DocumentuploadPageEnglish(driver);
 
 	}
+	
+	public  boolean isContinueButtonEnable() {
+		return isElementEnabled(continueButton);
+
+	}
 
 	public boolean isPreRegFetchDataTextBoxDisplay() {
 		return isElementDisplayed(fetchDataButton);
