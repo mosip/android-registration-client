@@ -30,36 +30,36 @@ class OnboardingPage extends StatelessWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-              child: InkWell(
-                onTap: () {},
-                child: Container(
-                  height: isMobileSize ? 46.h : 62.h,
-                  width: 129.w,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border.all(
-                      color: appWhite,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(5),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      appLocalizations.help,
-                      style: TextStyle(
-                        fontSize: isMobileSize ? 16 : 22,
-                        fontWeight: FontWeight.bold,
-                        color: appWhite,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Container(
+            //   alignment: Alignment.centerRight,
+            //   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+            //   child: InkWell(
+            //     onTap: () {},
+            //     child: Container(
+            //       height: isMobileSize ? 46.h : 62.h,
+            //       width: 129.w,
+            //       decoration: BoxDecoration(
+            //         color: Colors.transparent,
+            //         border: Border.all(
+            //           color: appWhite,
+            //         ),
+            //         borderRadius: const BorderRadius.all(
+            //           Radius.circular(5),
+            //         ),
+            //       ),
+            //       child: Center(
+            //         child: Text(
+            //           appLocalizations.help,
+            //           style: TextStyle(
+            //             fontSize: isMobileSize ? 16 : 22,
+            //             fontWeight: FontWeight.bold,
+            //             color: appWhite,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
