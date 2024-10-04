@@ -2078,7 +2078,7 @@ class _OperatorBiometricCaptureScanBlockViewState
         const SizedBox(
           height: 40,
         ),
-        (biometricAttributeData.title != "Face" &&
+       /* (biometricAttributeData.title != "Face" &&
                 biometricAttributeData.title != "Exception")
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2233,7 +2233,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                         color: secondaryColors.elementAt(24)),
                   ),
                 ),
-              ),
+              ),*/
         SizedBox(
           height: 20.h,
         ),

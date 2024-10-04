@@ -36,7 +36,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, List<Field>> fieldsMap = {};
-  final RegExp validation = RegExp(r'^([0-9]{10})$');
+  final RegExp validation = RegExp(r'^[0-9]{6}[/][0-9]{2}[/][0-9]{1}$');
   TextEditingController controller = TextEditingController();
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
@@ -148,10 +148,10 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                   child: Row(
                     children: [
                       Text(
-                        appLocalizations.uin_number,
+                        appLocalizations.nrc_number,
                         style: TextStyle(
-                            fontSize: isPortrait && !isMobileSize ? 18 : 14,
-                            fontWeight: semiBold),
+                            fontSize: isPortrait && !isMobileSize ? 20 : 16,
+                            fontWeight: bold),
                       ),
                       const SizedBox(
                         width: 5,
@@ -181,9 +181,9 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       },
                       validator: (value) {
                         if (value == null) {
-                          return appLocalizations.valid_uin;
+                          return appLocalizations.valid_nrc;
                         } else if (!validation.hasMatch(value)) {
-                          return appLocalizations.valid_uin;
+                          return appLocalizations.valid_nrc;
                         }
                         return null;
                       },
@@ -195,7 +195,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 14, horizontal: 16),
-                        hintText: appLocalizations.enter_uin,
+                        hintText: appLocalizations.enter_nrc,
                         hintStyle: const TextStyle(
                             color: appBlackShade3, fontSize: 14),
                       ),
@@ -226,8 +226,8 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                       Text(
                         appLocalizations.select_update_attributes,
                         style: TextStyle(
-                            fontSize: isPortrait && !isMobileSize ? 18 : 14,
-                            fontWeight: semiBold),
+                            fontSize: isPortrait && !isMobileSize ? 20 : 16,
+                            fontWeight: bold),
                       ),
                       const SizedBox(
                         width: 5,

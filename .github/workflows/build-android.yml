@@ -36,7 +36,7 @@ jobs:
 
       # - name: Flutter test
       #   run: flutter test
-
+      
       - name: Decode android/app/arc-local-keystore.jks
         run: echo "${{ secrets.JKS_PRIVATE_SECRET }}" | base64 --decode > android/app/arc-local-keystore.jks
 
@@ -47,7 +47,7 @@ jobs:
         run: flutter build apk
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: apk-output
           path: ./build/app/outputs/flutter-apk/app-release.apk

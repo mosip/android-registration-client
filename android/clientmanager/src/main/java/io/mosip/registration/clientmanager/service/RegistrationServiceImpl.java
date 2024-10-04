@@ -188,15 +188,21 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException(context, R.string.err_004);
         }
 
+        List<String> selectedHandles = this.globalParamRepository.getSelectedHandles();
+        if(selectedHandles != null) {
+            if (this.registrationDto.getFlowType().equals("NEW")) {
+                this.registrationDto.getDemographics().put("selectedHandles", selectedHandles);
+            }
+        }
+
 //        try {
             String individualBiometricsFieldId = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID);
             String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
-
             for (String fieldName : this.registrationDto.getDemographics().keySet()) {
                 switch (this.registrationDto.getFlowType()) {
                     case "Update":
                         if (this.registrationDto.getDemographics().get(fieldName) != null && (this.registrationDto.getUpdatableFields().contains(fieldName) ||
-                                fieldName.equals("UIN")))
+                                fieldName.equals("nrcId")))
                             packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
                         break;
                     case "Correction":

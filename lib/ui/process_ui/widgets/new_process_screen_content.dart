@@ -105,7 +105,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           return GenderControl(field: e, validation: regexPattern);
         }
         if (e.fieldType == "dynamic") {
-          return DynamicDropDownControl(field: e, validation: regexPattern);
+          return (e.id != "countryCode") ? DynamicDropDownControl(field: e, validation: regexPattern):const SizedBox.shrink();
         }
         return DropDownControl(
           validation: regexPattern,
@@ -128,7 +128,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           validation: regexPattern,
         );
       default:
-        return Text("${e.controlType}");
+        return (e.controlType!=null)? Text("${e.controlType}"): const SizedBox.shrink();
     }
   }
 
@@ -162,15 +162,16 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (widget.screen.preRegFetchRequired == true) ...[
-          PreRegDataControl(
-              screen: widget.screen,
-              onFetched: () {
-                setState(() {
-                  refreshValue = 1;
-                });
-              }),
-        ],
+        // if (widget.screen.preRegFetchRequired == true) ...[
+        //   PreRegDataControl(
+        //       screen: widget.screen,
+        //       onFetched: () {
+        //         setState(() {
+        //           refreshValue = 1;
+        //         });
+        //       }),
+        // ],
+        const SizedBox(height: 10),
         (context.watch<GlobalProvider>().preRegControllerRefresh)
             ? const CircularProgressIndicator()
             : Form(

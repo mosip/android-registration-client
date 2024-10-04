@@ -382,7 +382,7 @@ class _BiometricCaptureControlPortraitState
                                         2)
                                     .ceil() *
                                 335.h) +
-                            70.h),
+                        410.h),
                     width: double.infinity,
                     child: ResponsiveGridList(
                         listViewBuilderOptions: ListViewBuilderOptions(

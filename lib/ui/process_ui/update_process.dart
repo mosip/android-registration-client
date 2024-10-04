@@ -649,7 +649,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                             if (fieldSelectionCompleted) {
                               registrationTaskProvider.addConsentField("Y");
                               await DemographicsApi().addDemographicField(
-                                  "UIN", globalProvider.updateUINNumber);
+                                  "nrcId", globalProvider.updateUINNumber);
                               await DemographicsApi()
                                   .addDemographicField("consent", "true");
                             }
@@ -662,44 +662,44 @@ class _UpdateProcessState extends State<UpdateProcess>
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      globalProvider.newProcessTabIndex == size + 2
-                          ? ElevatedButton(
-                              onPressed: () async {
-                                await connectivityProvider
-                                    .checkNetworkConnection();
-                                bool isConnected =
-                                    connectivityProvider.isConnected;
-                                if (!isConnected) {
-                                  _showInSnackBar(
-                                      appLocalizations.network_error);
-                                  return;
-                                }
-                                globalProvider.syncPacket(globalProvider.regId);
-                              },
-                              child: Text(appLocalizations.sync_packet),
-                            )
-                          : const SizedBox.shrink(),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      globalProvider.newProcessTabIndex == size + 2
-                          ? ElevatedButton(
-                              onPressed: () async {
-                                await connectivityProvider
-                                    .checkNetworkConnection();
-                                bool isConnected =
-                                    connectivityProvider.isConnected;
-                                if (!isConnected) {
-                                  _showInSnackBar(
-                                      appLocalizations.network_error);
-                                  return;
-                                }
-                                globalProvider
-                                    .uploadPacket(globalProvider.regId);
-                              },
-                              child: Text(appLocalizations.upload_packet),
-                            )
-                          : const SizedBox.shrink(),
+                      // globalProvider.newProcessTabIndex == size + 2
+                      //     ? ElevatedButton(
+                      //         onPressed: () async {
+                      //           await connectivityProvider
+                      //               .checkNetworkConnection();
+                      //           bool isConnected =
+                      //               connectivityProvider.isConnected;
+                      //           if (!isConnected) {
+                      //             _showInSnackBar(
+                      //                 appLocalizations.network_error);
+                      //             return;
+                      //           }
+                      //           globalProvider.syncPacket(globalProvider.regId);
+                      //         },
+                      //         child: Text(appLocalizations.sync_packet),
+                      //       )
+                      //     : const SizedBox.shrink(),
+                      // SizedBox(
+                      //   width: 10.w,
+                      // ),
+                      // globalProvider.newProcessTabIndex == size + 2
+                      //     ? ElevatedButton(
+                      //         onPressed: () async {
+                      //           await connectivityProvider
+                      //               .checkNetworkConnection();
+                      //           bool isConnected =
+                      //               connectivityProvider.isConnected;
+                      //           if (!isConnected) {
+                      //             _showInSnackBar(
+                      //                 appLocalizations.network_error);
+                      //             return;
+                      //           }
+                      //           globalProvider
+                      //               .uploadPacket(globalProvider.regId);
+                      //         },
+                      //         child: Text(appLocalizations.upload_packet),
+                      //       )
+                      //     : const SizedBox.shrink(),
                       const Expanded(
                         child: SizedBox(),
                       ),

@@ -37,10 +37,12 @@ import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -61,10 +63,12 @@ public class TemplateService {
     MasterDataService masterDataService;
 
     IdentitySchemaRepository identitySchemaRepository;
+    GlobalParamRepository globalParamRepository;
 
-    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository) {
+    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository, GlobalParamRepository globalParamRepository) {
         this.appContext = appContext;
         this.masterDataService = masterDataService;
+        this.globalParamRepository = globalParamRepository;
         this.identitySchemaRepository = identitySchemaRepository;
         sharedPreferences = this.appContext.getSharedPreferences(
                 this.appContext.getString(R.string.app_name),
@@ -396,7 +400,11 @@ public class TemplateService {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
 
+        String imp_guidelines = globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.TEMPLATE_IMPORTANT_GUIDELINES
+                +"_"+registrationDto.getSelectedLanguages().get(0));
+
         velocityContext.put("isPreview", isPreview);
+        velocityContext.put("ImportantGuidelines", imp_guidelines);
         velocityContext.put("ApplicationIDLabel", appContext.getString(R.string.app_id));
         velocityContext.put("ApplicationID", registrationDto.getRId());
         velocityContext.put("UINLabel", appContext.getString(R.string.uin));
@@ -416,7 +424,6 @@ public class TemplateService {
         velocityContext.put("ROName", sharedPreferences.getString(USER_NAME, ""));
         velocityContext.put("RegCenterLabel", appContext.getString(R.string.reg_center));
         velocityContext.put("RegCenter", centerMachineDto.getCenterId());
-        velocityContext.put("ImportantGuidelines", appContext.getString(R.string.imp_guidelines));
 
         velocityContext.put("LeftEyeLabel", appContext.getString(R.string.left_iris));
         velocityContext.put("RightEyeLabel", appContext.getString(R.string.right_iris));
