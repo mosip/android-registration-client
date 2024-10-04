@@ -1,0 +1,311 @@
+{
+  "english": "English",
+  "arabic": "العربية",
+  "french": "Français",
+  "hindi": "हिंदी",
+  "kannada": "ಕನ್ನಡ",
+  "tamil": "தமிழ்",
+  "locale": "hin",
+  "help": "मदद",
+  "mosip": "MOSIP",
+  "welcome": "आपका स्वागत है",
+  "community_reg_text": "MOSIP पंजीकरण ग्राहक!",
+  "info_text": "सुविधाओं तक पहुँचने के लिए कृपया लॉगिन करें.",
+  "login_text": "लॉगिन",
+  "language": "भाषा",
+  "username": "उपयोगकर्ता नाम",
+  "enter_username": "उपयोगकर्ता नाम दर्ज करें",
+  "next_button": "अगला",
+  "password": "पासवर्ड",
+  "enter_password": "पासवर्ड दर्ज करें",
+  "forgot_password": "पासवर्ड भूल गए?",
+  "login_button": "लॉगिन",
+  "back_button": "वापस",
+  "user_validated": "उपयोगकर्ता मान्य!",
+  "username_required": "उपयोगकर्ता नाम आवश्यक है!",
+  "password_required": "पासवर्ड आवश्यक है!",
+  "username_exceed": "उपयोगकर्ता नाम 50 वर्णों से अधिक नहीं होना चाहिए!",
+  "password_exceed": "पासवर्ड 50 वर्णों से अधिक नहीं होना चाहिए!",
+  "username_incorrect": "उपयोगकर्ता नहीं मिला!",
+  "device_credentials": "डिवाइस क्रेडेंशियल्स",
+  "copy_text": "पाठ की प्रतिलिपि बनाएँ",
+  "download_json": "JSON डाउनलोड करें",
+  "copy_message": "मशीन विवरण क्लिपबोर्ड पर कॉपी किया गया!",
+  "download_message": "फ़ाइल डाउनलोड करने के लिए सहेजी गई!",
+  "logout": "लॉगआउट",
+  "login_failed": "लॉगिन विफल रहा। फिर कोशिश करो!",
+  "password_incorrect": "पासवर्ड गलत है!",
+  "machine_not_found": "मशीन नहीं मिली!",
+  "network_error": "लॉगिन विफल रहा। नेटवर्क कनेक्शन की जाँच करें!",
+  "cred_expired": "क्रेडेंशियल्स नहीं मिले या समय सीमा समाप्त हो गई है. ऑनलाइन लॉगिन का प्रयास करें!",
+  "not_initialized": "मशीन प्रारंभ नहीं की जा सकी!",
+  "invalid_user": "उपयोगकर्ता नाम अमान्य!",
+  "machine_inactive": "मशीन सक्रिय नहीं है!",
+  "center_inactive": "केंद्र सक्रिय नहीं है!",
+  "sync_completed_succesfully": "सिंक्रनाइज़ेशन सफलतापूर्वक पूरा हुआ",
+  "sync_completed_message": "सिस्टम कुछ सेकंड में पुनरारंभ हो जाएगा और आपको लॉगिन पृष्ठ पर रीडायरेक्ट किया जाएगा।",
+  "sync_failed": "सिंक्रनाइज़ेशन असफल",
+  "sync_failed_message": "कृपया मदद के लिए सिस्टम व्यवस्थापक या पर्यवेक्षक से कनेक्ट करें.",
+  "policy_key_sync_failed": "नीति कुंजी सिंक्रनाइज़ेशन विफल",
+  "ca_certs_sync_failed": "सीए प्रमाणपत्र सिंक विफल रहा",
+  "global_params_sync_failed": "Global Params Sync विफल",
+  "user_details_sync_failed": "उपयोगकर्ता विवरण सिंक्रनाइज़ेशन विफल रहा",
+  "id_schema_sync_failed": "IDSchena सिंक्रनाइज़ेशन विफल रहा",
+  "master_data_sync_failed": "मास्टर डेटा सिंक्रनाइज़ेशन विफल",
+  "network_error": "कोई नेटवर्क नहीं मिला!",
+  "delete": "मिटाना",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLanguage": "{language, select, eng{Preferred Language of Communication} ara{لغة التواصل المفضلة} fra{Langue de communication préférée} hin{संचार की पसंदीदा भाषा} kan{ಸಂವಹನದ ಆದ್ಯತೆಯ ಭಾಷೆ} tam{விருப்பமான தொடர்பு மொழி} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "dataEntryLanguage": "{language, select, eng{Data Entry Language} ara{لغة إدخال البيانات} fra{Langue de saisie des données} hin{डाटा एंट्री भाषा} kan{ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ} tam{தரவு நுழைவு மொழி} other{Notification Languages}}",
+  "@dataEntryLanguage": {
+    "description": "Data Entry Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "upload_document": "कृपया दस्तावेज़ अपलोड करें",
+  "scan": "स्कैन",
+  "clear": "निकालना",
+  "save": "बचाना",
+  "retake": "फिर से लेना",
+  "reference_number": "संदर्भ संख्या दर्ज करें",
+  "select_value_message": "कृपया एक मान चुनें",
+  "enter_value_message": "कृपया कोई मान दर्ज करें",
+  "invalid_input": "अमान्य निवेश",
+  "reference_number_validation": "कृपया संदर्भ संख्या दर्ज करें",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "synchronize_data": "डेटा सिंक्रनाइज़ करें",
+  "registration_tasks": "पंजीकरण कार्य",
+  "manage_applications": "अनुप्रयोगों का प्रबंधन",
+  "search_application": "एप्लिकेशन आईडी द्वारा खोजें",
+  "upload": "डालना",
+  "export": "निर्यात",
+  "number_of_application": "{number} एप्लिकेशन प्रदर्शित हो रहे हैं",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} आवेदन चयनित",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "ग्राहक स्थिति",
+  "server_status": "सर्वर की स्थिति",
+  "clear_filter": "फ़िल्टर साफ़ करें",
+  "serial_number": "क्र.सं",
+  "application_id": "आवेदन पहचान पत्र",
+  "reg_date": "रजि. तारीख",
+  "reg_type": "रजि. प्रकार",
+  "operator_id": "ऑपरेटर आईडी",
+  "operation_tasks": "परिचालन कार्य",
+  "system_storage_usage": "सिस्टम संग्रहण उपयोग",
+  "download_pre_registration_data": "पूर्व-पंजीकरण डेटा डाउनलोड करें",
+  "update_operator_biomterics": "ऑपरेटर बायोमेट्रिक्स अपडेट करें",
+  "appliction_upload": "आवेदन अपलोड करें",
+  "check_updates": "अपडेट जांचें",
+  "center_remap_sync": "केंद्र रीमैप सिंक.",
+  "sync_activities": "साथ-साथ करना। गतिविधियाँ",
+  "pending_approval": "लंबित अनुमोदन",
+  "dashboard": "डैशबोर्ड",
+  "settings": "समायोजन",
+  "notifications": "सूचनाएं",
+  "profile": "प्रोफ़ाइल",
+  "select_language": "भाषा चुने",
+  "select_two_languages": "कृपया डेटा प्रविष्टि के लिए कोई भी दो भाषाएँ चुनें।",
+  "language_mandatory": "सरकारी दिशानिर्देशों के अनुसार चयन के लिए निवासी के लिए {mandatoryLanguage} अनिवार्य है। चयन का क्रम जनसांख्यिकीय डेटा के लिए पृष्ठ दृश्य को जन्म देगा।",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "Hindi"
+      }
+    }
+  },
+  "language_selector_note": "कृपया ध्यान दें कि भाषा पूर्व-पंजीकरण के दौरान दर्ज किए गए डेटा पर आधारित हो सकती है।",
+  "cancel": "रद्द करना",
+  "submit": "जमा करना",
+  "go_back": "वापस जाएं",
+  "informed": "सूचित किया",
+  "logo_text": "MOSIP द्वारा संचालित",
+  "get_onboard": "सवार होना",
+  "skip_to_home": "होम पेज पर जाएं",
+  "continue_text": "जारी रखें",
+  "authenticate": "प्रमाणित करें",
+  "new_registration": "नया पंजीकरण",
+  "go_back": "वापस जाएं",
+  "informed": "सूचित",
+  "sync_packet": "पैकेट सिंक करें",
+  "upload_packet": "अपलोड पैकेट",
+  "authenticate_using_password": "पासवर्ड का उपयोग करके प्रमाणीकरण",
+  "registration_acknowledgement": "रजिस्ट्रेशन स्वीकृति",
+  "print_text": "प्रिंट",
+  "hello": "नमस्ते",
+  "onboard_process_help": "कृपया ऑनबोर्डिंग प्रक्रिया आरंभ करने के लिए 'ऑनबोर्ड प्राप्त करें' पर टैप करें।",
+  "default_not_found": "आवश्यक भूमिका नहीं मिली!",
+  "mark_exception": "अस्तित्व चिह्नित करें",
+  "threshold": "सीमा",
+  "quality": "गुणवत्ता",
+  "attempts": "प्रयास",
+  "comments": "टिप्पणियाँ",
+  "exception_type": "अस्तित्व प्रकार",
+  "permanent": "स्थायी",
+  "temporary": "अस्थायी",
+  "exceptions": "अस्तित्वाएं",
+  "add_comments_for_marking_the_exception": "अस्तित्व चिह्नित करने के लिए टिप्पणियाँ जोड़ें",
+  "rescan": "पुन: स्कैन",
+  "marking_exceptions_on": "अपवादों को चिह्नित करना",
+  "is_not_allowed": "अनुमति नहीं है",
+  "capture": "कब्जा",
+  "attempts_left": "प्रयास बाकी हैं",
+  "left_hand": "बाएं हाथ",
+  "left": "बाएं",
+  "right": "दाएं",
+  "right_hand": "दाएं हाथ",
+  "iris": "आईरिस",
+  "thumbs": "अंगूठे",
+  "exception": "अपवाद",
+  "face": "चेहरा",
+  "preview_page": "पूर्वावलोकन",
+  "packet_auth_page": "प्रमाणीकरण",
+  "acknowledgement_page": "पुनर्निर्देशन",
+  "demographic_information": "जनसांख्यिकीय जानकारी",
+  "documents": "दस्तावेज़",
+  "biometrics": "बॉयोमेट्रिक्स",
+  "share": "शेयर",
+  "packets_created": "पैकेट बनाए गए",
+  "packets_synced": "पैकेट सिंक किए गए",
+  "packets_uploaded": "पैकेट अपलोड किए गए",
+  "users": "उपयोगकर्ताओं",
+  "user_id": "उपयोगकर्ता पहचान",
+  "user_name": "उपयोगकर्ता नाम",
+  "status": "स्थिति",
+  "active_not_onboarded": "सक्रिय - ऑनबोर्ड नहीं किया गया",
+  "user_inactive": "उपयोगकर्ता निष्क्रिय",
+  "onboarded": "जहाज पर चढ़ाया गया",
+  "sync_alert_title": "जारी रखने के लिए सिंक करें!",
+  "sync_alert_content": "मशीन या केंद्र सक्रिय नहीं है। जारी रखने के लिए सक्रिय करें और सिंक करें।",
+  "sync_alert_text": "सिंक",
+  "onboarded_successfully": "आप सफलतापूर्वक शामिल हो गए हैं.",
+  "operator_biometric_updated_successfully": "ऑपरेटर बायोमेट्रिक्स सफलतापूर्वक अपडेट किया गया।",
+  "home": "घर",
+  "verify_and_save": "सत्यापित करें और सहेजें",
+  "supervisors_biometric_onboard": "पर्यवेक्षक का बायोमेट्रिक ऑनबोर्डिंग",
+  "supervisors_biometric_update": "पर्यवेक्षक का बायोमेट्रिक अपडेट",
+  "help_topics": "सहायता के विषय",
+  "onboard_request_message": "कृपया स्वयं को पोर्टल में शामिल करने के लिए गेट ऑनबोर्ड बटन पर टैप करें।",
+  "hello_s": "नमस्ते ",
+  "approve": "मंज़ूरी देना",
+  "reject": "अस्वीकार करना",
+  "reject_dialog_heading": "पैकेट अस्वीकार करें?",
+  "reject_dialog_subheading": "कृपया पैकेट अस्वीकृति का एक कारण चुनें। आप बाद में समीक्षा की स्थिति को स्वीकृत करने या रीसेट करने के लिए अपनी समीक्षा बदल सकते हैं।",
+  "reason_rejection": "खारिज करने का कारण",
+  "no_reason_selected": "कृपया कोई कारण चुनें...",
+  "supervisor_auth_heading": "पर्यवेक्षक का प्रमाणीकरण",
+  "supervisor_auth_subheading": "पासवर्ड का उपयोग करके पर्यवेक्षक का प्रमाणीकरण",
+  "uin_number": "यूआईएन नंबर",
+  "valid_uin": "कृपया एक वैध यूआईएन दर्ज करें",
+  "enter_uin": "यूआईएन नंबर दर्ज करें",
+  "select_update_attributes": "उन सभी विशेषताओं का चयन करें जिन्हें अद्यतन करने की आवश्यकता है",
+  "logout_action_required": "अभी भी कुछ कार्रवाई की आवश्यकता है!",
+  "logout_warning_message": "लॉगआउट पर क्लिक करने से प्रक्रिया समाप्त हो जाएगी और डेटा हानि हो सकती है।",
+  "officer": "अफ़सर",
+  "operator": "ऑपरेटर",
+  "supervisor": "पर्यवेक्षक",
+  "online": "ऑनलाइन",
+  "offline": "ऑफलाइन",
+  "logout_success": "आप सफलता पूर्वक लॉगआउट कर चुके हैं!",
+  "logout_failure": "कुछ गलती हो गई है, कृपया कुछ समय बाद पुनः प्रयास करें",
+  "go_to_home": "होम पर जाएं",
+  "errors": "{messages, select, REG_TRY_AGAIN{लॉगिन विफल रहा। फिर कोशिश करो!} REG_INVALID_REQUEST{पासवर्ड गलत है!} REG_MACHINE_NOT_FOUND{मशीन नहीं मिली!} REG_NETWORK_ERROR{लॉगिन विफल रहा। नेटवर्क कनेक्शन की जाँच करें!} REG_CRED_EXPIRED{क्रेडेंशियल्स नहीं मिले या समय सीमा समाप्त हो गई है. ऑनलाइन लॉगिन का प्रयास करें!} REG_MACHINE_INACTIVE{मशीन सक्रिय नहीं है!} REG_CENTER_INACTIVE{केंद्र सक्रिय नहीं है!} other{'Some error occurred!'}}",
+  "@errors": {
+    "description": "Error messages",
+    "placeholders": {
+      "messages": {
+        "type": "String"
+      }
+    }
+  },
+  "fetch_data": "डेटा प्राप्त करें",
+  "application_id_not_exist": "एप्लिकेशन आईडी मौजूद नहीं है!",
+  "correct_application_id": "कृपया दर्ज की गई एप्लिकेशन आईडी की जांच करें या सही आईडी दर्ज करें और इसे दोबारा लाने का प्रयास करें।",
+  "enter_application_id": "कृपया आवेदन आईडी दर्ज करें",
+  "okay": "ठीक है"
+}

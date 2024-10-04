@@ -1,0 +1,48 @@
+name: Build Android Registration-Client
+
+on:
+  push:
+    branches:
+      - release*
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup java 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.4'
+
+      - name: Install Dart SDK
+        run: flutter pub get
+
+      - name: Flutter clean
+        run: flutter clean
+
+      - name: Creating Folders for generated source code
+        run: |
+          sh pigeon.sh
+
+      # - name: Flutter test
+      #   run: flutter test
+
+      - name: Build Android APK
+        run: flutter build apk
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: apk-output
+          path: ./build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 10

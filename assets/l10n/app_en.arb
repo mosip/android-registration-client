@@ -1,0 +1,312 @@
+{
+  "english": "English",
+  "arabic": "العربية",
+  "french": "Français",
+  "hindi": "हिंदी",
+  "kannada": "ಕನ್ನಡ",
+  "tamil": "தமிழ்",
+  "locale": "eng",
+  "help": "HELP",
+  "mosip": "MOSIP",
+  "welcome": "Welcome to",
+  "community_reg_text": "MOSIP Registration Client!",
+  "info_text": "Please login to access the features.",
+  "login_text": "Login",
+  "language": "Language",
+  "username": "Username",
+  "enter_username": "Enter Username",
+  "next_button": "NEXT",
+  "password": "Password",
+  "enter_password": "Enter Password",
+  "forgot_password": "Forgot Password?",
+  "login_button": "LOGIN",
+  "back_button": "BACK",
+  "user_validated": "User Validated!",
+  "username_required": "Username is required!",
+  "password_required": "Password is required!",
+  "username_exceed": "Username should not exceed 50 characters!",
+  "password_exceed": "Password should not exceed 50 characters!",
+  "username_incorrect": "User not found!",
+  "device_credentials": "Device Credentials",
+  "copy_text": "COPY TEXT",
+  "download_json": "DOWNLOAD JSON",
+  "copy_message": "Machine Details copied to clipboard!",
+  "download_message": "File Saved to Downloads!",
+  "logout": "LOGOUT",
+  "login_failed": "Login Failed. Try Again!",
+  "password_incorrect": "Password incorrect!",
+  "machine_not_found": "Machine not found!",
+  "network_error": "Login failed. Check network connection!",
+  "cred_expired": "Credentials not found or are expired. Please try online login!",
+  "not_initialized": "Machine could not be initialized!",
+  "invalid_user": "Username invalid!",
+  "machine_inactive": "Machine is not active!",
+  "center_inactive": "Center is not active!",
+  "sync_completed_succesfully": "Sync Completed Successfully",
+  "sync_completed_message": "System will restart in a few seconds and you will be redirected to login page.",
+  "sync_failed": "Sync. Failed",
+  "sync_failed_message": "Please connect with the system admin or supervisor for help.",
+  "policy_key_sync_failed": "Policy Key Sync Failed",
+  "ca_certs_sync_failed": "CA Certificates Sync Failed",
+  "global_params_sync_failed": "Global Params Sync Failed",
+  "user_details_sync_failed": "User Details Sync Failed",
+  "id_schema_sync_failed": "IDSchema Sync Failed",
+  "master_data_sync_failed": "Master Data Sync Failed",
+  "network_error": "No network found!",
+  "delete": "DELETE",
+  "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "@newRegistrationProcess": {
+    "description": "New Registration Process Header",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "consentScreenName": "{language, select, eng{Consent} ara{موافقة} fra{Consentement} other{Consent}}",
+  "@consentScreenName": {
+    "description": "Consent Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "demographicsScreenName": "{language, select, eng{Demographic Details} ara{التفاصيل الديموغرافية} fra{Détails démographiques} other{Demographic Details}}",
+  "@demographicsScreenName": {
+    "description": "Demographic Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "documentsScreenName": "{language, select, eng{Document Upload} ara{تحميل الوثيقة} fra{Téléchargement de documents} other{Document Upload}}",
+  "@documentsScreenName": {
+    "description": "Document Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricsScreenName": "{language, select, eng{Biometric Details} ara{التفاصيل البيومترية} fra{Détails biométriques} other{Biometric Details}}",
+  "@biometricsScreenName": {
+    "description": "Biometric Screen Name",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLanguage": "{language, select, eng{Preferred Language of Communication} ara{لغة التواصل المفضلة} fra{Langue de communication préférée} hin{संचार की पसंदीदा भाषा} kan{ಸಂವಹನದ ಆದ್ಯತೆಯ ಭಾಷೆ} tam{விருப்பமான தொடர்பு மொழி} other{Notification Languages}}",
+  "@notificationLanguage": {
+    "description": "Notification Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "dataEntryLanguage": "{language, select, eng{Data Entry Language} ara{لغة إدخال البيانات} fra{Langue de saisie des données} hin{डाटा एंट्री भाषा} kan{ಡೇಟಾ ಎಂಟ್ರಿ ಭಾಷೆ} tam{தரவு நுழைவு மொழி} other{Notification Languages}}",
+  "@dataEntryLanguage": {
+    "description": "Data Entry Language Label",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "upload_document": "Please Upload The Document",
+  "scan": "Scan",
+  "clear": "Clear",
+  "save": "SAVE",
+  "retake": "RETAKE",
+  "reference_number": "Enter Reference Number",
+  "select_value_message": "Please select a value",
+  "enter_value_message": "Please enter a value",
+  "invalid_input": "Invalid input",
+  "reference_number_validation": "Please enter reference number",
+  "referenceNumber": "{language, select, eng{Reference Number} ara{رقم المرجع} fra{Numéro de réference} kan{ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ} hin{संदर्भ संख्या} tam{குறிப்பு எண்} other{Reference Number}}",
+  "@referenceNumber": {
+    "description": "Document reference number",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "synchronize_data": "Synchronize Data",
+  "registration_tasks": "Registration Tasks",
+  "manage_applications": "Manage Applications",
+  "search_application": "Search by Application ID",
+  "upload": "UPLOAD",
+  "export": "EXPORT",
+  "number_of_application": "Displaying {number} Applications",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} Applications Selected",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "Client Status",
+  "server_status": "Server Status",
+  "review_status": "Review Status",
+  "clear_filter": "Clear Filter",
+  "serial_number": "Sl.no",
+  "application_id": "Application ID",
+  "reg_date": "Reg. Date",
+  "reg_type": "Reg. Type",
+  "operator_id": "Operator ID",
+  "operation_tasks": "Operational Tasks",
+  "system_storage_usage": "System Storage Usage",
+  "download_pre_registration_data": "Download Pre-Registration Data",
+  "update_operator_biomterics": "Update Operator Biometrics",
+  "appliction_upload": "Application Upload",
+  "check_updates": "Check Updates",
+  "center_remap_sync": "Center Remap Sync.",
+  "sync_activities": "Sync. Activities",
+  "pending_approval": "Pending Approval",
+  "dashboard": "Dashboard",
+  "settings": "Settings",
+  "notifications": "Notifications",
+  "profile": "Profile",
+  "select_language": "Select Language",
+  "select_two_languages": "Please select any 2 languages for data entry.",
+  "language_mandatory": "{mandatoryLanguage} is mandatory for the resident to select as per government guidelines. The order of selection will lead to page view for demographic data.",
+  "@language_mandatory": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "mandatoryLanguage": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
+  "cancel": "CANCEL",
+  "submit": "SUBMIT",
+  "go_back": "GO BACK",
+  "informed": "INFORMED",
+  "logo_text": "Powered by MOSIP",
+  "get_onboard": "GET ONBOARDED",
+  "skip_to_home": "SKIP TO HOME",
+  "continue_text": "CONTINUE",
+  "authenticate": "AUTHENTICATE",
+  "new_registration": "NEW REGISTRATION",
+  "go_back": "GO BACK",
+  "informed": "INFORMED",
+  "sync_packet": "Sync Packet",
+  "upload_packet": "Upload Packet",
+  "authenticate_using_password": "Authentication using Password",
+  "registration_acknowledgement": "Registration Acknowledgement",
+  "print_text": "PRINT",
+  "hello": "HELLO",
+  "onboard_process_help": "Please tap on 'GET ONBOARDED' to get started with the onboarding process.",
+  "default_not_found": "Required role not found!",
+  "mark_exception": "Mark Exception",
+  "threshold": "Threshold",
+  "quality": "Quality",
+  "attempts": "Attempts",
+  "comments": "Comments",
+  "exception_type": "Exception Type",
+  "permanent": "Permanent",
+  "temporary": "Temporary",
+  "exceptions": "Exceptions",
+  "exception": "Exception",
+  "add_comments_for_marking_the_exception": "Add comments for marking the exception",
+  "rescan": "RESCAN",
+  "marking_exceptions_on": "Marking exceptions on",
+  "is_not_allowed": "is not allowed",
+  "capture": "Capture",
+  "attempts_left": "attempts left",
+  "left_hand": "Left Hand",
+  "left": "Left",
+  "right": "Right",
+  "right_hand": "Right Hand",
+  "iris": "Iris",
+  "thumbs": "Thumbs",
+  "face": "Face",
+  "preview_page": "Preview",
+  "packet_auth_page": "Authentication",
+  "acknowledgement_page": "Acknowledgement",
+  "demographic_information": "Demographic Information",
+  "documents": "Documents",
+  "biometrics": "Biometrics",
+  "share": "SHARE",
+  "packets_created": "Packets Created",
+  "packets_synced": "Packets Synced",
+  "packets_uploaded": "Packets Uploaded",
+  "users": "Users",
+  "user_id": "User ID",
+  "user_name": "User Name",
+  "status": "Status",
+  "active_not_onboarded": "Active - Not Onboarded",
+  "user_inactive": "User Inactive",
+  "onboarded": "Onboarded",
+  "sync_alert_title": "Sync to continue!",
+  "sync_alert_content": "Machine or Center is not active. Activate and Sync to continue.",
+  "sync_alert_text": "Sync",
+  "onboarded_successfully": "You have onboarded successfully.",
+  "operator_biometric_updated_successfully": "Operator biometrics updated successfully.",
+  "home": "HOME",
+  "verify_and_save": "VERIFY & SAVE",
+  "supervisors_biometric_onboard": "Supervisor's Biometric Onboarding",
+  "supervisors_biometric_update": "Supervisor's Biometric Update",
+  "help_topics": "Help topics",
+  "onboard_request_message": "Please tap the \"Get Onboard\" button to onboard yourself into the portal.",
+  "hello_s": "Hello ",
+  "approve": "APPROVE",
+  "reject": "REJECT",
+  "reject_dialog_heading": "Reject Packet?",
+  "reject_dialog_subheading": "Please select a reason for packet rejection. You can can change you review to approve or reset the status of review later.",
+  "reason_rejection": "Reason for rejection",
+  "no_reason_selected": "Please select a reason...",
+  "supervisor_auth_heading": "Supervisor's Authentication",
+  "supervisor_auth_subheading": "Supervisor's Authentication using Password",
+  "uin_number": "UIN Number",
+  "valid_uin": "Please enter a valid UIN",
+  "enter_uin": "Enter UIN Number",
+  "select_update_attributes": "Select all the attributes that need to be updated",
+  "logout_action_required": "There is still some action required!",
+  "logout_warning_message": "Clicking on logout will terminate the process and could result in data loss.",
+  "officer": "Officer",
+  "operator": "Operator",
+  "supervisor": "Supervisor",
+  "online": "Online",
+  "offline": "Offline",
+  "logout_success": "You have been successfully logged out!",
+  "logout_failure": "Something went wrong, please try again after some time",
+  "go_to_home": "Go To Home",
+  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{Machine not found!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} other{'Some error occurred!'}}",
+  "@errors": {
+    "description": "Error messages",
+    "placeholders": {
+      "messages": {
+        "type": "String"
+      }
+    }
+  },
+  "fetch_data": "FETCH DATA",
+  "application_id_not_exist": "Application ID does not exist!",
+  "correct_application_id": "Please check the entered Application ID or enter a correct ID and try to fetch it again.",
+  "enter_application_id": "Please Enter Application ID",
+  "okay": "OKAY"
+}

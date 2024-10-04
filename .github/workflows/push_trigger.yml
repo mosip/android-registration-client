@@ -5,11 +5,12 @@ on:
   push:
     branches:
       - '!release-branch'
-      - release-1*
+      - release-*
       - master
       - 1.*
       - develop
       - sprint-*
+      - main
 
 jobs:
   build-android:
@@ -19,6 +20,9 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install
+      - name: Updating serverBaseURL.
+        run: |
+          find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
       - name: Build Android Registration-Client
         run: |
           cd client
@@ -63,4 +67,5 @@ jobs:
         run: |
           cd client
           chmod +x gradlew
+          ./gradlew build test testDebugUnitTestCoverage sonarqube --info --warning-mode all
           ./gradlew build sonarqube --info --warning-mode all

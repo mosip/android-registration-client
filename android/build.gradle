@@ -1,0 +1,59 @@
+buildscript {
+    ext.kotlin_version = '1.7.10'
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.ibotta:plugin:1.2.0"
+        //Jacoco Plugin
+        classpath "org.jacoco:org.jacoco.core:0.8.7"
+    }
+}
+
+plugins {
+    id "org.sonarqube" version "3.0"
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+ext {
+    compileSdkVersion = 31
+    buildToolsVersion = "31.0.0"
+
+    minSdkVersion = 28
+    targetSdkVersion = 31
+
+    junitVersion = "4.+"
+
+    // clientmanager Library Info
+    clientmanagerLibVersionCode = 1
+    clientmanagerLibVersionName = "\"1.0.0\""
+
+    serverBaseURL = "\"https://api-internal.qa-platform1.mosip.net\""
+    serverHealthCheckPath = "\"/v1/syncdata/actuator/health\""
+    serverActuatorInfoPath = "\"/v1/syncdata/actuator/info\""
+    debugPassword = "\"APTyKejHxACQyKBSRciR\""
+}
+
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
