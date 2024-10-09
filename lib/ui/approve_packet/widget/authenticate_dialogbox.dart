@@ -103,6 +103,20 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
     });
   }
 
+  bool validateForm(){
+    bool value = false;
+    if(username.text.trim().isNotEmpty && password.text.trim().isNotEmpty){
+      setState(() {
+        value = true;
+      });
+    }else{
+      setState(() {
+        value = false;
+      });
+    }
+    return value;
+  }
+
   @override
   Widget build(BuildContext context) {
     const double width = 600;
@@ -117,6 +131,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
             width: width,
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.always,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -189,6 +204,9 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
 
                             return null;
                           },
+                          onChanged: (String value){
+                            validateForm();
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderSide: const BorderSide(
@@ -237,6 +255,9 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                             }
                             return null;
                           },
+                          onChanged: (String value){
+                            validateForm();
+                          },
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -281,11 +302,11 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
                         width: 150,
                         height: 65,
                         child: ElevatedButton(
-                            onPressed: () async {
+                            onPressed: validateForm() ? () async {
                               await submitReviews();
-                            },
+                            } : (){},
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: solidPrimary,
+                                backgroundColor: validateForm() ? solidPrimary : Colors.grey,
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 16, horizontal: 32)),
                             child: loading
