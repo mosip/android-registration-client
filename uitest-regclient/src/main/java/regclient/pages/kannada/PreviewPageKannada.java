@@ -3,15 +3,16 @@ package regclient.pages.kannada;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.AuthenticationPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.PreviewPage;
+import regclient.pages.english.AuthenticationPageEnglish;
+import regclient.pages.english.DemographicDetailsPageEnglish;
 
 public class PreviewPageKannada extends PreviewPage {
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ಹೊಸ ನೋಂದಣಿ\"))")
-	private WebElement newRegistrationTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ಜನಸಂಖ್ಯಾ ಮಾಹಿತಿ\"))")
 	private WebElement demographicInformationInPreviewPage;
@@ -21,9 +22,6 @@ public class PreviewPageKannada extends PreviewPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ದಾಖಲೆಗಳು\"))")
 	private WebElement documentsInformationInPreviewPage;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"ಜನಸಂಖ್ಯಾ ವಿವರಗಳು\"))")
-	private WebElement demographicDetailsTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ಬಯೋಮೆಟ್ರಿಕ್ಸ್\"))")
 	private WebElement biometricsInformationInPreviewPage;
@@ -40,16 +38,13 @@ public class PreviewPageKannada extends PreviewPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Fingers ( 7 )\"))")
 	private WebElement fingerExceptionText;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN ನವೀಕರಿಸಿ\"))")
-	private WebElement updateUINTitle;
-	
 	public PreviewPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
 	
 	public  AuthenticationPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new AuthenticationPageKannada(driver);
+		return new AuthenticationPageEnglish(driver);
 	}
 	
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
@@ -64,17 +59,23 @@ public class PreviewPageKannada extends PreviewPage {
 		return isElementDisplayed(biometricsInformationInPreviewPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isNewRegistrationTitleDisplayed() {
-		return isElementDisplayed(newRegistrationTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("NEW") + "\"))")));
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 	
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
 		return isElementDisplayed(applicationIDPreviewPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
-		clickOnElement(demographicDetailsTitle);
-		return new DemographicDetailsPageKannada(driver);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
+		return new DemographicDetailsPageEnglish(driver);
 	}
 	
 	public boolean isBothIrisImageDisplayed() {
@@ -92,10 +93,6 @@ public class PreviewPageKannada extends PreviewPage {
 	public String getAID() {
 		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
 		return applicationID;
-	}
-	
-	public boolean updateUINTitleDisplayed() {
-		return isElementDisplayed(updateUINTitle);
 	}
 
 }

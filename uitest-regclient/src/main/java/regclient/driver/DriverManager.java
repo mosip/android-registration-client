@@ -18,7 +18,7 @@ public class DriverManager {
 	private static AppiumDriverLocalService service = null;
 
 	private static AppiumDriver getAndroidDriver() {
-		DesiredCapabilities desiredCapabilities = CapabilitiesReader.getDesiredCapabilities("androidDevice", "src/main/resources/DesiredCapabilities.json");
+		DesiredCapabilities desiredCapabilities = CapabilitiesReader.getDesiredCapabilities("androidDevice", "/DesiredCapabilities.json");
 		appiumDriver.set(new AndroidDriver(service.getUrl(), desiredCapabilities));
 		return appiumDriver.get();
 	}

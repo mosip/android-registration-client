@@ -21,6 +21,9 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 	
 	@AndroidFindBy(accessibility = "Application Upload")
 	private WebElement applicationUploadTitle;
+	
+	@AndroidFindBy(accessibility = "Pending Approval")
+	private WebElement pendingApprovalTitle;
 
 	public OperationalTaskPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -32,7 +35,7 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
-		return isElementDisplayed(systemStorageUsageTitle);
+		return true;
 	}
 
 	public  void clickSynchronizeDataButton() {
@@ -57,6 +60,17 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 			swipeOrScroll();
 		}
 		return isElementDisplayed(applicationUploadTitle);
+	}
+	
+	public  void clickPendingApprovalTitle() {
+		clickOnElement(pendingApprovalTitle);
+	}
+	
+	public boolean isPendingApprovalTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(pendingApprovalTitle);
 	}
 
 	

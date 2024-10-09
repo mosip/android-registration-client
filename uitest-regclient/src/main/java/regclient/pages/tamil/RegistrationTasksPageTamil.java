@@ -42,6 +42,12 @@ public class RegistrationTasksPageTamil extends RegistrationTasksPage{
 	
 	@AndroidFindBy(accessibility = "UIN ஐப் புதுப்பிக்கவும்")
 	private WebElement updateUinButton;
+	
+	@AndroidFindBy(accessibility = "தொலைந்த UIN")
+	private WebElement lostUinButton;
+	
+	@AndroidFindBy(accessibility = "Biometric correction")
+	private WebElement biometricCorrectionButton;
 
 	public RegistrationTasksPageTamil(AppiumDriver driver) {
 		super(driver);
@@ -98,5 +104,17 @@ public class RegistrationTasksPageTamil extends RegistrationTasksPage{
 	public  SelectLanguagePage clickUpdateMyUINButton() {
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageTamil(driver);
+	}
+	
+	public boolean isUpdateUINTitleDisplayed() {
+		return isElementDisplayed(updateUinButton);
+	}
+	
+	public boolean isLostUINTitleDisplayed() {
+		return isElementDisplayed(lostUinButton);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionButton);
 	}
 }

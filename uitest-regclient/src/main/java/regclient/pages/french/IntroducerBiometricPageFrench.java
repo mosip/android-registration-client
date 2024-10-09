@@ -3,14 +3,14 @@ package regclient.pages.french;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
+import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class IntroducerBiometricPageFrench extends IntroducerBiometricPage{
-
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Introducteur BiomÃ©trie')]")
-	private WebElement introducerBiometricPageTitle;
 	
 	@AndroidFindBy(accessibility = "Iris ANALYSE")
 	private WebElement irisScanButton;
@@ -34,7 +34,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage{
 	private WebElement oneEyeException;
 	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
-	private WebElement firstFingureExceptionImage;
+	private WebElement firstFingureException;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Main droite ANALYSE\"))")
 	private WebElement rightHandScanTitle;
@@ -94,7 +94,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage{
 	}
 	
 	public void markOneFingureException() {
-		clickOnElement(firstFingureExceptionImage);
+		clickOnElement(firstFingureException);
 	}
 	
 	public void clickOnClosePopUp() {
@@ -111,7 +111,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage{
 	
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageFrench(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 	
 	public void clickOnZoomButton() {
@@ -136,11 +136,12 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage{
 	
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageFrench(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public  boolean isIntroducerBiometricsPageDisplyed() {
-		return isElementDisplayed(introducerBiometricPageTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerBiometrics")+"\")")));
 	}
 	
 	public  boolean isExceptionTypeTitleDisplyed() {
@@ -190,4 +191,6 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage{
 	public  boolean isExceptionScan() {
 		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
+
+
 }

@@ -1,5 +1,7 @@
 package regclient.pages.kannada;
 
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -73,6 +75,7 @@ public class LoginPageKannada extends LoginPage {
 	}
 
 	public  void enterPassword(String password) {
+		retryFindElement(passwordTextBox,Duration.ofSeconds(10));
 		clickAndsendKeysToTextBox(passwordTextBox,password);
 	}
 

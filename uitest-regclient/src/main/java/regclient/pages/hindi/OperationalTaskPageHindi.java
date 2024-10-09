@@ -20,6 +20,9 @@ public class OperationalTaskPageHindi extends OperationalTaskPage{
 
 	@AndroidFindBy(accessibility = "आवेदन अपलोड करें")
 	private WebElement applicationUploadTitle;
+	
+	@AndroidFindBy(accessibility = "लंबित अनुमोदन")
+	private WebElement pendingApprovalTitle;
 
 	public OperationalTaskPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -60,4 +63,14 @@ public class OperationalTaskPageHindi extends OperationalTaskPage{
 		return isElementDisplayed(applicationUploadTitle);
 	}
 
+	public  void clickPendingApprovalTitle() {
+		clickOnElement(pendingApprovalTitle);
+	}
+	
+	public boolean isPendingApprovalTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(pendingApprovalTitle);
+	}
 }

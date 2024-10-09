@@ -3,10 +3,13 @@ package regclient.pages.hindi;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.AcknowledgementPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
+import regclient.pages.english.DemographicDetailsPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class AcknowledgementPageHindi extends AcknowledgementPage {
@@ -31,10 +34,7 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"बॉयोमेट्रिक्स\"))")
 	private WebElement biometricsInformationInAcknowledgementPage;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"जनसांख्यिकीय विवरण\"))")
-	private WebElement demographicDetailsTitle;
-	
+		
 
 	public AcknowledgementPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -70,15 +70,13 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 		return isElementDisplayed(biometricsInformationInAcknowledgementPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
-		clickOnElement(demographicDetailsTitle);
-		return new DemographicDetailsPageHindi(driver);
-	}
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
+		return new DemographicDetailsPageEnglish(driver);
+	}	
 	
 	public String getAID() {
 		return getTextFromLocator(applicationID);
 	}
-	
-
-	
 }

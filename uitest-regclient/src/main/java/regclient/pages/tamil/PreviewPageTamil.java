@@ -3,16 +3,17 @@ package regclient.pages.tamil;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.AuthenticationPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.PreviewPage;
+import regclient.pages.english.AuthenticationPageEnglish;
+import regclient.pages.english.DemographicDetailsPageEnglish;
 
 
 public class PreviewPageTamil extends PreviewPage {
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"புதிய பதிவு\"))")
-	private WebElement newRegistrationTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"மக்கள்தொகை தகவல்\"))")
 	private WebElement demographicInformationInPreviewPage;
@@ -22,9 +23,6 @@ public class PreviewPageTamil extends PreviewPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"ஆவணங்கள்\"))")
 	private WebElement documentsInformationInPreviewPage;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"மக்கள்தொகை விவரங்கள்\"))")
-	private WebElement demographicDetailsTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"பயோமெட்ரிக்ஸ்\"))")
 	private WebElement biometricsInformationInPreviewPage;
@@ -41,16 +39,13 @@ public class PreviewPageTamil extends PreviewPage {
 	@AndroidFindBy(accessibility = "தொடர்க")
 	private WebElement continueButton;
 	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN ஐப் புதுப்பிக்கவும்\"))")
-	private WebElement updateUINTitle;
-	
 	public PreviewPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
 	
 	public  AuthenticationPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new AuthenticationPageTamil(driver);
+		return new AuthenticationPageEnglish(driver);
 	}
 	
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
@@ -65,17 +60,23 @@ public class PreviewPageTamil extends PreviewPage {
 		return isElementDisplayed(biometricsInformationInPreviewPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isNewRegistrationTitleDisplayed() {
-		return isElementDisplayed(newRegistrationTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("NEW") + "\"))")));
+	}
+	
+	public boolean updateUINTitleDisplayed() {
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 	
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
 		return isElementDisplayed(applicationIDPreviewPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
-		clickOnElement(demographicDetailsTitle);
-		return new DemographicDetailsPageTamil(driver);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
+		return new DemographicDetailsPageEnglish(driver);
 	}
 	
 	public boolean isBothIrisImageDisplayed() {
@@ -93,9 +94,5 @@ public class PreviewPageTamil extends PreviewPage {
 	public String getAID() {
 		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
 		return applicationID;
-	}
-
-	public boolean updateUINTitleDisplayed() {
-		return isElementDisplayed(updateUINTitle);
 	}
 }
