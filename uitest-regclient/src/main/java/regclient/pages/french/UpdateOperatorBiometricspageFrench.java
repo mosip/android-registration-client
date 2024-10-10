@@ -369,11 +369,9 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
-
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
 	}
-
 
 }

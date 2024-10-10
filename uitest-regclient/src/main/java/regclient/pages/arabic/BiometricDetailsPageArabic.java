@@ -89,6 +89,30 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
 	}
 	
+	public IntroducerBiometricPage clickOnIntroducerRightHandScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Right\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerLeftHandScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Left\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerThumbScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Thumbs\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerFaceScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Face\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
 	public  PreviewPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new PreviewPageEnglish(driver);

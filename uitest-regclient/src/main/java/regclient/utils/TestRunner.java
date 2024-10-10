@@ -20,6 +20,8 @@ public class TestRunner {
 	
 	public static void main(String[] args) {	
 		AdminTestUtil.initialize();
+		FetchUiSpec.getUiSpec("newProcess");
+		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		File homeDir = null;
 		TestNG runner = new TestNG();
 		if(!ConfigManager.gettestcases().equals("")) {

@@ -117,4 +117,17 @@ public class RegistrationTasksPageTamil extends RegistrationTasksPage{
 	public boolean isBiometricCorrectionTitleDisplayed() {
 		return isElementDisplayed(biometricCorrectionButton);
 	}
+	
+	public  void clickSynchronizeDataButton() {
+		clickOnElement(synchronizeDataButton);
+		waitTime(50);
+	}
+	
+	public boolean checkLastSyncDate() {
+		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
+		if(contentDesc.contains("Synchronize Data\n"+getCurrentDateWord()+","))
+			return true;
+		else
+			return false;
+	}
 }

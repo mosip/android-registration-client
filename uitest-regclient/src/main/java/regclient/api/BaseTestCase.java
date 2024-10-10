@@ -38,7 +38,7 @@ public class BaseTestCase {
 	public static Properties propsBio = getproperty(
 			TestRunner.getResourcePath() + "/config/bioValue.properties");
 	public static String SEPRATOR = "";
-	public static String currentModule = "AndroidRegClient";
+	public static String currentModule = "androidregclient";
 	public final static String COOKIENAME = "Authorization";
 	public static CommonLibrary kernelCmnLib = null;
 	public static KernelAuthentication kernelAuthLib = null;

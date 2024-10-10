@@ -385,5 +385,8 @@ public class UpdateOperatorBiometricspageKannada extends UpdateOperatorBiometric
 		clickOnElement(homeButton);
 	}
 
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 
 }

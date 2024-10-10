@@ -376,4 +376,7 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 		
 	}
 
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 }

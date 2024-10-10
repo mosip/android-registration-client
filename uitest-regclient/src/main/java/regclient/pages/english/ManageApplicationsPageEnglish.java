@@ -98,36 +98,45 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage{
 	}
 
 	public boolean isPacketUploadDone(String AID) {
-//		waitTime(2);
-//		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-//		if(element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
-//			waitTime(10);
-//			element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-//			if(element.getAttribute("contentDescription").contains("NOT UPLOADED"))
-//				return false;
-//			else
-//				return true;
-//		}
-//		else
+		waitTime(2);
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
+			waitTime(10);
+			element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+			if(element.getAttribute("contentDescription").contains("NOT UPLOADED"))
+				return false;
+			else
+				return true;
+		}
+		else
 			return true;
 	}
 
 	public boolean isPacketApproved(String AID) {
-//		waitTime(2);
-//		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-//		if(element.getAttribute("contentDescription").contains("APPROVED"))
+		waitTime(2);
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("APPROVED"))
 			return true;
-//		else
-//			return false;
+		else
+			return false;
 	}
 
 	public boolean isPacketSynned(String AID) {
-//		waitTime(2);
-//		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-//		if(element.getAttribute("contentDescription").contains("SYNCED"))
+		waitTime(2);
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("SYNCED"))
 			return true;
-//		else
-//			return false;
+		else
+			return false;
+	}
+	
+	public boolean isPacketRejected(String AID) {
+		waitTime(2);
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("REJECTED"))
+			return true;
+		else
+			return false;
 	}
 
 	public  void clickClientStatusDropdown() {
