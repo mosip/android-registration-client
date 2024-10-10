@@ -386,5 +386,9 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 
 }

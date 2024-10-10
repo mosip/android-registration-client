@@ -5,11 +5,14 @@ import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.testng.log4testng.Logger;
 
 import static io.restassured.RestAssured.given;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class RestClient {
 	public static String ZONECODE;
@@ -86,5 +89,40 @@ public class RestClient {
 		RESTCLIENT_LOGGER.info(postResponse.asString());
 		RESTCLIENT_LOGGER.info(postResponse.time());
 		return postResponse;
+	}
+	
+	public static Response getRequestWithCookieAndPathParm(String url, Map<String, String> body, String contentHeader,
+			String acceptHeader, String cookieName, String cookieValue) {
+		Response getResponse;
+		JSONObject responseJson = null;
+
+			RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a GET request to " + url);
+			
+			getResponse = given().config(config).relaxedHTTPSValidation().pathParams(body)
+					.cookie(cookieName, cookieValue).log().all().when().get(url).then().log().all().extract()
+					.response();
+			
+			RESTCLIENT_LOGGER.info( getResponse.asString());
+			RESTCLIENT_LOGGER.info( getResponse.time());
+			responseJson = new JSONObject(getResponse.getBody().asString());
+			if(responseJson.has("response")) {
+				org.json.JSONArray responseArray = responseJson.getJSONArray("response");
+			 ZONECODE = getZoneCode (responseArray,"code");
+				RESTCLIENT_LOGGER.info( ZONECODE);
+				
+			}
+			
+
+		return getResponse;
+	}
+	
+	static String getZoneCode(JSONArray responseArray, String code) {
+		String  ZoneCode="";
+	
+		for (int i = 0; i < responseArray.length(); i++) {
+			ZoneCode = responseArray.getJSONObject(i).getString("code");
+		}
+		
+		return ZoneCode;
 	}
 }
