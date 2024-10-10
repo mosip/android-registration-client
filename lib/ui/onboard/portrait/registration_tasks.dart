@@ -60,6 +60,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                   ),
                   title: AppLocalizations.of(context)!.synchronize_data,
                   ontap: () => widget.syncData(context),
+                  subtitle: null,
                 ),
               )
             : _getSyncDataProvider(),
