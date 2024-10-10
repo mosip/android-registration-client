@@ -111,7 +111,8 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
       ),
       backgroundColor: backgroundColor,
       body: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 0),
+        padding:
+            const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 12),
         child: Column(
           children: [
             const SizedBox(
@@ -119,9 +120,9 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
             ),
             Row(
               children: [
-                const Flexible(
-                  flex: 3,
-                  child: SearchBoxApprove(),
+                Flexible(
+                  flex: isMobileSize ? 2 : 3,
+                  child: const SearchBoxApprove(),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
