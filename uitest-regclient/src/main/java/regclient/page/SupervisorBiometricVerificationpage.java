@@ -104,4 +104,6 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage{
 	public abstract boolean isOperatorOnboardedPopupLoaded();
 	
 	public abstract void clickOnHomeButton();
+	
+	public abstract void clickOnBackButton();
 }

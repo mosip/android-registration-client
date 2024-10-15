@@ -384,4 +384,8 @@ public class UpdateOperatorBiometricspageHindi extends UpdateOperatorBiometricsp
 		clickOnElement(homeButton);
 	}
 	
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
+	
 }

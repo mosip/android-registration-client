@@ -38,5 +38,9 @@ public abstract class RegistrationTasksPage extends BasePage {
 	public abstract boolean isLostUINTitleDisplayed();
 		
 	public abstract boolean isBiometricCorrectionTitleDisplayed();
+	
+    public abstract void clickSynchronizeDataButton();
+
+    public abstract boolean checkLastSyncDate();
 
 }

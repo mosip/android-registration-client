@@ -29,4 +29,12 @@ public abstract class BiometricDetailsPage extends BasePage{
 	public abstract  PreviewPage clickOnContinueButton();
 	
 	public abstract  boolean isAuthenticationBiometricTitleDisplayed();
+	
+    public abstract IntroducerBiometricPage clickOnIntroducerRightHandScan();
+
+    public abstract IntroducerBiometricPage clickOnIntroducerLeftHandScan();
+
+    public abstract IntroducerBiometricPage clickOnIntroducerThumbScan();
+
+    public abstract IntroducerBiometricPage clickOnIntroducerFaceScan();
 }

@@ -29,5 +29,23 @@ public abstract class PendingApproval  extends BasePage{
     public abstract void clickOnBackButton();
     
     public abstract boolean isApprovalButtonDisplayed();
+    
+    public abstract boolean isPageAttributesDisplayed();
+    
+    public abstract boolean isClientStatusDisplayed();
+    
+    public abstract boolean isReviewStatusDisplayed();
+    
+    public abstract  void enterAID(String AID);
+    
+    public abstract boolean isRejectButtonDisplayed();
+    
+    public abstract void clickOnRejectButton();
+    
+    public abstract void selectRejectionReasonDropdown();
+    
+    public abstract boolean isRejectPacketTitleDisplayed();
+    
+    public abstract boolean isSubmitButtonEnabled();
 
 }

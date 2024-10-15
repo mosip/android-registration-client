@@ -86,7 +86,7 @@ public class ManageApplicationsPageHindi extends ManageApplicationsPage{
 		waitTime(2);
 		return isElementDisplayed(driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]")));
 	}
-	
+
 	public boolean isZeroApplicationDisplayed() {
 		waitTime(2);
 		return isElementDisplayed(displayZeroApplication);
@@ -94,18 +94,24 @@ public class ManageApplicationsPageHindi extends ManageApplicationsPage{
 
 	public  void clickOnUploadButton() {
 		clickOnElement(uploadButton);
-		waitTime(20);
+		waitTime(10);
 	}
 
 	public boolean isPacketUploadDone(String AID) {
 		waitTime(2);
 		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-		if(element.getAttribute("contentDescription").contains("NOT UPLOADED"))
-			return false;
+		if(element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
+			waitTime(10);
+			element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+			if(element.getAttribute("contentDescription").contains("NOT UPLOADED"))
+				return false;
+			else
+				return true;
+		}
 		else
 			return true;
 	}
-	
+
 	public boolean isPacketApproved(String AID) {
 		waitTime(2);
 		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
@@ -114,11 +120,20 @@ public class ManageApplicationsPageHindi extends ManageApplicationsPage{
 		else
 			return false;
 	}
-	
+
 	public boolean isPacketSynned(String AID) {
 		waitTime(2);
 		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
 		if(element.getAttribute("contentDescription").contains("SYNCED"))
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isPacketRejected(String AID) {
+		waitTime(2);
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("REJECTED"))
 			return true;
 		else
 			return false;
@@ -163,21 +178,21 @@ public class ManageApplicationsPageHindi extends ManageApplicationsPage{
 	public  void clickOnSearchCheckBox() {
 		clickOnElement(searchCheckBoxButton);
 	}
-	
+
 	public  void selectApprovedValueDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(approvedOption);
 	}	
-	
+
 	public  void selectSyncedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(syncedOption);
 	}
-	
+
 	public  void selectUploadedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(uploadedOption);
-		
+
 	}
 
 	public boolean isReceivedDropdownOptionDisplayed() {
@@ -195,7 +210,7 @@ public class ManageApplicationsPageHindi extends ManageApplicationsPage{
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
 	}
-	
+
 	public void clickOnBackButton() {
 		driver.navigate().back();
 	}
