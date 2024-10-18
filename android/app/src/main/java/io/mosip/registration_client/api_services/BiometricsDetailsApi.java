@@ -989,7 +989,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                     });
                 } else {
                     Toast.makeText(activity.getApplicationContext(),
-                            "Biometrics Matched With Operator Biometrics, Please Try Again",Toast.LENGTH_SHORT).show();
+                            "Unable to capture biometric data",Toast.LENGTH_SHORT).show();
                 }
             }
 
