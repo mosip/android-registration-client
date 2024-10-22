@@ -287,8 +287,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    PreRegZipHandlingService PreRegZipHandlingService(ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade, RegistrationService registrationService, CryptoManagerService cryptoManagerService, PacketKeeper packetKeeper, IPacketCryptoService iPacketCryptoService, MasterDataService masterDataService) {
-        return new PreRegZipHandlingServiceImpl(appContext, applicantValidDocumentDao, identitySchemaService, clientCryptoFacade, registrationService, cryptoManagerService, packetKeeper, iPacketCryptoService, masterDataService);
+    PreRegZipHandlingService PreRegZipHandlingService(ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade, RegistrationService registrationService, CryptoManagerService cryptoManagerService, PacketKeeper packetKeeper, IPacketCryptoService iPacketCryptoService, MasterDataService masterDataService,GlobalParamRepository globalParamRepository) {
+        return new PreRegZipHandlingServiceImpl(appContext, applicantValidDocumentDao, identitySchemaService, clientCryptoFacade, registrationService, cryptoManagerService, packetKeeper, iPacketCryptoService, masterDataService,globalParamRepository);
     }
 
     @Provides
