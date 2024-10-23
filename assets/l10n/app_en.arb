@@ -276,7 +276,7 @@
   "approve": "APPROVE",
   "reject": "REJECT",
   "reject_dialog_heading": "Reject Packet?",
-  "reject_dialog_subheading": "Please select a reason for packet rejection. You can can change you review to approve or reset the status of review later.",
+  "reject_dialog_subheading": "Please select a reason for packet rejection. You can change your review to approve or reset the review status later.",
   "reason_rejection": "Reason for rejection",
   "no_reason_selected": "Please select a reason...",
   "supervisor_auth_heading": "Supervisor's Authentication",
