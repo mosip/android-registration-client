@@ -106,5 +106,7 @@ public abstract class UpdateOperatorBiometricspage extends BasePage{
 	public abstract void clickOnVerifyAndSaveButton();
 
 	public abstract boolean isDismissPageLoaded();
+	
+	public abstract void clickOnBackButton();
 
 }

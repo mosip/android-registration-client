@@ -3,15 +3,14 @@ package regclient.pages.english;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
 
 
 public class IntroducerBiometricPageEnglish extends IntroducerBiometricPage {
-		
-		@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Introducer Biometrics')]")
-		private WebElement introducerBiometricPageTitle;
 		
 		@AndroidFindBy(accessibility = "Iris Scan")
 		private WebElement irisScanButton;
@@ -131,8 +130,9 @@ public class IntroducerBiometricPageEnglish extends IntroducerBiometricPage {
 			return new BiometricDetailsPageEnglish(driver);
 		}
 		
+		@SuppressWarnings("deprecation")
 		public  boolean isIntroducerBiometricsPageDisplyed() {
-			return isElementDisplayed(introducerBiometricPageTitle);
+			return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerBiometrics")+"\")")));
 		}
 		
 		public  boolean isExceptionTypeTitleDisplyed() {

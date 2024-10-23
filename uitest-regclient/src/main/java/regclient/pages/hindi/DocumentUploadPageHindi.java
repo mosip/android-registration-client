@@ -1,59 +1,29 @@
 package regclient.pages.hindi;
 
+import static org.testng.Assert.assertTrue;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
+import regclient.pages.english.BiometricDetailsPageEnglish;
+import regclient.pages.english.DocumentuploadPageEnglish;
 
 public class DocumentUploadPageHindi extends DocumentUploadPage{
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"दस्तावेज़ अपलोड\"))")
-	private WebElement doccumentUploadPage;
-
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Button\")")
-	private WebElement identityProofScanButton;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View")
-	private WebElement addressProofSelectValue;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पहचान प्रमाण\")]/parent::android.view.View/parent::android.view.View")
-	private WebElement identityProofSelectValue;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"संबंध प्रमाण\")]/parent::android.view.View/parent::android.view.View")
-	private WebElement relationshipProofSelectValue;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"जन्मतिथि प्रमाण\")]/parent::android.view.View/parent::android.view.View")
-	private WebElement dobProofSelectValue;
 
 	@AndroidFindBy(accessibility = "स्क्रिम")
 	private WebElement PopUpCloseButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
-	private WebElement scanButtonAddressProof;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पहचान प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
-	private WebElement scanButtonIdentityProof;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"जन्मतिथि प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
-	private WebElement scanButtonDobProof;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"संबंध प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")
-	private WebElement scanButtonRelationshipProof;
-
 	@AndroidFindBy(accessibility = "वापस जाएं")
 	private WebElement backButton;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView")
-	private WebElement previewCaptureImage;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[2]")
-	private WebElement previewSecondCaptureImage;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.ImageView[3]")
-	private WebElement previewThirdCaptureImage;
 
 	@AndroidFindBy(accessibility = "जारी रखें")
 	private WebElement continueButton;
@@ -61,203 +31,154 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 	@AndroidFindBy(accessibility = "मिटाना")
 	private WebElement deleteButton;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"जन्मतिथि प्रमाण\"))")
-	private WebElement dobsHeader;
-
 	@AndroidFindBy(xpath = "//android.widget.ImageView")
 	private WebElement captureImage;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"निवास प्रमाण पत्र\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")
-	private WebElement addressProofReferenceNumberTextbox;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"पहचान प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")
-	private WebElement identityProofReferenceNumberTextbox;
-	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"जन्मतिथि प्रमाण\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")
-	private WebElement dobProofReferenceNumberTextbox;
+	@AndroidFindBy(accessibility = "बचाना")
+	private WebElement saveButton;
 
+	@AndroidFindBy(accessibility = "फिर से लेना")
+	private WebElement retakeButton;
 
+	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
+	private WebElement imageleftCorner;
+	
 	public DocumentUploadPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
 
-	public void selectAddressProof() {
-		while(!isElementDisplayedOnScreen(addressProofSelectValue) || !isElementDisplayedOnScreen(scanButtonAddressProof)) {
-			swipeOrScroll();
-		}
-		clickOnElement(addressProofSelectValue);
-		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-			swipeOrScroll();
-			clickOnElement(addressProofSelectValue);	
-		}
-	}
-
-	public void selectIdentityProof() {
-		while(!isElementDisplayedOnScreen(identityProofSelectValue)|| !isElementDisplayedOnScreen(scanButtonIdentityProof) ) {
-			swipeOrScroll();
-		}
-		clickOnElement(identityProofSelectValue);
-		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-			swipeOrScroll();
-			clickOnElement(identityProofSelectValue);	
-		}
-	}
-
-	public void selectDobProof() {
-		while(!isElementDisplayedOnScreen(dobProofSelectValue) || !isElementDisplayedOnScreen(scanButtonDobProof)) {
-			swipeOrScroll();
-		}
-		clickOnElement(dobProofSelectValue);
-		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-			swipeOrScroll();
-			clickOnElement(dobProofSelectValue);	
-		}
-	}
-
-	public void selectRelationshipProof() {
-		while(!isElementDisplayedOnScreen(relationshipProofSelectValue) || !isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
-			swipeOrScroll();
-		}
-		clickOnElement(relationshipProofSelectValue);
-		if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-			swipeOrScroll();
-			clickOnElement(relationshipProofSelectValue);	
-		}
-	}
-
-	public void selectOnCaptureImage() {
-		clickOnElement(previewCaptureImage);
-	}
-
-	public void closePopUpClose() {
-		clickOnElement(PopUpCloseButton);
-	}
-
-	public CameraPage clickOnAddressProofScanButton() {
-		if(!isElementDisplayedOnScreen(scanButtonAddressProof)) {
-			swipeOrScroll();
-		}
-		clickOnElement(scanButtonAddressProof);
-		return new CameraPage(driver);
-	}
-
-	public CameraPage clickOnScanButtonDobProof() {
-		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
-			swipeOrScroll();
-		}
-		clickOnElement(scanButtonDobProof);
-		return new CameraPage(driver);
-	}
-
-	public CameraPage clickOnScanButtonIdentityProof() {
-		if(!isElementDisplayedOnScreen(scanButtonIdentityProof)) {
-			swipeOrScroll();
-		}
-		clickOnElement(scanButtonIdentityProof);
-		return new CameraPage(driver);
-	}
-
-	public CameraPage clickOnScanButtonRelationshipProof() {
-		if(!isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
-			swipeOrScroll();
-		}
-		clickOnElement(scanButtonRelationshipProof);
-		return new CameraPage(driver);
-	}
-
-	public void clickOnBackButton() {
-		clickOnElement(backButton);
-
-	}
-
-	public void clickOnDeleteButton() {
-		clickOnElement(deleteButton);
-
-	}
-
 	public  BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageHindi(driver);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 
-	public  boolean isImageDisplyed() {
-		waitTime(1);
-		return isElementDisplayed(captureImage);
-	}
-
-	public  boolean isSecondImageDisplyed() {
-		waitTime(1);
-		return isElementDisplayed(previewSecondCaptureImage);
-	}
-
-	public  boolean isThirdImageDisplyed() {
-		waitTime(1);
-		return isElementDisplayed(previewThirdCaptureImage);
-	}
-
-	public  boolean isDeleteButtonDisplyed() {
-		if(!isElementDisplayedOnScreen(deleteButton)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(deleteButton);
-	}
-
+	@SuppressWarnings("deprecation")
 	public boolean isDoccumentUploadPageDisplayed() {
-		return isElementDisplayed(doccumentUploadPage);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("Documents") + "\"))")));
 	}
 
-	public boolean isDobHeaderDisplayed() {
-		return isElementDisplayed(dobsHeader);
+	public  DocumentUploadPage clickOnSaveButton() {
+		clickOnElement(saveButton);
+		return new DocumentuploadPageEnglish(driver);
 	}
 
-	public  boolean isScanButtonAddressProofEnabled() {
-		if(!isElementDisplayedOnScreen(scanButtonAddressProof)) {
-			swipeOrScroll();
-		}
-		return isElementEnabled(scanButtonAddressProof);
+	public boolean isRetakeButtonDisplayed() {
+		return isElementDisplayed(retakeButton);
 	}
 
-	public  boolean isScanButtonIdentityProofEnabled() {
-		if(!isElementDisplayedOnScreen(scanButtonIdentityProof)) {
-			swipeOrScroll();
-		}
-		return isElementEnabled(scanButtonIdentityProof);
+	public void cropCaptureImage() {
+		isElementDisplayed(captureImage);
+		cropCaptureImage(imageleftCorner);
 	}
 
-	public  boolean isScanButtonDobProofEnabled() {
-		if(!isElementDisplayedOnScreen(scanButtonDobProof)) {
-			swipeOrScroll();
+	public void uploadDoccuments(String age,String type) {
+		List<String> idList=FetchUiSpec.getAllIds("Documents");
+		for(String id : idList) {
+			if(FetchUiSpec.getRequiredTypeUsingId(id)) {
+				if(type.equalsIgnoreCase("ReferenceNumber")) {
+					clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")),"1234567890");
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+						swipeOrScroll();
+						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					}
+					clickOnElement(PopUpCloseButton);
+					waitTime(1);
+					boolean isEnabled = isElementEnabled(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.clickimage();
+					cameraPage.clickOkButton();
+					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+					cropCaptureImage();
+					clickOnSaveButton();
+					assertTrue(isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed after upload of "+FetchUiSpec.getValueUsingId(id));
+				}else {
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+						swipeOrScroll();
+						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					}
+					clickOnElement(PopUpCloseButton);
+					waitTime(1);
+					boolean isEnabled = isElementEnabled(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.clickimage();
+					cameraPage.clickOkButton();
+					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+					cropCaptureImage();
+					clickOnSaveButton();
+					assertTrue(isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed after upload of "+FetchUiSpec.getValueUsingId(id));
+				}
+			}if(id.equals("proofOfRelationship")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+						swipeOrScroll();
+						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					}
+					clickOnElement(PopUpCloseButton);
+					waitTime(1);
+					boolean isEnabled = isElementEnabled(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.clickimage();
+					cameraPage.clickOkButton();
+					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+					cropCaptureImage();
+					clickOnSaveButton();
+					assertTrue(isDoccumentUploadPageDisplayed(),"Verify if doccumentupload page is displayed after upload of "+FetchUiSpec.getValueUsingId(id));
+				}
+			}
 		}
-		return isElementEnabled(scanButtonDobProof);
-	}
 
-	public  boolean isScanButtonRelationshipProoffEnabled() {
-		if(!isElementDisplayedOnScreen(scanButtonRelationshipProof)) {
-			swipeOrScroll();
-		}
-		return isElementEnabled(scanButtonRelationshipProof);
 	}
-	
-	public  void enterReferenceNumberInAdressProof() {
-		if(!isElementDisplayedOnScreen(addressProofReferenceNumberTextbox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(addressProofReferenceNumberTextbox,"1234567890");
-		}else
-		clickAndsendKeysToTextBox(addressProofReferenceNumberTextbox,"1234567890");
-	}
-	
-	public  void enterReferenceNumberInIdentityProof() {
-		while(!isElementDisplayedOnScreen(identityProofReferenceNumberTextbox)) {
-			swipeOrScroll();
+	public void uploadDoccumentsUpdate(String age,String type) {
+		List<String> idList=FetchUiSpec.getAllIds("Documents");
+		for(String id : idList) {
+			if(type.equals("all") && !id.equals("proofOfException") && !id.equals("proofOfRelationship")) {
+				clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+				if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+					swipeOrScroll();
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+				}
+				clickOnElement(PopUpCloseButton);
+				waitTime(1);
+				boolean isEnabled = isElementEnabled(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+				assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
+				clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+				CameraPage cameraPage=new CameraPage(driver);
+				cameraPage.clickimage();
+				cameraPage.clickOkButton();
+				assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+				cropCaptureImage();
+				clickOnSaveButton();
+			}if(id.equals("proofOfRelationship")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
+						swipeOrScroll();
+						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
+					}
+					clickOnElement(PopUpCloseButton);
+					waitTime(1);
+					boolean isEnabled = isElementEnabled(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					assertTrue(isEnabled,"Verify if scan  button enabled for "+FetchUiSpec.getValueUsingId(id));
+					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
+					CameraPage cameraPage=new CameraPage(driver);
+					cameraPage.clickimage();
+					cameraPage.clickOkButton();
+					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+					cropCaptureImage();
+					clickOnSaveButton();
+				}
+			}
+
 		}
-		clickAndsendKeysToTextBox(identityProofReferenceNumberTextbox,"1234567890");
-	}
-	
-	public  void enterReferenceNumberInDobProof() {
-		while(!isElementDisplayedOnScreen(dobProofReferenceNumberTextbox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(dobProofReferenceNumberTextbox,"1234567890");
 	}
 
 }

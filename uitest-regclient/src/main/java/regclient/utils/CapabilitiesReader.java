@@ -32,7 +32,7 @@ public class CapabilitiesReader {
     }
 
     public static DesiredCapabilities getDesiredCapabilities(String capabilityName, String capsContentRootLocation) {
-        String jsonLocation = System.getProperty("user.dir") + "/" + capsContentRootLocation;
+        String jsonLocation = TestRunner.getResourcePath() + capsContentRootLocation;
         HashMap<String, Object>  caps = null;
         try {
             caps = convertCapsToHashMap(capabilityName, jsonLocation);

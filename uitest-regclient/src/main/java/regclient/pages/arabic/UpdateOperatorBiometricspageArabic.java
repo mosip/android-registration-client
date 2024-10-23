@@ -369,5 +369,9 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 
 }

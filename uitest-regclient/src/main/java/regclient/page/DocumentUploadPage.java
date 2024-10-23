@@ -9,55 +9,17 @@ public abstract class DocumentUploadPage extends BasePage {
         super(driver);
     }
 
-    public abstract void selectAddressProof();
-
-	public abstract void selectIdentityProof();
-
-	public abstract void selectDobProof();
-
-	public abstract void selectRelationshipProof();
-
-	public abstract void selectOnCaptureImage();
-
-	public abstract void closePopUpClose();
-
-	public abstract CameraPage clickOnAddressProofScanButton();
-
-	public abstract CameraPage clickOnScanButtonDobProof();
-
-	public abstract CameraPage clickOnScanButtonIdentityProof();
-
-	public abstract CameraPage clickOnScanButtonRelationshipProof();
-
-	public abstract void clickOnBackButton();
-
-	public abstract void clickOnDeleteButton();
-
 	public abstract  BiometricDetailsPage clickOnContinueButton();
-
-	public abstract  boolean isImageDisplyed();
-
-	public abstract  boolean isSecondImageDisplyed();
-
-	public abstract  boolean isThirdImageDisplyed();
-
-	public abstract  boolean isDeleteButtonDisplyed();
-
+	
 	public abstract boolean isDoccumentUploadPageDisplayed();
-
-	public abstract boolean isDobHeaderDisplayed();
-
-	public abstract  boolean isScanButtonAddressProofEnabled();
-
-	public abstract  boolean isScanButtonIdentityProofEnabled() ;
-
-	public abstract  boolean isScanButtonDobProofEnabled();
-
-	public abstract  boolean isScanButtonRelationshipProoffEnabled();
 	
-	public abstract  void enterReferenceNumberInAdressProof();
+	public abstract  DocumentUploadPage clickOnSaveButton();
 	
-	public abstract  void enterReferenceNumberInIdentityProof();
+	public abstract boolean isRetakeButtonDisplayed();
 	
-	public abstract  void enterReferenceNumberInDobProof();
+	public abstract void cropCaptureImage();
+	
+	public abstract void uploadDoccuments(String age,String type);
+	
+	public abstract void uploadDoccumentsUpdate(String age,String type);
 }

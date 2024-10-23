@@ -374,4 +374,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 		clickOnElement(homeButton);
 	}
 
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 }

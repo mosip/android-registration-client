@@ -3,57 +3,26 @@
 <suite name="Suite">
 	<test name="Test" thread-count="5">
 		<classes>
-			<class name="androidTestCases.logintest">
+			<class name="regclient.androidTestCases.logintest">
 				<methods>
-					<include name="loginTest" />
-					<include name="getOnBoard" />
+					<include name="ALoginTest" />
+					<include name="OnBoardTest" />
 					<include name="updateOperatorBiometrics" />
 				</methods>
 			</class>
-			<class name="androidTestCases.NewRegistrationAdult">
+			<class name="regclient.androidTestCases.NewRegistrationAdult">
 				<methods>
 					<include name="newRegistrationAdult" />
-					<include name="newRegistrationAdultUploadMultipleDoccuments" />
 				</methods>
 			</class>
-			<class name="androidTestCases.NewRegistrationAdultException">
+			<class name="regclient.androidTestCases.NewRegistrationAdultException">
 				<methods>
 					<include name="newRegistrationAdultException" />
 				</methods>
 			</class>
-			<class name="androidTestCases.NewRegistrationInfant">
-				<methods>
-					<include name="newRegistrationInfant" />
-				</methods>
-			</class>
-			<class name="androidTestCases.NewRegistrationMinor">
-				<methods>
-					<include name="newRegistrationMinor" />
-				</methods>
-			</class>
-			<class name="androidTestCases.NewRegistrationMinorException">
-				<methods>
-					<include name="newRegistrationMinorException" />
-				</methods>
-			</class>
-			<class name="androidTestCases.UpdateMyUinInfant">
-				<methods>
-					<include name="updateMyUinInfant" />
-				</methods>
-			</class>
-			<class name="androidTestCases.UpdateMyUinMinor">
-				<methods>
-					<include name="updateMyUinInfant" />
-				</methods>
-			</class>
-			<class name="androidTestCases.UpdateMyUINUpdateDemographicDetails">
+			<class name="regclient.androidTestCases.UpdateMyUINUpdateDemographicDetails">
 				<methods>
 					<include name="updateMyUINUpdateDemographicDetails" />
-				</methods>
-			</class>
-			<class name="androidTestCases.UpdateMyUinUpdateBiometrics">
-				<methods>
-					<include name="updateMyUINUpdatebiometrics" />
 				</methods>
 			</class>
 		</classes>

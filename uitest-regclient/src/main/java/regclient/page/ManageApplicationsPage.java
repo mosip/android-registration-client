@@ -61,4 +61,6 @@ public abstract class ManageApplicationsPage extends BasePage{
 	public abstract boolean isDeletionDropdownOptionDisplayed();
 	
 	public abstract void clickOnBackButton();
+	
+	public abstract boolean isPacketRejected(String AID);
 }
