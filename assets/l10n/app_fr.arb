@@ -275,7 +275,7 @@
   "approve": "APPROUVER",
   "reject": "REJETER",
   "reject_dialog_heading": "Rejeter le paquet?",
-  "reject_dialog_subheading": "Veuillez sélectionner un motif de rejet du paquet. Vous pouvez modifier votre révision pour l'approuver ou réinitialiser le statut de la révision ultérieurement.",
+  "reject_dialog_subheading": "Veuillez sélectionner un motif de rejet du paquet. Vous pouvez modifier votre avis pour l'approuver ou réinitialiser le statut de l'avis ultérieurement.",
   "reason_rejection": "Raison du rejet",
   "no_reason_selected": "Veuillez sélectionner une raison...",
   "supervisor_auth_heading": "Authentification du superviseur",
