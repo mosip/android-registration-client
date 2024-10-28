@@ -196,11 +196,16 @@ class _CustomScannerState extends State<CustomScanner> {
   }
 
   Future<void> _uploadImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      _pickedFile = await pickedFile.readAsBytes();
-      setState(() {});
+    try {
+      final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+      if (pickedFile != null) {
+        _pickedFile = await pickedFile.readAsBytes();
+        setState(() {});
+      } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      Navigator.pop(context);
     }
   }
 

@@ -105,4 +105,8 @@ public class GlobalParamRepository {
     public String getCachedStringMAVELScript(){
         return globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
     }
+
+    public String getCachedStringPreRegPacketLocation(){
+        return globalParamMap.get(RegistrationConstants.PRE_REG_PACKET_LOCATION);
+    }
 }
