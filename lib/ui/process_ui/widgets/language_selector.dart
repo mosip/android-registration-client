@@ -106,7 +106,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   _getDataEntryLabel() {
     String dataEntryLanguage = "";
     context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code = globalProvider.languageToCodeMapper[element]!;
+      String code = context.read<GlobalProvider>().selectedLanguage;
       dataEntryLanguage +=
           " / ${AppLocalizations.of(context)!.dataEntryLanguage(code)}";
     });
@@ -116,7 +116,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   _getNotificationLabel() {
     String notificationLanguage = "";
     context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code = globalProvider.languageToCodeMapper[element]!;
+      String code = context.read<GlobalProvider>().selectedLanguage;
       notificationLanguage +=
           " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
     });
