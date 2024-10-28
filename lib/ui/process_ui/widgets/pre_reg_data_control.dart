@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/screen.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -173,6 +174,10 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                 values!,
                 globalProvider.fieldInputValue,
               );
+              //set age group
+              BiometricsApi().getAgeGroup().then((value) {
+                globalProvider.ageGroup = value;
+              });
               if(e.id != "gender" && e.fieldType != "dynamic"){
                 GenericData result = GenericData(name: values.toString(), code: values.toString(), langCode: lang);
                 globalProvider.setInputMapValue(

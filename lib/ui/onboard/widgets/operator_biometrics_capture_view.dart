@@ -257,6 +257,7 @@ class _OperatorBiometricsCaptureState
                                     ? appLocalizations.onboarded_successfully
                                     : appLocalizations
                                         .operator_biometric_updated_successfully,
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 28,
                                     fontWeight: semiBold,

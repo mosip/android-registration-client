@@ -89,4 +89,5 @@ public class RegistrationConstants {
     public static final String UI_SCHEMA_SUBTYPE_PHONE = "Phone";
     public static final String SELECTED_HANDLES = "mosip.registration.default-selected-handle-fields";
     public static final String TEMPLATE_IMPORTANT_GUIDELINES = "mosip.registration.important_guidelines";
+    public static final String PRE_REG_PACKET_LOCATION = "mosip.registration.registration_pre_reg_packet_location";
 }
