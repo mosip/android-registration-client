@@ -33,6 +33,8 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../model/screen.dart';
+
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
 
@@ -106,10 +108,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
+    List<Screen?> sortedScreens;
+    sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
     if (process.id == "NEW" || process.id == "UPDATE") {
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");
-      for (var screen in process.screens!) {
+      for (var screen in sortedScreens) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
               field.fieldType == 'default') {
@@ -122,7 +126,10 @@ class _HomePageState extends State<HomePage> {
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
-          newProcess: process,
+          newProcess: Process(label: process.label, autoSelectedGroups: process.autoSelectedGroups,
+              caption: process.caption, flow: process.flow, icon: process.icon, id: process.id,
+              isActive: process.isActive, order: process.order, screens: sortedScreens
+          ),
         ),
       );
     }
