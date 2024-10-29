@@ -33,7 +33,7 @@ jobs:
           ls app/build/outputs/apk/debug
           find -name '*.apk'
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: apk-output
           path: ./client/app/build/outputs/apk/debug/app-debug.apk
