@@ -41,6 +41,7 @@ import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.exception.RegBaseCheckedException;
 import io.mosip.registration.clientmanager.exception.RegBaseUncheckedException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -85,10 +86,11 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
 
     private Map<String, DocumentDto> documents;
     MasterDataService masterDataService;
+    GlobalParamRepository globalParamRepository;
 
     Context appContext;
 
-    public PreRegZipHandlingServiceImpl(Context appContext,ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade,RegistrationService registrationService,CryptoManagerService cryptoManagerService,PacketKeeper packetKeeper,IPacketCryptoService iPacketCryptoService,MasterDataService masterDataService) {
+    public PreRegZipHandlingServiceImpl(Context appContext,ApplicantValidDocumentDao applicantValidDocumentDao, IdentitySchemaRepository identitySchemaService, ClientCryptoManagerService clientCryptoFacade,RegistrationService registrationService,CryptoManagerService cryptoManagerService,PacketKeeper packetKeeper,IPacketCryptoService iPacketCryptoService,MasterDataService masterDataService,GlobalParamRepository globalParamRepository) {
         this.appContext = appContext;
         this.applicantValidDocumentDao = applicantValidDocumentDao;
         this.identitySchemaService = identitySchemaService;
@@ -99,6 +101,7 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
         this.iPacketCryptoService = iPacketCryptoService;
         this.documents = new HashMap<>();
         this.masterDataService = masterDataService;
+        this.globalParamRepository = globalParamRepository;
         try {
             initPreRegAdapter(appContext);
         } catch (Exception e) {
@@ -415,7 +418,8 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
     public String storePreRegPacketToDisk(String preRegistrationId, byte[] encryptedPacket, CenterMachineDto centerMachineDto)
             throws RegBaseUncheckedException {
         try {
-            String PRE_REG_PACKET = ConfigService.getProperty("mosip.registration.registration_pre_reg_packet_location", appContext);
+            //String PRE_REG_PACKET = ConfigService.getProperty("mosip.registration.registration_pre_reg_packet_location", appContext);
+            String PRE_REG_PACKET = this.globalParamRepository.getCachedStringPreRegPacketLocation();
 
             // Generate the file path for storing the Encrypted Packet
             File localFilePath = new File(this.appContext.getFilesDir() + SEPARATOR + PRE_REG_PACKET);

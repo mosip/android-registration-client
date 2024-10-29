@@ -128,7 +128,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           validation: regexPattern,
         );
       default:
-        return Text("${e.controlType}");
+        return (e.controlType!=null)? Text("${e.controlType}"): const SizedBox.shrink();
     }
   }
 
