@@ -36,7 +36,8 @@ class _ApproveTableState extends State<ApproveTable> {
 
   @override
   Widget build(BuildContext context) {
-    double tableWidth = MediaQuery.of(context).size.width + 75;
+    double tableWidth =
+        isMobileSize ? 1000 : MediaQuery.of(context).size.width + 75;
     TextStyle? textTheme = Theme.of(context)
         .textTheme
         .bodySmall
