@@ -188,10 +188,11 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException(context, R.string.err_004);
         }
 
-        if(RegistrationConstants.SELECTED_HANDLES != null){
-        if(this.registrationDto.getFlowType().equals("NEW")) {
-            this.registrationDto.getDemographics().put("selectedHandles", RegistrationConstants.SELECTED_HANDLES);
-        }
+        List<String> selectedHandles = this.globalParamRepository.getSelectedHandles();
+        if(selectedHandles != null) {
+            if (this.registrationDto.getFlowType().equals("NEW")) {
+                this.registrationDto.getDemographics().put("selectedHandles", selectedHandles);
+            }
         }
 
 //        try {
