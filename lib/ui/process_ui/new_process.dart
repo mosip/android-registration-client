@@ -216,6 +216,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   }
 
   bool continueButton = false;
+  bool authButton = false;
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -599,6 +600,11 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       }
     });
 
+    //auth button validation
+    if(username.trim().isNotEmpty && password.trim().isNotEmpty){
+      authButton = true;
+    }
+
     return WillPopScope(
       onWillPop: onWillPop,
       child: SafeArea(
@@ -719,7 +725,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           minimumSize: MaterialStateProperty.all<Size>(
                               const Size(209, 52)),
                           backgroundColor: MaterialStateProperty.all<Color>(
-                              continueButton ? solidPrimary : Colors.grey),
+                              (continueButton && context.read<GlobalProvider>().newProcessTabIndex <=
+                                  size) ? solidPrimary : authButton ? solidPrimary: Colors.grey),
                         ),
                         onPressed: () {
                           continueButtonTap(size, newProcess);
