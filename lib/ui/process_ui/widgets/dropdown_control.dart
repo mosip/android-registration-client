@@ -111,15 +111,17 @@ class _CustomDropDownState extends State<DropDownControl> {
                 parentCode, widget.field.subType!, code);
           }
           for (var item in temp) {
-            if (item!.code == value.code) {
+            if (item!.code == value.code && item.langCode == code) {
               registrationTaskProvider.addSimpleTypeDemographicField(
-                  widget.field.id ?? "", item.name, code);
+                  widget.field.id ?? "", value.name, code);
+              registrationTaskProvider.addSelectedCode(widget.field.id ?? "", value.code);
             }
           }
         }
       } else {
         registrationTaskProvider.addDemographicField(
             widget.field.id ?? "", value.name);
+        registrationTaskProvider.addSelectedCode(widget.field.id ?? "", value.code);
       }
     }
   }

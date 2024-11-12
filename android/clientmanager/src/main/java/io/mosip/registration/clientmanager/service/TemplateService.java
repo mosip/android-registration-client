@@ -493,7 +493,9 @@ public class TemplateService {
         List<String> values = new ArrayList<>();
         List<String> selectedLanguages = registrationDto.getSelectedLanguages();
         for (String selectedLanguage : selectedLanguages) {
+            Log.i(TAG,"get demographic lang ========"+selectedLanguage);
             values.add(getValue(fieldValue, selectedLanguage));
+            Log.i(TAG,"get demographic values ========"+values);
             if (!field.getType().equalsIgnoreCase("simpleType")) {
                 return String.join(SLASH, values);
             }

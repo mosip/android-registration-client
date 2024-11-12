@@ -58,15 +58,17 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
           List<DynamicFieldData?> temp =
               await _getFieldValues(widget.field.id!, code);
           for (var item in temp) {
-            if (item!.code == value.code) {
+            if (item!.code == value.code && item.langCode == code) {
               registrationTaskProvider.addSimpleTypeDemographicField(
-                  widget.field.id ?? "", value.code, code);
+                  widget.field.id ?? "", value.name, code);
+              registrationTaskProvider.addSelectedCode(widget.field.id ?? "", value.code);
             }
           }
         }
       } else {
         registrationTaskProvider.addDemographicField(
-            widget.field.id ?? "", value.code);
+            widget.field.id ?? "", value.name);
+        registrationTaskProvider.addSelectedCode(widget.field.id ?? "", value.code);
       }
     }
   }
