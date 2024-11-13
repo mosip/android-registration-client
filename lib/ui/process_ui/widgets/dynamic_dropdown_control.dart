@@ -60,8 +60,8 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
           temp.forEach((element) {
             if (element!.code == value.code && element.langCode == code) {
               registrationTaskProvider.addSimpleTypeDemographicField(
-                  widget.field.id ?? "", value.name, code);
-              registrationTaskProvider.addSelectedCode(widget.field.id ?? "", value.code);
+                  widget.field.id ?? "", element.name, code);
+              registrationTaskProvider.addSelectedCode(widget.field.id ?? "", element.code);
             }
           });
         }
