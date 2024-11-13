@@ -33,5 +33,7 @@ abstract class DemographicService {
 
   Future<void> changeUpdatableFieldGroups();
 
+  Future<void> addSelectedCode(String fieldId,String code);
+
   factory DemographicService() => getDemographicServiceImpl();
 }

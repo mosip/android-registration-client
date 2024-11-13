@@ -29,10 +29,10 @@ class GenderControl extends StatefulWidget {
 }
 
 class _CustomDynamicDropDownState extends State<GenderControl> {
-  late String selected;
+  String? selected;
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
-  late List<DynamicFieldData?> fieldValueData;
+  List<DynamicFieldData?>? fieldValueData;
 
   @override
   void initState() {
@@ -52,9 +52,9 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
             .getFieldValues(
                 widget.field.subType!, lang, globalProvider.chosenLang);
         setState(() {
-          selected = fieldValueData[0]!.name;
+          selected = fieldValueData![0]!.name;
         });
-        saveData(fieldValueData[0]!.code, fieldValueData[0]!.name);
+        saveData(fieldValueData![0]!.name, fieldValueData![0]!.code);
         _saveDataToMap(selected);
       }
     });
@@ -62,16 +62,25 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     super.initState();
   }
 
-  void saveData(value, name) {
+  void saveData(value, fieldCode) async{
     if (widget.field.type == 'simpleType') {
       for (var element in globalProvider.chosenLang) {
         String code = globalProvider.languageToCodeMapper[element]!;
-        registrationTaskProvider.addSimpleTypeDemographicField(
-            widget.field.id ?? "", value, code);
+        List<DynamicFieldData?> result =
+        await registrationTaskProvider.getFieldValues(
+            widget.field.subType!, code, globalProvider.chosenLang);
+        result.forEach((element) {
+          if(element!.code == fieldCode && element.langCode == code){
+            registrationTaskProvider.addSimpleTypeDemographicField(
+                widget.field.id ?? "", element.name, code);
+          }
+        });
+        registrationTaskProvider.addSelectedCode(widget.field.id ?? "", fieldCode);
       }
     } else {
       registrationTaskProvider.addDemographicField(
           widget.field.id ?? "", value);
+      registrationTaskProvider.addSelectedCode(widget.field.id ?? "", fieldCode);
     }
   }
 
@@ -250,11 +259,13 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
                                           setState(() {
                                             selected = e[mandatoryLang] ?? "";
                                           });
-                                          for (var e in fieldValueData) {
+                                        if(fieldValueData!=null) {
+                                          for (var e in fieldValueData!) {
                                             if (e!.name == selected) {
-                                              saveData(e.code, e.name);
+                                              saveData(e.name, e.code);
                                             }
                                           }
+                                        }
                                           _saveDataToMap(e[mandatoryLang]);
                                         },
                                         child: ChoiceChip(

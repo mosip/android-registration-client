@@ -151,6 +151,18 @@ class DemographicServiceImpl implements DemographicService {
       debugPrint('Updatable fields not removed ${e.toString()}');
     }
   }
+
+  @override
+  Future<void> addSelectedCode(String fieldId, String code) async {
+    try {
+      await DemographicsApi()
+          .addSelectedCode(fieldId, code);
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Selected Code not added ${e.toString()}');
+    }
+  }
 }
 
 DemographicService getDemographicServiceImpl() => DemographicServiceImpl();
