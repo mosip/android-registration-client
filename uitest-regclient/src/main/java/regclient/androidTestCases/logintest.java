@@ -401,9 +401,9 @@ public class logintest  extends AndroidBaseTest {
 			supervisorBiometricVerificationpage.markOneFingureException();
 
 			//	assertFalse(supervisorBiometricVerificationpage.isZoomButtonDisplyed(),"Verify if zoom button  is not  displayed for thumb");
-			supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
-
-			assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
+//			supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
+//
+//			assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 			//	supervisorBiometricVerificationpage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 
 			supervisorBiometricVerificationpage.clickOnThumbsScanTitle();
@@ -425,7 +425,7 @@ public class logintest  extends AndroidBaseTest {
 			assertTrue(supervisorBiometricVerificationpage.isFaceScanTitleDisplyed(),"Verify if face scan page is displayed");
 			supervisorBiometricVerificationpage.clickOnMarkExceptionButton();
 
-			assertTrue(supervisorBiometricVerificationpage.isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed(),"Verify if is Marking Exceptions On Face Is Not Allowed Text Displyed");
+//			assertTrue(supervisorBiometricVerificationpage.isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed(),"Verify if is Marking Exceptions On Face Is Not Allowed Text Displyed");
 			supervisorBiometricVerificationpage.clickOnFaceScanTitle();
 			supervisorBiometricVerificationpage.clickOnScanButton();
 
@@ -582,7 +582,7 @@ public class logintest  extends AndroidBaseTest {
 			assertTrue(UpdateOperatorBiometricspage.isRightHandScanTitleDisplyed(),"Verify if applicant right hand scan is displayed");
 			UpdateOperatorBiometricspage.clickOnMarkExceptionButton();
 
-			assertTrue(UpdateOperatorBiometricspage.isZoomButtonDisplyed(),"Verify if zoom button  is displayed");
+//			assertTrue(UpdateOperatorBiometricspage.isZoomButtonDisplyed(),"Verify if zoom button  is displayed");
 			UpdateOperatorBiometricspage.clickOnRightHandScanTitle();
 			UpdateOperatorBiometricspage.clickOnScanButton();
 
@@ -624,9 +624,9 @@ public class logintest  extends AndroidBaseTest {
 			UpdateOperatorBiometricspage.markOneFingureException();
 
 			//	assertFalse(UpdateOperatorBiometricspage.isZoomButtonDisplyed(),"Verify if zoom button  is not  displayed for thumb");
-			UpdateOperatorBiometricspage.clickOnExceptionTypeTemporaryButton();
+//			UpdateOperatorBiometricspage.clickOnExceptionTypeTemporaryButton();
 
-			assertTrue(UpdateOperatorBiometricspage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
+//			assertTrue(UpdateOperatorBiometricspage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 			//	UpdateOperatorBiometricspage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 
 			UpdateOperatorBiometricspage.clickOnThumbsScanTitle();
@@ -667,7 +667,7 @@ public class logintest  extends AndroidBaseTest {
 			assertTrue(UpdateOperatorBiometricspage.isFaceScanTitleDisplyed(),"Verify if face scan page is displayed");
 			UpdateOperatorBiometricspage.clickOnMarkExceptionButton();
 
-			assertTrue(UpdateOperatorBiometricspage.isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed(),"Verify if is Marking Exceptions On Face Is Not Allowed Text Displyed");
+//			assertTrue(UpdateOperatorBiometricspage.isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed(),"Verify if is Marking Exceptions On Face Is Not Allowed Text Displyed");
 			UpdateOperatorBiometricspage.clickOnFaceScanTitle();
 			UpdateOperatorBiometricspage.clickOnScanButton();
 

@@ -10,7 +10,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 public class OperationalTaskPageEnglish extends OperationalTaskPage{
 
 
-	@AndroidFindBy(accessibility = "Update Operator Biometrics")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Update Operator Biometrics\")")
 	private WebElement updateOperatorBiometricsButton;
 	
 	@AndroidFindBy(accessibility = "System Storage Usage")
@@ -19,10 +19,10 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchronize Data\")")
 	private WebElement synchronizeDataButton ;
 	
-	@AndroidFindBy(accessibility = "Application Upload")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Application Upload\")")
 	private WebElement applicationUploadTitle;
 	
-	@AndroidFindBy(accessibility = "Pending Approval")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Pending Approval\")")
 	private WebElement pendingApprovalTitle;
 
 	public OperationalTaskPageEnglish(AppiumDriver driver) {

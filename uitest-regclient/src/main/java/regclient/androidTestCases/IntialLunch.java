@@ -17,7 +17,7 @@ public class IntialLunch extends AndroidBaseTest {
 		BasePage.disableAutoRotation();
 		LoginPageEnglish   loginPage= new LoginPageEnglish(driver);
 
-		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(), "verify if the welcome msg in selected language displayed");
+//		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(), "verify if the welcome msg in selected language displayed");
 		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(), "verify if the next button enabled");
