@@ -88,6 +88,7 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
                 DynamicResponsePigeon.DynamicFieldData data = new DynamicResponsePigeon.DynamicFieldData.Builder()
                         .setCode(dto.getCode())
                         .setName(dto.getName())
+                        .setLangCode(dto.getLangCode())
                         .setConcatenatedName(value)
                         .build();
                 response.add(data);
