@@ -32,11 +32,13 @@ class LanguageData {
 class DynamicFieldData{
   final String code;
   final String name;
+  final String langCode;
   final String concatenatedName;
 
   DynamicFieldData({
     required this.code,
     required this.name,
+    required this.langCode,
     required this.concatenatedName,
   });
 }

@@ -82,6 +82,7 @@ public class RegistrationDto extends Observable {
     public Map<Modality, Object> BIO_DEVICES;
     private OperatorDto maker;
     private OperatorDto reviewer;
+    public Map<String, String> SELECTED_CODES = new HashMap<>();
 
     public RegistrationDto(@NonNull String rid, @NonNull String flowType, @NonNull String process,
                            @NonNull Double schemaVersion, @NonNull List<String> languages,
@@ -398,6 +399,7 @@ public class RegistrationDto extends Observable {
         this.biometrics.clear();
         this.AGE_GROUPS.clear();
         this.EXCEPTIONS.clear();
+        this.SELECTED_CODES.clear();
         this.selectedLanguages.removeIf(o->true);
 
         deleteObservers();
@@ -406,6 +408,7 @@ public class RegistrationDto extends Observable {
     public void changeUpdatableFieldGroups() {
         this.demographics.clear();
         this.AGE_GROUPS.clear();
+        this.SELECTED_CODES.clear();
         clearAndNotifyAllObservers();
     }
 
@@ -445,6 +448,7 @@ public class RegistrationDto extends Observable {
         allIdentityDetails.putAll(this.documents);
         allIdentityDetails.putAll(this.biometrics);
         allIdentityDetails.putAll(this.AGE_GROUPS);
+        allIdentityDetails.putAll(this.SELECTED_CODES);
         allIdentityDetails.put("isBioException", this.EXCEPTIONS.size() > 0);
         if(!allIdentityDetails.containsKey(RegistrationConstants.AGE))
             allIdentityDetails.put(RegistrationConstants.AGE, 0);
