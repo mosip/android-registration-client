@@ -1,26 +1,18 @@
 package regclient.utils;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.text.NumberFormat;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 
@@ -33,6 +25,8 @@ import org.testng.Reporter;
 import org.testng.collections.Lists;
 import org.testng.internal.Utils;
 import org.testng.xml.XmlSuite;
+
+import regclient.api.ConfigManager;
 
 
 
@@ -131,7 +125,7 @@ public class EmailableReport implements IReporter {
 
 	protected void writeStylesheet() {
 		writer.print("<style type=\"text/css\">");
-		writer.print("table {margin-bottom:10px;border-collapse:collapse;empty-cells:show}");
+		writer.print("table {margin-bottom:10px;border-collapse:collapse;empty-cells:show;width: 100%;}");
 		writer.print("th,td {border:1px solid #009;padding:.25em .5em}");
 		writer.print("th {vertical-align:bottom}");
 		writer.print("td {vertical-align:top}");
@@ -176,9 +170,8 @@ public class EmailableReport implements IReporter {
 		for (SuiteResult suiteResult : suiteResults) {
 
 			writer.print("<tr><th colspan=\"7\">");
-			writer.print(Utils.escapeHtml("Android Regclient Ui Automation" ));
+			writer.print(Utils.escapeHtml("Android Regclient Ui Automation      -------   Env - "+ConfigManager.getEnv() ));
 			writer.print("</th></tr>");
-
 			writer.print("<tr><th colspan=\"7\"><span class=\"not-bold\"><pre>");
 			writer.print(Utils.escapeHtml("Date and Time  ")+printCurrentDateTime());
 			writer.print("</pre></span>");

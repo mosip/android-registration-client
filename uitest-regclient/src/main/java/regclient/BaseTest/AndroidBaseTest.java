@@ -1,4 +1,4 @@
-package BaseTest;
+package regclient.BaseTest;
 
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;

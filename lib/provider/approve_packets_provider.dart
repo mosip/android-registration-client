@@ -245,6 +245,11 @@ class ApprovePacketsProvider with ChangeNotifier {
     for (int i = 0; i < matchingPackets.length; i++) {
       Registration reg = matchingPackets[i]["packet"] as Registration;
       if (reg.packetId == packetId) {
+        if (matchingSelected[i]) {
+          matchingSelected[i] = false;
+          countSelected -= 1;
+        }
+
         matchingPackets[i] = {
           "packet": reg,
           "review_status": ReviewStatus.NOACTIONTAKEN.name,

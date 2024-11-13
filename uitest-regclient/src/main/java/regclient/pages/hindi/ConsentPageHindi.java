@@ -3,43 +3,36 @@ package regclient.pages.hindi;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
+import regclient.pages.english.DemographicDetailsPageEnglish;
+import regclient.pages.english.RegistrationTasksPageEnglish;
 
 
 public class ConsentPageHindi extends ConsentPage{
 
-	@AndroidFindBy(accessibility = "सहमति")
-	private WebElement consentPage;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().className(\"android.widget.CheckBox\"))")
-	private WebElement termAndConditionCheckBox;
-
 	@AndroidFindBy(accessibility = "सूचित")
 	private WebElement informedButton;
-	
+
 	@AndroidFindBy(accessibility = "रद्द करना")
 	private WebElement cancelButton;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"मैंने अपना पीआईआई साझा करने के लिए नियम और शर्तें पढ़ ली हैं और स्वीकार करता हूं \"))")
-	private WebElement checkBoxDiscription;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"UIN अपडेट करें\"))")
-	private WebElement updateUINTitle;
 
-	
 	public ConsentPageHindi(AppiumDriver driver) {
 		super(driver);
-}
-	
-	public boolean isConsentPageDisplayed() {
-		return isElementDisplayed(consentPage);
 	}
 
+	@SuppressWarnings("deprecation")
+	public boolean isConsentPageDisplayed() {
+		return isElementDisplayed(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("consentdet") + "\"))"));		
+	}
+
+	@SuppressWarnings("deprecation")
 	public boolean isCheckBoxReadable() {
-		return isElementDisplayed(checkBoxDiscription);
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("consent") + "\"))")));
 	}
 
 	public  boolean isInformedButtonEnabled() {
@@ -48,16 +41,18 @@ public class ConsentPageHindi extends ConsentPage{
 
 	public  DemographicDetailsPage clickOnInformedButton() {
 		clickOnElement(informedButton);
-		return new DemographicDetailsPageHindi(driver);
+		return new DemographicDetailsPageEnglish(driver);
 	}
 
 
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
-		return new  RegistrationTasksPageHindi(driver);
+		return new  RegistrationTasksPageEnglish(driver);
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	public boolean updateUINTitleDisplayed() {
-		return isElementDisplayed(updateUINTitle);
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
+
 }

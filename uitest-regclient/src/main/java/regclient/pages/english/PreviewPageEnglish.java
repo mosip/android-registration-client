@@ -3,19 +3,15 @@ package regclient.pages.english;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.AuthenticationPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.PreviewPage;
 
 
 public class PreviewPageEnglish extends PreviewPage {
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Update UIN\"))")
-	private WebElement updateUINTitle;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"New Registration\"))")
-	private WebElement newRegistrationTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Demographic Information\"))")
 	private WebElement demographicInformationInPreviewPage;
@@ -25,9 +21,6 @@ public class PreviewPageEnglish extends PreviewPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Documents\"))")
 	private WebElement documentsInformationInPreviewPage;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Demographic Details\"))")
-	private WebElement demographicDetailsTitle;
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text(\"Biometrics\"))")
 	private WebElement biometricsInformationInPreviewPage;
@@ -65,20 +58,24 @@ public class PreviewPageEnglish extends PreviewPage {
 		return isElementDisplayed(biometricsInformationInPreviewPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean isNewRegistrationTitleDisplayed() {
-		return isElementDisplayed(newRegistrationTitle);
+		return isElementDisplayed(findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("NEW") + "\"))")));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean updateUINTitleDisplayed() {
-		return isElementDisplayed(updateUINTitle);
+		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 	
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
+		waitTime(1);
 		return isElementDisplayed(applicationIDPreviewPage);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
-		clickOnElement(demographicDetailsTitle);
+		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
 		return new DemographicDetailsPageEnglish(driver);
 	}
 	

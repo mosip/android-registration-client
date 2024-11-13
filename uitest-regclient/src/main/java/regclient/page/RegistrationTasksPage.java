@@ -32,4 +32,15 @@ public abstract class RegistrationTasksPage extends BasePage {
 	public abstract  ProfilePage clickProfileButton();
 	
 	public abstract  SelectLanguagePage clickUpdateMyUINButton();
+	
+	public abstract boolean isUpdateUINTitleDisplayed();
+	
+	public abstract boolean isLostUINTitleDisplayed();
+		
+	public abstract boolean isBiometricCorrectionTitleDisplayed();
+	
+    public abstract void clickSynchronizeDataButton();
+
+    public abstract boolean checkLastSyncDate();
+
 }

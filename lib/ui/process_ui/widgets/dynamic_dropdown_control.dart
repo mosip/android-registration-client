@@ -57,16 +57,18 @@ class _CustomDynamicDropDownState extends State<DynamicDropDownControl> {
           String code = globalProvider.languageToCodeMapper[element]!;
           List<DynamicFieldData?> temp =
               await _getFieldValues(widget.field.id!, code);
-          for (var item in temp) {
-            if (item!.code == value.code) {
+          temp.forEach((element) {
+            if (element!.code == value.code && element.langCode == code) {
               registrationTaskProvider.addSimpleTypeDemographicField(
-                  widget.field.id ?? "", value.code, code);
+                  widget.field.id ?? "", element.name, code);
+              registrationTaskProvider.addSelectedCode(widget.field.id ?? "", element.code);
             }
-          }
+          });
         }
       } else {
         registrationTaskProvider.addDemographicField(
-            widget.field.id ?? "", value.code);
+            widget.field.id ?? "", value.name);
+        registrationTaskProvider.addSelectedCode(widget.field.id ?? "", value.code);
       }
     }
   }

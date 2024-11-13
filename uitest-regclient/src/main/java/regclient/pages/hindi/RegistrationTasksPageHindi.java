@@ -42,6 +42,12 @@ public class RegistrationTasksPageHindi  extends RegistrationTasksPage{
 	
 	@AndroidFindBy(accessibility = "UIN अपडेट करें")
 	private WebElement updateUinButton;
+	
+	@AndroidFindBy(accessibility = "खोया यूआईएन")
+	private WebElement lostUinButton;
+	
+	@AndroidFindBy(accessibility = "Biometric correction")
+	private WebElement biometricCorrectionButton;
 
 	public RegistrationTasksPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -99,5 +105,30 @@ public class RegistrationTasksPageHindi  extends RegistrationTasksPage{
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageHindi(driver);
 	}	
+	
+	public boolean isUpdateUINTitleDisplayed() {
+		return isElementDisplayed(updateUinButton);
+	}
+	
+	public boolean isLostUINTitleDisplayed() {
+		return isElementDisplayed(lostUinButton);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionButton);
+	}
+	
+	public  void clickSynchronizeDataButton() {
+		clickOnElement(synchronizeDataButton);
+		waitTime(50);
+	}
+	
+	public boolean checkLastSyncDate() {
+		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
+		if(contentDesc.contains("Synchronize Data\n"+getCurrentDateWord()+","))
+			return true;
+		else
+			return false;
+	}
 
 }

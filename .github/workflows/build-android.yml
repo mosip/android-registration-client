@@ -1,6 +1,7 @@
 name: Build Android Registration-Client
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - release*
@@ -37,11 +38,17 @@ jobs:
       # - name: Flutter test
       #   run: flutter test
 
+      - name: Decode android/app/arc-local-keystore.jks
+        run: echo "${{ secrets.JKS_PRIVATE_SECRET }}" | base64 --decode > android/app/arc-local-keystore.jks
+
+      - name: Decode android/key.properties
+        run: echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
+
       - name: Build Android APK
         run: flutter build apk
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: apk-output
           path: ./build/app/outputs/flutter-apk/app-release.apk

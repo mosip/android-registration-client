@@ -27,6 +27,8 @@ class TemplateBottomSheet {
   }
 
   Widget bottomSheet(BuildContext context) {
+    bool isPortrait = true;
+    isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return ChangeNotifierProvider<ApprovePacketsProvider>.value(
       value: context.watch<ApprovePacketsProvider>(),
       builder: (context, _) {
@@ -58,7 +60,7 @@ class TemplateBottomSheet {
                 child: SingleChildScrollView(
                   controller: ScrollController(),
                   child: SizedBox(
-                    height: 1400,
+                    height: isPortrait ? 1400 : 2400,
                     child: WebViewPlus(
                       zoomEnabled: true,
                       onWebViewCreated: (controller) async {
@@ -119,6 +121,8 @@ class TemplateBottomSheet {
                     children: [
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
+                          disabledForegroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey.withOpacity(0.5),
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 18),
                         ),
@@ -197,12 +201,14 @@ class TemplateBottomSheet {
                                     });
                               },
                         style: OutlinedButton.styleFrom(
+                          disabledForegroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey.withOpacity(0.5),
                           foregroundColor: Colors.red,
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 18),
                           side: BorderSide(
                               color: reviewStatus == ReviewStatus.REJECTED.name
-                                  ? Colors.grey
+                                  ? Colors.transparent
                                   : Colors.red,
                               width: 2),
                         ),
