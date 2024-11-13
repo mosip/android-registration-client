@@ -109,4 +109,13 @@ public class GlobalParamRepository {
     public String getCachedStringPreRegPacketLocation(){
         return globalParamMap.get(RegistrationConstants.PRE_REG_PACKET_LOCATION);
     }
+
+    public List<String> getSelectedHandles() {
+        String value = globalParamMap.getOrDefault(RegistrationConstants.SELECTED_HANDLES, "");
+        return Arrays.asList(value.split(RegistrationConstants.COMMA)).stream()
+                .map(String::trim)
+                .filter(item-> !item.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }
