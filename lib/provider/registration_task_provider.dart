@@ -189,6 +189,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     await demographics.addDemographicField(fieldId, value);
   }
 
+  addSelectedCode(String fieldId, String code) async {
+    await demographics.addSelectedCode(fieldId, code);
+  }
+
   getDemographicField(String fieldId) async {
     return await demographics.getDemographicField(fieldId);
   }
