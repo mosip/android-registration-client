@@ -26,7 +26,13 @@ public class ConsentPageEnglish extends ConsentPage{
 
 	@SuppressWarnings("deprecation")
 	public boolean isConsentPageDisplayed() {
-			return isElementDisplayed(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("consentdet") + "\"))"));		
+		String title;
+		if (FetchUiSpec.getScreenTitle("consentdet") != null) {
+		    title = FetchUiSpec.getScreenTitle("consentdet");
+		} else {
+		    title = FetchUiSpec.getScreenTitle("consent");
+		}
+			return isElementDisplayed(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + title + "\"))"));		
 	}
 
 	@SuppressWarnings("deprecation")

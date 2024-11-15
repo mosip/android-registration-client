@@ -266,7 +266,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 		updateUINPage.clickOnContinueButton();
 		for(String screen :screenOrder) {
-			if(screen.equals("consentdet")) {
+			if(screen.equals("consentdet") || screen.equals("consent"))  {
 				if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 					consentPage =new ConsentPageEnglish(driver);
 				} 

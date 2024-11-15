@@ -2,6 +2,7 @@ package regclient.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,23 +51,26 @@ public class FetchUiSpec extends BaseTestCase{
 	}
 
 	public static List<String> getAllScreenOrder() {
-		  List<String> screenNames = new ArrayList<>();
-
-	        JSONObject jsonObject = new JSONObject(UiSpec);
-	        JSONArray responseArray = jsonObject.getJSONArray("response");
-
-	        JSONArray jsonSpecArray = responseArray.getJSONObject(0).getJSONArray("jsonSpec");
-	        JSONObject specObject = jsonSpecArray.getJSONObject(0).getJSONObject("spec");
-	        JSONArray screensArray = specObject.getJSONArray("screens");
-
-	        for (int i = 0; i < screensArray.length(); i++) {
-	            JSONObject screen = screensArray.getJSONObject(i);
-	            String name = screen.getString("name");
-	            screenNames.add(name);
-	        }
-
-	        return screenNames;
-	    }
+		List<String> screenNames = new ArrayList<>();
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode rootNode = null;
+		try {
+			rootNode = mapper.readTree(UiSpec);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		JsonNode screensNode = rootNode.path("response").get(0)
+				.path("jsonSpec").get(0)
+				.path("spec").path("screens");
+		List<JsonNode> screens = new ArrayList<>();
+		screensNode.forEach(screens::add);
+		screens.stream()
+		.sorted(Comparator.comparingInt(screen -> screen.path("order").asInt()))
+		.forEach(screen -> screenNames.add(screen.path("name").asText()));
+		return screenNames;
+	}
 
 	
 	
