@@ -18,12 +18,12 @@ public class CameraPage  extends BasePage{
 	}
 
 	public  void clickOkButton() {
-		if(isElementDisplayed(okButton))
-			clickOnElement(okButton);		
-		else {
+//		if(isElementDisplayed(okButton))
+//			clickOnElement(okButton);		
+//		else {
 			waitTime(7);
 			clickAtCoordinates(633,2042);
-		}
+//		}
 	}
 
 	public  void clickimage() {
