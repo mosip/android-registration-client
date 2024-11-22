@@ -164,7 +164,6 @@ class _HtmlRendererState extends State<HtmlRenderer> {
       DemographicsApi().getHashValue(unit8List).then((value) {
         hash = value;
         globalProvider.fieldInputValue[widget.field.id!] = hash;
-        debugPrint("ID : ${widget.field.id!}");
         DemographicsApi().addSimpleTypeDemographicField(
             widget.field.id!,
             value,

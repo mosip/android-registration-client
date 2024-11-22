@@ -42,4 +42,7 @@ abstract class DemographicsApi {
 
   @async
   String changeUpdatableFieldGroups();
+
+  @async
+  void addSelectedCode(String fieldId,String code);
 }
