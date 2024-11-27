@@ -290,10 +290,10 @@ public class PacketServiceImpl implements PacketService {
         if (registrations == null || registrations.size() == 0)
             return;
 
-        String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+        String serverVersion = globalParamRepository != null ? this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION):"";
 
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId(serverVersion.startsWith("1.1.5") ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
+        packetStatusRequest.setId((serverVersion.startsWith("1.1.5")) ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
         packetStatusRequest.setVersion(PACKET_SYNC_VERSION);
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         List<PacketIdDto> packets = new ArrayList<>();

@@ -16,7 +16,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
+import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
+import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
+import io.mosip.registration.clientmanager.dao.TemplateDao;
 import io.mosip.registration.clientmanager.dto.http.IdSchemaResponse;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
@@ -41,7 +44,15 @@ public class IdentitySchemaRepositoryTest {
                 .build();
 
         IdentitySchemaDao identitySchemaDao = clientDatabase.identitySchemaDao();
-        identitySchemaRepository = new IdentitySchemaRepository(identitySchemaDao);
+        //template dao
+        TemplateDao templateDao = clientDatabase.templateDao();
+        TemplateRepository templateRepository = new TemplateRepository(templateDao);
+        //global param dao
+        GlobalParamDao globalParamDao = clientDatabase.globalParamDao();
+        GlobalParamRepository globalParamRepository = new GlobalParamRepository(globalParamDao);
+
+        ProcessSpecDao processSpecDao = clientDatabase.processSpecDao();
+        identitySchemaRepository = new IdentitySchemaRepository(templateRepository, globalParamRepository, identitySchemaDao,processSpecDao);
 
         ProcessSpecDto processSpecDto = new ProcessSpecDto();
         ScreenSpecDto screen = new ScreenSpecDto();
