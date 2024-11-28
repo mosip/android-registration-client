@@ -65,11 +65,11 @@ public class JobManagerServiceImplTest {
         long lastSyncTime = 1609459200L;  // Example timestamp
 
         when(mockJobTransactionService.getLastSyncTime(jobId)).thenReturn(lastSyncTime);
-        when(mockDateUtil.getDateTime(lastSyncTime)).thenReturn("2021-01-01 00:00:00");
+        when(mockDateUtil.getDateTime(lastSyncTime)).thenReturn("2024-11-27 00:00:00");
 
         String lastSync = jobManagerService.getLastSyncTime(jobId);
 
-        assertEquals("2021-01-01 00:00:00", lastSync);
+        assertEquals("2024-11-27 00:00:00", lastSync);
     }
 
     @Test
@@ -79,10 +79,10 @@ public class JobManagerServiceImplTest {
         long nextSyncTime = lastSyncTime + 15 * 60;
 
         when(mockJobTransactionService.getLastSyncTime(jobId)).thenReturn(lastSyncTime);
-        when(mockDateUtil.getDateTime(nextSyncTime)).thenReturn("2021-01-01 00:15:00");
+        when(mockDateUtil.getDateTime(nextSyncTime)).thenReturn("2024-11-27 00:15:00");
 
         String nextSync = jobManagerService.getNextSyncTime(jobId);
 
-        assertEquals("2021-01-01 00:15:00", nextSync);
+        assertEquals("2024-11-27 00:15:00", nextSync);
     }
 }
