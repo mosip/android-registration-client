@@ -284,8 +284,12 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                                 .fetchPreRegistrationDetail(
                                 preRegIdController.text);
                             if (value.isNotEmpty) {
+                              globalProvider.clearMap();
+                              globalProvider.clearScannedPages();
                               widgetValue(widget.screen, value);
                             } else {
+                              globalProvider.clearMap();
+                              globalProvider.clearScannedPages();
                               globalProvider.preRegControllerRefresh = false;
                             }
                         }
@@ -335,8 +339,12 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             .fetchPreRegistrationDetail(
                             preRegIdController.text);
                         if (value.isNotEmpty) {
+                          globalProvider.clearMap();
+                          globalProvider.clearScannedPages();
                           widgetValue(widget.screen, value);
                         } else {
+                          globalProvider.clearMap();
+                          globalProvider.clearScannedPages();
                           globalProvider.preRegControllerRefresh = false;
                         }
                       }
