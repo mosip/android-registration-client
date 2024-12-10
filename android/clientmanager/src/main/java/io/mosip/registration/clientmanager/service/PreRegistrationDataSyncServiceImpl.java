@@ -251,7 +251,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         return attributes;
     }
 
-    public PreRegistrationList downloadAndSavePacket(@NonNull String preRegistrationId,
+    private PreRegistrationList downloadAndSavePacket(@NonNull String preRegistrationId,
                                                      String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();

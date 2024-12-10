@@ -290,16 +290,16 @@ public class PacketServiceImpl implements PacketService {
         if (registrations == null || registrations.size() == 0)
             return;
 
-        String serverVersion = globalParamRepository != null ? this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION):"";
+        String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
 
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId((serverVersion.startsWith("1.1.5")) ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
+        packetStatusRequest.setId((serverVersion!=null && serverVersion.startsWith("1.1.5")) ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
         packetStatusRequest.setVersion(PACKET_SYNC_VERSION);
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         List<PacketIdDto> packets = new ArrayList<>();
         for (Registration reg : registrations) {
             PacketIdDto packet = new PacketIdDto();
-            if (serverVersion.startsWith("1.1.5")) {
+            if (serverVersion!=null && serverVersion.startsWith("1.1.5")) {
                 packet.setRegistrationId(reg.getPacketId());
             } else {
                 packet.setPacketId(reg.getPacketId());
@@ -307,7 +307,7 @@ public class PacketServiceImpl implements PacketService {
         }
         packetStatusRequest.setRequest(packets);
 
-        Call<PacketStatusResponse> call = serverVersion.startsWith("1.1.5") ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
+        Call<PacketStatusResponse> call = (serverVersion!=null && serverVersion.startsWith("1.1.5")) ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
         call.enqueue(new Callback<PacketStatusResponse>() {
             @Override
             public void onResponse(Call<PacketStatusResponse> call, Response<PacketStatusResponse> response) {

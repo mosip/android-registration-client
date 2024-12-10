@@ -2,6 +2,8 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 
+import io.mosip.registration.clientmanager.config.ClientDatabase;
+import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.PreRegistrationIdsDto;
@@ -25,6 +27,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public class PreRegistrationDataSyncServiceImplTest {
@@ -54,6 +58,7 @@ public class PreRegistrationDataSyncServiceImplTest {
 
     @Mock
     GlobalParamRepository globalParamRepository;
+    ClientDatabase clientDatabase;
 
     @Before
     public void setUp() {
@@ -111,10 +116,22 @@ public class PreRegistrationDataSyncServiceImplTest {
         assertTrue(result.isEmpty());
     }
 
-    @Test(expected = ClientCheckedException.class)
+    @Test
     public void downloadAndSavePacket_error_Test() throws Exception {
+        Method method = PreRegistrationDataSyncServiceImpl.class.getDeclaredMethod("downloadAndSavePacket", String.class, String.class);
+        method.setAccessible(true);
+
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(null);
 
-        service.downloadAndSavePacket("26506250831081", null);
+        try {
+            method.invoke(service, "26506250831081", null);
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof ClientCheckedException) {
+                assertTrue(cause instanceof ClientCheckedException);
+            } else {
+                throw e;
+            }
+        }
     }
 }

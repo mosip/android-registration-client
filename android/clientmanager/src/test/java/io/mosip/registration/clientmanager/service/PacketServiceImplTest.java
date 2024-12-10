@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
 import java.nio.charset.StandardCharsets;
@@ -27,17 +28,20 @@ import java.util.List;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
+import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.RegistrationDao;
 import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
 import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
-import io.mosip.registration.clientmanager.service.PacketServiceImpl;
+import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import io.mosip.registration.clientmanager.util.RestServiceTestHelper;
+import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 import okhttp3.Cache;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -71,9 +75,17 @@ public class PacketServiceImplTest {
     Retrofit retrofit;
 
     RegistrationRepository registrationRepository;
-    SyncRestService syncRestService;
     SyncJobDefRepository syncJobDefRepository;
     RegistrationDao registrationDao;
+    @Mock
+    private GlobalParamRepository globalParamRepository;
+    @Mock
+    private IPacketCryptoService packetCryptoService;
+    @Mock
+    private SyncRestService syncRestService;
+    @Mock
+    private MasterDataService masterDataService;
+    private PacketServiceImpl packetServiceImpl;
 
     @Before
     public void setUp() throws Exception {
@@ -84,6 +96,9 @@ public class PacketServiceImplTest {
 
         registrationDao = clientDatabase.registrationDao();
         registrationRepository = new RegistrationRepository(registrationDao, objectMapper);
+
+        GlobalParamDao globalParamDao = clientDatabase.globalParamDao();
+        globalParamRepository = new GlobalParamRepository(globalParamDao);
 
         SyncJobDefDao syncJobDefDao = clientDatabase.syncJobDefDao();
         syncJobDefRepository = new SyncJobDefRepository(syncJobDefDao);
@@ -111,6 +126,14 @@ public class PacketServiceImplTest {
                 .build();
 
         syncRestService = retrofit.create(SyncRestService.class);
+        packetServiceImpl = new PacketServiceImpl(
+                appContext,
+                registrationRepository,
+                packetCryptoService,
+                syncRestService,
+                masterDataService,
+                globalParamRepository
+        );
     }
 
     @After
@@ -120,7 +143,7 @@ public class PacketServiceImplTest {
 
     @Test
     public void syncAllPacketStatusSuccessResponse() throws Exception {
-        //Dummy registration data
+
         Registration registrationDummyData = new Registration(PACKET_ID);
         registrationDummyData.setFilePath(CONTAINER_PATH);
         registrationDummyData.setRegType(REGISTRATION_TYPE);
@@ -132,15 +155,12 @@ public class PacketServiceImplTest {
         registrationDummyData.setAdditionalInfo(ADDITIONAL_INFO.getBytes(StandardCharsets.UTF_8));
         registrationDao.insert(registrationDummyData);
 
-        //Preparing mock response
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_200)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null, null);
         packetServiceImpl.syncAllPacketStatus();
 
-        //waiting for sync to completed
         Thread.sleep(1000);
 
         Registration registrationAfterSync = registrationRepository.getRegistration(PACKET_ID);
@@ -154,7 +174,6 @@ public class PacketServiceImplTest {
                 .setResponseCode(200)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_200)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for sync to completed
@@ -183,7 +202,6 @@ public class PacketServiceImplTest {
                 .setResponseCode(404)
                 .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_PACKET_STATUS_404)));
 
-        PacketServiceImpl packetServiceImpl = new PacketServiceImpl(appContext, registrationRepository, null, syncRestService, null, null);
         packetServiceImpl.syncAllPacketStatus();
 
         //waiting for packetServiceSync to complete
