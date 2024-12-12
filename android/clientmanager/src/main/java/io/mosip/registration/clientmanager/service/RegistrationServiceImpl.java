@@ -220,7 +220,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document.setType(entry.getValue().getType());
                 document.setFormat(entry.getValue().getFormat());
                 document.setRefNumber(entry.getValue().getRefNumber());
-                document.setDocument(convertImageToPDF(entry.getValue().getContent()));
+                document.setDocument(("pdf".equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
                 Log.i(TAG, entry.getKey() + " >> PDF document size :" + document.getDocument().length);
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
@@ -303,6 +303,17 @@ public class RegistrationServiceImpl implements RegistrationService {
             }
         }
         return String.join(RegistrationConstants.COMMA, key);
+    }
+
+    private byte[] combineByteArray(List<byte[]> byteList) {
+        int totalLength = byteList.stream().mapToInt(byteArr -> byteArr.length).sum();
+        byte[] result = new byte[totalLength];
+        int currentPos = 0;
+        for (byte[] byteArr : byteList) {
+            System.arraycopy(byteArr, 0, result, currentPos, byteArr.length);
+            currentPos += byteArr.length;
+        }
+        return result;
     }
 
     private String getAdditionalInfo(Object fieldValue) {
