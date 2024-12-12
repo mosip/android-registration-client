@@ -3,7 +3,7 @@ plugins {
     id "org.sonarqube"
 }
 
-apply from: '../jacoco.gradle'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
