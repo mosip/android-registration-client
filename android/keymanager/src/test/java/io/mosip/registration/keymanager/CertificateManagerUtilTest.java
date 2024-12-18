@@ -2,12 +2,11 @@ package io.mosip.registration.keymanager;
 
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.util.CertificateManagerUtil;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.security.cert.Certificate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CertificateManagerUtilTest {
 
@@ -54,8 +53,7 @@ public class CertificateManagerUtilTest {
     //TODO corrections
     @Test
     public void isValidCertificateData_positive_test() {
-        //Assert.assertEquals(false, CertificateManagerUtil.isValidCertificateData("null"));
-        //Assert.assertEquals(false, CertificateManagerUtil.isValidCertificateData("NA"));
+        Assert.assertEquals(false, CertificateManagerUtil.isValidCertificateData(null));
     }
 
     @Test
