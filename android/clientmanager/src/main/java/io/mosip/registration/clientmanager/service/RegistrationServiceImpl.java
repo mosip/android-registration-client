@@ -190,7 +190,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         List<String> selectedHandles = this.globalParamRepository.getSelectedHandles();
         if(selectedHandles != null) {
-            if (this.registrationDto.getFlowType().equals("NEW")) {
+            if (this.registrationDto.getFlowType().equals("NEW") ||
+                 this.registrationDto.getFlowType().equals("Update")) {
                 this.registrationDto.getDemographics().put("selectedHandles", selectedHandles);
             }
         }
