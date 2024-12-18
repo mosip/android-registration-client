@@ -33,8 +33,8 @@ class ClientStatusDropdown extends StatelessWidget {
             DropdownMenuItem(
                 value: ClientStatus.REJECTED.name,
                 child: const Text("Rejected")),
-            DropdownMenuItem(
-                value: ClientStatus.SYNCED.name, child: const Text("Synced")),
+            // DropdownMenuItem(
+            //     value: ClientStatus.SYNCED.name, child: const Text("Synced")),
             DropdownMenuItem(
                 value: ClientStatus.EXPORTED.name,
                 child: const Text("Exported")),

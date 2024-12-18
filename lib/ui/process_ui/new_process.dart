@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/field.dart';
@@ -1086,7 +1087,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         color: authIconBackground,
       ),
       child: Center(
-        child: Image.asset('assets/images/Registering an Individual@2x.png'),
+        child: SvgPicture.asset('assets/images/AuthenticationIcon.svg'),
       ),
     );
   }
