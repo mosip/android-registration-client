@@ -90,7 +90,6 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         Log.i(TAG,"Fetching Pre-Registration Id's started {}");
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
-        Log.i(TAG,"Pre-Registration get center Id"+ centerMachineDto.getCenterId());
         if (centerMachineDto == null) {
             result = "application_id_sync_failed";
             onFinish.run();
@@ -262,10 +261,9 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     }
 
     private PreRegistrationList downloadAndSavePacket(@NonNull String preRegistrationId,
-                                                      String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
+                                                     String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
-        Log.i(TAG,"Pre-Registration get center Id"+ centerMachineDto.getCenterId() + centerMachineDto.getMachineId());
         if (centerMachineDto == null) {
             throw new ClientCheckedException(context, R.string.err_001);
         }
@@ -342,8 +340,10 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(reqTime);
-        cal.add(Calendar.DATE,
-                Integer.parseInt(String.valueOf(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRE_REG_DAYS_LIMIT))));
+        if(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRE_REG_DAYS_LIMIT)!=null) {
+            cal.add(Calendar.DATE,
+                    Integer.parseInt(String.valueOf(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRE_REG_DAYS_LIMIT))));
+        }
 
         return formatDate(cal);
 
