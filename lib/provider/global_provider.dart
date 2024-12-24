@@ -514,6 +514,8 @@ class GlobalProvider with ChangeNotifier {
 
   clearMap() {
     _fieldInputValue = {};
+    _mvelRequiredFields = {};
+    _mvelVisibleFields = {};
     log("input value $_fieldInputValue");
     notifyListeners();
   }
