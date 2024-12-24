@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -33,5 +35,23 @@ public class LoginServiceTest {
     public void saveAuthToken_throwException() throws Exception {
         when(this.clientCryptoManagerService.decrypt(any())).thenReturn(null);
         loginService.saveAuthToken(null, "");
+    }
+
+    @Test
+    public void isValidUserId_WithActiveUser_Test() {
+        String userId = "9343";
+        when(userDetailRepository.getUserDetailCount()).thenReturn(1);
+        when(userDetailRepository.isActiveUser(userId)).thenReturn(true);
+
+        assertTrue(loginService.isValidUserId(userId));
+    }
+
+    @Test
+    public void isValidUserId_WithInactiveUser_Test() {
+        String userId = "9343";
+        when(userDetailRepository.getUserDetailCount()).thenReturn(1);
+        when(userDetailRepository.isActiveUser(userId)).thenReturn(false);
+
+        assertFalse(loginService.isValidUserId(userId));
     }
 }

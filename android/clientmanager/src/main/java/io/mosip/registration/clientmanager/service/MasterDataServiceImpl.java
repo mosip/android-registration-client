@@ -324,7 +324,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         Log.i(TAG, "config data sync is started");
         String serverVersion = getServerVersionFromConfigs();
 
-        Call<ResponseWrapper<Map<String, Object>>> call = serverVersion.startsWith("1.1.5") ? syncRestService.getV1GlobalConfigs(
+        Call<ResponseWrapper<Map<String, Object>>> call = (serverVersion != null && serverVersion.startsWith("1.1.5")) ? syncRestService.getV1GlobalConfigs(
                 clientCryptoManagerService.getMachineName(), BuildConfig.CLIENT_VERSION) : syncRestService.getGlobalConfigs(
                 clientCryptoManagerService.getClientKeyIndex(), BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<Map<String, Object>>>() {

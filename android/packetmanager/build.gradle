@@ -66,6 +66,21 @@ dependencies {
 
     implementation 'commons-io:commons-io:2.11.0'
 
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    // added for unit test cases
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
+    androidTestImplementation "org.mockito:mockito-android:4.6.1"
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.mockito:mockito-core:5.1.1"
+    testImplementation 'org.mockito:mockito-inline:5.0.0'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+
     // added key-manager Android library module as a dependency
     implementation project(':keymanager')
 }

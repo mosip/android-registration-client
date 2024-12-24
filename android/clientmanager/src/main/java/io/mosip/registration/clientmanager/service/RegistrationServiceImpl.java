@@ -226,7 +226,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
             });
 
-            if (serverVersion.startsWith("1.1.5")) {
+            if (serverVersion!=null && serverVersion.startsWith("1.1.5")) {
                 this.registrationDto.getBestBiometrics(individualBiometricsFieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
                     Document document = new Document();
                     document.setType("EOP");
