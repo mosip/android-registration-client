@@ -16,12 +16,6 @@ abstract class PacketAuthApi {
   PacketAuth authenticate(String username, String password);
 
   @async
-  void syncPacket(String packetId);
-
-  @async
-  void uploadPacket(String packetId);
-
-  @async
   void syncPacketAll(List<String> packetIds);
 
   @async
@@ -31,5 +25,13 @@ abstract class PacketAuthApi {
   List<String> getAllRegistrationPacket();
 
   @async
-  void updatePacketStatus(String packetId, String? serverStatus, String clientStatus);
+  List<String> getAllCreatedRegistrationPacket();
+
+  @async
+  void updatePacketStatus(
+      String packetId, String? serverStatus, String clientStatus);
+
+  @async
+  void supervisorReview(
+      String packetId, String supervisorStatus, String supervisorComment);
 }

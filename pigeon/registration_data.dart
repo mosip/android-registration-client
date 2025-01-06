@@ -13,13 +13,14 @@ class RegistrationSubmitResponse {
 @HostApi()
 abstract class RegistrationDataApi {
   @async
-  String startRegistration(List<String> languages, String flowType, String process);
+  String startRegistration(
+      List<String> languages, String flowType, String process);
 
   @async
-  bool evaluateMVELVisible(String fieldData, String expression);
-  
+  bool evaluateMVELVisible(String fieldData);
+
   @async
-  bool evaluateMVELRequired(String fieldData, String expression);
+  bool evaluateMVELRequired(String fieldData);
 
   @async
   String getPreviewTemplate(bool isPreview, Map<String, String> templateValues);

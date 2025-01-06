@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
+import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
@@ -59,6 +60,10 @@ class RegistrationClientApp extends StatelessWidget {
           lazy: false,
           create: (_) => AuthProvider(),
         ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => ApprovePacketsProvider(),
+        ),
       ],
       child: const BuildApp(),
     );
@@ -71,7 +76,7 @@ class BuildApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Registration Client',
       routes: AppRouter.routes,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -92,7 +97,9 @@ class BuildApp extends StatelessWidget {
         ScreenUtil.init(
           context,
           designSize: orientation == Orientation.portrait
-              ? mediaQueryData.size.width < 750 ? const Size(390, 844) : const Size(800, 1280)
+              ? mediaQueryData.size.width < 750
+                  ? const Size(390, 844)
+                  : const Size(800, 1280)
               : const Size(1024, 768),
           minTextAdapt: true,
           splitScreenMode: true,

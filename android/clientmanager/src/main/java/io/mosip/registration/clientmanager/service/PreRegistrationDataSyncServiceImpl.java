@@ -26,6 +26,7 @@ import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingSer
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.packetmanager.util.DateUtils;
@@ -65,11 +66,12 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     SharedPreferences sharedPreferences;
     PreRegistrationList preRegistration;
     GlobalParamRepository globalParamRepository;
+    RegistrationService registrationService;
     private Context context;
     private String result = "";
     ExecutorService executorServiceForPreReg = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    public PreRegistrationDataSyncServiceImpl(Context context,PreRegistrationDataSyncDao preRegistrationDao,MasterDataService masterDataService,SyncRestService syncRestService,PreRegZipHandlingService preRegZipHandlingService,PreRegistrationList preRegistration,GlobalParamRepository globalParamRepository){
+    public PreRegistrationDataSyncServiceImpl(Context context,PreRegistrationDataSyncDao preRegistrationDao,MasterDataService masterDataService,SyncRestService syncRestService,PreRegZipHandlingService preRegZipHandlingService,PreRegistrationList preRegistration,GlobalParamRepository globalParamRepository,RegistrationService registrationService){
         this.context = context;
         this.preRegistrationDao = preRegistrationDao;
         this.masterDataService = masterDataService;
@@ -77,6 +79,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         this.preRegZipHandlingService = preRegZipHandlingService;
         this.preRegistration = preRegistration;
         this.globalParamRepository = globalParamRepository;
+        this.registrationService = registrationService;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -87,7 +90,6 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         Log.i(TAG,"Fetching Pre-Registration Id's started {}");
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
-        Log.i(TAG,"Pre-Registration get center Id"+ centerMachineDto.getCenterId());
         if (centerMachineDto == null) {
             result = "application_id_sync_failed";
             onFinish.run();
@@ -208,7 +210,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         return attributeData;
     }
 
-    private PreRegistrationList fetchPreRegistration(String preRegistrationId, String lastUpdatedTimeStamp) throws ClientCheckedException {
+    private PreRegistrationList fetchPreRegistration(String preRegistrationId, String lastUpdatedTimeStamp) throws Exception {
         Log.i(TAG,"Fetching Pre-Registration started for {}"+ preRegistrationId);
        // PreRegistrationList preRegistration;
 
@@ -220,17 +222,23 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
             try {
                 preRegistration = downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
             } catch (ExecutionException | InterruptedException e) {
+                this.registrationService.getRegistrationDto().getDocuments().clear();
+                this.registrationService.getRegistrationDto().getDemographics().clear();
                 throw new RuntimeException(e);
             }
             return preRegistration;
         }
 
-        if(lastUpdatedTimeStamp == null /*||
-                preRegistration.getLastUpdatedPreRegTimeStamp().before(lastUpdatedTimeStamp)*/) {
+        Timestamp updatedPreRegTimeStamp = Timestamp.valueOf(preRegistration.getLastUpdatedPreRegTimeStamp());
+        Timestamp lastUpdatedTime = Timestamp.valueOf(lastUpdatedTimeStamp);
+        if(lastUpdatedTimeStamp == null ||
+                updatedPreRegTimeStamp.before(lastUpdatedTime)) {
             Log.i(TAG,"Pre-Registration ID is not up-to-date downloading {}"+ preRegistrationId);
             try {
-                return downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
+                preRegistration = downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
             } catch (ExecutionException | InterruptedException e) {
+                this.registrationService.getRegistrationDto().getDocuments().clear();
+                this.registrationService.getRegistrationDto().getDemographics().clear();
                 throw new RuntimeException(e);
             }
         }
@@ -253,10 +261,9 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     }
 
     private PreRegistrationList downloadAndSavePacket(@NonNull String preRegistrationId,
-                                                      String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
+                                                     String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
-        Log.i(TAG,"Pre-Registration get center Id"+ centerMachineDto.getCenterId() + centerMachineDto.getMachineId());
         if (centerMachineDto == null) {
             throw new ClientCheckedException(context, R.string.err_001);
         }
@@ -333,8 +340,10 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(reqTime);
-        cal.add(Calendar.DATE,
-                Integer.parseInt(String.valueOf(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRE_REG_DAYS_LIMIT))));
+        if(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRE_REG_DAYS_LIMIT)!=null) {
+            cal.add(Calendar.DATE,
+                    Integer.parseInt(String.valueOf(this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.PRE_REG_DAYS_LIMIT))));
+        }
 
         return formatDate(cal);
 

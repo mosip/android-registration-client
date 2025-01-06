@@ -8,7 +8,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -16,13 +15,17 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
+import 'package:registration_client/provider/approve_packets_provider.dart';
+import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/ui/approve_packet/approve_packet_ui.dart';
 import 'package:registration_client/ui/export_packet/export_packet_ui.dart';
 import 'package:registration_client/ui/onboard/portrait/mobile_home_page.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
+// import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
@@ -30,8 +33,11 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../model/screen.dart';
+
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
+
   const HomePage({super.key});
 
   @override
@@ -102,12 +108,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    Clipboard.setData(ClipboardData(
-        text: registrationTaskProvider.listOfProcesses.toString()));
+    List<Screen?> sortedScreens;
+    sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
     if (process.id == "NEW" || process.id == "UPDATE") {
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");
-      for (var screen in process.screens!) {
+      for (var screen in sortedScreens) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
               field.fieldType == 'default') {
@@ -120,7 +126,10 @@ class _HomePageState extends State<HomePage> {
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
-          newProcess: process,
+          newProcess: Process(label: process.label, autoSelectedGroups: process.autoSelectedGroups,
+              caption: process.caption, flow: process.flow, icon: process.icon, id: process.id,
+              isActive: process.isActive, order: process.order, screens: sortedScreens
+          ),
         ),
       );
     }
@@ -152,11 +161,13 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.synchronize_data,
         "onTap": syncData,
-        "subtitle": DateFormat("EEEE d MMMM, hh:mma")
-            .format(DateTime.parse(
-                    context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                .toLocal())
-            .toString(),
+        "subtitle": context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
+            ? DateFormat("EEEE d MMMM, hh:mma")
+                .format(DateTime.parse(
+                        context.watch<SyncProvider>().lastSuccessfulSyncTime)
+                    .toLocal())
+                .toString()
+            : "Last Sync time not found",
       },
       // {
       //   "icon": SvgPicture.asset(
@@ -178,9 +189,12 @@ class _HomePageState extends State<HomePage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
+                      // Don't add const for loading the widget in a stateless class
                       OperatorOnboardingBiometricsCaptureControl()));
         },
-        "subtitle": lastOperatorUpdateBiometricTime.toString(),
+        "subtitle": lastOperatorUpdateBiometricTime.toString() == ""
+            ? "Not updated yet"
+            : "Last Updated on ${lastOperatorUpdateBiometricTime.toString()}",
       },
       {
         "icon": SvgPicture.asset(
@@ -193,32 +207,48 @@ class _HomePageState extends State<HomePage> {
               MaterialPageRoute(
                   builder: (context) => const ExportPacketsPage()));
         },
-        "subtitle": "3 application(s)"
+        "subtitle":
+            "${context.watch<RegistrationTaskProvider>().numberOfPackets} application(s)"
       },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Onboarding Yourself.svg",
-        ),
-        "title": appLocalizations.check_updates,
-        "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.center_remap_sync,
-        "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      },
-      {
-        "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
-        ),
-        "title": appLocalizations.sync_activities,
-        "onTap": () {},
-        "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Onboarding Yourself.svg",
+      //   ),
+      //   "title": appLocalizations.check_updates,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.center_remap_sync,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
+      // {
+      //   "icon": SvgPicture.asset(
+      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //   ),
+      //   "title": appLocalizations.sync_activities,
+      //   "onTap": () {},
+      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
+      // },
+      if (Provider.of<AuthProvider>(context, listen: false).isSupervisor)
+        {
+          "icon": SvgPicture.asset(
+            "assets/svg/Uploading Local - Registration Data.svg",
+          ),
+          "title": appLocalizations.pending_approval,
+          "onTap": (context) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ApprovePacketsPage()));
+          },
+          "subtitle":
+              "${context.watch<ApprovePacketsProvider>().totalCreatedPackets} application(s)"
+        },
     ];
 
     return MobileHomePage(
@@ -435,4 +465,3 @@ class _HomePageState extends State<HomePage> {
 //               ],
 //             ),
 //           );
-  

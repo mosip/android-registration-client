@@ -9,7 +9,7 @@
   "help": "உதவி",
   "mosip": "MOSIP",
   "welcome": "உங்களை வரவேற்கிறோம்",
-  "community_reg_text": "சமூக பதிவு கிளையன்ட்!",
+  "community_reg_text": "MOSIP பதிவு வாடிக்கையாளர்!",
   "info_text": "அம்சங்களை அணுக உள்நுழைக.",
   "login_text": "உள்நுழைவு",
   "language": "மொழி",
@@ -46,12 +46,12 @@
   "sync_completed_message": "கணினி சில வினாடிகளில் மறுதொடக்கம் செய்யப்படும் மற்றும் நீங்கள் உள்நுழைவு பக்கத்திற்கு திருப்பிவிடப்படுவீர்கள்.",
   "sync_failed": "ஒத்திசைவு தோல்வியுற்றது",
   "sync_failed_message": "உதவிக்கு கணினி நிர்வாகி அல்லது மேற்பார்வையாளருடன் இணைக்கவும்.",
-  "policy_key_sync_failed":"கொள்கை விசை ஒத்திசைவு தோல்வியுற்றது",
-  "ca_certs_sync_failed":"CA சான்றிதழ்கள் ஒத்திசைவு தோல்வியடைந்தது",
-  "global_params_sync_failed":"Global Params Sync தோல்வியுற்றது",
-  "user_details_sync_failed":"பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
-  "id_schema_sync_failed":"IDSchena Sync Failed",
-  "master_data_sync_failed":"Master Data Sync தோல்வியுற்றது",
+  "policy_key_sync_failed": "கொள்கை விசை ஒத்திசைவு தோல்வியுற்றது",
+  "ca_certs_sync_failed": "CA சான்றிதழ்கள் ஒத்திசைவு தோல்வியடைந்தது",
+  "global_params_sync_failed": "Global Params Sync தோல்வியுற்றது",
+  "user_details_sync_failed": "பயனர் விவரங்கள் ஒத்திசைவு தோல்வியுற்றது",
+  "id_schema_sync_failed": "IDSchena Sync Failed",
+  "master_data_sync_failed": "Master Data Sync தோல்வியுற்றது",
   "network_error": "நெட்வொர்க் இல்லை!",
   "delete": "அழி",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
@@ -129,6 +129,42 @@
   "upload_document": "ஆவணத்தைப் பதிவேற்றவும்",
   "synchronize_data": "தரவை ஒத்திசைக்கவும்",
   "registration_tasks": "பதிவு பணிகள்",
+  "manage_applications": "பயன்பாடுகளை நிர்வகிக்கவும்",
+  "search_application": "விண்ணப்ப ஐடி மூலம் தேடவும்",
+  "upload": "பதிவேற்றம்",
+  "export": "ஏற்றுமதி",
+  "number_of_application": "{number} பயன்பாடுகளைக் காட்டுகிறது",
+  "@number_of_application": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "total_selected_application": "{selected}/{total} விண்ணப்பங்கள் தேர்ந்தெடுக்கப்பட்டன",
+  "@total_selected_application": {
+    "description": "A message with a two parameter",
+    "placeholders": {
+      "selected": {
+        "type": "int",
+        "example": "0"
+      },
+      "total": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "client_status": "வாடிக்கையாளர் நிலை",
+  "server_status": "சேவையக நிலை",
+  "clear_filter": "Clear Filter",
+  "serial_number": "எஸ்.என்",
+  "application_id": "விண்ணப்ப ஐடி",
+  "reg_date": "ரெஜி. தேதி",
+  "reg_type": "ரெஜி. வகை",
+  "operator_id": "ஆபரேட்டர் ஐடி",
   "operation_tasks": "செயல்பாட்டு பணிகள்",
   "system_storage_usage": "கணினி சேமிப்பக பயன்பாடு",
   "download_pre_registration_data": "முன் பதிவுத் தரவைப் பதிவிறக்கவும்",
@@ -137,6 +173,7 @@
   "check_updates": "புதுப்பிப்புகளைச் சரிபார்க்கவும்",
   "center_remap_sync": "மைய ரீமேப் ஒத்திசைவு.",
   "sync_activities": "ஒத்திசை செயல்பாடுகள்",
+  "pending_approval": "நிலுவையிலுள்ள ஒப்புதல்",
   "dashboard": "டாஷ்போர்டு",
   "settings": "அமைப்புகள்",
   "notifications": "அறிவிப்புகள்",
@@ -163,11 +200,11 @@
   "temporary": "குறிப்பிடுக",
   "exceptions": "விதிவிலக்குகள்",
   "add_comments_for_marking_the_exception": "விசாரிக்கப்பட்ட விதிவிலக்குக்கு கருத்துகளை சேர்க்கவும்",
-  "rescan":"மறு ஆய்வு",
-  "marking_exceptions_on":"விதிவிலக்குகளைக் குறிப்பது இயக்கத்தில் உள்ளது",
-  "is_not_allowed":"அனுமதிக்கப்படவில்லை",
-  "capture":"பிடிப்பு",
-  "attempts_left":"முயற்சிகள் எஞ்சியுள்ளன",
+  "rescan": "மறு ஆய்வு",
+  "marking_exceptions_on": "விதிவிலக்குகளைக் குறிப்பது இயக்கத்தில் உள்ளது",
+  "is_not_allowed": "அனுமதிக்கப்படவில்லை",
+  "capture": "பிடிப்பு",
+  "attempts_left": "முயற்சிகள் எஞ்சியுள்ளன",
   "left_hand": "இடது கை",
   "left": "இடது",
   "right": "வலது",
@@ -175,7 +212,7 @@
   "iris": "ஐரிஸ்",
   "thumbs": "முழுகுமதி",
   "face": "முகம்",
-  "exception":"விதிவிலக்கு",
+  "exception": "விதிவிலக்கு",
   "language_selector_note": "முன்பதிவின் போது உள்ளிடப்பட்ட தரவின் அடிப்படையில் மொழி இருக்கலாம் என்பதை நினைவில் கொள்ளவும்.",
   "cancel": "ரத்துசெய்",
   "submit": "சமர்ப்பிக்கவும்",
@@ -244,6 +281,14 @@
   "help_topics": "உதவி தலைப்புகள்",
   "onboard_request_message": "போர்ட்டலில் உங்களை உள்வாங்க, \"ஆன்போர்டைப் பெறு\" பொத்தானைத் தட்டவும்.",
   "hello_s": "வணக்கம் ",
+  "approve": "ஒப்புதல்",
+  "reject": "நிராகரி",
+  "reject_dialog-heading": "பாக்கெட்டை நிராகரிக்கவா?",
+  "reject_dialog_subheading": "பாக்கெட் நிராகரிப்புக்கான காரணத்தைத் தேர்ந்தெடுக்கவும். மதிப்பாய்வு நிலையை அங்கீகரிக்க அல்லது பின்னர் மீட்டமைக்க உங்கள் மதிப்பாய்வை மாற்றலாம்.",
+  "reason_rejection": "நிராகரிப்புக்கான காரணம்",
+  "no_reason_selected": "தயவுசெய்து காரணத்தைத் தேர்ந்தெடுக்கவும்...",
+  "supervisor_auth_heading": "மேற்பார்வையாளரின் அங்கீகாரம்",
+  "supervisor_auth_subheading": "கடவுச்சொல்லைப் பயன்படுத்தி மேற்பார்வையாளரின் அங்கீகாரம்",
   "uin_number": "UIN எண்",
   "valid_uin": "சரியான UIN ஐ உள்ளிடவும்",
   "enter_uin": "UIN எண்ணை உள்ளிடவும்",
@@ -258,6 +303,20 @@
   "logout_success": "நீங்கள் வெற்றிகரமாக வெளியேறிவிட்டீர்கள்!",
   "logout_failure": "ஏதோ தவறாகிவிட்டது, சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்",
   "go_to_home": "வீட்டிற்கு போ",
+  "errors": "{messages, select, REG_TRY_AGAIN{உள்நுழைவு தோல்வியுற்றது. மீண்டும் முயற்சி செய்!} REG_INVALID_REQUEST{கடவுச்சொல் தவறானது!} REG_MACHINE_NOT_FOUND{இயந்திரம் கிடைக்கவில்லை!} REG_NETWORK_ERROR{உள்நுழைவு தோல்வியுற்றது. நெட்வொர்க் இணைப்பை சரிபார்க்கவும்!} REG_CRED_EXPIRED{நற்சான்றிதழ்கள் காணப்படவில்லை அல்லது காலாவதியாகவில்லை. ஆன்லைன் உள்நுழைவை முயற்சிக்கவும்!} REG_MACHINE_INACTIVE{இயந்திரம் செயலில் இல்லை!} REG_CENTER_INACTIVE{மையம் செயல்படவில்லை!} other{'Some error occurred!'}}",
+  "@errors": {
+    "description": "Error messages",
+    "placeholders": {
+      "messages": {
+        "type": "String"
+      }
+    }
+  },
+  "fetch_data": "தரவைப் பெறவும்",
+  "application_id_not_exist": "விண்ணப்ப ஐடி இல்லை",
+  "correct_application_id": "உள்ளிட்ட விண்ணப்ப ஐடியைச் சரிபார்க்கவும் அல்லது சரியான ஐடியை உள்ளிட்டு, அதை மீண்டும் பெற முயற்சிக்கவும்.",
+  "enter_application_id": "விண்ணப்ப ஐடியை உள்ளிடவும்",
+  "okay": "சரி",
   "no_internet_connection": "இணைய இணைப்பு இல்லை!",
   "connect_and_retry": "இணையத்துடன் இணைத்து மீண்டும் முயற்சிக்கவும்.",
   "retry": "மீண்டும் முயற்சிக்கவும்"

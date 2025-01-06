@@ -29,10 +29,14 @@ import java.util.List;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
+import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
+import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
 import io.mosip.registration.clientmanager.dao.TemplateDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.MachineRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
@@ -75,6 +79,7 @@ public class MasterDataServiceImplTest {
     ClientCryptoManagerService clientCryptoManagerService;
     GlobalParamRepository globalParamRepository;
     TemplateRepository templateRepository;
+    IdentitySchemaRepository identitySchemaRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -113,6 +118,11 @@ public class MasterDataServiceImplTest {
                 .build();
 
         syncRestService = retrofit.create(SyncRestService.class);
+
+        ProcessSpecDao processSpecDao = clientDatabase.processSpecDao();
+
+        IdentitySchemaDao identitySchemaDao = clientDatabase.identitySchemaDao();
+        identitySchemaRepository = new IdentitySchemaRepository(templateRepository,globalParamRepository,identitySchemaDao,processSpecDao);
     }
 
     @After
@@ -135,9 +145,9 @@ public class MasterDataServiceImplTest {
                 , objectMapper, syncRestService, clientCryptoManagerService, null
                 , null, null, null
                 , null, null, null
-                , globalParamRepository, null, null
-                , null, null, null
-                , null, null, null);
+                ,  null, globalParamRepository
+                , identitySchemaRepository, null, null
+                , null, null, null,null,null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -173,9 +183,9 @@ public class MasterDataServiceImplTest {
                 , objectMapper, syncRestService, clientCryptoManagerService, null
                 , null, null, null
                 , null, null, null
-                , globalParamRepository, null, null
-                , null, null, null
-                , null, null, null);
+                ,  null, globalParamRepository
+                , identitySchemaRepository, null, null
+                , null, null, null,null,null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -207,9 +217,9 @@ public class MasterDataServiceImplTest {
                 , objectMapper, syncRestService, clientCryptoManagerService, null
                 , null, null, null
                 , null, null, null
-                , globalParamRepository, null, null
-                , null, null, null
-                , null, null, null);
+                , null, globalParamRepository
+                , identitySchemaRepository, null, null
+                , null, null, null,null,null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -238,9 +248,9 @@ public class MasterDataServiceImplTest {
                 , objectMapper, syncRestService, clientCryptoManagerService, null
                 , null, null, null
                 , null, null, null
-                , globalParamRepository, null, null
-                , null, null, null
-                , null, null, null);
+                , null, globalParamRepository
+                , identitySchemaRepository, null, null
+                , null, null, null,null,null);
 
         //Preparing mock response
         server.enqueue(new MockResponse()
@@ -264,10 +274,10 @@ public class MasterDataServiceImplTest {
         MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
                 , objectMapper, syncRestService, clientCryptoManagerService, null
                 , null, null, null
-                , templateRepository, null, null
+                , null, templateRepository
+                , null, null
                 , globalParamRepository, null, null
-                , null, null, null
-                , null, null, null);
+                , null, null, null,null,null,null);
 
         assertNotNull(masterDataService.getPreviewTemplateContent("reg-android-preview-template", "eng"));
     }

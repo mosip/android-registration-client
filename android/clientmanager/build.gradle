@@ -122,10 +122,11 @@ dependencies {
 
     implementation 'com.github.Tgo1014:JP2ForAndroid:1.0.4'
 
-    implementation('io.mosip.biometric.util:biometrics-util:1.2.0') {
+    implementation('io.mosip.biometric.util:biometrics-util:1.2.0.2') {
         exclude group: 'org.springframework.boot'
         exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'org.projectlombok'
+        exclude group: 'org.openpnp'
     }
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha7'
@@ -133,6 +134,9 @@ dependencies {
     // added packet-manager Android library module as a dependency
     implementation project(':packetmanager')
     implementation project(':keymanager')
+
+    api project(':matchsdk')
+    implementation files('libs/kernel-biometrics-api-1.2.1-SNAPSHOT.jar')
     implementation 'com.github.kenglxn.QRGen:android:3.0.1'
 }
 

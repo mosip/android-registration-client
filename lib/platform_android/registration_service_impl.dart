@@ -12,11 +12,12 @@ import 'package:registration_client/platform_spi/registration_service.dart';
 
 class RegistrationServiceImpl implements RegistrationService {
   @override
-  Future<String> startRegistration(List<String> langauages, String flowType, String process) async {
+  Future<String> startRegistration(
+      List<String> langauages, String flowType, String process) async {
     String registrationStartResponse = '';
     try {
-      registrationStartResponse =
-          await RegistrationDataApi().startRegistration(langauages, flowType, process);
+      registrationStartResponse = await RegistrationDataApi()
+          .startRegistration(langauages, flowType, process);
     } on PlatformException {
       registrationStartResponse = "Something went wrong!";
       debugPrint('RegApi call failed');
@@ -29,11 +30,10 @@ class RegistrationServiceImpl implements RegistrationService {
   }
 
   @override
-  Future<bool> evaluateMVELVisible(String fieldData, String expression) async {
+  Future<bool> evaluateMVELVisible(String fieldData) async {
     bool isMvelValid = false;
     try {
-      isMvelValid =
-          await RegistrationDataApi().evaluateMVELVisible(fieldData, expression);
+      isMvelValid = await RegistrationDataApi().evaluateMVELVisible(fieldData);
     } on PlatformException {
       debugPrint('RegApi mvel visible call failed');
     } catch (e) {
@@ -43,11 +43,10 @@ class RegistrationServiceImpl implements RegistrationService {
   }
 
   @override
-  Future<bool> evaluateMVELRequired(String fieldData, String expression) async {
+  Future<bool> evaluateMVELRequired(String fieldData) async {
     bool isMvelValid = false;
     try {
-      isMvelValid =
-          await RegistrationDataApi().evaluateMVELRequired(fieldData, expression);
+      isMvelValid = await RegistrationDataApi().evaluateMVELRequired(fieldData);
     } on PlatformException {
       debugPrint('RegApi mvel call failed');
     } catch (e) {
@@ -57,11 +56,12 @@ class RegistrationServiceImpl implements RegistrationService {
   }
 
   @override
-  Future<String> getPreviewTemplate(bool isPreview, Map<String, String> templateValues) async {
+  Future<String> getPreviewTemplate(
+      bool isPreview, Map<String, String> templateValues) async {
     String previewTemplate = '';
     try {
-      previewTemplate =
-          await RegistrationDataApi().getPreviewTemplate(isPreview,templateValues);
+      previewTemplate = await RegistrationDataApi()
+          .getPreviewTemplate(isPreview, templateValues);
     } on PlatformException {
       debugPrint('Registration API template call failed');
     } catch (e) {
@@ -72,7 +72,8 @@ class RegistrationServiceImpl implements RegistrationService {
   }
 
   @override
-  Future<RegistrationSubmitResponse> submitRegistrationDto(String makerName) async {
+  Future<RegistrationSubmitResponse> submitRegistrationDto(
+      String makerName) async {
     late RegistrationSubmitResponse registrationSubmitResponse;
     try {
       registrationSubmitResponse =

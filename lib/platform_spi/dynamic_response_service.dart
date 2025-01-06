@@ -12,7 +12,7 @@ abstract class DynamicResponseService {
   Future<List<DynamicFieldData?>> fetchFieldValues(String fieldName, String langCode, List<String> languages);
 
   Future<List<GenericData?>> fetchLocationValues(
-      String hierarchyLevelName, String langCode);
+      String hierarchyLevelName, String langCode, List<String> languages);
 
   Future<List<String?>> fetchDocumentValues(
       String categoryCode, String? applicantType, String langCode);

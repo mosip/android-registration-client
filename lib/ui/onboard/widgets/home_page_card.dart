@@ -21,10 +21,13 @@ class HomePageCard extends StatefulWidget {
     required this.title,
     required this.index,
     required this.ontap,
+    required this.subtitle,
   });
+
   final Widget icon;
   final String title;
   final int index;
+  final String? subtitle;
   final void Function() ontap;
 
   @override
@@ -72,12 +75,21 @@ class _HomePageCardState extends State<HomePageCard> {
               fontSize: 15,
               color: const Color(0xff333333)),
         ),
-        subtitle: subtitle == null
-            ? null
+        subtitle: widget.subtitle == null
+            ? (subtitle == null
+                ? null
+                : Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      subtitle ?? "",
+                      style: const TextStyle(
+                          fontSize: 12, color: Color(0xff6F6E6E)),
+                    ),
+                  ))
             : Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  subtitle ?? "",
+                  widget.subtitle ?? "",
                   style:
                       const TextStyle(fontSize: 12, color: Color(0xff6F6E6E)),
                 ),

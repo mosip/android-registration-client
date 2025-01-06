@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/field.dart';
@@ -30,6 +31,7 @@ import 'package:registration_client/ui/common/tablet_navbar.dart';
 import 'package:registration_client/ui/post_registration/acknowledgement_page.dart';
 
 import 'package:registration_client/ui/post_registration/preview_page.dart';
+import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/new_process_screen_content.dart';
 
@@ -205,20 +207,21 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     await globalProvider.getAudit("REG-EVT-003", "REG-MOD-103");
   }
 
-  setScrollToTop(){
-      scrollController.animateTo(
-        scrollController.position.minScrollExtent,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-      );
-      globalProvider.isPageChanged = false;
+  setScrollToTop() {
+    scrollController.animateTo(
+      scrollController.position.minScrollExtent,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+    globalProvider.isPageChanged = false;
   }
 
   bool continueButton = false;
+  bool authButton = false;
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if(globalProvider.isPageChanged){
+      if (globalProvider.isPageChanged) {
         setScrollToTop();
       }
     });
@@ -235,17 +238,15 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     final Process newProcess = arguments["process"];
     int size = newProcess.screens!.length;
 
-    evaluateMVELVisible(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool visible = await registrationTaskProvider.evaluateMVELVisible(
-          fieldData, expression!);
+    evaluateMVELVisible(String fieldData) async {
+      bool visible =
+          await registrationTaskProvider.evaluateMVELVisible(fieldData);
       return visible;
     }
 
-    evaluateMVELRequired(
-        String fieldData, String? engine, String? expression, Field e) async {
-      bool required = await registrationTaskProvider.evaluateMVELRequired(
-          fieldData, expression!);
+    evaluateMVELRequired(String fieldData) async {
+      bool required =
+          await registrationTaskProvider.evaluateMVELRequired(fieldData);
       return required;
     }
 
@@ -409,6 +410,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
 
                     break;
                   }
+                  if(globalProvider.isValidBiometricCapture){
+                    isValid = false;
+                    break;
+                  }
                 }
               }
             }
@@ -416,15 +421,9 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
           if (screen.fields!.elementAt(i)!.requiredOn != null &&
               screen.fields!.elementAt(i)!.requiredOn!.isNotEmpty) {
             bool visible = await evaluateMVELVisible(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()));
             bool required = await evaluateMVELRequired(
-                jsonEncode(screen.fields!.elementAt(i)!.toJson()),
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.engine,
-                screen.fields!.elementAt(i)!.requiredOn?[0]?.expr,
-                screen.fields!.elementAt(i)!);
+                jsonEncode(screen.fields!.elementAt(i)!.toJson()));
             if (visible && required) {
               if (screen.fields!.elementAt(i)!.inputRequired!) {
                 if (!(globalProvider.fieldInputValue
@@ -469,6 +468,10 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           count) {
                         isValid = false;
 
+                        break;
+                      }
+                      if(globalProvider.isValidBiometricCapture){
+                        isValid = false;
                         break;
                       }
                     }
@@ -544,7 +547,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               await registrationTaskProvider.getPreviewTemplate(
                   true, templateTitleMap!);
               await registrationTaskProvider.getAcknowledgementTemplate(
-                  false, templateTitleMap!);
+                  false, templateTitleMap!,
+              );
             }
 
             globalProvider.newProcessTabIndex =
@@ -566,6 +570,12 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
             return;
           }
           globalProvider.setRegId(registrationSubmitResponse.rId);
+
+          // Updating key to packetId after success creation of packet
+          registrationTaskProvider
+              .updateTemplateStorageKey(registrationSubmitResponse.rId);
+          registrationTaskProvider.deleteDefaultTemplateStored();
+
           setState(() {
             username = '';
             password = '';
@@ -581,14 +591,20 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     }
 
     customValidation(globalProvider.newProcessTabIndex).then((value) {
-      continueButton = value &&
-          globalProvider.formKey.currentState != null &&
-          globalProvider.formKey.currentState!.validate();
-
+      setState(() {
+        continueButton = value &&
+            globalProvider.formKey.currentState != null &&
+            globalProvider.formKey.currentState!.validate();
+      });
       if (globalProvider.newProcessTabIndex >= size) {
         continueButton = true;
       }
     });
+
+    //auth button validation
+    if(username.trim().isNotEmpty && password.trim().isNotEmpty){
+      authButton = true;
+    }
 
     return WillPopScope(
       onWillPop: onWillPop,
@@ -662,7 +678,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      globalProvider.newProcessTabIndex == size + 2
+                      /*globalProvider.newProcessTabIndex == size + 2
                           ? ElevatedButton(
                               onPressed: () async {
                                 await connectivityProvider
@@ -699,7 +715,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               },
                               child: Text(appLocalizations.upload_packet),
                             )
-                          : const SizedBox.shrink(),
+                          : const SizedBox.shrink(),*/
                       const Expanded(
                         child: SizedBox(),
                       ),
@@ -710,7 +726,8 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                           minimumSize: MaterialStateProperty.all<Size>(
                               const Size(209, 52)),
                           backgroundColor: MaterialStateProperty.all<Color>(
-                              continueButton ? solidPrimary : Colors.grey),
+                              (continueButton && context.read<GlobalProvider>().newProcessTabIndex <=
+                                  size) ? solidPrimary : authButton ? solidPrimary: Colors.grey),
                         ),
                         onPressed: () {
                           continueButtonTap(size, newProcess);
@@ -736,14 +753,14 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
               ),
               child: Column(
                 children: [
-                  isPortrait
-                      ? const SizedBox()
-                      : const Column(
-                          children: [
-                            TabletHeader(),
-                            TabletNavbar(),
-                          ],
-                        ),
+                  // isPortrait
+                  //     ? const SizedBox()
+                  //     : const Column(
+                  //         children: [
+                  //           TabletHeader(),
+                  //           TabletNavbar(),
+                  //         ],
+                  //       ),
                   Container(
                     padding: isMobile && !isMobileSize
                         ? const EdgeInsets.fromLTRB(0, 46, 0, 0)
@@ -1070,7 +1087,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
         color: authIconBackground,
       ),
       child: Center(
-        child: Image.asset('assets/images/Registering an Individual@2x.png'),
+        child: SvgPicture.asset('assets/images/AuthenticationIcon.svg'),
       ),
     );
   }

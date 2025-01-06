@@ -8,13 +8,20 @@ import androidx.room.Query;
 import java.util.List;
 
 import io.mosip.registration.clientmanager.entity.UserBiometric;
-import io.mosip.registration.clientmanager.entity.UserDetail;
 
 @Dao
 public interface UserBiometricDao {
 
     @Query("select * from user_biometric where usr_id=:id")
     List<UserBiometric> findByUsrId(String id);
+
+    /**
+     * Retrieves list of operator biometrics from storage  for biometric type
+     * @param biometricType biometric type
+     * @return {@link List<UserBiometric>}
+     */
+    @Query("select * from user_biometric where bmtyp_code=:biometricType")
+    List<UserBiometric> findAll(String biometricType);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(UserBiometric userBiometric);

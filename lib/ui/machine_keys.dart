@@ -6,7 +6,6 @@
 */
 
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -118,13 +117,13 @@ class _MachineKeysState extends State<MachineKeys> {
                 });
               },
             ),
-            SizedBox(
-              height: 20.h,
-            ),
-            _downloadButton(
-              title: appLocalizations.share,
-              onTap: () {},
-            ),
+            // SizedBox(
+            //   height: 20.h,
+            // ),
+            // _downloadButton(
+            //   title: appLocalizations.share,
+            //   onTap: () {},
+            // ),
             SizedBox(
               height: 30.h,
             ),
@@ -147,7 +146,6 @@ class _MachineKeysState extends State<MachineKeys> {
       onTap: () {
         Clipboard.setData(ClipboardData(text: machineDetails)).then((value) {
           showInSnackBar(appLocalizations.copy_message);
-          log("machine details: $machineDetails");
         });
       },
       child: Container(

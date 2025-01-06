@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+	<test name="Test" thread-count="5">
+		<classes>
+			<class name="regclient.androidTestCases.logintest">
+				<methods>
+					<include name="ALoginTest" />
+					<include name="OnBoardTest" />
+					<include name="updateOperatorBiometrics" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.NewRegistrationAdult">
+				<methods>
+					<include name="newRegistrationAdult" />
+					<include name="newRegistrationAdultUploadMultipleDoccuments" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.NewRegistrationAdultException">
+				<methods>
+					<include name="newRegistrationAdultException" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.NewRegistrationInfant">
+				<methods>
+					<include name="newRegistrationInfant" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.NewRegistrationMinor">
+				<methods>
+					<include name="newRegistrationMinor" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.NewRegistrationMinorException">
+				<methods>
+					<include name="newRegistrationMinorException" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.UpdateMyUinInfant">
+				<methods>
+					<include name="updateMyUinInfant" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.UpdateMyUinMinor">
+				<methods>
+					<include name="updateMyUinMinor" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.UpdateMyUINUpdateDemographicDetails">
+				<methods>
+					<include name="updateMyUINUpdateDemographicDetails" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.UpdateMyUinUpdateBiometrics">
+				<methods>
+					<include name="updateMyUINUpdatebiometrics" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	<listeners>
+		<listener
+			  class-name="regclient.utils.EmailableReport" />		
+	</listeners>
+</suite>

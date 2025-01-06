@@ -32,11 +32,13 @@ class LanguageData {
 class DynamicFieldData{
   final String code;
   final String name;
+  final String langCode;
   final String concatenatedName;
 
   DynamicFieldData({
     required this.code,
     required this.name,
+    required this.langCode,
     required this.concatenatedName,
   });
 }
@@ -53,7 +55,7 @@ abstract class DynamicResponseApi {
 
   @async
   List<GenericData> getLocationValues(
-      String hierarchyLevelName, String langCode);
+      String hierarchyLevelName, String langCode, List<String> languages);
 
   @async
   List<String> getDocumentValues(

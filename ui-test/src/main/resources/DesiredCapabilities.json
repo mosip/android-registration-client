@@ -1,0 +1,17 @@
+[
+  {
+    "name": "androidDevice",
+    "caps": {
+      "appium:udid": "ZD222L7BGN",
+      "appium:automationName": "UiAutomator2",
+      "appium:app": "D:/app-release.apk",
+      "platformName": "android",
+      "appium:appPackage": "io.mosip.registration_client",
+      "appium:appActivity": "io.mosip.registration_client.MainActivity",
+      "appium:noReset": true,
+      "appium:autoGrantPermissions": true,
+      "appium:shouldTerminateApp": true,
+      "appium:noSign": true
+    }
+  }
+]

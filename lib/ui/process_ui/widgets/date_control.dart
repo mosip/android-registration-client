@@ -61,9 +61,21 @@ class _DateControlState extends State<DateControl> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(
-                    width: 50,
-                  ),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          dateController.clear();
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(AppLocalizations.of(context)!.clear,
+                            style: const TextStyle(
+                                color: appRed,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500)),
+                      )),
                   Text(
                     widget.field.label!['eng'] ?? "",
                     style: Theme.of(context)
@@ -91,7 +103,10 @@ class _DateControlState extends State<DateControl> {
                 maxDate: DateTime.now(),
                 minDate: DateTime(DateTime.now().year - 125),
                 selectedDate: dateString != ""
-                    ? DateFormat(widget.field.format ?? "yyyy/MM/dd")
+                    ? DateFormat(widget.field.format == null ||
+                                widget.field.format!.toLowerCase() == "none"
+                            ? "yyyy/MM/dd"
+                            : widget.field.format)
                         .parse(dateString)
                     : null,
                 squeeze: 1,
@@ -117,13 +132,15 @@ class _DateControlState extends State<DateControl> {
                   fontSize: 15,
                 ),
                 onSelectedItemChanged: (selectedDate) {
-                  String targetDateString = widget.field.format ??
-                      "yyyy/MM/dd"
-                          .replaceAll(
-                              'dd', selectedDate.day.toString().padLeft(2, "0"))
-                          .replaceAll('MM',
-                              selectedDate.month.toString().padLeft(2, "0"))
-                          .replaceAll('yyyy', selectedDate.year.toString());
+                  String targetDateString = (widget.field.format == null ||
+                              widget.field.format!.toLowerCase() == "none"
+                          ? "yyyy/MM/dd"
+                          : widget.field.format!)
+                      .replaceAll(
+                          'dd', selectedDate.day.toString().padLeft(2, "0"))
+                      .replaceAll(
+                          'MM', selectedDate.month.toString().padLeft(2, "0"))
+                      .replaceAll('yyyy', selectedDate.year.toString());
                   setState(() {
                     dateController.text = targetDateString;
                   });

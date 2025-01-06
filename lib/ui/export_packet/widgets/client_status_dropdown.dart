@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../provider/export_packet_provider.dart';
 import '../../../utils/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ClientStatusDropdown extends StatelessWidget {
   const ClientStatusDropdown({super.key});
@@ -22,21 +23,27 @@ class ClientStatusDropdown extends StatelessWidget {
           underline: const SizedBox.shrink(),
           dropdownColor: Colors.white,
           padding: const EdgeInsets.all(16),
-          items:  [
-            const DropdownMenuItem(value: null, child: Text("Client Status")),
-            DropdownMenuItem(value: ClientStatus.CREATED.name, child: const Text("Created")),
-            DropdownMenuItem(value: ClientStatus.APPROVED.name, child: const Text("Approved")),
-            DropdownMenuItem(value: ClientStatus.REJECTED.name, child: const Text("Rejected")),
-            DropdownMenuItem(value: ClientStatus.SYNCED.name, child: const Text("Synced")),
-            DropdownMenuItem(value: ClientStatus.UPLOADED.name, child: const Text("Uploaded")),
-            DropdownMenuItem(value: ClientStatus.EXPORTED.name, child: const Text("Exported")),
+          items: [
+            DropdownMenuItem(
+                value: null,
+                child: Text(AppLocalizations.of(context)!.client_status)),
+            DropdownMenuItem(
+                value: ClientStatus.APPROVED.name,
+                child: const Text("Approved")),
+            DropdownMenuItem(
+                value: ClientStatus.REJECTED.name,
+                child: const Text("Rejected")),
+            // DropdownMenuItem(
+            //     value: ClientStatus.SYNCED.name, child: const Text("Synced")),
+            DropdownMenuItem(
+                value: ClientStatus.EXPORTED.name,
+                child: const Text("Exported")),
             // Add more items as needed
           ],
           onChanged: (String? newValue) {
             context.read<ExportPacketsProvider>().changeClientStatus(newValue);
             context.read<ExportPacketsProvider>().filterSearchList();
           },
-        )
-    );
+        ));
   }
 }
