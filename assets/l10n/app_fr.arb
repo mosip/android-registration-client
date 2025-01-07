@@ -18,7 +18,7 @@
   "next_button": "PROCHAINE",
   "password": "Mot de passe",
   "enter_password": "Entrez le mot de passe",
-  "forgot_password": "MOT DE PASSE OUBLIÉ",
+  "forgot_password": "MOT DE PASSE OUBLIÉ ?",
   "login_button": "CONNECTEZ-VOUS",
   "back_button": "PRÉCÉDENT",
   "user_validated": "Utilisateur validé !",

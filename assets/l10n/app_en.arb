@@ -18,7 +18,7 @@
   "next_button": "NEXT",
   "password": "Password",
   "enter_password": "Enter Password",
-  "forgot_password": "FORGOT PASSWORD",
+  "forgot_password": "FORGOT PASSWORD?",
   "login_button": "LOGIN",
   "back_button": "BACK",
   "user_validated": "User Validated!",

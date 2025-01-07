@@ -14,7 +14,7 @@ class NetworkComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 80,bottom: 20),
+      padding: const EdgeInsets.only(top: 50,bottom: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -35,7 +35,7 @@ class NetworkComponent extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.w300,color: Colors.grey,fontSize: 22)),
           SizedBox(
-            height: 90.h,
+            height: 50.h,
           ),
           InkWell(
             onTap: onTapRetry,
