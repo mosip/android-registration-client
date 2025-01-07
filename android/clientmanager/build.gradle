@@ -20,7 +20,6 @@ android {
         buildConfigField("String", "CLIENT_VERSION", rootProject.ext.clientmanagerLibVersionName)
         buildConfigField("String", "BASE_URL", rootProject.ext.serverBaseURL)
         buildConfigField("String", "DEBUG_PASSWORD", rootProject.ext.debugPassword)
-        buildConfigField("String", "FORGOT_PASSWORD_URL", rootProject.ext.serverForgotPasswordURL)
     }
 
     buildTypes {

@@ -30,6 +30,7 @@ import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -49,6 +50,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     LoginService loginService;
     AuditManagerService auditManagerService;
     SharedPreferences sharedPreferences;
+    GlobalParamRepository globalParamRepository;
     public static final String IS_OFFICER = "is_officer";
     public static final String IS_SUPERVISOR = "is_supervisor";
     public static final String IS_DEFAULT = "is_default";
@@ -60,12 +62,13 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Inject
     public AuthenticationApi(Context context, SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                    LoginService loginService, AuditManagerService auditManagerService) {
+                    LoginService loginService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.syncRestFactory = syncRestFactory;
         this.loginService = loginService;
         this.auditManagerService = auditManagerService;
+        this.globalParamRepository = globalParamRepository;
         sharedPreferences = this.context.
                 getSharedPreferences(
                         this.context.getString(R.string.app_name),
@@ -236,7 +239,8 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Override
     public void forgotPasswordUrl(@NonNull AuthResponsePigeon.Result<String> result) {
-        String response = "https://"+ BuildConfig.FORGOT_PASSWORD_URL +"/auth/realms/master/protocol/openid-connect/auth?client_id=security-admin-console&redirect_uri=https%3A%2F%2F"+ BuildConfig.FORGOT_PASSWORD_URL +"%2Fauth%2Fadmin%2Fmaster%2Fconsole%2F&state=744b7212-725b-48cb-91a9-9b8e4c33a031&response_mode=fragment&response_type=code&scope=openid&nonce=08339536-3d88-4d24-a465-16e9d02e7dbe&code_challenge=OQREJKeFfdANcrZpB10WqFQe8Y2Br881eR628O1sJnU&code_challenge_method=S256";
+        System.out.println("<======forgot password url======>"+this.globalParamRepository.getCachedStringForgotPassword());
+        String response = this.globalParamRepository.getCachedStringForgotPassword();
         result.success(response);
     }
 }
