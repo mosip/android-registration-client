@@ -239,7 +239,6 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Override
     public void forgotPasswordUrl(@NonNull AuthResponsePigeon.Result<String> result) {
-        System.out.println("<======forgot password url======>"+this.globalParamRepository.getCachedStringForgotPassword());
         String response = this.globalParamRepository.getCachedStringForgotPassword();
         result.success(response);
     }
