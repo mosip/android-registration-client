@@ -85,21 +85,6 @@ class PasswordComponent extends StatelessWidget {
             ),
           ),
         ),
-        // SizedBox(
-        //   height: 15.h,
-        // ),
-        // InkWell(
-        //   onTap: () {},
-        //   child: Container(
-        //     alignment: Alignment.centerRight,
-        //     child: Text(
-        //       AppLocalizations.of(context)!.forgot_password,
-        //       style: isMobile
-        //       && !isMobileSize ? AppTextStyle.tabletPortraitForgotPasswordText
-        //           : AppTextStyle.mobileForgotPasswordText,
-        //     ),
-        //   ),
-        // ),
         SizedBox(
           height: 30.h,
         ),
