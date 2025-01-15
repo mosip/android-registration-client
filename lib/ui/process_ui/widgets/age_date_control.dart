@@ -268,7 +268,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         readOnly: true,
                         controller: dateController,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (widget.field.required == true && (value == null || value.isEmpty)) {
                             return AppLocalizations.of(context)!
                                 .select_value_message;
                           }
@@ -310,7 +310,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                         controller: ageController,
                         keyboardType: TextInputType.number,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (widget.field.required == true && (value == null || value.isEmpty)) {
                             return AppLocalizations.of(context)!
                                 .select_value_message;
                           }
