@@ -118,4 +118,8 @@ public class GlobalParamRepository {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+    public String getCachedStringForgotPassword() {
+        return globalParamMap.get(RegistrationConstants.FORGOT_PASSWORD_URL);
+    }
 }

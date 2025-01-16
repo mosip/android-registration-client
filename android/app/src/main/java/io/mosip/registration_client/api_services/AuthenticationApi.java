@@ -24,11 +24,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDException;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -48,6 +50,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     LoginService loginService;
     AuditManagerService auditManagerService;
     SharedPreferences sharedPreferences;
+    GlobalParamRepository globalParamRepository;
     public static final String IS_OFFICER = "is_officer";
     public static final String IS_SUPERVISOR = "is_supervisor";
     public static final String IS_DEFAULT = "is_default";
@@ -59,12 +62,13 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Inject
     public AuthenticationApi(Context context, SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                    LoginService loginService, AuditManagerService auditManagerService) {
+                    LoginService loginService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.syncRestFactory = syncRestFactory;
         this.loginService = loginService;
         this.auditManagerService = auditManagerService;
+        this.globalParamRepository = globalParamRepository;
         sharedPreferences = this.context.
                 getSharedPreferences(
                         this.context.getString(R.string.app_name),
@@ -231,5 +235,11 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             Log.e(getClass().getSimpleName(), "Failed to stop alarm service", e);
         }
         result.success(resultString);
+    }
+
+    @Override
+    public void forgotPasswordUrl(@NonNull AuthResponsePigeon.Result<String> result) {
+        String response = this.globalParamRepository.getCachedStringForgotPassword();
+        result.success(response);
     }
 }

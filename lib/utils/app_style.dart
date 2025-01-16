@@ -81,7 +81,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle mobileForgotPasswordText = const TextStyle(
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.bold,
     fontSize: 14,
     color: appSolidPrimary,
     letterSpacing: 0.5,
@@ -284,7 +284,7 @@ abstract class AppTextStyle {
   );
 
   static TextStyle tabletPortraitForgotPasswordText = const TextStyle(
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.bold,
     fontSize: 22,
     color: appSolidPrimary,
     letterSpacing: 0.5,

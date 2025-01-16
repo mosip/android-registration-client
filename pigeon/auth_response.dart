@@ -32,4 +32,6 @@ abstract class AuthResponseApi {
   String logout();
   @async
   String stopAlarmService();
+  @async
+  String forgotPasswordUrl();
 }
