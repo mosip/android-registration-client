@@ -18,7 +18,7 @@
   "next_button": "PROCHAINE",
   "password": "Mot de passe",
   "enter_password": "Entrez le mot de passe",
-  "forgot_password": "Mot de passe oublié?",
+  "forgot_password": "MOT DE PASSE OUBLIÉ ?",
   "login_button": "CONNECTEZ-VOUS",
   "back_button": "PRÉCÉDENT",
   "user_validated": "Utilisateur validé !",
@@ -307,5 +307,8 @@
   "application_id_not_exist": "L'ID de l'application n'existe pas!",
   "correct_application_id": "Veuillez vérifier l'ID d'application saisi ou saisir un ID correct et essayer de le récupérer à nouveau.",
   "enter_application_id": "Veuillez saisir l'ID de la demande",
-  "okay": "D'ACCORD"
+  "okay": "D'ACCORD",
+  "no_internet_connection": "Pas de connexion Internet!",
+  "connect_and_retry": "Veuillez vous connecter à Internet et réessayer.",
+  "retry": "RECOMMENCEZ"
 }

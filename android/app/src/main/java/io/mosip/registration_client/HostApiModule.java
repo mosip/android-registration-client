@@ -113,9 +113,9 @@ public class HostApiModule {
     AuthenticationApi getAuthenticationApi(SyncRestService syncRestService,
                                            SyncRestUtil syncRestFactory,
                                            LoginService loginService,
-                                           AuditManagerService auditManagerService) {
+                                           AuditManagerService auditManagerService,GlobalParamRepository globalParamRepository) {
         return new AuthenticationApi(appContext, syncRestService, syncRestFactory,
-                loginService, auditManagerService);
+                loginService, auditManagerService, globalParamRepository);
     }
 
     @Provides
