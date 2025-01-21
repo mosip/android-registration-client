@@ -27,8 +27,7 @@ class TemplateBottomSheet {
   }
 
   Widget bottomSheet(BuildContext context) {
-    bool isPortrait = true;
-    isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+
     return ChangeNotifierProvider<ApprovePacketsProvider>.value(
       value: context.watch<ApprovePacketsProvider>(),
       builder: (context, _) {
@@ -60,7 +59,7 @@ class TemplateBottomSheet {
                 child: SingleChildScrollView(
                   controller: ScrollController(),
                   child: SizedBox(
-                    height: isPortrait ? 1400 : 2400,
+                    height: isMobileSize ? 1500 : 2700,
                     child: WebViewPlus(
                       zoomEnabled: true,
                       onWebViewCreated: (controller) async {

@@ -20,6 +20,7 @@ class PasswordComponent extends StatelessWidget {
     required this.isLoggingIn,
     required this.isDisabled,
     required this.isMobile,
+    required this.onTapForgotPassword,
   }) : super(key: key);
 
   final VoidCallback onTapLogin;
@@ -28,6 +29,7 @@ class PasswordComponent extends StatelessWidget {
   final bool isLoggingIn;
   final bool isDisabled;
   final bool isMobile;
+  final VoidCallback onTapForgotPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -80,21 +82,6 @@ class PasswordComponent extends StatelessWidget {
             style: TextStyle(
               fontSize: isMobile && !isMobileSize ? 22 : 14,
               color: appBlack,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 15.h,
-        ),
-        InkWell(
-          onTap: () {},
-          child: Container(
-            alignment: Alignment.centerRight,
-            child: Text(
-              AppLocalizations.of(context)!.forgot_password,
-              style: isMobile
-              && !isMobileSize ? AppTextStyle.tabletPortraitForgotPasswordText
-                  : AppTextStyle.mobileForgotPasswordText,
             ),
           ),
         ),
@@ -160,6 +147,24 @@ class PasswordComponent extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        SizedBox(
+          height: 30.h,
+        ),
+        InkWell(
+          onTap: onTapForgotPassword,
+          child: Container(
+            alignment: Alignment.center,
+            child: Text(
+              AppLocalizations.of(context)!.forgot_password,
+              style: isMobile
+                  && !isMobileSize ? AppTextStyle.tabletPortraitForgotPasswordText
+                  : AppTextStyle.mobileForgotPasswordText,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20.h,
         ),
       ],
     );
