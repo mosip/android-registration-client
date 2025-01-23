@@ -70,6 +70,10 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       return const SizedBox.shrink();
     }
 
+    if (e.inputRequired == false) {
+      return const SizedBox.shrink();
+    }
+
     switch (e.controlType) {
       case "checkbox":
         if (e.subType == "gender") {
