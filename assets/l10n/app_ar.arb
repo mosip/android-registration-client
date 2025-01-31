@@ -18,7 +18,7 @@
   "next_button": "مقبل",
   "password": "شعار",
   "enter_password": "أدخل كلمة المرور",
-  "forgot_password": "نسيت كلمة المرور?",
+  "forgot_password": "هل نسيت كلمة السر؟",
   "login_button": "تسجيل الدخول",
   "back_button": "ظهر",
   "user_validated": "تم التحقق من صحة المستخدم!",
@@ -307,5 +307,8 @@
   "application_id_not_exist": "معرف التطبيق غير موجود!",
   "correct_application_id": "يرجى التحقق من معرف التطبيق الذي تم إدخاله أو إدخال معرف صحيح ومحاولة جلبه مرة أخرى.",
   "enter_application_id": "الرجاء إدخال معرف التطبيق",
-  "okay": "تمام"
+  "okay": "تمام",
+  "no_internet_connection": "لا يوجد اتصال بالإنترنت!",
+  "connect_and_retry": "يرجى الاتصال بالإنترنت وإعادة المحاولة.",
+  "retry": "إعادة المحاولة"
 }

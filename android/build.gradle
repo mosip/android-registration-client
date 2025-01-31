@@ -23,6 +23,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 
@@ -39,7 +40,7 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-    serverBaseURL = "\"https://api-internal.qa-plan.mosip.net\""
+    serverBaseURL = "\"https://api-internal.qa-platform1.mosip.net\""
     serverHealthCheckPath = "\"/v1/syncdata/actuator/health\""
     serverActuatorInfoPath = "\"/v1/syncdata/actuator/info\""
     debugPassword = "\"APTyKejHxACQyKBSRciR\""

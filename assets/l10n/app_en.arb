@@ -18,7 +18,7 @@
   "next_button": "NEXT",
   "password": "Password",
   "enter_password": "Enter Password",
-  "forgot_password": "Forgot Password?",
+  "forgot_password": "FORGOT PASSWORD?",
   "login_button": "LOGIN",
   "back_button": "BACK",
   "user_validated": "User Validated!",
@@ -308,5 +308,8 @@
   "application_id_not_exist": "Application ID does not exist!",
   "correct_application_id": "Please check the entered Application ID or enter a correct ID and try to fetch it again.",
   "enter_application_id": "Please Enter Application ID",
-  "okay": "OKAY"
+  "okay": "OKAY",
+  "no_internet_connection": "No Internet Connection!",
+  "connect_and_retry": "Please connect with internet and retry.",
+  "retry": "RETRY"
 }
