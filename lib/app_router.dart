@@ -6,6 +6,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:registration_client/ui/process_ui/lost_process.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 
@@ -23,6 +24,7 @@ class AppRouter {
     UpdateProcess.routeName: (context) => const UpdateProcess(),
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
+    LostProcess.routeName: (context) => const LostProcess(),
   };
 
   static Route<dynamic>? onUnknownRoute(RouteSettings settings) {
