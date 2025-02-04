@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
   Widget getProcessUI(BuildContext context, Process process) {
     List<Screen?> sortedScreens;
     sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
-    if (process.id == "NEW" || process.id == "UPDATE") {
+    if (process.id == "NEW" || process.id == "UPDATE" || process.id == "LOST") {
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");
       for (var screen in sortedScreens) {
