@@ -48,10 +48,10 @@ class _LanguageSelectorState extends State<LanguageSelector> {
           arguments: {"process": widget.newProcess});
     }
 
-    if (widget.newProcess.id == "LOST") {
-      Navigator.pushNamed(context, LostProcess.routeName,
-      arguments: {"process": widget.newProcess});
-    }
+    // if (widget.newProcess.id == "LOST") {
+    //   Navigator.pushNamed(context, LostProcess.routeName,
+    //   arguments: {"process": widget.newProcess});
+    // }
   }
 
   _showInSnackBar(String value) {
