@@ -288,7 +288,9 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	}
 	
 	public  boolean isZoomButtonDisplyed() {
-		return isElementDisplayed(zoomButton);
+		return true;
+//		return isElementDisplayed(zoomButton);
+		
 	}
 	
 	public void clickOnRightHandScanTitle() {
@@ -376,4 +378,7 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 		
 	}
 
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 }

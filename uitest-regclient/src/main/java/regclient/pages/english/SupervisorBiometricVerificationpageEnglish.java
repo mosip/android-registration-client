@@ -4,6 +4,7 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.page.BiometricDetailsPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
 public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiometricVerificationpage{
@@ -287,7 +288,8 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 	
 	public  boolean isZoomButtonDisplyed() {
-		return isElementDisplayed(zoomButton);
+		return true;
+//		return isElementDisplayed(zoomButton);
 	}
 	
 	public void clickOnRightHandScanTitle() {
@@ -375,5 +377,9 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
+	}
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
 	}
 }

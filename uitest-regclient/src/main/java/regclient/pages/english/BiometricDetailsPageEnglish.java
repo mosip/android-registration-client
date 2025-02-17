@@ -1,9 +1,12 @@
 package regclient.pages.english;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
@@ -11,12 +14,6 @@ import regclient.page.PreviewPage;
 
 
 public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Applicant Biometrics\"))")
-	private WebElement applicantBiometricTitle;
-	
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Authentication\"))")
-	private WebElement authenticationBiometricTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
@@ -36,9 +33,6 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
 	private WebElement exceptionScanIcon;
 	
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,\"Introducer Biometrics\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris Scan\"]")
-	private WebElement introducerIrisScanIcon;
-	
 	@AndroidFindBy(accessibility = "CONTINUE")
 	private WebElement continueButton;
 
@@ -46,12 +40,14 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 		super(driver);
 	}
 
+	@SuppressWarnings("deprecation")
 	public  boolean isBiometricDetailsPageDisplayed() {
-		return isElementDisplayed(applicantBiometricTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
 	}
 		
+	@SuppressWarnings("deprecation")
 	public  boolean isAuthenticationBiometricTitleDisplayed() {
-		return isElementDisplayed(authenticationBiometricTitle);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualAuthBiometrics") + "\"))")));
 	}
 	
 	public ApplicantBiometricsPage clickOnIrisScan() {
@@ -86,10 +82,31 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	}
 	
 	public IntroducerBiometricPage clickOnIntroducerIrisScan() {
-		while(!isElementDisplayedOnScreen(introducerIrisScanIcon)) {
-			swipeOrScroll();
-		}
-		clickOnElement(introducerIrisScanIcon);
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris Scan\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerRightHandScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Right\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerLeftHandScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Left\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerThumbScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Thumbs\"]")));
+		return new IntroducerBiometricPageEnglish(driver);
+
+	}
+	
+	public IntroducerBiometricPage clickOnIntroducerFaceScan() {
+		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Face\"]")));
 		return new IntroducerBiometricPageEnglish(driver);
 
 	}

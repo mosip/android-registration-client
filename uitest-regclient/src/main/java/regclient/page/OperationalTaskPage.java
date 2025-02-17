@@ -19,4 +19,8 @@ public abstract class OperationalTaskPage extends BasePage{
 	public abstract  void clickApplicationUploadTitle();
 	
 	public abstract boolean isApplicationUploadTitleDisplayed();
+	
+    public abstract void clickPendingApprovalTitle();
+
+    public abstract boolean isPendingApprovalTitleDisplayed();
 }

@@ -1,48 +1,25 @@
 package regclient.pages.english;
 
+import static org.testng.Assert.assertTrue;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.BaseTestCase;
+import regclient.api.FetchUiSpec;
+import regclient.page.BasePage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
+import regclient.utils.TestDataReader;
 
 
 public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Full Name\"))")
-	private WebElement demographicDetailspage;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Consent\"))")
-	private WebElement consentTitle;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Full Name\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement fullNameTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Full Name\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement fullNameTextBoxSecondLanguage;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")
-	private WebElement ageTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement addressLine1TextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine1\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement addressLine1TextBoxSecondLangauge;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement addressLine2TextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine2\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement addressLine2TextBoxSecondLangauge;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement addressLine3TextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"addressLine3\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement addressLine3TextBoxSecondLangauge;
 
 	@AndroidFindBy(accessibility = "Male")
 	private WebElement maleButton;
@@ -50,117 +27,26 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(accessibility = "Female")
 	private WebElement femaleButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Civil Status\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectMaritalStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Residence Status\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectResidentStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Region\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectRegionStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Province\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectProvinceStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"City\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectCityStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Zone\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectZoneStatus;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Postal\")]/parent::android.view.View/parent::android.widget.Button")
-	private WebElement selectPostal;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"14022\")")
-	private WebElement selectPostalCode;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-Foreigner\")")
-	private WebElement nonForeignerValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Foreigner\")")
-	private WebElement foreignerValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Single\")")
-	private WebElement singleValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Rabat Sale Kenitra\")")
-	private WebElement rabatSaleKenitraValueFromDropdown;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Kenitra\")]")
-	private WebElement kenitraValueFromDropdown;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Rabat\")]")
-	private WebElement rabatValueFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Ben Mansour\")")
-	private WebElement benMansourFromDropdown;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Residence Status\")")
-	private WebElement residenceStatusHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Region\")")
-	private WebElement regionHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Province\")")
-	private WebElement provinceHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"City\")")
-	private WebElement cityHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Zone\")")
-	private WebElement zoneHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Postal\")")
-	private WebElement postalCodeHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Phone\")")
-	private WebElement mobileNumberHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Email\"))")
-	private WebElement emailHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducer Name\"))")
-	private WebElement introducerNameHeader;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Introducer RID\"))")
-	private WebElement introducerRidHeader;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Phone\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText")
-	private WebElement mobileNumberTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Email\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement emailIdTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducer Name\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement introducerNameTextBox;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducer Name\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")
-	private WebElement introducerNameTextBoxSecondLangauge;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Introducer RID\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")
-	private WebElement introducerRidTextBox;
-
 	@AndroidFindBy(accessibility = "CONTINUE")
 	private WebElement continueButton;
 
 	@AndroidFindBy(accessibility = "Invalid input")
 	private WebElement errorMessageInvalidInputText;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
-	private WebElement calenderIcon;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"DOB\")]/parent::android.view.View/following-sibling::android.view.View")
-	private WebElement getSelectedDate;
-
 	@AndroidFindBy(accessibility = "Scrim")
 	private WebElement backgroundScreen;
+
+	@AndroidFindBy(accessibility = "FETCH DATA")
+	private WebElement fetchDataButton;
 
 
 	public DemographicDetailsPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isDemographicDetailsPageDisplayed() {
+		WebElement  demographicDetailspage = findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))"));
 		return isElementDisplayed(demographicDetailspage);
 	}
 
@@ -168,243 +54,11 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 		return isElementDisplayed(errorMessageInvalidInputText);
 	}
 
+	@SuppressWarnings("deprecation")
 	public  ConsentPage clickOnConsentPageTitle() {
+		WebElement  consentTitle = findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("consentdet") + "\"))"));
 		clickOnElement(consentTitle);
 		return new ConsentPageEnglish(driver);
-	}
-
-	public  void enterFullName(String fullName) {
-		clickAndsendKeysToTextBox(fullNameTextBox,fullName);
-	}
-
-	public  void enterAddressLine1(String addressLine1) {
-		if(!isElementDisplayedOnScreen(addressLine1TextBox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(addressLine1TextBox,addressLine1);
-	}
-
-	public  void enterAddressLine2(String addressLine2) {
-		if(!isElementDisplayedOnScreen(addressLine2TextBox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(addressLine2TextBox,addressLine2);
-	}
-
-	public  void enterAddressLine3(String addressLine3) {
-		if(!isElementDisplayedOnScreen(addressLine3TextBox)) {
-			swipeOrScroll();
-		}
-		clickAndsendKeysToTextBox(addressLine3TextBox,addressLine3);
-	}
-
-	public  void enterAge(String age) {
-		clickAndsendKeysToTextBox(ageTextBox,age);
-	}
-
-	public boolean checkFullNameSecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(fullNameTextBoxSecondLanguage)==null || getTextFromLocator(fullNameTextBoxSecondLanguage)=="" )
-			return	false;
-		else
-			return	true;
-	}
-
-	public boolean checkAddress1SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine1TextBoxSecondLangauge)==null || getTextFromLocator(addressLine1TextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
-	}
-
-	public boolean checkAddress2SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine2TextBoxSecondLangauge)==null || getTextFromLocator(addressLine2TextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
-	}
-
-	public boolean checkAddress3SecondLanguageTextBoxNotNull() {
-		if(getTextFromLocator(addressLine3TextBoxSecondLangauge)==null || getTextFromLocator(addressLine3TextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
-	}
-
-	public boolean checkIntroducerNameTextBoxSecondLangaugeTextBoxNotNull() {
-		if(getTextFromLocator(introducerNameTextBoxSecondLangauge)==null || getTextFromLocator(introducerNameTextBoxSecondLangauge)=="" )
-			return	false;
-		else
-			return	true;
-	}
-	public boolean isResidenceStatusHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(residenceStatusHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(residenceStatusHeader);
-	}
-
-	public boolean isRegionHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(regionHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(regionHeader);
-	}
-
-	public boolean isProvinceHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(provinceHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(provinceHeader);
-	}
-
-	public boolean isCityHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(cityHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(cityHeader);
-	}
-
-	public boolean isPostalCodeHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(postalCodeHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(postalCodeHeader);
-	}
-
-	public boolean isMobileNumberHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(mobileNumberHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(mobileNumberHeader);
-	}
-
-	public boolean isZoneHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(zoneHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(zoneHeader);
-	}
-
-	public boolean isEmailHeaderDisplayed() {
-		while(!isElementDisplayedOnScreen(emailHeader)) {
-			swipeOrScroll();
-		}
-		return isElementDisplayed(emailHeader);
-	}
-
-	public boolean isIntroducerNameHeaderDisplayed() {
-		return isElementDisplayed(introducerNameHeader);
-	}
-
-	public boolean isIntroducerRidHeaderDisplayed() {
-		return isElementDisplayed(introducerRidHeader);
-	}
-
-	public  void selectGender(String gender) {
-		if(gender.equalsIgnoreCase("male"))
-			clickOnElement(maleButton);
-		if(gender.equalsIgnoreCase("female"))
-			clickOnElement(femaleButton);
-	}
-
-	public  void selectMaritalStatus() {
-		clickOnElement(selectMaritalStatus);
-		if(!isElementDisplayedOnScreen(singleValueFromDropdown)) {
-			swipeOrScroll();
-			clickOnElement(selectMaritalStatus);
-			clickOnElement(singleValueFromDropdown);
-		}else
-			clickOnElement(singleValueFromDropdown);
-	}
-
-	public  void selectResidenceStatus(String ResidenceStatus) {
-		clickOnElement(selectResidentStatus);
-		if(ResidenceStatus.equalsIgnoreCase("Foreigner")) {
-			if(!isElementDisplayedOnScreen(foreignerValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectResidentStatus);
-				clickOnElement(foreignerValueFromDropdown);
-			}else
-				clickOnElement(foreignerValueFromDropdown);
-		}else {
-			if(!isElementDisplayedOnScreen(nonForeignerValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectResidentStatus);
-				clickOnElement(nonForeignerValueFromDropdown);
-			}else
-				clickOnElement(nonForeignerValueFromDropdown);
-		}
-
-	}
-
-	public  void selectRegionStatus(String region) {
-		clickOnElement(selectRegionStatus);
-		if(region.equalsIgnoreCase("Rabat Sale Kenitra")) {
-			if(!isElementDisplayedOnScreen(rabatSaleKenitraValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectRegionStatus);
-				clickOnElement(rabatSaleKenitraValueFromDropdown);
-			}else {
-				clickOnElement(rabatSaleKenitraValueFromDropdown);
-			}
-		}
-
-	}
-
-	public  void selectProvinceStatus(String province) {
-		clickOnElement(selectProvinceStatus);
-		if(province.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayed(kenitraValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectProvinceStatus);
-				clickOnElement(kenitraValueFromDropdown);
-			}else
-				clickOnElement(kenitraValueFromDropdown);
-		if(province.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayed(rabatValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectProvinceStatus);
-				clickOnElement(rabatValueFromDropdown);
-			}else
-				clickOnElement(rabatValueFromDropdown);
-	}
-
-	public  void selectCityStatus(String city) {
-		clickOnElement(selectCityStatus);
-		if(city.equalsIgnoreCase("Kenitra"))
-			if(!isElementDisplayed(kenitraValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectCityStatus);
-				clickOnElement(kenitraValueFromDropdown);
-			}else
-				clickOnElement(kenitraValueFromDropdown);
-		if(city.equalsIgnoreCase("Rabat"))
-			if(!isElementDisplayed(rabatValueFromDropdown)) {
-				swipeOrScroll();
-				clickOnElement(selectCityStatus);
-				clickOnElement(rabatValueFromDropdown);
-			}else
-				clickOnElement(rabatValueFromDropdown);
-	}
-
-	public  void selectZoneStatus() {
-		clickOnElement(selectZoneStatus);
-		if(!isElementDisplayedOnScreen(benMansourFromDropdown)) {
-			swipeOrScroll();
-			clickOnElement(selectZoneStatus);
-			clickOnElement(benMansourFromDropdown);
-		}else
-			clickOnElement(benMansourFromDropdown);
-	}
-
-	public  void selectPostalStatus() {
-		clickOnElement(selectPostal);
-		if(!isElementDisplayedOnScreen(selectPostalCode)) {
-			swipeOrScroll();
-			clickOnElement(selectPostal);
-			clickOnElement(selectPostalCode);
-		}else
-			clickOnElement(selectPostalCode);
 	}
 
 	public  DocumentUploadPage clickOnContinueButton() {
@@ -412,52 +66,226 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 		return new DocumentuploadPageEnglish(driver);
 
 	}
+	
+	public  boolean isContinueButtonEnable() {
+		return isElementEnabled(continueButton);
 
-	public  void enterMobileNumber(String mobileNumber) {
-		if(!isElementDisplayedOnScreen(mobileNumberTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(mobileNumberTextBox,mobileNumber);
-		}else
-			clickAndsendKeysToTextBox(mobileNumberTextBox,mobileNumber);
 	}
 
-	public  void enterEmailID(String EmailID) {
-		if(!isElementDisplayedOnScreen(emailIdTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
-		}else
-			clickAndsendKeysToTextBox(emailIdTextBox,EmailID);
+	public boolean isPreRegFetchDataTextBoxDisplay() {
+		return isElementDisplayed(fetchDataButton);
 	}
 
-	public  void enterIntroducerName(String introducerName) {
-		if(!isElementDisplayedOnScreen(introducerNameTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
-		}else
-			clickAndsendKeysToTextBox(introducerNameTextBox,introducerName);
+	public void fillDemographicDetailsPage(String age) {
+		List<String> idList=FetchUiSpec.getAllIds("DemographicDetails");
+		for(String id : idList) {
+			if(FetchUiSpec.getRequiredTypeUsingId(id)) {
+				if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+					waitTime(3);
+					boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+					assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+					clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),BasePage.generateData(FetchUiSpec.getTextBoxUsingId(id)));
+					if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+						assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+				}
+				else if(FetchUiSpec.getControlTypeUsingId(id).equals("dropdown") &&  FetchUiSpec.getFormatUsingId(id).equals("none")){	
+					waitTime(3);
+					while(!isElementDisplayed(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")"))) {
+						swipeOrScroll();
+					}
+					boolean isdisplayed =isElementDisplayed(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")"));
+					assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+					WebElement dropdownElement=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.widget.Button"));
+					clickOnElement(dropdownElement);
+					waitTime(3);
+					if(!isElementDisplayed(dropdownElement)) {				
+						clickOnElement(findElement(By.className("android.view.View")));
+					}else if(isElementDisplayed(dropdownElement))  {
+						swipeOrScroll();
+						clickOnElement(dropdownElement);
+						waitTime(2);
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
+					waitTime(2);
+					if(isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+						clickOnElement(dropdownElement);
+						waitTime(2);
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
+				}else if(FetchUiSpec.getControlTypeUsingId(id).equals("dropdown") &&  FetchUiSpec.getFormatUsingId(id).equals("")){	
+					if(!isElementDisplayed(maleButton)) {
+						swipeOrScroll();
+						clickOnElement(maleButton);		
+					}else
+						clickOnElement(maleButton);		
+
+				}else if(FetchUiSpec.getControlTypeUsingId(id).equals("ageDate")){
+					waitTime(3);
+					boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+					assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+					if(age.equals("adult"))
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")),"20");
+					else if(age.equals("minor"))
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")),"12");
+					else if(age.equals("infant"))
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")),"4");
+					else if(age.equals("currentCalenderDate")) {
+						waitTime(1);
+						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.view.View")));		
+						waitTime(1);
+						clickOnElement(backgroundScreen);
+						waitTime(1);
+						assertTrue(checkDateFormatAndCurrectDate(id),"Verify date format and current date and time while selecting age date");
+					}
+				}
+			}
+			else if(id.equals("residenceStatus")) {
+				if(FetchUiSpec.getControlTypeUsingId(id).equals("dropdown") &&  FetchUiSpec.getFormatUsingId(id).equals("none")){	
+					waitTime(2);
+					boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+					assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+					WebElement dropdownElement=findElement(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.widget.Button"));
+					clickOnElement(dropdownElement);
+					waitTime(2);
+					if(!isElementDisplayed(dropdownElement)) {				
+						clickOnElement(findElement(By.className("android.view.View")));
+					}else if(isElementDisplayed(dropdownElement))  {
+						swipeOrScroll();
+						clickOnElement(dropdownElement);
+						waitTime(2);
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
+					waitTime(2);
+					if(isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+						clickOnElement(dropdownElement);
+						waitTime(2);
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
+				}
+			}
+			if(id.equals("introducerName") && FetchUiSpec.getFlowType().equals("newProcess")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+						waitTime(3);
+						boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+						assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),BasePage.generateData(FetchUiSpec.getTextBoxUsingId(id)));
+						if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+							assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+					}
+				}
+			}if(id.equals("introducerRID") && FetchUiSpec.getFlowType().equals("newProcess")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+						waitTime(3);
+						boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+						assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),TestDataReader.readData("RID"));
+						if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+							assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+					}
+				}
+			}
+		}
 	}
 
-	public  void enterIntroducerRid(String introducerRid) {
-		if(!isElementDisplayedOnScreen(introducerRidTextBox)) {
-			swipeOrScroll();
-			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
-		}else
-			clickAndsendKeysToTextBox(introducerRidTextBox,introducerRid);
+	public void editDemographicDetailsPage(String age) {
+		List<String> idList=FetchUiSpec.getAllIds("DemographicDetails");
+		for(String id : idList) {
+			if(FetchUiSpec.getRequiredTypeUsingId(id)) {
+				if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+					waitTime(3);
+					boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+					assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+					clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),BasePage.generateData(FetchUiSpec.getTextBoxUsingId(id)));
+					if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+						assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+				}else if(FetchUiSpec.getControlTypeUsingId(id).equals("ageDate")){
+					waitTime(3);
+					boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+					assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+					if(age.equals("adult"))
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")),"20");
+					else if(age.equals("minor"))
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")),"12");
+					else if(age.equals("infant"))
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.widget.EditText[1]")),"4");
+					else if(age.equals("currentCalenderDate")) {
+						waitTime(1);
+						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.view.View")));		
+						waitTime(1);
+						clickOnElement(backgroundScreen);
+						waitTime(1);
+						assertTrue(checkDateFormatAndCurrectDate(id),"Verify date format and current date and time while selecting age date");
+					}
+				}
+			}
+			if(id.equals("introducerName") && FetchUiSpec.getFlowType().equals("newProcess")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+						waitTime(3);
+						boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+						assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),BasePage.generateData(FetchUiSpec.getTextBoxUsingId(id)));
+						if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+							assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+					}
+				}
+			}if(id.equals("introducerRID") && FetchUiSpec.getFlowType().equals("newProcess")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+						waitTime(3);
+						boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+						assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),TestDataReader.readData("RID"));
+						if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+							assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+					}
+				}
+			}
+		}
 	}
 
-	public  void selectCurrentCalenderDate() {
-		clickOnElement(calenderIcon);		
+	public boolean checkSecondLanguageTextBoxNotNull(String id) {
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))==null || getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]")))=="" )
+			return	false;
+		else
+			return	true;
 	}
 
-	public  void closeCalender() {
-		clickOnElement(backgroundScreen);		
-	}
-
-	public  boolean checkDateFormatAndCurrectDate() {
-		getTextFromLocator(getSelectedDate);
-		if(getTextFromLocator(getSelectedDate).equalsIgnoreCase(getCurrentDate())) 
+	public  boolean checkDateFormatAndCurrectDate(String id) {
+		if(getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+ FetchUiSpec.getValueUsingId(id) +"\")]/parent::android.view.View/following-sibling::android.view.View"))).equalsIgnoreCase(getCurrentDate())) 
 			return	true;
 		else
 			return false;
+	}
+	
+	public void fillIntroducerDetailsInDemographicDetailsPage(String age) {
+		List<String> idList=FetchUiSpec.getAllIds("DemographicDetails");
+		for(String id : idList) {
+			if(id.equals("introducerName")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+						waitTime(3);
+						boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+						assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),BasePage.generateData(FetchUiSpec.getTextBoxUsingId(id)));
+						if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+							assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+					}
+				}
+			}if(id.equals("introducerUIN")) {
+				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
+					if(FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
+						waitTime(3);
+						boolean isdisplayed =isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId(id)+"\")")));
+						assertTrue(isdisplayed,"Verify if "+id+" header is displayed");
+						clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id) + "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),TestDataReader.readData("UINminor"));
+						if(FetchUiSpec.getTransliterateTypeUsingId(id)) 
+							assertTrue(checkSecondLanguageTextBoxNotNull(id),"Verify if "+id+" is enter in second language text box");
+					}
+				}
+			}
+		}
 	}
 }

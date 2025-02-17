@@ -368,5 +368,9 @@ public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometr
 	public void clickOnHomeButton() {
 		clickOnElement(homeButton);
 	}
+	
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
 
 }

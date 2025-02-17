@@ -28,11 +28,14 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	@AndroidFindBy(accessibility = "New Registration")
 	private WebElement newRegistrationButton;
 	
-	@AndroidFindBy(accessibility = "Update UIN")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Update\")")
 	private WebElement updateUinButton;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.ImageView\").instance(0)")
-	private WebElement synchronizeDataButton ;
+	
+	@AndroidFindBy(accessibility = "Lost UIN")
+	private WebElement lostUinButton;
+	
+	@AndroidFindBy(accessibility = "Biometric correction")
+	private WebElement biometricCorrectionButton;
 
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Policy key Sync Completed\"]")
 	private WebElement policykeySyncCompletedMessage ;
@@ -42,6 +45,9 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
 	private WebElement scriptSyncCompletedMessage ;
+	
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchronize Data\")")
+	private WebElement synchronizeDataButton ;
 
 	public RegistrationTasksPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -57,7 +63,7 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	}
 
 	public boolean isRegistrationTasksPageLoaded() {
-		return isElementDisplayed(registrationTasksTitle);
+		return isElementDisplayed(registrationTasksTitle,2000);
 	}
 
 	public boolean isOperationalTaskDisplayed() {
@@ -98,6 +104,31 @@ public class RegistrationTasksPageEnglish  extends RegistrationTasksPage{
 	public  SelectLanguagePage clickUpdateMyUINButton() {
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageEnglish(driver);
+	}
+	
+	public boolean isUpdateUINTitleDisplayed() {
+		return isElementDisplayed(updateUinButton);
+	}
+	
+	public boolean isLostUINTitleDisplayed() {
+		return isElementDisplayed(lostUinButton);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionButton);
+	}
+	
+	public  void clickSynchronizeDataButton() {
+		clickOnElement(synchronizeDataButton);
+		waitTime(50);
+	}
+	
+	public boolean checkLastSyncDate() {
+		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
+		if(contentDesc.contains("Synchronize Data\n"+getCurrentDateWord()+","))
+			return true;
+		else
+			return false;
 	}
 
 }

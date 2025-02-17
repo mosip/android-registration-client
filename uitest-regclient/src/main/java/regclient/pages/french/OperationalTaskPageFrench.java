@@ -21,6 +21,9 @@ public class OperationalTaskPageFrench extends OperationalTaskPage{
 	
 	@AndroidFindBy(accessibility = "Téléchargement d'application")
 	private WebElement applicationUploadTitle;
+	
+	@AndroidFindBy(accessibility = "En attente de validation")
+	private WebElement pendingApprovalTitle;
 
 
 	public OperationalTaskPageFrench(AppiumDriver driver) {
@@ -61,5 +64,15 @@ public class OperationalTaskPageFrench extends OperationalTaskPage{
 		return isElementDisplayed(applicationUploadTitle);
 	}
 
+	public  void clickPendingApprovalTitle() {
+		clickOnElement(pendingApprovalTitle);
+	}
+	
+	public boolean isPendingApprovalTitleDisplayed() {
+		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeOrScroll();
+		}
+		return isElementDisplayed(pendingApprovalTitle);
+	}
 
 }
