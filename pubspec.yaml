@@ -70,6 +70,9 @@ dependencies:
   flutter_config: ^2.0.2
   native_image_cropper: ^0.6.0
   qr_code_scanner: ^1.0.1
+  get_it: ^7.6.7
+  injectable: ^2.3.2
+  internet_connection_checker:
 
 dev_dependencies:
   flutter_test:

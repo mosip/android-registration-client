@@ -21,6 +21,7 @@ import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_driver/driver_extension.dart';
+import 'package:registration_client/internet_network_utils/injection.dart';
 
 void main() async {
   enableFlutterDriverExtension(enableTextEntryEmulation: false);
@@ -28,6 +29,7 @@ void main() async {
   final GlobalProvider appLanguage = GlobalProvider();
   await FlutterConfig.loadEnvVariables();
   await appLanguage.fetchLocale();
+  setupNetworkDependencies();
   runApp(
     const RestartWidget(child: RegistrationClientApp()),
   );
