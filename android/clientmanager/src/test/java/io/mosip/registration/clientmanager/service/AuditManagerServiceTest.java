@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
  */
 
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 30)
 public class AuditManagerServiceTest {
 
     private static final String PACKET_ID = "10001103911003120220530051317";
@@ -107,7 +109,14 @@ public class AuditManagerServiceTest {
         List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
         assertEquals(1, audits.size());
 
-        globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, String.valueOf(System.currentTimeMillis()));
+        // Wait a moment to ensure the audit timestamp is earlier
+        try {
+            Thread.sleep(100); // Add a small delay
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        long currentTime = System.currentTimeMillis();
+        globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, String.valueOf(currentTime));
         auditManagerService.deleteAuditLogs();
 
         audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);

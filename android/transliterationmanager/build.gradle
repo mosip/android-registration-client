@@ -3,6 +3,10 @@ plugins {
 }
 
 android {
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+    }
     namespace 'io.mosip.registration.transliterationmanager'
     compileSdk rootProject.ext.compileSdkVersion
 

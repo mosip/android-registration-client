@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,7 @@ import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 30)
 public class IdentitySchemaRepositoryTest {
 
     Context appContext;

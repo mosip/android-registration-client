@@ -10,11 +10,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.entity.UserToken;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 30)
 public class DaoTest {
     private static ClientDatabase clientDatabase;
 

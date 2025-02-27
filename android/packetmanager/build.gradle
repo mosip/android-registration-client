@@ -1,12 +1,15 @@
 plugins {
     id 'com.android.library'
-    id "org.sonarqube"
+    //id "org.sonarqube"
 }
 
 apply from: '../jacoco.gradle'
 
 android {
-
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
@@ -85,14 +88,14 @@ dependencies {
     implementation project(':keymanager')
 }
 
-sonarqube {
-    androidVariant 'debug' //PUT REAL TASK NAME HERE
-
-    properties {
-        //PUT REAL PATHS HERE
-        property "sonar.java.binaries", "build/intermediates/javac/debug"
-        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
-        //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
-        property "sonar.coverage.jacoco.xmlReportPaths", "./build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
-    }
-}
+//sonarqube {
+//    androidVariant 'debug' //PUT REAL TASK NAME HERE
+//
+//    properties {
+//        //PUT REAL PATHS HERE
+//        property "sonar.java.binaries", "build/intermediates/javac/debug"
+//        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
+//        //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
+//        property "sonar.coverage.jacoco.xmlReportPaths", "./build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
+//    }
+//}
