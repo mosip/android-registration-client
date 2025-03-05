@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     //id "org.sonarqube"
+    id "org.sonarqube" version "6.0.1.5171"
 }
 
 apply plugin: 'jacoco'
@@ -84,14 +85,19 @@ dependencies {
 
 }
 
-//sonarqube {
-//    androidVariant 'debug' //PUT REAL TASK NAME HERE
-//
-//    properties {
-//        //PUT REAL PATHS HERE
+sonarqube {
+    androidVariant 'debug' //PUT REAL TASK NAME HERE
+
+    properties {
+        property "sonar.projectKey", "test-integrations_arc-gradle"
+        property "sonar.organization", "test-integrations"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.login", "851fdfdc67968b38decc9a66935672d9880ee2ec"
+        property "sonar.androidLint.reportPaths", "build/keymanager/reports/lint-results-debug.xml"
+        //PUT REAL PATHS HERE
 //        property "sonar.java.binaries", "build/intermediates/javac/debug"
 //        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
 //        //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
 //        property "sonar.coverage.jacoco.xmlReportPaths", "./build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
-//    }
-//}
+    }
+}
