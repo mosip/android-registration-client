@@ -41,6 +41,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, String> transliterationLangMapper = {};
+  bool hasInteractedWithDropdown = false;
+
 
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
@@ -347,7 +349,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                         null ||
                                                     widget.field.requiredOn!
                                                         .isEmpty ||
-                                                    !(globalProvider
+                                                    (globalProvider
                                                                 .mvelRequiredFields[
                                                             widget.field.id] ??
                                                         true))) {
@@ -355,7 +357,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                             }
                                             if ((value == null ||
                                                     value.isEmpty) &&
-                                                widget.field.inputRequired!) {
+                                                widget.field.inputRequired! && hasInteractedWithDropdown) {
                                               return AppLocalizations.of(
                                                       context)!
                                                   .select_value_message;
@@ -613,8 +615,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                                     }
                                                     if ((value == null ||
                                                             value.isEmpty) &&
-                                                        widget.field
-                                                            .inputRequired!) {
+                                                        (widget.field.inputRequired!) && hasInteractedWithDropdown) {
                                                       return AppLocalizations
                                                               .of(context)!
                                                           .select_value_message;
@@ -818,6 +819,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   void _showDropdownBottomSheet(
       AsyncSnapshot? snapshot, Field field, BuildContext context) {
+    hasInteractedWithDropdown = true;
     setState(() {
       documentController.text = snapshot!.data[0];
       doc.title = snapshot.data[0];
