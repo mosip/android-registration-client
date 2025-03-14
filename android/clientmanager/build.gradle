@@ -136,7 +136,7 @@ dependencies {
 
     api project(':matchsdk')
     implementation 'com.github.kenglxn.QRGen:android:3.0.1'
-    implementation("io.mosip.kernel:kernel-biometrics-api:1.2.0.3-SNAPSHOT"){
+    implementation("io.mosip.kernel:kernel-biometrics-api:1.2.0.3"){
         transitive = false
     }
 }
