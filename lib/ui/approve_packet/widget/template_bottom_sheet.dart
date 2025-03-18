@@ -59,7 +59,7 @@ class TemplateBottomSheet {
                 child: SingleChildScrollView(
                   controller: ScrollController(),
                   child: SizedBox(
-                    height: isMobileSize ? 1500 : 2700,
+                    height: isMobileSize ? 1600 : 2700,
                     child: WebViewPlus(
                       zoomEnabled: true,
                       onWebViewCreated: (controller) async {
