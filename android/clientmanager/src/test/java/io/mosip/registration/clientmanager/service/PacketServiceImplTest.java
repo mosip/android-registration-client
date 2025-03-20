@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -57,7 +56,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 30)
 public class PacketServiceImplTest {
 
     private static final String PACKET_ID = "10001103911003120220530051317";

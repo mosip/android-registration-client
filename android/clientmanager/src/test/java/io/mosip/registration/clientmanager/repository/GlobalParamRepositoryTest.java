@@ -1,6 +1,5 @@
 package io.mosip.registration.clientmanager.repository;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -17,20 +16,16 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 
-/**
- * @author Anshul vanawat
- * @since 02/06/2022.
- */
-
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 30)
 public class GlobalParamRepositoryTest {
 
     private static final String GLOBAL_PARAM_STRING_ID = "mosip.lang-code";
@@ -46,7 +41,6 @@ public class GlobalParamRepositoryTest {
 
     Context appContext;
     ClientDatabase clientDatabase;
-
     GlobalParamRepository globalParamRepository;
 
     @Before
@@ -76,68 +70,64 @@ public class GlobalParamRepositoryTest {
         assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamCachedValue);
     }
 
-
     @Test
     public void saveGlobalParamList() {
-
         List<GlobalParam> globalParamList = new ArrayList<>();
-        globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID
-                , GLOBAL_PARAM_BOOLEAN_ID
-                , GLOBAL_PARAM_BOOLEAN_VALUE.toString()
-                , true));
-        globalParamList.add(new GlobalParam(GLOBAL_PARAM_STRING_ID
-                , GLOBAL_PARAM_STRING_ID
-                , GLOBAL_PARAM_STRING_VALUE
-                , true));
-        globalParamList.add(new GlobalParam(GLOBAL_PARAM_INT_ID
-                , GLOBAL_PARAM_INT_ID
-                , String.valueOf(GLOBAL_PARAM_INT_VALUE)
-                , true));
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_VALUE.toString(), true));
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_VALUE, true));
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_INT_ID, GLOBAL_PARAM_INT_ID, String.valueOf(GLOBAL_PARAM_INT_VALUE), true));
 
         globalParamRepository.saveGlobalParams(globalParamList);
-
         List<GlobalParam> globalParams = globalParamRepository.getGlobalParams();
         assertEquals(3, globalParams.size());
     }
 
     @Test
     public void getCachedValues() {
+        saveGlobalParamList();
 
-        List<GlobalParam> globalParamList = new ArrayList<>();
-        globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID
-                , GLOBAL_PARAM_BOOLEAN_ID
-                , GLOBAL_PARAM_BOOLEAN_VALUE.toString()
-                , true));
-        globalParamList.add(new GlobalParam(GLOBAL_PARAM_STRING_ID
-                , GLOBAL_PARAM_STRING_ID
-                , GLOBAL_PARAM_STRING_VALUE
-                , true));
-        globalParamList.add(new GlobalParam(GLOBAL_PARAM_INT_ID
-                , GLOBAL_PARAM_INT_ID
-                , String.valueOf(GLOBAL_PARAM_INT_VALUE)
-                , true));
-
-        globalParamRepository.saveGlobalParams(globalParamList);
-
-        String globalParamCachedStringValue = globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID);
-        assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamCachedStringValue);
-
-        Boolean globalParamCachedBoolValue = globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID);
-        assertEquals(GLOBAL_PARAM_BOOLEAN_VALUE, globalParamCachedBoolValue);
-
-        int globalParamCachedIntValue = globalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_INT_ID);
-        assertEquals(GLOBAL_PARAM_INT_VALUE, globalParamCachedIntValue);
+        assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID));
+        assertEquals(GLOBAL_PARAM_BOOLEAN_VALUE, globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID));
+        assertEquals(GLOBAL_PARAM_INT_VALUE, globalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_INT_ID));
     }
 
     @Test
     public void getCachedValuesNotFoundTest() {
-        String globalParamCachedStringValue = globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED);
-        assertNull(globalParamCachedStringValue);
+        assertNull(globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED));
+        assertNull(globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED));
+        assertEquals(0, globalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED));
+    }
 
-        Boolean globalParamCachedBoolValue = globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED);
-        assertNull(globalParamCachedBoolValue);
+    @Test
+    public void getMandatoryLanguageCodesTest() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.MANDATORY_LANGUAGES_KEY, "eng, hin, fra");
+        List<String> codes = globalParamRepository.getMandatoryLanguageCodes();
+        assertEquals(Arrays.asList("eng", "hin", "fra"), codes);
+    }
 
-        int globalParamCachedIntValue = globalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED);
-        assertEquals(0, globalParamCachedIntValue);
+    @Test
+    public void getOptionalLanguageCodesTest() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.OPTIONAL_LANGUAGES_KEY, "kan, tam");
+        List<String> codes = globalParamRepository.getOptionalLanguageCodes();
+        assertEquals(Arrays.asList("kan", "tam"), codes);
+    }
+
+    @Test
+    public void getMaxLanguageCountTest() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.MAX_LANGUAGES_COUNT_KEY, "5");
+        assertEquals(5, globalParamRepository.getMaxLanguageCount());
+    }
+
+    @Test
+    public void getMinLanguageCountTest() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.MIN_LANGUAGES_COUNT_KEY, "2");
+        assertEquals(2, globalParamRepository.getMinLanguageCount());
+    }
+
+    @Test
+    public void getSelectedHandlesTest() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.SELECTED_HANDLES, "phone, email");
+        List<String> handles = globalParamRepository.getSelectedHandles();
+        assertEquals(Arrays.asList("phone", "email"), handles);
     }
 }

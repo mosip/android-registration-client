@@ -49,6 +49,7 @@ dependencies {
 
     implementation 'com.google.dagger:dagger:2.41'
     implementation 'com.google.dagger:dagger-android-support:2.41'
+    testImplementation 'androidx.test:core:1.5.0'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
 
@@ -87,15 +88,3 @@ dependencies {
     // added key-manager Android library module as a dependency
     implementation project(':keymanager')
 }
-
-//sonarqube {
-//    androidVariant 'debug' //PUT REAL TASK NAME HERE
-//
-//    properties {
-//        //PUT REAL PATHS HERE
-//        property "sonar.java.binaries", "build/intermediates/javac/debug"
-//        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
-//        //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
-//        property "sonar.coverage.jacoco.xmlReportPaths", "./build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
-//    }
-//}

@@ -60,7 +60,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 30)
+@Config(sdk = 33)
 public class MasterDataServiceImplTest {
 
     private static final String GLOBAL_PARAM_ID = "mosip.kernel.transliteration.english-language-code";

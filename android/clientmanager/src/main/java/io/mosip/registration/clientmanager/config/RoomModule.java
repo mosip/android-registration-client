@@ -135,7 +135,11 @@ public class RoomModule {
             SQLiteDatabase.loadLibs(context);
             File originalFile = context.getDatabasePath(DATABASE_NAME);
             File newFile = File.createTempFile("sqlcipherutils", "tmp", context.getCacheDir());
-            SQLiteDatabase existing_db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), "", null, SQLiteDatabase.OPEN_READWRITE);
+
+            // Retrieve existing DB password securely
+            String existingPassword = getEncryptedSharedPreferences(context).getString(DB_PWD_KEY, null);
+
+            SQLiteDatabase existing_db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), existingPassword, null, SQLiteDatabase.OPEN_READWRITE);
             existing_db.rawExecSQL("ATTACH DATABASE '" + newFile.getPath() + "' AS encrypted KEY '" + passphrase + "';");
             existing_db.rawExecSQL("SELECT sqlcipher_export('encrypted');");
             existing_db.rawExecSQL("DETACH DATABASE encrypted;");

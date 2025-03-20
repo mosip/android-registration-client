@@ -57,7 +57,7 @@ public class PacketManagerConstant {
     public static final String FINGERPRINT_SLAB_RIGHT = "FINGERPRINT_SLAB_RIGHT";
     public static final String FINGERPRINT_SLAB_THUMBS = "FINGERPRINT_SLAB_THUMBS";
     public static final String IRIS_DOUBLE = "IRIS_DOUBLE";
-    public static final String FACE_FULLFACE = "FACE_FULL FACE";
+    public static final String FACE_FULL_FACE = "FACE_FULL FACE";
 
     public static final String META_CREATION_DATE = "creationDate";
     public static final String META_CLIENT_VERSION = "Registration Client Version Number";
@@ -129,4 +129,9 @@ public class PacketManagerConstant {
     public static final java.lang.String OTHER_KEY_CONFIGURED = "CONFIGURED";
     public static final java.lang.String OTHER_KEY_PAYLOAD = "PAYLOAD";
     public static final java.lang.String OTHER_KEY_SPEC_VERSION = "SPEC_VERSION";
+    public static final String LEFT_SLAB = "Left Slab";
+    public static final String RIGHT_SLAB = "Right Slab";
+    public static final String THUMBS = "Thumbs";
+    public static final String IRIS = "Iris";
+    public static final String PACKET_KEEPER_EXCEPTION_MSG = "Packet keeper exception occured.";
 }
