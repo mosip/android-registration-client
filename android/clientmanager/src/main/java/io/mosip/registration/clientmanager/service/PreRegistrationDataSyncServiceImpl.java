@@ -281,7 +281,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                     PreRegArchiveDto preRegArchiveDto = responseWrapper.getResponse();
                     if (preRegArchiveDto != null && preRegArchiveDto.getZipBytes() != null) {
                         String stringZipBytes = preRegArchiveDto.getZipBytes();
-                        String byteString = stringZipBytes.replace("+", "-").replace("/", "_");
+                        String byteString = stringZipBytes.replaceAll("\\+", "-").replaceAll("/", "_");
                         PreRegistrationDto preRegistrationDto = preRegZipHandlingService.encryptAndSavePreRegPacket(preRegistrationId, byteString, centerMachineDto);
 
                         // save in Pre-Reg List
