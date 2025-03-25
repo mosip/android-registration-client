@@ -106,6 +106,7 @@ class _CustomDynamicDropDownState extends State<GenderControl> {
     List<DynamicFieldData?> data =
         await registrationTaskProvider.getFieldValues(
             widget.field.subType!, "eng", globalProvider.chosenLang);
+    fieldValueData = data;
     String response = data[0]!.name;
     if (widget.field.type == 'simpleType') {
       if ((globalProvider.fieldInputValue[widget.field.id ?? ""]
