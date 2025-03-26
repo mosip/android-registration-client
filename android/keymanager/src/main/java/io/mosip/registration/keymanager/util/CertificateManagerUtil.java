@@ -148,7 +148,7 @@ public class CertificateManagerUtil {
         if (rdns.length == 0) {
             return KeyManagerConstant.EMPTY;
         }
-        return BCStyle.INSTANCE.oidToDisplayName(identifier) + KeyManagerConstant.EQUALS
+        return BCStyle.INSTANCE.oidToDisplayName(identifier) + KeyManagerConstant.EQUALS_SIGN
                 + IETFUtils.valueToString((rdns[0]).getFirst().getValue()) + KeyManagerConstant.COMMA;
     }
 

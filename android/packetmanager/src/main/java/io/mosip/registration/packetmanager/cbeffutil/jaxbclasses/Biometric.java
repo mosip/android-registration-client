@@ -1,5 +1,15 @@
 package io.mosip.registration.packetmanager.cbeffutil.jaxbclasses;
 
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.FACE_FULL_FACE;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.FINGERPRINT_SLAB_LEFT;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.FINGERPRINT_SLAB_RIGHT;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.FINGERPRINT_SLAB_THUMBS;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.IRIS;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.IRIS_DOUBLE;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.LEFT_SLAB;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.RIGHT_SLAB;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.THUMBS;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,20 +17,20 @@ import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
 
 public enum Biometric {
 
-    LEFT_INDEX("FINGERPRINT_SLAB_LEFT", "Left Slab", "leftIndex", BiometricType.FINGER, "LF_INDEX"),
-    LEFT_MIDDLE("FINGERPRINT_SLAB_LEFT", "Left Slab", "leftMiddle", BiometricType.FINGER, "LF_MIDDLE"),
-    LEFT_RING("FINGERPRINT_SLAB_LEFT", "Left Slab", "leftRing", BiometricType.FINGER, "LF_RING"),
-    LEFT_LITTLE("FINGERPRINT_SLAB_LEFT", "Left Slab", "leftLittle", BiometricType.FINGER, "LF_LITTLE"),
-    RIGHT_INDEX("FINGERPRINT_SLAB_RIGHT", "Right Slab", "rightIndex", BiometricType.FINGER, "RF_INDEX"),
-    RIGHT_MIDDLE("FINGERPRINT_SLAB_RIGHT", "Right Slab", "rightMiddle", BiometricType.FINGER, "RF_MIDDLE"),
-    RIGHT_RING("FINGERPRINT_SLAB_RIGHT", "Right Slab", "rightRing", BiometricType.FINGER, "RF_RING"),
-    RIGHT_LITTLE("FINGERPRINT_SLAB_RIGHT", "Right Slab", "rightLittle", BiometricType.FINGER, "RF_LITTLE"),
-    LEFT_THUMB("FINGERPRINT_SLAB_THUMBS", "Thumbs", "leftThumb", BiometricType.FINGER, "LF_THUMB"),
-    RIGHT_THUMB("FINGERPRINT_SLAB_THUMBS", "Thumbs", "rightThumb", BiometricType.FINGER, "RF_THUMB"),
-    RIGHT_IRIS("IRIS_DOUBLE", "Iris", "rightEye", BiometricType.IRIS, "R_IRIS"),
-    LEFT_IRIS("IRIS_DOUBLE", "Iris", "leftEye", BiometricType.IRIS, "L_IRIS"),
-    FACE("FACE_FULL FACE", "Face", "face", BiometricType.FACE, "FACE"),
-    EXCEPTION("FACE_FULL FACE", "ExceptionPhoto", "unknown", BiometricType.EXCEPTION_PHOTO, "EXCEPTION_PHOTO");
+    LEFT_INDEX(FINGERPRINT_SLAB_LEFT, LEFT_SLAB, "leftIndex", BiometricType.FINGER, "LF_INDEX"),
+    LEFT_MIDDLE(FINGERPRINT_SLAB_LEFT, LEFT_SLAB, "leftMiddle", BiometricType.FINGER, "LF_MIDDLE"),
+    LEFT_RING(FINGERPRINT_SLAB_LEFT, LEFT_SLAB, "leftRing", BiometricType.FINGER, "LF_RING"),
+    LEFT_LITTLE(FINGERPRINT_SLAB_LEFT, LEFT_SLAB, "leftLittle", BiometricType.FINGER, "LF_LITTLE"),
+    RIGHT_INDEX(FINGERPRINT_SLAB_RIGHT, RIGHT_SLAB, "rightIndex", BiometricType.FINGER, "RF_INDEX"),
+    RIGHT_MIDDLE(FINGERPRINT_SLAB_RIGHT, RIGHT_SLAB, "rightMiddle", BiometricType.FINGER, "RF_MIDDLE"),
+    RIGHT_RING(FINGERPRINT_SLAB_RIGHT, RIGHT_SLAB, "rightRing", BiometricType.FINGER, "RF_RING"),
+    RIGHT_LITTLE(FINGERPRINT_SLAB_RIGHT, RIGHT_SLAB, "rightLittle", BiometricType.FINGER, "RF_LITTLE"),
+    LEFT_THUMB(FINGERPRINT_SLAB_THUMBS, THUMBS, "leftThumb", BiometricType.FINGER, "LF_THUMB"),
+    RIGHT_THUMB(FINGERPRINT_SLAB_THUMBS, THUMBS, "rightThumb", BiometricType.FINGER, "RF_THUMB"),
+    RIGHT_IRIS(IRIS_DOUBLE, IRIS, "rightEye", BiometricType.IRIS, "R_IRIS"),
+    LEFT_IRIS(IRIS_DOUBLE, IRIS, "leftEye", BiometricType.IRIS, "L_IRIS"),
+    FACE(FACE_FULL_FACE, "Face", "face", BiometricType.FACE, "FACE"),
+    EXCEPTION(FACE_FULL_FACE, "ExceptionPhoto", "unknown", BiometricType.EXCEPTION_PHOTO, "EXCEPTION_PHOTO");
 
     Biometric(String modalityName, String modalityShortName, String attributeName, BiometricType biometricType,
               String mdmConstant) {

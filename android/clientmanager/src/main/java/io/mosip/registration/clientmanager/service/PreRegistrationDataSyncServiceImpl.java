@@ -70,6 +70,8 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     private Context context;
     private String result = "";
     ExecutorService executorServiceForPreReg = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    public static final String APPLICATION_ID_SYNC_FAILED = "application_id_sync_failed";
+    public static final String ERROR_FETCH_PRE_REG_PACKET = "Failed to fetch pre-reg packet";
 
     public PreRegistrationDataSyncServiceImpl(Context context,PreRegistrationDataSyncDao preRegistrationDao,MasterDataService masterDataService,SyncRestService syncRestService,PreRegZipHandlingService preRegZipHandlingService,PreRegistrationList preRegistration,GlobalParamRepository globalParamRepository,RegistrationService registrationService){
         this.context = context;
@@ -91,7 +93,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
-            result = "application_id_sync_failed";
+            result = APPLICATION_ID_SYNC_FAILED;
             onFinish.run();
             return;
         }
@@ -137,19 +139,19 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                            result = "";
                            onFinish.run();
                         } catch (Exception e) {
-                            result = "application_id_sync_failed";
-                            Log.e(TAG, "application_id_sync_failed", e);
+                            result = APPLICATION_ID_SYNC_FAILED;
+                            Log.e(TAG, APPLICATION_ID_SYNC_FAILED, e);
                             Toast.makeText(context, "Application Id Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
                             onFinish.run();
                         }
 
                     } else {
-                        result = "application_id_sync_failed";
+                        result = APPLICATION_ID_SYNC_FAILED;
                         Toast.makeText(context, "Application Id Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
                         onFinish.run();
                     }
                 } else {
-                    result = "application_id_sync_failed";
+                    result = APPLICATION_ID_SYNC_FAILED;
                     Toast.makeText(context, "Application Id Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
                     onFinish.run();
                 }
@@ -157,7 +159,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
             @Override
             public void onFailure(Call<ResponseWrapper<PreRegistrationIdsDto>> call, Throwable t) {
                 Log.e(TAG,"Application Data Sync "+ t);
-                result = "application_id_sync_failed";
+                result = APPLICATION_ID_SYNC_FAILED;
                 Toast.makeText(context, "Application Id Sync failed", Toast.LENGTH_LONG).show();
                 onFinish.run();
             }
@@ -177,13 +179,13 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                                 try {
                                     fetchPreRegistration(preRegDetail.getKey(), String.valueOf(Timestamp.from(Instant.parse(preRegDetail.getValue()))));
                                 } catch (Exception e) {
-                                    Log.e(TAG,"Failed to fetch pre-reg packet", e);
+                                    Log.e(TAG,ERROR_FETCH_PRE_REG_PACKET, e);
                                 }
                             }
                         }
                 );
             } catch (Exception ex) {
-                Log.e(TAG,"Failed to fetch pre-reg packet", ex);
+                Log.e(TAG,ERROR_FETCH_PRE_REG_PACKET, ex);
             }
         }
         Log.e(TAG,"Added Pre-Registration packet fetch task in parallel mode completed");
@@ -205,7 +207,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                 attributeData = setPacketToResponse(decryptedPacket, preRegistrationId);
             }
         } catch (Exception e) {
-            Log.e(TAG,"Failed to fetch pre-reg packet", e);
+            Log.e(TAG,ERROR_FETCH_PRE_REG_PACKET, e);
         }
         return attributeData;
     }

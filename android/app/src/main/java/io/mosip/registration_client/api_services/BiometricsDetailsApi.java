@@ -94,6 +94,25 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
     public List<String> OPERATOR_EXCEPTIONS=new ArrayList<>();
 
+    private static final String OPERATOR_BIOMETRICS = "operatorBiometrics";
+    private static final String LEFT_INDEX_FINGER = "Left IndexFinger";
+    private static final String LEFT_MIDDLE_FINGER = "Left MiddleFinger";
+    private static final String LEFT_RING_FINGER = "Left RingFinger";
+    private static final String LEFT_LITTLE_FINGER = "Left LittleFinger";
+    private static final String RIGHT_INDEX_FINGER = "Right IndexFinger";
+    private static final String RIGHT_MIDDLE_FINGER = "Right MiddleFinger";
+    private static final String RIGHT_RING_FINGER = "Right RingFinger";
+    private static final String RIGHT_LITTLE_FINGER = "Right LittleFinger";
+    private static final String LEFT_THUMB = "Left Thumb";
+    private static final String RIGHT_THUMB = "Right Thumb";
+    private static final String RIGHT = "Right";
+    private static final String LEFT = "Left";
+
+
+
+
+
+
     @Inject
     public BiometricsDetailsApi(AuditManagerService auditManagerService, ObjectMapper objectMapper,
             Biometrics095Service biometrics095Service, RegistrationService registrationService,
@@ -124,7 +143,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void getBestBiometrics(@NonNull String fieldId, @NonNull String modality,
             @NonNull BiometricsPigeon.Result<List<String>> result) {
 
-        if (fieldId.equals("operatorBiometrics")) {
+        if (fieldId.equals(OPERATOR_BIOMETRICS)) {
             try {
                 biometricsDtoList=new ArrayList<>();
                 ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -193,7 +212,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             @NonNull BiometricsPigeon.Result<List<byte[]>> result) {
         List<Bitmap> listBitmaps = new ArrayList<>();
         List<byte[]> listByteArrayTester = new ArrayList<>();
-        if (fieldId.equals("operatorBiometrics")) {
+        if (fieldId.equals(OPERATOR_BIOMETRICS)) {
             try {
 
 
@@ -538,7 +557,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void addBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute,
             @NonNull BiometricsPigeon.Result<String> result) {
         try {
-            if(fieldId.equals("operatorBiometrics")){
+            if(fieldId.equals(OPERATOR_BIOMETRICS)){
 
 
                 OPERATOR_EXCEPTIONS.add(attribute);
@@ -566,7 +585,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void removeBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute,
             @NonNull BiometricsPigeon.Result<String> result) {
         try {
-            if(fieldId.equals("operatorBiometrics")){
+            if(fieldId.equals(OPERATOR_BIOMETRICS)){
                 OPERATOR_EXCEPTIONS.remove(attribute);
              
 
@@ -646,40 +665,40 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
     public static Boolean customMatcher(String str1, String str2) {
         Boolean result = false;
-        if (str1.matches("Left IndexFinger") && str2.matches("leftIndex")) {
+        if (str1.matches(LEFT_INDEX_FINGER) && str2.matches("leftIndex")) {
             result = true;
         }
-        if (str1.matches("Left MiddleFinger") && str2.matches("leftMiddle")) {
+        if (str1.matches(LEFT_MIDDLE_FINGER) && str2.matches("leftMiddle")) {
             result = true;
         }
-        if (str1.matches("Left RingFinger") && str2.matches("leftRing")) {
+        if (str1.matches(LEFT_RING_FINGER) && str2.matches("leftRing")) {
             result = true;
         }
-        if (str1.matches("Left LittleFinger") && str2.matches("leftLittle")) {
+        if (str1.matches(LEFT_LITTLE_FINGER) && str2.matches("leftLittle")) {
             result = true;
         }
-        if (str1.matches("Right IndexFinger") && str2.matches("rightIndex")) {
+        if (str1.matches(RIGHT_INDEX_FINGER) && str2.matches("rightIndex")) {
             result = true;
         }
-        if (str1.matches("Right MiddleFinger") && str2.matches("rightMiddle")) {
+        if (str1.matches(RIGHT_MIDDLE_FINGER) && str2.matches("rightMiddle")) {
             result = true;
         }
-        if (str1.matches("Right RingFinger") && str2.matches("rightRing")) {
+        if (str1.matches(RIGHT_RING_FINGER) && str2.matches("rightRing")) {
             result = true;
         }
-        if (str1.matches("Right LittleFinger") && str2.matches("rightLittle")) {
+        if (str1.matches(RIGHT_LITTLE_FINGER) && str2.matches("rightLittle")) {
             result = true;
         }
-        if (str1.matches("Left Thumb") && str2.matches("leftThumb")) {
+        if (str1.matches(LEFT_THUMB) && str2.matches("leftThumb")) {
             result = true;
         }
-        if (str1.matches("Right Thumb") && str2.matches("rightThumb")) {
+        if (str1.matches(RIGHT_THUMB) && str2.matches("rightThumb")) {
             result = true;
         }
-        if (str1.matches("Left") && str2.matches("leftEye")) {
+        if (str1.matches(LEFT) && str2.matches("leftEye")) {
             result = true;
         }
-        if (str1.matches("Right") && str2.matches("rightEye")) {
+        if (str1.matches(RIGHT) && str2.matches("rightEye")) {
             result = true;
         }
         if (str1 == null && str2.matches("face")) {
@@ -740,52 +759,52 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private String attributeToBioSubType(String attribute){
 //        rightThumb, leftThumb,leftIndex, leftLittle, leftRing, leftMiddle,rightEye, leftEye,rightRing, rightIndex, rightMiddle, rightLittle
         if(attribute.equals("rightThumb")){
-            return "Right Thumb";
+            return RIGHT_THUMB;
         }else if(attribute.equals("leftThumb")){
-            return "Left Thumb";
+            return LEFT_THUMB;
         }else if(attribute.equals("leftIndex")){
-            return "Left IndexFinger";
+            return LEFT_INDEX_FINGER;
         }else if(attribute.equals("leftLittle")){
-            return "Left LittleFinger";
+            return LEFT_LITTLE_FINGER;
         }else if(attribute.equals("leftRing")){
-            return "Left RingFinger";
+            return LEFT_RING_FINGER;
         }else if(attribute.equals("leftMiddle")){
-            return "Left MiddleFinger";
+            return LEFT_MIDDLE_FINGER;
         }else if(attribute.equals("rightEye")){
-            return "Right";
+            return RIGHT;
         }else if(attribute.equals("leftEye")){
-            return "Left";
+            return LEFT;
         }else if(attribute.equals("rightRing")){
-            return "Right RingFinger";
+            return RIGHT_RING_FINGER;
         }else if(attribute.equals("rightIndex")){
-            return "Right IndexFinger";
+            return RIGHT_INDEX_FINGER;
         }else if(attribute.equals("rightMiddle")){
-            return "Right MiddleFinger";
+            return RIGHT_MIDDLE_FINGER;
         }else if(attribute.equals("rightLittle")){
-            return "Right LittleFinger";
+            return RIGHT_LITTLE_FINGER;
         }
         return "";
     }
     private boolean matchOperatorModality(String bioSubType,String modality) {
        boolean result =false;
         if (modality.equals("Iris")) {
-            if(bioSubType!=null && (bioSubType.equals("Left")||bioSubType.equals("Right"))){
+            if(bioSubType!=null && (bioSubType.equals(LEFT)||bioSubType.equals(RIGHT))){
                 result=true;
 
             }
         } else if (modality.equals("LeftHand")) {
-            if(bioSubType!=null && (bioSubType.equals("Left LittleFinger")||bioSubType.equals("Left MiddleFinger")||bioSubType.equals("Left IndexFinger")||bioSubType.equals("Left RingFinger"))){
+            if(bioSubType!=null && (bioSubType.equals(LEFT_LITTLE_FINGER)||bioSubType.equals(LEFT_MIDDLE_FINGER)||bioSubType.equals(LEFT_INDEX_FINGER)||bioSubType.equals(LEFT_RING_FINGER))){
                 result=true;
 
             }
 
         } else if (modality.equals("RightHand")) {
-            if(bioSubType!=null && (bioSubType.equals("Right LittleFinger")||bioSubType.equals("Right MiddleFinger")||bioSubType.equals("Right IndexFinger")||bioSubType.equals("Right RingFinger"))){
+            if(bioSubType!=null && (bioSubType.equals(RIGHT_LITTLE_FINGER)||bioSubType.equals(RIGHT_MIDDLE_FINGER)||bioSubType.equals(RIGHT_INDEX_FINGER)||bioSubType.equals(RIGHT_RING_FINGER))){
                 result=true;
 
             }
         } else if (modality.equals("Thumbs")) {
-            if(bioSubType!=null && (bioSubType.equals("Left Thumb")||bioSubType.equals("Right Thumb"))){
+            if(bioSubType!=null && (bioSubType.equals(LEFT_THUMB)||bioSubType.equals(RIGHT_THUMB))){
                 result=true;
 
             }
@@ -900,27 +919,27 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
         userOnboardService.getOperatorBiometrics().forEach(biometricsDto -> {
             if (modality==Modality.IRIS_DOUBLE) {
-                if(biometricsDto.getBioSubType()!=null && (biometricsDto.getBioSubType().equals("Left")||biometricsDto.getBioSubType().equals("Right"))){
+                if(biometricsDto.getBioSubType()!=null && (biometricsDto.getBioSubType().equals(LEFT)||biometricsDto.getBioSubType().equals(RIGHT))){
 
                 }else{
                     biometricsDtoListCopy.add(biometricsDto);
                 }
             } else if (modality==Modality.FINGERPRINT_SLAB_LEFT) {
-                if(biometricsDto.getBioSubType()!=null &&(biometricsDto.getBioSubType().equals("Left LittleFinger")||biometricsDto.getBioSubType().equals("Left MiddleFinger")||biometricsDto.getBioSubType().equals("Left IndexFinger")||biometricsDto.getBioSubType().equals("Left RingFinger"))){
+                if(biometricsDto.getBioSubType()!=null &&(biometricsDto.getBioSubType().equals(LEFT_LITTLE_FINGER)||biometricsDto.getBioSubType().equals(LEFT_MIDDLE_FINGER)||biometricsDto.getBioSubType().equals(LEFT_INDEX_FINGER)||biometricsDto.getBioSubType().equals(LEFT_RING_FINGER))){
 
 
                 }else{
                     biometricsDtoListCopy.add(biometricsDto);
                 }
             } else if (modality==Modality.FINGERPRINT_SLAB_RIGHT) {
-                if(biometricsDto.getBioSubType()!=null &&(biometricsDto.getBioSubType().equals("Right LittleFinger")||biometricsDto.getBioSubType().equals("Right MiddleFinger")||biometricsDto.getBioSubType().equals("Right IndexFinger")||biometricsDto.getBioSubType().equals("Right RingFinger"))){
+                if(biometricsDto.getBioSubType()!=null &&(biometricsDto.getBioSubType().equals(RIGHT_LITTLE_FINGER)||biometricsDto.getBioSubType().equals(RIGHT_MIDDLE_FINGER)||biometricsDto.getBioSubType().equals(RIGHT_INDEX_FINGER)||biometricsDto.getBioSubType().equals(RIGHT_RING_FINGER))){
 
 
                 }else{
                     biometricsDtoListCopy.add(biometricsDto);
                 }
             }else if (modality==Modality.FINGERPRINT_SLAB_THUMBS) {
-                if(biometricsDto.getBioSubType()!=null &&(biometricsDto.getBioSubType().equals("Left Thumb")||biometricsDto.getBioSubType().equals("Right Thumb"))){
+                if(biometricsDto.getBioSubType()!=null &&(biometricsDto.getBioSubType().equals(LEFT_THUMB)||biometricsDto.getBioSubType().equals(RIGHT_THUMB))){
 
 
                 }else{
@@ -948,7 +967,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
                     getExceptionAttributes());
             // if attempts is zero, there is no need to maintain the counter
-            if (fieldId.equals("operatorBiometrics")) {
+            if (fieldId.equals(OPERATOR_BIOMETRICS)) {
                 removeDuplicatesFromOperatorBiometricList(currentModality);
                 biometricsDtoList.forEach(biometricsDto -> {userOnboardService.getOperatorBiometrics().add(biometricsDto);});
                 List<BiometricsDto> biometricsDtoListCopy=new ArrayList<>();

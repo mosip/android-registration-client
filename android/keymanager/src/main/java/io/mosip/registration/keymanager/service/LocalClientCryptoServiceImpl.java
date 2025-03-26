@@ -95,6 +95,8 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     private KeyStore keyStore = null;
     private CertificateManagerService certificateManagerService;
 
+    public static final String ERROR_INVALID_SIGNED_DATA = "Provided Signed Data value is invalid.";
+
     @Inject
     public LocalClientCryptoServiceImpl(Context appContext, CertificateManagerService certificateManagerService) {
         Log.i(TAG, "LocalClientCryptoServiceImpl: Constructor call successful");
@@ -252,7 +254,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     public JWTSignatureVerifyResponseDto jwtVerify(JWTSignatureVerifyRequestDto jwtVerifyRequestDto) throws Exception {
         String signedData = jwtVerifyRequestDto.getJwtSignatureData();
         if (!CertificateManagerUtil.isDataValid(signedData)) {
-            Log.e(TAG,"Provided Signed Data value is invalid.");
+            Log.e(TAG,ERROR_INVALID_SIGNED_DATA);
             throw new Exception();
         }
 
@@ -316,7 +318,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
 
             return jws.verifySignature();
         } catch (Exception e) {
-            Log.e(TAG, "Provided Signed Data value is invalid.");
+            Log.e(TAG, ERROR_INVALID_SIGNED_DATA);
             throw new KeymanagerServiceException(KeyManagerErrorCode.VERIFY_ERROR.getErrorCode(),
                     KeyManagerErrorCode.VERIFY_ERROR.getErrorMessage(), e);
         }
@@ -326,7 +328,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         String jwtTokenHeader = new String(CryptoUtil.decodeBase64(jwtHeader));
         Map<String, Object> jwtTokenHeadersMap = JsonUtils.jsonStringToJavaMap(jwtTokenHeader);
         if (jwtTokenHeadersMap == null){
-            Log.e(TAG, "Provided Signed Data value is invalid.");
+            Log.e(TAG, ERROR_INVALID_SIGNED_DATA);
             return null;
         }
         // 1st precedence to consider certificate to use in signature verification (JWT Header).

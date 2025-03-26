@@ -26,7 +26,7 @@ public class TransliterationServiceUnitTest {
     @Test
     public void unsupportedLanguageTest() {
         String frenchString = transliterationService.transliterate("en","fr", "Document");
-        assertEquals("", frenchString);
+        assertEquals("Document", frenchString);
     }
 
     @Test

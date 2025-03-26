@@ -50,9 +50,11 @@ public class Biometrics095Service extends BiometricsService {
 
     private static final String TAG = Biometrics095Service.class.getSimpleName();
 
-    private String rCaptureTrustDomain = "DEVICE";
-    private String deviceInfoTrustDomain = "DEVICE";
-    private String digitalIdTrustDomain = "DEVICE";
+    private static final String TRUST_DOMAIN_DEVICE = "DEVICE";
+
+    private String rCaptureTrustDomain = TRUST_DOMAIN_DEVICE;
+    private String deviceInfoTrustDomain = TRUST_DOMAIN_DEVICE;
+    private String digitalIdTrustDomain = TRUST_DOMAIN_DEVICE;
 
     private Context context;
     private ObjectMapper objectMapper;
