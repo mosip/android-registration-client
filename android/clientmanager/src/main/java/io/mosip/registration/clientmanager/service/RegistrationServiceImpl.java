@@ -100,6 +100,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private KeyStoreRepository keyStoreRepository;
     private GlobalParamRepository globalParamRepository;
     private AuditManagerService auditManagerService;
+    public static final String BOOLEAN_FALSE = "false";
 
     @Inject
     public RegistrationServiceImpl(Context context, PacketWriterService packetWriterService,
@@ -427,10 +428,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         metaData.put(PacketManagerConstant.META_SUPERVISOR_BIOMETRIC_FILE, null);
         metaData.put(PacketManagerConstant.META_SUPERVISOR_PWD, "true");
         metaData.put(PacketManagerConstant.META_OFFICER_PWD, "true");
-        metaData.put(PacketManagerConstant.META_SUPERVISOR_PIN, "false");
-        metaData.put(PacketManagerConstant.META_OFFICER_PIN, "false");
-        metaData.put(PacketManagerConstant.META_SUPERVISOR_OTP, "false");
-        metaData.put(PacketManagerConstant.META_OFFICER_OTP, "false");
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_PIN, BOOLEAN_FALSE);
+        metaData.put(PacketManagerConstant.META_OFFICER_PIN, BOOLEAN_FALSE);
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_OTP, BOOLEAN_FALSE);
+        metaData.put(PacketManagerConstant.META_OFFICER_OTP, BOOLEAN_FALSE);
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_INFO_OPERATIONS_DATA, getLabelValueDTOListString(metaData));
 
         //other metaInfo
@@ -598,7 +599,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                         .withCreationDate(LocalDateTime.now(ZoneId.of("UTC"))).withIndex(UUID.randomUUID().toString())
                         .build())
                 .withSb(biometricsDto.getSignature() == null ? new byte[0] : biometricsDto.getSignature().getBytes(StandardCharsets.UTF_8))
-                .withOthers(OTHER_KEY_EXCEPTION, iso == null ? "true" : "false")
+                .withOthers(OTHER_KEY_EXCEPTION, iso == null ? "true" : BOOLEAN_FALSE)
                 .withOthers(OTHER_KEY_RETRIES, biometricsDto.getNumOfRetries() + EMPTY)
                 .withOthers(OTHER_KEY_SDK_SCORE, biometricsDto.getSdkScore() + EMPTY)
                 .withOthers(OTHER_KEY_FORCE_CAPTURED, biometricsDto.isForceCaptured() + EMPTY)

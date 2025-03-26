@@ -1,4 +1,4 @@
-package io.mosip.registration.keymanager;
+package io.mosip.registration.keymanager.service;
 
 import static io.mosip.registration.keymanager.util.CertificateManagerUtil.getPEMFormatedData;
 
@@ -11,14 +11,11 @@ import org.mockito.MockitoAnnotations;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 import javax.crypto.KeyGenerator;
 
 import io.mosip.registration.keymanager.dto.CryptoManagerResponseDto;
 import io.mosip.registration.keymanager.entity.CACertificateStore;
-import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
-import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.util.CertificateManagerUtil;
 
 public class CryptoManagerServiceImplTest {

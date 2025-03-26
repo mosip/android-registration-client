@@ -33,6 +33,8 @@ public class SyncRestUtil {
 
     private ClientCryptoManagerService clientCryptoManagerService;
 
+    private static final String ERROR_PARSING_SERVICE = "error parsing service error";
+
     @Inject
     public SyncRestUtil(ClientCryptoManagerService clientCryptoManagerService) {
         this.clientCryptoManagerService= clientCryptoManagerService;
@@ -45,7 +47,7 @@ public class SyncRestUtil {
         try {
             Log.i(TAG, JsonUtils.javaObjectToJsonString(wrapper.getErrors()));
         } catch (JsonProcessingException e) {
-            Log.e(TAG, "error parsing service error", e);
+            Log.e(TAG, ERROR_PARSING_SERVICE, e);
         }
         return (ServiceError) wrapper.getErrors().get(0);
     }
@@ -57,7 +59,7 @@ public class SyncRestUtil {
         try {
             Log.i(TAG, JsonUtils.javaObjectToJsonString(wrapper.getErrors()));
         } catch (JsonProcessingException e) {
-            Log.e(TAG, "error parsing service error", e);
+            Log.e(TAG, ERROR_PARSING_SERVICE, e);
         }
         return (OnboardError) wrapper.getErrors().get(0);
     }
@@ -69,7 +71,7 @@ public class SyncRestUtil {
         try {
             Log.i(TAG, JsonUtils.javaObjectToJsonString(wrapper.getErrors()));
         } catch (JsonProcessingException e) {
-            Log.e(TAG, "error parsing service error", e);
+            Log.e(TAG, ERROR_PARSING_SERVICE, e);
         }
         return (ServiceError) wrapper.getErrors().get(0);
     }

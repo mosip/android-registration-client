@@ -91,4 +91,18 @@ public class RegistrationConstants {
     public static final String TEMPLATE_IMPORTANT_GUIDELINES = "mosip.registration.important_guidelines";
     public static final String PRE_REG_PACKET_LOCATION = "mosip.registration.registration_pre_reg_packet_location";
     public static final String FORGOT_PASSWORD_URL = "mosip.registration.reset_password_url";
+
+    public static final String LEFT_LITTLE_FINGER = "Left LittleFinger";
+    public static final String LEFT_RING_FINGER = "Left RingFinger";
+    public static final String LEFT_MIDDLE_FINGER = "Left MiddleFinger";
+    public static final String LEFT_INDEX_FINGER = "Left IndexFinger";
+    public static final String RIGHT_LITTLE_FINGER = "Right LittleFinger";
+    public static final String RIGHT_RING_FINGER = "Right RingFinger";
+    public static final String RIGHT_MIDDLE_FINGER = "Right MiddleFinger";
+    public static final String RIGHT_INDEX_FINGER = "Right IndexFinger";
+    public static final String LEFT_THUMB = "Left Thumb";
+    public static final String RIGHT_THUMB = "Right Thumb";
+    public static final String RIGHT = "Right";
+    public static final String LEFT = "Left";
+
 }

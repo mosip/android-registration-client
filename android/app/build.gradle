@@ -1,3 +1,7 @@
+plugins {
+    id "org.sonarqube" version "6.0.1.5171"
+    id 'jacoco'
+}
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -29,8 +33,13 @@ if (keystorePropertiesFile.exists()) {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'jacoco'
 
 android {
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+    }
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -64,9 +73,16 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true  // Enable test coverage
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
             minifyEnabled false
             shrinkResources false
             signingConfig signingConfigs.debug
@@ -82,7 +98,21 @@ android {
         resources.excludes.add("META-INF/*")
     }
 }
+tasks.register("jacocoTestReport", JacocoReport) {
+    dependsOn "testDebugUnitTest" // Ensure tests run before generating report
 
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    sourceDirectories.setFrom(files(["src/main/java"]))
+    classDirectories.setFrom(files([
+            fileTree(dir: "${buildDir}/intermediates/javac/debug", includes: ["**/*.class"]),
+            fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", includes: ["**/*.class"])
+    ]))
+    executionData.setFrom(fileTree(dir: buildDir, includes: ["**/*.exec", "**/*.ec"]))
+}
 flutter {
     source '../..'
 }

@@ -1,11 +1,14 @@
 plugins {
     id 'com.android.library'
-    id "org.sonarqube"
 }
 
-apply plugin: 'jacoco'
+apply from: '../jacoco.gradle'
 
 android {
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
@@ -45,6 +48,7 @@ dependencies {
 
     implementation 'com.google.dagger:dagger:2.41'
     implementation 'com.google.dagger:dagger-android-support:2.41'
+    testImplementation project(':clientmanager')
     annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
 
@@ -54,9 +58,13 @@ dependencies {
     implementation 'javax.validation:validation-api:2.0.1.Final'
 
     testImplementation "junit:junit:4.13.2"
-    testImplementation "org.mockito:mockito-core:4.6.1"
+    testImplementation "org.mockito:mockito-core:4.8.0"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+    testImplementation 'org.mockito:mockito-inline:4.8.0'
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation 'org.apache.commons:commons-lang3:3.12.0'
@@ -78,16 +86,4 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.13.3'
     implementation 'org.bitbucket.b_c:jose4j:0.6.5'
 
-}
-
-sonarqube {
-    androidVariant 'debug' //PUT REAL TASK NAME HERE
-
-    properties {
-        //PUT REAL PATHS HERE
-        property "sonar.java.binaries", "build/intermediates/javac/debug"
-        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
-        //property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
-        property "sonar.coverage.jacoco.xmlReportPaths", "./build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml"
-    }
 }

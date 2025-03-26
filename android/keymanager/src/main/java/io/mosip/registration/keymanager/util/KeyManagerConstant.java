@@ -23,9 +23,9 @@ public class KeyManagerConstant {
     public static final String EMPTY = "";
 
     /**
-     * The constant EQUALS
+     * The constant EQUALS_SIGN 
      */
-    public static final String 	EQUALS = "=";
+    public static final String EQUALS_SIGN = "=";
 
     /**
      * The constant COMMA

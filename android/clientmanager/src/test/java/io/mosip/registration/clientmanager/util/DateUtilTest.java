@@ -15,7 +15,7 @@ import org.robolectric.RuntimeEnvironment;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 28)
+@Config(sdk = 33)
 public class DateUtilTest {
 
     private DateUtil dateUtil;

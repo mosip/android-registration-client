@@ -95,7 +95,7 @@ public class UserOnboardService {
     public static final String ON_BOARD_AUTH_STATUS = "authStatus";
     public static final String PURPOSE = "purpose";
     public static final String PURPOSE_AUTH = "Auth";
-    public static final String TRANSACTION_Id = "transactionId";
+    public static final String TRANSACTION_UNIQUE_ID = "transactionId";
     private Context context;
     private CertificateManagerService certificateManagerService;
     private CryptoManagerService cryptoManagerService;
@@ -240,7 +240,7 @@ public class UserOnboardService {
         data.put(ON_BOARD_BIO_SUB_TYPE, bioSubType);
         SplitEncryptedData splitEncryptedData = getSessionKey(data, attributeISO);
         data.put(ON_BOARD_BIO_VALUE, splitEncryptedData.getEncryptedData());
-        data.put(TRANSACTION_Id, TRANSACTION_ID_VALUE);
+        data.put(TRANSACTION_UNIQUE_ID, TRANSACTION_ID_VALUE);
         data.put(PURPOSE, PURPOSE_AUTH);
         data.put(ENV, SERVER_ACTIVE_PROFILE);
         data.put(DOMAIN_URI,  BuildConfig.BASE_URL);

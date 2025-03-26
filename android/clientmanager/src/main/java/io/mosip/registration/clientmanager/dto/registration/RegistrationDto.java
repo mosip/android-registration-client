@@ -52,8 +52,8 @@ public class RegistrationDto extends Observable {
     private static final String BIO_KEY_PATTERN = "%s_%s_";
 
     //TODO take it from config
-    public static final String dateFormatConfig = "yyyy/MM/dd";
-    public static final String ageGroupConfig = "{'INFANT':'0-5','MINOR':'6-17','ADULT':'18-200'}";
+    public static final String DATE_FORMAT_CONFIG = "yyyy/MM/dd";
+    public static final String AGE_GROUP_CONFIG = "{'INFANT':'0-5','MINOR':'6-17','ADULT':'18-200'}";
 
     private String rId;
     private String flowType;
@@ -106,27 +106,27 @@ public class RegistrationDto extends Observable {
     }
 
     public void setMakerDetails() {
-
+        //TODO
     }
 
     public void setReviewerDetails() {
-
+        //TODO
     }
 
     public void setDateField(String fieldId, String subType, String day, String month, String year) {
         if(isValidValue(day) && isValidValue(month) && isValidValue(year)) {
             LocalDate date = LocalDate.of(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(day));
-            this.demographics.put(fieldId, date.format(DateTimeFormatter.ofPattern(dateFormatConfig)));
+            this.demographics.put(fieldId, date.format(DateTimeFormatter.ofPattern(DATE_FORMAT_CONFIG)));
             try {
-                JSONObject configJson = new JSONObject(ageGroupConfig);
+                JSONObject configJson = new JSONObject(AGE_GROUP_CONFIG);
                 Iterator<String> itr = configJson.keys();
                 while(itr.hasNext()) {
                     String group = itr.next();
                     String[] range = configJson.getString(group).split("-");
                     int ageInYears = Period.between(date, LocalDate.now(ZoneId.of("UTC"))).getYears();
                     if(ValueRange.of(Long.valueOf(range[0]), Long.valueOf(range[1])).isValidIntValue(ageInYears)) {
-                        AGE_GROUPS.put(String.format("%s_%s", fieldId, RegistrationConstants.AGE_GROUP), group);
-                        AGE_GROUPS.put(String.format("%s_%s", fieldId, RegistrationConstants.AGE), ageInYears);
+                        AGE_GROUPS.put(String.format(BIO_KEY, fieldId, RegistrationConstants.AGE_GROUP), group);
+                        AGE_GROUPS.put(String.format(BIO_KEY, fieldId, RegistrationConstants.AGE), ageInYears);
 
                         if(APPLICANT_DOB_SUBTYPE.equals(subType)) {
                             AGE_GROUPS.put(RegistrationConstants.AGE_GROUP, group);

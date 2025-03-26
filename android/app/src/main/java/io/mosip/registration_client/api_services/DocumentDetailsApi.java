@@ -73,7 +73,7 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
     }
     @Override
     public void hasDocument(@NonNull String fieldId, @NonNull DocumentDataPigeon.Result<Boolean> result) {
-
+        //TODO
     }
 
     @Override
