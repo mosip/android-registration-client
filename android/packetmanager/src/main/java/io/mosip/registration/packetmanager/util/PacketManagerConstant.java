@@ -133,5 +133,5 @@ public class PacketManagerConstant {
     public static final String RIGHT_SLAB = "Right Slab";
     public static final String THUMBS = "Thumbs";
     public static final String IRIS = "Iris";
-    public static final String PACKET_KEEPER_EXCEPTION_MSG = "Packet keeper exception occured.";
+    public static final String PACKET_KEEPER_EXCEPTION_MSG = "Packet keeper exception occurred.";
 }
