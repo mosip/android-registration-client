@@ -33,6 +33,7 @@
   "copy_message": "Machine Details copied to clipboard!",
   "download_message": "File Saved to Downloads!",
   "logout": "LOGOUT",
+  "reset_password": "Reset Password",
   "login_failed": "Login Failed. Try Again!",
   "password_incorrect": "Password incorrect!",
   "machine_not_found": "Machine not found!",
