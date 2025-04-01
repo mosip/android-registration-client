@@ -7,7 +7,6 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/upload_document_data.dart';
 import 'package:registration_client/pigeon/document_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/ui/process_ui/widgets/custom_dropdown_cupertino_picker.dart';
 import 'package:registration_client/ui/scanner/custom_scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/ui/scanner/preview_screen.dart';
@@ -67,6 +67,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           .title!;
       doc.title =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
+      initialSelectedData = context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
     super.initState();
   }
@@ -202,6 +203,14 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
+  _removeDropDownChangeData(String fieldId) async {
+    debugPrint("inside1111==");
+    imageBytesList.clear();
+    context.read<RegistrationTaskProvider>().removeDocumentField(fieldId);
+    context.read<GlobalProvider>().removeProofOfExceptionFieldFromMap(
+        fieldId, context.read<GlobalProvider>().fieldInputValue);
+  }
+
   Future<void> getScannedDocuments(Field e) async {
     try {
       imageBytesList.clear();
@@ -248,6 +257,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   );
   String? selected;
   String referenceNumber = "";
+  String initialSelectedData = "";
+
   final TextEditingController documentController =
       TextEditingController(text: "");
 
@@ -818,10 +829,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   void _showDropdownBottomSheet(
       AsyncSnapshot? snapshot, Field field, BuildContext context) {
-    setState(() {
-      documentController.text = snapshot!.data[0];
-      doc.title = snapshot.data[0];
-    });
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -898,41 +906,37 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
               ),
               Expanded(
                 flex: 3,
-                child: CupertinoPicker(
+                child: CustomCupertinoDropDownPicker(
+                  snapshot: snapshot,
                   itemExtent: 50,
-                  scrollController: FixedExtentScrollController(
-                    initialItem: 0,
+                  squeeze: 1,
+                  diameterRatio: 20,
+                  selectionOverlay: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: solidPrimary.withOpacity(0.075),
+                    ),
                   ),
-                  onSelectedItemChanged: (int index) {
-                    saveData(snapshot.data[index]);
+                  selectedStyle: TextStyle(
+                    color: solidPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 22,
+                  ),
+                  unselectedStyle: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 21,
+                  ),
+                  initialValue: documentController.text,
+                  onSelectedItemChanged: (selectedItem)  {
+                    saveData(selectedItem);
                     setState(() {
-                      documentController.text = snapshot.data[index];
-                      doc.title = snapshot.data[index];
+                      documentController.text = selectedItem;
+                      doc.title = selectedItem;
                     });
+                    if(initialSelectedData != documentController.text) {
+                      _removeDropDownChangeData(field.id!);
+                    }
                   },
-                  looping: false,
-                  backgroundColor: Colors.white,
-                  children: <Widget>[
-                    for (var i = 0; i < snapshot.data.length; i++) ...[
-                      ListTile(
-                          title: Center(
-                            child: Text(
-                              snapshot.data[i],
-                              style: const TextStyle(
-                                  fontSize: 22,
-                                  color: dropDownSelector,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          trailing: Icon(
-                            Icons.check,
-                            size: 30,
-                            color: (snapshot.data[i] == documentController.text)
-                                ? dropDownSelector
-                                : Colors.white,
-                          )),
-                    ],
-                  ],
                 ),
               ),
             ],
