@@ -33,6 +33,7 @@
   "copy_message": "Détails de la machine copiés dans le presse-papiers !",
   "download_message": "Fichier enregistré dans les téléchargements!",
   "logout": "DÉCONNEXION",
+  "reset_password": "Réinitialiser le mot de passe",
   "login_failed": "Echec de la connexion.. Réessayez!",
   "password_incorrect": "Mot de passe incorrect!",
   "machine_not_found": "Machine introuvable!",
