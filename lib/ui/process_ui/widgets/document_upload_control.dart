@@ -206,7 +206,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   _removeDropDownChangeData(String fieldId) async {
-    debugPrint("inside1111==");
     imageBytesList.clear();
     context.read<RegistrationTaskProvider>().removeDocumentField(fieldId);
     context.read<GlobalProvider>().removeProofOfExceptionFieldFromMap(
