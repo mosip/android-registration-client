@@ -33,6 +33,7 @@
   "copy_message": "मशीन विवरण क्लिपबोर्ड पर कॉपी किया गया!",
   "download_message": "फ़ाइल डाउनलोड करने के लिए सहेजी गई!",
   "logout": "लॉगआउट",
+  "reset_password": "पासवर्ड रीसेट",
   "login_failed": "लॉगिन विफल रहा। फिर कोशिश करो!",
   "password_incorrect": "पासवर्ड गलत है!",
   "machine_not_found": "मशीन नहीं मिली!",

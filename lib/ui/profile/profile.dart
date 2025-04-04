@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../platform_spi/sync_response_service.dart';
 import '../../provider/auth_provider.dart';
@@ -22,11 +23,21 @@ class _ProfilePageState extends State<ProfilePage> {
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   late SyncProvider syncProvider;
   late SyncResponseService syncResponseService = SyncResponseService();
+  late ConnectivityProvider connectivityProvider;
 
   @override
   void initState() {
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    connectivityProvider =  Provider.of<ConnectivityProvider>(context, listen: false);
     super.initState();
+  }
+
+  goToUrl(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   void _showInSnackBar(String value) {
@@ -163,6 +174,43 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: const Color(0xff333333), fontWeight: semiBold),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 15),
+          const Divider(color: Color(0xFFF5F8FF), height: 4),
+          const SizedBox(height: 15),
+          InkWell(
+            onTap: () async {
+              await connectivityProvider.checkNetworkConnection();
+              bool isConnected = connectivityProvider.isConnected;
+              if (isConnected) {
+                await authProvider.getForgotPasswordUrl();
+                String res = authProvider.forgotPasswordUrl;
+                await goToUrl(res);
+              } else {
+                _showInSnackBar(appLocalizations.network_error);
+                authProvider.setIsNetworkPresent(true);
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.lock_reset,
+                    color: solidPrimary,
+                    size: 17,
+                  ),
+                  SizedBox(
+                    width: (isLandscape) ? 7.85.w : 1.96.w,
+                  ),
+                  Text(
+                    appLocalizations.reset_password,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: const Color(0xff333333), fontWeight: semiBold),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 15),
