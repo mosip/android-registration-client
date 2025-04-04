@@ -69,6 +69,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           .title!;
       doc.title =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
+      initialSelectedData = context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
     super.initState();
   }
@@ -204,6 +205,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
+  _removeDropDownChangeData(String fieldId) async {
+    imageBytesList.clear();
+    context.read<RegistrationTaskProvider>().removeDocumentField(fieldId);
+    context.read<GlobalProvider>().removeProofOfExceptionFieldFromMap(
+        fieldId, context.read<GlobalProvider>().fieldInputValue);
+  }
+
   Future<void> getScannedDocuments(Field e) async {
     try {
       imageBytesList.clear();
@@ -250,6 +258,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   );
   String? selected;
   String referenceNumber = "";
+  String initialSelectedData = "";
+
   final TextEditingController documentController =
       TextEditingController(text: "");
 
@@ -923,12 +933,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     fontSize: 21,
                   ),
                   initialValue: documentController.text,
-                  onSelectedItemChanged: (selectedItem) {
+                  onSelectedItemChanged: (selectedItem)  {
                     saveData(selectedItem);
                     setState(() {
                       documentController.text = selectedItem;
                       doc.title = selectedItem;
                     });
+                    if(initialSelectedData != documentController.text) {
+                      _removeDropDownChangeData(field.id!);
+                    }
                   },
                 ),
               ),
