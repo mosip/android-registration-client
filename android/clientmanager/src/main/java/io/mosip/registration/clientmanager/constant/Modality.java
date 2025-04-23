@@ -65,18 +65,18 @@ public enum Modality implements Serializable {
         List<String> bioSubTypes = new ArrayList<>();
         for(String attribute : bioAttributes) {
             switch (attribute.toLowerCase()) {
-                case "leftlittle": bioSubTypes.add("Left LittleFinger"); break;
-                case "leftring": bioSubTypes.add("Left RingFinger"); break;
-                case "leftmiddle": bioSubTypes.add("Left MiddleFinger"); break;
-                case "leftindex": bioSubTypes.add("Left IndexFinger"); break;
-                case "rightlittle": bioSubTypes.add("Right LittleFinger"); break;
-                case "rightring": bioSubTypes.add("Right RingFinger");  break;
-                case "rightmiddle": bioSubTypes.add("Right MiddleFinger"); break;
-                case "rightindex": bioSubTypes.add("Right IndexFinger"); break;
-                case "leftthumb": bioSubTypes.add("Left Thumb"); break;
-                case "rightthumb": bioSubTypes.add("Right Thumb"); break;
-                case "lefteye": case "leftiris": bioSubTypes.add("Left"); break;
-                case "righteye": case "rightiris": bioSubTypes.add("Right"); break;
+                case "leftlittle": bioSubTypes.add(RegistrationConstants.LEFT_LITTLE_FINGER); break;
+                case "leftring": bioSubTypes.add(RegistrationConstants.LEFT_RING_FINGER); break;
+                case "leftmiddle": bioSubTypes.add(RegistrationConstants.LEFT_MIDDLE_FINGER); break;
+                case "leftindex": bioSubTypes.add(RegistrationConstants.LEFT_INDEX_FINGER); break;
+                case "rightlittle": bioSubTypes.add(RegistrationConstants.RIGHT_LITTLE_FINGER); break;
+                case "rightring": bioSubTypes.add(RegistrationConstants.RIGHT_RING_FINGER);  break;
+                case "rightmiddle": bioSubTypes.add(RegistrationConstants.RIGHT_MIDDLE_FINGER); break;
+                case "rightindex": bioSubTypes.add(RegistrationConstants.RIGHT_INDEX_FINGER); break;
+                case "leftthumb": bioSubTypes.add(RegistrationConstants.LEFT_THUMB); break;
+                case "rightthumb": bioSubTypes.add(RegistrationConstants.RIGHT_THUMB); break;
+                case "lefteye": case "leftiris": bioSubTypes.add(RegistrationConstants.LEFT); break;
+                case "righteye": case "rightiris": bioSubTypes.add(RegistrationConstants.RIGHT); break;
                 case "face": bioSubTypes.add("Face"); break;
             }
         }
@@ -85,18 +85,18 @@ public enum Modality implements Serializable {
 
     public static String getSpecBioSubType(String bioAttribute) {
             switch (bioAttribute.toLowerCase()) {
-                case "leftlittle": return "Left LittleFinger";
-                case "leftring": return "Left RingFinger";
-                case "leftmiddle": return "Left MiddleFinger";
-                case "leftindex": return "Left IndexFinger";
-                case "rightlittle": return "Right LittleFinger";
-                case "rightring": return "Right RingFinger";
-                case "rightmiddle": return "Right MiddleFinger";
-                case "rightindex": return "Right IndexFinger";
-                case "leftthumb": return "Left Thumb";
-                case "rightthumb": return "Right Thumb";
-                case "lefteye": case "leftiris": return "Left";
-                case "righteye": case "rightiris": return "Right";
+                case "leftlittle": return RegistrationConstants.LEFT_LITTLE_FINGER;
+                case "leftring": return RegistrationConstants.LEFT_RING_FINGER;
+                case "leftmiddle": return RegistrationConstants.LEFT_MIDDLE_FINGER;
+                case "leftindex": return RegistrationConstants.LEFT_INDEX_FINGER;
+                case "rightlittle": return RegistrationConstants.RIGHT_LITTLE_FINGER;
+                case "rightring": return RegistrationConstants.RIGHT_RING_FINGER;
+                case "rightmiddle": return RegistrationConstants.RIGHT_MIDDLE_FINGER;
+                case "rightindex": return RegistrationConstants.RIGHT_INDEX_FINGER;
+                case "leftthumb": return RegistrationConstants.LEFT_THUMB;
+                case "rightthumb": return RegistrationConstants.RIGHT_THUMB;
+                case "lefteye": case "leftiris": return RegistrationConstants.LEFT;
+                case "righteye": case "rightiris": return RegistrationConstants.RIGHT;
                 case "face": return "Face";
             }
         return "";
@@ -107,18 +107,18 @@ public enum Modality implements Serializable {
             return "";
         }
         switch (bioSubType) {
-            case "Left LittleFinger": return "leftLittle";
-            case "Left RingFinger" : return "leftRing";
-            case "Left MiddleFinger": return "leftMiddle";
-            case "Left IndexFinger": return "leftIndex";
-            case "Right LittleFinger": return "rightLittle";
-            case "Right RingFinger": return "rightRing";
-            case "Right MiddleFinger": return "rightMiddle";
-            case "Right IndexFinger": return "rightIndex";
-            case "Left Thumb": return "leftThumb";
-            case "Right Thumb": return "rightThumb";
-            case "Left": return "leftEye";
-            case "Right": return "rightEye";
+            case RegistrationConstants.LEFT_LITTLE_FINGER : return "leftLittle";
+            case RegistrationConstants.LEFT_RING_FINGER : return "leftRing";
+            case RegistrationConstants.LEFT_MIDDLE_FINGER : return "leftMiddle";
+            case RegistrationConstants.LEFT_INDEX_FINGER : return "leftIndex";
+            case RegistrationConstants.RIGHT_LITTLE_FINGER : return "rightLittle";
+            case RegistrationConstants.RIGHT_RING_FINGER : return "rightRing";
+            case RegistrationConstants.RIGHT_MIDDLE_FINGER : return "rightMiddle";
+            case RegistrationConstants.RIGHT_INDEX_FINGER : return "rightIndex";
+            case RegistrationConstants.LEFT_THUMB : return "leftThumb";
+            case RegistrationConstants.RIGHT_THUMB : return "rightThumb";
+            case RegistrationConstants.LEFT: return "leftEye";
+            case RegistrationConstants.RIGHT : return "rightEye";
             case "Face":return "";
         }
         return bioSubType;

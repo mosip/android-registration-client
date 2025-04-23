@@ -1,8 +1,6 @@
-package io.mosip.registration.keymanager;
+package io.mosip.registration.keymanager.util;
 
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
-import io.mosip.registration.keymanager.util.CertificateManagerUtil;
-
 import org.junit.Assert;
 import org.junit.Test;
 

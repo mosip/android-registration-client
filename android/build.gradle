@@ -11,12 +11,13 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.ibotta:plugin:1.2.0"
         //Jacoco Plugin
-        classpath "org.jacoco:org.jacoco.core:0.8.7"
+        classpath "org.jacoco:org.jacoco.core:0.8.12"
     }
 }
 
 plugins {
-    id "org.sonarqube" version "3.0"
+    id "org.sonarqube" version "6.0.1.5171"
+    id "jacoco"
 }
 
 allprojects {
@@ -29,10 +30,10 @@ allprojects {
 
 ext {
     compileSdkVersion = 33
-    buildToolsVersion = "31.0.0"
+    buildToolsVersion = "33.0.0"
 
     minSdkVersion = 28
-    targetSdkVersion = 31
+    targetSdkVersion = 33
 
     junitVersion = "4.+"
 
@@ -40,7 +41,7 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-    serverBaseURL = "\"https://api-internal.qa-plan.mosip.net\""
+    serverBaseURL = "\"https://api-internal.qa-platform1.mosip.net\""
     serverHealthCheckPath = "\"/v1/syncdata/actuator/health\""
     serverActuatorInfoPath = "\"/v1/syncdata/actuator/info\""
     debugPassword = "\"APTyKejHxACQyKBSRciR\""

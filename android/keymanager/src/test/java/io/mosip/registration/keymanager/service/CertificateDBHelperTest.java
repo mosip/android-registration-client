@@ -1,4 +1,4 @@
-package io.mosip.registration.keymanager;
+package io.mosip.registration.keymanager.service;
 
 import static org.mockito.ArgumentMatchers.any;
 

@@ -12,6 +12,7 @@ import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import retrofit2.Call;
@@ -60,6 +61,9 @@ public class PreRegistrationDataSyncServiceImplTest {
     GlobalParamRepository globalParamRepository;
     ClientDatabase clientDatabase;
 
+    @Mock
+    RegistrationService registrationService;
+
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -70,7 +74,8 @@ public class PreRegistrationDataSyncServiceImplTest {
                 mockSyncRestService,
                 mockPreRegZipHandlingService,
                 preRegistration,
-                globalParamRepository
+                globalParamRepository,
+                registrationService
         );
     }
 

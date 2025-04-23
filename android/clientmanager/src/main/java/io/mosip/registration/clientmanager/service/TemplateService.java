@@ -55,6 +55,10 @@ public class TemplateService {
     private static final String SLASH = "/";
     private static final String TEMPLATE_TYPE_CODE = "reg-android-preview-template-part";
     private static final String ACK_TEMPLATE_TYPE_CODE = "reg-android-ack-template-part";
+    private static final String LABEL_KEY = "label";
+    private static final String CROSS_MARK = "&#10008;";
+    private static final String APPLICANT_IMAGE_SOURCE = "ApplicantImageSource";
+    private static final String BASE64_IMAGE_PREFIX = "\"data:image/jpeg;base64,";
 
     private Context appContext;
 
@@ -150,14 +154,14 @@ public class TemplateService {
         bioData.put("IrisCount", capturedIris.stream().filter(b -> b.getBioValue() != null).count());
         bioData.put("FaceCount", capturedFace.stream().filter(b -> b.getBioValue() != null).count()); //TODO check this
         bioData.put("subType", field.getSubType());
-        bioData.put("label", getFieldLabel(field, registrationDto));
+        bioData.put(LABEL_KEY, getFieldLabel(field, registrationDto));
 
         Bitmap missingImage = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.wrong);
         Optional<BiometricsDto> result = capturedIris.stream()
                 .filter(b -> b.getBioSubType().equalsIgnoreCase("Left")).findFirst();
         if (result.isPresent()) {
             BiometricsDto biometricsDto = result.get();
-            bioData.put("LeftEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
+            bioData.put("LeftEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : CROSS_MARK);
             setBiometricImage(bioData, "CapturedLeftEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
                     isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.left_eye_ack), isPreview);
         }
@@ -166,7 +170,7 @@ public class TemplateService {
                 .filter(b -> b.getBioSubType().equalsIgnoreCase("Right")).findFirst();
         if (result.isPresent()) {
             BiometricsDto biometricsDto = result.get();
-            bioData.put("RightEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : "&#10008;");
+            bioData.put("RightEye", (biometricsDto.getBioValue() != null) ? "&#10003;" : CROSS_MARK);
             setBiometricImage(bioData, "CapturedRightEye", isPreview ? R.drawable.cross_mark : R.drawable.eye,
                     isPreview ? UserInterfaceHelperService.getIrisBitMap(biometricsDto) : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.right_eye_ack), isPreview);
         }
@@ -281,7 +285,7 @@ public class TemplateService {
                     isPreview ? faceBitmap : BitmapFactory.decodeResource(appContext.getResources(), R.drawable.face_ack), isPreview);
 
             if ("applicant".equalsIgnoreCase(field.getSubType())) {
-                setBiometricImage(velocityContext, "ApplicantImageSource", faceBitmap, isPreview);
+                setBiometricImage(velocityContext, APPLICANT_IMAGE_SOURCE, faceBitmap, isPreview);
             }
         }
 
@@ -307,7 +311,7 @@ public class TemplateService {
             qrBitmap.compress(Bitmap.CompressFormat.JPEG, 50 , byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            velocityContext.put("QRCodeSource", "\"data:image/jpeg;base64," + encodedBytes + "\"");
+            velocityContext.put("QRCodeSource", BASE64_IMAGE_PREFIX + encodedBytes + "\"");
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
         }
@@ -318,14 +322,14 @@ public class TemplateService {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 if (isPreview) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-                }else if(!isPreview && key.equals("ApplicantImageSource")){
+                }else if(!isPreview && key.equals(APPLICANT_IMAGE_SOURCE)){
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
                 } else {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 }
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                templateValues.put(key, "\"data:image/jpeg;base64," + encodedBytes + "\"");
+                templateValues.put(key, BASE64_IMAGE_PREFIX + encodedBytes + "\"");
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);
             }
@@ -339,14 +343,14 @@ public class TemplateService {
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 if (isPreview) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-                }else if(!isPreview && key.equals("ApplicantImageSource")){
+                }else if(!isPreview && key.equals(APPLICANT_IMAGE_SOURCE)){
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
                 } else {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 }
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 String encodedBytes = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                velocityContext.put(key, "\"data:image/jpeg;base64," + encodedBytes + "\"");
+                velocityContext.put(key, BASE64_IMAGE_PREFIX + encodedBytes + "\"");
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);
             }
@@ -372,10 +376,10 @@ public class TemplateService {
             Optional<BiometricsDto> result = capturedFingers.stream()
                     .filter(b -> Modality.getBioAttribute(b.getBioSubType()).equalsIgnoreCase(finger)).findFirst();
             if (result.isPresent()) {
-                data.put(finger, result.get().getBioValue() == null ? "&#10008;" :
+                data.put(finger, result.get().getBioValue() == null ? CROSS_MARK :
                         rankings.get(finger));
                         } else {
-                data.put(finger, "&#10008;");
+                data.put(finger, CROSS_MARK);
             }
         }
     }
@@ -440,7 +444,7 @@ public class TemplateService {
         String value = getValue(registrationDto.getDemographics().get(field.getId()));
         if (value != null && !value.isEmpty()) {
             data = new HashMap<>();
-            data.put("label", getFieldLabel(field, registrationDto));
+            data.put(LABEL_KEY, getFieldLabel(field, registrationDto));
             data.put("value", getFieldValue(field, registrationDto));
         }
         return data;
@@ -505,7 +509,7 @@ public class TemplateService {
         Map<String, Object> data = null;
         if (registrationDto.getDocuments().get(field.getId()) != null) {
             data = new HashMap<>();
-            data.put("label", getFieldLabel(field, registrationDto));
+            data.put(LABEL_KEY, getFieldLabel(field, registrationDto));
             data.put("value", registrationDto.getDocuments().get(field.getId()).getType());
         }
         return data;

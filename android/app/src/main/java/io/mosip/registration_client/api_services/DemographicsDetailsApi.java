@@ -28,6 +28,7 @@ import io.mosip.registration_client.model.DemographicsDataPigeon;
 public class DemographicsDetailsApi implements DemographicsDataPigeon.DemographicsApi {
     private final RegistrationService registrationService;
     AuditManagerService auditManagerService;
+    private static final String GET_FIELD_FAILED_MESSAGE = "Get field failed!";
 
     @Inject
     public DemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
@@ -61,7 +62,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
                 }
             });
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Get field failed!" + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), GET_FIELD_FAILED_MESSAGE + Arrays.toString(e.getStackTrace()));
         }
         result.success("");
     }
@@ -102,9 +103,9 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
                     }
                 }
             });
-            Log.e(getClass().getSimpleName(), "Get field failed!" + this.registrationService.getRegistrationDto().getDemographics());
+            Log.e(getClass().getSimpleName(), GET_FIELD_FAILED_MESSAGE + this.registrationService.getRegistrationDto().getDemographics());
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Get field failed!" + Arrays.toString(e.getStackTrace()));
+            Log.e(getClass().getSimpleName(), GET_FIELD_FAILED_MESSAGE + Arrays.toString(e.getStackTrace()));
         }
         result.success("");
     }

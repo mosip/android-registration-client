@@ -54,6 +54,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
     private ObjectMapper objectMapper;
     private IPacketCryptoService iPacketCryptoService;
+    private static final String EXCEPTION_ADD_METADATA_MSG = "exception occurred to add metadata for id - ";
 
     @Inject
     public PosixAdapterServiceImpl(Context appContext, IPacketCryptoService iPacketCryptoService,
@@ -109,9 +110,9 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             return metadata;
         } catch (
                 IOException e) {
-            Log.e(TAG, "exception occurred to add metadata for id - " + container);
+            Log.e(TAG, EXCEPTION_ADD_METADATA_MSG + container);
         } catch (Exception e1) {
-            Log.e(TAG, "exception occurred to add metadata for id - " + container);
+            Log.e(TAG, EXCEPTION_ADD_METADATA_MSG + container);
         }
         return null;
     }
@@ -186,7 +187,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             Log.e(TAG, "exception occurred. Will create a new connection");
             throw e;
         } catch (IOException e) {
-            Log.e(TAG, "exception occurred to add metadata for id - " + container);
+            Log.e(TAG, EXCEPTION_ADD_METADATA_MSG + container);
         }
         return metaMap;
     }
@@ -275,7 +276,7 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
                 try {
                     jsonObject.put(entry.getKey(), entry.getValue());
                 } catch (JSONException e) {
-                    Log.e(TAG, "exception occurred to add metadata for id - " + container);
+                    Log.e(TAG, EXCEPTION_ADD_METADATA_MSG + container);
                 }
             });
         return jsonObject;

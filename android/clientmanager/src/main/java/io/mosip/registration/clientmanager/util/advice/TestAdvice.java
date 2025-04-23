@@ -6,11 +6,11 @@ import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class TestAdvice {
-    private static final String localClientCryptoServiceAdvice =
+    private static final String LOCAL_CLIENT_CRYPTO_SERVICE_ADVICE =
             "execution(* io.mosip.registration.clientmanager.service.crypto." +
                     "LocalClientCryptoServiceImpl.encrypt(..))";
 
-    @Pointcut(localClientCryptoServiceAdvice)
+    @Pointcut(LOCAL_CLIENT_CRYPTO_SERVICE_ADVICE)
     public void k(){}//pointcut name
 
     @Before("k()")//applying pointcut on before advice
