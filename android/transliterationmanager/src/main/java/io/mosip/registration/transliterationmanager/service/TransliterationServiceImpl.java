@@ -7,7 +7,7 @@ import io.mosip.registration.transliterationmanager.spi.TransliterationService;
 public class TransliterationServiceImpl implements TransliterationService {
     @Override
     public String transliterate(String inputCode,String outputCode, String input) {
-        if(inputCode == outputCode){
+        if(inputCode.equals(outputCode)){
             return input;
         }
         Transliterator transliterator = Transliterator.getInstance(inputCode+"-"+outputCode);
