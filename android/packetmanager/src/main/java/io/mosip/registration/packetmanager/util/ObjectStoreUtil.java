@@ -43,7 +43,7 @@ public class ObjectStoreUtil {
     }
 
     private static boolean stringIsEmpty(String str) {
-        if (str == null || str.trim() == "") {
+        if (str == null || str.trim().equals("")) {
             return true;
         } else
             return false;
