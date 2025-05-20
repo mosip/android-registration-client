@@ -46,6 +46,6 @@ public class UserBiometric {
 	private Long delDtimes;
 
     public UserBiometric() {
-
+		//TODO
     }
 }

@@ -76,15 +76,15 @@ public class RegistrationServiceImplTest {
                 keyStoreRepository, globalParamRepository, auditManagerService);
     }
 
-    @Test
-    public void approveRegistration() {
-        //Not Implemented
-    }
-
-    @Test
-    public void rejectRegistration() {
-        //Not Implemented
-    }
+//    @Test
+//    public void approveRegistration() {
+//        //Not Implemented
+//    }
+//
+//    @Test
+//    public void rejectRegistration() {
+//        //Not Implemented
+//    }
 
 
     @Test(expected = ClientCheckedException.class)
@@ -246,13 +246,13 @@ public class RegistrationServiceImplTest {
         registrationService.getRegistrationDto();
     }
 
-    @Test
-    public void getAudits() {
-        //TODO
-    }
-
-    @Test
-    public void buildBIR() {
-        //TODO
-    }
+//    @Test
+//    public void getAudits() {
+//        //TODO
+//    }
+//
+//    @Test
+//    public void buildBIR() {
+//        //TODO
+//    }
 }

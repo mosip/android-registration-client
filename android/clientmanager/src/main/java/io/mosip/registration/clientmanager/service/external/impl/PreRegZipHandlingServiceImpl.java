@@ -351,7 +351,7 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
 //                                }
 //                            }
 //                        }
-                        list.add(new SimpleType(object.optString("language", ""), updatedName!= "" ? updatedName : object.optString("value","")));
+                        list.add(new SimpleType(object.optString("language", ""), !updatedName.equals("") ? updatedName : object.optString("value","")));
                     }
                     return list;
             }

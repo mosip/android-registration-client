@@ -40,6 +40,8 @@ public class IdentitySchemaRepository {
     private GlobalParamRepository globalParamRepository;
     private TemplateRepository templateRepository;
     private ProcessSpecDao processSpecDao;
+    private static final String SCHEMA_PREFIX = "schema_";
+    private static final String SCHEMA_FILE_TAMPERED_ERROR = "Schema file is tampered";
 
     public IdentitySchemaRepository(TemplateRepository templateRepository, GlobalParamRepository globalParamRepository, IdentitySchemaDao identitySchemaDao, ProcessSpecDao processSpecDao) {
         this.templateRepository = templateRepository;
@@ -61,11 +63,11 @@ public class IdentitySchemaRepository {
         }
         String schema = JsonUtils.javaObjectToJsonString(idSchemaResponse);
         Log.i(TAG, "Schema path: " + context.getFilesDir());
-        File file = new File(context.getFilesDir(), "schema_"+identitySchema.getSchemaVersion());
+        File file = new File(context.getFilesDir(), SCHEMA_PREFIX+identitySchema.getSchemaVersion());
         try(FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(schema);
         }
-        identitySchema.setFileName("schema_"+identitySchema.getSchemaVersion());
+        identitySchema.setFileName(SCHEMA_PREFIX+identitySchema.getSchemaVersion());
         identitySchema.setFileLength(file.length());
         identitySchema.setFileHash(HMACUtils2.digestAsPlainText(schema.getBytes(StandardCharsets.UTF_8)));
         identitySchemaDao.insertIdentitySchema(identitySchema);
@@ -100,7 +102,7 @@ public class IdentitySchemaRepository {
     }
 
     public String getSchemaJson(Context context, Double version) throws Exception {
-        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version, "schema_"+version);
+        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version, SCHEMA_PREFIX+version);
 
 
         if(identitySchema == null)
@@ -110,7 +112,7 @@ public class IdentitySchemaRepository {
     }
 
     public ProcessSpecDto getNewProcessSpec(Context context, Double version) throws Exception {
-        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version, "schema_"+version);
+        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version, SCHEMA_PREFIX+version);
 
         if(identitySchema == null)
             throw new Exception("Identity schema not found for version : " + version);
@@ -132,15 +134,15 @@ public class IdentitySchemaRepository {
     }
 
     private IdSchemaResponse getIdSchemaResponse(Context context, IdentitySchema identitySchema) throws Exception {
-        File file = new File(context.getFilesDir(), "schema_"+identitySchema.getSchemaVersion());
+        File file = new File(context.getFilesDir(), SCHEMA_PREFIX+identitySchema.getSchemaVersion());
         if(file.length() != identitySchema.getFileLength())
-            throw new Exception("Schema file is tampered");
+            throw new Exception(SCHEMA_FILE_TAMPERED_ERROR);
 
         try(FileReader fileReader = new FileReader(file)) {
             String content = IOUtils.toString(fileReader);
             String hash = HMACUtils2.digestAsPlainText(content.getBytes(StandardCharsets.UTF_8));
             if(!hash.equalsIgnoreCase(identitySchema.getFileHash()))
-                throw new Exception("Schema file is tampered");
+                throw new Exception(SCHEMA_FILE_TAMPERED_ERROR);
 
             return JsonUtils.jsonStringToJavaObject(content, IdSchemaResponse.class);
         } catch (IOException e) {
@@ -191,13 +193,13 @@ public class IdentitySchemaRepository {
     private ProcessSpecDto getProcessSpecDtoFromFile(Context context, String type, IdentitySchema identitySchema) throws Exception {
         File file = new File(context.getFilesDir(), type);
         if(file.length() != identitySchema.getFileLength())
-            throw new Exception("Schema file is tampered");
+            throw new Exception(SCHEMA_FILE_TAMPERED_ERROR);
 
         try(FileReader fileReader = new FileReader(file)) {
             String content = IOUtils.toString(fileReader);
             String hash = HMACUtils2.digestAsPlainText(content.getBytes(StandardCharsets.UTF_8));
             if(!hash.equalsIgnoreCase(identitySchema.getFileHash()))
-                throw new Exception("Schema file is tampered");
+                throw new Exception(SCHEMA_FILE_TAMPERED_ERROR);
 
             return JsonUtils.jsonStringToJavaObject(content, ProcessSpecDto.class);
         } catch (IOException e) {

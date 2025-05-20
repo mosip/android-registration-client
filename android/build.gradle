@@ -11,12 +11,30 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.ibotta:plugin:1.2.0"
         //Jacoco Plugin
-        classpath "org.jacoco:org.jacoco.core:0.8.7"
+        classpath "org.jacoco:org.jacoco.core:0.8.12"
     }
 }
 
 plugins {
-    id "org.sonarqube" version "3.0"
+    id "org.sonarqube" version "6.0.1.5171"
+    id "jacoco"
+}
+
+sonarqube {
+    androidVariant 'debug'
+    properties {
+        property "sonar.projectKey", "rajapandi1234_android-registration-client"
+        property "sonar.organization", "test-integrations"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.login", "13c9437b3fa54b66de5ec14c4fc2bd04fb55ae77"
+        property "sonar.androidLint.reportPaths", "**/reports/lint-results-debug.xml"
+
+        property "sonar.exclusions", "**/src/androidTest/assets/**,**/AppData/Local/Pub/Cache/**,**/app/src/**"
+        property "sonar.java.binaries", "build/intermediates/javac/debug"
+        property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
+        // property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
+        property "sonar.coverage.jacoco.xmlReportPaths", "C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\clientmanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml,"+"C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\keymanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml,"+ "C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\packetmanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml,"+"C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\transliterationmanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml"
+    }
 }
 
 allprojects {
@@ -29,10 +47,10 @@ allprojects {
 
 ext {
     compileSdkVersion = 33
-    buildToolsVersion = "31.0.0"
+    buildToolsVersion = "33.0.0"
 
     minSdkVersion = 28
-    targetSdkVersion = 31
+    targetSdkVersion = 33
 
     junitVersion = "4.+"
 
@@ -40,7 +58,7 @@ ext {
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
 
-    serverBaseURL = "\"https://api-internal.qa-plan.mosip.net\""
+    serverBaseURL = "\"https://api-internal.qa-base.mosip.net\""
     serverHealthCheckPath = "\"/v1/syncdata/actuator/health\""
     serverActuatorInfoPath = "\"/v1/syncdata/actuator/info\""
     debugPassword = "\"APTyKejHxACQyKBSRciR\""

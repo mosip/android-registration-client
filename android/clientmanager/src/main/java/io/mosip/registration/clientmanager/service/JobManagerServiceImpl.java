@@ -33,7 +33,7 @@ public class JobManagerServiceImpl implements JobManagerService {
 
     private static final String TAG = JobManagerServiceImpl.class.getSimpleName();
     private static final int JOB_PERIODIC_SECONDS = 15 * 60;
-    private static final int numLengthLimit = 5;
+    private static final int NUM_LENGTH_LIMIT = 5;
 
     Context context;
     JobScheduler jobScheduler;
@@ -181,10 +181,10 @@ public class JobManagerServiceImpl implements JobManagerService {
     @Override
     public int generateJobServiceId(String syncJobDefId) {
         try {
-            String lastCharsWithNumLengthLimit = syncJobDefId.substring(syncJobDefId.length() - numLengthLimit);
+            String lastCharsWithNumLengthLimit = syncJobDefId.substring(syncJobDefId.length() - NUM_LENGTH_LIMIT);
             return Integer.parseInt(lastCharsWithNumLengthLimit);
         } catch (Exception ex) {
-            Log.e(TAG, "Conversion of jobId : " + syncJobDefId + "to int failed for length " + numLengthLimit + ex.getMessage());
+            Log.e(TAG, "Conversion of jobId : " + syncJobDefId + "to int failed for length " + NUM_LENGTH_LIMIT + ex.getMessage());
             throw ex;
         }
     }

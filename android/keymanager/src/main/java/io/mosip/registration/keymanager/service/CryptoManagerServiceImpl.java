@@ -40,8 +40,8 @@ import static java.util.Arrays.copyOfRange;
 public class CryptoManagerServiceImpl implements CryptoManagerService {
 
     private static final String TAG = CryptoManagerServiceImpl.class.getSimpleName();
-    private static final String signRefId = "SIGN";
-    private static final String signApplicationId = "KERNEL";
+    private static final String SIGN_REF_ID = "SIGN";
+    private static final String SIGN_APPLICATION_ID = "KERNEL";
     private static final String AES = "AES";
     public static final int GCM_NONCE_LENGTH = 12;
     public static final int GCM_AAD_LENGTH = 32;
@@ -50,6 +50,7 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
     private static final String MGF1 = "MGF1";
     private static final String HASH_ALGO = "SHA-256";
     public static final int THUMBPRINT_LENGTH = 32;
+    public static final String ERROR_CERTIFICATE_PARSING = "CERTIFICATE_PARSING_ERROR";
 
     private Context context;
     private static String KEYGEN_SYMMETRIC_ALGORITHM;
@@ -91,8 +92,8 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
         Log.i(TAG, "Request for data encryption.");
 
         if(!isDataValid(cryptoRequestDto.getReferenceId()) ||
-                (cryptoRequestDto.getApplicationId().equalsIgnoreCase(signApplicationId) &&
-                        cryptoRequestDto.getReferenceId().equalsIgnoreCase(signRefId) )) {
+                (cryptoRequestDto.getApplicationId().equalsIgnoreCase(SIGN_APPLICATION_ID) &&
+                        cryptoRequestDto.getReferenceId().equalsIgnoreCase(SIGN_REF_ID) )) {
             Log.i(TAG,"Not Allowed to preform encryption with Master Key.");
             throw new Exception("ENCRYPT_NOT_ALLOWED_ERROR WITH SIGN KEY");
         }
@@ -232,14 +233,14 @@ public class CryptoManagerServiceImpl implements CryptoManagerService {
             PemObject pemObject = pemReader.readPemObject();
             if (Objects.isNull(pemObject)) {
                 Log.i(TAG, "Error Parsing Certificate.");
-                throw new Exception("CERTIFICATE_PARSING_ERROR");
+                throw new Exception(ERROR_CERTIFICATE_PARSING);
             }
             byte[] certBytes = pemObject.getContent();
             CertificateFactory certFactory = CertificateFactory.getInstance(CERTIFICATE_TYPE);
             return certFactory.generateCertificate(new ByteArrayInputStream(certBytes));
         } catch(Exception e) {
-            Log.e(TAG, "CERTIFICATE_PARSING_ERROR", e);
-            throw new Exception("CERTIFICATE_PARSING_ERROR");
+            Log.e(TAG, ERROR_CERTIFICATE_PARSING, e);
+            throw new Exception(ERROR_CERTIFICATE_PARSING);
         }
     }
 

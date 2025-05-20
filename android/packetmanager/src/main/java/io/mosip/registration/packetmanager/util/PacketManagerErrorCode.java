@@ -1,5 +1,7 @@
 package io.mosip.registration.packetmanager.util;
 
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.PACKET_KEEPER_EXCEPTION_MSG;
+
 public enum PacketManagerErrorCode {
 
     UNKNOWN_RESOURCE_EXCEPTION("KER-PUT-001",
@@ -17,10 +19,10 @@ public enum PacketManagerErrorCode {
     DOCUMENT_EXCEPTION("KER-PUT-011", "Failed to get document"),
     BIOMETRIC_EXCEPTION("KER-PUT-012", "Unable to get biometric"),
     OS_ADAPTER_EXCEPTION("KER-PUT-013", "No Object store adapter found."),
-    PACKET_KEEPER_GET_ERROR("KER-PUT-014", "Packet keeper exception occured."),
-    PACKET_KEEPER_PUT_ERROR("KER-PUT-015", "Packet keeper exception occured."),
-    PACKET_KEEPER_GETMETA_ERROR("KER-PUT-016", "Packet keeper exception occured."),
-    PACKET_KEEPER_INTEGRITY_ERROR("KER-PUT-017", "Packet keeper exception occured."),
+    PACKET_KEEPER_GET_ERROR("KER-PUT-014", PACKET_KEEPER_EXCEPTION_MSG),
+    PACKET_KEEPER_PUT_ERROR("KER-PUT-015", PACKET_KEEPER_EXCEPTION_MSG),
+    PACKET_KEEPER_GETMETA_ERROR("KER-PUT-016", PACKET_KEEPER_EXCEPTION_MSG),
+    PACKET_KEEPER_INTEGRITY_ERROR("KER-PUT-017", PACKET_KEEPER_EXCEPTION_MSG),
     CRYPTO_EXCEPTION("KER-PUT-018", "No available crypto service exception."),
     INTEGRITY_FAILURE("KER-PUT-019", "Packet Integrity check failed."),
     PACKET_VALIDATION_FAILED("KER-PUT-020", "Packet Validation exception occured."),

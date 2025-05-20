@@ -65,7 +65,7 @@ class _CustomCupertinoDropDownPickerState
   int _getInitialSelectedIndex() {
     if (widget.initialValue != null && widget.snapshot.hasData) {
       List<String> items =
-          (widget.snapshot.data as List<dynamic>).whereType<String>().toList();
+      (widget.snapshot.data as List<dynamic>).whereType<String>().toList();
       return items.indexOf(widget.initialValue!);
     }
     return 0;
@@ -92,7 +92,7 @@ class _CustomCupertinoDropDownPickerState
 
     // Convert data to List<String> to avoid type mismatch
     List<String> items =
-        (widget.snapshot.data as List<dynamic>).whereType<String>().toList();
+    (widget.snapshot.data as List<dynamic>).whereType<String>().toList();
 
     return CupertinoPicker.builder(
       childCount: items.length,

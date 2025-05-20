@@ -66,6 +66,7 @@ public class PacketServiceImpl implements PacketService {
     public static final String PACKET_SYNC_ID = "mosip.registration.sync";
     public static final String PACKET_SYNC_VERSION = "1.0";
     public static final String PACKET_UPLOAD_FIELD = "file";
+    public static final String SERVER_VERSION_1_1_5 = "1.1.5";
     public static final List<String> PACKET_UNSYNCED_STATUS = Arrays.asList(
             PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
 
@@ -133,7 +134,7 @@ public class PacketServiceImpl implements PacketService {
         SyncRIDRequest syncRIDRequest = new SyncRIDRequest();
         syncRIDRequest.setRegistrationId(registration.getPacketId());
         syncRIDRequest.setRegistrationType(registration.getRegType().toUpperCase());
-        if (!serverVersion.startsWith("1.1.5")) {
+        if (!serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
             syncRIDRequest.setPacketId(registration.getPacketId());
             syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
         }
@@ -163,7 +164,7 @@ public class PacketServiceImpl implements PacketService {
         byte[] cipher = this.packetCryptoService.encrypt(centerMachineDto.getMachineRefId(),
                 JsonUtils.javaObjectToJsonString(wrapper).getBytes(StandardCharsets.UTF_8));
 
-        Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call = serverVersion.startsWith("1.1.5") ? this.syncRestService.v1syncRID(
+        Call<RegProcResponseWrapper<List<SyncRIDResponse>>> call = serverVersion.startsWith(SERVER_VERSION_1_1_5) ? this.syncRestService.v1syncRID(
                 DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)),
                 centerMachineDto.getMachineRefId(), CryptoUtil.base64encoder.encodeToString(cipher)) : this.syncRestService.syncRID(
                 DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)),
@@ -293,13 +294,13 @@ public class PacketServiceImpl implements PacketService {
         String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
 
         PacketStatusRequest packetStatusRequest = new PacketStatusRequest();
-        packetStatusRequest.setId((serverVersion!=null && serverVersion.startsWith("1.1.5")) ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
+        packetStatusRequest.setId((serverVersion!=null && serverVersion.startsWith(SERVER_VERSION_1_1_5)) ? PACKET_STATUS_READER_ID : PACKET_EXTERNAL_STATUS_READER_ID);
         packetStatusRequest.setVersion(PACKET_SYNC_VERSION);
         packetStatusRequest.setRequesttime(DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         List<PacketIdDto> packets = new ArrayList<>();
         for (Registration reg : registrations) {
             PacketIdDto packet = new PacketIdDto();
-            if (serverVersion!=null && serverVersion.startsWith("1.1.5")) {
+            if (serverVersion!=null && serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
                 packet.setRegistrationId(reg.getPacketId());
             } else {
                 packet.setPacketId(reg.getPacketId());
@@ -307,7 +308,7 @@ public class PacketServiceImpl implements PacketService {
         }
         packetStatusRequest.setRequest(packets);
 
-        Call<PacketStatusResponse> call = (serverVersion!=null && serverVersion.startsWith("1.1.5")) ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
+        Call<PacketStatusResponse> call = (serverVersion!=null && serverVersion.startsWith(SERVER_VERSION_1_1_5)) ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
         call.enqueue(new Callback<PacketStatusResponse>() {
             @Override
             public void onResponse(Call<PacketStatusResponse> call, Response<PacketStatusResponse> response) {
