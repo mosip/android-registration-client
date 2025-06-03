@@ -58,13 +58,12 @@ dependencies {
     implementation 'javax.validation:validation-api:2.0.1.Final'
 
     testImplementation "junit:junit:4.13.2"
-    testImplementation "org.mockito:mockito-core:4.8.0"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
-    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+
     testImplementation 'org.mockito:mockito-inline:4.8.0'
+    testImplementation 'org.mockito:mockito-core:4.11.0'
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation 'org.apache.commons:commons-lang3:3.12.0'
@@ -85,5 +84,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
     implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.13.3'
     implementation 'org.bitbucket.b_c:jose4j:0.6.5'
+
+    testImplementation 'net.bytebuddy:byte-buddy:1.14.0'
+    testImplementation 'org.objenesis:objenesis:3.3'
 
 }
