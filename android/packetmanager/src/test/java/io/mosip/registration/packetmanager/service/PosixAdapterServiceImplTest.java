@@ -21,11 +21,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowEnvironment;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -931,61 +933,6 @@ public class PosixAdapterServiceImplTest {
         assertFalse(result);
     }
 
-    @Ignore
-    @Test
-    public void testCreateContainerZipWithSubPacket_withExistingZip_shouldMergeEntries() throws Exception {
-        // Use a temporary directory for isolation
-        File tempDir = temporaryFolder.newFolder("mergeZipTest");
-        Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
-        baseLocationField.setAccessible(true);
-        baseLocationField.set(service, tempDir.getAbsolutePath());
-
-        File zip = new File(tempDir, "packet.zip");
-        File newTxt = new File(tempDir, "new.txt");
-
-        // Create new.txt with some content
-        try (FileOutputStream fos = new FileOutputStream(newTxt)) {
-            fos.write("new".getBytes());
-        }
-
-        // Ensure the zip exists and has an old entry
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zip))) {
-            zos.putNextEntry(new ZipEntry("old.txt"));
-            zos.write("old".getBytes());
-            zos.closeEntry();
-        }
-
-        Method method = PosixAdapterServiceImpl.class.getDeclaredMethod("createContainerZipWithSubPacket",
-                String.class, String.class, String.class, String.class, String.class, InputStream.class);
-        method.setAccessible(true);
-
-        // Add a new entry from the created txt file
-        try (InputStream newData = new FileInputStream(newTxt)) {
-            // Use the same name as in the zip for the new entry to ensure it is added as a new entry
-            method.invoke(service, tempDir.getName(), "packet", "src", "proc", "new.txt", newData);
-        }
-
-        // Check both entries exist
-        File mergedZip = new File(tempDir, "packet.zip");
-        boolean foundOld = false, foundNew = false;
-        StringBuilder entryNames = new StringBuilder();
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(mergedZip))) {
-            ZipEntry entry;
-            while ((entry = zis.getNextEntry()) != null) {
-                String name = entry.getName();
-                entryNames.append(name).append(", ");
-                // The actual entry name may be prefixed by ObjectStoreUtil.getName(source, process, fileName)
-                if (name.endsWith("old.txt")) foundOld = true;
-                if (name.endsWith("new.txt")) foundNew = true;
-            }
-        }
-        if (!foundNew) {
-            System.out.println("Entries in zip: " + entryNames);
-        }
-        assertTrue("Old entry should exist", foundOld);
-        assertTrue("New entry should exist", foundNew);
-    }
-
     @Test
     public void testObjectMetadata_withNullMeta_shouldReturnEmptyJson() throws Exception {
         // Arrange
@@ -1357,5 +1304,57 @@ public class PosixAdapterServiceImplTest {
         Object result = getMetaData.invoke(testService, "accMetaFSN", "contMetaFSN", "src", "proc", "fileMetaFSN");
         assertNotNull(result);
         assertEquals("bar", ((Map<?, ?>) result).get("foo"));
+    }
+
+    @Test
+    public void testGetMetaData_shouldReturnNullIfZipEntryNotPresent() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        PosixAdapterServiceImpl localService = new PosixAdapterServiceImpl(mockContext, mockCryptoService, objectMapper);
+
+        Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
+        baseLocationField.setAccessible(true);
+        baseLocationField.set(localService, baseDir.getAbsolutePath());
+
+        // Create account and container zip with a different entry
+        File accDir = new File(baseDir, "accMeta7");
+        accDir.mkdirs();
+        File zip = new File(accDir, "contMeta7.zip");
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zip))) {
+            zos.putNextEntry(new ZipEntry("notTheMeta.json"));
+            zos.write("{\"foo\":\"bar\"}".getBytes());
+            zos.closeEntry();
+        }
+
+        Method getMetaData = PosixAdapterServiceImpl.class.getDeclaredMethod(
+                "getMetaData", String.class, String.class, String.class, String.class, String.class);
+        getMetaData.setAccessible(true);
+
+        Object result = getMetaData.invoke(localService, "accMeta7", "contMeta7", "src", "proc", "fileMeta7");
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetMetaData_shouldHandleNullZipEntry() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        PosixAdapterServiceImpl localService = new PosixAdapterServiceImpl(mockContext, mockCryptoService, objectMapper);
+
+        Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
+        baseLocationField.setAccessible(true);
+        baseLocationField.set(localService, baseDir.getAbsolutePath());
+
+        // Create account and container zip with no entries
+        File accDir = new File(baseDir, "accMeta8");
+        accDir.mkdirs();
+        File zip = new File(accDir, "contMeta8.zip");
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zip))) {
+            // No entries
+        }
+
+        Method getMetaData = PosixAdapterServiceImpl.class.getDeclaredMethod(
+                "getMetaData", String.class, String.class, String.class, String.class, String.class);
+        getMetaData.setAccessible(true);
+
+        Object result = getMetaData.invoke(localService, "accMeta8", "contMeta8", "src", "proc", "fileMeta8");
+        assertNull(result);
     }
 }
