@@ -1,134 +1,178 @@
-//package io.mosip.registration.clientmanager.service;
-//
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertTrue;
-//
-//import android.content.Context;
-//import android.content.SharedPreferences;
-//
-//import androidx.room.Room;
-//import androidx.test.platform.app.InstrumentationRegistry;
-//
-//import org.junit.After;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.robolectric.RobolectricTestRunner;
-//
-//import java.util.List;
-//
-//import io.mosip.registration.clientmanager.BuildConfig;
-//import io.mosip.registration.clientmanager.config.ClientDatabase;
-//import io.mosip.registration.clientmanager.config.SessionManager;
-//import io.mosip.registration.clientmanager.constant.AuditEvent;
-//import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
-//import io.mosip.registration.clientmanager.constant.Components;
-//import io.mosip.registration.clientmanager.constant.RegistrationConstants;
-//import io.mosip.registration.clientmanager.dao.AuditDao;
-//import io.mosip.registration.clientmanager.dao.GlobalParamDao;
-//import io.mosip.registration.clientmanager.entity.Audit;
-//import io.mosip.registration.clientmanager.repository.AuditRepository;
-//import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
-//
-//@RunWith(RobolectricTestRunner.class)
-//public class AuditManagerServiceTest {
-//
-//    private static final String PACKET_ID = "10001103911003120220530051317";
-//    private static final String USER_NAME = "audit@123";
-//    private static final String SCREEN_NAME = "Biometric_capture";
-//    private static final String TEST_APP_NAME = "test_app"; // Hardcoded app name
-//
-//    private Context appContext;
-//    private ClientDatabase clientDatabase;
-//    private AuditRepository auditRepository;
-//    private GlobalParamRepository globalParamRepository;
-//    private AuditManagerServiceImpl auditManagerService;
-//
-//    @Before
-//    public void init() {
-//        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-//        clientDatabase = Room.inMemoryDatabaseBuilder(appContext, ClientDatabase.class)
-//                .allowMainThreadQueries()
-//                .build();
-//
-//        AuditDao auditDao = clientDatabase.auditDao();
-//        auditRepository = new AuditRepository(auditDao);
-//
-//        GlobalParamDao globalParamDao = clientDatabase.globalParamDao();
-//        globalParamRepository = new GlobalParamRepository(globalParamDao);
-//
-//        // Set up SharedPreferences with hardcoded name
-//        SharedPreferences.Editor editor = appContext.getSharedPreferences(TEST_APP_NAME, Context.MODE_PRIVATE).edit();
-//        editor.putString(SessionManager.USER_NAME, USER_NAME);
-//        editor.putString(SessionManager.RID, PACKET_ID); // Add RID for registration events
-//        editor.apply();
-//
-//        auditManagerService = new AuditManagerServiceImpl(appContext, auditRepository, globalParamRepository);
-//    }
-//
-//    @After
-//    public void tearDown() {
-//        clientDatabase.close();
-//    }
-//
-//    @Test
-//    public void auditWithAllParameters_test() {
-//        auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION.getId(), Components.REGISTRATION.getName(), PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
-//
-//        List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
-//
-//        assertEquals(1, audits.size());
-//        Audit audit = audits.get(0);
-//        assertEquals(USER_NAME, audit.getSessionUserId());
-//        assertEquals(USER_NAME, audit.getSessionUserName());
-//        assertEquals(BuildConfig.BASE_URL, audit.getHostIp());
-//        assertEquals(BuildConfig.BASE_URL, audit.getHostName());
-//        assertEquals(TEST_APP_NAME, audit.getApplicationId()); // Matches hardcoded value
-//        assertEquals(TEST_APP_NAME, audit.getApplicationName()); // Matches hardcoded value
-//        assertEquals(PACKET_ID, audit.getRefId());
-//        assertEquals(AuditReferenceIdTypes.REGISTRATION_ID.toString(), audit.getRefIdType());
-//        assertEquals(AuditEvent.LOADED_LOGIN.getId(), audit.getEventId());
-//        assertEquals(AuditEvent.LOADED_LOGIN.getName(), audit.getEventName());
-//        assertEquals(AuditEvent.LOADED_LOGIN.getType(), audit.getEventType());
-//        assertEquals(Components.REGISTRATION.getId(), audit.getModuleId());
-//        assertEquals(Components.REGISTRATION.getName(), audit.getModuleName());
-//    }
-//
-//    @Test
-//    public void auditDelete_test() {
-//        auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION.getId(), PACKET_ID, AuditReferenceIdTypes.REGISTRATION_ID.toString());
-//
-//        List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
-//        assertEquals(1, audits.size());
-//
-//        try {
-//            Thread.sleep(100); // Small delay to ensure timestamp difference
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        long currentTime = System.currentTimeMillis();
-//        globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, String.valueOf(currentTime));
-//        boolean deleted = auditManagerService.deleteAuditLogs();
-//
-//        assertTrue(deleted);
-//        audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
-//        assertEquals(0, audits.size());
-//    }
-//
-//    @Test
-//    public void auditWithComponent_test() {
-//        auditManagerService.audit(AuditEvent.LOADED_LOGIN, Components.REGISTRATION);
-//
-//        List<Audit> audits = auditRepository.getAuditsFromDate(System.currentTimeMillis() - 5000);
-//
-//        assertEquals(1, audits.size());
-//        Audit audit = audits.get(0);
-//        assertEquals(USER_NAME, audit.getSessionUserId());
-//        assertEquals(USER_NAME, audit.getSessionUserName());
-//        assertEquals(PACKET_ID, audit.getRefId()); // Since RID is set and event is REG-EVT
-//        assertEquals(AuditReferenceIdTypes.REGISTRATION_ID.getReferenceTypeId(), audit.getRefIdType());
-//        assertEquals(AuditEvent.LOADED_LOGIN.getId(), audit.getEventId());
-//        assertEquals(Components.REGISTRATION.getId(), audit.getModuleId());
-//        assertEquals(Components.REGISTRATION.getName(), audit.getModuleName());
-//    }
-//}
+package io.mosip.registration.clientmanager.service;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.config.SessionManager;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
+import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.entity.Audit;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.lang.reflect.Field;
+
+import org.springframework.util.ReflectionUtils;
+
+import io.mosip.registration.clientmanager.repository.AuditRepository;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class AuditManagerServiceTest {
+
+    @Mock
+    private Context mockContext;
+
+    @Mock
+    private AuditRepository mockAuditRepository;
+
+    @Mock
+    private GlobalParamRepository mockGlobalParamRepository;
+
+    @InjectMocks
+    private AuditManagerServiceImpl auditManagerService;
+
+    @Mock
+    private android.content.SharedPreferences mockSharedPreferences;
+
+    @Before
+    public void setUp() {
+        lenient().when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+
+        lenient().when(mockSharedPreferences.getString(anyString(), anyString())).thenReturn("mock-value");
+    }
+
+    @Test
+    public void test_constructor_initializes_instance_variables() {
+        AuditManagerServiceImpl manuallyCreatedService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+        Field contextField = ReflectionUtils.findField(AuditManagerServiceImpl.class, "context");
+        Field auditRepositoryField = ReflectionUtils.findField(AuditManagerServiceImpl.class, "auditRepository");
+        Field globalParamRepositoryField = ReflectionUtils.findField(AuditManagerServiceImpl.class, "globalParamRepository");
+
+        ReflectionUtils.makeAccessible(contextField);
+        ReflectionUtils.makeAccessible(auditRepositoryField);
+        ReflectionUtils.makeAccessible(globalParamRepositoryField);
+
+        assertEquals(mockContext, ReflectionUtils.getField(contextField, manuallyCreatedService));
+        assertEquals(mockAuditRepository, ReflectionUtils.getField(auditRepositoryField, manuallyCreatedService));
+        assertEquals(mockGlobalParamRepository, ReflectionUtils.getField(globalParamRepositoryField, manuallyCreatedService));
+    }
+
+    @Test
+    public void test_constructor_with_null_context() {
+        AuditManagerServiceImpl serviceWithNullContext = new AuditManagerServiceImpl(null, mockAuditRepository, mockGlobalParamRepository);
+
+        Field contextField = ReflectionUtils.findField(AuditManagerServiceImpl.class, "context");
+        ReflectionUtils.makeAccessible(contextField);
+        assertNull(ReflectionUtils.getField(contextField, serviceWithNullContext));
+    }
+
+    @Test
+    public void test_audit_with_null_audit_event() {
+        AuditEvent nullAuditEvent = null;
+        Components component = Components.REGISTRATION;
+
+        assertThrows(NullPointerException.class, () -> {
+            auditManagerService.audit(nullAuditEvent, component);
+        });
+    }
+
+    @Test
+    public void test_registration_event_with_valid_rid_sets_correct_reference_id_and_type() {
+        Context mockContext = mock(Context.class);
+        SharedPreferences mockSharedPreferences = mock(SharedPreferences.class);
+        AuditRepository mockAuditRepository = mock(AuditRepository.class);
+        GlobalParamRepository mockGlobalParamRepository = mock(GlobalParamRepository.class);
+
+        AuditManagerServiceImpl auditManagerService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+        String appName = "TestApp";
+        String testRid = "12345678901234567890";
+        String appModuleId = "REG-MOD-001";
+        String appModuleName = "Registration Module";
+
+        when(mockContext.getString(R.string.app_name)).thenReturn(appName);
+        when(mockContext.getSharedPreferences(appName, Context.MODE_PRIVATE)).thenReturn(mockSharedPreferences);
+        when(mockSharedPreferences.getString(SessionManager.RID, null)).thenReturn(testRid);
+
+        AuditEvent auditEvent = AuditEvent.REGISTRATION_START;
+
+        ArgumentCaptor<Audit> auditCaptor = ArgumentCaptor.forClass(Audit.class);
+
+        auditManagerService.audit(auditEvent, appModuleId, appModuleName, null);
+
+        verify(mockAuditRepository).insertAudit(auditCaptor.capture());
+        Audit capturedAudit = auditCaptor.getValue();
+
+        assertEquals(testRid, capturedAudit.getRefId());
+        assertEquals(AuditReferenceIdTypes.REGISTRATION_ID.getReferenceTypeId(), capturedAudit.getRefIdType());
+    }
+
+    @Test
+    public void test_null_audit_event_enum_throws_exception() {
+        Context mockContext = mock(Context.class);
+        AuditRepository mockAuditRepository = mock(AuditRepository.class);
+        GlobalParamRepository mockGlobalParamRepository = mock(GlobalParamRepository.class);
+
+        AuditManagerServiceImpl auditManagerService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+        String appModuleId = "REG-MOD-001";
+        String appModuleName = "Registration Module";
+
+        assertThrows(NullPointerException.class, () -> {
+            auditManagerService.audit(null, appModuleId, appModuleName, null);
+        });
+
+        verify(mockAuditRepository, never()).insertAudit(any(Audit.class));
+    }
+
+    @Test
+    public void test_delete_audit_logs_success() {
+        Context mockContext = Mockito.mock(Context.class);
+        GlobalParamRepository mockGlobalParamRepo = Mockito.mock(GlobalParamRepository.class);
+        AuditRepository mockAuditRepo = Mockito.mock(AuditRepository.class);
+
+        AuditManagerServiceImpl auditManagerService = new AuditManagerServiceImpl(mockContext, mockAuditRepo, mockGlobalParamRepo);
+
+        String validTillDate = "1625097600000";
+        long validTillDateLong = Long.parseLong(validTillDate);
+
+        Mockito.when(mockGlobalParamRepo.getGlobalParamValue(RegistrationConstants.AUDIT_EXPORTED_TILL))
+                .thenReturn(validTillDate);
+
+        boolean result = auditManagerService.deleteAuditLogs();
+
+        assertTrue(result);
+        Mockito.verify(mockAuditRepo).deleteAllAuditsTillDate(validTillDateLong);
+    }
+
+    @Test
+    public void test_delete_audit_logs_null_till_date() {
+        Context mockContext = Mockito.mock(Context.class);
+        GlobalParamRepository mockGlobalParamRepo = Mockito.mock(GlobalParamRepository.class);
+        AuditRepository mockAuditRepo = Mockito.mock(AuditRepository.class);
+
+        AuditManagerServiceImpl auditManagerService = new AuditManagerServiceImpl(mockContext, mockAuditRepo, mockGlobalParamRepo);
+
+        Mockito.when(mockGlobalParamRepo.getGlobalParamValue(RegistrationConstants.AUDIT_EXPORTED_TILL))
+                .thenReturn(null);
+
+        boolean result = auditManagerService.deleteAuditLogs();
+
+        assertFalse(result);
+        Mockito.verify(mockAuditRepo, Mockito.never()).deleteAllAuditsTillDate(Mockito.anyLong());
+    }
+
+}

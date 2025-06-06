@@ -1,39 +1,93 @@
 package io.mosip.registration.clientmanager.util;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.robolectric.RobolectricTestRunner;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import org.robolectric.annotation.Config;
-import org.robolectric.RuntimeEnvironment;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+@RunWith(MockitoJUnitRunner.class)
 public class DateUtilTest {
 
-    private DateUtil dateUtil;
+    @Mock
+    Context mockContext;
+
+    private MockedStatic<DateFormat> mockedDateFormat;
 
     @Before
     public void setUp() {
+        mockedDateFormat = Mockito.mockStatic(android.text.format.DateFormat.class);
+    }
 
-        Context context = RuntimeEnvironment.application.getApplicationContext();
-        dateUtil = new DateUtil(context);
+    @After
+    public void tearDown() {
+        if (mockedDateFormat != null) {
+            mockedDateFormat.close();
+        }
     }
 
     @Test
-    public void testGetDateTime_shouldReturnFormattedDateTime() {
-        long millis = 1732530600000L;
-        String result = dateUtil.getDateTime(millis);
+    public void testConstructor_initializesFormats() {
+        SimpleDateFormat mockDateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
+        SimpleDateFormat mockTimeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+
+        mockedDateFormat.when(() -> android.text.format.DateFormat.getMediumDateFormat(mockContext))
+                .thenReturn(mockDateFormat);
+        mockedDateFormat.when(() -> android.text.format.DateFormat.getTimeFormat(mockContext))
+                .thenReturn(mockTimeFormat);
+
+        DateUtil util = new DateUtil(mockContext);
+        assertNotNull(util.dateFormat);
+        assertNotNull(util.timeFormat);
+    }
+
+    @Test
+    public void testGetDateTime_returnsFormattedString() {
+        SimpleDateFormat mockDateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
+        SimpleDateFormat mockTimeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+
+        mockedDateFormat.when(() -> android.text.format.DateFormat.getMediumDateFormat(mockContext))
+                .thenReturn(mockDateFormat);
+        mockedDateFormat.when(() -> android.text.format.DateFormat.getTimeFormat(mockContext))
+                .thenReturn(mockTimeFormat);
+
+        DateUtil util = new DateUtil(mockContext);
+
+        long millis = 1732530600000L; // Fixed date
+        String result = util.getDateTime(millis);
 
         assertNotNull(result);
-        assertTrue(result.matches(".*\\d{1,2}, \\d{4}.*"));
-        assertTrue(result.matches(".*\\d{1,2}:\\d{2}.*"));
+        assertTrue(result.contains(", 2024") || result.contains(", 2023") || result.contains(", 2025"));
+        assertTrue(result.matches(".*\\d{2}:\\d{2}.*"));
+    }
+
+    @Test
+    public void testGetDateTime_withEpoch() {
+        SimpleDateFormat mockDateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
+        SimpleDateFormat mockTimeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+
+        mockedDateFormat.when(() -> android.text.format.DateFormat.getMediumDateFormat(mockContext))
+                .thenReturn(mockDateFormat);
+        mockedDateFormat.when(() -> android.text.format.DateFormat.getTimeFormat(mockContext))
+                .thenReturn(mockTimeFormat);
+
+        DateUtil util = new DateUtil(mockContext);
+
+        String result = util.getDateTime(0L);
+        assertNotNull(result);
+        assertTrue(result.length() > 0);
     }
 }
