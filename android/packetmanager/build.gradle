@@ -43,6 +43,13 @@ android {
             }
         }
     }
+
+    sourceSets {
+        test {
+            java.srcDirs += 'src/test/java'
+            assets.srcDirs += 'src/test/assets'
+        }
+    }
 }
 
 dependencies {
@@ -53,8 +60,11 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
 
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testImplementation 'org.mockito:mockito-inline:4.11.0'
+    testImplementation "org.robolectric:robolectric:4.10.3"
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
    testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -87,4 +97,5 @@ dependencies {
 
     // added key-manager Android library module as a dependency
     implementation project(':keymanager')
+
 }
