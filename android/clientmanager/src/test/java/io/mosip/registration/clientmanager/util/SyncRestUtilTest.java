@@ -1,22 +1,31 @@
 package io.mosip.registration.clientmanager.util;
 
+import android.util.Log;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.keymanager.dto.*;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.util.KeyManagerConstant;
 import io.mosip.registration.packetmanager.util.DateUtils;
+import io.mosip.registration.packetmanager.util.JsonUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
+import static android.content.ContentValues.TAG;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -87,5 +96,59 @@ public class SyncRestUtilTest {
         RequestWrapper<String> result = syncRestUtil.getAuthRequest(username, password);
         assertNotNull(result);
         assertNotNull(result.getRequest());
+    }
+
+    @Test
+    public void testReturnsNullWhenErrorsNullAndResponseNotNull() {
+        RegProcResponseWrapper wrapper = new RegProcResponseWrapper();
+        wrapper.setErrors(null);
+        wrapper.setResponse("response");
+        assertNull(SyncRestUtil.getServiceError(wrapper));
+    }
+
+    @Test
+    public void testReturnsNullWhenErrorsEmptyAndResponseNotNull() {
+        RegProcResponseWrapper wrapper = new RegProcResponseWrapper();
+        wrapper.setErrors(new ArrayList<>());
+        wrapper.setResponse("response");
+        assertNull(SyncRestUtil.getServiceError(wrapper));
+    }
+
+    @Test
+    public void testReturnsFirstServiceErrorWhenErrorsExist() {
+        RegProcResponseWrapper wrapper = new RegProcResponseWrapper();
+        ServiceError error1 = new ServiceError("E001", "First error");
+        ServiceError error2 = new ServiceError("E002", "Second error");
+        wrapper.setErrors(new ArrayList<>());
+        wrapper.getErrors().add(error1);
+        wrapper.getErrors().add(error2);
+
+        try (MockedStatic<Log> logMock = mockStatic(Log.class);
+             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+            jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any())).thenReturn("json");
+            ServiceError result = SyncRestUtil.getServiceError(wrapper);
+            assertEquals(error1, result);
+        }
+    }
+
+    @Test
+    public void testHandlesJsonProcessingException() throws Exception {
+        RegProcResponseWrapper wrapper = new RegProcResponseWrapper();
+        ServiceError error = new ServiceError("E001", "Error");
+        wrapper.setErrors(Collections.singletonList(error));
+        wrapper.setResponse(null);
+
+        try (MockedStatic<Log> logMock = mockStatic(Log.class);
+             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+            jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any()))
+                    .thenThrow(new JsonProcessingException("fail") {});
+            ServiceError result = SyncRestUtil.getServiceError(wrapper);
+            assertEquals(error, result);
+        }
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testThrowsNullPointerExceptionWhenWrapperIsNull() {
+        SyncRestUtil.getServiceError((RegProcResponseWrapper) null);
     }
 }
