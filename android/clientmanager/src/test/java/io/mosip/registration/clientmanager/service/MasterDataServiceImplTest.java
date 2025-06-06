@@ -1,286 +1,1298 @@
 package io.mosip.registration.clientmanager.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import android.content.Context;
 
-import androidx.room.Room;
-import androidx.test.platform.app.InstrumentationRegistry;
+import android.content.SharedPreferences;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.junit.After;
-import org.junit.Before;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.dao.*;
+import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.dto.ReasonListDto;
+import io.mosip.registration.clientmanager.dto.http.*;
+import io.mosip.registration.clientmanager.dto.registration.GenericDto;
+import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
+import io.mosip.registration.clientmanager.entity.*;
+import io.mosip.registration.clientmanager.repository.*;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.keymanager.dto.*;
+import io.mosip.registration.keymanager.dto.CACertificateResponseDto;
+import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
+import io.mosip.registration.keymanager.spi.CertificateManagerService;
+import io.mosip.registration.keymanager.util.CryptoUtil;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
-import io.mosip.registration.clientmanager.config.ClientDatabase;
-import io.mosip.registration.clientmanager.dao.GlobalParamDao;
-import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
-import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
-import io.mosip.registration.clientmanager.dao.TemplateDao;
-import io.mosip.registration.clientmanager.entity.GlobalParam;
-import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
-import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
-import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
-import io.mosip.registration.clientmanager.repository.MachineRepository;
-import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
-import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
-import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
-import io.mosip.registration.clientmanager.util.RestServiceTestHelper;
-import io.mosip.registration.keymanager.dto.CryptoRequestDto;
-import io.mosip.registration.keymanager.dto.CryptoResponseDto;
-import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import org.springframework.test.util.ReflectionTestUtils;
+import retrofit2.Call;
 
 /**
  * @author Anshul vanawat
  * @since 01/06/2022.
  */
 
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+@RunWith(MockitoJUnitRunner.class)
 public class MasterDataServiceImplTest {
 
-    private static final String GLOBAL_PARAM_ID = "mosip.kernel.transliteration.english-language-code";
-    private static final String GLOBAL_PARAM_VALUE = "eng";
-    private static final int GLOBAL_PARAM_COUNT = 184;
-    private static final String DECRYPTED_RESPONSE = "eyJtb3NpcC5rZXJuZWwudHJhbnNsaXRlcmF0aW9uLmVuZ2xpc2gtbGFuZ3VhZ2UtY29kZSI6ImVuZyIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5wcmVfcmVnX25vX29mX2RheXNfbGltaXQiOiI3IiwibW9zaXAubWluLWxhbmd1YWdlcy5jb3VudCI6IjIiLCJtb3NpcC5rZXJuZWwucmlkLnNlcXVlbmNlLWxlbmd0aCI6IjUiLCJtb3NpcC5yZWdpc3RyYXRpb24uY2JlZmZfZm9ybWF0X29yZyI6Ik1vc2lwIiwibW9zaXAucmVnaXN0cmF0aW9uLnByZVJlZ2lzdHJhdGlvblBhY2tldERlbGV0aW9uSm9iLmZyZXF1ZW5jeSI6IjE5MCIsIm1vc2lwLm1hbmRhdG9yeS1sYW5ndWFnZXMiOiJlbmciLCJvYmplY3RzdG9yZS5hZGFwdGVyLm5hbWUiOiJQb3NpeEFkYXB0ZXIiLCJtb3NpcC5iaW9tZXRyaWMuc2RrLnByb3ZpZGVycy5pcmlzLm1vY2t2ZW5kb3IudmVyc2lvbiI6IjAuOSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5tZG0udHJ1c3QuZG9tYWluLmRpZ2l0YWxJZCI6IkRFVklDRSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5ncHNfcG9ydF90aW1lb3V0IjoiMTAwMCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5zeW5jX2pvYnNfcmVzdGFydF9mcmVxIjoiMCAwICovMTEgPyAqICoiLCJtb3NpcC5rZXJuZWwuY3J5cHRvLmdjbS10YWctbGVuZ3RoIjoiMTI4IiwibW9zaXAucmVnaXN0cmF0aW9uLmF1ZGl0X2FwcGxpY2F0aW9uX25hbWUiOiJSRUdJU1RSQVRJT04iLCJtb3NpcC5vcHRpb25hbC1sYW5ndWFnZXMiOiJmcmEsYXJhIiwibW9zaXAua2VybmVsLnByaWQucmVwZWF0aW5nLWJsb2NrLWxpbWl0IjoiMyIsIm1vc2lwLmtlcm5lbC52aWQubGVuZ3RoLnJlcGVhdGluZy1ibG9jay1saW1pdCI6IjIiLCJtb3NpcC5yZWdpc3RyYXRpb24uZmFjZV90aHJlc2hvbGQiOiI5MCIsIm1vc2lwLmJpb21ldHJpYy5zZGsucHJvdmlkZXJzLmZhY2UubW9ja3ZlbmRvci50aHJlc2hvbGQiOiI2MCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5IVFRQX0FQSV9XUklURV9USU1FT1VUIjoiNjAwMDAiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmVnaXN0cmF0aW9uUGFja2V0U3luY0pvYi5mcmVxdWVuY3kiOiIxOTAiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmlkX3N5bmNfYmF0Y2hfc2l6ZSI6IjUiLCJtb3NpcC5yZWdpc3RyYXRpb24uam9icy5vZmZsaW5lIjoiREVMX0owMDAxMyxSREpfSjAwMDEwLEFESl9KMDAwMTIsUFZTX0owMDAxNSIsIm1vc2lwLmtlcm5lbC5rZXlnZW5lcmF0b3IuYXN5bW1ldHJpYy1hbGdvcml0aG0tbmFtZSI6IlJTQSIsIm1vc2lwLmtlcm5lbC51aW4ucmVzdHJpY3RlZC1udW1iZXJzIjoiNzg2LDY2NiIsIm1vc2lwLmtlcm5lbC5rZXlnZW5lcmF0b3Iuc3ltbWV0cmljLWtleS1sZW5ndGgiOiIyNTYiLCJtb3NpcC5yZWdpc3RyYXRpb24uZGVsZXRlQXVkaXRMb2dzSm9iLmZyZXF1ZW5jeSI6IjE5MCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5ncHNfZGV2aWNlX2VuYWJsZV9mbGFnIjoiTiIsIm1vc2lwLmtlcm5lbC52aWQubGVuZ3RoLnJlcGVhdGluZy1saW1pdCI6IjIiLCJtb3NpcC5rZXJuZWwuY3J5cHRvLnNpZ24tYWxnb3JpdGhtLW5hbWUiOiJSUzI1NiIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5yZWdVc2VyTWFwcGluZ1N5bmNKb2IuZnJlcXVlbmN5IjoiMTkwIiwibW9zaXAua2VybmVsLnJlZ2lzdHJhdGlvbmNlbnRlcmlkLmxlbmd0aCI6IjUiLCJtb3NpcC5yZWdpc3RyYXRpb24uYXVkaXRfZGVmYXVsdF9ob3N0X25hbWUiOiJsb2NhbGhvc3QiLCJtb3NpcC5tYXgtbGFuZ3VhZ2VzLmNvdW50IjoiMyIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5qb2JzLnNjaGVkdWxlci5lbmFibGUiOiJZIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5maW5nZXIuYXJncyI6IiIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5jYXB0dXJlX3RpbWVfb3V0IjoiMTAwMDAiLCJtb3NpcC5rZXJuZWwua2V5Z2VuZXJhdG9yLnN5bW1ldHJpYy1hbGdvcml0aG0tbmFtZSI6IkFFUyIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5yZWdpc3RlcmluZ19pbmRpdmlkdWFsX3VybCI6Imh0dHBzOi8vZG9jcy5tb3NpcC5pby9wbGF0Zm9ybS9tb2R1bGVzL3JlZ2lzdHJhdGlvbi1jbGllbnQvcmVnaXN0cmF0aW9uLXBhY2tldCIsIm1vc2lwLmtlcm5lbC5jcnlwdG8uc3ltbWV0cmljLWFsZ29yaXRobS1uYW1lIjoiQUVTL0dDTS9QS0NTNVBhZGRpbmciLCJtb3NpcC5maW5nZXJwcmludF9hdXRoZW50aWNhdGlvbi5xdWFsaXR5X3Njb3JlIjoiMzAiLCJtb3NpcC5yZWdpc3RyYXRpb24uZG9jdW1lbnRfc2Nhbm5lcl9jb250cmFzdCI6IjEwIiwibW9zaXAucmVnaXN0cmF0aW9uLmlkbGVfdGltZSI6IjkwMCIsIm1vc2lwLmJpb21ldHJpYy5zZGsucHJvdmlkZXJzLmZhY2UubW9ja3ZlbmRvci5hcmdzIjoiIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5mYWNlLnRocmVzaG9sZCI6IjYwIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlcnMuZmluZ2VyLm1vY2t2ZW5kb3IuYXJncyI6IiIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5kb2N1bWVudF9zY2FubmVyX2RvY3R5cGUiOiJQREYiLCJtb3NpcC5yZWdpc3RyYXRpb24uaW52YWxpZF9sb2dpbl9jb3VudCI6IjUwIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5mYWNlLmNsYXNzbmFtZSI6ImlvLm1vc2lwLm1vY2suc2RrLmltcGwuU2FtcGxlU0RLIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlcnMuaXJpcy5tb2NrdmVuZG9yLnRocmVzaG9sZCI6IjYwIiwibW9zaXAua2VybmVsLnJpZC50aW1lc3RhbXAtbGVuZ3RoIjoiMTQiLCJtb3NpcC5yZWdpc3RyYXRpb24ucGFja2V0Lm1heGltdW0uY291bnQub2ZmbGluZS5mcmVxdWVuY3kiOiI3MCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5yZWdfcGFrX21heF90aW1lX2FwcHJ2X2xpbWl0IjoiNTAiLCJtb3NpcC5rZXJuZWwub3RwLmV4cGlyeS10aW1lIjoiMTgwIiwibW9zaXAucmVnaXN0cmF0aW9uLnJlZ2lzdHJhdGlvbl9wcmVfcmVnX3BhY2tldF9sb2NhdGlvbiI6Ii4uLy9QcmVSZWdQYWNrZXRTdG9yZSIsIm1vc2lwLmtlcm5lbC5wcmlkLmxlbmd0aCI6IjE0IiwibW9zaXAucmVnaXN0cmF0aW9uLm1kbS50cnVzdC5kb21haW4ucmNhcHR1cmUiOiJERVZJQ0UiLCJtb3NpcC5rZXJuZWwuY3J5cHRvLmFzeW1tZXRyaWMtYWxnb3JpdGhtLW5hbWUiOiJSU0EvRUNCL09BRVBXSVRIU0hBLTI1NkFORE1HRjFQQURESU5HIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlcnMuaXJpcy5tb2NrdmVuZG9yLmNsYXNzbmFtZSI6ImlvLm1vc2lwLm1vY2suc2RrLmltcGwuU2FtcGxlU0RLIiwibW9zaXAucmVnaXN0cmF0aW9uLm51bV9vZl9pcmlzX3JldHJpZXMiOiIzIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5maW5nZXIuY2xhc3NuYW1lIjoiaW8ubW9zaXAubW9jay5zZGsuaW1wbC5TYW1wbGVTREsiLCJtb3NpcC5rZXJuZWwuc2lnbmF0dXJlLnNpZ25hdHVyZS12ZXJzaW9uLWlkIjoidjEuMCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5tZG0uTU9TSVBESVNDLmNvbm5lY3Rpb24udGltZW91dCI6IjUwMDAiLCJtb3NpcC5yZWdpc3RyYXRpb24ucGFja2V0U3luY1N0YXR1c0pvYi5mcmVxdWVuY3kiOiIxOTAiLCJtb3NpcC5iaW9tZXRyaWMuc2RrLnByb3ZpZGVycy5mYWNlLm1vY2t2ZW5kb3IuY2xhc3NuYW1lIjoiaW8ubW9zaXAubW9jay5zZGsuaW1wbC5TYW1wbGVTREsiLCJtb3NpcC5yZWdpc3RyYXRpb24udXNlcm5hbWVfcHdkX2xlbmd0aCI6IjUwIiwibW9zaXAua2VybmVsLnByaWQucmVwZWF0aW5nLWxpbWl0IjoiMiIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5wcmVSZWdpc3RyYXRpb25EYXRhU3luY0pvYi5mcmVxdWVuY3kiOiIxOTAiLCJtb3NpcC5yZWdpc3RyYXRpb24ubWRtLmNvbm5lY3Rpb24udGltZW91dCI6IjEwMDAwIiwibW9zaXAucmVnaXN0cmF0aW9uLmpvYnMucmVzdGFydCI6IlJDU19KMDAwMDUiLCJtb3NpcC5rZXJuZWwuY3J5cHRvLmhhc2gtc3ltbWV0cmljLWtleS1sZW5ndGgiOiIyNTYiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmV2aWV3ZXJfYXV0aGVudGljYXRpb25fY29uZmlndXJhdGlvbiI6IlkiLCJtb3NpcC5yZWdpc3RyYXRpb24uZ2VvLmNhcHR1cmUuZnJlcXVlbmN5IjoibiIsIm1vc2lwLnJlZ2lzdHJhdGlvbi51aW5fdXBkYXRlX2NvbmZpZ19mbGFnIjoiWSIsIm1vc2lwLmJpb21ldHJpYy5zZGsucHJvdmlkZXIuZmluZ2VyLnRocmVzaG9sZCI6IjYwIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlcnMuZmluZ2VyLm1vY2t2ZW5kb3IudGhyZXNob2xkIjoiNjAiLCJtb3NpcC5yZWdpc3RyYXRpb24ubWF4X2FnZSI6IjE1MCIsIm1vc2lwLmtlcm5lbC5wcmlkLm5vdC1zdGFydC13aXRoIjoiMCwxIiwibW9zaXAucmVnaXN0cmF0aW9uLmRpc3RhbmNlLmZyb20ubWFjaGluZS50by5jZW50ZXIiOiI5MDAwMDAiLCJtb3NpcC5yZWdpc3RyYXRpb24ubWRtLnBvcnRSYW5nZUZyb20iOiI0NTAxIiwibW9zaXAucmVnaXN0cmF0aW9uLnF1YWxpdHlfY2hlY2tfd2l0aF9zZGsiOiJOIiwibW9zaXAua2VybmVsLmRhdGEta2V5LXNwbGl0dGVyIjoiI0tFWV9TUExJVFRFUiMiLCJtb3NpcC5yZWdpc3RyYXRpb24ubWRtLlJDQVBUVVJFLmNvbm5lY3Rpb24udGltZW91dCI6IjQwMDAwIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5pcmlzLmFyZ3MiOiIiLCJtb3NpcC5iaW9tZXRyaWMuc2RrLnByb3ZpZGVyLmlyaXMuY2xhc3NuYW1lIjoiaW8ubW9zaXAubW9jay5zZGsuaW1wbC5TYW1wbGVTREsiLCJtb3NpcC5yZWdpc3RyYXRpb24uZ3BzX2RldmljZV9tb2RlbCI6IkdQU0JVMzQzQ29ubmVjdG9yIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5pcmlzLnRocmVzaG9sZCI6IjYwIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlcnMuaXJpcy5tb2NrdmVuZG9yLmFyZ3MiOiIiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmVnX2RlbGV0aW9uX2NvbmZpZ3VyZWRfZGF5cyI6IjEiLCJtb3NpcC5yZWdpc3RyYXRpb24uYXVkaXRfZGVmYXVsdF9ob3N0X2lwIjoiMTIwLjAuMC4wIiwibW9zaXAucmVnaXN0cmF0aW9uLmRvY3VtZW50X3NjYW5uZXJfZW5hYmxlZCI6Ik5vIiwibW9zaXAua2VybmVsLnByaWQuc2VxdWVuY2UtbGltaXQiOiIzIiwibW9zaXAucmVnaXN0cmF0aW9uLkhUVFBfQVBJX1JFQURfVElNRU9VVCI6IjYwMDAwIiwibW9zaXAucmVnaXN0cmF0aW9uLnNlcnZlcl9wcm9maWxlIjoiU3RhZ2luZyIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5yZWdfcGFrX21heF9jbnRfYXBwcnZfbGltaXQiOiIxMDAiLCJtb3NpcC5yZWdpc3RyYXRpb24udXBsb2FkaW5nX2RhdGFfdXJsIjoiaHR0cHM6Ly9kb2NzLm1vc2lwLmlvL3BsYXRmb3JtL21vZHVsZXMvcmVnaXN0cmF0aW9uLWNsaWVudC91aS1zcGVjaWZpY2F0aW9uLWZvci1yZWdpc3RyYXRpb24tY2xpZW50IiwibW9zaXAua2VybmVsLm1hY2hpbmVpZC5sZW5ndGgiOiI1IiwibW9zaXAucmVnaXN0cmF0aW9uLnByZV9yZWdfZGVsZXRpb25fY29uZmlndXJlZF9kYXlzIjoiMSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5tZG0udHJ1c3QuZG9tYWluLmRldmljZWluZm8iOiJERVZJQ0UiLCJtb3NpcC5yZWdpc3RyYXRpb24ub3RwX2NoYW5uZWxzIjoiZW1haWwiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmlnaHRzbGFwX2ZpbmdlcnByaW50X3RocmVzaG9sZCI6IjQwIiwibW9zaXAucmVnaXN0cmF0aW9uLnBhY2tldF91cGxvYWRfYmF0Y2hfc2l6ZSI6IjUiLCJtb3NpcC5rZXJuZWwudmlydXMtc2Nhbm5lci5ob3N0IjoiY2xhbWF2LmNsYW1hdiIsIm1vc2lwLmtlcm5lbC51aW4ubGVuZ3RoLmNvbmp1Z2F0aXZlLWV2ZW4tZGlnaXRzLWxpbWl0IjoiMyIsIm1vc2lwLmtlcm5lbC5zaWduYXR1cmUuc2lnbmF0dXJlLXJlcXVlc3QtaWQiOiJTSUdOQVRVUkUuUkVRVUVTVCIsIm1vc2lwLmJpb21ldHJpYy5zZGsucHJvdmlkZXIuZmFjZS5hcmdzIjoiIiwibW9zaXAucmVnaXN0cmF0aW9uLm1hcHBpbmdfZGV2aWNlc191cmwiOiJodHRwczovL2RvY3MubW9zaXAuaW8vcGxhdGZvcm0vbW9kdWxlcy9yZWdpc3RyYXRpb24tY2xpZW50L2RldmljZS1pbnRlZ3JhdGlvbi1zcGVjaWZpY2F0aW9ucyIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5qb2JzLnVuVGFnZ2VkIjoiUERTX0owMDAwMyIsIm1vc2lwLnJpZ2h0X3RvX2xlZnRfb3JpZW50YXRpb24iOiJhcmEiLCJtb3NpcC5iaW9tZXRyaWMuc2RrLnByb3ZpZGVyLmlyaXMudmVyc2lvbiI6IjAuOSIsIm1vc2lwLmtlcm5lbC5yaWQubGVuZ3RoIjoiMjkiLCJtb3NpcC5rZXJuZWwudHJhbnNsaXRlcmF0aW9uLmZyYW5jaC1sYW5ndWFnZS1jb2RlIjoiZnJhIiwibW9zaXAucmVnaXN0cmF0aW9uLnJlZ2lzdHJhdGlvbkRlbGV0aW9uSm9iLmZyZXF1ZW5jeSI6IjE5MCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5vbmJvYXJkX3lvdXJzZWxmX3VybCI6Imh0dHBzOi8vZG9jcy5tb3NpcC5pby9wbGF0Zm9ybS9tb2R1bGVzL3JlZ2lzdHJhdGlvbi1jbGllbnQvZmlyc3QtdXNlci1yZWdpc3RyYXRpb24tYW5kLW9uYm9hcmRpbmciLCJtb3NpcC5yZWdpc3RyYXRpb24uc3RhdHVzX3N5bmNfYmF0Y2hfc2l6ZSI6IjUiLCJtb3NpcC5yZWdpc3RyYXRpb24uZ3BzX3NlcmlhbF9wb3J0X2xpbnV4IjoiL2Rldi90dHl1c2IwIiwibW9zaXAucmVnaXN0cmF0aW9uLmRvY3VtZW50X3NpemUiOiIyMDAwMDAwIiwibW9zaXAucmVnaXN0cmF0aW9uLnN5bmNoQ29uZmlnRGF0YUpvYi5mcmVxdWVuY3kiOiIxOTAiLCJtb3NpcC5rZXJuZWwudWluLmxlbmd0aC5yZXZlcnNlLWRpZ2l0cy1saW1pdCI6IjUiLCJtb3NpcC5rZXJuZWwudmlkLnJlc3RyaWN0ZWQtbnVtYmVycyI6Ijc4Niw2NjYiLCJtb3NpcC5rZXJuZWwudmlkLm5vdC1zdGFydC13aXRoIjoiMCwxIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlcnMuZmluZ2VyLm1vY2t2ZW5kb3IuY2xhc3NuYW1lIjoiaW8ubW9zaXAubW9jay5zZGsuaW1wbC5TYW1wbGVTREsiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmVwbGFjZV9zZGtfcXVhbGl0eV9zY29yZSI6Ik4iLCJtb3NpcC5yZWdpc3RyYXRpb24uYXVkaXRfYXBwbGljYXRpb25faWQiOiJSRUciLCJtb3NpcC5iaW9tZXRyaWMuc2RrLnByb3ZpZGVycy5mYWNlLm1vY2t2ZW5kb3IudmVyc2lvbiI6IjAuOSIsIm1vc2lwLmtlcm5lbC52aWQubGVuZ3RoIjoiMTYiLCJtb3NpcC5rZXJuZWwudWluLmxlbmd0aC5yZXBlYXRpbmctYmxvY2stbGltaXQiOiIyIiwibW9zaXAua2VybmVsLnRyYW5zbGl0ZXJhdGlvbi5hcmFiaWMtbGFuZ3VhZ2UtY29kZSI6ImFyYSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi50aHVtYnNfZmluZ2VycHJpbnRfdGhyZXNob2xkIjoiNDAiLCJtb3NpcC5yZWdpc3RyYXRpb24ub3BlcmF0b3Iub25ib2FyZGluZy5iaW9hdHRyaWJ1dGVzIjoibGVmdExpdHRsZSxsZWZ0UmluZyxsZWZ0TWlkZGxlLGxlZnRJbmRleCxsZWZ0VGh1bWIscmlnaHRMaXR0bGUscmlnaHRSaW5nLHJpZ2h0TWlkZGxlLHJpZ2h0SW5kZXgscmlnaHRUaHVtYixsZWZ0RXllLHJpZ2h0RXllLGZhY2UiLCJtb3NpcC5yZWdpc3RyYXRpb24ubWRzLmRlZHVwbGljYXRpb24uZW5hYmxlLmZsYWciOiJOIiwibW9zaXAucmVnaXN0cmF0aW9uLmRvY3VtZW50X3NjYW5uZXJfYnJpZ2h0bmVzcyI6IjEwIiwibW9zaXAua2VybmVsLnVpbi5sZW5ndGguc2VxdWVuY2UtbGltaXQiOiIzIiwibW9zaXAucmVnaXN0cmF0aW9uLnNvZnR3YXJlVXBkYXRlQ2hlY2tfY29uZmlndXJlZF9mcmVxdWVuY3kiOiIzMDAiLCJtb3NpcC5yZWdpc3RyYXRpb24uZG9jdW1lbnRfc2Nhbm5lcl9kcGkiOiI3NSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi51cGRhdGluZ19iaW9tZXRyaWNzX3VybCI6Imh0dHBzOi8vZG9jcy5tb3NpcC5pby9wbGF0Zm9ybS9tb2R1bGVzL3JlZ2lzdHJhdGlvbi1jbGllbnQvZ3VpZGUtdG8tY29uZmlndXJlLW1vc2lwLWZvci1iaW9tZXRyaWNzIiwibW9zaXAua2VybmVsLnZpcnVzLXNjYW5uZXIucG9ydCI6IjMzMTAiLCJtb3NpcC5yZWdpc3RyYXRpb24uYXVkaXRfbG9nX2RlbGV0aW9uX2NvbmZpZ3VyZWRfZGF5cyI6IjEwIiwibW9zaXAucmVnaXN0cmF0aW9uLmFwcC5pZCI6InJlZ2lzdHJhdGlvbmNsaWVudCIsIm1vc2lwLmxlZnRfdG9fcmlnaHRfb3JpZW50YXRpb24iOiJlbmcsZnJhIiwibW9zaXAua2VybmVsLnVpbi5sZW5ndGguZGlnaXRzLWxpbWl0IjoiNSIsIm9iamVjdC5zdG9yZS5iYXNlLmxvY2F0aW9uIjoiLi4vcGFja2V0cyIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5sZWZ0c2xhcF9maW5nZXJwcmludF90aHJlc2hvbGQiOiI0MCIsIm1vc2lwLnNpZ24ucmVmaWQiOiJTSUdOQVRVUkVLRVkiLCJtb3NpcC5rZXJuZWwudmlkLmxlbmd0aC5zZXF1ZW5jZS1saW1pdCI6IjMiLCJtb3NpcC5yZWdpc3RyYXRpb24ubG9zdF91aW5fZGlzYWJsZV9mbGFnIjoiWSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5udW1fb2ZfZmFjZV9yZXRyaWVzIjoiMyIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5kb2N1bWVudF9lbmFibGVfZmxhZyI6InkiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmVzZXRfcGFzc3dvcmRfdXJsIjoiaHR0cHM6Ly9hcGktaW50ZXJuYWwuZGV2My5tb3NpcC5uZXQva2V5Y2xvYWsvYXV0aC9yZWFsbXMvbW9zaXAvYWNjb3VudC8iLCJtb3NpcC5yZWdpc3RyYXRpb24ubWRtLk1PU0lQRElORk8uY29ubmVjdGlvbi50aW1lb3V0IjoiNTAwMCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5tZG0ucG9ydFJhbmdlVG8iOiI0NjAwIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5mYWNlLnZlcnNpb24iOiIwLjkiLCJtb3NpcC5rZXJuZWwudWluLmxlbmd0aCI6IjEwIiwibW9zaXAucmVnaXN0cmF0aW9uLmZpbmdlcl9wcmludF9zY29yZSI6IjgwIiwibW9zaXAua2VybmVsLmNyeXB0by5oYXNoLWl0ZXJhdGlvbiI6IjEwMDAwMCIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5pcmlzX3RocmVzaG9sZCI6IjYwIiwibW9zaXAucmVnaXN0cmF0aW9uLmtleVBvbGljeVN5bmNKb2IuZnJlcXVlbmN5IjoiMTkwIiwibW9zaXAucmVnaXN0cmF0aW9uLnN1cGVydmlzb3JfYXBwcm92YWxfY29uZmlnX2ZsYWciOiJZIiwibW9zaXAucmVnaXN0cmF0aW9uLmNiZWZmX2FsZ29yaXRobV9vcmciOiJITUFDIiwibW9zaXAucmVnaXN0cmF0aW9uLm1kbS5TVFJFQU0uY29ubmVjdGlvbi50aW1lb3V0IjoiNDAwMDAiLCJtb3NpcC5rZXJuZWwueHNkZmlsZSI6IkxPQ0FMIiwibW9zaXAucmVnaXN0cmF0aW9uLnJlZnJlc2hlZF9sb2dpbl90aW1lIjoiNjAwIiwibW9zaXAua2VybmVsLmtleWdlbmVyYXRvci5hc3ltbWV0cmljLWtleS1sZW5ndGgiOiIyMDQ4IiwibW9zaXAucmVnaXN0cmF0aW9uLmNiZWZmX2FsZ29yaXRobV90eXBlIjoiU0hBLTI1NiIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5tZG0uaG9zdCI6IjEyNy4wLjAuMSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5zeW5jX2RhdGFfdXJsIjoiaHR0cHM6Ly9kb2NzLm1vc2lwLmlvL3BsYXRmb3JtL21vZHVsZXMvcmVnaXN0cmF0aW9uLWNsaWVudC9yZWdpc3RyYXRpb24tZnVuY3Rpb25hbGl0eSIsIm9iamVjdHN0b3JlLmNyeXB0by5uYW1lIjoiT2ZmbGluZVBhY2tldENyeXB0b1NlcnZpY2VJbXBsIiwibW9zaXAucmVnaXN0cmF0aW9uLmludmFsaWRfbG9naW5fdGltZSI6IjIiLCJtb3NpcC5yZWdpc3RyYXRpb24ubWRtLnZhbGlkYXRlLnRydXN0IjoidHJ1ZSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5zeW5jX3RyYW5zYWN0aW9uX25vX29mX2RheXNfbGltaXQiOiI1IiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlci5maW5nZXIudmVyc2lvbiI6IjAuOSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5sYXN0X2V4cG9ydF9yZWdpc3RyYXRpb25fY29uZmlnX3RpbWUiOiIxMDAiLCJtb3NpcC5rZXJuZWwucHJpZC5yZXN0cmljdGVkLW51bWJlcnMiOiI3ODYsNjY2IiwibW9zaXAucmVnaXN0cmF0aW9uLm1hc3RlclN5bmNKb2IuZnJlcXVlbmN5IjoiMTkwIiwibW9zaXAua2VybmVsLmNyeXB0by5oYXNoLWFsZ29yaXRobS1uYW1lIjoiUEJLREYyV2l0aEhtYWNTSEE1MTIiLCJtb3NpcC5yZWdpc3RyYXRpb24ubnVtX29mX2ZpbmdlcnByaW50X3JldHJpZXMiOiIzIiwibW9zaXAuYmlvbWV0cmljLnNkay5wcm92aWRlcnMuZmluZ2VyLm1vY2t2ZW5kb3IudmVyc2lvbiI6IjAuOSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5kaXNrX3NwYWNlX3NpemUiOiI1IiwibW9zaXAucmVncHJvYy5wYWNrZXQuY2xhc3NpZmllci50YWdnaW5nLmFnZWdyb3VwLnJhbmdlcyI6InsnSU5GQU5UJzonMC01JywnTUlOT1InOic2LTE3JywnQURVTFQnOicxOC0yMDAnfSIsIm1vc2lwLmtlcm5lbC51aW4ubGVuZ3RoLnJlcGVhdGluZy1saW1pdCI6IjIiLCJtb3NpcC5yZWdpc3RyYXRpb24uZ3BzX3NlcmlhbF9wb3J0X3dpbmRvd3MiOiIiLCJtb3NpcC5yZWdpc3RyYXRpb24ucmVnaXN0cmF0aW9uX3BhY2tldF9zdG9yZV9sb2NhdGlvbiI6Ii4uLy9QYWNrZXRTdG9yZSIsIm1vc2lwLnJlZ2lzdHJhdGlvbi5maWVsZHMudG8ucmV0YWluLnBvc3QucHJpZC5mZXRjaCI6ImNvbnNlbnQsY29uc2VudFRleHQscHJlZmVycmVkTGFuZyIsIm1vc2lwLmtlcm5lbC54c2RzdG9yYWdlLXVyaSI6IkxPQ0FMIn0";
-    private static final String KEY_INDEX = "10:13:4a:ce:61:9b:bf:0d:e1:46:18:0a:5a:b9:d7:fb:7b:c0:51:09:74:7a:c1:32:00:8b:a1:3c:cb:37:cb:ed";
+    @Mock
+    private Context mockContext;
+    @Mock
+    private ObjectMapper mockObjectMapper;
+    @Mock
+    private SyncRestService mockSyncRestService;
+    @Mock
+    private ClientCryptoManagerService mockClientCryptoManagerService;
+    @Mock
+    private MachineRepository mockMachineRepository;
+    @Mock
+    private ReasonListRepository mockReasonListRepository;
+    @Mock
+    private RegistrationCenterRepository mockRegistrationCenterRepository;
+    @Mock
+    private DocumentTypeRepository mockDocumentTypeRepository;
+    @Mock
+    private ApplicantValidDocRepository mockApplicantValidDocRepository;
+    @Mock
+    private TemplateRepository mockTemplateRepository;
+    @Mock
+    private DynamicFieldRepository mockDynamicFieldRepository;
+    @Mock
+    private LocationRepository mockLocationRepository;
+    @Mock
+    private GlobalParamRepository mockGlobalParamRepository;
+    @Mock
+    private IdentitySchemaRepository mockIdentitySchemaRepository;
+    @Mock
+    private BlocklistedWordRepository mockBlocklistedWordRepository;
+    @Mock
+    private SyncJobDefRepository mockSyncJobDefRepository;
+    @Mock
+    private UserDetailRepository mockUserDetailRepository;
+    @Mock
+    private CertificateManagerService mockCertificateManagerService;
+    @Mock
+    private LanguageRepository mockLanguageRepository;
+    @Mock
+    private JobManagerService mockJobManagerService;
+    @Mock
+    private FileSignatureDao mockFileSignatureDao;
 
-    private static final String GET_GLOBAL_CONFIGS_STATUS_200 = "getGlobalConfigs_200.json";
+    @InjectMocks
+    private MasterDataServiceImpl masterDataService;
 
-    Context appContext;
-    ClientDatabase clientDatabase;
-    ObjectMapper objectMapper = new ObjectMapper();
-    MockWebServer server;
-    Retrofit retrofit;
+    @Mock
+    private SharedPreferences mockSharedPreferences;
 
-    SyncRestService syncRestService;
-    ClientCryptoManagerService clientCryptoManagerService;
-    GlobalParamRepository globalParamRepository;
-    TemplateRepository templateRepository;
-    IdentitySchemaRepository identitySchemaRepository;
+    @Mock
+    private Call<ResponseWrapper<CertificateResponse>> mockCall;
 
-    @Before
-    public void setUp() throws Exception {
-        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        clientDatabase = Room.inMemoryDatabaseBuilder(appContext, ClientDatabase.class)
-                .allowMainThreadQueries()
-                .build();
+    private final String TEST_APP_NAME = "MockAppName";
 
-        GlobalParamDao globalParamDao = clientDatabase.globalParamDao();
-        globalParamRepository = new GlobalParamRepository(globalParamDao);
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
 
-        TemplateDao templateDao = clientDatabase.templateDao();
-        templateRepository = new TemplateRepository(templateDao);
+        when(mockContext.getString(anyInt())).thenReturn(TEST_APP_NAME);
 
-        server = new MockWebServer();
-        server.start();
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer());
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializer());
-        Gson gson = gsonBuilder.create();
-
-        int cacheSize = 10 * 1024 * 1024;
-        Cache cache = new Cache(appContext.getCacheDir(), cacheSize);
-
-        OkHttpClient.Builder client = new OkHttpClient.Builder();
-        client.cache(cache);
-        client.addInterceptor(new RestAuthInterceptor(appContext));
-        OkHttpClient okHttpClient = client.build();
-
-        retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(server.url("/").toString())
-                .client(okHttpClient)
-                .build();
-
-        syncRestService = retrofit.create(SyncRestService.class);
-
-        ProcessSpecDao processSpecDao = clientDatabase.processSpecDao();
-
-        IdentitySchemaDao identitySchemaDao = clientDatabase.identitySchemaDao();
-        identitySchemaRepository = new IdentitySchemaRepository(templateRepository,globalParamRepository,identitySchemaDao,processSpecDao);
-    }
-
-    @After
-    public void tearDown() {
-        clientDatabase.close();
+        when(mockContext.getSharedPreferences(eq(TEST_APP_NAME), eq(Context.MODE_PRIVATE)))
+                .thenReturn(mockSharedPreferences);
     }
 
     @Test
-    public void syncGlobalParamsData() throws Exception {
-        //Mocking clientCrypto
-        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto(DECRYPTED_RESPONSE);
+    public void test_constructor_initializes_sharedPreferences_correctly() {
+        assertNotNull(String.valueOf(masterDataService), "MasterDataServiceImpl should be instantiated by @InjectMocks.");
 
-        clientCryptoManagerService = mock(LocalClientCryptoServiceImpl.class);
-        when(clientCryptoManagerService.decrypt(any(CryptoRequestDto.class)))
-                .thenReturn(cryptoResponseDto);
-        when(clientCryptoManagerService.getClientKeyIndex())
-                .thenReturn(KEY_INDEX);
+        verify(mockContext).getString(anyInt());
+    }
 
-        MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
-                , objectMapper, syncRestService, clientCryptoManagerService, null
-                , null, null, null
-                , null, null, null
-                ,  null, globalParamRepository
-                , identitySchemaRepository, null, null
-                , null, null, null,null,null);
+    @Test
+    public void test_returns_center_machine_dto_when_data_available() {
+        String machineName = "testMachine";
+        String machineId = "M001";
+        String centerId = "C001";
 
-        //Preparing mock response
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(RestServiceTestHelper.getStringFromFile(appContext, GET_GLOBAL_CONFIGS_STATUS_200)));
+        MachineMaster machineMaster = new MachineMaster(machineId);
+        machineMaster.setName(machineName);
+        machineMaster.setIsActive(true);
+        machineMaster.setRegCenterId(centerId);
 
-        masterDataService.syncGlobalParamsData(() -> {}, true);
+        List<RegistrationCenter> centers = new ArrayList<>();
+        RegistrationCenter center1 = new RegistrationCenter(centerId, "eng");
+        center1.setName("Test Center English");
+        center1.setIsActive(true);
 
-        //waiting for sync to completed
-        Thread.sleep(1000);
+        RegistrationCenter center2 = new RegistrationCenter(centerId, "fra");
+        center2.setName("Test Center French");
+        center2.setIsActive(true);
 
-        String globalParamValue = globalParamRepository.getGlobalParamValue(GLOBAL_PARAM_ID);
-        assertEquals(GLOBAL_PARAM_VALUE, globalParamValue);
+        centers.add(center1);
+        centers.add(center2);
 
-        List<GlobalParam> globalParams = globalParamRepository.getGlobalParams();
-        assertEquals(GLOBAL_PARAM_COUNT, globalParams.size());
+        Mockito.when(mockClientCryptoManagerService.getMachineName()).thenReturn(machineName);
+        Mockito.when(mockMachineRepository.getMachine(machineName)).thenReturn(machineMaster);
+        Mockito.when(mockRegistrationCenterRepository.getRegistrationCenter(centerId)).thenReturn(centers);
+
+        CenterMachineDto result = masterDataService.getRegistrationCenterMachineDetails();
+
+        assertNotNull(result);
+        assertEquals(machineId, result.getMachineId());
+        assertEquals(machineName, result.getMachineName());
+        assertEquals(true, result.getMachineStatus());
+        assertEquals(centerId, result.getCenterId());
+        assertEquals(true, result.getCenterStatus());
+        assertEquals(centerId + "_" + machineId, result.getMachineRefId());
+        assertEquals(2, result.getCenterNames().size());
+        assertEquals("Test Center English", result.getCenterNames().get("eng"));
+        assertEquals("Test Center French", result.getCenterNames().get("fra"));
+    }
+
+    @Test
+    public void test_returns_null_when_machine_not_found() {
+        String machineName = "nonExistentMachine";
+
+        Mockito.when(mockClientCryptoManagerService.getMachineName()).thenReturn(machineName);
+        Mockito.when(mockMachineRepository.getMachine(machineName)).thenReturn(null);
+
+        CenterMachineDto result = masterDataService.getRegistrationCenterMachineDetails();
+
+        assertNull(result);
+
+        verify(mockRegistrationCenterRepository, Mockito.never()).getRegistrationCenter(Mockito.anyString());
+    }
+
+    @Test
+    public void test_get_all_reasons_list_for_given_language_code() {
+        String langCode = "eng";
+
+        List<ReasonList> reasonLists = new ArrayList<>();
+        ReasonList reason1 = new ReasonList();
+        reason1.setCode("REA001");
+        reason1.setName("Invalid Address");
+        reason1.setDescription("Address is invalid");
+        reason1.setLangCode("eng");
+
+        ReasonList reason2 = new ReasonList();
+        reason2.setCode("REA002");
+        reason2.setName("Gender-Photo Mismatch");
+        reason2.setDescription("Gender does not match with photo");
+        reason2.setLangCode("eng");
+
+        reasonLists.add(reason1);
+        reasonLists.add(reason2);
+
+        when(mockReasonListRepository.getAllReasonList(langCode)).thenReturn(reasonLists);
+
+        List<ReasonListDto> result = masterDataService.getAllReasonsList(langCode);
+
+        assertEquals(2, result.size());
+        assertEquals("REA001", result.get(0).getCode());
+        assertEquals("Invalid Address", result.get(0).getName());
+        assertEquals("Address is invalid", result.get(0).getDescription());
+        assertEquals("eng", result.get(0).getLangCode());
+        assertEquals("REA002", result.get(1).getCode());
+        assertEquals("Gender-Photo Mismatch", result.get(1).getName());
+    }
+
+    @Test
+    public void test_get_all_reasons_list_with_empty_repository_result() {
+        String langCode = "fra";
+        List<ReasonList> emptyReasonList = new ArrayList<>();
+        when(mockReasonListRepository.getAllReasonList(langCode)).thenReturn(emptyReasonList);
+
+        List<ReasonListDto> result = masterDataService.getAllReasonsList(langCode);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        assertEquals(0, result.size());
+
+        verify(mockReasonListRepository).getAllReasonList(langCode);
+    }
+
+    @Test
+    public void test_returns_predefined_location_hierarchy_levels() {
+        String langCode = "eng";
+
+        List<GenericDto> result = masterDataService.getAllLocationHierarchyLevels(langCode);
+
+        assertEquals(5, result.size());
+        assertEquals("Country", result.get(0).getName());
+        assertEquals("Region", result.get(1).getName());
+        assertEquals("Province", result.get(2).getName());
+        assertEquals("City", result.get(3).getName());
+        assertEquals("Postal Code", result.get(4).getName());
+
+        for (GenericDto dto : result) {
+            assertEquals(langCode, dto.getLangCode());
+        }
+    }
+
+    @Test
+    public void test_works_with_any_language_code_including_null() {
+        List<GenericDto> nullLangResult = masterDataService.getAllLocationHierarchyLevels(null);
+
+        String arbitraryLangCode = "xyz";
+        List<GenericDto> arbitraryLangResult = masterDataService.getAllLocationHierarchyLevels(arbitraryLangCode);
+
+        assertEquals(5, nullLangResult.size());
+        for (GenericDto dto : nullLangResult) {
+            assertNull(dto.getLangCode());
+        }
+
+        assertEquals(5, arbitraryLangResult.size());
+        for (GenericDto dto : arbitraryLangResult) {
+            assertEquals(arbitraryLangCode, dto.getLangCode());
+        }
+    }
+
+    @Test
+    public void test_returns_dynamic_field_values_for_valid_field_name_and_language() {
+        String fieldName = "gender";
+        String langCode = "eng";
+        List<GenericValueDto> expectedValues = Arrays.asList(
+                new GenericValueDto("Male", "M", "eng"),
+                new GenericValueDto("Female", "F", "eng")
+        );
+
+        when(mockDynamicFieldRepository.getDynamicValues(fieldName, langCode))
+                .thenReturn(expectedValues);
+
+        List<GenericValueDto> actualValues = masterDataService.getFieldValues(fieldName, langCode);
+
+        assertEquals(expectedValues.size(), actualValues.size());
+        assertEquals(expectedValues, actualValues);
+        verify(mockDynamicFieldRepository).getDynamicValues(fieldName, langCode);
+    }
+
+    @Test
+    public void test_returns_empty_list_when_field_name_does_not_exist() {
+        String nonExistentFieldName = "nonExistentField";
+        String langCode = "eng";
+        List<GenericValueDto> emptyList = new ArrayList<>();
+
+        when(mockDynamicFieldRepository.getDynamicValues(nonExistentFieldName, langCode))
+                .thenReturn(emptyList);
+
+        List<GenericValueDto> result = masterDataService.getFieldValues(nonExistentFieldName, langCode);
+
+        assertTrue(result.isEmpty());
+        assertEquals(0, result.size());
+        verify(mockDynamicFieldRepository).getDynamicValues(nonExistentFieldName, langCode);
+    }
+
+    @Test
+    public void test_returns_field_values_when_parameters_valid() {
+        String fieldName = "gender";
+        String code = "MLE";
+        List<GenericValueDto> expectedValues = Arrays.asList(
+                new GenericValueDto("Male", "MLE", "eng"),
+                new GenericValueDto("Homme", "MLE", "fra")
+        );
+
+        when(mockDynamicFieldRepository.getDynamicValuesByCode(fieldName, code))
+                .thenReturn(expectedValues);
+
+        List<GenericValueDto> result = masterDataService.getFieldValuesByCode(fieldName, code);
+
+        assertEquals(expectedValues.size(), result.size());
+        assertEquals(expectedValues, result);
+        verify(mockDynamicFieldRepository).getDynamicValuesByCode(fieldName, code);
+    }
+
+    @Test
+    public void test_throws_exception_when_fieldname_null() {
+        String fieldName = null;
+        String code = "MLE";
+
+        when(mockDynamicFieldRepository.getDynamicValuesByCode(fieldName, code))
+                .thenThrow(new NullPointerException("fieldName is marked non-null but is null"));
+
+        assertThrows(NullPointerException.class, () -> {
+            masterDataService.getFieldValuesByCode(fieldName, code);
+        });
+
+        verify(mockDynamicFieldRepository).getDynamicValuesByCode(fieldName, code);
+    }
+
+    @Test
+    public void test_returns_location_data_when_parent_code_provided() {
+        String parentCode = "REG001";
+        String langCode = "eng";
+        List<GenericValueDto> expectedLocations = Arrays.asList(
+                new GenericValueDto("Location1", "LOC1", "eng"),
+                new GenericValueDto("Location2", "LOC2", "eng")
+        );
+        Mockito.when(mockLocationRepository.getLocations(parentCode, langCode)).thenReturn(expectedLocations);
+
+        List<GenericValueDto> result = masterDataService.findLocationByParentHierarchyCode(parentCode, langCode);
+
+        assertEquals(expectedLocations, result);
+        Mockito.verify(mockLocationRepository).getLocations(parentCode, langCode);
+    }
+
+    @Test
+    public void test_handles_null_parent_code() {
+        String langCode = "eng";
+        List<GenericValueDto> expectedParentLocations = Arrays.asList(
+                new GenericValueDto("ParentLocation1", "PLC1", "eng"),
+                new GenericValueDto("ParentLocation2", "PLC2", "eng")
+        );
+        Mockito.when(mockLocationRepository.getLocations(null, langCode)).thenReturn(expectedParentLocations);
+
+        List<GenericValueDto> result = masterDataService.findLocationByParentHierarchyCode(null, langCode);
+
+        assertEquals(expectedParentLocations, result);
+
+        Mockito.verify(mockLocationRepository).getLocations(null, langCode);
+    }
+
+    @Test
+    public void test_find_location_by_valid_code() {
+        String locationCode = "LOC001";
+        List<GenericValueDto> expectedLocations = Arrays.asList(
+                new GenericValueDto("Location 1", locationCode, "eng")
+        );
+
+        Mockito.when(mockLocationRepository.getLocationsByCode(locationCode)).thenReturn(expectedLocations);
+
+        List<GenericValueDto> result = masterDataService.findLocationByCode(locationCode);
+
+        Assertions.assertEquals(expectedLocations, result);
+        Mockito.verify(mockLocationRepository).getLocationsByCode(locationCode);
+    }
+
+    @Test
+    public void test_find_location_by_null_code() {
+        String locationCode = null;
+        List<GenericValueDto> expectedEmptyList = Collections.emptyList();
+
+        Mockito.when(mockLocationRepository.getLocationsByCode(locationCode)).thenReturn(expectedEmptyList);
+
+        List<GenericValueDto> result = masterDataService.findLocationByCode(locationCode);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.isEmpty());
+        Mockito.verify(mockLocationRepository).getLocationsByCode(locationCode);
+    }
+
+    @Test
+    public void test_find_location_by_hierarchy_level_returns_locations() {
+        int hierarchyLevel = 2;
+        String langCode = "eng";
+
+        List<GenericValueDto> expectedLocations = Arrays.asList(
+                new GenericValueDto("New York", "NY", "eng"),
+                new GenericValueDto("California", "CA", "eng")
+        );
+
+        Mockito.when(mockLocationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode))
+                .thenReturn(expectedLocations);
+
+        List<GenericValueDto> actualLocations = masterDataService.findLocationByHierarchyLevel(hierarchyLevel, langCode);
+
+        assertEquals(expectedLocations, actualLocations);
+        Mockito.verify(mockLocationRepository).getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
+    }
+
+    @Test
+    public void test_find_location_by_hierarchy_level_returns_empty_list() {
+        int hierarchyLevel = 5;
+        String langCode = "eng";
+
+        List<GenericValueDto> emptyList = Collections.emptyList();
+        Mockito.when(mockLocationRepository.getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode))
+                .thenReturn(emptyList);
+
+        List<GenericValueDto> result = masterDataService.findLocationByHierarchyLevel(hierarchyLevel, langCode);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        Mockito.verify(mockLocationRepository).getLocationsBasedOnHierarchyLevel(hierarchyLevel, langCode);
+    }
+
+    @Test
+    public void test_get_document_types_with_valid_parameters() {
+        String categoryCode = "POI";
+        String applicantType = "ADULT";
+        String langCode = "eng";
+
+        List<String> expectedDocTypes = Arrays.asList("Passport", "Driving License");
+        when(mockApplicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode))
+                .thenReturn(expectedDocTypes);
+
+        List<String> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+
+        assertEquals(expectedDocTypes, actualDocTypes);
+        verify(mockApplicantValidDocRepository).getDocumentTypes(applicantType, categoryCode, langCode);
+    }
+
+    @Test
+    public void test_get_document_types_with_null_applicant_type() {
+        String categoryCode = "POI";
+        String applicantType = null;
+        String langCode = "eng";
+
+        List<String> expectedDocTypes = Arrays.asList("Passport", "Driving License", "National ID");
+        when(mockApplicantValidDocRepository.getDocumentTypes(null, categoryCode, langCode))
+                .thenReturn(expectedDocTypes);
+
+        List<String> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+
+        assertEquals(expectedDocTypes, actualDocTypes);
+        verify(mockApplicantValidDocRepository).getDocumentTypes(null, categoryCode, langCode);
+    }
+
+    @Test
+    public void test_get_template_content_returns_template_from_repository() {
+        String templateName = "registration-receipt";
+        String langCode = "eng";
+        String expectedTemplate = "<html><body>Template Content</body></html>";
+
+        when(mockTemplateRepository.getTemplate(templateName, langCode))
+                .thenReturn(expectedTemplate);
+
+        String actualTemplate = masterDataService.getTemplateContent(templateName, langCode);
+
+        assertEquals(expectedTemplate, actualTemplate);
+        verify(mockTemplateRepository).getTemplate(templateName, langCode);
+    }
+
+    @Test
+    public void test_get_template_content_returns_empty_when_no_template_found() {
+        String templateName = "non-existent-template";
+        String langCode = "eng";
+        String emptyTemplate = "";
+
+        when(mockTemplateRepository.getTemplate(templateName, langCode))
+                .thenReturn(emptyTemplate);
+
+        String actualTemplate = masterDataService.getTemplateContent(templateName, langCode);
+
+        assertEquals(emptyTemplate, actualTemplate);
+        assertTrue(actualTemplate.isEmpty());
+        verify(mockTemplateRepository).getTemplate(templateName, langCode);
+    }
+
+    @Test
+    public void test_retrieves_preview_template_content() {
+        String templateTypeCode = "IDC";
+        String langCode = "eng";
+        String expectedContent = "<html><body>Preview Template</body></html>";
+
+        when(mockTemplateRepository.getPreviewTemplate(templateTypeCode, langCode))
+                .thenReturn(expectedContent);
+
+        String actualContent = masterDataService.getPreviewTemplateContent(templateTypeCode, langCode);
+
+        assertEquals(expectedContent, actualContent);
+        verify(mockTemplateRepository).getPreviewTemplate(templateTypeCode, langCode);
+    }
+
+    @Test
+    public void test_handles_null_template_type_code() {
+        String templateTypeCode = null;
+        String langCode = "eng";
+        String expectedContent = "";
+
+        when(mockTemplateRepository.getPreviewTemplate(templateTypeCode, langCode))
+                .thenReturn(expectedContent);
+
+        String actualContent = masterDataService.getPreviewTemplateContent(templateTypeCode, langCode);
+
+        assertEquals(expectedContent, actualContent);
+        assertTrue(actualContent.isEmpty());
+        verify(mockTemplateRepository).getPreviewTemplate(templateTypeCode, langCode);
+    }
+
+    @Test
+    public void test_get_all_languages_returns_languages_from_repository() {
+        List<Language> expectedLanguages = new ArrayList<>();
+        Language english = new Language("eng");
+        english.setName("English");
+        english.setNativeName("English");
+        english.setIsActive(true);
+        english.setIsDeleted(false);
+
+        Language french = new Language("fra");
+        french.setName("French");
+        french.setNativeName("Français");
+        french.setIsActive(true);
+        french.setIsDeleted(false);
+
+        expectedLanguages.add(english);
+        expectedLanguages.add(french);
+
+        Mockito.when(mockLanguageRepository.getAllLanguages()).thenReturn(expectedLanguages);
+
+        List<Language> actualLanguages = masterDataService.getAllLanguages();
+
+        assertEquals(expectedLanguages, actualLanguages);
+        Mockito.verify(mockLanguageRepository).getAllLanguages();
+    }
+
+    @Test
+    public void test_get_all_languages_returns_empty_list_when_no_languages_available() {
+        List<Language> emptyLanguageList = new ArrayList<>();
+        Mockito.when(mockLanguageRepository.getAllLanguages()).thenReturn(emptyLanguageList);
+
+        List<Language> actualLanguages = masterDataService.getAllLanguages();
+
+        assertTrue(actualLanguages.isEmpty());
+        assertEquals(0, actualLanguages.size());
+        Mockito.verify(mockLanguageRepository).getAllLanguages();
+    }
+
+    @Test
+    public void test_find_locations_by_lang_code_returns_filtered_list() {
+        String langCode = "eng";
+        List<Location> expectedLocations = new ArrayList<>();
+        Location location1 = new Location("LOC1", langCode);
+        location1.setName("Location 1");
+        Location location2 = new Location("LOC2", langCode);
+        location2.setName("Location 2");
+        expectedLocations.add(location1);
+        expectedLocations.add(location2);
+
+        Mockito.when(mockLocationRepository.findAllLocationsByLangCode(langCode)).thenReturn(expectedLocations);
+
+        List<Location> result = masterDataService.findAllLocationsByLangCode(langCode);
+
+        Assertions.assertEquals(expectedLocations.size(), result.size());
+        Assertions.assertEquals(expectedLocations, result);
+        Mockito.verify(mockLocationRepository).findAllLocationsByLangCode(langCode);
+    }
+
+    @Test
+    public void test_find_locations_by_lang_code_returns_empty_list_when_none_exist() {
+        String langCode = "fra";
+        List<Location> emptyList = new ArrayList<>();
+
+        Mockito.when(mockLocationRepository.findAllLocationsByLangCode(langCode)).thenReturn(emptyList);
+
+        List<Location> result = masterDataService.findAllLocationsByLangCode(langCode);
+
+        Assertions.assertTrue(result.isEmpty());
+        Mockito.verify(mockLocationRepository).findAllLocationsByLangCode(langCode);
+    }
+
+    @Test
+    public void test_save_global_param_with_valid_parameters() {
+        String id = "testId";
+        String value = "testValue";
+
+        masterDataService.saveGlobalParam(id, value);
+
+        Mockito.verify(mockGlobalParamRepository, Mockito.times(1)).saveGlobalParam(id, value);
+    }
+
+    @Test
+    public void test_returns_empty_string_when_global_param_value_is_null() {
+        Mockito.when(mockGlobalParamRepository.getGlobalParamValue("testId")).thenReturn(null);
+
+        String result = masterDataService.getGlobalParamValue("testId");
+
+        assertEquals("", result);
+        Mockito.verify(mockGlobalParamRepository).getGlobalParamValue("testId");
+    }
+
+    @Test
+    public void test_returns_value_from_repository_when_not_null() {
+        Mockito.when(mockGlobalParamRepository.getGlobalParamValue("testId")).thenReturn("testValue");
+
+        String result = masterDataService.getGlobalParamValue("testId");
+
+        assertEquals("testValue", result);
+        Mockito.verify(mockGlobalParamRepository).getGlobalParamValue("testId");
+    }
+
+    @Test
+    public void test_successfully_decrypts_data_using_client_crypto_manager() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "dynamicFieldRepository", mockDynamicFieldRepository);
+
+        String encryptedData = "encryptedData";
+        String decryptedData = "WyJ7XCJpZFwiOlwiZmllbGQxXCIsXCJkYXRhVHlwZVwiOlwidGV4dFwiLFwibmFtZVwiOlwiRmllbGQgMVwiLFwibGFuZ0NvZGVcIjpcImVuZ1wiLFwiaXNBY3RpdmVcIjp0cnVlLFwiZmllbGRWYWxcIjpbe1wiY29kZVwiOlwiRlJcIixcInZhbHVlXCI6XCJGb3JlaWduXCIsXCJhY3RpdmVcIjpmYWxzZX1dfSJd";
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+
+        Mockito.when(mockClientCryptoManagerService.decrypt(Mockito.any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveDynamicData", encryptedData);
+
+        Mockito.verify(mockClientCryptoManagerService).decrypt(Mockito.any(CryptoRequestDto.class));
+        Mockito.verify(mockDynamicFieldRepository).saveDynamicField(Mockito.any(JSONObject.class));
     }
 
 
     @Test
-    public void syncGlobalParamsDataNotFound() throws Exception {
-        //Mocking clientCrypto
-        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto(DECRYPTED_RESPONSE);
+    public void test_empty_json_array_after_decryption() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "dynamicFieldRepository", mockDynamicFieldRepository);
 
-        clientCryptoManagerService = mock(LocalClientCryptoServiceImpl.class);
-        when(clientCryptoManagerService.decrypt(any(CryptoRequestDto.class)))
-                .thenReturn(cryptoResponseDto);
+        String encryptedData = "encryptedData";
+        String decryptedData = "W10=";
 
-        when(clientCryptoManagerService.getClientKeyIndex())
-                .thenReturn(KEY_INDEX);
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
 
-        MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
-                , objectMapper, syncRestService, clientCryptoManagerService, null
-                , null, null, null
-                , null, null, null
-                ,  null, globalParamRepository
-                , identitySchemaRepository, null, null
-                , null, null, null,null,null);
+        Mockito.when(mockClientCryptoManagerService.decrypt(Mockito.any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
 
-        //Preparing mock response
-        server.enqueue(new MockResponse()
-                .setResponseCode(404)
-                .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveDynamicData", encryptedData);
 
-        masterDataService.syncGlobalParamsData(() -> {}, true);
+        Mockito.verify(mockClientCryptoManagerService).decrypt(Mockito.any(CryptoRequestDto.class));
+        Mockito.verify(mockDynamicFieldRepository, Mockito.never()).saveDynamicField(Mockito.any(JSONObject.class));
+    }
 
-        //waiting for sync to completed
-        Thread.sleep(1000);
 
-        String globalParamValue = globalParamRepository.getGlobalParamValue(GLOBAL_PARAM_ID);
-        assertNull(globalParamValue);
+    @Test
+    public void test_returns_server_version_from_global_parameters() {
+       ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
 
-        List<GlobalParam> globalParams = globalParamRepository.getGlobalParams();
-        assertTrue(globalParams.isEmpty());
+        String expectedVersion = "1.2.0";
+        Mockito.when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn(expectedVersion);
+
+        String actualVersion = ReflectionTestUtils.invokeMethod(masterDataService, "getServerVersionFromConfigs");
+
+        assertEquals(expectedVersion, actualVersion);
     }
 
     @Test
-    public void syncGlobalParamsDataInvalidKeyIndex() throws Exception {
-        //Mocking clientCrypto
-        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto(DECRYPTED_RESPONSE);
+    public void test_returns_null_when_server_version_not_found() {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
 
-        clientCryptoManagerService = mock(LocalClientCryptoServiceImpl.class);
-        when(clientCryptoManagerService.decrypt(any(CryptoRequestDto.class)))
-                .thenReturn(cryptoResponseDto);
+        Mockito.when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn(null);
 
-        MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
-                , objectMapper, syncRestService, clientCryptoManagerService, null
-                , null, null, null
-                , null, null, null
-                , null, globalParamRepository
-                , identitySchemaRepository, null, null
-                , null, null, null,null,null);
+        String actualVersion = ReflectionTestUtils.invokeMethod(masterDataService, "getServerVersionFromConfigs");
 
-        //Preparing mock response
-        server.enqueue(new MockResponse()
-                .setResponseCode(404)
-                .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
-
-        masterDataService.syncGlobalParamsData(() -> {}, true);
-
-        //waiting for sync to completed
-        Thread.sleep(1000);
-
-        String globalParamValue = globalParamRepository.getGlobalParamValue(GLOBAL_PARAM_ID);
-        assertNull(globalParamValue);
-
-        List<GlobalParam> globalParams = globalParamRepository.getGlobalParams();
-        assertTrue(globalParams.isEmpty());
+        assertNull(actualVersion);
     }
 
     @Test
-    public void syncGlobalParamsDataDecryptionFailed() throws Exception {
-        clientCryptoManagerService = mock(LocalClientCryptoServiceImpl.class);
-        when(clientCryptoManagerService.getClientKeyIndex())
-                .thenReturn(KEY_INDEX);
+    public void test_returns_file_range_when_signature_exists_and_file_length_less_than_content_length() {
+        ReflectionTestUtils.setField(masterDataService, "fileSignatureDao", mockFileSignatureDao);
 
-        MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
-                , objectMapper, syncRestService, clientCryptoManagerService, null
-                , null, null, null
-                , null, null, null
-                , null, globalParamRepository
-                , identitySchemaRepository, null, null
-                , null, null, null,null,null);
+        Path mockPath = Mockito.mock(Path.class);
+        File mockFile = Mockito.mock(File.class);
+        FileSignature mockSignature = new FileSignature();
+        mockSignature.setFileName("test.txt");
+        mockSignature.setContentLength(1000);
 
-        //Preparing mock response
-        server.enqueue(new MockResponse()
-                .setResponseCode(404)
-                .setBody(RestServiceTestHelper.GET_PACKET_STATUS_404));
+        Mockito.when(mockPath.toFile()).thenReturn(mockFile);
+        Mockito.when(mockFile.getName()).thenReturn("test.txt");
+        Mockito.when(mockFile.length()).thenReturn(500L);
+        Mockito.when(mockFileSignatureDao.findByFileName("test.txt")).thenReturn(Optional.of(mockSignature));
 
-        masterDataService.syncGlobalParamsData(() -> {}, true);
+        long[] result = ReflectionTestUtils.invokeMethod(masterDataService, "getFileRange", mockPath);
 
-        //waiting for sync to completed
-        Thread.sleep(1000);
-
-        String globalParamValue = globalParamRepository.getGlobalParamValue(GLOBAL_PARAM_ID);
-        assertNull(globalParamValue);
-
-        List<GlobalParam> globalParams = globalParamRepository.getGlobalParams();
-        assertTrue(globalParams.isEmpty());
+        assertNotNull(result);
+        assertEquals(500L, result[0]);
+        assertEquals(1000, result[1]);
     }
 
     @Test
-    public void getPreviewTemplateContentTest() {
-        MasterDataServiceImpl masterDataService = new MasterDataServiceImpl(appContext
-                , objectMapper, syncRestService, clientCryptoManagerService, null
-                , null, null, null
-                , null, templateRepository
-                , null, null
-                , globalParamRepository, null, null
-                , null, null, null,null,null,null);
+    public void test_throws_null_pointer_exception_when_path_is_null() {
+        ReflectionTestUtils.setField(masterDataService, "fileSignatureDao", mockFileSignatureDao);
 
-        assertNotNull(masterDataService.getPreviewTemplateContent("reg-android-preview-template", "eng"));
+        assertThrows(NullPointerException.class, () -> {
+            ReflectionTestUtils.invokeMethod(masterDataService, "getFileRange", (Path) null);
+        });
+
+        Mockito.verify(mockFileSignatureDao, Mockito.never()).findByFileName(Mockito.anyString());
     }
+
+    @Test
+    public void test_save_file_signature_successfully() {
+        Path path = Paths.get("test.txt");
+        boolean isFileEncrypted = true;
+        String signature = "test-signature";
+        Integer contentLength = 100;
+
+        ReflectionTestUtils.setField(masterDataService, "fileSignatureDao", mockFileSignatureDao);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveFileSignature", path, isFileEncrypted, signature, contentLength);
+
+        ArgumentCaptor<FileSignature> fileSignatureCaptor = ArgumentCaptor.forClass(FileSignature.class);
+        Mockito.verify(mockFileSignatureDao).insert(fileSignatureCaptor.capture());
+
+        FileSignature capturedFileSignature = fileSignatureCaptor.getValue();
+        assertEquals("test.txt", capturedFileSignature.getFileName());
+        assertEquals(signature, capturedFileSignature.getSignature());
+        assertEquals(isFileEncrypted, capturedFileSignature.getEncrypted());
+        assertEquals(contentLength, capturedFileSignature.getContentLength());
+    }
+
+    @Test
+    public void test_save_file_signature_returns_early_when_signature_null() {
+        Path path = Paths.get("test.txt");
+        boolean isFileEncrypted = true;
+        String signature = null;
+        Integer contentLength = 100;
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveFileSignature", path, isFileEncrypted, signature, contentLength);
+
+        Mockito.verify(mockFileSignatureDao, Mockito.never()).insert(Mockito.any(FileSignature.class));
+    }
+
+    @Test
+    public void test_returns_current_time_in_iso_format() {
+        String currentTime = ReflectionTestUtils.invokeMethod(masterDataService, "getCurrentTime");
+
+        assertNotNull(currentTime);
+
+        assertTrue(currentTime.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d+Z"));
+
+        Instant parsedTime = Instant.parse(currentTime);
+        Instant now = Instant.now();
+
+        long diffInMillis = Math.abs(now.toEpochMilli() - parsedTime.toEpochMilli());
+        assertTrue("Time difference should be less than 5 seconds", diffInMillis < 5000);
+    }
+
+    @Test
+    public void test_returns_system_time_even_if_manipulated() {
+        Instant beforeTest = Instant.now();
+
+        String currentTimeStr = ReflectionTestUtils.invokeMethod(masterDataService, "getCurrentTime");
+        Instant currentTime = Instant.parse(currentTimeStr);
+
+        Instant afterTest = Instant.now();
+
+        boolean isTimeInRange = (currentTime.isAfter(beforeTest.minusMillis(1000)) &&
+                currentTime.isBefore(afterTest.plusMillis(1000)));
+
+        assertTrue("The returned time should reflect the actual system time", isTimeInRange);
+
+        long diffFromNow = Math.abs(Instant.now().toEpochMilli() - currentTime.toEpochMilli());
+        assertTrue("Time should be close to actual system time", diffFromNow < 5000);
+    }
+
+    @Test
+    public void test_get_hierarchy_level_returns_level_for_valid_name() {
+        ReflectionTestUtils.setField(masterDataService, "locationRepository", mockLocationRepository);
+
+        String hierarchyLevelName = "PROVINCE";
+        Integer expectedLevel = 2;
+        Mockito.when(mockLocationRepository.getHierarchyLevel(hierarchyLevelName)).thenReturn(expectedLevel);
+
+        Integer actualLevel = masterDataService.getHierarchyLevel(hierarchyLevelName);
+
+        assertEquals(expectedLevel, actualLevel);
+        Mockito.verify(mockLocationRepository).getHierarchyLevel(hierarchyLevelName);
+    }
+
+    @Test
+    public void test_get_hierarchy_level_handles_null_parameter() {
+        ReflectionTestUtils.setField(masterDataService, "locationRepository", mockLocationRepository);
+
+        String hierarchyLevelName = null;
+        Integer expectedLevel = null;
+        Mockito.when(mockLocationRepository.getHierarchyLevel(hierarchyLevelName)).thenReturn(expectedLevel);
+
+        Integer actualLevel = masterDataService.getHierarchyLevel(hierarchyLevelName);
+
+        assertNull(actualLevel);
+        Mockito.verify(mockLocationRepository).getHierarchyLevel(hierarchyLevelName);
+    }
+
+    @Test
+    public void test_returns_result_value() {
+        try {
+            java.lang.reflect.Field resultField = MasterDataServiceImpl.class.getDeclaredField("result");
+            resultField.setAccessible(true);
+            resultField.set(masterDataService, "test_result");
+        } catch (Exception e) {
+            fail("Failed to set result field: " + e.getMessage());
+        }
+
+        String actualResult = masterDataService.onResponseComplete();
+
+        assertEquals("test_result", actualResult);
+    }
+
+    @Test
+    public void test_returns_null_when_result_is_null() {
+        try {
+            java.lang.reflect.Field resultField = MasterDataServiceImpl.class.getDeclaredField("result");
+            resultField.setAccessible(true);
+            resultField.set(masterDataService, null);
+        } catch (Exception e) {
+            fail("Failed to set result field: " + e.getMessage());
+        }
+
+        String actualResult = masterDataService.onResponseComplete();
+
+        assertNull(actualResult);
+    }
+
+    @Test
+    public void test_save_user_details_successfully() throws JSONException {
+        String encryptedData = "encrypted_data";
+        JSONArray decryptedData = new JSONArray();
+        decryptedData.put(new JSONObject("{\"userId\":\"user1\",\"isActive\":true,\"regCenterId\":\"REG001\"}"));
+
+        ReflectionTestUtils.setField(masterDataService, "userDetailRepository", mockUserDetailRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(decryptedData.toString().getBytes()));
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveUserDetails", encryptedData);
+
+        verify(mockUserDetailRepository, times(1)).saveUserDetail(any(JSONArray.class));
+    }
+
+    @Test
+    public void test_save_user_details_handles_exception() throws JSONException {
+        String encryptedData = "encrypted_data";
+
+        ReflectionTestUtils.setField(masterDataService, "userDetailRepository", mockUserDetailRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenThrow(new KeymanagerServiceException("KER-CRY-001", "Decryption failed"));
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveUserDetails", encryptedData);
+
+        verify(mockUserDetailRepository, never()).saveUserDetail(any(JSONArray.class));
+    }
+
+    @Test
+    public void test_successfully_parses_json_and_extracts_process_specs() throws Exception {
+        Field contextField = MasterDataServiceImpl.class.getDeclaredField("context");
+        contextField.setAccessible(true);
+        contextField.set(masterDataService, mockContext);
+
+        Field identitySchemaRepositoryField = MasterDataServiceImpl.class.getDeclaredField("identitySchemaRepository");
+        identitySchemaRepositoryField.setAccessible(true);
+        identitySchemaRepositoryField.set(masterDataService, mockIdentitySchemaRepository);
+
+        IdSchemaResponse idSchemaResponse = new IdSchemaResponse();
+        idSchemaResponse.setIdVersion(1.0);
+
+        String jsonString = "{\"registrationProcess\":{\"id\":\"reg-process\",\"order\":1,\"flow\":\"registration\",\"isActive\":true}}";
+
+        ProcessSpecDto expectedProcessSpecDto = new ProcessSpecDto();
+        expectedProcessSpecDto.setId("reg-process");
+        expectedProcessSpecDto.setOrder(1);
+        expectedProcessSpecDto.setFlow("registration");
+        expectedProcessSpecDto.setActive(true);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveProcessSpec", idSchemaResponse, jsonString);
+
+        Mockito.verify(mockIdentitySchemaRepository).createProcessSpec(
+                Mockito.eq(mockContext),
+                Mockito.eq("registrationProcess"),
+                Mockito.eq(1.0),
+                Mockito.argThat(processSpecDto ->
+                        processSpecDto.getId().equals("reg-process") &&
+                                processSpecDto.getOrder() == 1 &&
+                                processSpecDto.getFlow().equals("registration") &&
+                                processSpecDto.isActive() == true
+                )
+        );
+    }
+
+
+    @Test
+    public void test_handles_empty_json_string() throws Exception {
+        Field contextField = MasterDataServiceImpl.class.getDeclaredField("context");
+        contextField.setAccessible(true);
+        contextField.set(masterDataService, mockContext);
+
+        Field identitySchemaRepositoryField = MasterDataServiceImpl.class.getDeclaredField("identitySchemaRepository");
+        identitySchemaRepositoryField.setAccessible(true);
+        identitySchemaRepositoryField.set(masterDataService, mockIdentitySchemaRepository);
+
+        IdSchemaResponse idSchemaResponse = new IdSchemaResponse();
+        idSchemaResponse.setIdVersion(1.0);
+
+        String emptyJsonString = "{}";
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveProcessSpec", idSchemaResponse, emptyJsonString);
+
+        Mockito.verify(mockIdentitySchemaRepository, Mockito.never()).createProcessSpec(
+                Mockito.any(Context.class),
+                Mockito.anyString(),
+                Mockito.anyDouble(),
+                Mockito.any(ProcessSpecDto.class)
+        );
+    }
+
+    @Test
+    public void test_iterates_and_identifies_process_keys() throws Exception {
+        String jsonString = "{\"key1\":\"value1\", \"testProcess\":{\"id\":\"123\", \"order\":1, \"flow\":\"flow1\", \"isActive\":true}}";
+        IdSchemaResponse idSchemaResponse = new IdSchemaResponse();
+        idSchemaResponse.setIdVersion(1.0);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveProcessSpec", idSchemaResponse, jsonString);
+
+        verify(mockIdentitySchemaRepository, times(1)).createProcessSpec(any(Context.class), eq("testProcess"), eq(1.0), any(ProcessSpecDto.class));
+    }
+
+    @Test
+    public void test_converts_json_to_processspecdto() throws Exception {
+        String jsonString = "{\"testProcess\":{\"id\":\"123\", \"order\":1, \"flow\":\"flow1\", \"isActive\":true}}";
+        IdSchemaResponse idSchemaResponse = new IdSchemaResponse();
+        idSchemaResponse.setIdVersion(1.0);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveProcessSpec", idSchemaResponse, jsonString);
+
+        ArgumentCaptor<ProcessSpecDto> captor = ArgumentCaptor.forClass(ProcessSpecDto.class);
+        verify(mockIdentitySchemaRepository).createProcessSpec(any(Context.class), eq("testProcess"), eq(1.0), captor.capture());
+
+        ProcessSpecDto capturedDto = captor.getValue();
+        assertEquals("123", capturedDto.getId());
+        assertEquals(1, capturedDto.getOrder());
+        assertEquals("flow1", capturedDto.getFlow());
+        assertTrue(capturedDto.isActive());
+    }
+
+    @Test
+    public void test_handles_malformed_json_data() {
+        IdSchemaResponse idSchemaResponse = new IdSchemaResponse();
+        idSchemaResponse.setIdVersion(1.0);
+        String malformedJsonString = "{ \"firstProcess\": { \"id\": \"proc1\", \"order\": 1, \"flow\": \"flow1\", \"isActive\": true, ";
+
+        assertThrows(JSONException.class, () -> {
+            ReflectionTestUtils.invokeMethod(masterDataService, "saveProcessSpec", idSchemaResponse, malformedJsonString);
+        });
+    }
+
+    @Test
+    public void test_successful_decrypt_and_parse() throws Exception {
+        Field cryptoField = MasterDataServiceImpl.class.getDeclaredField("clientCryptoManagerService");
+        cryptoField.setAccessible(true);
+        cryptoField.set(masterDataService, mockClientCryptoManagerService);
+
+        Field mapperField = MasterDataServiceImpl.class.getDeclaredField("objectMapper");
+        mapperField.setAccessible(true);
+        mapperField.set(masterDataService, mockObjectMapper);
+
+        String encodedCipher = "test-encoded-cipher";
+        String decodedValue = "eyJrZXkxIjoidmFsdWUxIiwia2V5MiI6InZhbHVlMiJ9";
+        Map<String, Object> expectedMap = new HashMap<>();
+        expectedMap.put("key1", "value1");
+        expectedMap.put("key2", "value2");
+
+        CryptoResponseDto responseDto = new CryptoResponseDto();
+        responseDto.setValue(decodedValue);
+
+        Mockito.when(mockClientCryptoManagerService.decrypt(Mockito.any(CryptoRequestDto.class))).thenReturn(responseDto);
+        Mockito.when(mockObjectMapper.readValue(Mockito.any(byte[].class), Mockito.eq(HashMap.class))).thenReturn((HashMap) expectedMap);
+
+        Map<String, Object> result = ReflectionTestUtils.invokeMethod(masterDataService, "getParams", encodedCipher);
+
+        assertEquals(expectedMap, result);
+        Mockito.verify(mockClientCryptoManagerService).decrypt(Mockito.any(CryptoRequestDto.class));
+        Mockito.verify(mockObjectMapper).readValue(Mockito.any(byte[].class), Mockito.eq(HashMap.class));
+    }
+
+    @Test
+    public void test_returns_empty_map_on_io_exception() throws Exception {
+        Field cryptoField = MasterDataServiceImpl.class.getDeclaredField("clientCryptoManagerService");
+        cryptoField.setAccessible(true);
+        cryptoField.set(masterDataService, mockClientCryptoManagerService);
+
+        Field mapperField = MasterDataServiceImpl.class.getDeclaredField("objectMapper");
+        mapperField.setAccessible(true);
+        mapperField.set(masterDataService, mockObjectMapper);
+
+        String encodedCipher = "test-encoded-cipher";
+        String decodedValue = "eyJrZXkxIjoidmFsdWUxIiwia2V5MiI6InZhbHVlMiJ9";
+
+        CryptoResponseDto responseDto = new CryptoResponseDto();
+        responseDto.setValue(decodedValue);
+
+        Mockito.when(mockClientCryptoManagerService.decrypt(Mockito.any(CryptoRequestDto.class))).thenReturn(responseDto);
+        Mockito.when(mockObjectMapper.readValue(Mockito.any(byte[].class), Mockito.eq(HashMap.class)))
+                .thenThrow(new IOException("Test exception"));
+
+        Map<String, Object> result = ReflectionTestUtils.invokeMethod(masterDataService, "getParams", encodedCipher);
+
+        assertEquals(Collections.EMPTY_MAP, result);
+        Mockito.verify(mockClientCryptoManagerService).decrypt(Mockito.any(CryptoRequestDto.class));
+        Mockito.verify(mockObjectMapper).readValue(Mockito.any(byte[].class), Mockito.eq(HashMap.class));
+    }
+
+    @Test
+    public void test_nested_map_flattening() {
+        Map<String, Object> nestedMap = new HashMap<>();
+        nestedMap.put("key1", "value1");
+
+        Map<String, Object> innerMap = new HashMap<>();
+        innerMap.put("innerKey1", "innerValue1");
+        innerMap.put("innerKey2", 123);
+
+        Map<String, Object> deeperMap = new HashMap<>();
+        deeperMap.put("deepKey", true);
+
+        innerMap.put("deeperMap", deeperMap);
+        nestedMap.put("innerMap", innerMap);
+
+        Map<String, String> resultMap = new HashMap<>();
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "parseToMap", nestedMap, resultMap);
+
+        assertEquals(4, resultMap.size());
+        assertEquals("value1", resultMap.get("key1"));
+        assertEquals("innerValue1", resultMap.get("innerKey1"));
+        assertEquals("123", resultMap.get("innerKey2"));
+        assertEquals("true", resultMap.get("deepKey"));
+    }
+
+    @Test
+    public void test_empty_input_map() {
+        Map<String, Object> emptyMap = new HashMap<>();
+
+        Map<String, String> resultMap = new HashMap<>();
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "parseToMap", emptyMap, resultMap);
+
+        assertTrue(resultMap.isEmpty());
+    }
+
+    @Test
+    public void test_parse_headers_from_json_object() throws Exception {
+        Path path = mock(Path.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("headers", "Content-Type:application/json,Authorization:Bearer token");
+        jsonObject.put("encrypted", false);
+        jsonObject.put("url", "https://example.com/script");
+        boolean isManualSync = false;
+
+        Map<String, String> expectedMap = new HashMap<>();
+        expectedMap.put("Content-Type", "application/json");
+        expectedMap.put("Authorization", "Bearer token");
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "downloadUrlData", path, jsonObject, isManualSync);
+
+        Map<String, String> capturedMap = getHeadersFromService(jsonObject);
+
+        assertTrue(capturedMap.containsKey("Content-Type"));
+        assertEquals("application/json", capturedMap.get("Content-Type"));
+        assertTrue(capturedMap.containsKey("Authorization"));
+        assertEquals("Bearer token", capturedMap.get("Authorization"));
+        assertTrue(capturedMap.containsKey("Range"));
+        assertEquals("bytes=0-", capturedMap.get("Range"));
+    }
+
+    @Test
+    public void test_handle_null_headers() throws Exception {
+        Path path = mock(Path.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("headers", "");
+        jsonObject.put("encrypted", false);
+        jsonObject.put("url", "https://example.com/script");
+        boolean isManualSync = false;
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "downloadUrlData", path, jsonObject, isManualSync);
+
+        Map<String, String> capturedMap = getHeadersFromService(jsonObject);
+
+        assertEquals(1, capturedMap.size());
+        assertTrue(capturedMap.containsKey("Range"));
+        assertEquals("bytes=0-", capturedMap.get("Range"));
+
+        jsonObject.put("headers", JSONObject.NULL);
+        ReflectionTestUtils.invokeMethod(masterDataService, "downloadUrlData", path, jsonObject, isManualSync);
+
+        capturedMap = getHeadersFromService(jsonObject);
+        assertEquals(1, capturedMap.size());
+        assertTrue(capturedMap.containsKey("Range"));
+    }
+
+    @Test
+    public void test_parse_headers_from_json_object_alternative() throws Exception {
+        Path path = mock(Path.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("headers", "Content-Type:application/json,Authorization:Bearer token");
+        jsonObject.put("encrypted", false);
+        jsonObject.put("url", "https://example.com/script");
+        boolean isManualSync = false;
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "downloadUrlData", path, jsonObject, isManualSync);
+    }
+
+    private Map<String, String> getHeadersFromService(JSONObject jsonObject) {
+        Map<String, String> headers = new HashMap<>();
+
+        String headersString = jsonObject.optString("headers", "");
+        if (!headersString.isEmpty() && !JSONObject.NULL.equals(jsonObject.opt("headers"))) {
+            String[] headerPairs = headersString.split(",");
+            for (String pair : headerPairs) {
+                String[] keyValue = pair.split(":", 2);
+                if (keyValue.length == 2) {
+                    headers.put(keyValue[0].trim(), keyValue[1].trim());
+                }
+            }
+        }
+
+        headers.put("Range", "bytes=0-");
+
+        return headers;
+    }
+
+    @Test
+    public void test_save_ca_certificates_with_non_empty_list() {
+        ReflectionTestUtils.setField(masterDataService, "certificateManagerService", mockCertificateManagerService);
+
+        List<CACertificateDto> caCertificateDtos = new ArrayList<>();
+        CACertificateDto certificateDto = new CACertificateDto();
+        certificateDto.setCertId("cert-123");
+        certificateDto.setCertData("certificate-data");
+        certificateDto.setPartnerDomain("DEVICE");
+        certificateDto.setCreatedtimes(LocalDateTime.now());
+        caCertificateDtos.add(certificateDto);
+
+        CACertificateResponseDto responseDto = new CACertificateResponseDto();
+        responseDto.setStatus("success");
+        responseDto.setTimestamp(LocalDateTime.now());
+
+        when(mockCertificateManagerService.uploadCACertificate(any(CACertificateRequestDto.class))).thenReturn(responseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveCACertificate", caCertificateDtos);
+
+        verify(mockCertificateManagerService, times(1)).uploadCACertificate(any(CACertificateRequestDto.class));
+    }
+
+    @Test
+    public void test_save_ca_certificates_with_null_input() {
+        ReflectionTestUtils.setField(masterDataService, "certificateManagerService", mockCertificateManagerService);
+
+        List<CACertificateDto> caCertificateDtos = null;
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveCACertificate", caCertificateDtos);
+
+        verify(mockCertificateManagerService, never()).uploadCACertificate(any(CACertificateRequestDto.class));
+    }
+
+    @Test
+    public void test_sorts_certificates_by_creation_time() {
+        List<CACertificateDto> certificates = new ArrayList<>();
+        CACertificateDto cert1 = new CACertificateDto();
+        cert1.setCreatedtimes(LocalDateTime.of(2023, 10, 1, 0, 0));
+        CACertificateDto cert2 = new CACertificateDto();
+        cert2.setCreatedtimes(LocalDateTime.of(2023, 9, 1, 0, 0));
+        certificates.add(cert1);
+        certificates.add(cert2);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveCACertificate", certificates);
+
+        assertEquals(LocalDateTime.of(2023, 9, 1, 0, 0), certificates.get(0).getCreatedtimes());
+        assertEquals(LocalDateTime.of(2023, 10, 1, 0, 0), certificates.get(1).getCreatedtimes());
+    }
+
+
+    @Test
+    public void test_empty_input_list_handling() {
+        List<CACertificateDto> caCertificateDtos = new ArrayList<>();
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveCACertificate", caCertificateDtos);
+    }
+
+    @Test
+    public void test_save_global_params_with_valid_config() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "objectMapper", mockObjectMapper);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        Map<String, Object> configDetailMap = new HashMap<>();
+        configDetailMap.put("registrationConfiguration", "encryptedData");
+        responseMap.put("configDetail", configDetailMap);
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue("base64EncodedValue");
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        Map<String, Object> decryptedParams = new HashMap<>();
+        decryptedParams.put("param1", "value1");
+        decryptedParams.put("param2", "value2");
+        decryptedParams.put(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, "true");
+
+        try {
+            when(mockObjectMapper.readValue(any(byte[].class), eq(HashMap.class))).thenReturn((HashMap) decryptedParams);
+        } catch (IOException e) {
+            fail("Mock setup failed");
+        }
+
+        SharedPreferences.Editor mockEditor = mock(SharedPreferences.Editor.class);
+        when(mockContext.getString(anyInt())).thenReturn("app_name");
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockSharedPreferences.edit()).thenReturn(mockEditor);
+        when(mockEditor.putString(anyString(), anyString())).thenReturn(mockEditor);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG)).thenReturn("true");
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveGlobalParams", responseMap);
+
+        ArgumentCaptor<List<GlobalParam>> globalParamCaptor = ArgumentCaptor.forClass(List.class);
+        verify(mockGlobalParamRepository).saveGlobalParams(globalParamCaptor.capture());
+
+        List<GlobalParam> capturedParams = globalParamCaptor.getValue();
+        assertNotNull(capturedParams);
+        assertFalse(capturedParams.isEmpty());
+        assertTrue(capturedParams.stream().anyMatch(param -> param.getId().equals("param1")));
+        assertTrue(capturedParams.stream().anyMatch(param -> param.getId().equals("param2")));
+
+        verify(mockEditor).putString(eq(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG), eq("true"));
+        verify(mockEditor).apply();
+    }
+
+    @Test
+    public void test_save_global_params_with_null_config_detail() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("configDetail", null);
+
+        SharedPreferences.Editor mockEditor = mock(SharedPreferences.Editor.class);
+        when(mockContext.getString(anyInt())).thenReturn("app_name");
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockSharedPreferences.edit()).thenReturn(mockEditor);
+        lenient().when(mockEditor.putString(anyString(), anyString())).thenReturn(mockEditor);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG)).thenReturn(null);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveGlobalParams", responseMap);
+
+        ArgumentCaptor<List<GlobalParam>> globalParamCaptor = ArgumentCaptor.forClass(List.class);
+        verify(mockGlobalParamRepository).saveGlobalParams(globalParamCaptor.capture());
+
+        List<GlobalParam> capturedParams = globalParamCaptor.getValue();
+        assertNotNull(capturedParams);
+        assertTrue(capturedParams.isEmpty());
+
+        verify(mockEditor).putString(eq(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG), isNull());
+        verify(mockEditor).apply();
+    }
+
 }
