@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
@@ -10,16 +11,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.constant.*;
+import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.sbi.*;
 import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
+import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 
+import io.mosip.registration.keymanager.util.KeyManagerConstant;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -50,6 +56,9 @@ public class Biometrics095ServiceTest {
 
     @InjectMocks
     private Biometrics095Service biometrics095Service;
+
+    @Mock
+    private InputStream mockInputStream;
 
     @Before
     public void setUp() {
@@ -446,5 +455,88 @@ public class Biometrics095ServiceTest {
 
         assertEquals(0, actualAttempts);
     }
+
+    @Test
+    public void test_validates_jwt_signature_successfully_when_valid() throws Exception {
+        String signedData = "valid.jwt.token";
+        String domain = "test-domain";
+
+        JWTSignatureVerifyResponseDto mockResponse = new JWTSignatureVerifyResponseDto();
+        mockResponse.setSignatureValid(true);
+        mockResponse.setTrustValid(KeyManagerConstant.TRUST_VALID);
+
+        when(mockCryptoManagerService.jwtVerify(any(JWTSignatureVerifyRequestDto.class)))
+                .thenReturn(mockResponse);
+
+        assertDoesNotThrow(() -> biometrics095Service.validateJWTResponse(signedData, domain));
+
+        verify(mockCryptoManagerService).jwtVerify(argThat(request ->
+                request.getJwtSignatureData().equals(signedData) &&
+                        request.getDomain().equals(domain) &&
+                        request.getValidateTrust().equals(true)
+        ));
+    }
+
+    @Test
+    public void test_throws_exception_when_signature_invalid() throws Exception {
+        String signedData = "invalid.jwt.token";
+        String domain = "test-domain";
+
+        JWTSignatureVerifyResponseDto mockResponse = new JWTSignatureVerifyResponseDto();
+        mockResponse.setSignatureValid(false);
+        mockResponse.setTrustValid(KeyManagerConstant.TRUST_VALID);
+
+        when(mockCryptoManagerService.jwtVerify(any(JWTSignatureVerifyRequestDto.class)))
+                .thenReturn(mockResponse);
+
+        BiometricsServiceException exception = assertThrows(BiometricsServiceException.class,
+                () -> biometrics095Service.validateJWTResponse(signedData, domain));
+
+        assertEquals(SBIError.SBI_INVALID_SIGNATURE.getErrorCode(), exception.getErrorCode());
+
+        verify(mockCryptoManagerService).jwtVerify(any(JWTSignatureVerifyRequestDto.class));
+    }
+
+    @Test
+    public void test_successfully_parses_valid_json_response_and_returns_callback_id() throws Exception {
+        ReflectionTestUtils.setField(biometrics095Service, "objectMapper", mockObjectMapper);
+        ReflectionTestUtils.setField(biometrics095Service, "auditManagerService", mockAuditManagerService);
+
+        DeviceDto deviceDto = new DeviceDto();
+        deviceDto.setCallbackId("test-callback-123");
+        deviceDto.setDeviceStatus("Ready");
+        deviceDto.setError(null);
+
+        List<DeviceDto> deviceList = Arrays.asList(deviceDto);
+        byte[] responseBytes = "test-response".getBytes();
+
+        when(mockObjectMapper.readValue(eq(responseBytes), any(TypeReference.class))).thenReturn(deviceList);
+
+        String result = biometrics095Service.handleDiscoveryResponse(Modality.FACE, responseBytes);
+
+        assertEquals("test-callback-123", result);
+        verify(mockObjectMapper).readValue(eq(responseBytes), any(TypeReference.class));
+        verifyNoInteractions(mockAuditManagerService);
+    }
+
+    @Test
+    public void test_throws_exception_when_device_list_is_empty() throws Exception {
+        ReflectionTestUtils.setField(biometrics095Service, "objectMapper", mockObjectMapper);
+        ReflectionTestUtils.setField(biometrics095Service, "auditManagerService", mockAuditManagerService);
+
+        List<DeviceDto> emptyDeviceList = new ArrayList<>();
+        byte[] responseBytes = "empty-response".getBytes();
+
+        when(mockObjectMapper.readValue(eq(responseBytes), any(TypeReference.class))).thenReturn(emptyDeviceList);
+
+        BiometricsServiceException exception = assertThrows(BiometricsServiceException.class, () -> {
+            biometrics095Service.handleDiscoveryResponse(Modality.FACE, responseBytes);
+        });
+
+        assertEquals(SBIError.SBI_DISC_INVALID_REPSONSE.getErrorCode(), exception.getErrorCode());
+        assertEquals(SBIError.SBI_DISC_INVALID_REPSONSE.getErrorMessage(), exception.getErrorText());
+        verify(mockAuditManagerService).audit(eq(AuditEvent.DEVICE_INFO_PARSE_FAILED), eq(Components.REGISTRATION), anyString());
+    }
+
 
 }
