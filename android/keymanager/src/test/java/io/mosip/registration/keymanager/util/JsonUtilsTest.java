@@ -2,7 +2,6 @@ package io.mosip.registration.keymanager.util;
 
 import android.util.Log;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;

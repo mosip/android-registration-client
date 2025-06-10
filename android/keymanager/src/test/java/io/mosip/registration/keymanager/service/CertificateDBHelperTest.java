@@ -7,7 +7,6 @@ import io.mosip.registration.keymanager.util.CertificateManagerUtil;
 import io.mosip.registration.keymanager.util.KeyManagerErrorCode;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,7 +28,6 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -131,6 +129,9 @@ public class CertificateDBHelperTest {
         return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(decoded));
     }
 
+    /**
+     * Test isCertificateExist() should return true when certificate exists in the repository.
+     */
     @Test
     public void testIsCertificateExist_WhenCertificateExists_ReturnsTrue() {
         when(repository.getCACertStore(thumbprint, domain))
@@ -142,6 +143,9 @@ public class CertificateDBHelperTest {
         verify(repository).getCACertStore(thumbprint, domain);
     }
 
+    /**
+     * Test isCertificateExist() should return false when certificate does not exist in the repository.
+     */
     @Test
     public void testIsCertificateExist_WhenCertificateDoesNotExist_ReturnsFalse() {
         when(repository.getCACertStore(thumbprint, domain))
@@ -153,6 +157,9 @@ public class CertificateDBHelperTest {
         verify(repository).getCACertStore(thumbprint, domain);
     }
 
+    /**
+     * Test isCertificateExist() should return false when input is null.
+     */
     @Test
     public void testIsCertificateExist_NullInput() {
         when(repository.getCACertStore(null, null)).thenReturn(null);
@@ -161,6 +168,9 @@ public class CertificateDBHelperTest {
         verify(repository).getCACertStore(null, null);
     }
 
+    /**
+     * Test isCertificateExist() should return false when input strings are empty.
+     */
     @Test
     public void testIsCertificateExist_EmptyStrings() {
         when(repository.getCACertStore("", "")).thenReturn(null);
@@ -169,6 +179,9 @@ public class CertificateDBHelperTest {
         verify(repository).getCACertStore("", "");
     }
 
+    /**
+     * Test storeCACertificate() should save a valid X509 certificate to the repository.
+     */
     @Test
     public void testStoreCACertificate_RealCertificate() throws Exception {
         X509Certificate cert = getMockX509Certificate();
@@ -177,11 +190,17 @@ public class CertificateDBHelperTest {
         verify(repository, times(1)).save(any(CACertificateStore.class));
     }
 
+    /**
+     * Test storeCACertificate() should throw NullPointerException when all arguments are null.
+     */
     @Test(expected = NullPointerException.class)
     public void testStoreCACertificate_AllNulls() {
         dbHelper.storeCACertificate(null, null, null, null, null, null, null);
     }
 
+    /**
+     * Test getPEMFormatedData() should return PEM string for a valid X509 certificate.
+     */
     @Test
     public void testGetPEMFormatedData_RealCertificate() throws Exception {
         X509Certificate cert = getMockX509Certificate();
@@ -190,6 +209,9 @@ public class CertificateDBHelperTest {
         assertFalse(pem.isEmpty());
     }
 
+    /**
+     * Test getPEMFormatedData() should return PEM string for a non-X509 certificate type.
+     */
     @Test
     public void testGetPEMFormatedData_NonX509Type() throws Exception {
         X509Certificate cert = mock(X509Certificate.class);
@@ -200,6 +222,9 @@ public class CertificateDBHelperTest {
         assertFalse(pem.isEmpty());
     }
 
+    /**
+     * Test getPEMFormatedData() should throw KeymanagerServiceException when encoding fails.
+     */
     @Test
     public void testGetPEMFormatedData_CertificateEncodingException_Mock() throws Exception {
         X509Certificate cert = mock(X509Certificate.class);
@@ -211,6 +236,9 @@ public class CertificateDBHelperTest {
         assertEquals(KeyManagerErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex.getErrorCode());
     }
 
+    /**
+     * Test getTrustAnchors() should return trust anchors map when only self-signed certificates are present.
+     */
     @Test
     public void testGetTrustAnchors_WithSelfSignedCerts() {
         when(repository.getAllCACertStore(domain)).thenReturn(Collections.emptyList());
@@ -228,6 +256,9 @@ public class CertificateDBHelperTest {
         verify(repository).getAllCACertStore(domain);
     }
 
+    /**
+     * Test getTrustAnchors() should return trust anchors map when intermediate certificates are present.
+     */
     @Test
     public void testGetTrustAnchors_WithIntermediateCerts() {
         when(repository.getAllCACertStore(domain)).thenReturn(Collections.emptyList());
@@ -245,6 +276,9 @@ public class CertificateDBHelperTest {
         verify(repository).getAllCACertStore(domain);
     }
 
+    /**
+     * Test getTrustAnchors() should return empty sets when no certificates are present.
+     */
     @Test
     public void testGetTrustAnchors_EmptyList() {
         when(repository.getAllCACertStore(domain)).thenReturn(Collections.emptyList());
@@ -263,6 +297,9 @@ public class CertificateDBHelperTest {
         verify(repository).getAllCACertStore(domain);
     }
 
+    /**
+     * Test getTrustAnchors() should handle non-self-signed certificates correctly.
+     */
     @Test
     public void testGetTrustAnchors_WithNonSelfSignedCert() {
         CACertificateStore certStore = mock(CACertificateStore.class);
@@ -284,6 +321,9 @@ public class CertificateDBHelperTest {
         }
     }
 
+    /**
+     * Test getIssuerCertId() should return certificate ID for a single valid certificate.
+     */
     @Test
     public void testGetIssuerCertId_SingleValidCertificate() {
         CACertificateStore validCert = new CACertificateStore("valid-cert");
@@ -311,6 +351,9 @@ public class CertificateDBHelperTest {
         }
     }
 
+    /**
+     * Test getIssuerCertId() should return the earliest valid certificate ID when multiple certificates are present.
+     */
     @Test
     public void testGetIssuerCertId_MultipleCertificates_ReturnsSortedFirst() {
         // Create two valid certificates with different notBefore dates
@@ -352,6 +395,9 @@ public class CertificateDBHelperTest {
         verify(repository).getAllCACertStoreByCertSubject(certIssuer);
     }
 
+    /**
+     * Test getIssuerCertId() should throw IndexOutOfBoundsException when no valid certificates are found.
+     */
     @Test
     public void testGetIssuerCertId_NoValidCertificates_ThrowsException() {
         CACertificateStore expiredCert = new CACertificateStore("expired");
@@ -373,6 +419,9 @@ public class CertificateDBHelperTest {
         verify(repository).getAllCACertStoreByCertSubject(certIssuer);
     }
 
+    /**
+     * Test CertificateDBHelper constructor should create a non-null instance.
+     */
     @Test
     public void testConstructor() {
         CertificateDBHelper helper = new CertificateDBHelper(repository);
