@@ -1616,4 +1616,70 @@ public class PosixAdapterServiceImplTest {
 
         assertFalse("Expected false due to simulated exception", result);
     }
+
+    @Test
+    // Tests if createContainerZipWithSubPacket creates a new zip file when it does not exist
+    @Config(manifest = Config.NONE)
+    public void testCreateContainerZipWithSubPacket_whenZipDoesNotExist_shouldCreateNewZip() throws Exception {
+        // Set external storage to mounted
+        ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
+
+        // Point to test base directory
+        Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
+        baseLocationField.setAccessible(true);
+        baseLocationField.set(service, baseDir.getAbsolutePath());
+
+        InputStream inputStream = new ByteArrayInputStream("new zip content".getBytes());
+
+        Method method = PosixAdapterServiceImpl.class.getDeclaredMethod("createContainerZipWithSubPacket",
+                String.class, String.class, String.class, String.class, String.class, InputStream.class);
+        method.setAccessible(true);
+
+        method.invoke(service, "accNew", "contNew", "src", "proc", "fileNew.txt", inputStream);
+
+        File containerZip = new File(new File(baseDir, "accNew"), "contNew.zip");
+        assertTrue("ZIP file should be created", containerZip.exists());
+    }
+
+    @Test
+    // Tests if createContainerZipWithSubPacket appends to existing zip file
+    @Config(manifest = Config.NONE)
+    public void testCreateContainerZipWithSubPacket_whenZipExists_shouldAppendEntry() throws Exception {
+        // Simulate mounted external storage
+        ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
+
+        // Set base location manually
+        Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
+        baseLocationField.setAccessible(true);
+        baseLocationField.set(service, baseDir.getAbsolutePath());
+
+        // Create initial ZIP file with one entry
+        File accountDir = new File(baseDir, "accExist");
+        accountDir.mkdirs();
+        File zipFile = new File(accountDir, "contExist.zip");
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            zos.putNextEntry(new ZipEntry("existing.txt"));
+            zos.write("existing content".getBytes());
+            zos.closeEntry();
+        }
+
+        // Invoke method to append new entry
+        InputStream inputStream = new ByteArrayInputStream("new entry content".getBytes());
+
+        Method method = PosixAdapterServiceImpl.class.getDeclaredMethod("createContainerZipWithSubPacket",
+                String.class, String.class, String.class, String.class, String.class, InputStream.class);
+        method.setAccessible(true);
+        method.invoke(service, "accExist", "contExist", "src", "proc", "newFile.txt", inputStream);
+
+        // Verify ZIP now contains two entries
+        int entryCount = 0;
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+            while (zis.getNextEntry() != null) {
+                entryCount++;
+            }
+        }
+
+        assertEquals("ZIP should contain two entries", 2, entryCount);
+    }
+
 }
