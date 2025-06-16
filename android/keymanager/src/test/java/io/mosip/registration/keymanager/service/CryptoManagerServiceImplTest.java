@@ -11,18 +11,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.*;
-import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 import java.security.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.util.Base64;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -61,7 +55,6 @@ public class CryptoManagerServiceImplTest {
         try {
             CryptoUtil.base64encoder = Base64.getEncoder();
             CryptoUtil.base64decoder = Base64.getDecoder();
-            // For Bouncy Castle, we can also set a custom encoder/decoder if needed.
         } catch (Exception e) {}
     }
 
@@ -97,6 +90,9 @@ public class CryptoManagerServiceImplTest {
         }
     }
 
+    /**
+     * Tests that generateAESKey() generates a valid AES key with the specified length and algorithm.
+     */
     @Test
     public void testGenerateAESKey() throws Exception {
         KeyGenerator keyGen = cryptoManagerService.generateAESKey(SYM_KEY_LENGTH);
@@ -104,9 +100,12 @@ public class CryptoManagerServiceImplTest {
         assertEquals(SYM_ALGO, keyGen.getAlgorithm());
     }
 
+    /**
+     * Tests that isDataValid() correctly validates input data, returning true for valid data and false for null, empty, or whitespace strings.
+     */
     @Test
     public void testIsDataValid() {
-        // Use reflection to access private method
+
         try {
             Method m = CryptoManagerServiceImpl.class.getDeclaredMethod("isDataValid", String.class);
             m.setAccessible(true);
@@ -119,6 +118,9 @@ public class CryptoManagerServiceImplTest {
         }
     }
 
+    /**
+     * Tests that nullOrTrim() correctly trims valid strings and returns null for null input.
+     */
     @Test
     public void testNullOrTrim() {
         try {
@@ -131,6 +133,9 @@ public class CryptoManagerServiceImplTest {
         }
     }
 
+    /**
+     * Tests that nullOrTrim() returns an empty string when input is whitespace.
+     */
     @Test
     public void testNullOrTrimWhitespace() {
         try {
@@ -142,6 +147,9 @@ public class CryptoManagerServiceImplTest {
         }
     }
 
+    /**
+     * Tests that concatByteArrays() correctly concatenates byte arrays, including cases with empty arrays.
+     */
     @Test
     public void testConcatByteArraysWithEmpty() {
         byte[] arr1 = {};
@@ -160,6 +168,9 @@ public class CryptoManagerServiceImplTest {
         assertArrayEquals(new byte[]{}, result);
     }
 
+    /**
+     * Tests that convertToCertificate() throws an exception when provided with invalid PEM certificate data.
+     */
     @Test
     public void testConvertToCertificateFailure() {
         String invalidPem = "-----BEGIN CERTIFICATE-----\nINVALID\n-----END CERTIFICATE-----\n";
@@ -167,6 +178,9 @@ public class CryptoManagerServiceImplTest {
         assertEquals("CERTIFICATE_PARSING_ERROR", ex.getMessage());
     }
 
+    /**
+     * Tests that getCertificateThumbprint() throws an exception when certificate encoding fails.
+     */
     @Test
     public void testGetCertificateThumbprintFailure() throws Exception {
         Certificate mockCert = mock(Certificate.class);
@@ -175,6 +189,9 @@ public class CryptoManagerServiceImplTest {
         assertEquals("CERTIFICATE_THUMBPRINT_ERROR", ex.getMessage());
     }
 
+    /**
+     * Tests that symmetricDecrypt() correctly decrypts data encrypted with symmetricEncryptWithRandomIV() using the same key and AAD.
+     */
     @Test
     public void testSymmetricDecrypt() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -185,6 +202,9 @@ public class CryptoManagerServiceImplTest {
         assertArrayEquals(data, decrypted);
     }
 
+    /**
+     * Tests that asymmetricEncrypt() throws an exception when an invalid key type (DSA) is used.
+     */
     @Test
     public void testAsymmetricEncryptWithInvalidKey() throws Exception {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("DSA");
@@ -196,6 +216,9 @@ public class CryptoManagerServiceImplTest {
                 || ex.getMessage().contains("javax.crypto.BadPaddingException"));
     }
 
+    /**
+     * Tests that generateRandomBytes() returns an empty array for zero length and throws NegativeArraySizeException for negative length.
+     */
     @Test
     public void testGenerateRandomBytesZeroAndNegative() {
         byte[] zero = cryptoManagerService.generateRandomBytes(0);
@@ -206,6 +229,9 @@ public class CryptoManagerServiceImplTest {
         } catch (NegativeArraySizeException ignored) {}
     }
 
+    /**
+     * Tests that combineByteArray() correctly combines empty data and key arrays with a splitter.
+     */
     @Test
     public void testCombineByteArrayWithEmpty() {
         byte[] data = {};
@@ -215,6 +241,9 @@ public class CryptoManagerServiceImplTest {
         assertArrayEquals(expected, CryptoManagerServiceImpl.combineByteArray(data, key, splitter));
     }
 
+    /**
+     * Tests that isDataValid() private method correctly validates input data, returning true for valid data and false for null, empty, or whitespace strings.
+     */
     @Test
     public void testPrivateIsDataValid() throws Exception {
         Method m = CryptoManagerServiceImpl.class.getDeclaredMethod("isDataValid", String.class);
@@ -225,6 +254,9 @@ public class CryptoManagerServiceImplTest {
         assertTrue((Boolean) m.invoke(cryptoManagerService, "abc"));
     }
 
+    /**
+     * Tests that symmetricEncrypt() private method successfully encrypts data with a null AAD.
+     */
     @Test
     public void testPrivateSymmetricEncryptWithNullAAD() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -236,6 +268,9 @@ public class CryptoManagerServiceImplTest {
         assertNotNull(result);
     }
 
+    /**
+     * Tests that encrypt() handles all branches, including successful encryption, invalid application ID, empty reference ID, and valid salt.
+     */
     @Test
     public void testEncryptAndAllBranches() throws Exception {
         CryptoManagerRequestDto reqDto = new CryptoManagerRequestDto();
@@ -287,7 +322,9 @@ public class CryptoManagerServiceImplTest {
         assertNotNull(resp.getData());
     }
 
-    // 100% coverage: test edge case for combineByteArray with non-empty data/key
+    /**
+     * Tests that combineByteArray() correctly combines non-empty data and key arrays with a splitter.
+     */
     @Test
     public void testCombineByteArrayWithNonEmpty() {
         byte[] data = {1, 2};
@@ -297,7 +334,9 @@ public class CryptoManagerServiceImplTest {
         assertArrayEquals(expected, CryptoManagerServiceImpl.combineByteArray(data, key, splitter));
     }
 
-    // 100% coverage: test concatCertThumbprint with thumbprint shorter than 32 bytes
+    /**
+     * Tests that concatCertThumbprint() correctly concatenates a short thumbprint with a key, padding to the expected length.
+     */
     @Test
     public void testConcatCertThumbprintShortThumbprint() {
         byte[] thumb = {1, 2, 3};
@@ -306,7 +345,9 @@ public class CryptoManagerServiceImplTest {
         assertEquals(32 + 3, result.length); // THUMBPRINT_LENGTH + key.length
     }
 
-    // 100% coverage: test symmetricEncrypt with null aad
+    /**
+     * Tests that symmetricEncrypt() successfully encrypts data with a null AAD.
+     */
     @Test
     public void testSymmetricEncryptNullAAD() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -315,7 +356,9 @@ public class CryptoManagerServiceImplTest {
         assertNotNull(enc);
     }
 
-    // 100% coverage: test symmetricEncrypt with empty aad
+    /**
+     * Tests that symmetricEncrypt() successfully encrypts data with an empty AAD.
+     */
     @Test
     public void testSymmetricEncryptEmptyAAD() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -324,7 +367,9 @@ public class CryptoManagerServiceImplTest {
         assertNotNull(enc);
     }
 
-    // 100% coverage: test symmetricEncryptWithRandomIV with null aad
+    /**
+     * Tests that symmetricEncryptWithRandomIV() successfully encrypts data with a null AAD.
+     */
     @Test
     public void testSymmetricEncryptWithRandomIVNullAAD() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -333,7 +378,9 @@ public class CryptoManagerServiceImplTest {
         assertNotNull(enc);
     }
 
-    // 100% coverage: test symmetricEncryptWithRandomIV with empty aad
+    /**
+     * Tests that symmetricEncryptWithRandomIV() successfully encrypts data with an empty AAD.
+     */
     @Test
     public void testSymmetricEncryptWithRandomIVEmptyAAD() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -342,7 +389,9 @@ public class CryptoManagerServiceImplTest {
         assertNotNull(enc);
     }
 
-    // 100% coverage: test generateAadAndEncryptData
+    /**
+     * Tests that generateAadAndEncryptData() successfully generates AAD and encrypts data with a given key.
+     */
     @Test
     public void testGenerateAadAndEncryptData() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -351,7 +400,9 @@ public class CryptoManagerServiceImplTest {
         assertNotNull(enc);
     }
 
-    // 100% coverage: test symmetricDecrypt with empty aad
+    /**
+     * Tests that symmetricDecrypt() correctly decrypts data encrypted with symmetricEncryptWithRandomIV() using an empty AAD.
+     */
     @Test
     public void testSymmetricDecryptEmptyAAD() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -362,7 +413,9 @@ public class CryptoManagerServiceImplTest {
         assertArrayEquals(data, decrypted);
     }
 
-    // 100% coverage: test symmetricDecrypt with null aad
+    /**
+     * Tests that symmetricDecrypt() correctly decrypts data encrypted with symmetricEncryptWithRandomIV() using a null AAD.
+     */
     @Test
     public void testSymmetricDecryptNullAAD() throws Exception {
         SecretKey key = KeyGenerator.getInstance(SYM_ALGO).generateKey();
@@ -372,7 +425,9 @@ public class CryptoManagerServiceImplTest {
         assertArrayEquals(data, decrypted);
     }
 
-    // 100% coverage: test generateRandomBytes with positive size
+    /**
+     * Tests that generateRandomBytes() generates a byte array of the specified positive length.
+     */
     @Test
     public void testGenerateRandomBytesPositive() {
         byte[] random = cryptoManagerService.generateRandomBytes(16);

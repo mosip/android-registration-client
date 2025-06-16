@@ -11,9 +11,6 @@ import java.security.cert.X509Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.PublicKey;
 import java.security.SignatureException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 
 public class CertificateManagerUtilTest {
