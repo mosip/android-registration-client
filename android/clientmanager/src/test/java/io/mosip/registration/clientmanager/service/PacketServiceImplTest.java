@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
@@ -17,6 +18,7 @@ import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import org.junit.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -26,6 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import retrofit2.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RunWith(MockitoJUnitRunner .class)
@@ -532,5 +535,416 @@ public class PacketServiceImplTest {
         assertEquals(PacketClientStatus.APPROVED.name(), status);
     }
 
+    @Test
+    public void testSyncRegistration_createdStatus() throws Exception {
+        Registration reg = new Registration("id");
+        reg.setClientStatus(PacketClientStatus.CREATED.name());
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.syncRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.SYNC_FAILED);
+    }
+
+    @Test
+    public void testSyncRegistration_alreadySynced() throws Exception {
+        Registration reg = new Registration("id");
+        reg.setClientStatus(PacketClientStatus.SYNCED.name());
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.syncRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.SYNC_ALREADY_COMPLETED);
+    }
+
+    @Test
+    public void testSyncRegistration_successfulSync() throws Exception {
+        Registration reg = new Registration("id");
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setRegType("NEW");
+        reg.setPacketId("id");
+        reg.setFilePath(File.createTempFile("test", ".zip").getAbsolutePath());
+        CenterMachineDto center = new CenterMachineDto();
+        center.setMachineRefId("machine");
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+        when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(center);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("1.1.5");
+        when(mockPacketCryptoService.encrypt(anyString(), any(byte[].class))).thenReturn("abc".getBytes(StandardCharsets.UTF_8));
+        Call call = mock(Call.class);
+        when(mockSyncRestService.v1syncRID(anyString(), anyString(), anyString())).thenReturn(call);
+
+        doAnswer(invocation -> {
+            Callback cb = invocation.getArgument(0);
+            RegProcResponseWrapper<List<SyncRIDResponse>> wrapper = new RegProcResponseWrapper<>();
+            SyncRIDResponse resp = new SyncRIDResponse();
+            resp.setStatus("SUCCESS");
+            wrapper.setResponse(Collections.singletonList(resp));
+            cb.onResponse(call, Response.success(wrapper));
+            return null;
+        }).when(call).enqueue(any());
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.syncRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.SYNC_COMPLETED);
+        verify(cb).inProgress("id");
+    }
+
+    @Test
+    public void testSyncRegistration_syncFailed() throws Exception {
+        Registration reg = new Registration("id");
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setRegType("NEW");
+        reg.setPacketId("id");
+        reg.setFilePath(File.createTempFile("test", ".zip").getAbsolutePath());
+        CenterMachineDto center = new CenterMachineDto();
+        center.setMachineRefId("machine");
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+        when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(center);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("1.1.5");
+        when(mockPacketCryptoService.encrypt(anyString(), any(byte[].class))).thenReturn("abc".getBytes(StandardCharsets.UTF_8));
+        Call call = mock(Call.class);
+        when(mockSyncRestService.v1syncRID(anyString(), anyString(), anyString())).thenReturn(call);
+
+        doAnswer(invocation -> {
+            Callback cb = invocation.getArgument(0);
+            RegProcResponseWrapper<List<SyncRIDResponse>> wrapper = new RegProcResponseWrapper<>();
+            SyncRIDResponse resp = new SyncRIDResponse();
+            resp.setStatus("FAIL");
+            wrapper.setResponse(Collections.singletonList(resp));
+            cb.onResponse(call, Response.success(wrapper));
+            return null;
+        }).when(call).enqueue(any());
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.syncRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.SYNC_FAILED);
+    }
+
+    @Test
+    public void testSyncRegistration_onFailure() throws Exception {
+        Registration reg = new Registration("id");
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setRegType("NEW");
+        reg.setPacketId("id");
+        reg.setFilePath(File.createTempFile("test", ".zip").getAbsolutePath());
+        CenterMachineDto center = new CenterMachineDto();
+        center.setMachineRefId("machine");
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+        when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(center);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("1.1.5");
+        when(mockPacketCryptoService.encrypt(anyString(), any(byte[].class))).thenReturn("abc".getBytes(StandardCharsets.UTF_8));
+        Call call = mock(Call.class);
+        when(mockSyncRestService.v1syncRID(anyString(), anyString(), anyString())).thenReturn(call);
+
+        doAnswer(invocation -> {
+            Callback cb = invocation.getArgument(0);
+            cb.onFailure(call, new IOException("fail"));
+            return null;
+        }).when(call).enqueue(any());
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.syncRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.SYNC_FAILED);
+    }
+
+    @Test
+    public void testUploadRegistration_alreadyUploaded() {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.ACCEPTED.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        try (MockedStatic<Toast> toast = Mockito.mockStatic(Toast.class)) {
+            Toast mockToast = mock(Toast.class);
+            toast.when(() -> Toast.makeText(any(), anyString(), anyInt())).thenReturn(mockToast);
+            packetService.uploadRegistration("id", cb);
+        }
+        verify(cb).onComplete("id", PacketTaskStatus.UPLOAD_ALREADY_COMPLETED);
+    }
+
+    @Test
+    public void testUploadRegistration_successfulUpload() throws IOException {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.UPLOAD_PENDING.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setFilePath(File.createTempFile("test", ".zip").getAbsolutePath());
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        Call call = mock(Call.class);
+        when(mockSyncRestService.uploadPacket(any())).thenReturn(call);
+
+        doAnswer(invocation -> {
+            Callback cb = invocation.getArgument(0);
+            RegProcResponseWrapper<UploadResponse> wrapper = new RegProcResponseWrapper<>();
+            UploadResponse resp = new UploadResponse();
+            resp.setStatus("UPLOADED");
+            wrapper.setResponse(resp);
+            cb.onResponse(call, Response.success(wrapper));
+            return null;
+        }).when(call).enqueue(any());
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.uploadRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.UPLOAD_COMPLETED);
+    }
+
+    @Test
+    public void testUploadRegistration_uploadFailed() throws IOException {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.UPLOAD_PENDING.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setFilePath(File.createTempFile("test", ".zip").getAbsolutePath());
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        Call call = mock(Call.class);
+        when(mockSyncRestService.uploadPacket(any())).thenReturn(call);
+
+        doAnswer(invocation -> {
+            Callback cb = invocation.getArgument(0);
+            cb.onResponse(call, Response.error(400, ResponseBody.create(null, "fail")));
+            return null;
+        }).when(call).enqueue(any());
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.uploadRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.UPLOAD_FAILED);
+    }
+
+    @Test
+    public void testUploadRegistration_onFailure() throws IOException {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.UPLOAD_PENDING.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setFilePath(File.createTempFile("test", ".zip").getAbsolutePath());
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        Call call = mock(Call.class);
+        when(mockSyncRestService.uploadPacket(any())).thenReturn(call);
+
+        doAnswer(invocation -> {
+            Callback cb = invocation.getArgument(0);
+            cb.onFailure(call, new IOException("fail"));
+            return null;
+        }).when(call).enqueue(any());
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        packetService.uploadRegistration("id", cb);
+
+        verify(cb).onComplete("id", PacketTaskStatus.UPLOAD_FAILED);
+    }
+
+    @Test
+    public void testSyncAllPacketStatus_emptyList() {
+        when(mockRegistrationRepository.getAllRegistrations()).thenReturn(Collections.emptyList());
+        packetService.syncAllPacketStatus();
+        verify(mockRegistrationRepository).getAllRegistrations();
+    }
+
+    @Test
+    public void testSyncAllPacketStatus_onFailure() {
+        Registration reg = new Registration("id");
+        when(mockRegistrationRepository.getAllRegistrations()).thenReturn(Collections.singletonList(reg));
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("1.1.5");
+        Call call = mock(Call.class);
+        when(mockSyncRestService.getV1PacketStatus(any())).thenReturn(call);
+
+        doAnswer(invocation -> {
+            Callback cb = invocation.getArgument(0);
+            cb.onFailure(call, new IOException("fail"));
+            return null;
+        }).when(call).enqueue(any());
+
+        try (MockedStatic<Toast> toast = Mockito.mockStatic(Toast.class)) {
+            Toast mockToast = mock(Toast.class);
+            toast.when(() -> Toast.makeText(any(), anyString(), anyInt())).thenReturn(mockToast);
+            packetService.syncAllPacketStatus();
+        }
+    }
+
+    @Test
+    public void test_uploadRegistration_serviceError_RPR_PKR_005() {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.UPLOAD_PENDING.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setFilePath("test.zip");
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        Call call = mock(Call.class);
+        when(mockSyncRestService.uploadPacket(any())).thenReturn(call);
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+
+        RegProcResponseWrapper<UploadResponse> wrapper = new RegProcResponseWrapper<>();
+        UploadResponse uploadResponse = new UploadResponse();
+        uploadResponse.setStatus("FAILED");
+        wrapper.setResponse(uploadResponse);
+
+        ServiceError error = new ServiceError();
+        error.setErrorCode("RPR-PKR-005");
+
+        try (MockedStatic<SyncRestUtil> util = Mockito.mockStatic(SyncRestUtil.class)) {
+            util.when(() -> SyncRestUtil.getServiceError(wrapper)).thenReturn(error);
+
+            packetService.uploadRegistration("id", cb);
+
+            ArgumentCaptor<Callback<RegProcResponseWrapper<UploadResponse>>> captor = ArgumentCaptor.forClass(Callback.class);
+            verify(call).enqueue(captor.capture());
+
+            Response<RegProcResponseWrapper<UploadResponse>> response = Response.success(wrapper);
+            captor.getValue().onResponse(call, response);
+
+            verify(mockRegistrationRepository).updateStatus(eq("id"), isNull(), eq(PacketClientStatus.UPLOADED.name()));
+            verify(cb).onComplete("id", PacketTaskStatus.UPLOAD_ALREADY_COMPLETED);
+        }
+    }
+
+    @Test
+    public void test_uploadRegistration_serviceError_other() {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.UPLOAD_PENDING.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setFilePath("test.zip");
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        Call call = mock(Call.class);
+        when(mockSyncRestService.uploadPacket(any())).thenReturn(call);
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+
+        RegProcResponseWrapper<UploadResponse> wrapper = new RegProcResponseWrapper<>();
+        UploadResponse uploadResponse = new UploadResponse();
+        uploadResponse.setStatus("FAILED");
+        wrapper.setResponse(uploadResponse);
+
+        ServiceError error = new ServiceError();
+        error.setErrorCode("OTHER");
+
+        try (MockedStatic<SyncRestUtil> util = Mockito.mockStatic(SyncRestUtil.class)) {
+            util.when(() -> SyncRestUtil.getServiceError(wrapper)).thenReturn(error);
+
+            packetService.uploadRegistration("id", cb);
+
+            ArgumentCaptor<Callback<RegProcResponseWrapper<UploadResponse>>> captor = ArgumentCaptor.forClass(Callback.class);
+            verify(call).enqueue(captor.capture());
+
+            Response<RegProcResponseWrapper<UploadResponse>> response = Response.success(wrapper);
+            captor.getValue().onResponse(call, response);
+
+            verify(cb).onComplete("id", PacketTaskStatus.UPLOAD_FAILED);
+        }
+    }
+
+    @Test
+    public void test_uploadRegistration_nullServerStatus() {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(null);
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setFilePath("test.zip");
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+
+        Call call = mock(Call.class);
+        when(mockSyncRestService.uploadPacket(any())).thenReturn(call);
+
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+
+        RegProcResponseWrapper<UploadResponse> wrapper = new RegProcResponseWrapper<>();
+        UploadResponse uploadResponse = new UploadResponse();
+        uploadResponse.setStatus("UPLOADED");
+        wrapper.setResponse(uploadResponse);
+
+        try (MockedStatic<SyncRestUtil> util = Mockito.mockStatic(SyncRestUtil.class)) {
+            util.when(() -> SyncRestUtil.getServiceError(wrapper)).thenReturn(null);
+
+            packetService.uploadRegistration("id", cb);
+
+            ArgumentCaptor<Callback<RegProcResponseWrapper<UploadResponse>>> captor = ArgumentCaptor.forClass(Callback.class);
+            verify(call).enqueue(captor.capture());
+
+            Response<RegProcResponseWrapper<UploadResponse>> response = Response.success(wrapper);
+            captor.getValue().onResponse(call, response);
+
+            verify(cb, atLeastOnce()).onComplete("id", PacketTaskStatus.UPLOAD_COMPLETED);
+        }
+    }
+
+    @Test
+    public void test_uploadRegistration_nullRegistration() {
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(null);
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        assertThrows(NullPointerException.class, () -> packetService.uploadRegistration("id", cb));
+    }
+
+    @Test
+    public void test_uploadRegistration_filePathNull() {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.UPLOAD_PENDING.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        reg.setFilePath(null);
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        assertThrows(NullPointerException.class, () -> packetService.uploadRegistration("id", cb));
+    }
+
+    @Test
+    public void test_syncRegistration_nullRegistration() {
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(null);
+        AsyncPacketTaskCallBack cb = mock(AsyncPacketTaskCallBack.class);
+        assertThrows(NullPointerException.class, () -> packetService.syncRegistration("id", cb));
+    }
+
+    @Test
+    public void test_syncRegistration_nullCallback() {
+        Registration reg = new Registration("id");
+        reg.setClientStatus(PacketClientStatus.CREATED.name());
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(reg);
+        assertThrows(NullPointerException.class, () -> packetService.syncRegistration("id", null));
+    }
+
+    @Test
+    public void test_getPacketStatus_nullRegistration() {
+        when(mockRegistrationRepository.getRegistration("id")).thenReturn(null);
+        assertThrows(NullPointerException.class, () -> packetService.getPacketStatus("id"));
+    }
+
+    @Test
+    public void test_syncAllPacketStatus_serverVersionNot115() {
+        List<Registration> regs = Collections.singletonList(new Registration("id"));
+        when(mockRegistrationRepository.getAllRegistrations()).thenReturn(regs);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("2.0.0");
+        Call call = mock(Call.class);
+        when(mockSyncRestService.getPacketStatus(any())).thenReturn(call);
+
+        packetService.syncAllPacketStatus();
+
+        verify(mockSyncRestService).getPacketStatus(any());
+    }
+
+    @Test
+    public void test_getPacketStatus_serverStatusNotNull() {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(PacketServerStatus.UPLOAD_PENDING.name());
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        when(mockRegistrationRepository.getRegistration("packet123")).thenReturn(reg);
+        String status = packetService.getPacketStatus("packet123");
+        assertEquals(PacketServerStatus.UPLOAD_PENDING.name(), status);
+    }
+
+    @Test
+    public void test_getPacketStatus_serverStatusNull() {
+        Registration reg = new Registration("id");
+        reg.setServerStatus(null);
+        reg.setClientStatus(PacketClientStatus.APPROVED.name());
+        when(mockRegistrationRepository.getRegistration("packet123")).thenReturn(reg);
+        String status = packetService.getPacketStatus("packet123");
+        assertEquals(PacketClientStatus.APPROVED.name(), status);
+    }
 
 }

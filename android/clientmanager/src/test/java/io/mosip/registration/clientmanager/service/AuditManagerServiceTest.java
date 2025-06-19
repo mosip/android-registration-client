@@ -9,6 +9,7 @@ import io.mosip.registration.clientmanager.constant.AuditReferenceIdTypes;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.entity.Audit;
+import io.mosip.registration.clientmanager.spi.RegistrationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,9 @@ import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.util.ReflectionUtils;
 
@@ -23,6 +27,7 @@ import io.mosip.registration.clientmanager.repository.AuditRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -173,6 +178,91 @@ public class AuditManagerServiceTest {
 
         assertFalse(result);
         Mockito.verify(mockAuditRepo, Mockito.never()).deleteAllAuditsTillDate(Mockito.anyLong());
+    }
+
+    @Test
+    public void test_audit_delegates_to_overloaded_method_with_null_error_message() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("testUser");
+
+        AuditManagerServiceImpl auditService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+        auditService.audit(AuditEvent.LOGIN_WITH_PASSWORD, "TEST_MODULE", "Test Module");
+    }
+
+    @Test
+    public void test_audit_delegates_to_main_method_with_component_details() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("testUser");
+        when(mockSharedPreferences.getString(SessionManager.RID, null)).thenReturn(null);
+
+        AuditManagerServiceImpl auditService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+        auditService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN, "Test error message");
+    }
+
+    @Test
+    public void test_audit_throws_exception_with_null_audit_event() {
+      AuditManagerServiceImpl auditService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+      assertThrows(NullPointerException.class, () -> {
+          auditService.audit(null, Components.LOGIN, "Test error message");
+      });
+    }
+
+    @Test
+    public void test_audit_delegates_to_add_audit_with_null_error_msg() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("testUser");
+
+        auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, "MOD001", "LoginModule", "REF123", "USER_ID");
+
+        verify(mockAuditRepository, times(1)).insertAudit(any(Audit.class));
+    }
+
+    @Test
+    public void test_audit_with_null_audit_event_enum() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("testUser");
+
+        assertThrows(NullPointerException.class, () -> {
+            auditManagerService.audit(null, "MOD001", "LoginModule", "REF123", "USER_ID");
+        });
+    }
+
+    @Test
+    public void test_returns_audit_logs_with_valid_from_date_time() {
+        List<Audit> expectedAudits = Arrays.asList(
+                new Audit(1234567890L, "EVT-001", "Login", "USER", 1234567890L, "host1", "192.168.1.1", "app1", "TestApp", "user1", "user1", "ref1", "USER_ID", "user1", "AuthModule", "AUTH-001", "User login successful"),
+                new Audit(1234567891L, "EVT-002", "Logout", "USER", 1234567891L, "host1", "192.168.1.1", "app1", "TestApp", "user1", "user1", "ref1", "USER_ID", "user1", "AuthModule", "AUTH-002", "User logout successful")
+        );
+
+        when(mockAuditRepository.getAuditsFromDate(1234567890L)).thenReturn(expectedAudits);
+
+        AuditManagerServiceImpl auditManagerService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+        List<Audit> actualAudits = auditManagerService.getAuditLogs(1234567890L);
+
+        assertEquals(expectedAudits, actualAudits);
+        verify(mockAuditRepository).getAuditsFromDate(1234567890L);
+    }
+
+    @Test
+    public void test_handles_negative_from_date_time_values() {
+        List<Audit> expectedAudits = new ArrayList<>();
+
+        when(mockAuditRepository.getAuditsFromDate(-1000L)).thenReturn(expectedAudits);
+
+        AuditManagerServiceImpl auditManagerService = new AuditManagerServiceImpl(mockContext, mockAuditRepository, mockGlobalParamRepository);
+
+        List<Audit> actualAudits = auditManagerService.getAuditLogs(-1000L);
+
+        assertEquals(expectedAudits, actualAudits);
+        verify(mockAuditRepository).getAuditsFromDate(-1000L);
     }
 
 }

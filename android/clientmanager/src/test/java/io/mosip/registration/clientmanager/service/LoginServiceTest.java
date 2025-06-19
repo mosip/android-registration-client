@@ -1,15 +1,19 @@
 package io.mosip.registration.clientmanager.service;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
 
+import com.auth0.android.jwt.DecodeException;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -368,6 +372,61 @@ public class LoginServiceTest {
         assertTrue(result);
         Mockito.verify(userDetailRepository).getUserDetailCount();
         Mockito.verify(userDetailRepository, Mockito.never()).isActiveUser(Mockito.anyString());
+    }
+
+    @Test (expected = DecodeException.class)
+     public void test_saveAuthToken_success() throws Exception {
+        String authResponse = "dummyAuth";
+        String userId = "user1";
+        String token = "token123";
+        String refreshToken = "refresh456";
+        long expiryTime = 1000L;
+        long refreshExpiryTime = 2000L;
+        List<String> expectedRoles = Arrays.asList("ROLE1", "ROLE2");
+
+        JSONObject json = new JSONObject();
+        json.put("token", token);
+        json.put("refreshToken", refreshToken);
+        json.put("expiryTime", String.valueOf(expiryTime));
+        json.put("refreshExpiryTime", String.valueOf(refreshExpiryTime));
+        byte[] encoded = json.toString().getBytes();
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(java.util.Base64.getEncoder().encodeToString(encoded));
+
+        when(clientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+        lenient().when(sessionManager.saveAuthToken(token)).thenReturn(expectedRoles);
+
+        List<String> roles = loginService.saveAuthToken(authResponse, userId);
+
+        verify(userDetailRepository).saveUserAuthToken(userId, token, refreshToken, expiryTime, refreshExpiryTime);
+        verify(sessionManager).saveAuthToken(token);
+        assertEquals(expectedRoles, roles);
+    }
+
+    @Test
+    public void test_saveAuthToken_nullCryptoResponse_throwsException() {
+        String authResponse = "dummyAuth";
+        String userId = "user1";
+        when(clientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(null);
+
+        Exception ex = assertThrows(InvalidMachineSpecIDException.class, () -> {
+            loginService.saveAuthToken(authResponse, userId);
+        });
+        assertEquals("Invalid Machine Spec ID found", ex.getMessage());
+    }
+
+    @Test
+    public void test_saveAuthToken_jsonParseException() {
+        String authResponse = "dummyAuth";
+        String userId = "user1";
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue("!!notbase64!!");
+        when(clientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        assertThrows(Exception.class, () -> {
+            loginService.saveAuthToken(authResponse, userId);
+        });
     }
 
 }
