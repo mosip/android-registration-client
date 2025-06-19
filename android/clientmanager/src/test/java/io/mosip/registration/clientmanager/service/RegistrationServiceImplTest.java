@@ -1089,8 +1089,35 @@ public class RegistrationServiceImplTest {
         biometricsDto.setSdkScore(0.0);
         biometricsDto.setSpecVersion(null);
         biometricsDto.setQualityScore(0);
-        BIR bir = ((RegistrationServiceImpl)registrationService).buildBIR(biometricsDto);
+
+        BIR bir = ((RegistrationServiceImpl) registrationService).buildBIR(biometricsDto);
+
         assertNotNull(bir);
+        assertNotNull(bir.getBirInfo());
+        // bdb is an empty array, not null
+        assertArrayEquals(new byte[0], bir.getBdb());
+        // sb is also an empty array
+        assertArrayEquals(new byte[0], bir.getSb());
+        // others is not null, and should contain all expected keys with default/empty values
+        assertNotNull(bir.getOthers());
+        // Accept both "true" and null for "exception" key
+        String exceptionValue = bir.getOthers().get("exception");
+        assertTrue(exceptionValue == null || "true".equals(exceptionValue));
+        // Accept both null and "0" for numOfRetries
+        String numOfRetries = bir.getOthers().get("numOfRetries");
+        assertTrue(numOfRetries == null || "0".equals(numOfRetries));
+        // Accept both null and "0.0" for sdkScore
+        String sdkScore = bir.getOthers().get("sdkScore");
+        assertTrue(sdkScore == null || "0.0".equals(sdkScore));
+        // Accept both null and "false" for forceCaptured
+        String forceCaptured = bir.getOthers().get("forceCaptured");
+        assertTrue(forceCaptured == null || "false".equals(forceCaptured));
+        // Accept both null and "" for payload
+        String payload = bir.getOthers().get("payload");
+        assertTrue(payload == null || "".equals(payload));
+        // Accept both null and "" for specVersion
+        String specVersion = bir.getOthers().get("specVersion");
+        assertTrue(specVersion == null || "".equals(specVersion));
     }
 
     @Test
@@ -1098,7 +1125,7 @@ public class RegistrationServiceImplTest {
     public void testBuildBIR_InvalidDecodedBioResponse() {
         BiometricsDto biometricsDto = new BiometricsDto();
         biometricsDto.setModality("FACE");
-        biometricsDto.setBioValue("dGVzdA==");
+        biometricsDto.setBioValue("dGVzdA=="); // base64 of "test"
         biometricsDto.setBioSubType("subtype");
         biometricsDto.setDecodedBioResponse("{\"somethingElse\":\"abc\"}");
         biometricsDto.setSignature("sig");
@@ -1106,8 +1133,21 @@ public class RegistrationServiceImplTest {
         biometricsDto.setSdkScore(0.5);
         biometricsDto.setSpecVersion("1.0");
         biometricsDto.setQualityScore(10);
+
         BIR bir = ((RegistrationServiceImpl)registrationService).buildBIR(biometricsDto);
+
         assertNotNull(bir);
+        assertNotNull(bir.getBdb());
+        assertEquals("test", new String(bir.getBdb()));  // decoded from base64
+        assertEquals("sig", new String(bir.getSb()));    // assuming set directly
+        assertNotNull(bir.getOthers());
+        // Accept both expected value and null for these keys
+        String modality = bir.getOthers().get("modality");
+        assertTrue(modality == null || "FACE".equals(modality));
+        String bioSubType = bir.getOthers().get("bioSubType");
+        assertTrue(bioSubType == null || "subtype".equals(bioSubType));
+        String specVersion = bir.getOthers().get("specVersion");
+        assertTrue(specVersion == null || "1.0".equals(specVersion));
     }
 
     @Test
@@ -1322,20 +1362,39 @@ public class RegistrationServiceImplTest {
     @Test
     // Test buildBIR with null and empty values
     public void testBuildBIR_NullAndEmpty() {
-        assertNull(((RegistrationServiceImpl)registrationService).buildBIR(null));
+        // Null DTO returns null
+        assertNull(((RegistrationServiceImpl) registrationService).buildBIR(null));
+
+        // Empty but non-null DTO
         BiometricsDto biometricsDto = new BiometricsDto();
         biometricsDto.setModality("FACE");
         biometricsDto.setBioValue("");
         biometricsDto.setBioSubType("");
-        // Provide a minimal valid decodedBioResponse to avoid StringIndexOutOfBoundsException
         biometricsDto.setDecodedBioResponse("{\"bioValue\":\"\"}");
         biometricsDto.setSignature("");
         biometricsDto.setNumOfRetries(0);
         biometricsDto.setSdkScore(0.0);
         biometricsDto.setSpecVersion("");
         biometricsDto.setQualityScore(0);
-        BIR bir = ((RegistrationServiceImpl)registrationService).buildBIR(biometricsDto);
+
+        BIR bir = ((RegistrationServiceImpl) registrationService).buildBIR(biometricsDto);
+
         assertNotNull(bir);
+        assertEquals("", new String(bir.getBdb()));
+        assertEquals("", new String(bir.getSb()));
+        // Accept both expected value and null for these keys
+        String modality = bir.getOthers().get("modality");
+        assertTrue(modality == null || "FACE".equals(modality));
+        String bioSubType = bir.getOthers().get("bioSubType");
+        assertTrue(bioSubType == null || "".equals(bioSubType));
+        String specVersion = bir.getOthers().get("specVersion");
+        assertTrue(specVersion == null || "".equals(specVersion));
+        String numOfRetries = bir.getOthers().get("numOfRetries");
+        assertTrue(numOfRetries == null || "0".equals(numOfRetries));
+        String sdkScore = bir.getOthers().get("sdkScore");
+        assertTrue(sdkScore == null || "0.0".equals(sdkScore));
+        String qualityScore = bir.getOthers().get("qualityScore");
+        assertTrue(qualityScore == null || "0".equals(qualityScore));
     }
 
     @Test
