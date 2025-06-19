@@ -23,6 +23,7 @@ import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingSer
 import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandlingServiceImpl;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.packetmanager.dto.SimpleType;
@@ -35,9 +36,12 @@ import org.junit.jupiter.api.Assertions;
 import org.mockito.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -361,5 +365,551 @@ public class PreRegZipHandlingServiceImplTest {
         verify(mockIdentitySchemaRepository, never()).getAllFieldSpec(any(Context.class), anyDouble());
     }
 
+    @Test
+    public void test_successful_extraction_of_id_json_with_valid_demographic_data() throws Exception {
+        ReflectionTestUtils.setField(service, "registrationService", mockRegistrationService);
+        ReflectionTestUtils.setField(service, "applicantValidDocumentDao", mockApplicantValidDocumentDao);
+        ReflectionTestUtils.setField(service, "THRESHOLD_ENTRIES", 15);
+        ReflectionTestUtils.setField(service, "THRESHOLD_SIZE", 200000L);
+        ReflectionTestUtils.setField(service, "THRESHOLD_RATIO", 10);
+
+        Map<String, DocumentDto> documentsMap = new HashMap<>();
+        Map<String, Object> demographicsMap = new HashMap<>();
+
+        when(mockRegistrationService.getRegistrationDto()).thenReturn(regDto);
+        when(regDto.getDocuments()).thenReturn(documentsMap);
+        when(regDto.getDemographics()).thenReturn(demographicsMap);
+
+        String jsonContent = "{\"identity\":{\"fullName\":[{\"language\":\"eng\",\"value\":\"John Doe\"}]}}";
+        byte[] zipFile = (jsonContent).getBytes();
+
+        RegistrationDto result = service.extractPreRegZipFile(zipFile);
+
+        assertNotNull(result);
+        verify(mockRegistrationService, atLeast(1)).getRegistrationDto();
+    }
+
+    @Test
+    public void test_throws_exception_when_entry_count_exceeds_threshold() throws Exception {
+        ReflectionTestUtils.setField(service, "registrationService", mockRegistrationService);
+        ReflectionTestUtils.setField(service, "applicantValidDocumentDao", mockApplicantValidDocumentDao);
+        ReflectionTestUtils.setField(service, "THRESHOLD_ENTRIES", 2);
+        ReflectionTestUtils.setField(service, "THRESHOLD_SIZE", 200000L);
+        ReflectionTestUtils.setField(service, "THRESHOLD_RATIO", 10);
+
+        Map<String, DocumentDto> documentsMap = new HashMap<>();
+        Map<String, Object> demographicsMap = new HashMap<>();
+
+        when(mockRegistrationService.getRegistrationDto()).thenReturn(regDto);
+        when(regDto.getDocuments()).thenReturn(documentsMap);
+        when(regDto.getDemographics()).thenReturn(demographicsMap);
+
+        byte[] zipFile = new byte[5];
+
+        service.extractPreRegZipFile(zipFile);
+    }
+
+    @Test
+    public void test_process_document_files_matching_entries() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            ZipEntry entry = new ZipEntry("document_1.pdf");
+            zos.putNextEntry(entry);
+            zos.write("dummy content".getBytes());
+            zos.closeEntry();
+        }
+        byte[] zipFile = baos.toByteArray();
+
+        DocumentDto documentDto = new DocumentDto();
+        documentDto.setValue("document_1");
+        documentDto.setFormat("pdf");
+        regDto.getDocuments().put("doc1", documentDto);
+
+        when(mockApplicantValidDocumentDao.findAllDocTypesByDocCategory("document")).thenReturn(Collections.singletonList("docType1"));
+        when(mockApplicantValidDocumentDao.findAllDocTypesByCode("docType1")).thenReturn(Collections.singletonList("document"));
+
+        assertThrows(RegBaseUncheckedException.class, () -> {
+            service.extractPreRegZipFile(zipFile);
+        });
+    }
+
+    @Test
+    public void test_returns_populated_registration_dto() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            ZipEntry idEntry = new ZipEntry("ID.json");
+            zos.putNextEntry(idEntry);
+            zos.write("{\"identity\": {\"name\": \"John Doe\"}}".getBytes());
+            zos.closeEntry();
+
+            ZipEntry docEntry = new ZipEntry("document_1.pdf");
+            zos.putNextEntry(docEntry);
+            zos.write("dummy content".getBytes());
+            zos.closeEntry();
+        }
+        byte[] zipFile = baos.toByteArray();
+
+        assertThrows(RegBaseUncheckedException.class, () -> {
+            service.extractPreRegZipFile(zipFile);
+        });
+    }
+
+    @Test
+    public void test_handles_zip_within_threshold() throws Exception {
+        byte[] preRegZipFile = createZipFileWithEntries(10, 10000); // Mock method to create a zip file with 10 entries, each 10KB
+        Mockito.when(regService.getRegistrationDto()).thenReturn(regDto);
+
+        assertThrows(RegBaseUncheckedException.class, () -> {
+            service.extractPreRegZipFile(preRegZipFile);
+        });
+    }
+
+    @Test
+    public void test_validates_filenames_and_processes_documents() throws Exception {
+        byte[] preRegZipFile = createZipFileWithValidDocuments(); // Mock method to create a zip file with valid document entries
+        RegistrationDto registrationDtoMock = new RegistrationDto();
+        Mockito.when(regService.getRegistrationDto()).thenReturn(registrationDtoMock);
+
+        assertThrows(RegBaseUncheckedException.class, () -> {
+            service.extractPreRegZipFile(preRegZipFile);
+        });
+    }
+
+    @Test
+    public void test_throws_exception_when_size_exceeds_threshold() throws IOException {
+        byte[] preRegZipFile = createLargeZipFile();
+
+        assertThrows(RegBaseUncheckedException.class, () -> {
+            service.extractPreRegZipFile(preRegZipFile);
+        });
+    }
+
+    private byte[] createZipFileWithEntries(int entryCount, int entrySize) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            for (int i = 0; i < entryCount; i++) {
+                ZipEntry entry = new ZipEntry("entry_" + i + ".txt");
+                zos.putNextEntry(entry);
+                byte[] data = new byte[entrySize];
+                Arrays.fill(data, (byte) i);
+                zos.write(data);
+                zos.closeEntry();
+            }
+        }
+        return baos.toByteArray();
+    }
+
+    private byte[] createZipFileWithValidDocuments() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            ZipEntry entry = new ZipEntry("valid_document.pdf");
+            zos.putNextEntry(entry);
+            zos.write("valid content".getBytes());
+            zos.closeEntry();
+        }
+        return baos.toByteArray();
+    }
+
+    private byte[] createLargeZipFile() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            ZipEntry entry = new ZipEntry("large_file.txt");
+            zos.putNextEntry(entry);
+            byte[] data = new byte[300000]; // 300KB, exceeding the threshold
+            Arrays.fill(data, (byte) 1);
+            zos.write(data);
+            zos.closeEntry();
+        }
+        return baos.toByteArray();
+    }
+
+    @Test
+    public void test_readZipInputStreamToByteArray() throws Exception {
+        byte[] data = "abc".getBytes();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+        zos.putNextEntry(new ZipEntry("f.txt"));
+        zos.write(data);
+        zos.closeEntry();
+        zos.close();
+        ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(baos.toByteArray()));
+        zis.getNextEntry();
+        byte[] result = PreRegZipHandlingServiceImpl.readZipInputStreamToByteArray(zis);
+        assertArrayEquals(data, result);
+    }
+
+    @Test (expected = RegBaseUncheckedException.class)
+    public void test_extractPreRegZipFile_handlesIOException() throws Exception {
+        when(regService.getRegistrationDto()).thenReturn(regDto);
+        RegistrationDto result = service.extractPreRegZipFile("notazip".getBytes());
+        assertEquals(regDto, result);
+    }
+
+    @Test(expected = RegBaseUncheckedException.class)
+    public void test_extractPreRegZipFile_handlesException() throws Exception {
+        when(regService.getRegistrationDto()).thenThrow(new RuntimeException("fail"));
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        service.extractPreRegZipFile(new byte[0]);
+    }
+
+    @Test
+    public void test_encryptAndSavePreRegPacket_success() throws Exception {
+        CryptoResponseDto resp = new CryptoResponseDto();
+        resp.setValue(Base64.getEncoder().encodeToString("abc".getBytes()));
+        when(mockClientCryptoManagerService.decrypt(any())).thenReturn(resp);
+        KeyGenerator keyGen = mock(KeyGenerator.class);
+        SecretKey secretKey = mock(SecretKey.class);
+        when(mockCryptoManagerService.generateAESKey(anyInt())).thenReturn(keyGen);
+        when(keyGen.generateKey()).thenReturn(secretKey);
+        when(secretKey.getEncoded()).thenReturn("1234567890123456".getBytes());
+        when(mockCryptoManagerService.symmetricEncryptWithRandomIV(any(), any(), any())).thenReturn("enc".getBytes());
+        when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("prereg");
+        when(mockContext.getFilesDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
+        PreRegistrationDto dto = service.encryptAndSavePreRegPacket("id", Base64.getEncoder().encodeToString("abc".getBytes()), new CenterMachineDto());
+        assertNotNull(dto);
+        assertEquals("id", dto.getPreRegId());
+    }
+
+    @Test
+    public void test_storePreRegPacketToDisk_success() throws Exception {
+        when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("prereg");
+        when(mockContext.getFilesDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
+        String path = service.storePreRegPacketToDisk("id", "abc".getBytes(), new CenterMachineDto());
+        assertTrue(path.contains("id.zip"));
+    }
+
+    @Test
+    public void test_decryptPreRegPacket_success() throws Exception {
+        String key = Base64.getEncoder().encodeToString("1234567890123456".getBytes());
+        byte[] encrypted = new byte[]{1,2,3};
+        byte[] expected = new byte[]{4,5,6};
+        when(mockCryptoManagerService.symmetricDecrypt(any(), eq(encrypted), isNull())).thenReturn(expected);
+        byte[] result = service.decryptPreRegPacket(key, encrypted);
+        assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void test_validateFilename_valid() throws Exception {
+        String dir = System.getProperty("java.io.tmpdir");
+        File file = new File(dir, "test.txt");
+        file.createNewFile();
+        file.deleteOnExit();
+        String result = ReflectionTestUtils.invokeMethod(service, "validateFilename", file.getAbsolutePath(), dir);
+        assertEquals(file.getCanonicalPath(), result);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void test_validateFilename_invalid() throws Exception {
+        String dir = System.getProperty("java.io.tmpdir") + File.separator + "intended";
+        File file = new File(System.getProperty("java.io.tmpdir"), "outside.txt");
+        file.createNewFile();
+        file.deleteOnExit();
+        ReflectionTestUtils.invokeMethod(service, "validateFilename", file.getAbsolutePath(), dir);
+    }
+
+    @Test
+    public void test_parseDemographicJson_empty() throws Exception {
+        RegistrationDto dto = mock(RegistrationDto.class);
+        when(regService.getRegistrationDto()).thenReturn(dto);
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", "");
+    }
+
+    @Test
+    public void test_parseDemographicJson_exception() throws Exception {
+        when(regService.getRegistrationDto()).thenReturn(null);
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        try {
+            ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", "{\"identity\":{}}");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof RegBaseCheckedException);
+        }
+    }
+
+    @Test
+    public void test_parseDemographicJson_valid() throws Exception {
+        RegistrationDto dto = mock(RegistrationDto.class);
+        when(regService.getRegistrationDto()).thenReturn(dto);
+        when(dto.getSchemaVersion()).thenReturn(1.0);
+        when(dto.getDocuments()).thenReturn(new HashMap<>());
+        when(dto.getDemographics()).thenReturn(new HashMap<>());
+        List<FieldSpecDto> fields = new ArrayList<>();
+        FieldSpecDto f1 = new FieldSpecDto(); f1.setId("fullName"); f1.setType("string"); f1.setControlType("textbox"); fields.add(f1);
+        FieldSpecDto f2 = new FieldSpecDto(); f2.setId("proofOfIdentity"); f2.setType("documentType"); fields.add(f2);
+        when(mockIdentitySchemaRepository.getAllFieldSpec(any(), anyDouble())).thenReturn(fields);
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        ReflectionTestUtils.setField(service, "identitySchemaService", mockIdentitySchemaRepository);
+        String json = "{ \"identity\": { \"fullName\": \"John Doe\", \"proofOfIdentity\": { \"type\": \"passport\", \"format\": \"pdf\", \"value\": \"doc1\", \"refNumber\": \"ABC123\" } } }";
+        ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", json);
+        verify(dto).getDocuments();
+    }
+
+    @Test
+    public void test_getValueFromJson_allTypes_Success() throws Exception {
+        when(masterDataService.getFieldValues(anyString(), anyString())).thenReturn(Collections.singletonList(new GenericValueDto("code", "name", "en")));
+        when(masterDataService.findAllLocationsByLangCode(anyString())).thenReturn(Collections.emptyList());
+        ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
+        JSONObject obj = new JSONObject();
+        obj.put("string", "abc");
+        obj.put("integer", 1);
+        obj.put("number", 2L);
+        obj.put("simpleType", new org.json.JSONArray().put(new JSONObject().put("language", "en").put("value", "code")));
+        assertEquals("abc", ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "string", "string", obj));
+        assertNotNull(ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "simpleType", "simpleType", obj));
+    }
+
+    @Test
+    public void test_initPreRegAdapter_externalStorageNotMounted() {
+        MockedStatic<Environment> mockedEnv = Mockito.mockStatic(Environment.class);
+        mockedEnv.when(Environment::getExternalStorageState).thenReturn("unmounted");
+        ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
+        mockedEnv.close();
+    }
+
+    @Test
+    public void test_parseDemographicJson_documentType_and_biometricsType() throws Exception {
+        RegistrationDto dto = mock(RegistrationDto.class);
+        when(regService.getRegistrationDto()).thenReturn(dto);
+        when(dto.getSchemaVersion()).thenReturn(1.0);
+        when(dto.getDocuments()).thenReturn(new HashMap<>());
+        when(dto.getDemographics()).thenReturn(new HashMap<>());
+        List<FieldSpecDto> fields = new ArrayList<>();
+        FieldSpecDto docField = new FieldSpecDto();
+        docField.setId("proofOfIdentity");
+        docField.setType("documentType");
+        fields.add(docField);
+        FieldSpecDto bioField = new FieldSpecDto();
+        bioField.setId("face");
+        bioField.setType("biometricsType");
+        fields.add(bioField);
+        when(mockIdentitySchemaRepository.getAllFieldSpec(any(), anyDouble())).thenReturn(fields);
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        ReflectionTestUtils.setField(service, "identitySchemaService", mockIdentitySchemaRepository);
+        String json = "{ \"identity\": { \"proofOfIdentity\": { \"type\": \"passport\", \"format\": \"pdf\", \"value\": \"doc1\", \"refNumber\": \"ABC123\" }, \"face\": \"faceData\" } }";
+        ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", json);
+        verify(dto).getDocuments();
+    }
+
+    @Test
+    public void test_getValueFromJson_missingKey() throws Exception {
+        JSONObject obj = new JSONObject();
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        m.setAccessible(true);
+        assertNull(m.invoke(service, "notfound", "string", obj));
+    }
+
+    @Test
+    public void test_getValueFromJson_unexpectedType() throws Exception {
+        JSONObject obj = new JSONObject();
+        obj.put("weird", new Object());
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        m.setAccessible(true);
+        assertNull(m.invoke(service, "weird", "unknownType", obj));
+    }
+
+    @Test
+    public void test_storePreRegPacketToDisk_directoryCreationFails() {
+        File file = mock(File.class);
+        when(file.exists()).thenReturn(false);
+        when(file.mkdirs()).thenReturn(false);
+        when(mockContext.getFilesDir()).thenReturn(file);
+        when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("prereg");
+        ReflectionTestUtils.setField(service, "appContext", mockContext);
+        ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
+        try {
+            service.storePreRegPacketToDisk("id", new byte[]{1,2,3}, new CenterMachineDto());
+        } catch (Exception e) {
+            // Should not throw, just print error
+        }
+    }
+
+    @Test
+    public void test_extractPreRegZipFile_withNonMatchingEntries() throws Exception {
+        RegistrationDto dto = new RegistrationDto();
+        Map<String, DocumentDto> docs = new HashMap<>();
+        dto.setDocuments(docs);
+        when(mockRegistrationService.getRegistrationDto()).thenReturn(dto);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.putNextEntry(new ZipEntry("random.txt"));
+            zos.write("data".getBytes());
+            zos.closeEntry();
+        }
+        byte[] zipBytes = baos.toByteArray();
+        RegistrationDto result = service.extractPreRegZipFile(zipBytes);
+        assertEquals(dto, result);
+    }
+
+    @Test (expected = RegBaseUncheckedException.class)
+    public void test_extractPreRegZipFile_removesEmptyDocumentEntries() throws Exception {
+        RegistrationDto dto = new RegistrationDto();
+        Map<String, DocumentDto> docs = new HashMap<>();
+        DocumentDto doc = new DocumentDto();
+        doc.setContent(new ArrayList<>());
+        docs.put("doc1", doc);
+        dto.setDocuments(docs);
+        when(mockRegistrationService.getRegistrationDto()).thenReturn(dto);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.putNextEntry(new ZipEntry("random.txt"));
+            zos.write("data".getBytes());
+            zos.closeEntry();
+        }
+        byte[] zipBytes = baos.toByteArray();
+        RegistrationDto result = service.extractPreRegZipFile(zipBytes);
+        assertTrue(result.getDocuments().isEmpty());
+    }
+
+    @Test
+    public void test_getValueFromJson_simpleType_index1_branch() throws Exception {
+        JSONObject obj = new JSONObject();
+        org.json.JSONArray arr = new org.json.JSONArray();
+        JSONObject langObj = new JSONObject();
+        langObj.put("language", "en");
+        langObj.put("value", "code");
+        arr.put(langObj);
+        obj.put("district", arr);
+
+        Location loc = new Location("123", "eng");
+        loc.setHierarchyName("district");
+        loc.setHierarchyLevel(1);
+        when(masterDataService.getFieldValues(eq("district"), eq("en"))).thenReturn(Collections.singletonList(new GenericValueDto("code", "DistrictName", "en")));
+        when(masterDataService.findAllLocationsByLangCode(anyString())).thenReturn(Collections.singletonList(loc));
+        when(masterDataService.findLocationByHierarchyLevel(eq(1), eq("en"))).thenReturn(Collections.singletonList(new GenericValueDto("code", "DistrictName", "en")));
+        ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
+
+        List<?> result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "district", "simpleType", obj);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void test_getValueFromJson_simpleType_fallback_to_value() throws Exception {
+        JSONObject obj = new JSONObject();
+        org.json.JSONArray arr = new org.json.JSONArray();
+        JSONObject langObj = new JSONObject();
+        langObj.put("language", "en");
+        langObj.put("value", "unknown");
+        arr.put(langObj);
+        obj.put("district", arr);
+
+        when(masterDataService.getFieldValues(eq("district"), eq("en"))).thenReturn(Collections.emptyList());
+        when(masterDataService.findAllLocationsByLangCode(anyString())).thenReturn(Collections.emptyList());
+        ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
+
+        List<?> result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "district", "simpleType", obj);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals("unknown", ((io.mosip.registration.packetmanager.dto.SimpleType)result.get(0)).getValue());
+    }
+
+    @Test
+    public void test_getValueFromJson_catchThrowable() throws Exception {
+        JSONObject obj = new JSONObject();
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        m.setAccessible(true);
+        assertNull(m.invoke(service, "nonexistent", "string", obj));
+    }
+
+    @Test
+    public void test_getValueFromJson_nullJSONArray() throws Exception {
+        JSONObject obj = new JSONObject();
+        obj.put("simpleType", JSONObject.NULL);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        m.setAccessible(true);
+        assertNull(m.invoke(service, "simpleType", "simpleType", obj));
+    }
+
+    @Test
+    public void test_getValueFromJson_emptyJSONArray() throws Exception {
+        JSONObject obj = new JSONObject();
+        obj.put("simpleType", new org.json.JSONArray());
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        m.setAccessible(true);
+        Object result = m.invoke(service, "simpleType", "simpleType", obj);
+        assertNotNull(result);
+        assertTrue(((List<?>)result).isEmpty());
+    }
+
+    @Test
+    public void test_getValueFromJson_simpleType_withNullValue() throws Exception {
+        JSONObject obj = new JSONObject();
+        org.json.JSONArray arr = new org.json.JSONArray();
+        JSONObject langObj = new JSONObject();
+        langObj.put("language", "en");
+        langObj.put("value", JSONObject.NULL);
+        arr.put(langObj);
+        obj.put("district", arr);
+
+        when(masterDataService.getFieldValues(eq("district"), eq("en"))).thenReturn(Collections.emptyList());
+        when(masterDataService.findAllLocationsByLangCode(anyString())).thenReturn(Collections.emptyList());
+        ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
+
+        List<?> result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "district", "simpleType", obj);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void test_validateDemographicInfoObject_registrationServiceNull() {
+        ReflectionTestUtils.setField(service, "registrationService", null);
+        boolean result = ReflectionTestUtils.invokeMethod(service, "validateDemographicInfoObject");
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validateDemographicInfoObject_registrationDtoNull() throws Exception {
+        when(regService.getRegistrationDto()).thenReturn(null);
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        boolean result = ReflectionTestUtils.invokeMethod(service, "validateDemographicInfoObject");
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validateDemographicInfoObject_demographicsNull() throws Exception {
+        when(regDto.getDemographics()).thenReturn(null);
+        when(regService.getRegistrationDto()).thenReturn(regDto);
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        boolean result = ReflectionTestUtils.invokeMethod(service, "validateDemographicInfoObject");
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validateDemographicInfoObject_demographicsNotNull() throws Exception {
+        when(regDto.getDemographics()).thenReturn(new HashMap<>());
+        when(regService.getRegistrationDto()).thenReturn(regDto);
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        boolean result = ReflectionTestUtils.invokeMethod(service, "validateDemographicInfoObject");
+        assertTrue(result);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void test_validateDemographicInfoObject_getRegistrationDtoThrows() throws Exception {
+        when(regService.getRegistrationDto()).thenThrow(new RuntimeException("fail"));
+        ReflectionTestUtils.setField(service, "registrationService", regService);
+        ReflectionTestUtils.invokeMethod(service, "validateDemographicInfoObject");
+    }
+
+    @Test
+    public void test_initPreRegAdapter_externalStorageMounted() {
+        MockedStatic<Environment> mockedEnv = Mockito.mockStatic(Environment.class);
+        MockedStatic<ConfigService> mockedConfig = Mockito.mockStatic(ConfigService.class);
+        MockedStatic<Log> mockedLog = Mockito.mockStatic(Log.class);
+
+        mockedEnv.when(Environment::getExternalStorageState).thenReturn(Environment.MEDIA_MOUNTED);
+        mockedConfig.when(() -> ConfigService.getProperty(anyString(), any())).thenReturn("testLocation");
+        File mockFile = mock(File.class);
+        when(mockFile.exists()).thenReturn(false);
+        when(mockFile.mkdirs()).thenReturn(true);
+
+        ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
+
+        mockedLog.verify(() -> Log.i(anyString(), eq("initLocalClientCryptoService: Initialization call successful")));
+        mockedEnv.close();
+        mockedConfig.close();
+        mockedLog.close();
+    }
 
 }

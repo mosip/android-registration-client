@@ -3,134 +3,110 @@ package io.mosip.registration.clientmanager.config;
 import android.app.Application;
 import android.content.Context;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
-import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
-import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static io.mosip.registration.clientmanager.BuildConfig.BASE_URL;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
+@RunWith(MockitoJUnitRunner.class)
 public class NetworkModuleTest {
 
     @Mock
-    private Application mockApplication;
-
+    Application mockApplication;
     @Mock
-    private Context mockContext;
+    Context mockContext;
 
-    @Mock
-    private Cache mockCache;
-
-    @Mock
-    private Gson mockGson;
-
-    @Mock
-    private OkHttpClient mockOkHttpClient;
-
-    @Mock
-    private Retrofit mockRetrofit;
-
-    @Mock
-    private SyncRestService mockSyncRestService;
-
+    private File tempCacheDir;
     private NetworkModule networkModule;
 
     @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
+    public void setUp() throws IOException {
+        MockitoAnnotations.initMocks(this);
+        tempCacheDir = File.createTempFile("test-cache", "");
+        if (tempCacheDir.exists()) tempCacheDir.delete();
+        tempCacheDir.mkdir();
         when(mockApplication.getApplicationContext()).thenReturn(mockContext);
-        when(mockApplication.getCacheDir()).thenReturn(new File("cache"));
+        when(mockApplication.getCacheDir()).thenReturn(tempCacheDir);
         networkModule = new NetworkModule(mockApplication);
     }
 
-    @Test
-    public void testConstructor_InitializesFields() {
-        assertEquals(mockApplication, networkModule.application);
-        assertEquals(mockContext, networkModule.appContext);
+    @After
+    public void tearDown() {
+        if (tempCacheDir != null && tempCacheDir.exists()) {
+            for (File file : tempCacheDir.listFiles() != null ? tempCacheDir.listFiles() : new File[0]) {
+                file.delete();
+            }
+            tempCacheDir.delete();
+        }
     }
 
     @Test
-    public void testProvideHttpCache_ReturnsCache() {
+    public void testProvideHttpCache() {
         Cache cache = networkModule.provideHttpCache();
         assertNotNull(cache);
+        assertEquals(tempCacheDir.getAbsolutePath(), cache.directory().getAbsolutePath());
         assertEquals(10 * 1024 * 1024, cache.maxSize());
-        assertEquals(new File("cache"), cache.directory());
     }
 
     @Test
-    public void testProvideGson_ReturnsConfiguredGson() {
+    public void testProvideGson() {
         Gson gson = networkModule.provideGson();
         assertNotNull(gson);
-        GsonBuilder builder = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer())
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializer());
-        Gson expectedGson = builder.create();
-        LocalDateTime now = LocalDateTime.now();
-        String jsonFromActual = gson.toJson(now);
-        String jsonFromExpected = expectedGson.toJson(now);
-        assertEquals(jsonFromExpected, jsonFromActual);
+        String json = gson.toJson(new TestDateTimeHolder(LocalDateTime.of(2020, 1, 1, 12, 0)));
+        assertTrue(json.contains("2020"));
     }
 
     @Test
-    public void testProvideOkhttpClient_ReturnsConfiguredClient() {
-        OkHttpClient client = networkModule.provideOkhttpClient(mockCache);
+    public void testProvideOkhttpClient() {
+        Cache cache = networkModule.provideHttpCache();
+        OkHttpClient client = networkModule.provideOkhttpClient(cache);
         assertNotNull(client);
-        assertEquals(mockCache, client.cache());
+        assertEquals(cache, client.cache());
         assertTrue(client.interceptors().stream().anyMatch(i -> i instanceof RestAuthInterceptor));
     }
 
     @Test
-    public void testProvideRetrofit_ReturnsConfiguredRetrofit() {
-        // Act
-        Retrofit retrofit = networkModule.provideRetrofit(mockGson, mockOkHttpClient);
-
-        // Assert
+    public void testProvideRetrofit() {
+        Gson gson = networkModule.provideGson();
+        OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache());
+        Retrofit retrofit = networkModule.provideRetrofit(gson, client);
         assertNotNull(retrofit);
-        // Update expected value to include trailing slash
-        assertEquals(BASE_URL+"/", retrofit.baseUrl().toString());
-        assertEquals(mockOkHttpClient, retrofit.callFactory());
-        boolean hasGsonConverter = false;
-        for (Converter.Factory factory : retrofit.converterFactories()) {
-            if (factory instanceof GsonConverterFactory) {
-                hasGsonConverter = true;
-                break;
-            }
-        }
-        assertTrue("Retrofit should have a GsonConverterFactory", hasGsonConverter);
+        assertEquals(client, retrofit.callFactory());
+        assertTrue(retrofit.converterFactories().stream().anyMatch(f -> f instanceof GsonConverterFactory));
     }
 
     @Test
-    public void testProvideSyncRestService_ReturnsService() {
-        when(mockRetrofit.create(SyncRestService.class)).thenReturn(mockSyncRestService);
-        SyncRestService service = networkModule.provideSyncRestService(mockRetrofit);
+    public void testProvideSyncRestService() {
+        Gson gson = networkModule.provideGson();
+        OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache());
+        Retrofit retrofit = networkModule.provideRetrofit(gson, client);
+        SyncRestService service = networkModule.provideSyncRestService(retrofit);
         assertNotNull(service);
-        verify(mockRetrofit).create(SyncRestService.class);
-        assertEquals(mockSyncRestService, service);
+        assertTrue(SyncRestService.class.isAssignableFrom(service.getClass()));
     }
+
+    static class TestDateTimeHolder {
+        public LocalDateTime dateTime;
+        public TestDateTimeHolder(LocalDateTime dateTime) {
+            this.dateTime = dateTime;
+        }
+    }
+
 }

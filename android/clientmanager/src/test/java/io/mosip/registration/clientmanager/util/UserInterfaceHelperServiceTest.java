@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -264,6 +265,72 @@ public class UserInterfaceHelperServiceTest {
             assertNotNull(result);
             assertEquals(0, result.getWidth());
             assertEquals(0, result.getHeight());
+        }
+    }
+
+    @Test
+    public void testIsFieldVisible_DefaultVisible() {
+        FieldSpecDto dto = new FieldSpecDto();
+        assertTrue(UserInterfaceHelperService.isFieldVisible(dto, new HashMap<>()));
+    }
+
+    @Test
+    public void testIsFieldVisible_MvelTrue() {
+        FieldSpecDto dto = new FieldSpecDto();
+        RequiredDto visible = new RequiredDto();
+        visible.setEngine("MVEL");
+        visible.setExpr("identity.age > 18");
+        dto.setVisible(visible);
+        Map<String, Object> data = new HashMap<>();
+        data.put("age", 25);
+        assertTrue(UserInterfaceHelperService.isFieldVisible(dto, data));
+    }
+
+    @Test
+    public void testIsFieldVisible_MvelFalse() {
+        FieldSpecDto dto = new FieldSpecDto();
+        RequiredDto visible = new RequiredDto();
+        visible.setEngine("MVEL");
+        visible.setExpr("identity.age > 18");
+        dto.setVisible(visible);
+        Map<String, Object> data = new HashMap<>();
+        data.put("age", 10);
+        assertFalse(UserInterfaceHelperService.isFieldVisible(dto, data));
+    }
+
+    @Test
+    public void testIsFieldVisible_NullExpr() {
+        FieldSpecDto dto = new FieldSpecDto();
+        RequiredDto visible = new RequiredDto();
+        visible.setEngine("MVEL");
+        visible.setExpr(null);
+        dto.setVisible(visible);
+        assertTrue(UserInterfaceHelperService.isFieldVisible(dto, new HashMap<>()));
+    }
+
+    @Test
+    public void testIsFieldVisible_NonMvelEngine() {
+        FieldSpecDto dto = new FieldSpecDto();
+        RequiredDto visible = new RequiredDto();
+        visible.setEngine("OTHER");
+        visible.setExpr("identity.age > 18");
+        dto.setVisible(visible);
+        assertTrue(UserInterfaceHelperService.isFieldVisible(dto, new HashMap<>()));
+    }
+
+    @Test
+    public void testCombineBitmaps_EmptyList() {
+        Bitmap missingImage = mock(Bitmap.class);
+        when(missingImage.getWidth()).thenReturn(50);
+        when(missingImage.getHeight()).thenReturn(50);
+
+        try (MockedStatic<Bitmap> mockedBitmap = mockStatic(Bitmap.class)) {
+            Bitmap result = mock(Bitmap.class);
+            mockedBitmap.when(() -> Bitmap.createBitmap(0, 0, Bitmap.Config.ARGB_8888)).thenReturn(result);
+
+            Bitmap combined = UserInterfaceHelperService.combineBitmaps(Collections.emptyList(), missingImage);
+
+            assertNotNull(combined);
         }
     }
 
