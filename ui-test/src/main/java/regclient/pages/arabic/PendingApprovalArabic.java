@@ -29,6 +29,11 @@ public class PendingApprovalArabic extends PendingApproval{
 
 	@AndroidFindBy(accessibility = "يُقدِّم")
 	private WebElement submitButton;
+	
+	@AndroidFindBy(accessibility = "اسم المستخدم غير صالح!")
+	private WebElement invalidUsernameMessage;
+	
+	
 
 	@AndroidFindBy(accessibility = "مصادقة المشرف")
 	private WebElement supervisorAuthenticationTitle;
@@ -115,6 +120,11 @@ public class PendingApprovalArabic extends PendingApproval{
 	public boolean isRejectButtonDisplayed() {
 		return isElementDisplayed(rejectButton);		
 	}
+	
+	public boolean isInvalidUsernameMessageDisplayed() {
+		return isElementDisplayed(invalidUsernameMessage);		
+	}
+	
 	
 	public boolean isPageAttributesDisplayed() {
 		return isElementDisplayed(pageAttributes);		

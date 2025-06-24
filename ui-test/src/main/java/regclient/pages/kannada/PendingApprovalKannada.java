@@ -23,6 +23,8 @@ public class PendingApprovalKannada extends PendingApproval{
 
 	@AndroidFindBy(accessibility = "ಸ್ಕ್ರಿಮ್")
 	private WebElement backGroundScreen;
+	@AndroidFindBy(accessibility = "ಬಳಕೆದಾರ ಹೆಸರು ಅಮಾನ್ಯ!")
+	private WebElement invalidUsernameMessage;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(0)")
 	private WebElement searchCheckBoxButton;
@@ -116,6 +118,7 @@ public class PendingApprovalKannada extends PendingApproval{
 		return isElementDisplayed(rejectButton);		
 	}
 	
+	
 	public boolean isPageAttributesDisplayed() {
 		return isElementDisplayed(pageAttributes);		
 	}
@@ -135,10 +138,14 @@ public class PendingApprovalKannada extends PendingApproval{
 	public void clickOnRejectButton() {
 		clickOnElement(rejectButton);
 	}
+	public boolean isInvalidUsernameMessageDisplayed() {
+		return isElementDisplayed(invalidUsernameMessage);		
+	}
 	
 	public boolean isRejectPacketTitleDisplayed() {
 		return isElementDisplayed(rejectPacketTitle);		
 	}
+	
 	
 	public void selectRejectionReasonDropdown() {
 		boolean isdisplayed =isElementDisplayed(rejectReasonDropdown);

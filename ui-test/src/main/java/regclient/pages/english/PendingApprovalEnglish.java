@@ -32,6 +32,10 @@ public class PendingApprovalEnglish extends PendingApproval{
 
 	@AndroidFindBy(accessibility = "SUBMIT")
 	private WebElement submitButton;
+	
+	@AndroidFindBy(accessibility = "Username invalid!")
+	private WebElement invalidUsernameMessage;
+	
 
 	@AndroidFindBy(accessibility = "Supervisor's Authentication")
 	private WebElement supervisorAuthenticationTitle;
@@ -95,13 +99,17 @@ public class PendingApprovalEnglish extends PendingApproval{
 	public boolean isSupervisorAuthenticationTitleDisplayed() {
 		return isElementDisplayed(supervisorAuthenticationTitle);		
 	}
+	
+	public boolean isInvalidUsernameMessageDisplayed() {
+		return isElementDisplayed(invalidUsernameMessage);		
+	}
 
 	public  void enterUserName(String username) {
-		sendKeysToTextBox(userNameTextBox,username);
+		clickAndsendKeysToTextBox2(userNameTextBox,username);
 	}
 
 	public  void enterPassword(String password) {
-		sendKeysToTextBox(passwordTextBox,password);
+		clickAndsendKeysToTextBox2(passwordTextBox,password);
 	}
 	
 	public void clickOnBackButton() {

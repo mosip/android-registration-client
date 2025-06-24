@@ -20,6 +20,8 @@ public class PendingApprovalTamil extends PendingApproval{
 
 	@AndroidFindBy(accessibility = "ஒப்புதல்")
 	private WebElement approveButton;
+	@AndroidFindBy(accessibility = "பயனர்பெயர் செல்லாது!")
+	private WebElement invalidUsernameMessage;
 
 	@AndroidFindBy(accessibility = "ஸ்க்ரிம்")
 	private WebElement backGroundScreen;
@@ -69,6 +71,9 @@ public class PendingApprovalTamil extends PendingApproval{
 
 	public boolean isPendingApprovalTitleDisplayed() {
 		return isElementDisplayed(pendingApprovalTitle);		
+	}
+	public boolean isInvalidUsernameMessageDisplayed() {
+		return isElementDisplayed(invalidUsernameMessage);		
 	}
 
 	@SuppressWarnings("deprecation")
