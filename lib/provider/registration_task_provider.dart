@@ -328,4 +328,8 @@ class RegistrationTaskProvider with ChangeNotifier {
         .fetchPreRegistrationDetails(preRegistrationId);
     return _preRegistrationData;
   }
+
+  setApplicationId(String appId) async {
+    await registrationService.setApplicationId(appId);
+  }
 }
