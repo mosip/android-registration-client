@@ -37,6 +37,10 @@ public class AuthenticationPageEnglish extends AuthenticationPage {
 		return isElementDisplayed(authenticationPageTitle);
 	}
 	
+	
+	
+	
+	
 	public AcknowledgementPage clickOnAuthenticatenButton() {
 		clickOnElement(authenticateButton);
 		return new AcknowledgementPageEnglish(driver);

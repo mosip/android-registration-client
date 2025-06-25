@@ -36,6 +36,10 @@ public class PendingApprovalEnglish extends PendingApproval{
 	@AndroidFindBy(accessibility = "Username invalid!")
 	private WebElement invalidUsernameMessage;
 	
+	
+	@AndroidFindBy(accessibility = "SUBMIT")
+	private WebElement invalidUsernameMessageForempty;
+	
 
 	@AndroidFindBy(accessibility = "Supervisor's Authentication")
 	private WebElement supervisorAuthenticationTitle;
@@ -102,6 +106,10 @@ public class PendingApprovalEnglish extends PendingApproval{
 	
 	public boolean isInvalidUsernameMessageDisplayed() {
 		return isElementDisplayed(invalidUsernameMessage);		
+	}
+	
+	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
+		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 
 	public  void enterUserName(String username) {
