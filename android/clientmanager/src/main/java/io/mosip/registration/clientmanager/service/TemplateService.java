@@ -410,7 +410,7 @@ public class TemplateService {
         velocityContext.put("isPreview", isPreview);
         velocityContext.put("ImportantGuidelines", imp_guidelines);
         velocityContext.put("ApplicationIDLabel", appContext.getString(R.string.app_id));
-        velocityContext.put("ApplicationID", registrationDto.getRId());
+        velocityContext.put("ApplicationID", registrationDto.getApplicationId());
         velocityContext.put("UINLabel", appContext.getString(R.string.uin));
         velocityContext.put("UIN", registrationDto.getDemographics().get("UIN"));
 

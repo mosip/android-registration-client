@@ -121,5 +121,14 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
                         .build();
         result.success(registrationSubmitResponse);
     }
+
+    @Override
+    public void setApplicationId(@NonNull String applicationId, @NonNull RegistrationDataPigeon.Result<Void> result) {
+        try {
+            this.registrationDto.setApplicationId(applicationId);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Set application ID failed: " + Arrays.toString(e.getStackTrace()));
+        }
+    }
 }
 
