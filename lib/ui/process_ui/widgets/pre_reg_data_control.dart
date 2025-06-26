@@ -287,6 +287,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                               globalProvider.clearMap();
                               globalProvider.clearScannedPages();
                               widgetValue(widget.screen, value);
+                              registrationTaskProvider.setApplicationId(preRegIdController.text);
                             } else {
                               globalProvider.clearMap();
                               globalProvider.clearScannedPages();
@@ -342,6 +343,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                           globalProvider.clearMap();
                           globalProvider.clearScannedPages();
                           widgetValue(widget.screen, value);
+                          registrationTaskProvider.setApplicationId(preRegIdController.text);
                         } else {
                           globalProvider.clearMap();
                           globalProvider.clearScannedPages();
