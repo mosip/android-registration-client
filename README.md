@@ -27,6 +27,54 @@ git clone -b feature-flutter https://github.com/mosip/android-registration-clien
 
 **Active Branches**:
 
+* [release-0.12.x](https://github.com/mosip/android-registration-client/tree/release-0.12.x)(developer release branch)
+* [develop](https://github.com/mosip/android-registration-client/tree/develop)(active development branch)
+
+#### Step 2: Set up Flutter in Android Studio
+
+1. To begin, launch Android Studio.
+2. Next, select **Open an existing Android Studio project** and navigate to the cloned repository.
+3. Open the `android-registration-client` directory as a project in Android Studio.
+4. In order to integrate Flutter with Android Studio, install the Flutter plugin by accessing `File > Settings > Plugins` and searching for **Flutter**. Proceed to click on **Install** to install the plugin.
+5. To ensure proper functionality, configure the Flutter SDK path by navigating to `File > Settings > Languages & Frameworks > Flutter` and specifying the Flutter SDK path as the location where you have installed Flutter.
+6. Finally, save the changes by clicking on the "Apply" button.
+
+**Customizing the Registration Client**
+
+* Styling of the application can be configured by modifying these files `lib/utils/app_style.dart, lib/utils/app_config.dart`
+* Application language bundles can be added to this path `lib/l10n` After adding the bundle run the below command to generate Localization data (Required for the first time).
+
+```
+flutter gen-l10n
+```
+
+The Android Registration Client is a tablet application that serves as a portable version of the existing desktop Registration Client. It has been developed to support accessibility on all Android devices. The creation of the Android Registration Client was driven by the need to meet the mobility requirements of countries adopting MOSIP.
+
+# Developer Guide
+
+The documentation here will guide you through the pre-requisites and the other necessary details required for Android Registration Client developer setup.
+
+The android-registration-client repository contains the Android Registration Client software for MOSIP. The feature-flutter branch focuses on integrating Flutter into the client.
+
+## Setup
+
+To set up the Android Registration Client with Flutter and Android Studio, follow the steps below:
+
+#### Prerequisites
+
+* Flutter SDK (3.10.4): Install Flutter by following the official [Flutter installation guide](https://flutter.dev/docs/get-started/install).
+* Android Studio (or Any IDE of your choice): Download and install Android Studio from the official [Android Studio website](https://developer.android.com/studio).
+
+#### Step 1: Clone the Repository
+
+The `develop` branch of android-reg-client is currently being actively developed. If you wish to access this branch, you can clone the repository by executing the following command in your terminal. Alternatively, you can download one of the releases available in the repository's release section.
+
+```
+git clone -b feature-flutter https://github.com/mosip/android-registration-client.git
+```
+
+**Active Branches**:
+
 * [release-1.0.x](https://github.com/mosip/android-registration-client/tree/release-1.0.x)(developer release branch)
 * [develop](https://github.com/mosip/android-registration-client/tree/develop)(active development branch)
 
