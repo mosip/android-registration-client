@@ -56,6 +56,12 @@
   "network_error": "நெட்வொர்க் இல்லை!",
   "delete": "அழி",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "inactive_logout_heading": "நீங்கள் சும்மா இருந்தீர்கள்",
+  "inactive_logout_description": "பாதுகாப்பு காரணங்களுக்காக, நீங்கள் வெளியேறுவீர்கள் ",
+  "seconds": " நொடிகள்.",
+  "minutes": " நிமிடங்கள்.",
+  "logout_button": "வெளியேறு",
+  "stay_logged_in_button": "உள்நுழைந்தே இருங்கள்",
   "@newRegistrationProcess": {
     "description": "New Registration Process Header",
     "placeholders": {
