@@ -56,6 +56,12 @@
   "network_error": "لم يتم العثور على شبكة!",
   "delete": "يمسح",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "inactive_logout_heading": "لقد كنت خاملاً",
+  "inactive_logout_description": "لأسباب أمنية، سيتم تسجيل خروجك ",
+  "seconds": " ثواني.",
+  "minutes": " دقائق.",
+  "logout_button": "تسجيل الخروج",
+  "stay_logged_in_button": "البقاء مسجلاً الدخول",
   "@newRegistrationProcess": {
     "description": "New Registration Process Header",
     "placeholders": {
