@@ -689,4 +689,91 @@ public class logintest  extends AndroidBaseTest {
 
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 	}
+	@Test(priority = 3)
+	public void verifyUserNotLoggedOutDuringBackgroundSync() throws InterruptedException {
+	    BasePage.disableAutoRotation();
+	    LoginPage loginPage = null;
+	    RegistrationTasksPage registrationTasksPage = null;
+	    OperationalTaskPage operationalTaskPage = null;
+	    DashboardPage dashboardPage = null;
+
+	    // Select language-specific LoginPage
+	    String lang = TestDataReader.readData("language");
+	    if (lang.equalsIgnoreCase("eng")) {
+	        loginPage = new LoginPageEnglish(driver);
+	    } else if (lang.equalsIgnoreCase("hin")) {
+	        loginPage = new LoginPageHindi(driver);
+	    } else if (lang.equalsIgnoreCase("fra")) {
+	        loginPage = new LoginPageFrench(driver);
+	    } else if (lang.equalsIgnoreCase("kan")) {
+	        loginPage = new LoginPageKannada(driver);
+	    } else if (lang.equalsIgnoreCase("tam")) {
+	        loginPage = new LoginPageTamil(driver);
+	    } else if (lang.equalsIgnoreCase("ara")) {
+	        loginPage = new LoginPageArabic(driver);
+	    }
+
+	    loginPage.selectLanguage();
+	    loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+	    loginPage.clickOnNextButton();
+	    loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
+	    loginPage.clickOnloginButton();
+
+	    // Registration Tasks Page
+	    if (lang.equalsIgnoreCase("eng")) {
+	        registrationTasksPage = new RegistrationTasksPageEnglish(driver);
+	    } else if (lang.equalsIgnoreCase("hin")) {
+	        registrationTasksPage = new RegistrationTasksPageHindi(driver);
+	    } else if (lang.equalsIgnoreCase("fra")) {
+	        registrationTasksPage = new RegistrationTasksPageFrench(driver);
+	    } else if (lang.equalsIgnoreCase("kan")) {
+	        registrationTasksPage = new RegistrationTasksPageKannada(driver);
+	    } else if (lang.equalsIgnoreCase("tam")) {
+	        registrationTasksPage = new RegistrationTasksPageTamil(driver);
+	    } else if (lang.equalsIgnoreCase("ara")) {
+	        registrationTasksPage = new RegistrationTasksPageArabic(driver);
+	    }
+
+	    assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(), "Verify if registration task page loaded");
+	    registrationTasksPage.clickOnOperationalTasksTitle();
+
+	    // Operational Task Page
+	    if (lang.equalsIgnoreCase("eng")) {
+	        operationalTaskPage = new OperationalTaskPageEnglish(driver);
+	    } else if (lang.equalsIgnoreCase("hin")) {
+	        operationalTaskPage = new OperationalTaskPageHindi(driver);
+	    } else if (lang.equalsIgnoreCase("fra")) {
+	        operationalTaskPage = new OperationalTaskPageFrench(driver);
+	    } else if (lang.equalsIgnoreCase("kan")) {
+	        operationalTaskPage = new OperationalTaskPageKannada(driver);
+	    } else if (lang.equalsIgnoreCase("tam")) {
+	        operationalTaskPage = new OperationalTaskPageTamil(driver);
+	    } else if (lang.equalsIgnoreCase("ara")) {
+	        operationalTaskPage = new OperationalTaskPageArabic(driver);
+	    }
+
+	    assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational task page loaded");
+	    operationalTaskPage.clickSynchronizeDataButton();  // sync starts
+	    Thread.sleep(60000);  // simulate idle time
+
+	    registrationTasksPage.clickOnDashboardButton();
+
+	    // Dashboard Page
+	    if (lang.equalsIgnoreCase("eng")) {
+	        dashboardPage = new DashboardPageEnglish(driver);
+	    } else if (lang.equalsIgnoreCase("hin")) {
+	        dashboardPage = new DashboardPageHindi(driver);
+	    } else if (lang.equalsIgnoreCase("fra")) {
+	        dashboardPage = new DashboardPageFrench(driver);
+	    } else if (lang.equalsIgnoreCase("kan")) {
+	        dashboardPage = new DashboardPageKannada(driver);
+	    } else if (lang.equalsIgnoreCase("tam")) {
+	        dashboardPage = new DashboardPageTamil(driver);
+	    } else if (lang.equalsIgnoreCase("ara")) {
+	        dashboardPage = new DashboardPageArabic(driver);
+	    }
+
+	    assertTrue(dashboardPage.isDashboardTitleDisplayed(), "Verify that user is still on dashboard and not logged out");
+	}
+
 }

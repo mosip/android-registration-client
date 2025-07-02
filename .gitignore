@@ -88,3 +88,6 @@ app.*.map.json
 /ios/Runner/pigeon.h
 /ios/Runner/pigeon.m
 
+/bin/
+.classpath
+.project
