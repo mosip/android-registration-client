@@ -27,4 +27,7 @@ abstract class RegistrationDataApi {
 
   @async
   RegistrationSubmitResponse submitRegistrationDto(String makerName);
+
+  @async
+  void setApplicationId(String applicationId);
 }

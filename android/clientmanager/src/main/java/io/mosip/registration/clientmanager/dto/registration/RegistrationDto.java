@@ -84,9 +84,11 @@ public class RegistrationDto extends Observable {
     private OperatorDto reviewer;
     public Map<String, String> SELECTED_CODES = new HashMap<>();
 
+    private String applicationId;
+
     public RegistrationDto(@NonNull String rid, @NonNull String flowType, @NonNull String process,
                            @NonNull Double schemaVersion, @NonNull List<String> languages,
-                           @NonNull Map<Modality, Integer> bioThresholds) {
+                           @NonNull Map<Modality, Integer> bioThresholds, @NonNull String applicationId) {
         this.rId = rid;
         this.flowType = flowType;
         this.process = process;
@@ -103,6 +105,7 @@ public class RegistrationDto extends Observable {
         this.BIO_THRESHOLDS = bioThresholds;
         this.CAPTURED_BIO_FIELDS = new HashSet<>();
         this.BIO_DEVICES = new HashMap<>();
+        this.applicationId = applicationId;
     }
 
     public void setMakerDetails() {

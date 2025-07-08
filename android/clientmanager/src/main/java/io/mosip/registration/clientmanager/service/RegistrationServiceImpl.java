@@ -165,7 +165,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         for(Modality modality : Modality.values()) {
             bioThresholds.put(modality, getAttemptsCount(modality));
         }
-        this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds);
+        this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds, rid);
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE).edit();
