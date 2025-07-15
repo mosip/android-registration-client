@@ -106,11 +106,9 @@ class _MachineKeysState extends State<MachineKeys> {
             ),
             _copyButton(),
             SizedBox(
-              height: 20.h,
+              height: 50.h,
             ),
-            SizedBox(
-              height: 30.h,
-            ),
+
           ],
         ),
       ),
