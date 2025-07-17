@@ -2,18 +2,16 @@
   {
     "name": "androidDevice",
     "caps": {
-      "appium:udid": "60d498fb",
+      "appium:udid": "HA1TB4W4",
       "appium:automationName": "UiAutomator2",
-      "appium:app": "C:/app-release.apk",
+      "appium:app": "D:/apiandroid/app-release.apk",
       "platformName": "android",
       "appium:appPackage": "io.mosip.registration_client",
       "appium:appActivity": "io.mosip.registration_client.MainActivity",
       "appium:noReset": true,
       "appium:autoGrantPermissions": true,
       "appium:shouldTerminateApp": true,
-      "appium:noSign": true,
-	  "appium:disableSuppressAccessibilityService": true,
-	  "appium:ignoreHiddenApiPolicyError": true
+      "appium:noSign": true
     }
   }
 ]

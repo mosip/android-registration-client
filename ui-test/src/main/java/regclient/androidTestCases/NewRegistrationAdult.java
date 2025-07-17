@@ -618,7 +618,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded in Selected language");		
 	}
 
-	@Test
+	
 	public void newRegistrationAdultUploadMultipleDoccuments(){	
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");

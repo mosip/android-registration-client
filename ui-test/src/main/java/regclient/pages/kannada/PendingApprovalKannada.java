@@ -65,6 +65,9 @@ public class PendingApprovalKannada extends PendingApproval{
 	@AndroidFindBy(accessibility = "Please select a value")
 	private WebElement rejectReasonDropdown;
 	
+	@AndroidFindBy(accessibility = "SUBMIT")
+	private WebElement invalidUsernameMessageForempty;
+	
 	public PendingApprovalKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -163,5 +166,9 @@ public class PendingApprovalKannada extends PendingApproval{
 	
 	public boolean isSubmitButtonEnabled() {
 		return isElementEnabled(submitButton);		
+	}
+	
+	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
+		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 }

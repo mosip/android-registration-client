@@ -359,7 +359,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 					applicantBiometricsPage.clickOnMarkExceptionButton();
 
 					assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
-					applicantBiometricsPage.clickOnZoomButton();
+//					applicantBiometricsPage.clickOnZoomButton();
 
 					assertTrue(applicantBiometricsPage.isRightHandScanTitleDisplyed(),"Verify if applicant right hand scan is displayed");
 					applicantBiometricsPage.markFourFingureExceptionThenRemoveOne();
@@ -382,7 +382,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 					applicantBiometricsPage.clickOnMarkExceptionButton();
 
 					assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
-					applicantBiometricsPage.clickOnZoomButton();
+//					applicantBiometricsPage.clickOnZoomButton();
 
 					assertTrue(applicantBiometricsPage.isLeftHandScanTitleDisplyed(),"Verify if applicant right hand scan is displayed");
 					applicantBiometricsPage.markOneFingureException();

@@ -381,6 +381,9 @@ public class BasePage {
 
 	            case "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$":
 	                return generateEmail();
+	            
+	            case "^([0-9]{10,30})$":
+	                return generateTenDigitNumber();
 
 	            default:
 	                return "abcd";

@@ -65,6 +65,9 @@ public class PendingApprovalTamil extends PendingApproval{
 	@AndroidFindBy(accessibility = "Please select a value")
 	private WebElement rejectReasonDropdown;
 
+	@AndroidFindBy(accessibility = "SUBMIT")
+	private WebElement invalidUsernameMessageForempty;
+	
 	public PendingApprovalTamil(AppiumDriver driver) {
 		super(driver);
 	}
@@ -161,6 +164,10 @@ public class PendingApprovalTamil extends PendingApproval{
 	
 	public boolean isSubmitButtonEnabled() {
 		return isElementEnabled(submitButton);		
+	}
+	
+	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
+		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 
 }
