@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SupportFactory;
 
@@ -29,8 +31,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.dao.*;
 import io.mosip.registration.clientmanager.repository.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -224,5 +225,30 @@ public class RoomModuleTest {
                 templateRepo, globalParamRepo, identitySchemaDao, processSpecDao);
 
         assertNotNull(result);
+    }
+
+    @Test
+    public void test_provide_object_mapper_returns_new_instance() {
+        ObjectMapper objectMapper = roomModule.provideObjectMapper();
+
+        assertNotNull(objectMapper);
+        assertTrue(true);
+    }
+
+    @Test
+    public void test_provide_object_mapper_throws_exception() {
+        roomModule = new RoomModule(application, applicationInfo) {
+            @Override
+            @NonNull
+            public ObjectMapper provideObjectMapper() {
+                throw new RuntimeException("Failed to create ObjectMapper");
+            }
+        };
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            roomModule.provideObjectMapper();
+        });
+
+        assertEquals("Failed to create ObjectMapper", exception.getMessage());
     }
 }

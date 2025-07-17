@@ -1,68 +1,93 @@
 package io.mosip.registration.packetmanager.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.nio.charset.StandardCharsets;
-
-import io.mosip.registration.keymanager.dto.CryptoManagerRequestDto;
-import io.mosip.registration.keymanager.dto.CryptoManagerResponseDto;
-import io.mosip.registration.keymanager.dto.SignResponseDto;
+import io.mosip.registration.keymanager.dto.*;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import android.content.Context;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 
 public class PacketCryptoServiceImplTest {
 
-    @Mock
-    private ClientCryptoManagerService clientCryptoManagerService;
-
-    @Mock
-    private CryptoManagerService cryptoManagerService;
-
-    @InjectMocks
+    private ClientCryptoManagerService mockClientCryptoService;
+    private CryptoManagerService mockCryptoManagerService;
+    private Context mockContext;
     private PacketCryptoServiceImpl packetCryptoService;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        mockClientCryptoService = mock(ClientCryptoManagerService.class);
+        mockCryptoManagerService = mock(CryptoManagerService.class);
+        mockContext = mock(Context.class);
+
+        packetCryptoService = new PacketCryptoServiceImpl(mockContext, mockClientCryptoService, mockCryptoManagerService);
     }
 
     @Test
-    public void signTest() {
-        String packetSignature = "signature";
-        SignResponseDto signatureResponse = new SignResponseDto();
-        signatureResponse.setData(CryptoUtil.encodeToURLSafeBase64(packetSignature.getBytes(StandardCharsets.UTF_8)));
+    public void testSign() {
+        byte[] inputPacket = "TestPacket".getBytes(StandardCharsets.UTF_8);
+        String base64Encoded = Base64.getEncoder().encodeToString(inputPacket);
+        String signedBase64 = Base64.getEncoder().encodeToString("SignedPacket".getBytes(StandardCharsets.UTF_8));
 
-        Mockito.when(clientCryptoManagerService.sign(any())).thenReturn(signatureResponse);
+        SignResponseDto responseDto = new SignResponseDto();
+        responseDto.setData(signedBase64);
+        when(mockClientCryptoService.sign(any(SignRequestDto.class))).thenReturn(responseDto);
 
-        byte[] result = packetCryptoService.sign(packetSignature.getBytes());
-        assertTrue(ArrayUtils.isEquals(packetSignature.getBytes(), result));
-
-    }
-
-    @Test
-    public void encryptTest() throws Exception {
-        String id = "10001100770000320200720092256";
-        String response = "packet";
-        byte[] packet = "packet".getBytes();
-        CryptoManagerResponseDto cryptomanagerResponseDto = new CryptoManagerResponseDto ();
-        cryptomanagerResponseDto.setData(response);
-        Mockito.when(cryptoManagerService.encrypt(any(CryptoManagerRequestDto.class)))
-                .thenReturn(cryptomanagerResponseDto);
-
-        byte[] result = packetCryptoService.encrypt(id, packet);
+        byte[] result = packetCryptoService.sign(inputPacket);
         assertNotNull(result);
+        assertEquals("SignedPacket", new String(result, StandardCharsets.UTF_8));
+
+        verify(mockClientCryptoService, times(1)).sign(any(SignRequestDto.class));
+    }
+
+    @Test
+    public void testEncrypt() throws Exception {
+        byte[] inputPacket = "TestPacket".getBytes(StandardCharsets.UTF_8);
+        String base64EncodedPacket = Base64.getEncoder().encodeToString(inputPacket);
+        byte[] encryptedBytes = "EncryptedData".getBytes(StandardCharsets.UTF_8);
+        String encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes);
+
+        CryptoManagerResponseDto responseDto = new CryptoManagerResponseDto();
+        responseDto.setData(encryptedBase64);
+
+        when(mockCryptoManagerService.encrypt(any(CryptoManagerRequestDto.class))).thenReturn(responseDto);
+
+        byte[] result = packetCryptoService.encrypt("REF123", inputPacket);
+
+        assertNotNull(result);
+        assertTrue(result.length >= encryptedBytes.length + 28); // GCM_AAD_LENGTH + GCM_NONCE_LENGTH
+
+        verify(mockCryptoManagerService, times(1)).encrypt(any(CryptoManagerRequestDto.class));
+    }
+
+    @Test
+    public void testMergeEncryptedData() {
+        byte[] encrypted = new byte[]{1, 2, 3};
+        byte[] nonce = new byte[12];
+        byte[] aad = new byte[16];
+        for (int i = 0; i < 12; i++) nonce[i] = (byte) i;
+        for (int i = 0; i < 16; i++) aad[i] = (byte) (i + 10);
+
+        byte[] merged = PacketCryptoServiceImpl.mergeEncryptedData(encrypted, nonce, aad);
+
+        assertEquals(47, merged.length);
+        assertArrayEquals(nonce, java.util.Arrays.copyOfRange(merged, 0, 12));
+        assertArrayEquals(aad, java.util.Arrays.copyOfRange(merged, 12, 28));
+        assertArrayEquals(encrypted, java.util.Arrays.copyOfRange(merged, 28, 31));
     }
 }

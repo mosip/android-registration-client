@@ -85,6 +85,17 @@ class RegistrationServiceImpl implements RegistrationService {
     }
     return registrationSubmitResponse;
   }
+
+  @override
+  Future<void> setApplicationId(String applicationId) async {
+    try {
+      await RegistrationDataApi().setApplicationId(applicationId);
+    } on PlatformException {
+      debugPrint('RegistrationDataApi call failed');
+    } catch (e) {
+      debugPrint('Application ID not added ${e.toString()}');
+    }
+  }
 }
 
 RegistrationService getRegistrationServiceImpl() => RegistrationServiceImpl();

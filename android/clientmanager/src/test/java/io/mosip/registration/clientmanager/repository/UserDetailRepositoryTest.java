@@ -53,6 +53,9 @@ public class UserDetailRepositoryTest {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Test saveUserDetail() should save user details from JSONArray and verify correct insertion.
+     */
     @Test
     public void testSaveUserDetail() throws JSONException {
         JSONArray users = new JSONArray();
@@ -75,6 +78,9 @@ public class UserDetailRepositoryTest {
         assertEquals("9343", capturedList.get(0).getId());
     }
 
+    /**
+     * Test isActiveUser() should return true when user exists.
+     */
     @Test
     public void testIsActiveUser_UserExists() {
         when(userDetailDao.getUserDetail("9343")).thenReturn(new UserDetail("9343"));
@@ -84,6 +90,9 @@ public class UserDetailRepositoryTest {
         assertTrue(result);
     }
 
+    /**
+     * Test isActiveUser() should return false when user does not exist.
+     */
     @Test
     public void testIsActiveUser_UserDoesNotExist() {
         when(userDetailDao.getUserDetail("9343")).thenReturn(null);
@@ -93,6 +102,9 @@ public class UserDetailRepositoryTest {
         assertFalse(result);
     }
 
+    /**
+     * Test getUserDetailByUserId() should return user detail for given userId.
+     */
     @Test
     public void testGetUserDetailByUserId() {
         UserDetail user = new UserDetail("9343");
@@ -104,6 +116,9 @@ public class UserDetailRepositoryTest {
         assertEquals("9343", result.getId());
     }
 
+    /**
+     * Test getUserDetailCount() should return the correct count of user details.
+     */
     @Test
     public void testGetUserDetailCount() {
         when(userDetailDao.getUserDetailCount()).thenReturn(5);
@@ -113,6 +128,9 @@ public class UserDetailRepositoryTest {
         assertEquals(5, result);
     }
 
+    /**
+     * Test isPasswordPresent() should return true when password exists for user.
+     */
     @Test
     public void testIsPasswordPresent_PasswordExists() {
         UserPassword password = new UserPassword("9343");
@@ -125,6 +143,9 @@ public class UserDetailRepositoryTest {
         assertTrue(result);
     }
 
+    /**
+     * Test isPasswordPresent() should return false when password does not exist for user.
+     */
     @Test
     public void testIsPasswordPresent_NoPassword() {
         when(userPasswordDao.getUserPassword("9343")).thenReturn(null);
@@ -135,6 +156,9 @@ public class UserDetailRepositoryTest {
         assertFalse(result);
     }
 
+    /**
+     * Test isValidPassword() should return true for correct password.
+     */
     @Test
     public void testIsValidPassword_CorrectPassword() throws NoSuchAlgorithmException {
         UserPassword password = new UserPassword("9343");
@@ -153,6 +177,9 @@ public class UserDetailRepositoryTest {
         }
     }
 
+    /**
+     * Test isValidPassword() should return false for incorrect password.
+     */
     @Test
     public void testIsValidPassword_IncorrectPassword() throws NoSuchAlgorithmException {
         UserPassword password = new UserPassword("9343");
@@ -171,6 +198,9 @@ public class UserDetailRepositoryTest {
         }
     }
 
+    /**
+     * Test setPasswordHash() should set and save new password hash for user.
+     */
     @Test
     public void testSetPasswordHash() throws NoSuchAlgorithmException {
         UserPassword password = new UserPassword("9343");
@@ -191,6 +221,9 @@ public class UserDetailRepositoryTest {
         }
     }
 
+    /**
+     * Test saveUserAuthToken() should save or update user authentication token.
+     */
     @Test
     public void testSaveUserAuthToken() {
         UserToken token = new UserToken("9343", "", "", 0, 0);
@@ -207,6 +240,9 @@ public class UserDetailRepositoryTest {
         assertEquals(2000L, captor.getValue().getRExpiry());
     }
 
+    /**
+     * Test getUserAuthToken() should return token when user has a token.
+     */
     @Test
     public void testGetUserAuthToken_UserHasToken() {
         UserToken token = new UserToken("9343", "authToken", "refreshToken", 1000L, 2000L);
@@ -217,6 +253,9 @@ public class UserDetailRepositoryTest {
         assertEquals("authToken", result);
     }
 
+    /**
+     * Test getUserAuthToken() should return empty string when user has no token.
+     */
     @Test
     public void testGetUserAuthToken_UserHasNoToken() {
         when(userTokenDao.findByUsername("9343")).thenReturn(null);
@@ -225,4 +264,94 @@ public class UserDetailRepositoryTest {
 
         assertEquals("", result);
     }
+
+    /**
+     * Test updateUserDetail() should update user detail as expected.
+     */
+    @Test
+    public void testUpdateUserDetail() {
+        doNothing().when(userDetailDao).updateUserDetail(anyBoolean(), anyString(), anyLong());
+        userDetailRepository.updateUserDetail("9343");
+        verify(userDetailDao).updateUserDetail(eq(true), eq("9343"), anyLong());
+    }
+
+    /**
+     * Test isValidPassword() should return false when exception occurs during password validation.
+     */
+    @Test
+    public void testIsValidPassword_Exception() throws NoSuchAlgorithmException {
+        UserPassword password = new UserPassword("9343");
+        password.setSalt("encodedSalt");
+        password.setPwd("correctHash");
+
+        when(userPasswordDao.getUserPassword("9343")).thenReturn(password);
+
+        try (MockedStatic<HMACUtils2> mockedStatic = mockStatic(HMACUtils2.class)) {
+            mockedStatic.when(() -> HMACUtils2.digestAsPlainTextWithSalt(any(byte[].class), any(byte[].class)))
+                    .thenThrow(new NoSuchAlgorithmException("Algorithm not found"));
+
+            boolean result = userDetailRepository.isValidPassword("9343", "1234");
+
+            assertFalse(result);
+        }
+    }
+
+    /**
+     * Test setPasswordHash() should handle exception during password hashing and still insert password.
+     */
+    @Test
+    public void testSetPasswordHash_Exception() throws NoSuchAlgorithmException {
+        UserPassword password = new UserPassword("9343");
+        password.setSalt("encodedSalt");
+
+        when(userPasswordDao.getUserPassword("9343")).thenReturn(password);
+
+        try (MockedStatic<HMACUtils2> mockedStatic = mockStatic(HMACUtils2.class)) {
+            mockedStatic.when(() -> HMACUtils2.digestAsPlainTextWithSalt(any(byte[].class), any(byte[].class)))
+                    .thenThrow(new NoSuchAlgorithmException("Algorithm not found"));
+
+            userDetailRepository.setPasswordHash("9343", "admin123");
+
+            verify(userPasswordDao).insertUserPassword(any(UserPassword.class));
+        }
+    }
+
+    /**
+     * Test setPasswordHash() should insert new password when UserPassword is null.
+     */
+    @Test
+    public void testSetPasswordHash_UserPasswordNull() throws NoSuchAlgorithmException {
+        when(userPasswordDao.getUserPassword("9343")).thenReturn(null);
+
+        try (MockedStatic<HMACUtils2> mockedStatic = mockStatic(HMACUtils2.class)) {
+            mockedStatic.when(() -> HMACUtils2.digestAsPlainTextWithSalt(any(byte[].class), any(byte[].class)))
+                    .thenReturn("newHash");
+
+            userDetailRepository.setPasswordHash("9343", "admin123");
+
+            verify(userPasswordDao).insertUserPassword(any(UserPassword.class));
+        }
+    }
+
+    /**
+     * Test setPasswordHash() should generate and set salt if salt is null.
+     */
+    @Test
+    public void testSetPasswordHash_SaltNull() throws NoSuchAlgorithmException {
+        UserPassword password = new UserPassword("9343");
+        password.setSalt(null);
+
+        when(userPasswordDao.getUserPassword("9343")).thenReturn(password);
+
+        try (MockedStatic<HMACUtils2> mockedStatic = mockStatic(HMACUtils2.class)) {
+            mockedStatic.when(() -> HMACUtils2.digestAsPlainTextWithSalt(any(byte[].class), any(byte[].class)))
+                    .thenReturn("newHash");
+
+            userDetailRepository.setPasswordHash("9343", "admin123");
+
+            verify(userPasswordDao).insertUserPassword(any(UserPassword.class));
+            assertNotNull(password.getSalt());
+        }
+    }
+
 }
