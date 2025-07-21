@@ -105,23 +105,22 @@ class _TextBoxControlState extends State<TextBoxControl>
   }
 
   String _getDataFromMap(String lang) {
-    String response = "";
-    if (globalProvider.fieldInputValue.containsKey(widget.e.id)) {
-      if (widget.e.type == 'simpleType') {
-        if ((globalProvider.fieldInputValue[widget.e.id]
-                as Map<String, dynamic>)
-            .containsKey(lang)) {
-          response = globalProvider.fieldInputValue[widget.e.id][lang];
-        }
-      } else {
-        response = globalProvider.fieldInputValue[widget.e.id];
-      }
+    final value = globalProvider.fieldInputValue[widget.e.id];
+    if (value is String) return value;
+    if (value is Map<String, dynamic>) {
+      return value[lang] ?? '';
     }
-    return response;
+    return '';
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
+    print("Rebuilding TextBoxControl for field: ${widget.e.id}");
+
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     List<String> choosenLang = globalProvider.chosenLang;
@@ -163,10 +162,15 @@ class _TextBoxControlState extends State<TextBoxControl>
               verticalGridSpacing: 12,
               children: choosenLang.map((code) {
                 String lang = globalProvider.langToCode(code);
-                  setState(() {
-                    controllerMap.putIfAbsent(lang,
-                        () => TextEditingController(text: _getDataFromMap(lang)));
-                  });
+                final valueFromMap = _getDataFromMap(lang);
+                if (!controllerMap.containsKey(lang)) {
+                  controllerMap[lang] = TextEditingController(text: valueFromMap);
+                } else {
+                  if (controllerMap[lang]!.text != valueFromMap) {
+                    controllerMap[lang]!.text = valueFromMap;
+                  }
+                }
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: TextFormField(
