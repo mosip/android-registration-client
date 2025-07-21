@@ -108,15 +108,15 @@ class _MachineKeysState extends State<MachineKeys> {
             SizedBox(
               height: 20.h,
             ),
-            _downloadButton(
-              title: appLocalizations.download_json,
-              onTap: () {
-                FileStorage.writeCounter(machineDetails, "machine_details.txt")
-                    .then((value) {
-                  showInSnackBar(appLocalizations.download_message);
-                });
-              },
-            ),
+            // _downloadButton(
+            //   title: appLocalizations.download_json,
+            //   onTap: () {
+            //     FileStorage.writeCounter(machineDetails, "machine_details.txt")
+            //         .then((value) {
+            //       showInSnackBar(appLocalizations.download_message);
+            //     });
+            //   },
+            // ),
             // SizedBox(
             //   height: 20.h,
             // ),
