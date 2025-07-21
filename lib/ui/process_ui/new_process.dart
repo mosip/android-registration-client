@@ -58,6 +58,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
   ScrollController scrollController = ScrollController();
+  bool _isContinueProcessing = false;
 
   List<String> postRegistrationTabs = [
     'Preview',
@@ -306,7 +307,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
         for (int i = 0; i < screen.fields!.length; i++) {
-          if (screen.fields!.elementAt(i)!.id == "dateOfBirth") {
+          if (screen.fields!.elementAt(i)!.controlType == "ageDate") {
             if (globalProvider.checkAgeGroupChange == "") {
               globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
             } else {
@@ -628,53 +629,62 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
             // height: isPortrait ? 94.h : 84.h,
             child: globalProvider.newProcessTabIndex == 0
                 ? Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          child: SizedBox(
-                            height: isPortrait && !isMobileSize ? 68.h : 52.h,
-                            child: Center(
-                              child: Text(
-                                appLocalizations.go_back,
-                                style: TextStyle(
-                                  fontSize:
-                                      isPortrait && !isMobileSize ? 22 : 14,
-                                ),
-                              ),
-                            ),
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    child: SizedBox(
+                      height: isPortrait && !isMobileSize ? 68.h : 52.h,
+                      child: Center(
+                        child: Text(
+                          appLocalizations.go_back,
+                          style: TextStyle(
+                            fontSize:
+                            isPortrait && !isMobileSize ? 22 : 14,
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
                         ),
                       ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          child: SizedBox(
-                            height: isPortrait && !isMobileSize ? 68.h : 52.h,
-                            child: Center(
-                              child: Text(
-                                appLocalizations.informed,
-                                style: TextStyle(
-                                  fontSize:
-                                      isPortrait && !isMobileSize ? 22 : 14,
-                                ),
-                              ),
-                            ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _isContinueProcessing ? null : () async {
+                      setState(() {
+                        _isContinueProcessing = true;
+                      });
+                      try {
+                        registrationTaskProvider.addConsentField("Y");
+                        await DemographicsApi()
+                            .addDemographicField("consent", "true");
+                        continueButtonTap(size, newProcess);
+                      } finally {
+                        setState(() {
+                          _isContinueProcessing = false;
+                        });
+                      }
+                    },
+                    child: SizedBox(
+                      height: isPortrait && !isMobileSize ? 68.h : 52.h,
+                      child: Center(
+                        child: Text(
+                          appLocalizations.informed,
+                          style: TextStyle(
+                            fontSize:
+                            isPortrait && !isMobileSize ? 22 : 14,
                           ),
-                          onPressed: () async {
-                            registrationTaskProvider.addConsentField("Y");
-                            await DemographicsApi()
-                                .addDemographicField("consent", "true");
-                            continueButtonTap(size, newProcess);
-                          },
                         ),
                       ),
-                    ],
-                  )
+                    ),
+                  ),
+                ),
+              ],
+            )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -716,34 +726,44 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                               child: Text(appLocalizations.upload_packet),
                             )
                           : const SizedBox.shrink(),*/
-                      const Expanded(
-                        child: SizedBox(),
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          maximumSize: MaterialStateProperty.all<Size>(
-                              const Size(209, 52)),
-                          minimumSize: MaterialStateProperty.all<Size>(
-                              const Size(209, 52)),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              (continueButton && context.read<GlobalProvider>().newProcessTabIndex <=
-                                  size) ? solidPrimary : authButton ? solidPrimary: Colors.grey),
-                        ),
-                        onPressed: () {
-                          continueButtonTap(size, newProcess);
-                        },
-                        child: Text(
-                          context.read<GlobalProvider>().newProcessTabIndex <=
-                                  size
-                              ? appLocalizations.continue_text
-                              : globalProvider.newProcessTabIndex == size + 1
-                                  ? appLocalizations.authenticate
-                                  : appLocalizations.go_to_home,
-                          style: const TextStyle(color: appWhite),
-                        ),
-                      ),
-                    ],
+                const Expanded(
+                  child: SizedBox(),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    maximumSize: MaterialStateProperty.all<Size>(
+                        const Size(209, 52)),
+                    minimumSize: MaterialStateProperty.all<Size>(
+                        const Size(209, 52)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        (continueButton && context.read<GlobalProvider>().newProcessTabIndex <=
+                            size) ? solidPrimary : authButton ? solidPrimary: Colors.grey),
                   ),
+                  onPressed: _isContinueProcessing ? null : () async {
+                    if (_isContinueProcessing) return;
+                    setState(() {
+                      _isContinueProcessing = true;
+                    });
+                    try {
+                      await continueButtonTap(size, newProcess);
+                    } finally {
+                      setState(() {
+                        _isContinueProcessing = false;
+                      });
+                    }
+                  },
+                  child: Text(
+                    context.read<GlobalProvider>().newProcessTabIndex <=
+                        size
+                        ? appLocalizations.continue_text
+                        : globalProvider.newProcessTabIndex == size + 1
+                        ? appLocalizations.authenticate
+                        : appLocalizations.go_to_home,
+                    style: const TextStyle(color: appWhite),
+                  ),
+                ),
+              ],
+            ),
           ),
           body: SingleChildScrollView(
             controller: scrollController,
