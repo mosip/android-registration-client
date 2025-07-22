@@ -54,6 +54,7 @@ class _LostProcessState extends State<LostProcess>
   late ConnectivityProvider connectivityProvider;
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
+  bool _isLostUinContinue = false;
 
   List<String> postRegistrationTabs = [
     'Preview',
@@ -365,7 +366,7 @@ class _LostProcessState extends State<LostProcess>
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
         for (int i = 0; i < screen.fields!.length; i++) {
-          if (screen.fields!.elementAt(i)!.id == "dateOfBirth") {
+          if (screen.fields!.elementAt(i)!.controlType == "ageDate") {
             if (globalProvider.checkAgeGroupChange == "") {
               globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
             } else {
@@ -386,7 +387,7 @@ class _LostProcessState extends State<LostProcess>
                           .toString(),
                     ),
                   );
-                  if (process.id == "NEW" || process.id == "UPDATE" || process.id == "LOST") {
+                  if (process.id == "LOST") {
                     screens = process.screens!;
                   }
                 }
@@ -578,65 +579,85 @@ class _LostProcessState extends State<LostProcess>
       return isValid;
     }
 
+    const debounceDuration = Duration(milliseconds: 500);
+    DateTime? lastClickTime;
+
     continueButtonTap(int size, newProcess) async {
 
-      if (globalProvider.newProcessTabIndex < size) {
-        ageDateChangeValidation(globalProvider.newProcessTabIndex);
-        bool customValidator =
-        await customValidation(globalProvider.newProcessTabIndex);
-        if (customValidator) {
-          if (globalProvider.formKey.currentState!.validate()) {
-            if (globalProvider.newProcessTabIndex ==
-                newProcess.screens!.length - 1) {
-              templateTitleMap = {
-                'demographicInfo': appLocalizations.demographic_information,
-                'documents': appLocalizations.documents,
-                'bioMetrics': appLocalizations.biometrics,
-              };
-              registrationTaskProvider.setPreviewTemplate("");
-              registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(
-                  true, templateTitleMap!);
-              await registrationTaskProvider.getAcknowledgementTemplate(
-                  false, templateTitleMap!);
+      final now = DateTime.now();
+      if (lastClickTime != null &&
+          now.difference(lastClickTime!) < debounceDuration) {
+        return;
+      }
+      lastClickTime = now;
+
+      setState(() {
+        _isLostUinContinue = true;
+      });
+
+      try {
+        if (globalProvider.newProcessTabIndex < size) {
+          ageDateChangeValidation(globalProvider.newProcessTabIndex);
+          bool customValidator =
+          await customValidation(globalProvider.newProcessTabIndex);
+          if (customValidator) {
+            if (globalProvider.formKey.currentState!.validate()) {
+              if (globalProvider.newProcessTabIndex ==
+                  newProcess.screens!.length - 1) {
+                templateTitleMap = {
+                  'demographicInfo': appLocalizations.demographic_information,
+                  'documents': appLocalizations.documents,
+                  'bioMetrics': appLocalizations.biometrics,
+                };
+                registrationTaskProvider.setPreviewTemplate("");
+                registrationTaskProvider.setAcknowledgementTemplate("");
+                await registrationTaskProvider.getPreviewTemplate(
+                    true, templateTitleMap!);
+                await registrationTaskProvider.getAcknowledgementTemplate(
+                    false, templateTitleMap!);
+              }
+
+              globalProvider.newProcessTabIndex =
+                  globalProvider.newProcessTabIndex + 1;
             }
-
-            globalProvider.newProcessTabIndex =
-                globalProvider.newProcessTabIndex + 1;
           }
-        }
 
-        _nextButtonClickedAudit();
-      } else {
-        if (globalProvider.newProcessTabIndex == size + 1) {
-          bool isPacketAuthenticated = await _authenticatePacket(context);
-          if (!isPacketAuthenticated) {
+          _nextButtonClickedAudit();
+        } else {
+          if (globalProvider.newProcessTabIndex == size + 1) {
+            bool isPacketAuthenticated = await _authenticatePacket(context);
+            if (!isPacketAuthenticated) {
+              return;
+            }
+            RegistrationSubmitResponse registrationSubmitResponse =
+            await registrationTaskProvider.submitRegistrationDto(username);
+            if (registrationSubmitResponse.errorCode!.isNotEmpty) {
+              _showInSnackBar(registrationSubmitResponse.errorCode!);
+              return;
+            }
+            globalProvider.setRegId(registrationSubmitResponse.rId);
+
+            // Updating key to packetId after success creation of packet
+            registrationTaskProvider
+                .updateTemplateStorageKey(registrationSubmitResponse.rId);
+            registrationTaskProvider.deleteDefaultTemplateStored();
+
+            setState(() {
+              username = '';
+              password = '';
+            });
+          }
+          if (globalProvider.newProcessTabIndex == size + 2) {
+            _resetValuesOnRegistrationComplete();
             return;
           }
-          RegistrationSubmitResponse registrationSubmitResponse =
-          await registrationTaskProvider.submitRegistrationDto(username);
-          if (registrationSubmitResponse.errorCode!.isNotEmpty) {
-            _showInSnackBar(registrationSubmitResponse.errorCode!);
-            return;
-          }
-          globalProvider.setRegId(registrationSubmitResponse.rId);
-
-          // Updating key to packetId after success creation of packet
-          registrationTaskProvider
-              .updateTemplateStorageKey(registrationSubmitResponse.rId);
-          registrationTaskProvider.deleteDefaultTemplateStored();
-
-          setState(() {
-            username = '';
-            password = '';
-          });
+          globalProvider.newProcessTabIndex =
+              globalProvider.newProcessTabIndex + 1;
         }
-        if (globalProvider.newProcessTabIndex == size + 2) {
-          _resetValuesOnRegistrationComplete();
-          return;
-        }
-        globalProvider.newProcessTabIndex =
-            globalProvider.newProcessTabIndex + 1;
+      } finally {
+        setState(() {
+          _isLostUinContinue = false;
+        });
       }
     }
 
@@ -675,31 +696,37 @@ class _LostProcessState extends State<LostProcess>
                 ? Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    child: SizedBox(
-                      height:
-                      isPortrait && !isMobileSize ? 68.h : 52.h,
-                      child: Center(
-                        child: Text(
-                          appLocalizations.go_back,
-                          style: TextStyle(
-                            fontSize: isPortrait && !isMobileSize
-                                ? 22
-                                : 14,
+                    child: OutlinedButton(
+                      child: SizedBox(
+                        height:
+                        isPortrait && !isMobileSize ? 68.h : 52.h,
+                        child: Center(
+                          child: Text(
+                            appLocalizations.go_back,
+                            style: TextStyle(
+                              fontSize: isPortrait && !isMobileSize
+                                  ? 22
+                                  : 14,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
                 ),
                 SizedBox(
                   width: 10.w,
                 ),
                 Expanded(
                   child: ElevatedButton(
+                    onPressed:  _isLostUinContinue ? null : () async {
+                      registrationTaskProvider.addConsentField("Y");
+                      await DemographicsApi()
+                          .addDemographicField("consent", "true");
+                      continueButtonTap(size, newProcess);
+                    },
                     child: SizedBox(
                       height: isPortrait && !isMobileSize ? 68.h : 52.h,
                       child: Center(
@@ -712,12 +739,6 @@ class _LostProcessState extends State<LostProcess>
                         ),
                       ),
                     ),
-                    onPressed: () async {
-                        registrationTaskProvider.addConsentField("Y");
-                        await DemographicsApi()
-                            .addDemographicField("consent", "true");
-                      continueButtonTap(size, newProcess);
-                    },
                   ),
                 ),
               ],
@@ -775,8 +796,8 @@ class _LostProcessState extends State<LostProcess>
                     backgroundColor: MaterialStateProperty.all<Color>(
                         continueButton ? solidPrimary : Colors.grey),
                   ),
-                  onPressed: () {
-                    continueButtonTap(size, newProcess);
+                  onPressed: _isLostUinContinue ? null : () async {
+                    await continueButtonTap(size, newProcess);
                   },
                   child: Text(
                     context.read<GlobalProvider>().newProcessTabIndex <=
