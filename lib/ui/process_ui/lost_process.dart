@@ -579,17 +579,7 @@ class _LostProcessState extends State<LostProcess>
       return isValid;
     }
 
-    const debounceDuration = Duration(milliseconds: 500);
-    DateTime? lastClickTime;
-
     continueButtonTap(int size, newProcess) async {
-
-      final now = DateTime.now();
-      if (lastClickTime != null &&
-          now.difference(lastClickTime!) < debounceDuration) {
-        return;
-      }
-      lastClickTime = now;
 
       setState(() {
         _isLostUinContinue = true;

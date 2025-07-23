@@ -459,16 +459,8 @@ class _UpdateProcessState extends State<UpdateProcess>
       return true;
     }
 
-    const debounceDuration = Duration(milliseconds: 500);
-    DateTime? lastClickTime;
 
     continueButtonTap(int size, newProcess) async {
-      final now = DateTime.now();
-      if (lastClickTime != null &&
-          now.difference(lastClickTime!) < debounceDuration) {
-        return;
-      }
-      lastClickTime = now;
 
       setState(() {
         _isContinueProcessing = true;
