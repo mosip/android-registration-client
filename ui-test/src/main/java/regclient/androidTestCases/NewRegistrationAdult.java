@@ -539,7 +539,15 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		pendingApproval.clickOnSubmitButton();
 
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
+		
+		pendingApproval.clickOnSubmitButton();
+		assertTrue(pendingApproval.isInvalidemptyUsernameSumbitButtonEnbled(), "Verify if error empty username submit button enabled");	
+		
+		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser+"123");
+		
+		assertTrue(pendingApproval.isInvalidUsernameMessageDisplayed(), "Verify if invalid username messgae is displayed");	    
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		
 		pendingApproval.enterPassword(ConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
 		pendingApproval.clickOnBackButton();
@@ -1131,6 +1139,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			authenticationPage=new AuthenticationPageArabic(driver);
 		}
 		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Verify if authentication details page is displayed");
+		authenticationPage.clickOnAuthenticatenButton();
+		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Username/password required error should be displayed");
+		authenticationPage.clickOnAuthenticatenButton();
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();

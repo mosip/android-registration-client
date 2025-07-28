@@ -22,14 +22,13 @@ public class CameraPage  extends BasePage{
 //			clickOnElement(okButton);		
 //		else {
 			waitTime(7);
-			clickAtCoordinates(633,2042);
-//		}
+//			clickAtCoordinates(633,2042);
+//		}22222222222222222222222222222222222222222223222
 	}
 
 	public  void clickimage() {
-		waitTime(2);
-		isElementDisplayed(driver.findElement(By.id(TestDataReader.readData("id"))));
-		clickOnElement(driver.findElement(By.id(TestDataReader.readData("id"))));
+		waitTime(7);
+		clickAtCoordinates(401,1128);
 
 	}
 

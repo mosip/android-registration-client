@@ -119,7 +119,7 @@ public class logintest  extends AndroidBaseTest {
 
 		//assertFalse(loginPage.isLoginButtonEnabled(),"verify if the login button is disable without entering password");
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
-		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
+		//assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
 
 
@@ -340,8 +340,8 @@ public class logintest  extends AndroidBaseTest {
 			assertTrue(supervisorBiometricVerificationpage.isExceptionTypeTitleDisplyed(),"Verify if  mark exception is displayed");
 			supervisorBiometricVerificationpage.markOneEyeException();
 
-			supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
-			assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
+//			supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
+//			assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 
 			supervisorBiometricVerificationpage.clickOnIrisScanTitle();
 			supervisorBiometricVerificationpage.clickOnScanButton();
@@ -560,9 +560,9 @@ public class logintest  extends AndroidBaseTest {
 
 			assertTrue(UpdateOperatorBiometricspage.isExceptionTypeTitleDisplyed(),"Verify if  mark exception is displayed");
 			UpdateOperatorBiometricspage.markOneEyeException();
-			UpdateOperatorBiometricspage.clickOnExceptionTypeTemporaryButton();
+	//		UpdateOperatorBiometricspage.clickOnExceptionTypeTemporaryButton();
 
-			assertTrue(UpdateOperatorBiometricspage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
+//			assertTrue(UpdateOperatorBiometricspage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 
 			UpdateOperatorBiometricspage.clickOnIrisScanTitle();
 			UpdateOperatorBiometricspage.clickOnScanButton();

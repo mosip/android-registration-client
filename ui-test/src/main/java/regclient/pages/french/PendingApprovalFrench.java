@@ -62,6 +62,9 @@ public class PendingApprovalFrench extends PendingApproval{
 	
 	@AndroidFindBy(accessibility = "Please select a value")
 	private WebElement rejectReasonDropdown;
+	
+	@AndroidFindBy(accessibility = "اسم المستخدم غير صالح!")
+	private WebElement invalidUsernameMessage;
 
 	public PendingApprovalFrench(AppiumDriver driver) {
 		super(driver);
@@ -130,6 +133,10 @@ public class PendingApprovalFrench extends PendingApproval{
 	
 	public  void enterAID(String AID) {
 		clickAndsendKeysToTextBox(applicationIdTextbox,AID);
+	}
+	
+	public boolean isInvalidUsernameMessageDisplayed() {
+		return isElementDisplayed(invalidUsernameMessage);		
 	}
 	
 	public void clickOnRejectButton() {
