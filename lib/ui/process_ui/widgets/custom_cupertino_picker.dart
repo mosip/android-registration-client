@@ -135,11 +135,7 @@ class _CustomCupertinoDatePickerState extends State<CustomCupertinoDatePicker> {
   }
 
   void _scrollList(FixedExtentScrollController controller, int index) {
-    controller.animateToItem(
-      index,
-      curve: Curves.easeIn,
-      duration: const Duration(milliseconds: 300),
-    );
+    controller.jumpToItem(index);
   }
 
   @override
