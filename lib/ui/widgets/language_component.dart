@@ -39,8 +39,9 @@ class _LanguageComponentState extends State<LanguageComponent> {
           widget.onTap();
         }
       },
+
       child: Container(
-        padding: EdgeInsets.only(
+          padding: EdgeInsets.only(
           left: 25.w,
           right: 25.w,
           top: widget.isMobile && !isMobileSize ? 15.h : 9.h,
@@ -76,17 +77,20 @@ class _LanguageComponentState extends State<LanguageComponent> {
             SizedBox(
               width: widget.isFreezed || widget.isSelected ? 15.02 : 0,
             ),
-            Text(
-              widget.title,
-              style: TextStyle(
-                fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
-                color: widget.isDisabled
-                    ? appBlackShade3
-                    : widget.isFreezed
-                        ? appGreyShade
-                        : widget.isSelected
-                            ? appWhite
-                            : appBlackShade1,
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Text(
+                widget.title,
+                style: TextStyle(
+                  fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
+                  color: widget.isDisabled
+                      ? appBlackShade3
+                      : widget.isFreezed
+                          ? appGreyShade
+                          : widget.isSelected
+                              ? appWhite
+                              : appBlackShade1,
+                ),
               ),
             ),
           ],
