@@ -41,8 +41,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
       },
 
       child: Container(
-        height: 60.h,
-        padding: EdgeInsets.only(
+          padding: EdgeInsets.only(
           left: 25.w,
           right: 25.w,
           top: widget.isMobile && !isMobileSize ? 15.h : 9.h,
