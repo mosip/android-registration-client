@@ -241,7 +241,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             const BorderSide(color: appGreyShade, width: 1),
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 14),
-                      hintText: "Enter Application ID",
+                      hintText: AppLocalizations.of(context)!.enter_application_id,
                       hintStyle:
                           const TextStyle(color: appBlackShade3, fontSize: 14),
                     ),
