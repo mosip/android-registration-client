@@ -175,7 +175,9 @@ class _BiometricCaptureScanBlockPortraitState
                       borderRadius: BorderRadius.circular(6)),
                   child: Center(
                     child: Text(
-                      "${biometricAttributeData.noOfCapturesAllowed - currentAttemptNo} ${AppLocalizations.of(context)!.attempts_left}",
+                      "${biometricAttributeData.noOfCapturesAllowed - currentAttemptNo} "
+                          "${AppLocalizations.of(context)!.attempts_left}"
+                          "${Localizations.localeOf(context).languageCode == 'en' ? '' : ' attempts left'}",
                       style: TextStyle(
                           fontSize: 25,
                           fontWeight: semiBold,
