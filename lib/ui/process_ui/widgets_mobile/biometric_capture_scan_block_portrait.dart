@@ -2998,8 +2998,12 @@ class _BiometricCaptureScanBlockPortraitState
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                  Expanded(
+                  child:
                       (widget.field.inputRequired!)
                           ? RichText(
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                               text: TextSpan(
                               text: context
                                   .read<GlobalProvider>()
@@ -3011,7 +3015,8 @@ class _BiometricCaptureScanBlockPortraitState
                                       fontSize: (isMobileSize) ? 14.h : 24.h,
                                       color: blackShade1,
                                       fontWeight: semiBold,
-                                      overflow: TextOverflow.ellipsis),
+                                     // overflow: TextOverflow.ellipsis
+                                ),
                               children: const [
                                 TextSpan(
                                   text: " *",
@@ -3024,6 +3029,8 @@ class _BiometricCaptureScanBlockPortraitState
                               context
                                   .read<GlobalProvider>()
                                   .chooseLanguage(widget.field.label!),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
@@ -3031,8 +3038,10 @@ class _BiometricCaptureScanBlockPortraitState
                                       fontSize: (isMobileSize) ? 14.h : 24.h,
                                       color: blackShade1,
                                       fontWeight: semiBold,
-                                      overflow: TextOverflow.ellipsis),
+                                    //  overflow: TextOverflow.ellipsis
+                              ),
                             ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(right: 30),
                         child: InkWell(
