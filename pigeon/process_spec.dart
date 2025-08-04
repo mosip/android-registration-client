@@ -21,5 +21,8 @@ abstract class ProcessSpecApi {
   int getMinLanguageCount();
 
   @async
-  int getMaxLanguageCount(); 
+  int getMaxLanguageCount();
+
+  @async
+  List<String?> getSettingSpec();
 }
