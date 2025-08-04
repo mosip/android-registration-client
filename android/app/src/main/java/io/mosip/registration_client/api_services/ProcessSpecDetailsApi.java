@@ -7,8 +7,6 @@
 
 package io.mosip.registration_client.api_services;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Context;
 import android.util.Log;
 
@@ -165,7 +163,6 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getSettingSpec", e);
         }
-        Log.i(TAG, "SettingsSpecDtoList size: " + settingSpecList);
         result.success(settingSpecList);
     }
 }
