@@ -160,6 +160,7 @@
   },
   "client_status": "வாடிக்கையாளர் நிலை",
   "server_status": "சேவையக நிலை",
+  "review_status": "மீளாய்வு நிலை",
   "clear_filter": "Clear Filter",
   "serial_number": "எஸ்.என்",
   "application_id": "விண்ணப்ப ஐடி",
