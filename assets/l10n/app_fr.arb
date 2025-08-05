@@ -169,6 +169,7 @@
   },
   "client_status": "Statut du client",
   "server_status": "État du serveur",
+  "review_status": "Statut d'examen",
   "clear_filter": "Effacer le filtre",
   "serial_number": "S.non",
   "application_id": "ID d'application",

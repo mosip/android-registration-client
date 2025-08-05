@@ -169,6 +169,7 @@
   },
   "client_status": "ग्राहक स्थिति",
   "server_status": "सर्वर की स्थिति",
+  "review_status": "समीक्षा स्थिति",
   "clear_filter": "फ़िल्टर साफ़ करें",
   "serial_number": "क्र.सं",
   "application_id": "आवेदन पहचान पत्र",
