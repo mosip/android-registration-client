@@ -93,19 +93,26 @@ class ApprovePacketsProvider with ChangeNotifier {
       Registration reg = Registration.fromJson(json.decode(element ?? ""));
       String review = ReviewStatus.NOACTIONTAKEN.name;
       String reviewComment = "";
-      for (var oldPacket in oldPackets) {
-        Registration oldReg = oldPacket['packet'] as Registration;
-        if (reg.packetId == oldReg.packetId) {
-          review = oldPacket['review_status'] as String;
-          reviewComment = oldPacket['review_comment'] as String;
+
+      // Load saved review from secure storage
+      String? savedReview = await storage.read(key: reg.packetId);
+      if (savedReview != null) {
+        try {
+          Map<String, dynamic> savedMap = json.decode(savedReview);
+          review = savedMap["review_status"] ?? review;
+          reviewComment = savedMap["review_comment"] ?? reviewComment;
+        } catch (e) {
+          log("Error parsing saved review for ${reg.packetId}: $e");
         }
       }
+
       packetsList.add({
         "packet": reg,
         "review_status": review,
-        "review_comment": reviewComment
+        "review_comment": reviewComment,
       });
     }
+
     // Setting matching packets
     for (var element in packetsList) {
       matchingSelected.add(false);
@@ -226,6 +233,15 @@ class ApprovePacketsProvider with ChangeNotifier {
         };
       }
     }
+
+    await storage.write(
+      key: packetId,
+      value: json.encode({
+        "review_status": ReviewStatus.APPROVED.name,
+        "review_comment": "Approved",
+      }),
+    );
+
 
     log("Approved");
     notifyListeners();
