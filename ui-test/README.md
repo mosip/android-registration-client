@@ -1,7 +1,7 @@
 
 # Reg-Client Automation - Mobile Automation Framework using Appium
 
-## Overview
+## Overview...
 Reg-Client Automation is a mobile automation framework designed for Android platforms. It automates both positive and negative scenarios to ensure comprehensive testing of mobile applications.
 
 ## Installation
