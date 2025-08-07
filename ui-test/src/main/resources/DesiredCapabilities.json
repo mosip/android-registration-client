@@ -4,7 +4,7 @@
     "caps": {
       "appium:udid": "HA1TB4W4",
       "appium:automationName": "UiAutomator2",
-      "appium:app": "D:/apiandroid/app-release.apk",
+      "appium:app": "E:\app-release.apk",
       "platformName": "android",
       "appium:appPackage": "io.mosip.registration_client",
       "appium:appActivity": "io.mosip.registration_client.MainActivity",
