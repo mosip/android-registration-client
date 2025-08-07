@@ -96,9 +96,19 @@ public class BasePage {
 		((HidesKeyboard) driver).hideKeyboard();
 	}
 	
-	protected void sendKeysToTextBox(WebElement element, String text) {
+	protected void clickAndsendKeysToTextBox2(WebElement element, String text) {
 		this.waitForElementToBeVisible(element);
 		element.click();
+		waitTime(1);
+		element.clear();
+		waitTime(1);
+		element.sendKeys(text);
+		waitTime(1);
+		driver.navigate().back();	
+	}
+	
+	protected void sendKeysToTextBox(WebElement element, String text) {
+		this.waitForElementToBeVisible(element);
 		waitTime(1);
 		element.clear();
 		waitTime(1);
@@ -354,8 +364,8 @@ public class BasePage {
 	            case "^(?=.{2,50}$).*":
 	                return generateStringOfLength(2, 30);
 
-	            case "^[0-9]{6}[/][0-9]{2}[/][0-9]{1}$":
-	                return generateSixDigitNumber() + "/" + generateTwoDigitNumber() + "/" + generateOneDigitNumber();
+	            case "^([0-9]{10})$":
+	                return generateTenDigitNumber();
 
 	            case "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$":
 	                return generateDateInRange();
@@ -371,6 +381,9 @@ public class BasePage {
 
 	            case "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$":
 	                return generateEmail();
+	            
+	            case "^([0-9]{10,30})$":
+	                return generateTenDigitNumber();
 
 	            default:
 	                return "abcd";
@@ -411,6 +424,15 @@ public class BasePage {
 	    private static String generateNineDigitNumber() {
 	        return String.format("%09d", random.nextInt(1000000000));
 	    }
+	    
+	    
+	    private static final Random randomten = new Random();
+
+	    private static String generateTenDigitNumber() {
+	        long number = 1000000000L + (long)(randomten.nextDouble() * 9000000000L);
+	        return String.valueOf(number);
+	    }
+
 
 	    private static String generateEmail() {
 	        String[] domains = {"example.com", "test.com", "email.com"};

@@ -1,0 +1,345 @@
+diff --git a/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationAdult.java b/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationAdult.java
+index c18228f7..59cb8451 100644
+--- a/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationAdult.java
++++ b/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationAdult.java
+@@ -618,7 +618,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
+ 		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded in Selected language");		
+ 	}
+ 
+-	@Test
++	
+ 	public void newRegistrationAdultUploadMultipleDoccuments(){	
+ 		FetchUiSpec.getUiSpec("newProcess");
+ 		FetchUiSpec.getBiometricDetails("individualBiometrics");
+diff --git a/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationMinorException.java b/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationMinorException.java
+index b3c7d08b..e3fc7b85 100644
+--- a/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationMinorException.java
++++ b/ui-test/src/main/java/regclient/androidTestCases/NewRegistrationMinorException.java
+@@ -359,7 +359,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
+ 					applicantBiometricsPage.clickOnMarkExceptionButton();
+ 
+ 					assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
+-					applicantBiometricsPage.clickOnZoomButton();
++//					applicantBiometricsPage.clickOnZoomButton();
+ 
+ 					assertTrue(applicantBiometricsPage.isRightHandScanTitleDisplyed(),"Verify if applicant right hand scan is displayed");
+ 					applicantBiometricsPage.markFourFingureExceptionThenRemoveOne();
+@@ -382,7 +382,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
+ 					applicantBiometricsPage.clickOnMarkExceptionButton();
+ 
+ 					assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplyed(),"Verify if applicant biometric mark exception is displayed");
+-					applicantBiometricsPage.clickOnZoomButton();
++//					applicantBiometricsPage.clickOnZoomButton();
+ 
+ 					assertTrue(applicantBiometricsPage.isLeftHandScanTitleDisplyed(),"Verify if applicant right hand scan is displayed");
+ 					applicantBiometricsPage.markOneFingureException();
+diff --git a/ui-test/src/main/java/regclient/androidTestCases/UpdateMyUinMinor.java b/ui-test/src/main/java/regclient/androidTestCases/UpdateMyUinMinor.java
+index af11816b..68cd2d60 100644
+--- a/ui-test/src/main/java/regclient/androidTestCases/UpdateMyUinMinor.java
++++ b/ui-test/src/main/java/regclient/androidTestCases/UpdateMyUinMinor.java
+@@ -342,7 +342,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
+ 				else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
+ 					biometricDetailsPage=new BiometricDetailsPageArabic(driver);
+ 				}
+-				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
++			     assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+ 				if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+ 					applicantBiometricsPage=new ApplicantBiometricsPageEnglish(driver);
+ 				} 
+diff --git a/ui-test/src/main/java/regclient/page/BasePage.java b/ui-test/src/main/java/regclient/page/BasePage.java
+index 200b2272..f36da2d4 100644
+--- a/ui-test/src/main/java/regclient/page/BasePage.java
++++ b/ui-test/src/main/java/regclient/page/BasePage.java
+@@ -381,6 +381,9 @@ public class BasePage {
+ 
+ 	            case "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$":
+ 	                return generateEmail();
++	            
++	            case "^([0-9]{10,30})$":
++	                return generateTenDigitNumber();
+ 
+ 	            default:
+ 	                return "abcd";
+diff --git a/ui-test/src/main/java/regclient/page/CameraPage.java b/ui-test/src/main/java/regclient/page/CameraPage.java
+index 216f2fd7..88755d7b 100644
+--- a/ui-test/src/main/java/regclient/page/CameraPage.java
++++ b/ui-test/src/main/java/regclient/page/CameraPage.java
+@@ -10,7 +10,8 @@ import regclient.utils.TestDataReader;
+ 
+ public class CameraPage  extends BasePage{
+ 
+-	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"OK\"]")
++	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"OK\"]")	
++	
+ 	private WebElement okButton;
+ 
+ 	public CameraPage(AppiumDriver driver) {
+@@ -18,17 +19,17 @@ public class CameraPage  extends BasePage{
+ 	}
+ 
+ 	public  void clickOkButton() {
+-//		if(isElementDisplayed(okButton))
+-//			clickOnElement(okButton);		
+-//		else {
+-			waitTime(7);
+-//			clickAtCoordinates(633,2042);
+-//		}22222222222222222222222222222222222222222223222
++		if(isElementDisplayed(okButton))
++			clickOnElement(okButton);		
++ 	else {
++		waitTime(7);
++		clickAtCoordinates(401,1123);
++		}
+ 	}
+ 
+ 	public  void clickimage() {
+ 		waitTime(7);
+-		clickAtCoordinates(401,1128);
++		clickAtCoordinates(401,1123);
+ 
+ 	}
+ 
+diff --git a/ui-test/src/main/java/regclient/pages/arabic/PendingApprovalArabic.java b/ui-test/src/main/java/regclient/pages/arabic/PendingApprovalArabic.java
+index c5d2ef01..7b1cb4aa 100644
+--- a/ui-test/src/main/java/regclient/pages/arabic/PendingApprovalArabic.java
++++ b/ui-test/src/main/java/regclient/pages/arabic/PendingApprovalArabic.java
+@@ -33,7 +33,8 @@ public class PendingApprovalArabic extends PendingApproval{
+ 	@AndroidFindBy(accessibility = "اسم المستخدم غير صالح!")
+ 	private WebElement invalidUsernameMessage;
+ 	
+-	
++	@AndroidFindBy(accessibility = "SUBMIT")
++	private WebElement invalidUsernameMessageForempty;
+ 
+ 	@AndroidFindBy(accessibility = "مصادقة المشرف")
+ 	private WebElement supervisorAuthenticationTitle;
+@@ -167,5 +168,9 @@ public class PendingApprovalArabic extends PendingApproval{
+ 	public boolean isSubmitButtonEnabled() {
+ 		return isElementEnabled(submitButton);		
+ 	}
++	
++	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
++		return isElementEnabled(invalidUsernameMessageForempty);
++	}
+ 
+ }
+diff --git a/ui-test/src/main/java/regclient/pages/french/PendingApprovalFrench.java b/ui-test/src/main/java/regclient/pages/french/PendingApprovalFrench.java
+index 0768524e..3ca8b313 100644
+--- a/ui-test/src/main/java/regclient/pages/french/PendingApprovalFrench.java
++++ b/ui-test/src/main/java/regclient/pages/french/PendingApprovalFrench.java
+@@ -66,6 +66,10 @@ public class PendingApprovalFrench extends PendingApproval{
+ 	@AndroidFindBy(accessibility = "اسم المستخدم غير صالح!")
+ 	private WebElement invalidUsernameMessage;
+ 
++	@AndroidFindBy(accessibility = "SUBMIT")
++	private WebElement invalidUsernameMessageForempty;
++	
++	
+ 	public PendingApprovalFrench(AppiumDriver driver) {
+ 		super(driver);
+ 	}
+@@ -164,5 +168,9 @@ public class PendingApprovalFrench extends PendingApproval{
+ 	public boolean isSubmitButtonEnabled() {
+ 		return isElementEnabled(submitButton);		
+ 	}
++	
++	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
++		return isElementEnabled(invalidUsernameMessageForempty);
++	}
+ 
+ }
+diff --git a/ui-test/src/main/java/regclient/pages/hindi/PendingApprovalHindi.java b/ui-test/src/main/java/regclient/pages/hindi/PendingApprovalHindi.java
+index 7515c814..5570bc5e 100644
+--- a/ui-test/src/main/java/regclient/pages/hindi/PendingApprovalHindi.java
++++ b/ui-test/src/main/java/regclient/pages/hindi/PendingApprovalHindi.java
+@@ -66,6 +66,10 @@ public class PendingApprovalHindi extends PendingApproval{
+ 	@AndroidFindBy(accessibility = "Please select a value")
+ 	private WebElement rejectReasonDropdown;
+ 
++
++	@AndroidFindBy(accessibility = "SUBMIT")
++	private WebElement invalidUsernameMessageForempty;
++	
+ 	public PendingApprovalHindi(AppiumDriver driver) {
+ 		super(driver);
+ 	}
+@@ -119,6 +123,10 @@ public class PendingApprovalHindi extends PendingApproval{
+ 		return isElementDisplayed(invalidUsernameMessage);		
+ 	}
+ 	
++	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
++		return isElementEnabled(invalidUsernameMessageForempty);
++	}
++	
+ 	public boolean isRejectButtonDisplayed() {
+ 		return isElementDisplayed(rejectButton);		
+ 	}
+diff --git a/ui-test/src/main/java/regclient/pages/kannada/PendingApprovalKannada.java b/ui-test/src/main/java/regclient/pages/kannada/PendingApprovalKannada.java
+index 80247fd1..1e5427e6 100644
+--- a/ui-test/src/main/java/regclient/pages/kannada/PendingApprovalKannada.java
++++ b/ui-test/src/main/java/regclient/pages/kannada/PendingApprovalKannada.java
+@@ -65,6 +65,9 @@ public class PendingApprovalKannada extends PendingApproval{
+ 	@AndroidFindBy(accessibility = "Please select a value")
+ 	private WebElement rejectReasonDropdown;
+ 	
++	@AndroidFindBy(accessibility = "SUBMIT")
++	private WebElement invalidUsernameMessageForempty;
++	
+ 	public PendingApprovalKannada(AppiumDriver driver) {
+ 		super(driver);
+ 	}
+@@ -164,4 +167,8 @@ public class PendingApprovalKannada extends PendingApproval{
+ 	public boolean isSubmitButtonEnabled() {
+ 		return isElementEnabled(submitButton);		
+ 	}
++	
++	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
++		return isElementEnabled(invalidUsernameMessageForempty);
++	}
+ }
+diff --git a/ui-test/src/main/java/regclient/pages/tamil/PendingApprovalTamil.java b/ui-test/src/main/java/regclient/pages/tamil/PendingApprovalTamil.java
+index 1fdd5445..f1f7db29 100644
+--- a/ui-test/src/main/java/regclient/pages/tamil/PendingApprovalTamil.java
++++ b/ui-test/src/main/java/regclient/pages/tamil/PendingApprovalTamil.java
+@@ -65,6 +65,9 @@ public class PendingApprovalTamil extends PendingApproval{
+ 	@AndroidFindBy(accessibility = "Please select a value")
+ 	private WebElement rejectReasonDropdown;
+ 
++	@AndroidFindBy(accessibility = "SUBMIT")
++	private WebElement invalidUsernameMessageForempty;
++	
+ 	public PendingApprovalTamil(AppiumDriver driver) {
+ 		super(driver);
+ 	}
+@@ -162,5 +165,9 @@ public class PendingApprovalTamil extends PendingApproval{
+ 	public boolean isSubmitButtonEnabled() {
+ 		return isElementEnabled(submitButton);		
+ 	}
++	
++	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
++		return isElementEnabled(invalidUsernameMessageForempty);
++	}
+ 
+ }
+diff --git a/ui-test/src/main/resources/DesiredCapabilities.json b/ui-test/src/main/resources/DesiredCapabilities.json
+index 69d2edbd..63a0b51b 100644
+--- a/ui-test/src/main/resources/DesiredCapabilities.json
++++ b/ui-test/src/main/resources/DesiredCapabilities.json
+@@ -2,18 +2,16 @@
+   {
+     "name": "androidDevice",
+     "caps": {
+-      "appium:udid": "60d498fb",
++      "appium:udid": "HA1TB4W4",
+       "appium:automationName": "UiAutomator2",
+-      "appium:app": "C:/app-release.apk",
++      "appium:app": "D:/apiandroid/app-release.apk",
+       "platformName": "android",
+       "appium:appPackage": "io.mosip.registration_client",
+       "appium:appActivity": "io.mosip.registration_client.MainActivity",
+       "appium:noReset": true,
+       "appium:autoGrantPermissions": true,
+       "appium:shouldTerminateApp": true,
+-      "appium:noSign": true,
+-	  "appium:disableSuppressAccessibilityService": true,
+-	  "appium:ignoreHiddenApiPolicyError": true
++      "appium:noSign": true
+     }
+   }
+ ]
+\ No newline at end of file
+diff --git a/ui-test/src/main/resources/config.properties b/ui-test/src/main/resources/config.properties
+index bf1f6ec2..38f26270 100644
+--- a/ui-test/src/main/resources/config.properties
++++ b/ui-test/src/main/resources/config.properties
+@@ -1,5 +1,5 @@
+ ipAddress=127.0.0.1
+ nodePath=C:/Program Files/nodejs/node
+-appiumServerExecutable=C:/Users/Basant kumar/AppData/Roaming/npm/node_modules/appium/build/lib/main.js
++appiumServerExecutable=C:/Users/famuda.m/AppData/Roaming/npm/node_modules/appium/build/lib/main.js
+ appiumLogFilePath=report/appiumLogs.txt
+ startAppiumServer=true
+\ No newline at end of file
+diff --git a/ui-test/src/main/resources/config/Kernel.properties b/ui-test/src/main/resources/config/Kernel.properties
+index bc715fb6..4bd0d376 100644
+--- a/ui-test/src/main/resources/config/Kernel.properties
++++ b/ui-test/src/main/resources/config/Kernel.properties
+@@ -29,19 +29,19 @@ policytest_userName=111998
+ #IDREPO
+ mosip_idrepo_app_id=idrepo
+ mosip_idrepo_client_id=mosip-idrepo-client
+-mosip_idrepo_client_secret=uUkMdHwBecS5en6c
++mosip_idrepo_client_secret=93cBaraTZdODJGq0
+ #admin
+ mosip_admin_app_id=admin
+ admin_password=mosip123
+ admin_userName=32
+ mosip_admin_client_id=mosip-admin-client
+-mosip_admin_client_secret=p92bDbUVEqrs7Kkz
++mosip_admin_client_secret=3b5h11xJmjLhrd6m
+ #admin
+ admin_zone_password=mosip123
+ admin_zone_userName=globaladmin
+ mosip_regclient_app_id=registrationclient
+ mosip_reg_client_id=mosip-reg-client
+-mosip_reg_client_secret=KZEbBA8009jvkQBj
++mosip_reg_client_secret=YLTQig7ocfh6tR61
+ #This credentials are used to execute auth demo service
+ new_Resident_User=111995
+ new_Resident_Password=mosip123
+@@ -50,11 +50,11 @@ roles.111995=PARTNER_ADMIN,default-roles-mosip
+ 
+ 
+ keycloak_UserName = admin
+-keycloak_Password = DGQfHAEayB
++keycloak_Password = pG26cTESM8
+ 
+-keycloak-external-url=https://iam.qa-platform1.mosip.net
++keycloak-external-url=https://iam.qa-core.mosip.net
+ mosip_testrig_client_id=mosip-testrig-client
+-mosip_testrig_client_secret=PPAuJADf3JM1Umdn
++mosip_testrig_client_secret=3mxuNm3wTOa5QHRp
+ 
+ keycloak-realm-id=mosip
+ iam-users-to-create=32
+@@ -71,7 +71,7 @@ current_session_context_class=thread
+ #ida-partner details
+ DB_PORT=
+ installation-domain=
+-partner_url=jdbc:postgresql://qa-platform1.mosip.net:5432/mosip_ida
++partner_url=jdbc:postgresql://qa-core.mosip.net:5432/mosip_ida
+ partner_username=postgres
+ partner_password=fWflIjaezy
+ partner_default_schema=partner
+@@ -93,14 +93,14 @@ langselect=0
+ #----------------------------------Database properties----------------------------------------------------------#
+ postgresqlUser=postgresql
+ db-port=5432
+-db-server=qa-platform1.mosip.net
++db-server=qa-core.mosip.net
+ hibernate.connection.driver_class=org.postgresql.Driver
+ hibernate.connection.pool_size=1
+ hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+ hibernate.show_sql=true
+ hibernate.current_session_context_class=thread
+ db-su-user=postgres
+-postgresql-password=fWflIjaezy
++postgresql-password=cNIE2mC7Wg
+ pms_db_schema=pms
+ km_db_schema=keymgr
+ master_db_schema=master
+@@ -131,9 +131,9 @@ authCertsPath=
+ preconfiguredOtp=111111
+ usePreConfiguredOtp=true
+ 
+-regCenterId=16075
+-zone=1000
++regCenterId=10004
++zone=MOR
+ 
+-apiEnvUser=api-internal.qa-platform1
+-apiInternalEndPoint=https://api-internal.qa-platform1.mosip.net
++apiEnvUser=api-internal.qa-core
++apiInternalEndPoint=https://api-internal.qa-core.mosip.net
+ regclientScenariosToExecute=
+\ No newline at end of file

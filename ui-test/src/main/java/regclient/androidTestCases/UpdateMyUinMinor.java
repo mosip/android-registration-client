@@ -342,7 +342,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				else if(TestDataReader.readData("language").equalsIgnoreCase("ara")){
 					biometricDetailsPage=new BiometricDetailsPageArabic(driver);
 				}
-				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
+			     assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),"Verify if biometric details page is displayed");
 				if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 					applicantBiometricsPage=new ApplicantBiometricsPageEnglish(driver);
 				} 

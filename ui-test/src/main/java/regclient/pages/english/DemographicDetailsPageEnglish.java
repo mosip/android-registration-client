@@ -69,6 +69,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	
 	public  boolean isContinueButtonEnable() {
 		return isElementEnabled(continueButton);
+		
 
 	}
 

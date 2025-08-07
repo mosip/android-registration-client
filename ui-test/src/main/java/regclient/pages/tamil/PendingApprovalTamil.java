@@ -20,6 +20,8 @@ public class PendingApprovalTamil extends PendingApproval{
 
 	@AndroidFindBy(accessibility = "ஒப்புதல்")
 	private WebElement approveButton;
+	@AndroidFindBy(accessibility = "பயனர்பெயர் செல்லாது!")
+	private WebElement invalidUsernameMessage;
 
 	@AndroidFindBy(accessibility = "ஸ்க்ரிம்")
 	private WebElement backGroundScreen;
@@ -63,12 +65,18 @@ public class PendingApprovalTamil extends PendingApproval{
 	@AndroidFindBy(accessibility = "Please select a value")
 	private WebElement rejectReasonDropdown;
 
+	@AndroidFindBy(accessibility = "SUBMIT")
+	private WebElement invalidUsernameMessageForempty;
+	
 	public PendingApprovalTamil(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public boolean isPendingApprovalTitleDisplayed() {
 		return isElementDisplayed(pendingApprovalTitle);		
+	}
+	public boolean isInvalidUsernameMessageDisplayed() {
+		return isElementDisplayed(invalidUsernameMessage);		
 	}
 
 	@SuppressWarnings("deprecation")
@@ -156,6 +164,10 @@ public class PendingApprovalTamil extends PendingApproval{
 	
 	public boolean isSubmitButtonEnabled() {
 		return isElementEnabled(submitButton);		
+	}
+	
+	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
+		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 
 }

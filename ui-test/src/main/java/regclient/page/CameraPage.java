@@ -10,7 +10,8 @@ import regclient.utils.TestDataReader;
 
 public class CameraPage  extends BasePage{
 
-	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"OK\"]")
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"OK\"]")	
+	
 	private WebElement okButton;
 
 	public CameraPage(AppiumDriver driver) {
@@ -18,18 +19,17 @@ public class CameraPage  extends BasePage{
 	}
 
 	public  void clickOkButton() {
-//		if(isElementDisplayed(okButton))
-//			clickOnElement(okButton);		
-//		else {
-			waitTime(7);
-			clickAtCoordinates(633,2042);
-//		}
+		if(isElementDisplayed(okButton))
+			clickOnElement(okButton);		
+ 	else {
+		waitTime(7);
+		clickAtCoordinates(401,1123);
+		}
 	}
 
 	public  void clickimage() {
-		waitTime(2);
-		isElementDisplayed(driver.findElement(By.id(TestDataReader.readData("id"))));
-		clickOnElement(driver.findElement(By.id(TestDataReader.readData("id"))));
+		waitTime(7);
+		clickAtCoordinates(401,1123);
 
 	}
 

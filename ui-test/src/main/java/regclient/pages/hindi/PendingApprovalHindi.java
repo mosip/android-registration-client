@@ -23,6 +23,9 @@ public class PendingApprovalHindi extends PendingApproval{
 
 	@AndroidFindBy(accessibility = "स्क्रिम")
 	private WebElement backGroundScreen;
+	
+	@AndroidFindBy(accessibility = "उपयोगकर्ता नाम अमान्य!")
+	private WebElement invalidUsernameMessage;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(0)")
 	private WebElement searchCheckBoxButton;
@@ -63,6 +66,10 @@ public class PendingApprovalHindi extends PendingApproval{
 	@AndroidFindBy(accessibility = "Please select a value")
 	private WebElement rejectReasonDropdown;
 
+
+	@AndroidFindBy(accessibility = "SUBMIT")
+	private WebElement invalidUsernameMessageForempty;
+	
 	public PendingApprovalHindi(AppiumDriver driver) {
 		super(driver);
 	}
@@ -110,6 +117,14 @@ public class PendingApprovalHindi extends PendingApproval{
 
 	public boolean isApprovalButtonDisplayed() {
 		return isElementDisplayed(approveButton);		
+	}
+	
+	public boolean isInvalidUsernameMessageDisplayed() {
+		return isElementDisplayed(invalidUsernameMessage);		
+	}
+	
+	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
+		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 	
 	public boolean isRejectButtonDisplayed() {
