@@ -17,6 +17,7 @@ import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.RequiredDto;
 import io.mosip.registration.clientmanager.dto.uispec.ScreenSpecDto;
+import io.mosip.registration.clientmanager.dto.uispec.SettingsSpecDto;
 import io.mosip.registration.clientmanager.entity.IdentitySchema;
 import io.mosip.registration.clientmanager.entity.ProcessSpec;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
@@ -118,6 +119,15 @@ public class IdentitySchemaRepository {
             throw new Exception("Identity schema not found for version : " + version);
 
         return getIdSchemaResponse(context, identitySchema).getNewProcess();
+    }
+
+    public List<SettingsSpecDto> getSettingsSchema(Context context, Double version) throws Exception {
+        IdentitySchema identitySchema =  identitySchemaDao.findIdentitySchema(version, SCHEMA_PREFIX+version);
+
+        if(identitySchema == null)
+            throw new Exception("Identity schema not found for version : " + version);
+
+        return getIdSchemaResponse(context, identitySchema).getSettings();
     }
 
     public List<FieldSpecDto> getAllFieldSpec(Context context, Double version) throws Exception {

@@ -15,6 +15,7 @@ abstract class ProcessSpecService {
   Future<List<String?>> getOptionalLanguageCodes();
   Future<int> getMinLanguageCount();
   Future<int> getMaxLanguageCount();
+  Future<List<String?>> getSettingSpec();
 
   factory ProcessSpecService() => getProcessSpecServiceImpl();
 }

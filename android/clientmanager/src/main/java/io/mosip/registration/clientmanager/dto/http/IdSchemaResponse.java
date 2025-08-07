@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
+import io.mosip.registration.clientmanager.dto.uispec.SettingsSpecDto;
 import lombok.Data;
 
 
@@ -19,4 +20,5 @@ public class IdSchemaResponse {
     private List<FieldSpecDto> schema;
     private String schemaJson;
     private String effectiveFrom;
+    private List<SettingsSpecDto> settings;
 }

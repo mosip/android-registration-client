@@ -44,6 +44,7 @@ class ProcessSpecServiceImpl implements ProcessSpecService {
     String result;
     try {
       result = await ProcessSpecApi().getUISchema();
+      debugPrint("UI Schema: $result");
     } on PlatformException catch (e) {
       debugPrint("Some Error Occurred: $e");
       result = "REG_UI_SCHEMA_ERROR";
@@ -105,6 +106,21 @@ class ProcessSpecServiceImpl implements ProcessSpecService {
       debugPrint("Process spec fetch error: $e");
     }
     return optionalLanguageCodes;
+  }
+
+  @override
+  Future<List<String?>> getSettingSpec() async {
+    List<String?> settingSpec;
+    try {
+      settingSpec = await ProcessSpecApi().getSettingSpec();
+    } on PlatformException {
+      debugPrint("Settings Spec Api failed!");
+      settingSpec = List.empty();
+    } catch (e) {
+      settingSpec = List.empty();
+      debugPrint("Settings spec fetch error: $e");
+    }
+    return settingSpec;
   }
 }
 

@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
+import io.mosip.registration.clientmanager.dto.uispec.SettingsSpecDto;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -147,5 +148,21 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
             Log.e(getClass().getSimpleName(), "Error in getMaxLangCount", e);
         }
         result.success((long) maxLangCount);
+    }
+
+    @Override
+    public void getSettingSpec(@NonNull ProcessSpecPigeon.Result<List<String>> result) {
+        List<String> settingSpecList = new ArrayList<>();
+        try {
+            List<SettingsSpecDto> settingsSpecDto = identitySchemaRepository.getSettingsSchema(context, identitySchemaRepository.getLatestSchemaVersion());
+            for (SettingsSpecDto dto : settingsSpecDto) {
+                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+                String json = ow.writeValueAsString(dto);
+                settingSpecList.add(json);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error in getSettingSpec", e);
+        }
+        result.success(settingSpecList);
     }
 }
