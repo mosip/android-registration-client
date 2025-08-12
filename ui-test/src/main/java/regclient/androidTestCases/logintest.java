@@ -249,7 +249,7 @@ public class logintest  extends AndroidBaseTest {
 
 	}
 
-	//@Test(priority=1)
+	@Test(priority=1)
 	public void OnBoardTest() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
@@ -340,8 +340,8 @@ public class logintest  extends AndroidBaseTest {
 			assertTrue(supervisorBiometricVerificationpage.isExceptionTypeTitleDisplyed(),"Verify if  mark exception is displayed");
 			supervisorBiometricVerificationpage.markOneEyeException();
 
-//			supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
-//			assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
+			supervisorBiometricVerificationpage.clickOnExceptionTypeTemporaryButton();
+		assertTrue(supervisorBiometricVerificationpage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 
 			supervisorBiometricVerificationpage.clickOnIrisScanTitle();
 			supervisorBiometricVerificationpage.clickOnScanButton();
@@ -448,7 +448,7 @@ public class logintest  extends AndroidBaseTest {
 
 	}
 
-	//@Test(priority=2)
+	@Test(priority=2)
 	public void updateOperatorBiometrics() {
 		BasePage.disableAutoRotation();
 		LoginPage   loginPage=null;
@@ -560,9 +560,9 @@ public class logintest  extends AndroidBaseTest {
 
 			assertTrue(UpdateOperatorBiometricspage.isExceptionTypeTitleDisplyed(),"Verify if  mark exception is displayed");
 			UpdateOperatorBiometricspage.markOneEyeException();
-	//		UpdateOperatorBiometricspage.clickOnExceptionTypeTemporaryButton();
+		UpdateOperatorBiometricspage.clickOnExceptionTypeTemporaryButton();
 
-//			assertTrue(UpdateOperatorBiometricspage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
+		assertTrue(UpdateOperatorBiometricspage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 
 			UpdateOperatorBiometricspage.clickOnIrisScanTitle();
 			UpdateOperatorBiometricspage.clickOnScanButton();
