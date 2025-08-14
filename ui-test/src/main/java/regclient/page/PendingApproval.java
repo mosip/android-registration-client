@@ -47,5 +47,11 @@ public abstract class PendingApproval  extends BasePage{
     public abstract boolean isRejectPacketTitleDisplayed();
     
     public abstract boolean isSubmitButtonEnabled();
+    
+    public abstract boolean isInvalidUsernameMessageDisplayed();
+    
+    public abstract boolean isInvalidemptyUsernameSumbitButtonEnbled();
+    
+    
 
 }
