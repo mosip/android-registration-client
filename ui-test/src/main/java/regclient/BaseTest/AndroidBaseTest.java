@@ -11,6 +11,7 @@ public class AndroidBaseTest extends BaseTest {
 	@BeforeMethod(alwaysRun = true)
 	public void setup() {
 		try {
+			DriverManager.startAppiumServer();
 			this.driver = DriverManager.getDriver();
 		} catch (Exception e) {
 			throw new RuntimeException();
