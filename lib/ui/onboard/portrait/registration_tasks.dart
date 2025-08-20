@@ -162,13 +162,6 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
 
   _getTasks() {
     final processes = context.watch<RegistrationTaskProvider>().listOfProcesses;
-    if (processes.length > 1) {
-      print('process: ${processes[0].toString()}');
-      print('process: ${processes[1].toString()}');
-      print('process: ${processes[2].toString()}');
-      print('process: ${processes[3].toString()}');
-      print('process: ${processes.length}');
-    }
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: GridView.builder(
@@ -190,7 +183,6 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
 
             return InkWell(
               onTap: () {
-                print("Clicked ontab: ${process.id}"); // Add process id to log
                 widget.getProcessUI(
                   context,
                   Process.fromJson(
