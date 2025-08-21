@@ -79,63 +79,104 @@ class TemplateBottomSheet {
               const SizedBox(
                 height: 18,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Card(
-                    margin: const EdgeInsets.only(left: 24),
-                    elevation: 0,
-                    shape: CircleBorder(
-                        side: BorderSide(
-                      color: (currentInd > 1) ? solidPrimary : Colors.grey,
-                    )),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: (currentInd > 1) ? solidPrimary : Colors.grey,
-                      ),
-                      onPressed: (currentInd > 1)
-                          ? () {
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Back arrow
+                    Card(
+                      margin: const EdgeInsets.only(left: 24),
+                      elevation: 0,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                            color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                          )),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                        ),
+                        onPressed: (currentInd > 1)
+                            ? () {
+                          context
+                              .read<ApprovePacketsProvider>()
+                              .setCurrentInd(currentInd - 1);
+                          Registration reg = context
+                              .read<ApprovePacketsProvider>()
+                              .matchingPackets[(currentInd - 1) - 1]['packet']
+                          as Registration;
+                          log(reg.packetId);
+                          loadHtmlData(
                               context
                                   .read<ApprovePacketsProvider>()
-                                  .setCurrentInd(currentInd - 1);
-                              Registration reg = context
-                                      .read<ApprovePacketsProvider>()
-                                      .matchingPackets[(currentInd - 1) - 1]
-                                  ['packet'] as Registration;
-                              log(reg.packetId);
-                              loadHtmlData(
-                                  context
-                                      .read<ApprovePacketsProvider>()
-                                      .webViewPlusController,
-                                  reg.packetId);
-                            }
-                          : () {
-                              log("Out of range");
-                            },
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          disabledForegroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey.withOpacity(0.5),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 18),
-                        ),
-                        icon: const Icon(
-                          Icons.check_outlined,
-                          color: Colors.white,
-                        ),
-                        onPressed: reviewStatus == ReviewStatus.APPROVED.name
-                            ? null
+                                  .webViewPlusController,
+                              reg.packetId);
+                        }
                             : () {
+                          log("Out of range");
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    // Middle buttons
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        disabledForegroundColor: Colors.white,
+                        disabledBackgroundColor: Colors.grey.withOpacity(0.5),
+                        padding:
+                        const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+                      ),
+                      icon: const Icon(
+                        Icons.check_outlined,
+                        color: Colors.white,
+                      ),
+                      onPressed: reviewStatus == ReviewStatus.APPROVED.name
+                          ? null
+                          : () {
+                        context
+                            .read<ApprovePacketsProvider>()
+                            .approvePacket(regCurrent.packetId);
+                        log(currentInd.toString());
+                        if (currentInd <
+                            context
+                                .read<ApprovePacketsProvider>()
+                                .matchingPackets
+                                .length) {
+                          context
+                              .read<ApprovePacketsProvider>()
+                              .setCurrentInd(currentInd + 1);
+                          Registration reg = context
+                              .read<ApprovePacketsProvider>()
+                              .matchingPackets[(currentInd + 1) - 1]['packet']
+                          as Registration;
+                          log(reg.packetId);
+                          loadHtmlData(
+                              context
+                                  .read<ApprovePacketsProvider>()
+                                  .webViewPlusController,
+                              reg.packetId);
+                        }
+                      },
+                      label: Text(AppLocalizations.of(context)!.approve),
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.close),
+                      onPressed: reviewStatus == ReviewStatus.REJECTED.name
+                          ? null
+                          : () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return dialogBox(() {
                                 context
                                     .read<ApprovePacketsProvider>()
-                                    .approvePacket(regCurrent.packetId);
-                                log(currentInd.toString());
+                                    .rejectPacket(regCurrent.packetId);
                                 if (currentInd <
                                     context
                                         .read<ApprovePacketsProvider>()
@@ -144,10 +185,11 @@ class TemplateBottomSheet {
                                   context
                                       .read<ApprovePacketsProvider>()
                                       .setCurrentInd(currentInd + 1);
+
                                   Registration reg = context
-                                          .read<ApprovePacketsProvider>()
-                                          .matchingPackets[(currentInd + 1) - 1]
-                                      ['packet'] as Registration;
+                                      .read<ApprovePacketsProvider>()
+                                      .matchingPackets[(currentInd + 1) - 1]
+                                  ['packet'] as Registration;
                                   log(reg.packetId);
                                   loadHtmlData(
                                       context
@@ -155,152 +197,105 @@ class TemplateBottomSheet {
                                           .webViewPlusController,
                                       reg.packetId);
                                 }
-                              },
-                        label: Text(AppLocalizations.of(context)!.approve),
+                                Navigator.of(context).pop();
+                              }, context);
+                            });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        disabledForegroundColor: Colors.white,
+                        disabledBackgroundColor: Colors.grey.withOpacity(0.5),
+                        foregroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+                        side: BorderSide(
+                            color: reviewStatus == ReviewStatus.REJECTED.name
+                                ? Colors.transparent
+                                : Colors.red,
+                            width: 2),
                       ),
-                      const SizedBox(
-                        width: 16,
+                      label: Text(
+                        AppLocalizations.of(context)!.reject,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.close),
-                        onPressed: reviewStatus == ReviewStatus.REJECTED.name
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    // Refresh button
+                    Card(
+                      margin: const EdgeInsets.only(right: 24),
+                      elevation: 0,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                            color: reviewStatus == ReviewStatus.NOACTIONTAKEN.name
+                                ? Colors.grey
+                                : solidPrimary,
+                          )),
+                      child: IconButton(
+                        onPressed: reviewStatus == ReviewStatus.NOACTIONTAKEN.name
                             ? null
                             : () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return dialogBox(() {
-                                        context
-                                            .read<ApprovePacketsProvider>()
-                                            .rejectPacket(regCurrent.packetId);
-                                        if (currentInd <
-                                            context
-                                                .read<ApprovePacketsProvider>()
-                                                .matchingPackets
-                                                .length) {
-                                          context
-                                              .read<ApprovePacketsProvider>()
-                                              .setCurrentInd(currentInd + 1);
-
-                                          Registration reg = context
-                                              .read<ApprovePacketsProvider>()
-                                              .matchingPackets[(currentInd +
-                                                  1) -
-                                              1]['packet'] as Registration;
-                                          log(reg.packetId);
-                                          loadHtmlData(
-                                              context
-                                                  .read<
-                                                      ApprovePacketsProvider>()
-                                                  .webViewPlusController,
-                                              reg.packetId);
-                                        }
-                                        Navigator.of(context).pop();
-                                      }, context);
-                                    });
-                              },
-                        style: OutlinedButton.styleFrom(
-                          disabledForegroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey.withOpacity(0.5),
-                          foregroundColor: Colors.red,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 18),
-                          side: BorderSide(
-                              color: reviewStatus == ReviewStatus.REJECTED.name
-                                  ? Colors.transparent
-                                  : Colors.red,
-                              width: 2),
-                        ),
-                        label: Text(
-                          AppLocalizations.of(context)!.reject,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      Card(
-                        margin: const EdgeInsets.only(right: 24),
-                        elevation: 0,
-                        shape: CircleBorder(
-                            side: BorderSide(
+                          context
+                              .read<ApprovePacketsProvider>()
+                              .clearReview(regCurrent.packetId);
+                        },
+                        icon: Icon(
+                          Icons.refresh_outlined,
                           color: reviewStatus == ReviewStatus.NOACTIONTAKEN.name
                               ? Colors.grey
                               : solidPrimary,
-                        )),
-                        child: IconButton(
-                          onPressed:
-                              reviewStatus == ReviewStatus.NOACTIONTAKEN.name
-                                  ? null
-                                  : () {
-                                      context
-                                          .read<ApprovePacketsProvider>()
-                                          .clearReview(regCurrent.packetId);
-                                    },
-                          icon: Icon(
-                            Icons.refresh_outlined,
-                            color:
-                                reviewStatus == ReviewStatus.NOACTIONTAKEN.name
-                                    ? Colors.grey
-                                    : solidPrimary,
-                            size: 28,
-                          ),
+                          size: 28,
                         ),
-                      )
-                    ],
-                  ),
-                  Card(
-                    margin: const EdgeInsets.only(right: 24),
-                    elevation: 0,
-                    shape: CircleBorder(
-                        side: BorderSide(
-                      color: (currentInd <
-                              context
-                                  .read<ApprovePacketsProvider>()
-                                  .matchingPackets
-                                  .length)
-                          ? solidPrimary
-                          : Colors.grey,
-                    )),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.arrow_forward,
-                        color: (currentInd <
-                                context
-                                    .read<ApprovePacketsProvider>()
-                                    .matchingPackets
-                                    .length)
-                            ? solidPrimary
-                            : Colors.grey,
-                        size: 24,
                       ),
-                      onPressed: currentInd <
-                              context
-                                  .read<ApprovePacketsProvider>()
-                                  .matchingPackets
-                                  .length
-                          ? () {
-                              context
-                                  .read<ApprovePacketsProvider>()
-                                  .setCurrentInd(currentInd + 1);
-                              Registration reg = context
-                                      .read<ApprovePacketsProvider>()
-                                      .matchingPackets[(currentInd + 1) - 1]
-                                  ['packet'] as Registration;
-                              log(reg.packetId);
-                              loadHtmlData(
-                                  context
-                                      .read<ApprovePacketsProvider>()
-                                      .webViewPlusController,
-                                  reg.packetId);
-                            }
-                          : () {
-                              log("Out of range");
-                            },
                     ),
-                  ),
-                ],
+
+                    const SizedBox(width: 16),
+
+                    // Forward arrow
+                    Card(
+                      margin: const EdgeInsets.only(right: 24),
+                      elevation: 0,
+                      shape: CircleBorder(
+                          side: BorderSide(
+                            color: (currentInd <
+                                context.read<ApprovePacketsProvider>().matchingPackets.length)
+                                ? solidPrimary
+                                : Colors.grey,
+                          )),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_forward,
+                          color: (currentInd <
+                              context.read<ApprovePacketsProvider>().matchingPackets.length)
+                              ? solidPrimary
+                              : Colors.grey,
+                          size: 24,
+                        ),
+                        onPressed: currentInd <
+                            context.read<ApprovePacketsProvider>().matchingPackets.length
+                            ? () {
+                          context
+                              .read<ApprovePacketsProvider>()
+                              .setCurrentInd(currentInd + 1);
+                          Registration reg = context
+                              .read<ApprovePacketsProvider>()
+                              .matchingPackets[(currentInd + 1) - 1]['packet']
+                          as Registration;
+                          log(reg.packetId);
+                          loadHtmlData(
+                              context
+                                  .read<ApprovePacketsProvider>()
+                                  .webViewPlusController,
+                              reg.packetId);
+                        }
+                            : () {
+                          log("Out of range");
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
+
               const SizedBox(
                 height: 18,
               ),

@@ -45,30 +45,32 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    return Column(
-      children: [
-        SizedBox(
-          height: 26.h,
-        ),
-        isMobileSize
-            ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: HomePageCard(
-                  index: 0,
-                  icon: SvgPicture.asset(
-                    syncDataIcon,
-                  ),
-                  title: AppLocalizations.of(context)!.synchronize_data,
-                  ontap: () => widget.syncData(context),
-                  subtitle: null,
-                ),
-              )
-            : _getSyncDataProvider(),
-        SizedBox(
-          height: 16.h,
-        ),
-        _getTasks(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 26.h,
+          ),
+          isMobileSize
+              ? Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: HomePageCard(
+              index: 0,
+              icon: SvgPicture.asset(
+                syncDataIcon,
+              ),
+              title: AppLocalizations.of(context)!.synchronize_data,
+              ontap: () => widget.syncData(context),
+              subtitle: null,
+            ),
+          )
+              : _getSyncDataProvider(),
+          SizedBox(
+            height: 16.h,
+          ),
+          _getTasks(),
+        ],
+      ),
     );
   }
 
@@ -141,11 +143,11 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
             Text(
               context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
                   ? DateFormat("EEEE d MMMM, hh:mma")
-                      .format(DateTime.parse(context
-                              .watch<SyncProvider>()
-                              .lastSuccessfulSyncTime)
-                          .toLocal())
-                      .toString()
+                  .format(DateTime.parse(context
+                  .watch<SyncProvider>()
+                  .lastSuccessfulSyncTime)
+                  .toLocal())
+                  .toString()
                   : "Last Sync time not found",
               style: const TextStyle(
                 fontSize: 18,
@@ -163,8 +165,9 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: GridView.builder(
           itemCount:
-              context.watch<RegistrationTaskProvider>().listOfProcesses.length,
+          context.watch<RegistrationTaskProvider>().listOfProcesses.length,
           shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: (isPortrait) ? 2 : 4,
             mainAxisSpacing: (isPortrait) ? 8.h : 1.h,
@@ -226,8 +229,8 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
                     ),
                     Text(
                       process.label![context
-                              .read<GlobalProvider>()
-                              .selectedLanguage] ??
+                          .read<GlobalProvider>()
+                          .selectedLanguage] ??
                           process.label!["eng"] ??
                           process.label!.values.first,
                       style: TextStyle(
