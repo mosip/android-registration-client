@@ -209,11 +209,26 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       )
                                     ],
                                   ),
-                                  const SizedBox(height: 10),
-                                  Text(appLocalizations.packets_uploaded,
-                                      style: TextStyle(
-                                          fontSize: isMobileSize ? 15 : 20,
-                                          fontWeight: FontWeight.bold)),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(height: 12), // pushes text slightly downward
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            appLocalizations.packets_uploaded,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: isMobileSize ? 15 : 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             );
