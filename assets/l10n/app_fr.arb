@@ -57,7 +57,7 @@
   "delete": "SUPPRIMER",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
   "inactive_logout_heading": "Tu as été inactif",
-  "inactive_logout_description": "Pour des raisons de sécurité, vous serez déconnecté ",
+  "inactive_logout_description": "Pour des raisons de sécurité, vous serez déconnecté de $TIMER",
   "seconds": " Seconds.",
   "minutes": " Minutes.",
   "logout_button": "LOG OUT",

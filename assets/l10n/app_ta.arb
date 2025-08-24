@@ -57,7 +57,7 @@
   "delete": "அழி",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
   "inactive_logout_heading": "நீங்கள் சும்மா இருந்தீர்கள்",
-  "inactive_logout_description": "பாதுகாப்பு காரணங்களுக்காக, நீங்கள் வெளியேறுவீர்கள் ",
+  "inactive_logout_description": "பாதுகாப்பு காரணங்களுக்காக, நீங்கள் $TIMER இல் வெளியேற்றப்படுவீர்கள்",
   "seconds": " நொடிகள்.",
   "minutes": " நிமிடங்கள்.",
   "logout_button": "வெளியேறு",

@@ -37,6 +37,6 @@ abstract class AuthResponseApi {
   @async
   String getIdleTime();
   @async
-  String getRefreshedLoginTime();
+  String getAutoLogoutPopupTimeout();
 
 }

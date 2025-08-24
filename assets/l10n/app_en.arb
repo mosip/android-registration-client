@@ -57,7 +57,7 @@
   "delete": "DELETE",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
   "inactive_logout_heading": "You have been idle",
-  "inactive_logout_description": "For security reasons, you'll be logged out in ",
+  "inactive_logout_description": "For security reasons, you'll be logged out in $TIMER",
   "seconds": " Seconds.",
   "minutes": " Minutes.",
   "logout_button": "LOG OUT",

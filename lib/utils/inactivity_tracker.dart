@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 
 import '../main.dart';
 
@@ -31,10 +33,12 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
   final ValueNotifier<int> _countdown = ValueNotifier<int>(0);
   DateTime? _pausedAt;
   bool _dialogOpen = false;
+  late GlobalProvider globalProvider;
 
   @override
   void initState() {
     super.initState();
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
     _startInactivityTimer();
   }
@@ -84,6 +88,8 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
       _countdown.value -= 1;
       if (_countdown.value <= 0) {
         t.cancel();
+        // Clear registration process data on auto logout
+        globalProvider.clearRegistrationProcessData();
         widget.onTimeout();
       }
     });
@@ -107,6 +113,7 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
           Navigator.of(dialogCtx, rootNavigator: true).pop();
           _dialogOpen = false;
           await widget.onTimeout();
+          globalProvider.clearRegistrationProcessData();
         },
         loc: loc,
       ),
@@ -227,11 +234,13 @@ class _IdleWarningDialog extends StatelessWidget {
                       ? '${(secs / 60).ceil()}${loc.minutes}'   // e.g. “2 minutes”
                       : '$secs${loc.seconds}';                   // e.g. “45 seconds”
 
+                  // Replace $TIMER in the localized string with timeLeft, and style it
+                  final parts = loc.inactive_logout_description.split('\$TIMER');
                   return RichText(
                     text: TextSpan(
                       style: theme.textTheme.bodyMedium,
                       children: [
-                        TextSpan(text: loc.inactive_logout_description),
+                        TextSpan(text: parts[0]),
                         TextSpan(
                           text: timeLeft,
                           style: const TextStyle(
@@ -239,6 +248,7 @@ class _IdleWarningDialog extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
+                        if (parts.length > 1) TextSpan(text: parts[1]),
                       ],
                     ),
                   );

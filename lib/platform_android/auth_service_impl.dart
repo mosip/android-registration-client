@@ -112,10 +112,10 @@ class AuthServiceImpl implements AuthService {
   }
 
   @override
-  Future<String> getRefreshedLoginTime() async {
+  Future<String> getAutoLogoutPopupTimeout() async {
     late String refreshLoginTime;
     try {
-      refreshLoginTime = await AuthResponseApi().getRefreshedLoginTime();
+      refreshLoginTime = await AuthResponseApi().getAutoLogoutPopupTimeout();
     } on PlatformException {
       debugPrint('getIdleTime call failed!');
     } catch (e) {

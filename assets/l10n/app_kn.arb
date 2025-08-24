@@ -57,7 +57,7 @@
   "delete": "ಅಳಿಸಿ",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
   "inactive_logout_heading": "ನೀವು ಸುಮ್ಮನಿದ್ದಿರಿ",
-  "inactive_logout_description": "ಭದ್ರತಾ ಕಾರಣಗಳಿಗಾಗಿ, ನಿಮ್ಮನ್ನು ಲಾಗ್ ಔಟ್ ಮಾಡಲಾಗುತ್ತದೆ ",
+  "inactive_logout_description": "ಭದ್ರತಾ ಕಾರಣಗಳಿಗಾಗಿ, ನೀವು $TIMER ನಲ್ಲಿ ಲಾಗ್ ಔಟ್ ಆಗುತ್ತೀರಿ",
   "seconds": " ಸೆಕೆಂಡುಗಳು.",
   "minutes": " ನಿಮಿಷಗಳು.",
   "logout_button": "ಲಾಗ್ ಔಟ್ ಮಾಡಿ",

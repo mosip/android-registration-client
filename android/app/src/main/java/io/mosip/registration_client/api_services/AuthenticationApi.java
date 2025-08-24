@@ -250,7 +250,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     }
 
     @Override
-    public void getRefreshedLoginTime(@NonNull AuthResponsePigeon.Result<String> result) {
+    public void getAutoLogoutPopupTimeout(@NonNull AuthResponsePigeon.Result<String> result) {
         String response = this.globalParamRepository.getCachedStringRefreshedLoginTime();
         result.success(response);
     }

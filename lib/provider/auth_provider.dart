@@ -234,7 +234,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   getRefreshedLoginTime() async {
-    String refreshedLoginTime = await auth.getRefreshedLoginTime();
+    String refreshedLoginTime = await auth.getAutoLogoutPopupTimeout();
     _refreshedLoginTime = refreshedLoginTime;
     notifyListeners();
   }

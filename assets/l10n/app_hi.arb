@@ -57,7 +57,7 @@
   "delete": "मिटाना",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
   "inactive_logout_heading": "तुम निष्क्रिय हो गए हो",
-  "inactive_logout_description": "सुरक्षा कारणों से, आपको लॉग आउट कर दिया जाएगा ",
+  "inactive_logout_description": "ससुरक्षा कारणों से, आपको $TIMER में लॉग आउट कर दिया जाएगा",
   "seconds": " सेकंड.",
   "minutes": " मिनट.",
   "logout_button": "लॉग आउट",

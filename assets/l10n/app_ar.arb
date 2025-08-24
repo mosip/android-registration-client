@@ -57,7 +57,7 @@
   "delete": "يمسح",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
   "inactive_logout_heading": "لقد كنت خاملاً",
-  "inactive_logout_description": "لأسباب أمنية، سيتم تسجيل خروجك ",
+  "inactive_logout_description": "لأسباب أمنية، سيتم تسجيل خروجك في $TIMER",
   "seconds": " ثواني.",
   "minutes": " دقائق.",
   "logout_button": "تسجيل الخروج",
