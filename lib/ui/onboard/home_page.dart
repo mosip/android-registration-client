@@ -108,6 +108,11 @@ class _HomePageState extends State<HomePage> {
     globalProvider.setNotificationLanguages(fieldValues);
   }
 
+  Future<List<String?>> getSettingsUI(BuildContext context) async {
+    await registrationTaskProvider.getListOfSettings();
+    return registrationTaskProvider.listOfSettings;
+  }
+
   Widget getProcessUI(BuildContext context, Process process) {
     List<Screen?> sortedScreens;
     sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
@@ -260,8 +265,8 @@ class _HomePageState extends State<HomePage> {
       syncData: (BuildContext context) {
         syncData(context);
       },
-      getSettingsUI: (BuildContext context, Settings settings) {
-        //getSettingsUI(context,settings);
+      getSettingsUI: (BuildContext context) async {
+        return await getSettingsUI(context);
       },
     );
   }

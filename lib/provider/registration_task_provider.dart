@@ -39,6 +39,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   );
 
   List<Object?> _listOfProcesses = List.empty(growable: true);
+  List<String?> _listOfSettings = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
   String _registrationStartError = '';
@@ -52,6 +53,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   int _numberOfPackets = 0;
 
   List<Object?> get listOfProcesses => _listOfProcesses;
+  List<String?> get listOfSettings => _listOfSettings;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
   String get previewTemplate => _previewTemplate;
@@ -64,6 +66,11 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
+    notifyListeners();
+  }
+
+  set listOfSettings(List<String?> value) {
+    _listOfSettings = value;
     notifyListeners();
   }
 
@@ -109,12 +116,21 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   getListOfProcesses() async {
     List<String?> result = await processSpecService.getNewProcessSpec();
-    List<String?> setting = await processSpecService.getSettingSpec();
-    debugPrint("Setting Spec: $setting");
     if (result.isEmpty) {
       _listOfProcesses = [];
     } else {
       _listOfProcesses = result;
+    }
+    notifyListeners();
+  }
+
+  getListOfSettings() async {
+    List<String?> result = await processSpecService.getSettingSpec();
+    debugPrint("Setting Spec: $result");
+    if (result.isEmpty) {
+      _listOfSettings = [];
+    } else {
+      _listOfSettings = result;
     }
     notifyListeners();
   }

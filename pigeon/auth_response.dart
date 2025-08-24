@@ -34,4 +34,6 @@ abstract class AuthResponseApi {
   String stopAlarmService();
   @async
   String forgotPasswordUrl();
+  @async
+  List<String> getRolesByUserId(String userId);
 }

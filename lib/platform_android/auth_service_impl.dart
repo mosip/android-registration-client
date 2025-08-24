@@ -98,6 +98,19 @@ class AuthServiceImpl implements AuthService {
     return forgotPasswordResponse;
   }
 
+  @override
+  Future<List<String?>> getRolesByUserId(String userId) async {
+    List<String?> rolesList = [];
+    try {
+      rolesList = await AuthResponseApi().getRolesByUserId(userId);
+    } on PlatformException {
+      debugPrint('getRolesByUserId call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return rolesList;
+  }
+
 
 }
 

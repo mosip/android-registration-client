@@ -30,6 +30,7 @@ import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
+import io.mosip.registration.clientmanager.dao.UserRoleDao;
 import io.mosip.registration.clientmanager.entity.ApplicantValidDocument;
 import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.entity.BlocklistedWord;
@@ -54,12 +55,13 @@ import io.mosip.registration.clientmanager.entity.UserBiometric;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.entity.UserPassword;
 import io.mosip.registration.clientmanager.entity.UserToken;
+import io.mosip.registration.clientmanager.entity.UserRole;
 import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.entity.CACertificateStore;
 import io.mosip.registration.keymanager.entity.KeyStore;
 
-@Database(entities = {UserToken.class, Registration.class, ReasonList.class, RegistrationCenter.class,
+@Database(entities = {UserToken.class, UserRole.class, Registration.class, ReasonList.class, RegistrationCenter.class,
         MachineMaster.class, DocumentType.class, DynamicField.class,
         ApplicantValidDocument.class, Template.class, KeyStore.class,
         Location.class, GlobalParam.class, IdentitySchema.class, LocationHierarchy.class,
@@ -85,6 +87,8 @@ public abstract class ClientDatabase extends RoomDatabase {
     }
 
     public abstract UserTokenDao userTokenDao();
+
+    public abstract UserRoleDao userRoleDao();
 
     public abstract RegistrationDao registrationDao();
 

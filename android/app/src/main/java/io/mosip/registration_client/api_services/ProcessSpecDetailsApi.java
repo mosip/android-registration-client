@@ -155,6 +155,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         List<String> settingSpecList = new ArrayList<>();
         try {
             List<SettingsSpecDto> settingsSpecDto = identitySchemaRepository.getSettingsSchema(context, identitySchemaRepository.getLatestSchemaVersion());
+            settingsSpecDto = settingsSpecDto == null ? new ArrayList<>() : settingsSpecDto;
             for (SettingsSpecDto dto : settingsSpecDto) {
                 ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
                 String json = ow.writeValueAsString(dto);
@@ -163,6 +164,7 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getSettingSpec", e);
         }
+        Log.i(getClass().getSimpleName(),"settingSpecList"+settingSpecList);
         result.success(settingSpecList);
     }
 }

@@ -223,4 +223,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<List<String?>> getUserRole(String userId) async {
+    return await auth.getRolesByUserId(userId);
+  }
 }

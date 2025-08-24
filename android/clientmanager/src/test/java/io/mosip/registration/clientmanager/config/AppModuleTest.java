@@ -75,6 +75,7 @@ public class AppModuleTest {
     @Mock SyncJobDefRepository syncJobDefRepository;
     @Mock UserDetailRepository userDetailRepository;
     @Mock LanguageRepository languageRepository;
+    @Mock UserRoleRepository userRoleRepository;
     @Mock JobManagerService jobManagerService;
     @Mock FileSignatureDao fileSignatureDao;
     @Mock UserBiometricRepository userBiometricRepository;
@@ -159,7 +160,7 @@ public class AppModuleTest {
 
     @Test
     public void testProvideLoginService() {
-        LoginService service = appModule.provideLoginService(clientCryptoManagerService, userDetailRepository);
+        LoginService service = appModule.provideLoginService(clientCryptoManagerService, userDetailRepository,userRoleRepository);
         assertNotNull(service);
     }
 

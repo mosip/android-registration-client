@@ -53,8 +53,8 @@ class _MobileHomePageState extends State<MobileHomePage> {
     List bottomNavPages = [
       const UserDashBoard(),
       SettingsScreen(
-        getSettingsUI: (BuildContext context, Settings setting) {
-          widget.getSettingsUI(context,setting);
+        getSettingsUI: (BuildContext context) async {
+          return await widget.getSettingsUI(context);
         }
       ),
       Container(
