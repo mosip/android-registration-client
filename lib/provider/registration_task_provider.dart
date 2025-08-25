@@ -126,7 +126,6 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   getListOfSettings() async {
     List<String?> result = await processSpecService.getSettingSpec();
-    debugPrint("Setting Spec: $result");
     if (result.isEmpty) {
       _listOfSettings = [];
     } else {

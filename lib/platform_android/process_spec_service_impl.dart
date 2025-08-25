@@ -44,7 +44,6 @@ class ProcessSpecServiceImpl implements ProcessSpecService {
     String result;
     try {
       result = await ProcessSpecApi().getUISchema();
-      debugPrint("UI Schema: $result");
     } on PlatformException catch (e) {
       debugPrint("Some Error Occurred: $e");
       result = "REG_UI_SCHEMA_ERROR";
