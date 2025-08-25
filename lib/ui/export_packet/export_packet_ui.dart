@@ -50,13 +50,41 @@ class ExportPacketsPage extends StatelessWidget {
         backgroundColor: backgroundColor,
         body: Padding(
           padding:
-              const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 0),
+          const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 0),
           child: Column(
             children: [
               const SizedBox(
                 height: 4,
               ),
-              const Row(
+              isMobileSize?Column(
+                children: [
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: SearchBoxExport(),
+                      ),
+                    ],
+                  ),const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: UploadButton(),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: ExportButton(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+                  :const Row(
                 children: [
                   Flexible(
                     flex: 2,
@@ -93,35 +121,35 @@ class ExportPacketsPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             context
-                                        .watch<ExportPacketsProvider>()
-                                        .countSelected >
-                                    0
+                                .watch<ExportPacketsProvider>()
+                                .countSelected >
+                                0
                                 ? Text(
-                                    AppLocalizations.of(context)!
-                                        .total_selected_application(
-                                            context
-                                                .watch<ExportPacketsProvider>()
-                                                .countSelected,
-                                            context
-                                                .watch<ExportPacketsProvider>()
-                                                .matchingPackets
-                                                .length),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontSize: 20),
-                                  )
+                              AppLocalizations.of(context)!
+                                  .total_selected_application(
+                                  context
+                                      .watch<ExportPacketsProvider>()
+                                      .countSelected,
+                                  context
+                                      .watch<ExportPacketsProvider>()
+                                      .matchingPackets
+                                      .length),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontSize: 20),
+                            )
                                 : Text(
-                                    AppLocalizations.of(context)!
-                                        .number_of_application(context
-                                            .watch<ExportPacketsProvider>()
-                                            .matchingPackets
-                                            .length),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontSize: 20),
-                                  ),
+                              AppLocalizations.of(context)!
+                                  .number_of_application(context
+                                  .watch<ExportPacketsProvider>()
+                                  .matchingPackets
+                                  .length),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontSize: 20),
+                            ),
                             const SizedBox(
                               width: 50,
                             ),
