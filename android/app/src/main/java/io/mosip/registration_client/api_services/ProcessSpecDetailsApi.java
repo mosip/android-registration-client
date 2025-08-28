@@ -156,8 +156,9 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         try {
             List<SettingsSpecDto> settingsSpecDto = identitySchemaRepository.getSettingsSchema(context, identitySchemaRepository.getLatestSchemaVersion());
             settingsSpecDto = settingsSpecDto == null ? new ArrayList<>() : settingsSpecDto;
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectWriter ow = objectMapper.writer().withDefaultPrettyPrinter();
             for (SettingsSpecDto dto : settingsSpecDto) {
-                ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
                 String json = ow.writeValueAsString(dto);
                 settingSpecList.add(json);
             }
