@@ -58,6 +58,7 @@ class _UpdateProcessState extends State<UpdateProcess>
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   bool isPortrait = true;
   bool fieldSelectionCompleted = false;
+  bool _isContinueProcessing = false;
 
   List<String> postRegistrationTabs = [
     'Preview',
@@ -362,7 +363,7 @@ class _UpdateProcessState extends State<UpdateProcess>
       if (globalProvider.newProcessTabIndex < size) {
         Screen screen = newProcess.screens!.elementAt(currentIndex)!;
         for (int i = 0; i < screen.fields!.length; i++) {
-          if (screen.fields!.elementAt(i)!.id == "dateOfBirth") {
+          if (screen.fields!.elementAt(i)!.controlType == "ageDate") {
             if (globalProvider.checkAgeGroupChange == "") {
               globalProvider.checkAgeGroupChange = globalProvider.ageGroup;
             } else {
@@ -458,83 +459,103 @@ class _UpdateProcessState extends State<UpdateProcess>
       return true;
     }
 
+    const debounceDuration = Duration(milliseconds: 500);
+    DateTime? lastClickTime;
+
     continueButtonTap(int size, newProcess) async {
-      if (globalProvider.newProcessTabIndex == 0 && !fieldSelectionCompleted) {
-        if (globalProvider.selectedUpdateFields.isEmpty ||
-            globalProvider.updateFieldKey.currentState == null ||
-            !globalProvider.updateFieldKey.currentState!.validate()) {
-          return;
-        }
-      }
-      if (!fieldSelectionCompleted) {
-        globalProvider.clearMap();
-        globalProvider.clearScannedPages();
-        globalProvider.clearExceptions();
-        await registrationTaskProvider.changeUpdatableFieldGroups();
-        globalProvider.ageGroup = "";
-        await BiometricsApi().clearBiometricAndDocumentHashmap();
-        setState(() {
-          fieldSelectionCompleted = true;
-        });
+      final now = DateTime.now();
+      if (lastClickTime != null &&
+          now.difference(lastClickTime!) < debounceDuration) {
         return;
       }
-      if (globalProvider.newProcessTabIndex < size) {
-        ageDateChangeValidation(globalProvider.newProcessTabIndex);
-        bool customValidator =
-            await customValidation(globalProvider.newProcessTabIndex);
-        if (customValidator) {
-          if (globalProvider.formKey.currentState!.validate()) {
-            if (globalProvider.newProcessTabIndex ==
-                newProcess.screens!.length - 1) {
-              templateTitleMap = {
-                'demographicInfo': appLocalizations.demographic_information,
-                'documents': appLocalizations.documents,
-                'bioMetrics': appLocalizations.biometrics,
-              };
-              registrationTaskProvider.setPreviewTemplate("");
-              registrationTaskProvider.setAcknowledgementTemplate("");
-              await registrationTaskProvider.getPreviewTemplate(
-                  true, templateTitleMap!);
-              await registrationTaskProvider.getAcknowledgementTemplate(
-                  false, templateTitleMap!);
-            }
+      lastClickTime = now;
 
-            globalProvider.newProcessTabIndex =
-                globalProvider.newProcessTabIndex + 1;
+      setState(() {
+        _isContinueProcessing = true;
+      });
+
+      try {
+        if (globalProvider.newProcessTabIndex == 0 && !fieldSelectionCompleted) {
+          if (globalProvider.selectedUpdateFields.isEmpty ||
+              globalProvider.updateFieldKey.currentState == null ||
+              !globalProvider.updateFieldKey.currentState!.validate()) {
+            return;
           }
         }
-
-        _nextButtonClickedAudit();
-      } else {
-        if (globalProvider.newProcessTabIndex == size + 1) {
-          bool isPacketAuthenticated = await _authenticatePacket(context);
-          if (!isPacketAuthenticated) {
-            return;
-          }
-          RegistrationSubmitResponse registrationSubmitResponse =
-              await registrationTaskProvider.submitRegistrationDto(username);
-          if (registrationSubmitResponse.errorCode!.isNotEmpty) {
-            _showInSnackBar(registrationSubmitResponse.errorCode!);
-            return;
-          }
-          globalProvider.setRegId(registrationSubmitResponse.rId);
-
-          // Updating key to packetId after success creation of packet
-          registrationTaskProvider
-              .updateTemplateStorageKey(registrationSubmitResponse.rId);
-          registrationTaskProvider.deleteDefaultTemplateStored();
-
+        if (!fieldSelectionCompleted) {
+          globalProvider.clearMap();
+          globalProvider.clearScannedPages();
+          globalProvider.clearExceptions();
+          await registrationTaskProvider.changeUpdatableFieldGroups();
+          globalProvider.ageGroup = "";
+          await BiometricsApi().clearBiometricAndDocumentHashmap();
           setState(() {
-            username = '';
-            password = '';
+            fieldSelectionCompleted = true;
           });
-        }
-        if (globalProvider.newProcessTabIndex == size + 2) {
-          _resetValuesOnRegistrationComplete();
           return;
         }
-        globalProvider.newProcessTabIndex =
-            globalProvider.newProcessTabIndex + 1;
+        if (globalProvider.newProcessTabIndex < size) {
+          ageDateChangeValidation(globalProvider.newProcessTabIndex);
+          bool customValidator =
+          await customValidation(globalProvider.newProcessTabIndex);
+          if (customValidator) {
+            if (globalProvider.formKey.currentState!.validate()) {
+              if (globalProvider.newProcessTabIndex ==
+                  newProcess.screens!.length - 1) {
+                templateTitleMap = {
+                  'demographicInfo': appLocalizations.demographic_information,
+                  'documents': appLocalizations.documents,
+                  'bioMetrics': appLocalizations.biometrics,
+                };
+                registrationTaskProvider.setPreviewTemplate("");
+                registrationTaskProvider.setAcknowledgementTemplate("");
+                await registrationTaskProvider.getPreviewTemplate(
+                    true, templateTitleMap!);
+                await registrationTaskProvider.getAcknowledgementTemplate(
+                    false, templateTitleMap!);
+              }
+
+              globalProvider.newProcessTabIndex =
+                  globalProvider.newProcessTabIndex + 1;
+            }
+          }
+
+          _nextButtonClickedAudit();
+        } else {
+          if (globalProvider.newProcessTabIndex == size + 1) {
+            bool isPacketAuthenticated = await _authenticatePacket(context);
+            if (!isPacketAuthenticated) {
+              return;
+            }
+            RegistrationSubmitResponse registrationSubmitResponse =
+            await registrationTaskProvider.submitRegistrationDto(username);
+            if (registrationSubmitResponse.errorCode!.isNotEmpty) {
+              _showInSnackBar(registrationSubmitResponse.errorCode!);
+              return;
+            }
+            globalProvider.setRegId(registrationSubmitResponse.rId);
+
+            // Updating key to packetId after success creation of packet
+            registrationTaskProvider
+                .updateTemplateStorageKey(registrationSubmitResponse.rId);
+            registrationTaskProvider.deleteDefaultTemplateStored();
+
+            setState(() {
+              username = '';
+              password = '';
+            });
+          }
+          if (globalProvider.newProcessTabIndex == size + 2) {
+            _resetValuesOnRegistrationComplete();
+            return;
+          }
+          globalProvider.newProcessTabIndex =
+              globalProvider.newProcessTabIndex + 1;
+        }
+      } finally {
+        setState(() {
+          _isContinueProcessing = false;
+        });
       }
     }
 
@@ -580,153 +601,153 @@ class _UpdateProcessState extends State<UpdateProcess>
             // height: isPortrait ? 94.h : 84.h,
             child: context.watch<GlobalProvider>().newProcessTabIndex == 0
                 ? Row(
-                    children: [
-                      Expanded(
-                        child: fieldSelectionCompleted
-                            ? OutlinedButton(
-                                child: SizedBox(
-                                  height:
-                                      isPortrait && !isMobileSize ? 68.h : 52.h,
-                                  child: Center(
-                                    child: Text(
-                                      appLocalizations.go_back,
-                                      style: TextStyle(
-                                        fontSize: isPortrait && !isMobileSize
-                                            ? 22
-                                            : 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  if (!fieldSelectionCompleted) {
-                                    Navigator.of(context).pop();
-                                  } else {
-                                    setState(() {
-                                      fieldSelectionCompleted = false;
-                                    });
-                                  }
-                                },
-                              )
-                            : const SizedBox(),
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            maximumSize: MaterialStateProperty.all<Size>(
-                                const Size(209, 52)),
-                            minimumSize: MaterialStateProperty.all<Size>(
-                                const Size(209, 52)),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                !fieldSelectionCompleted
-                                    ? (context
-                                                .watch<GlobalProvider>()
-                                                .selectedUpdateFields
-                                                .isNotEmpty &&
-                                            continueButton)
-                                        ? solidPrimary
-                                        : Colors.grey
-                                    : solidPrimary),
-                          ),
-                          child: SizedBox(
-                            height: isPortrait && !isMobileSize ? 68.h : 52.h,
-                            child: Center(
-                              child: Text(
-                                fieldSelectionCompleted
-                                    ? appLocalizations.informed
-                                    : appLocalizations.continue_text,
-                                style: TextStyle(
-                                  fontSize:
-                                      isPortrait && !isMobileSize ? 22 : 14,
-                                ),
-                              ),
-                            ),
-                          ),
-                          onPressed: () async {
-                            if (fieldSelectionCompleted) {
-                              registrationTaskProvider.addConsentField("Y");
-                              await DemographicsApi().addDemographicField(
-                                  "UIN", globalProvider.updateUINNumber);
-                              await DemographicsApi()
-                                  .addDemographicField("consent", "true");
-                            }
-                            continueButtonTap(size, newProcess);
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // globalProvider.newProcessTabIndex == size + 2
-                      //     ? ElevatedButton(
-                      //         onPressed: () async {
-                      //           await connectivityProvider
-                      //               .checkNetworkConnection();
-                      //           bool isConnected =
-                      //               connectivityProvider.isConnected;
-                      //           if (!isConnected) {
-                      //             _showInSnackBar(
-                      //                 appLocalizations.network_error);
-                      //             return;
-                      //           }
-                      //           globalProvider.syncPacket(globalProvider.regId);
-                      //         },
-                      //         child: Text(appLocalizations.sync_packet),
-                      //       )
-                      //     : const SizedBox.shrink(),
-                      // SizedBox(
-                      //   width: 10.w,
-                      // ),
-                      // globalProvider.newProcessTabIndex == size + 2
-                      //     ? ElevatedButton(
-                      //         onPressed: () async {
-                      //           await connectivityProvider
-                      //               .checkNetworkConnection();
-                      //           bool isConnected =
-                      //               connectivityProvider.isConnected;
-                      //           if (!isConnected) {
-                      //             _showInSnackBar(
-                      //                 appLocalizations.network_error);
-                      //             return;
-                      //           }
-                      //           globalProvider
-                      //               .uploadPacket(globalProvider.regId);
-                      //         },
-                      //         child: Text(appLocalizations.upload_packet),
-                      //       )
-                      //     : const SizedBox.shrink(),
-                      const Expanded(
-                        child: SizedBox(),
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          maximumSize: MaterialStateProperty.all<Size>(
-                              const Size(209, 52)),
-                          minimumSize: MaterialStateProperty.all<Size>(
-                              const Size(209, 52)),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              continueButton ? solidPrimary : Colors.grey),
-                        ),
-                        onPressed: () {
-                          continueButtonTap(size, newProcess);
-                        },
+              children: [
+                Expanded(
+                  child: fieldSelectionCompleted
+                      ? OutlinedButton(
+                    child: SizedBox(
+                      height:
+                      isPortrait && !isMobileSize ? 68.h : 52.h,
+                      child: Center(
                         child: Text(
-                          context.read<GlobalProvider>().newProcessTabIndex <=
-                                  size
-                              ? appLocalizations.continue_text
-                              : globalProvider.newProcessTabIndex == size + 1
-                                  ? appLocalizations.authenticate
-                                  : appLocalizations.go_to_home,
-                          style: const TextStyle(color: appWhite),
+                          appLocalizations.go_back,
+                          style: TextStyle(
+                            fontSize: isPortrait && !isMobileSize
+                                ? 22
+                                : 14,
+                          ),
                         ),
                       ),
-                    ],
+                    ),
+                    onPressed: () {
+                      if (!fieldSelectionCompleted) {
+                        Navigator.of(context).pop();
+                      } else {
+                        setState(() {
+                          fieldSelectionCompleted = false;
+                        });
+                      }
+                    },
+                  )
+                      : const SizedBox(),
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      maximumSize: MaterialStateProperty.all<Size>(
+                          const Size(209, 52)),
+                      minimumSize: MaterialStateProperty.all<Size>(
+                          const Size(209, 52)),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          !fieldSelectionCompleted
+                              ? (context
+                              .watch<GlobalProvider>()
+                              .selectedUpdateFields
+                              .isNotEmpty &&
+                              continueButton)
+                              ? solidPrimary
+                              : Colors.grey
+                              : solidPrimary),
+                    ),
+                    onPressed: _isContinueProcessing ? null : () async {
+                      if (fieldSelectionCompleted) {
+                        registrationTaskProvider.addConsentField("Y");
+                        await DemographicsApi().addDemographicField(
+                            "UIN", globalProvider.updateUINNumber);
+                        await DemographicsApi()
+                            .addDemographicField("consent", "true");
+                      }
+                      continueButtonTap(size, newProcess);
+                    },
+                    child: SizedBox(
+                      height: isPortrait && !isMobileSize ? 68.h : 52.h,
+                      child: Center(
+                        child: Text(
+                          fieldSelectionCompleted
+                              ? appLocalizations.informed
+                              : appLocalizations.continue_text,
+                          style: TextStyle(
+                            fontSize:
+                            isPortrait && !isMobileSize ? 22 : 14,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
+                ),
+              ],
+            )
+                : Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // globalProvider.newProcessTabIndex == size + 2
+                //     ? ElevatedButton(
+                //         onPressed: () async {
+                //           await connectivityProvider
+                //               .checkNetworkConnection();
+                //           bool isConnected =
+                //               connectivityProvider.isConnected;
+                //           if (!isConnected) {
+                //             _showInSnackBar(
+                //                 appLocalizations.network_error);
+                //             return;
+                //           }
+                //           globalProvider.syncPacket(globalProvider.regId);
+                //         },
+                //         child: Text(appLocalizations.sync_packet),
+                //       )
+                //     : const SizedBox.shrink(),
+                // SizedBox(
+                //   width: 10.w,
+                // ),
+                // globalProvider.newProcessTabIndex == size + 2
+                //     ? ElevatedButton(
+                //         onPressed: () async {
+                //           await connectivityProvider
+                //               .checkNetworkConnection();
+                //           bool isConnected =
+                //               connectivityProvider.isConnected;
+                //           if (!isConnected) {
+                //             _showInSnackBar(
+                //                 appLocalizations.network_error);
+                //             return;
+                //           }
+                //           globalProvider
+                //               .uploadPacket(globalProvider.regId);
+                //         },
+                //         child: Text(appLocalizations.upload_packet),
+                //       )
+                //     : const SizedBox.shrink(),
+                const Expanded(
+                  child: SizedBox(),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    maximumSize: MaterialStateProperty.all<Size>(
+                        const Size(209, 52)),
+                    minimumSize: MaterialStateProperty.all<Size>(
+                        const Size(209, 52)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        continueButton ? solidPrimary : Colors.grey),
+                  ),
+                  onPressed: _isContinueProcessing ? null : () async {
+                    await continueButtonTap(size, newProcess);
+                  },
+                  child: Text(
+                    context.read<GlobalProvider>().newProcessTabIndex <=
+                        size
+                        ? appLocalizations.continue_text
+                        : globalProvider.newProcessTabIndex == size + 1
+                        ? appLocalizations.authenticate
+                        : appLocalizations.go_to_home,
+                    style: const TextStyle(color: appWhite),
+                  ),
+                ),
+              ],
+            ),
           ),
           body: SingleChildScrollView(
             child: AnnotatedRegion<SystemUiOverlayStyle>(

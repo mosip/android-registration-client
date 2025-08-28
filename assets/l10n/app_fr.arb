@@ -254,6 +254,7 @@
   "packets_created": "Paquets créés",
   "packets_synced": "Paquets synchronisés",
   "packets_uploaded": "Paquets téléchargés",
+  "onboard_operator_biomterics": "Enrôler les données biométriques de l'opérateur",
   "users": "Utilisatrices",
   "user_id": "ID de l'utilisateur",
   "user_name": "Nom d'utilisateur",

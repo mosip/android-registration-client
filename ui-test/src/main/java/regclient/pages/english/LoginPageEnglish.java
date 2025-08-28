@@ -31,6 +31,7 @@ public class LoginPageEnglish extends LoginPage {
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement passwordTextBox;
+	
 
 	@AndroidFindBy(accessibility = "LOGIN")
 	private WebElement loginButton;
@@ -68,7 +69,7 @@ public class LoginPageEnglish extends LoginPage {
 	@AndroidFindBy(accessibility = "BACK")
 	private WebElement backButton;
 
-	@AndroidFindBy(accessibility = "Forgot Password?")
+	@AndroidFindBy(accessibility = "FORGOT PASSWORD?")
 	private WebElement forgetPasswordButton;
 
 	@AndroidFindBy(accessibility = "User not found!")

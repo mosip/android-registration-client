@@ -180,6 +180,7 @@
   "system_storage_usage": "System Storage Usage",
   "download_pre_registration_data": "Download Pre-Registration Data",
   "update_operator_biomterics": "Update Operator Biometrics",
+  "onboard_operator_biomterics":"Onboard Operator Biometrics",
   "appliction_upload": "Application Upload",
   "check_updates": "Check Updates",
   "center_remap_sync": "Center Remap Sync.",

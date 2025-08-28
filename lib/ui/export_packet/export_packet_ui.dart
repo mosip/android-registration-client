@@ -56,24 +56,36 @@ class ExportPacketsPage extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              const Row(
+              Column(
                 children: [
-                  Flexible(
-                    flex: 2,
-                    child: SearchBoxExport(),
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: SearchBoxExport(),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 10),
-                  Flexible(
-                    flex: 1,
-                    child: UploadButton(),
-                  ),
-                  SizedBox(width: 10), // Add spacing between buttons
-                  Flexible(
-                    flex: 1,
-                    child: ExportButton(),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: UploadButton(),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: ExportButton(),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
+
               const SizedBox(
                 height: 24,
               ),
