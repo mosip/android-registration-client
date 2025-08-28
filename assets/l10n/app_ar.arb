@@ -179,6 +179,7 @@
   "system_storage_usage": "استخدام تخزين النظام",
   "download_pre_registration_data": "تنزيل بيانات التسجيل المسبق",
   "update_operator_biomterics": "تحديث القياسات الحيوية للمشغل",
+  "onboard_operator_biomterics": "تسجيل القياسات الحيوية للمشغل",
   "appliction_upload": "تحميل التطبيق",
   "check_updates": "تفقد التحديث",
   "center_remap_sync": "مركز إعادة رسم خريطة المزامنة.",
