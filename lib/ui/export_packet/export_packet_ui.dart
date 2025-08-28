@@ -56,7 +56,7 @@ class ExportPacketsPage extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              Column(
+              isMobileSize?Column(
                 children: [
                   const Row(
                     children: [
@@ -84,6 +84,24 @@ class ExportPacketsPage extends StatelessWidget {
                     ],
                   ),
                 ],
+              )
+                  :const Row(
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: SearchBoxExport(),
+                  ),
+                  SizedBox(width: 10),
+                  Flexible(
+                    flex: 1,
+                    child: UploadButton(),
+                  ),
+                  SizedBox(width: 10), // Add spacing between buttons
+                  Flexible(
+                    flex: 1,
+                    child: ExportButton(),
+                  ),
+                ],
               ),
 
               const SizedBox(
@@ -105,35 +123,35 @@ class ExportPacketsPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             context
-                                        .watch<ExportPacketsProvider>()
-                                        .countSelected >
-                                    0
+                                .watch<ExportPacketsProvider>()
+                                .countSelected >
+                                0
                                 ? Text(
-                                    AppLocalizations.of(context)!
-                                        .total_selected_application(
-                                            context
-                                                .watch<ExportPacketsProvider>()
-                                                .countSelected,
-                                            context
-                                                .watch<ExportPacketsProvider>()
-                                                .matchingPackets
-                                                .length),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontSize: 20),
-                                  )
+                              AppLocalizations.of(context)!
+                                  .total_selected_application(
+                                  context
+                                      .watch<ExportPacketsProvider>()
+                                      .countSelected,
+                                  context
+                                      .watch<ExportPacketsProvider>()
+                                      .matchingPackets
+                                      .length),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontSize: 20),
+                            )
                                 : Text(
-                                    AppLocalizations.of(context)!
-                                        .number_of_application(context
-                                            .watch<ExportPacketsProvider>()
-                                            .matchingPackets
-                                            .length),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontSize: 20),
-                                  ),
+                              AppLocalizations.of(context)!
+                                  .number_of_application(context
+                                  .watch<ExportPacketsProvider>()
+                                  .matchingPackets
+                                  .length),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontSize: 20),
+                            ),
                             const SizedBox(
                               width: 50,
                             ),
