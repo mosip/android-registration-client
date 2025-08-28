@@ -41,7 +41,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
       },
 
       child: Container(
-          padding: EdgeInsets.only(
+        height: 60.h,
+        padding: EdgeInsets.only(
           left: 25.w,
           right: 25.w,
           top: widget.isMobile && !isMobileSize ? 15.h : 9.h,
@@ -51,15 +52,15 @@ class _LanguageComponentState extends State<LanguageComponent> {
           color: widget.isFreezed
               ? appButtonBorderText
               : widget.isSelected
-                  ? appButtonBorderText
-                  : Colors.transparent,
+              ? appButtonBorderText
+              : Colors.transparent,
           border: Border.all(
             width: 1,
             color: widget.isDisabled
                 ? appBlackShade3
                 : widget.isSelected
-                    ? appButtonBorderText
-                    : languageSelectedColor,
+                ? appButtonBorderText
+                : languageSelectedColor,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(36),
@@ -70,9 +71,9 @@ class _LanguageComponentState extends State<LanguageComponent> {
           children: [
             widget.isFreezed || widget.isSelected
                 ? Icon(
-                    Icons.check,
-                    color: widget.isFreezed ? appGreyShade : appWhite,
-                  )
+              Icons.check,
+              color: widget.isFreezed ? appGreyShade : appWhite,
+            )
                 : const SizedBox(),
             SizedBox(
               width: widget.isFreezed || widget.isSelected ? 15.02 : 0,
@@ -86,10 +87,10 @@ class _LanguageComponentState extends State<LanguageComponent> {
                   color: widget.isDisabled
                       ? appBlackShade3
                       : widget.isFreezed
-                          ? appGreyShade
-                          : widget.isSelected
-                              ? appWhite
-                              : appBlackShade1,
+                      ? appGreyShade
+                      : widget.isSelected
+                      ? appWhite
+                      : appBlackShade1,
                 ),
               ),
             ),
