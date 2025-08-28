@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
 
 import '../main.dart';
 
@@ -78,8 +79,18 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
     _logoutTicker?.cancel();
   }
 
-  void _showWarningDialog() {
+  void _showWarningDialog() async {
     if (!widget.isUserLoggedIn) return;
+
+    // Prevent warning dialog if sync is in progress
+    final syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    final bool isAnySyncInProgress = syncProvider.isSyncInProgress ||
+        syncProvider.isSyncAndUploadInProgress;
+    if (isAnySyncInProgress) {
+      _resetAllTimers();
+      return;
+    }
+
     _warningShown = true;
     _dialogOpen = true;
     _countdown.value = widget.gracePeriod.inSeconds;

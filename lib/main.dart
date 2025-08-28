@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
-import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/connectivity_provider.dart';
@@ -27,9 +26,6 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 GlobalKey<ScaffoldMessengerState>();
 
-/// Single instance to reuse inside logout handler
-final SyncResponseService _syncResponseService = SyncResponseService();
-
 void main() async {
   enableFlutterDriverExtension(enableTextEntryEmulation: false);
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,15 +41,9 @@ Future<void> _handleAutoLogout() async {
   final ctx = rootNavigatorKey.currentContext;
   if (ctx == null) return; // Safety guard
 
-  final syncProvider = ctx.read<SyncProvider>();
+  // final syncProvider = ctx.read<SyncProvider>();
   final authProvider = ctx.read<AuthProvider>();
   final loc = AppLocalizations.of(ctx)!;
-
-  final bool isAnySyncInProgress = syncProvider.isSyncInProgress ||
-      syncProvider.isSyncAndUploadInProgress ||
-      await _syncResponseService.getSyncAndUploadInProgressStatus();
-
-  if (isAnySyncInProgress) return; // Skip logout during critical sync
 
   final String result = await authProvider.logoutUser();
 
