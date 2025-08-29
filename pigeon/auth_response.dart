@@ -38,5 +38,6 @@ abstract class AuthResponseApi {
   String getIdleTime();
   @async
   String getAutoLogoutPopupTimeout();
-
+  @async
+  List<String> getRolesByUserId(String userId);
 }

@@ -29,5 +29,7 @@ abstract class AuthService {
 
   Future<String> getAutoLogoutPopupTimeout();
 
+  Future<List<String?>> getRolesByUserId(String userId);
+
   factory AuthService() => getAuthServiceImpl();
 }

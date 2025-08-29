@@ -13,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
@@ -105,6 +106,11 @@ class _HomePageState extends State<HomePage> {
     List<DynamicFieldData?> fieldValues = await registrationTaskProvider
         .getFieldValues(fieldId, langCode, globalProvider.chosenLang);
     globalProvider.setNotificationLanguages(fieldValues);
+  }
+
+  Future<List<String?>> getSettingsUI(BuildContext context) async {
+    await registrationTaskProvider.getListOfSettings();
+    return registrationTaskProvider.listOfSettings;
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
@@ -258,6 +264,9 @@ class _HomePageState extends State<HomePage> {
       },
       syncData: (BuildContext context) {
         syncData(context);
+      },
+      getSettingsUI: (BuildContext context) async {
+        return await getSettingsUI(context);
       },
     );
   }

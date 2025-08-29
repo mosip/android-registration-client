@@ -10,6 +10,7 @@ import io.mosip.registration.clientmanager.exception.InvalidMachineSpecIDExcepti
 import org.json.JSONObject;
 
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.keymanager.dto.CryptoRequestDto;
 import io.mosip.registration.keymanager.dto.CryptoResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -35,11 +36,15 @@ public class LoginService {
     UserDetailRepository userDetailRepository;
 
     @Inject
+    UserRoleRepository userRoleRepository;
+
+    @Inject
     ClientCryptoManagerService clientCryptoManagerService;
 
-    public LoginService(Context context, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
+    public LoginService(Context context, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository, UserRoleRepository userRoleRepository) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userDetailRepository = userDetailRepository;
+        this.userRoleRepository = userRoleRepository;
         this.sessionManager = SessionManager.getSessionManager(context);
     }
 
@@ -80,6 +85,7 @@ public class LoginService {
             long rExpiry = Long.parseLong(jsonObject.getString("refreshExpiryTime"));
             userDetailRepository.saveUserAuthToken(userId, token, refreshToken, tExpiry, rExpiry);
             List<String> roles=this.sessionManager.saveAuthToken(token);
+            userRoleRepository.saveRoles(userId, roles);
             return roles;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
@@ -111,4 +117,8 @@ public class LoginService {
                 throw ex;
             }
         }
+
+    public List<String> getRolesByUserId(String userId) {
+        return userRoleRepository.getRolesByUserId(userId);
+    }
 }
