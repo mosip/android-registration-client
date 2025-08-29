@@ -61,6 +61,8 @@ public class RegistrationConstants {
     public static final String AGEGROUP_CONFIG = "mosip.registration.agegroup-config";
     public static final String ALLOWED_BIO_ATTRIBUTES = "mosip.registration.allowed-bioattributes";
     public static final String DEFAULT_APP_TYPE_CODE = "mosip.registration.default-app-type-code";
+    public static final String IDLE_TIME = "mosip.registration.idle_time";
+    public static final String REFRESHED_LOGIN_TIME = "mosip.registration.refreshed_login_time";
 
     public static final String RESPONSE = "response";
     public static final String ERRORS = "errors";
