@@ -271,13 +271,10 @@ class _CustomDropDownState extends State<DropDownControl> {
                   items: list
                       .map((option) => DropdownMenuItem(
                             value: option,
-                      child: Flexible(
-                            child:
-                                Text(option!.concatenatedName ?? option.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  softWrap: false,
-                                ),
+                      child: Text(option!.concatenatedName ?? option.name,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        softWrap: false,
                       ),
                           ))
                       .toList(),
