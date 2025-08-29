@@ -167,7 +167,6 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error in getSettingSpec", e);
         }
-        Log.i(getClass().getSimpleName(),"settingSpecList"+settingSpecList);
         result.success(settingSpecList);
     }
 }
