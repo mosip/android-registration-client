@@ -176,6 +176,7 @@
   "client_status": "Statut du client",
   "server_status": "État du serveur",
   "clear_filter": "Effacer le filtre",
+  "review_status": "Statut d'examen",
   "serial_number": "S.non",
   "application_id": "ID d'application",
   "reg_date": "Rég. Date",
