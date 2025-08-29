@@ -175,6 +175,7 @@
   },
   "client_status": "  حالة العميل",
   "server_status": "حالة الملقم",
+  "review_status": "حالة المراجعة",
   "clear_filter": "مرشح واضح",
   "serial_number": "س.ن",
   "application_id": "رقم الاستمارة",
