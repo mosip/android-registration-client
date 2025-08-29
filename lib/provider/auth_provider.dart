@@ -32,6 +32,8 @@ class AuthProvider with ChangeNotifier {
   String _userEmail = "";
   bool _isNetworkPresent = false;
   String _forgotPasswordUrl = "";
+  String _refreshedLoginTime = "";
+  String _idleTime = "";
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isSyncing => _isSyncing;
@@ -53,6 +55,8 @@ class AuthProvider with ChangeNotifier {
   String get userEmail => _userEmail;
   bool get isNetworkPresent => _isNetworkPresent;
   String get forgotPasswordUrl => _forgotPasswordUrl;
+  String get refreshedLoginTime => _refreshedLoginTime;
+  String get idleTime => _idleTime;
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -220,6 +224,18 @@ class AuthProvider with ChangeNotifier {
   getForgotPasswordUrl() async {
     String forgotPasswordUrl = await auth.forgotPasswordUrl();
     _forgotPasswordUrl = forgotPasswordUrl;
+    notifyListeners();
+  }
+
+  getIdleTime() async {
+    String idleTime = await auth.getIdleTime();
+    _idleTime = idleTime;
+    notifyListeners();
+  }
+
+  getRefreshedLoginTime() async {
+    String refreshedLoginTime = await auth.getAutoLogoutPopupTimeout();
+    _refreshedLoginTime = refreshedLoginTime;
     notifyListeners();
   }
 

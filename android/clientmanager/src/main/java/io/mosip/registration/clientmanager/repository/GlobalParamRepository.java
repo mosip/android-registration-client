@@ -122,4 +122,12 @@ public class GlobalParamRepository {
     public String getCachedStringForgotPassword() {
         return globalParamMap.get(RegistrationConstants.FORGOT_PASSWORD_URL);
     }
+
+    public String getCachedStringIdleTime() {
+        return globalParamMap.get(RegistrationConstants.IDLE_TIME);
+    }
+
+    public String getCachedStringRefreshedLoginTime() {
+        return globalParamMap.get(RegistrationConstants.REFRESHED_LOGIN_TIME);
+    }
 }

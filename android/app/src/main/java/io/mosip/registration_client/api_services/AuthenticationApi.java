@@ -242,4 +242,16 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
         String response = this.globalParamRepository.getCachedStringForgotPassword();
         result.success(response);
     }
+
+    @Override
+    public void getIdleTime(@NonNull AuthResponsePigeon.Result<String> result) {
+        String response = this.globalParamRepository.getCachedStringIdleTime();
+        result.success(response);
+    }
+
+    @Override
+    public void getAutoLogoutPopupTimeout(@NonNull AuthResponsePigeon.Result<String> result) {
+        String response = this.globalParamRepository.getCachedStringRefreshedLoginTime();
+        result.success(response);
+    }
 }
