@@ -56,6 +56,12 @@
   "network_error": "कोई नेटवर्क नहीं मिला!",
   "delete": "मिटाना",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "inactive_logout_heading": "तुम निष्क्रिय हो गए हो",
+  "inactive_logout_description": "ससुरक्षा कारणों से, आपको $TIMER में लॉग आउट कर दिया जाएगा",
+  "seconds": " सेकंड.",
+  "minutes": " मिनट.",
+  "logout_button": "लॉग आउट",
+  "stay_logged_in_button": "लॉग इन रहें",
   "@newRegistrationProcess": {
     "description": "New Registration Process Header",
     "placeholders": {
@@ -236,6 +242,7 @@
   "is_not_allowed": "अनुमति नहीं है",
   "capture": "कब्जा",
   "attempts_left": "प्रयास बाकी हैं",
+  "onboard_operator_biomterics": "ऑपरेटर बायोमेट्रिक्स ऑनबोर्ड करें",
   "left_hand": "बाएं हाथ",
   "left": "बाएं",
   "right": "दाएं",

@@ -245,6 +245,18 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     }
 
     @Override
+    public void getIdleTime(@NonNull AuthResponsePigeon.Result<String> result) {
+        String response = this.globalParamRepository.getCachedStringIdleTime();
+        result.success(response);
+    }
+
+    @Override
+    public void getAutoLogoutPopupTimeout(@NonNull AuthResponsePigeon.Result<String> result) {
+        String response = this.globalParamRepository.getCachedStringRefreshedLoginTime();
+        result.success(response);
+    }
+
+    @Override
     public void getRolesByUserId(@NonNull String userId, @NonNull AuthResponsePigeon.Result<List<String>> result) {
         try {
             List<String> roles = loginService.getRolesByUserId(userId);

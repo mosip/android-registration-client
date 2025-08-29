@@ -249,6 +249,7 @@ class _CustomDropDownState extends State<DropDownControl> {
                   height: 10,
                 ),
                 DropdownButtonFormField<GenericData>(
+                  isExpanded: true,
                   icon: const Icon(null),
                   decoration: InputDecoration(
                     contentPadding:
@@ -270,8 +271,14 @@ class _CustomDropDownState extends State<DropDownControl> {
                   items: list
                       .map((option) => DropdownMenuItem(
                             value: option,
+                      child: Flexible(
                             child:
-                                Text(option!.concatenatedName ?? option.name),
+                                Text(option!.concatenatedName ?? option.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                ),
+                      ),
                           ))
                       .toList(),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
