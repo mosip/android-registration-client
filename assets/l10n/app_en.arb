@@ -56,6 +56,12 @@
   "network_error": "No network found!",
   "delete": "DELETE",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "inactive_logout_heading": "You have been idle",
+  "inactive_logout_description": "For security reasons, you'll be logged out in $TIMER",
+  "seconds": " Seconds.",
+  "minutes": " Minutes.",
+  "logout_button": "LOG OUT",
+  "stay_logged_in_button": "STAY LOGGED IN",
   "@newRegistrationProcess": {
     "description": "New Registration Process Header",
     "placeholders": {
@@ -180,6 +186,7 @@
   "system_storage_usage": "System Storage Usage",
   "download_pre_registration_data": "Download Pre-Registration Data",
   "update_operator_biomterics": "Update Operator Biometrics",
+  "onboard_operator_biomterics":"Onboard Operator Biometrics",
   "appliction_upload": "Application Upload",
   "check_updates": "Check Updates",
   "center_remap_sync": "Center Remap Sync.",

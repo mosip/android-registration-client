@@ -49,6 +49,7 @@ import io.mosip.registration.clientmanager.dao.TemplateDao;
 import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
+import io.mosip.registration.clientmanager.dao.UserRoleDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
 import io.mosip.registration.clientmanager.entity.UserBiometric;
 import io.mosip.registration.clientmanager.repository.ApplicantValidDocRepository;
@@ -68,6 +69,7 @@ import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
@@ -277,6 +279,12 @@ public class RoomModule {
 
     @Singleton
     @Provides
+    UserRoleDao providesUserRoleDao(ClientDatabase clientDatabase) {
+        return clientDatabase.userRoleDao();
+    }
+
+    @Singleton
+    @Provides
     JobTransactionDao providesJobTransactionDao(ClientDatabase clientDatabase) {
         return clientDatabase.jobTransactionDao();
     }
@@ -395,6 +403,12 @@ public class RoomModule {
     UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao,
                                                      UserPasswordDao userPasswordDao) {
         return new UserDetailRepository(userDetailDao, userTokenDao, userPasswordDao);
+    }
+
+    @Provides
+    @Singleton
+    UserRoleRepository provideUserRoleRepository(UserRoleDao userRoleDao) {
+        return new UserRoleRepository(userRoleDao);
     }
 
     @Provides

@@ -34,4 +34,10 @@ abstract class AuthResponseApi {
   String stopAlarmService();
   @async
   String forgotPasswordUrl();
+  @async
+  String getIdleTime();
+  @async
+  String getAutoLogoutPopupTimeout();
+  @async
+  List<String> getRolesByUserId(String userId);
 }

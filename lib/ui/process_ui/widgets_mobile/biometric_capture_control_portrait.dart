@@ -110,6 +110,10 @@ class _BiometricCaptureControlPortraitState
                         fontWeight: semiBold,
                         color: blackShade1,
                       ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                     )
                   ],
                 ),
@@ -179,7 +183,8 @@ class _BiometricCaptureControlPortraitState
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  (widget.field.inputRequired!)
+                Expanded(
+                child:(widget.field.inputRequired!)
                       ? RichText(
                           text: TextSpan(
                           text: context
@@ -225,6 +230,7 @@ class _BiometricCaptureControlPortraitState
                   // SizedBox(
                   //   height: (isMobileSize)?20.h:52.h,
                   // ),
+                ),
                 ],
               ),
             ),
