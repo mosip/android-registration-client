@@ -19,6 +19,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -253,5 +254,15 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     public void getAutoLogoutPopupTimeout(@NonNull AuthResponsePigeon.Result<String> result) {
         String response = this.globalParamRepository.getCachedStringRefreshedLoginTime();
         result.success(response);
+    }
+
+    @Override
+    public void getRolesByUserId(@NonNull String userId, @NonNull AuthResponsePigeon.Result<List<String>> result) {
+        try {
+            List<String> roles = loginService.getRolesByUserId(userId);
+            result.success(roles);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Getting user role failed!" + Arrays.toString(e.getStackTrace()));
+        }
     }
 }
