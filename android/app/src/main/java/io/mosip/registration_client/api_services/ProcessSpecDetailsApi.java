@@ -38,6 +38,8 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
     GlobalParamRepository globalParamRepository;
     AuditManagerService auditManagerService;
     RegistrationService registrationService;
+    ObjectMapper objectMapper;
+    ObjectWriter objectWriter;
 
     @Inject
     public ProcessSpecDetailsApi(Context context,
@@ -51,6 +53,8 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         this.globalParamRepository = globalParamRepository;
         this.registrationService = registrationService;
         this.auditManagerService = auditManagerService;
+        this.objectMapper = new ObjectMapper();
+        this.objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
     }
 
     @Override
@@ -156,10 +160,8 @@ public class ProcessSpecDetailsApi implements ProcessSpecPigeon.ProcessSpecApi {
         try {
             List<SettingsSpecDto> settingsSpecDto = identitySchemaRepository.getSettingsSchema(context, identitySchemaRepository.getLatestSchemaVersion());
             settingsSpecDto = settingsSpecDto == null ? new ArrayList<>() : settingsSpecDto;
-            ObjectMapper objectMapper = new ObjectMapper();
-            ObjectWriter ow = objectMapper.writer().withDefaultPrettyPrinter();
             for (SettingsSpecDto dto : settingsSpecDto) {
-                String json = ow.writeValueAsString(dto);
+                String json = objectWriter.writeValueAsString(dto);
                 settingSpecList.add(json);
             }
         } catch (Exception e) {
