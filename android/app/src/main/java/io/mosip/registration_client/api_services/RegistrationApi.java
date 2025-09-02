@@ -106,7 +106,12 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         String response = "";
         String errorCode = "";
         try {
-            response = this.registrationService.getRegistrationDto().getRId();
+            RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
+            if (registrationDto.getAdditionalInfoRequestId() != null) {
+                response = registrationDto.getAdditionalInfoRequestId().split("-")[0];
+            } else {
+                response = registrationDto.getRId();
+            }
             registrationService.submitRegistrationDto(makerName);
         } catch (Exception e) {
             errorCode = e.getMessage();

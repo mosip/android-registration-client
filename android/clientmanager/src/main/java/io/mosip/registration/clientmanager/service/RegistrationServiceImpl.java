@@ -188,7 +188,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (this.registrationDto == null) {
             throw new ClientCheckedException(context, R.string.err_004);
         }
-
+        if (this.registrationDto.getAdditionalInfoRequestId() != null) {
+            String newAppId = this.registrationDto.getAdditionalInfoRequestId().split("-")[0];
+            this.registrationDto.setApplicationId(newAppId);
+            this.registrationDto.setRId(newAppId);
+        }
         List<String> selectedHandles = this.globalParamRepository.getSelectedHandles();
         if(selectedHandles != null) {
             if (this.registrationDto.getFlowType().equals("NEW") ||
@@ -282,6 +286,11 @@ public class RegistrationServiceImpl implements RegistrationService {
             additionalInfo.put("name", String.join(" ", fullName));
             additionalInfo.put("email", getAdditionalInfo(emailObj));
             additionalInfo.put("phone", getAdditionalInfo(phoneObj));
+
+            Registration existingRegistration = registrationRepository.getRegistration(this.registrationDto.getRId());
+            if (existingRegistration != null) {
+                 registrationRepository.deleteRegistration(this.registrationDto.getRId());
+            }
             
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
                     centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId());
@@ -411,7 +420,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         metaData.put(PacketManagerConstant.META_CENTER_ID, centerId);
         metaData.put(PacketManagerConstant.META_KEYINDEX, this.clientCryptoManagerService.getClientKeyIndex());
         metaData.put(PacketManagerConstant.META_REGISTRATION_ID, rid);
-        metaData.put(PacketManagerConstant.META_APPLICATION_ID, rid);
+        String appIdForMeta = this.registrationDto.getApplicationId() == null || this.registrationDto.getApplicationId().trim().isEmpty()
+                ? rid : this.registrationDto.getApplicationId();
+        metaData.put(PacketManagerConstant.META_APPLICATION_ID, appIdForMeta);
         metaData.put(PacketManagerConstant.META_CREATION_DATE,
                 DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         metaData.put(PacketManagerConstant.META_CLIENT_VERSION, BuildConfig.CLIENT_VERSION);

@@ -161,7 +161,6 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   }
 
   _getTasks() {
-    final processes = context.watch<RegistrationTaskProvider>().listOfProcesses;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: GridView.builder(

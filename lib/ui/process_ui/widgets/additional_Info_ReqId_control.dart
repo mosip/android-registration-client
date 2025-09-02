@@ -61,6 +61,7 @@ class _AdditionalInfoReqIdControlState extends State<AdditionalInfoReqIdControl>
                     onChanged: (value) {
                       globalProvider.setAdditionalInfoReqId(value);
                       registrationTaskProvider.setAdditionalReqId(value);
+                      registrationTaskProvider.setApplicationId(value.split("-")[0]);
                     },
                     textAlign: TextAlign.left,
                     decoration: InputDecoration(
