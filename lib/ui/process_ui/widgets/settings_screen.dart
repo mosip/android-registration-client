@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/process_ui/widgets/device_settings_tab.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -140,7 +141,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildTabContent(Settings settings) {
     final selectedLang = context.read<GlobalProvider>().selectedLanguage;
-    return _buildDescriptionOnlyTab(settings, selectedLang);
+    switch (settings.name) {
+      case 'scheduledjobs':
+        return Center(child: Text("${settings.name}"));
+      case 'globalconfigs':
+        return Center(child: Text("${settings.name}"));
+      case 'devices':
+        return DeviceSettingsTab(settings: settings,selectedLan: selectedLang);
+      default:
+        return _buildDescriptionOnlyTab(settings, selectedLang);
+    }
   }
 
   Widget _buildDescriptionOnlyTab(Settings settings, String selectedLang) {

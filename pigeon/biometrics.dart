@@ -47,4 +47,7 @@ abstract class BiometricsApi {
 
   @async
   bool conditionalBioAttributeValidation(String fieldId, String expression);
+
+  @async
+  List<String> getListOfDevices(String modality);
 }

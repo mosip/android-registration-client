@@ -160,11 +160,24 @@ class BiometricsServiceImpl implements BiometricsService {
     try {
       response = await BiometricsApi().removeBioException(fieldId, modality, attribute);
     } on PlatformException {
-      debugPrint('BiomtericsApi call failed!');
+      debugPrint('BiometricsApi call failed!');
     } catch (e) {
       debugPrint('Remove Bio Exception failed: ${e.toString()}');
     }
     return response;
+  }
+
+  @override
+  Future<List<String?>> getListOfDevices(String modality) async {
+    List<String?> deviceList = List.empty();
+    try {
+      deviceList = await BiometricsApi().getListOfDevices(modality);
+    } on PlatformException {
+      debugPrint('BiometricsApi call failed!');
+    } catch (e) {
+      debugPrint('Fetch List of Device failed: ${e.toString()}');
+    }
+    return deviceList;
   }
 
 }

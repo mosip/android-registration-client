@@ -29,11 +29,8 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -56,7 +53,6 @@ import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
-import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
@@ -87,7 +83,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private int qualityThreshold;
     List<BiometricsDto> biometricsDtoList;
 
-    private List<Bitmap> listBitmaps1 = new ArrayList<>();
+    private final List<Bitmap> listBitmaps1 = new ArrayList<>();
     private byte[] byteArrayTester;
     private List<byte[]> listByteArrayTester1 = new ArrayList<>();
     BiometricsPigeon.Result<String> result1;
@@ -107,6 +103,11 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private static final String RIGHT_THUMB = "Right Thumb";
     private static final String RIGHT = "Right";
     private static final String LEFT = "Left";
+
+    private final List<String> deviceDetailsList = new ArrayList<>();
+    private BiometricsPigeon.Result<List<String>> deviceListResult;
+
+    private Modality deviceSettingsModality;
 
 
 
@@ -660,6 +661,82 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             result.success(response);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void getListOfDevices(@NonNull String modality, @NonNull BiometricsPigeon.Result<List<String>> result) {
+        deviceDetailsList.clear();
+        deviceListResult = result;
+        deviceSettingsModality = getModality(modality);
+        try {
+            Intent intent = new Intent();
+            intent.setAction(RegistrationConstants.DISCOVERY_INTENT_ACTION);
+            queryPackage(intent);
+            DiscoverRequest discoverRequest = new DiscoverRequest();
+            discoverRequest.setType(deviceSettingsModality.getSingleType().value());
+            intent.putExtra(RegistrationConstants.SBI_INTENT_REQUEST_KEY,
+                    objectMapper.writeValueAsBytes(discoverRequest));
+            activity.startActivityForResult(intent, 4);
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting device discovery", e);
+            result.success(new ArrayList<>());
+        }
+    }
+
+    public void handleDeviceInfoResponse(Bundle bundle) {
+        try {
+            byte[] infoBytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
+            String[] deviceInfo = biometricsService.handleDeviceInfoResponse(deviceSettingsModality, infoBytes);
+            Map<String, String> deviceMap = new HashMap<>();
+            deviceMap.put("deviceName", deviceInfo[0]);
+            deviceMap.put("deviceId", deviceInfo[1]);
+            deviceMap.put("connectionStatus", deviceInfo[2]);
+
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(deviceMap);
+            deviceDetailsList.add(json);
+
+            if (deviceListResult != null) deviceListResult.success(deviceDetailsList);
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling device info response", e);
+            if (deviceListResult != null) deviceListResult.success(new ArrayList<>());
+        }
+    }
+
+    // Device listing flow: parse discovery response, then request device info
+    public void parseDiscoverResponseForList(Bundle bundle) {
+        try {
+            byte[] bytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
+            String discoveredCallbackId = biometricsService.handleDiscoveryResponse(deviceSettingsModality, bytes);
+            if (discoveredCallbackId != null) {
+                infoForList(discoveredCallbackId);
+            } else {
+                if (deviceListResult != null) deviceListResult.success(new ArrayList<>());
+            }
+        } catch (BiometricsServiceException e) {
+            auditManagerService.audit(AuditEvent.DISCOVER_SBI_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
+            Log.e(TAG, "Failed to parse discover response for list", e);
+            if (deviceListResult != null) deviceListResult.success(new ArrayList<>());
+        }
+    }
+
+    private void infoForList(String callbackId) {
+        if (callbackId == null) {
+            Log.e(TAG, "No SBI found");
+            if (deviceListResult != null) deviceListResult.success(new ArrayList<>());
+            return;
+        }
+
+        try {
+            Intent intent = new Intent();
+            intent.setAction(callbackId + RegistrationConstants.D_INFO_INTENT_ACTION);
+            queryPackage(intent);
+            activity.startActivityForResult(intent, 5);
+        } catch (ClientCheckedException ex) {
+            auditManagerService.audit(AuditEvent.DEVICE_INFO_FAILED, Components.REGISTRATION, ex.getMessage());
+            Log.e(TAG, ex.getMessage(), ex);
+            if (deviceListResult != null) deviceListResult.success(new ArrayList<>());
         }
     }
 

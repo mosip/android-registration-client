@@ -36,5 +36,7 @@ abstract class BiometricsService {
 
   Future<bool> conditionalBioAttributeValidation(String fieldId, String expression);
 
+  Future<List<String?>> getListOfDevices(String modality);
+
   factory BiometricsService() => getBiometricsServiceImpl();
 }

@@ -1,0 +1,149 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import '../../../model/settings.dart';
+import '../../../platform_spi/biometrics_service.dart';
+import '../../../utils/app_config.dart';
+
+class DeviceSettingsTab extends StatefulWidget {
+  DeviceSettingsTab(
+      {super.key, required this.settings, required this.selectedLan});
+  Settings settings;
+  String selectedLan;
+
+  @override
+  _DeviceSettingsTabState createState() => _DeviceSettingsTabState();
+}
+
+class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
+  late Future<List<Map<String, dynamic>>> _devicesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _devicesFuture = fetchDeviceDetails();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchDeviceDetails() async {
+    List<Map<String, dynamic>> deviceDetails = [];
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      List<String> modality = ["Face", "Iris", "Thumbs"];
+      for (var modalityType in modality) {
+        List<String?> data =
+            await BiometricsService().getListOfDevices(modalityType);
+        for (var e in data) {
+          if (e != null) {
+            final deviceMap = jsonDecode(e) as Map<String, dynamic>;
+            deviceMap['modality'] = modalityType;
+            deviceDetails.add(deviceMap);
+          }
+        }
+      }
+      return deviceDetails;
+    } catch (e) {
+      debugPrint('Error fetching device details: $e');
+      return [];
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _devicesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(child: Text("Error loading device details"));
+        }
+
+        final devices = snapshot.data ?? [];
+        if (devices.isEmpty) {
+          return const Center(child: Text("No devices found"));
+        }
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.settings.label?[widget.selectedLan] ??
+                        widget.settings.label?['eng'] ??
+                        (widget.settings.label?.values.first ?? 'UnKnown'),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: solidPrimary,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 20),
+                    ),
+                    onPressed: () {
+                      fetchDeviceDetails();
+                    },
+                    child: const Text("Scan Now"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: GridView.builder(
+                  itemCount: devices.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 3.5,
+                  ),
+                  itemBuilder: (context, index) {
+                    final device = devices[index];
+                    return Container(
+                      padding: const EdgeInsets.all(8), // even less padding
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.scanner, size: 25, color: solidPrimary),
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("ID: ${device['deviceId'] ?? 'N/A'}",
+                                    style: const TextStyle(fontSize: 12)),
+                                Text(
+                                    "Name: ${device['deviceName'] ?? 'Unknown'}",
+                                    style: const TextStyle(fontSize: 12)),
+                                Text(
+                                    "Status: ${device['connectionStatus'] ?? 'Unknown'}",
+                                    style: const TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
