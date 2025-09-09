@@ -35,6 +35,7 @@ import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
+import io.mosip.registration.clientmanager.repository.PermittedLocalConfigRepository;
 import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
@@ -164,12 +165,13 @@ public class AppModule {
                                                       CertificateManagerService certificateManagerService,
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
-                                                      FileSignatureDao fileSignatureDao) {
+                                                      FileSignatureDao fileSignatureDao,
+                                                      PermittedLocalConfigRepository permittedLocalConfigRepository) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, permittedLocalConfigRepository);
     }
 
 

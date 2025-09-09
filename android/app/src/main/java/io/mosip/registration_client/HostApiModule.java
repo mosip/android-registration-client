@@ -21,6 +21,10 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
+import io.mosip.registration.clientmanager.dao.LocalPreferencesDao;
+import io.mosip.registration.clientmanager.dao.PermittedLocalConfigDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAOImpl;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -29,7 +33,9 @@ import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
+import io.mosip.registration.clientmanager.service.LocalConfigServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
@@ -46,6 +52,8 @@ import io.mosip.registration.clientmanager.repository.MachineRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.repository.LocalPreferencesRepository;
+import io.mosip.registration.clientmanager.repository.PermittedLocalConfigRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -120,8 +128,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService, AuditManagerService auditManagerService) {
-        return new CommonDetailsApi(masterDataService, auditManagerService);
+    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService, AuditManagerService auditManagerService, LocalConfigService localConfigService) {
+        return new CommonDetailsApi(masterDataService, auditManagerService,localConfigService);
     }
 
 
@@ -223,6 +231,43 @@ public class HostApiModule {
     @Singleton
     DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
         return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository);
+    }
+
+    @Provides
+    @Singleton
+    LocalPreferencesDao provideLocalPreferencesDao(io.mosip.registration.clientmanager.config.ClientDatabase database) {
+        return database.localPreferencesDao();
+    }
+
+    @Provides
+    @Singleton
+    PermittedLocalConfigDao providePermittedLocalConfigDao(io.mosip.registration.clientmanager.config.ClientDatabase database) {
+        return database.permittedLocalConfigDao();
+    }
+
+    @Provides
+    @Singleton
+    LocalPreferencesRepository provideLocalPreferencesRepository(LocalPreferencesDao localPreferencesDao) {
+        return new LocalPreferencesRepository(localPreferencesDao);
+    }
+
+    @Provides
+    @Singleton
+    PermittedLocalConfigRepository providePermittedLocalConfigRepository(PermittedLocalConfigDao permittedLocalConfigDao) {
+        return new PermittedLocalConfigRepository(permittedLocalConfigDao);
+    }
+
+    @Provides
+    @Singleton
+    LocalConfigDAO provideLocalConfigDAO(PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                        LocalPreferencesRepository localPreferencesRepository) {
+        return new LocalConfigDAOImpl(permittedLocalConfigRepository, localPreferencesRepository);
+    }
+
+    @Provides
+    @Singleton
+    LocalConfigService provideLocalConfigService(LocalConfigDAO localConfigDAO) {
+        return new LocalConfigServiceImpl(localConfigDAO);
     }
 }
 

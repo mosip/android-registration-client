@@ -8,6 +8,8 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../global_config_settings_screen.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
@@ -126,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SizedBox(
-            height: 400,
+            height: MediaQuery.of(context).size.height,
             child: TabBarView(
               children: [
                 for (final settings in settingUiByRole) _buildTabContent(settings),
@@ -140,7 +142,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildTabContent(Settings settings) {
     final selectedLang = context.read<GlobalProvider>().selectedLanguage;
-    return _buildDescriptionOnlyTab(settings, selectedLang);
+    switch (settings.name) {
+      case 'scheduledjobs':
+        return Center(child: Text("${settings.name}"));
+      case 'globalconfigs':
+        return const GlobalConfigSettingsTab();
+      case 'devices':
+        return Center(child: Text("${settings.name}"));
+      default:
+        return _buildDescriptionOnlyTab(settings, selectedLang);
+    }
   }
 
   Widget _buildDescriptionOnlyTab(Settings settings, String selectedLang) {

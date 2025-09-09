@@ -7,6 +7,7 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,8 +107,22 @@ public class GlobalParamRepository {
         return globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
     }
 
-    public String getCachedStringPreRegPacketLocation(){
+    public String getCachedStringPreRegPacketLocation() {
         return globalParamMap.get(RegistrationConstants.PRE_REG_PACKET_LOCATION);
+    }
+
+    public Map<String, Object> getGlobalParamsByPattern(String pattern) {
+        Log.i(TAG, "Fetching list of global params with key pattern " + pattern);
+
+        List<GlobalParam> globalParams = globalParamDao.findByNameLikeAndIsActiveTrueAndValIsNotNull(pattern);
+        Map<String, Object> globalParamMap = new LinkedHashMap<>();
+
+        for (GlobalParam param : globalParams) {
+            globalParamMap.put(param.getName(), param.getValue() != null ? param.getValue().trim() : param.getValue());
+        }
+
+        Log.i(TAG, "List of global params fetched successfully"+ globalParamMap);
+        return globalParamMap;
     }
 
     public List<String> getSelectedHandles() {

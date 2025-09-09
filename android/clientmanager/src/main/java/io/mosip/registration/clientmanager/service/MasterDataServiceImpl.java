@@ -23,6 +23,7 @@ import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.clientmanager.entity.PermittedLocalConfig;
 import io.mosip.registration.clientmanager.entity.ReasonList;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
@@ -105,6 +106,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
+    private PermittedLocalConfigRepository permittedLocalConfigRepository;
     private String regCenterId;
     private String result = "";
     SharedPreferences sharedPreferences;
@@ -128,7 +130,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  CertificateManagerService certificateManagerService,
                                  LanguageRepository languageRepository,
                                  JobManagerService jobManagerService,
-                                 FileSignatureDao fileSignatureDao) {
+                                 FileSignatureDao fileSignatureDao,
+                                 PermittedLocalConfigRepository permittedLocalConfigRepository) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -150,6 +153,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
         this.fileSignatureDao = fileSignatureDao;
+        this.permittedLocalConfigRepository = permittedLocalConfigRepository;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -376,10 +380,19 @@ public class MasterDataServiceImpl implements MasterDataService {
     @SuppressWarnings("unchecked")
     private void saveGlobalParams(Map<String, Object> responseMap) {
         try {
+            Log.i(TAG, "Processing global configuration sync response");
+            Log.i(TAG, "Response keys: " + responseMap.keySet());
+            
             Map<String, String> globalParamMap = new HashMap<>();
 
             if (responseMap.get("configDetail") != null) {
                 Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
+                Log.i(TAG, "ConfigDetail keys: " + configDetailJsonMap.keySet());
+
+                if (configDetailJsonMap != null && configDetailJsonMap.get("globalConfiguration") != null) {
+                    String encryptedGlobalConfigs = configDetailJsonMap.get("globalConfiguration").toString();
+                    parseToMap(getParams(encryptedGlobalConfigs), globalParamMap);
+                }
 
                 if (configDetailJsonMap != null && configDetailJsonMap.get("registrationConfiguration") != null) {
                     String encryptedConfigs = configDetailJsonMap.get("registrationConfiguration").toString();
@@ -414,6 +427,36 @@ public class MasterDataServiceImpl implements MasterDataService {
             } else {
                 globalParamMap.put(key, String.valueOf(entry.getValue()));
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void processPermittedLocalConfig(Map<String, Object> permittedConfigMap) {
+        try {
+            Log.i(TAG, "Processing PermittedLocalConfig data: " + permittedConfigMap.toString());
+            
+            // Check if the data is in the expected format
+            if (permittedConfigMap.containsKey("permittedConfigurations")) {
+                List<Map<String, Object>> permittedConfigsList = (List<Map<String, Object>>) permittedConfigMap.get("permittedConfigurations");
+                
+                List<PermittedLocalConfig> permittedConfigs = new ArrayList<>();
+                for (Map<String, Object> configData : permittedConfigsList) {
+                    PermittedLocalConfig permittedConfig = new PermittedLocalConfig((String) configData.get("code"));
+                    permittedConfig.setName((String) configData.get("name"));
+                    permittedConfig.setType((String) configData.get("type"));
+                    permittedConfig.setIsActive((Boolean) configData.get("isActive"));
+                    permittedConfig.setIsDeleted((Boolean) configData.getOrDefault("isDeleted", false));
+                    permittedConfig.setDelDtimes(((Number) configData.getOrDefault("delDtimes", 0L)).longValue());
+                    permittedConfigs.add(permittedConfig);
+                }
+                
+                permittedLocalConfigRepository.savePermittedConfigs(permittedConfigs);
+                Log.i(TAG, "Successfully saved " + permittedConfigs.size() + " permitted configurations from global config sync");
+            } else {
+                Log.w(TAG, "PermittedLocalConfig data not in expected format. Available keys: " + permittedConfigMap.keySet());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error processing PermittedLocalConfig from global configuration sync", e);
         }
     }
 
@@ -668,8 +711,12 @@ public class MasterDataServiceImpl implements MasterDataService {
         boolean applicantValidDocPresent = clientSettingDto.getDataToSync().stream().filter(masterData -> masterData.getEntityName().equalsIgnoreCase("ApplicantValidDocument")).findAny().isPresent();
         for (MasterData masterData : clientSettingDto.getDataToSync()) {
             try {
+                Log.i(TAG, "Processing master data entity: " + masterData.getEntityName() + " of type: " + masterData.getEntityType());
                 switch (masterData.getEntityType()) {
                     case "structured":
+                        Log.i(TAG, "Saving master data for entity: " + masterData.getEntityName().toString());
+                        Log.i(TAG, "Entity type: " + masterData.getEntityType());
+                        Log.i(TAG, "Data size: " + (masterData.getData() != null ? masterData.getData().length() : "null"));
                         saveStructuredData(masterData.getEntityName(), masterData.getData(), applicantValidDocPresent);
                         break;
                     case "dynamic":
@@ -806,6 +853,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void saveStructuredData(String entityName, String data, boolean applicantValidDocPresent) throws JSONException {
+        Log.i(TAG, "saveStructuredData called for entity: " + entityName);
         String serverVersion = getServerVersionFromConfigs();
         String defaultAppTypeCode = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE);
         Boolean fullSync = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED) == null ? true : false;
@@ -915,6 +963,22 @@ public class MasterDataServiceImpl implements MasterDataService {
                     }
                 }
                 break;
+            case "PermittedLocalConfig":
+                JSONArray permittedConfigsJsonArray = getDecryptedDataList(data);
+                List<PermittedLocalConfig> permittedConfigs = new ArrayList<>();
+                for (int i = 0; i < permittedConfigsJsonArray.length(); i++) {
+                    JSONObject jsonObjects = new JSONObject(permittedConfigsJsonArray.getString(i));
+                    Log.i(TAG, "PermittedLocalConfig Data: " + jsonObjects.toString());
+                    PermittedLocalConfig premittedConfig = new PermittedLocalConfig(jsonObjects.getString("code"));
+                    premittedConfig.setName(jsonObjects.getString("name"));
+                    premittedConfig.setType(jsonObjects.getString("type"));
+                    premittedConfig.setIsActive(jsonObjects.getBoolean("isActive"));
+                    premittedConfig.setIsDeleted(jsonObjects.optBoolean("isDeleted", false));
+                    premittedConfig.setDelDtimes(jsonObjects.optLong("delDtimes", 0L));
+                    permittedConfigs.add(premittedConfig);
+                }
+                permittedLocalConfigRepository.savePermittedConfigs(permittedConfigs);
+                break;
         }
     }
 
@@ -1001,4 +1065,11 @@ public class MasterDataServiceImpl implements MasterDataService {
         String value = globalParamRepository.getGlobalParamValue(id);
         return value == null ? "" : value;
     }
+
+    @Override
+    public Map<String, Object> getRegistrationParams() {
+        Log.i(TAG, "Fetching list of registration params");
+        return globalParamRepository.getGlobalParamsByPattern("mosip.registration%");
+    }
+
 }
