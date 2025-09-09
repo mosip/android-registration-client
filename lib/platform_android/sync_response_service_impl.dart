@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
+import 'package:flutter/services.dart' show MethodChannel;
 
 class SyncResponseServiceImpl implements SyncResponseService {
   @override
@@ -168,6 +169,24 @@ class SyncResponseServiceImpl implements SyncResponseService {
       debugPrint('getSyncAndUploadInProgressStatus has failed! ${e.toString()}');
     }
     return syncAndUploadResponse;
+  }
+
+  static const MethodChannel _activeJobsChannel = MethodChannel('io.mosip.registration/activeSyncJobs');
+
+  @override
+  Future<List<String?>> getActiveSyncJobs() async {
+    try {
+      final result = await _activeJobsChannel.invokeMethod<List<dynamic>>('getActiveSyncJobs');
+      final list = (result ?? const <dynamic>[]).cast<String?>();
+      debugPrint('Active Sync Jobs from Android: $list');
+      return list;
+    } on PlatformException catch (e) {
+      debugPrint('getActiveSyncJobs PlatformException: ${e.message}');
+      return const [];
+    } catch (e) {
+      debugPrint('getActiveSyncJobs failed: $e');
+      return const [];
+    }
   }
 }
 

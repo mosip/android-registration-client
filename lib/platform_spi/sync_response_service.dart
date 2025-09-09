@@ -24,5 +24,7 @@ abstract class SyncResponseService {
   Future<Sync> getKernelCertsSync(bool isManualSync);
   Future<bool> getSyncAndUploadInProgressStatus();
 
+  Future<List<String?>> getActiveSyncJobs();
+
   factory SyncResponseService() => getSyncResponseServiceImpl();
 }

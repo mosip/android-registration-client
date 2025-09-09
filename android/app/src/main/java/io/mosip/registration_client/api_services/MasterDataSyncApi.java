@@ -299,6 +299,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         result.success(batchJob.getInProgressStatus());
     }
 
+    // Custom non-generated API to expose active sync jobs list to Flutter
+    public List<String> getActiveSyncJobs() {
+        List<SyncJobDef> list = syncJobDefRepository.getActiveSyncJobs();
+        List<String> result = new ArrayList<>();
+        try {
+            for (SyncJobDef job : list) {
+                result.add(objectMapper.writeValueAsString(job));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to serialize active sync jobs", e);
+        }
+        Log.i(TAG, "Exposing Active Sync Jobs size=" + result.size());
+        return result;
+    }
+
     void resetAlarm(String api) {
         Intent intent = new Intent(activity, UploadBackgroundService.class);
         PendingIntent pendingIntent;

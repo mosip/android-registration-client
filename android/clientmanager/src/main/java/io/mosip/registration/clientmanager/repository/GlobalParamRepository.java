@@ -130,4 +130,5 @@ public class GlobalParamRepository {
     public String getCachedStringRefreshedLoginTime() {
         return globalParamMap.get(RegistrationConstants.REFRESHED_LOGIN_TIME);
     }
+
 }

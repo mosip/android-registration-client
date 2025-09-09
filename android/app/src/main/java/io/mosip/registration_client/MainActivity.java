@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugins.GeneratedPluginRegistrant;
+import io.flutter.plugin.common.MethodChannel;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
@@ -297,6 +298,21 @@ public class MainActivity extends FlutterActivity {
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
         masterDataSyncApi.setCallbackActivity(this, batchJob);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
+
+        // Custom lightweight channel to fetch active sync jobs for Settings page
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "io.mosip.registration/activeSyncJobs")
+                .setMethodCallHandler((call, result) -> {
+                    if ("getActiveSyncJobs".equals(call.method)) {
+                        try {
+                            List<String> jobs = masterDataSyncApi.getActiveSyncJobs();
+                            result.success(jobs);
+                        } catch (Exception e) {
+                            result.error("ERR_ACTIVE_JOBS", e.getMessage(), null);
+                        }
+                    } else {
+                        result.notImplemented();
+                    }
+                });
     }
 
     @Override

@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.repository;
 
+import android.util.Log;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,6 +29,13 @@ public class SyncJobDefRepository {
     }
 
     public List<SyncJobDef> getAllSyncJobDefList() {
+        Log.i(getClass().getSimpleName(), "Fetching all sync job def"+this.syncJobDefDao.findAllByActiveStatus(true));
         return this.syncJobDefDao.findAll();
+    }
+
+    public List<SyncJobDef> getActiveSyncJobs() {
+        List<SyncJobDef> activeJobs = this.syncJobDefDao.findAllByActiveStatus(true);
+        Log.i(getClass().getSimpleName(), "Active Sync Jobs count=" + (activeJobs != null ? activeJobs.size() : 0) + ", items=" + activeJobs);
+        return activeJobs;
     }
 }

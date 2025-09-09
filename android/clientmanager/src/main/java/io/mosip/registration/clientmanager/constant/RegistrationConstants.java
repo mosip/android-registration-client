@@ -106,5 +106,4 @@ public class RegistrationConstants {
     public static final String RIGHT_THUMB = "Right Thumb";
     public static final String RIGHT = "Right";
     public static final String LEFT = "Left";
-
 }
