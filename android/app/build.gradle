@@ -61,6 +61,7 @@ android {
         buildConfigField("String", "BASE_URL", rootProject.ext.serverBaseURL)
         buildConfigField("String", "HEALTH_CHECK_PATH", rootProject.ext.serverHealthCheckPath)
         buildConfigField("String", "ACTUATOR_INFO_PATH", rootProject.ext.serverActuatorInfoPath)
+        buildConfigField "String", "SERVER_BASE_URL", "\"${rootProject.ext.serverBaseURL}\""
     }
 
     signingConfigs {
