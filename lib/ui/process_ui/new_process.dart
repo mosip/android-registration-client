@@ -80,6 +80,7 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     super.initState();
+    context.read<GlobalProvider>().setCurrentPage("new_process");
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
         if (mounted) {
@@ -957,17 +958,20 @@ class _NewProcessState extends State<NewProcess> with WidgetsBindingObserver {
                                       }),
                                 ),
                               ),
-                              Container(
-                                height: 36.h,
-                                width: 25.w,
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                color: solidPrimary,
-                                child: Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  color: pureWhite,
-                                  size: 17,
+                              Visibility(
+                                visible:context.watch<GlobalProvider>().currentPage != "acknowledgement",
+                                child: Container(
+                                  height: 36.h,
+                                  width: 25.w,
+                                  color: solidPrimary,
+                                  child: const Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    color: Colors.white,
+                                    size: 17,
+                                  ),
                                 ),
                               ),
+
                             ],
                           ),
                         ),

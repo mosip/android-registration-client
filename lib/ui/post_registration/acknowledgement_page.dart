@@ -32,6 +32,9 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      context.read<GlobalProvider>().setCurrentPage("acknowledgement");
+    });
   }
 
   _printHtmlToPdf() async {

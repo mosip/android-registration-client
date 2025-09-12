@@ -131,6 +131,12 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  String? currentPage;
+  void setCurrentPage(String page) {
+    currentPage = page;
+    notifyListeners();
+  }
+
   void clearScannedPages() {
     _scannedPages.clear();
     notifyListeners();
