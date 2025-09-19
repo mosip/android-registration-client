@@ -54,6 +54,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -352,6 +353,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
             }
+        }
+    }
+
+    @Override
+    public void deleteAuditLogsNative(@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            boolean ok = auditManagerService.deleteAuditLogs();
+            // Also persist timestamps so UI can show Last/Next immediately when triggered manually
+            try {
+                long nowMs = System.currentTimeMillis();
+                long nextMs = nowMs + java.util.concurrent.TimeUnit.MINUTES.toMillis(3);
+            } catch (Exception ignored) {}
+            result.success(ok);
+        } catch (Exception e) {
+            result.error(e);
         }
     }
 }

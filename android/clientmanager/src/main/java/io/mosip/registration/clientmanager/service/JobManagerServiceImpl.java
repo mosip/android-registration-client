@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.jobs.ConfigDataSyncJob;
+import io.mosip.registration.clientmanager.jobs.DeleteAuditLogsJob;
 import io.mosip.registration.clientmanager.jobs.PacketStatusSyncJob;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
@@ -105,11 +106,18 @@ public class JobManagerServiceImpl implements JobManagerService {
 
         } else {
             //To schedule periodically
-            //TODO set cron wise
+            long periodMillis = parseSyncFreqToMillis(syncFreq);
+            if (periodMillis <= 0) {
+                periodMillis = JOB_PERIODIC_SECONDS * 1000L;
+            }
+            // For testing: force deleteAuditLogsJob to run every 3 minutes
+            if (clientJobService == DeleteAuditLogsJob.class) {
+                periodMillis = TimeUnit.MINUTES.toMillis(3);
+            }
             info = new JobInfo.Builder(jobId, componentName)
                     .setRequiresCharging(false)
                     .setPersisted(true)
-                    .setPeriodic(JOB_PERIODIC_SECONDS * 1000)
+                    .setPeriodic(periodMillis)
                     .build();
         }
         return jobScheduler.schedule(info);
@@ -178,6 +186,24 @@ public class JobManagerServiceImpl implements JobManagerService {
         return nextSync;
     }
 
+    public String getNextSyncTimeWithFreq(int jobId, String syncFreq) {
+        long lastSyncTimeSeconds = jobTransactionService.getLastSyncTime(jobId);
+        String nextSync = context.getString(R.string.NA);
+        if (lastSyncTimeSeconds > 0) {
+            long periodMillis = parseSyncFreqToMillis(syncFreq);
+            long periodSeconds = periodMillis > 0 ? TimeUnit.MILLISECONDS.toSeconds(periodMillis) : JOB_PERIODIC_SECONDS;
+            long nowSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+            long delta = nowSeconds - lastSyncTimeSeconds;
+            long steps = delta <= 0 ? 1 : (delta + periodSeconds - 1) / periodSeconds; // ceil
+            long nextSyncTimeSeconds = lastSyncTimeSeconds + steps * periodSeconds;
+            if (nextSyncTimeSeconds <= nowSeconds) {
+                nextSyncTimeSeconds = nowSeconds + periodSeconds; // safety
+            }
+            nextSync = dateUtil.getDateTime(nextSyncTimeSeconds);
+        }
+        return nextSync;
+    }
+
     @Override
     public int generateJobServiceId(String syncJobDefId) {
         try {
@@ -196,8 +222,28 @@ public class JobManagerServiceImpl implements JobManagerService {
                 return PacketStatusSyncJob.class;
             case "synchConfigDataJob":
                 return ConfigDataSyncJob.class;
+            case "deleteAuditLogsJob":
+                return DeleteAuditLogsJob.class;
             default:
                 return null;
         }
+    }
+
+    private long parseSyncFreqToMillis(String syncFreq) {
+        try {
+            String s = syncFreq.trim().toLowerCase();
+            if (s.endsWith("ms")) {
+                return Long.parseLong(s.substring(0, s.length() - 2));
+            } else if (s.endsWith("s")) {
+                return Long.parseLong(s.substring(0, s.length() - 1)) * 1000L;
+            } else if (s.endsWith("m")) {
+                return Long.parseLong(s.substring(0, s.length() - 1)) * 60_000L;
+            } else if (s.endsWith("h")) {
+                return Long.parseLong(s.substring(0, s.length() - 1)) * 3_600_000L;
+            } else if (s.endsWith("d")) {
+                return Long.parseLong(s.substring(0, s.length() - 1)) * 86_400_000L;
+            }
+        } catch (Exception ignored) {}
+        return 0L;
     }
 }

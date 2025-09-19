@@ -49,4 +49,6 @@ abstract class SyncApi {
   Sync getKernelCertsSync(bool isManualSync);
   @async
   bool getSyncAndUploadInProgressStatus();
+  @async
+  bool deleteAuditLogsNative();
 }

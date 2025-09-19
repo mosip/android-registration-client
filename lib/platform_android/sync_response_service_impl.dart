@@ -188,6 +188,19 @@ class SyncResponseServiceImpl implements SyncResponseService {
       return const [];
     }
   }
+
+  Future<bool> deleteAuditLogs() async {
+    try {
+      final ok = await SyncApi().deleteAuditLogsNative();
+      return ok;
+    } on PlatformException catch (e) {
+      debugPrint('deleteAuditLogs PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('deleteAuditLogs failed: $e');
+      return false;
+    }
+  }
 }
 
 SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

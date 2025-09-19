@@ -107,7 +107,7 @@ class _JobCard extends StatelessWidget {
               SizedBox(
                 width: 40,
                 child: OutlinedButton(
-                  onPressed: () => _triggerJobSync(job.apiName),
+                  onPressed: () => _triggerJobSync(context, job.apiName),
                   style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(40, 40),
@@ -121,7 +121,7 @@ class _JobCard extends StatelessWidget {
     );
   }
 
-  Future<void> _triggerJobSync(String? apiName) async {
+  Future<void> _triggerJobSync(BuildContext context, String? apiName) async {
     if (apiName == null || apiName.isEmpty) {
       debugPrint('No apiName provided for sync');
       return;
@@ -130,33 +130,51 @@ class _JobCard extends StatelessWidget {
     final service = SyncResponseService();
     try {
       switch (apiName) {
-        case 'getGlobalParamsSync':
-          await service.getGlobalParamsSync(true);
-          break;
         case 'masterSyncJob':
           await service.getMasterDataSync(true);
           break;
-        case 'getUserDetailsSync':
-          await service.getUserDetailsSync(true);
-          break;
-        case 'getIDSchemaSync':
-          await service.getIDSchemaSync(true);
-          break;
-        case 'getPolicyKeySync':
+        case 'keyPolicySyncJob':
           await service.getPolicyKeySync(true);
-          break;
-        case 'getCaCertsSync':
-          await service.getCaCertsSync(true);
-          break;
-        case 'getKernelCertsSync':
-          await service.getKernelCertsSync(true);
-          break;
-        case 'batchJob':
-          await service.batchJob();
           break;
         case 'preRegistrationDataSyncJob':
           await service.getPreRegIds();
           break;
+        case 'preRegistrationPacketDeletionJob':
+          // final ok = await service.deletePreRegPackets();
+          // debugPrint('preRegistrationPacketDeletionJob result: $ok');
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text(ok ? 'Pre-registration packets deleted' : 'Failed to delete pre-registration packets'),
+          //     behavior: SnackBarBehavior.floating,
+          //     duration: const Duration(seconds: 3),
+          //   ),
+          // );
+          break;
+        case 'userDetailServiceJob':
+          await service.getUserDetailsSync(true);
+          break;
+        case 'syncCertificateJob':
+          await service.getCaCertsSync(true);
+          break;
+        case 'deleteAuditLogsJob':
+          final ok = await service.deleteAuditLogs();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(ok ? 'Audit logs deleted successfully' : 'Failed to delete audit logs'),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+          break;
+        // case 'getKernelCertsSync':
+        //   await service.getKernelCertsSync(true);
+        //   break;
+        // case 'batchJob':
+        //   await service.batchJob();
+        //   break;
+        // case 'preRegistrationDataSyncJob':
+        //   await service.getPreRegIds();
+        //   break;
         default:
           debugPrint('No handler for sync job: $apiName');
       }
