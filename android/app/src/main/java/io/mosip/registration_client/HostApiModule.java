@@ -68,6 +68,7 @@ import io.mosip.registration_client.api_services.DocumentCategoryApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
+import io.mosip.registration_client.api_services.GlobalConfigSettingsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
@@ -128,8 +129,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService, AuditManagerService auditManagerService, LocalConfigService localConfigService) {
-        return new CommonDetailsApi(masterDataService, auditManagerService,localConfigService);
+    CommonDetailsApi getCommonApiImpl(MasterDataService masterDataService, AuditManagerService auditManagerService) {
+        return new CommonDetailsApi(masterDataService, auditManagerService);
     }
 
 
@@ -268,6 +269,12 @@ public class HostApiModule {
     @Singleton
     LocalConfigService provideLocalConfigService(LocalConfigDAO localConfigDAO) {
         return new LocalConfigServiceImpl(localConfigDAO);
+    }
+
+    @Provides
+    @Singleton
+    GlobalConfigSettingsApi getGlobalConfigSettingsApiImpl(MasterDataService masterDataService, LocalConfigService localConfigService, GlobalParamRepository globalParamRepository) {
+        return new GlobalConfigSettingsApi(masterDataService, localConfigService, globalParamRepository);
     }
 }
 

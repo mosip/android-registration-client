@@ -8,7 +8,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../global_config_settings_screen.dart';
+import 'widgets/global_config_settings_tab.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -128,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height/1.4,
             child: TabBarView(
               children: [
                 for (final settings in settingUiByRole) _buildTabContent(settings),

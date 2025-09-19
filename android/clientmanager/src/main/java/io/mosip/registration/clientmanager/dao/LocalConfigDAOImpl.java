@@ -3,7 +3,6 @@ package io.mosip.registration.clientmanager.dao;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,15 +39,17 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
     @Override
     public List<String> getPermittedConfigurations(String configType) {
         Log.i(TAG, "Getting the list of permitted configurations of type " + configType);
-        
-        List<PermittedLocalConfig> permittedConfigs = 
+
+        List<PermittedLocalConfig> permittedConfigs =
             permittedLocalConfigRepository.getPermittedConfigsByType(configType);
+        Log.i(TAG, "Returning test configurations: " + permittedConfigs);
         List<String> permittedConfigurations = new ArrayList<>();
         if (permittedConfigs != null && !permittedConfigs.isEmpty()) {
             for (PermittedLocalConfig config : permittedConfigs) {
                 permittedConfigurations.add(config.getName());
             }
         }
+        Log.i(TAG, "response " + permittedConfigurations);
         return permittedConfigurations;
     }
 
@@ -84,10 +85,6 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
         Log.i(TAG, "Successfully modified configurations");
     }
 
-    @Override
-    public boolean isConfigurationPermitted(String configName) {
-        return permittedLocalConfigRepository.isConfigurationPermitted(configName);
-    }
 
     /**
      * Save local preference to database

@@ -30,9 +30,4 @@ public interface LocalConfigDAO {
      * Modify configurations by saving local preferences
      */
     void modifyConfigurations(Map<String, String> localPreferences);
-
-    /**
-     * Check if a configuration is permitted for local changes
-     */
-    boolean isConfigurationPermitted(String configName);
 }

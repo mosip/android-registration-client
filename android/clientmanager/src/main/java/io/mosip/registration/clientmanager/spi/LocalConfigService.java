@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.spi;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,12 +19,7 @@ public interface LocalConfigService {
     void modifyConfigurations(Map<String, String> localPreferences);
 
     /**
-     * Check if a configuration is permitted for local changes
-     */
-    boolean isConfigurationPermitted(String configName);
-
-    /**
      * Get permitted configuration names
      */
-    java.util.List<String> getPermittedConfigurationNames();
+    List<String> getPermittedConfiguration();
 }

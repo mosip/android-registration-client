@@ -21,9 +21,4 @@ public interface PermittedLocalConfigDao {
     @Query("SELECT * FROM permitted_local_config WHERE is_active = 1 AND is_deleted = 0 AND config_type = :configType")
     List<PermittedLocalConfig> findByIsActiveTrueAndType(String configType);
 
-    @Query("SELECT name FROM permitted_local_config WHERE is_active = 1 AND is_deleted = 0 AND config_type = :configType")
-    List<String> getPermittedConfigurationNames(String configType);
-
-    @Query("SELECT * FROM permitted_local_config WHERE name = :name AND is_active = 1 AND is_deleted = 0")
-    PermittedLocalConfig findByIsActiveTrueAndName(String name);
 }

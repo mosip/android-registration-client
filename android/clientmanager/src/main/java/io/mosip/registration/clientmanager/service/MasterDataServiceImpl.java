@@ -251,6 +251,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         Map<String, String> queryParams = new HashMap<>();
 
         try {
+            Log.i(TAG, "MasterData Sync client index"+this.clientCryptoManagerService.getClientKeyIndex());
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
             result = MASTER_DATA_SYNC_FAILED;
@@ -427,36 +428,6 @@ public class MasterDataServiceImpl implements MasterDataService {
             } else {
                 globalParamMap.put(key, String.valueOf(entry.getValue()));
             }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void processPermittedLocalConfig(Map<String, Object> permittedConfigMap) {
-        try {
-            Log.i(TAG, "Processing PermittedLocalConfig data: " + permittedConfigMap.toString());
-            
-            // Check if the data is in the expected format
-            if (permittedConfigMap.containsKey("permittedConfigurations")) {
-                List<Map<String, Object>> permittedConfigsList = (List<Map<String, Object>>) permittedConfigMap.get("permittedConfigurations");
-                
-                List<PermittedLocalConfig> permittedConfigs = new ArrayList<>();
-                for (Map<String, Object> configData : permittedConfigsList) {
-                    PermittedLocalConfig permittedConfig = new PermittedLocalConfig((String) configData.get("code"));
-                    permittedConfig.setName((String) configData.get("name"));
-                    permittedConfig.setType((String) configData.get("type"));
-                    permittedConfig.setIsActive((Boolean) configData.get("isActive"));
-                    permittedConfig.setIsDeleted((Boolean) configData.getOrDefault("isDeleted", false));
-                    permittedConfig.setDelDtimes(((Number) configData.getOrDefault("delDtimes", 0L)).longValue());
-                    permittedConfigs.add(permittedConfig);
-                }
-                
-                permittedLocalConfigRepository.savePermittedConfigs(permittedConfigs);
-                Log.i(TAG, "Successfully saved " + permittedConfigs.size() + " permitted configurations from global config sync");
-            } else {
-                Log.w(TAG, "PermittedLocalConfig data not in expected format. Available keys: " + permittedConfigMap.keySet());
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error processing PermittedLocalConfig from global configuration sync", e);
         }
     }
 
@@ -870,7 +841,9 @@ public class MasterDataServiceImpl implements MasterDataService {
                 machineRepository.saveMachineMaster(new JSONObject(machines.getString(0)));
                 break;
             case "RegistrationCenter":
+                Log.i(TAG, "RegistrationCenter before decrypt");
                 JSONArray centers = getDecryptedDataList(data);
+                Log.i(TAG, "RegistrationCenter Data: " + centers.toString());
                 for (int i = 0; i < centers.length(); i++) {
                     registrationCenterRepository.saveRegistrationCenter(new JSONObject(centers.getString(i)));
                 }
@@ -1068,7 +1041,6 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public Map<String, Object> getRegistrationParams() {
-        Log.i(TAG, "Fetching list of registration params");
         return globalParamRepository.getGlobalParamsByPattern("mosip.registration%");
     }
 

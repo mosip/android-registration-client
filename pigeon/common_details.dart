@@ -16,12 +16,4 @@ abstract class CommonDetailsApi {
   String getVersionFromGlobalParam(String id);
   @async
   String saveScreenHeaderToGlobalParam(String id, String value);
-  @async
-  Map<String, Object> getRegistrationParams();
-  @async
-  Map<String, String> getLocalConfigurations();
-  @async
-  List<String> getPermittedConfigurationNames();
-  @async
-  void modifyConfigurations(Map<String, String> localPreferences);
 }

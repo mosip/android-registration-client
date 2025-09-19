@@ -36,6 +36,7 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
 import io.mosip.registration.clientmanager.dao.JobTransactionDao;
 import io.mosip.registration.clientmanager.dao.LanguageDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
@@ -104,8 +105,11 @@ public class RoomModule {
                     encryptExistingDb(context, dbPwd);
                 }
             }
+//            clientDatabase = Room.databaseBuilder(application, ClientDatabase.class, DATABASE_NAME)
+//                    .openHelperFactory(new SupportFactory(dbPwd.getBytes()))
+//                    .allowMainThreadQueries()
+//                    .build();
             clientDatabase = Room.databaseBuilder(application, ClientDatabase.class, DATABASE_NAME)
-                    .openHelperFactory(new SupportFactory(dbPwd.getBytes()))
                     .allowMainThreadQueries()
                     .build();
         } catch (Exception e) {

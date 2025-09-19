@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.PermittedLocalConfigDao;
 import io.mosip.registration.clientmanager.entity.PermittedLocalConfig;
 
@@ -56,49 +55,4 @@ public class PermittedLocalConfigRepository {
         }
     }
 
-    /**
-     * Get permitted configuration names by type (for UI permission checks)
-     */
-    public List<String> getPermittedConfigurationNames(String configType) {
-        try {
-            List<PermittedLocalConfig> configs = permittedLocalConfigDao.findByIsActiveTrueAndType(configType);
-            List<String> names = new java.util.ArrayList<>();
-            if (configs != null) {
-                for (PermittedLocalConfig config : configs) {
-                    names.add(config.getName());
-                }
-            }
-            return names;
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting permitted configuration names for type: " + configType, e);
-            return null;
-        }
-    }
-
-    /**
-     * Check if a specific configuration is permitted for local changes
-     */
-    public boolean isConfigurationPermitted(String configName) {
-        try {
-            List<PermittedLocalConfig> configs = permittedLocalConfigDao.findByIsActiveTrue();
-            if (configs != null) {
-                for (PermittedLocalConfig config : configs) {
-                    if (config.getName().equals(configName)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking if configuration is permitted: " + configName, e);
-            return false;
-        }
-    }
-
-    /**
-     * Get permitted configuration names for CONFIGURATION type (most common)
-     */
-    public List<String> getPermittedConfigurationNames() {
-        return getPermittedConfigurationNames(RegistrationConstants.PERMITTED_CONFIG_TYPE);
-    }
 }
