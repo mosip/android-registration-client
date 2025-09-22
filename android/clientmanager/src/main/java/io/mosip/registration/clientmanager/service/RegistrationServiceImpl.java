@@ -48,6 +48,7 @@ import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.dto.ResponseDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
@@ -61,6 +62,9 @@ import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.clientmanager.entity.PreRegistrationList;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
+import javax.inject.Provider;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
@@ -100,6 +104,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     private KeyStoreRepository keyStoreRepository;
     private GlobalParamRepository globalParamRepository;
     private AuditManagerService auditManagerService;
+    private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
+    
     public static final String BOOLEAN_FALSE = "false";
 
     @Inject
@@ -110,7 +116,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    ClientCryptoManagerService clientCryptoManagerService,
                                    KeyStoreRepository keyStoreRepository,
                                    GlobalParamRepository globalParamRepository,
-                                   AuditManagerService auditManagerService) {
+                                   AuditManagerService auditManagerService,
+                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -121,6 +128,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.keyStoreRepository = keyStoreRepository;
         this.globalParamRepository = globalParamRepository;
         this.auditManagerService = auditManagerService;
+        this.preRegistrationDataSyncServiceProvider = preRegistrationDataSyncServiceProvider;
     }
 
     @Override
@@ -285,6 +293,23 @@ public class RegistrationServiceImpl implements RegistrationService {
             
             registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
                     centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo);
+
+            Log.i(TAG, "Registration getPreRegistrationId: " + this.registrationDto.getPreRegistrationId());
+
+            // Delete pre-registration record after successful packet creation
+            if (this.registrationDto.getPreRegistrationId() != null
+                    && !this.registrationDto.getPreRegistrationId().trim().isEmpty()) {
+                
+                ResponseDto responseDTO = new ResponseDto();
+                List<PreRegistrationList> preRegistrationLists = new ArrayList<>();
+                PreRegistrationList preRegistrationList = preRegistrationDataSyncServiceProvider.get()
+                        .getPreRegistrationRecordForDeletion(
+                                this.registrationDto.getPreRegistrationId());
+                preRegistrationLists.add(preRegistrationList);
+                preRegistrationDataSyncServiceProvider.get().deletePreRegRecords(responseDTO, preRegistrationLists);
+                
+                Log.i(TAG, "Pre-registration record deleted for ID: " + this.registrationDto.getPreRegistrationId());
+            }
 
 //        } finally {
             clearRegistration();

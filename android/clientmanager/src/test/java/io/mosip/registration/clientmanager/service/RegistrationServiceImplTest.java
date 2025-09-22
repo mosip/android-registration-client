@@ -15,6 +15,7 @@ import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -50,6 +51,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import javax.inject.Provider;
+
 @RunWith(MockitoJUnitRunner.class)
 public class RegistrationServiceImplTest {
 
@@ -74,6 +77,7 @@ public class RegistrationServiceImplTest {
     @Mock
     private ClientCryptoManagerService clientCryptoManagerService;
     private RegistrationService registrationService;
+    private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
 
     @Before
     public void setUp() {
@@ -84,7 +88,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService);
+                keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider);
     }
     
     @Test(expected = ClientCheckedException.class)
