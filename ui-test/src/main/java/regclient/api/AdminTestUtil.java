@@ -1,10 +1,14 @@
 package regclient.api;
 
+import io.mosip.testrig.apirig.testrunner.OTPListener;
 import io.restassured.response.Response;
+import regclient.utils.TestDataReader;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.github.javafaker.Faker;
 
 import javax.ws.rs.core.MediaType;
 import java.text.SimpleDateFormat;
@@ -87,7 +91,7 @@ public class AdminTestUtil extends BaseTestCase {
 
 	public static void initialize() {
 		if (!initialized) {
-			ConfigManager.init();
+			ArcConfigManager.init();
 			BaseTestCase.initialize();
 			KeycloakUserManager.createUsers();
 			mapUserToZone(BaseTestCase.currentModule +"-"+propsKernel.getProperty("iam-users-to-create"),propsKernel.getProperty("zone"));
@@ -123,9 +127,9 @@ public class AdminTestUtil extends BaseTestCase {
 	public static List<String> getLanguageList() {
 		logger.info("We have created a Config Manager. Beginning to read properties!");
 
-		environment = ConfigManager.getiam_apienvuser();
+		environment = ArcConfigManager.getiam_apienvuser();
 		logger.info("Environemnt is  ==== :" + environment);
-		ApplnURI = ConfigManager.getiam_apiinternalendpoint();
+		ApplnURI = ArcConfigManager.getiam_apiinternalendpoint();
 		logger.info("Application URI ======" + ApplnURI);
 
 		logger.info("Configs from properties file are set.");
@@ -175,6 +179,210 @@ public class AdminTestUtil extends BaseTestCase {
 				MediaType.APPLICATION_JSON, BaseTestCase.COOKIENAME, token);
 		JSONObject responseJson = new JSONObject(response.asString());
 		System.out.println("responseJson = " + responseJson);
+	}
+	
+	public static void sendOtp(String userId, String langCode) {
+		String token = kernelAuthLib.getTokenByRole("globalAdmin");
+	    JSONObject requestJson = new JSONObject();
+	    requestJson.put("id", "mosip.pre-registration.login.sendotp");
+	    requestJson.put("version", "1.0");
+	    requestJson.put("requesttime", AdminTestUtil.generateCurrentUTCTimeStamp());
+	    JSONObject innerRequest = new JSONObject();
+	    innerRequest.put("userId", userId);
+	    innerRequest.put("langCode", langCode);
+	    requestJson.put("request", innerRequest);
+	    Response response = RestClient.postRequestWithCookie(
+	    		BaseTestCase.ApplnURI +"/preregistration/v1/login/sendOtp/langcode",
+	            requestJson.toString(),
+	            MediaType.APPLICATION_JSON,
+	            MediaType.APPLICATION_JSON,
+	            BaseTestCase.COOKIENAME, token
+	    );
+	    JSONObject responseJson = new JSONObject(response.asString());
+	    System.out.println("Response JSON = " + responseJson);
+	    if (responseJson.has("response") 
+	            && responseJson.getJSONObject("response").has("status")
+	            && "success".equalsIgnoreCase(responseJson.getJSONObject("response").getString("status"))) {
+	        System.out.println("✅ OTP request sent successfully.");
+	    } else {
+	        throw new RuntimeException("❌ OTP request failed. Response: " + responseJson.toString());
+	    }
+	}
+	
+	public static Response validateOtp(String userId, String otp) {
+	    String token = kernelAuthLib.getTokenByRole("globalAdmin");
+	    JSONObject requestJson = new JSONObject();
+	    requestJson.put("id", "mosip.pre-registration.login.useridotp");
+	    requestJson.put("version", "1.0");
+	    requestJson.put("requesttime", AdminTestUtil.generateCurrentUTCTimeStamp());
+
+	    JSONObject innerRequest = new JSONObject();
+	    innerRequest.put("userId", userId);
+	    innerRequest.put("otp", otp);
+	    requestJson.put("request", innerRequest);
+	    Response response = RestClient.postRequestWithCookie(
+	            BaseTestCase.ApplnURI + "/preregistration/v1/login/validateOtp",
+	            requestJson.toString(),
+	            MediaType.APPLICATION_JSON,
+	            MediaType.APPLICATION_JSON,
+	            BaseTestCase.COOKIENAME, token
+	    );
+
+	    if (response == null) {
+	        throw new RuntimeException("No response from validateOtp API");
+	    }
+
+	    int statusCode = response.getStatusCode();
+	    if (statusCode < 200 || statusCode >= 300) {
+	        throw new RuntimeException("HTTP error from validateOtp API. Status: " + statusCode + " Body: " + response.asString());
+	    }
+
+	    JSONObject responseJson;
+	    try {
+	        responseJson = new JSONObject(response.asString());
+	    } catch (Exception e) {
+	        throw new RuntimeException("Invalid JSON returned from validateOtp API: " + response.asString(), e);
+	    }
+	    if (responseJson.has("response")
+	            && responseJson.getJSONObject("response").has("status")
+	            && "success".equalsIgnoreCase(responseJson.getJSONObject("response").getString("status"))) {
+	        System.out.println("✅ OTP validation successful.");
+	        return response;
+	    } else {
+	        throw new RuntimeException("❌ OTP validation failed. Response: " + responseJson.toString());
+	    }
+	}
+
+	public static String createPreRegistration(String userId) {
+	    String token = kernelAuthLib.getTokenByRole("globalAdmin");
+	    Faker faker = new Faker();
+
+	    String randomName = faker.name().fullName();
+	    String address1 = faker.address().streetAddress();
+	    String address2 = faker.address().secondaryAddress();
+	    String address3 = faker.address().buildingNumber();
+	    String phone = faker.number().digits(10);  
+	    String email = faker.internet().emailAddress();
+	    
+	    JSONObject requestJson = new JSONObject();
+	    requestJson.put("id", "mosip.pre-registration.demographic.create");
+	    requestJson.put("version", "1.0");
+	    requestJson.put("requesttime", AdminTestUtil.generateCurrentUTCTimeStamp());
+
+	    JSONObject mainRequest = new JSONObject();
+	    JSONArray requiredFields = new JSONArray();
+	    requiredFields.put("IDSchemaVersion")
+	                  .put("fullName")
+	                  .put("dateOfBirth")
+	                  .put("gender")
+	                  .put("addressLine1")
+	                  .put("addressLine2")
+	                  .put("addressLine3")
+	                  .put("region")
+	                  .put("province")
+	                  .put("city")
+	                  .put("zone")
+	                  .put("postalCode")
+	                  .put("phone")
+	                  .put("email")
+	                  .put("residenceStatus");
+	    mainRequest.put("requiredFields", requiredFields);
+
+	    // demographicDetails.identity
+	    JSONObject identity = new JSONObject();
+	    identity.put("gender", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", "MLE"))
+	            .put(new JSONObject().put("language", "ara").put("value", "MLE"))
+	            .put(new JSONObject().put("language", "fra").put("value", "MLE")));
+
+	    identity.put("city", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", "TEST_CITY"))
+	            .put(new JSONObject().put("language", "ara").put("value", "TEST_CITY"))
+	            .put(new JSONObject().put("language", "fra").put("value", "TEST_CITY")));
+
+	    identity.put("postalCode", "14022");
+
+	    identity.put("fullName", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", randomName))
+	            .put(new JSONObject().put("language", "ara").put("value", randomName))
+	            .put(new JSONObject().put("language", "fra").put("value", randomName)));
+
+	    identity.put("dateOfBirth", "1996/01/01");
+	    identity.put("IDSchemaVersion", 0.1);
+
+	    identity.put("province", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", "TEST_PROVINCE"))
+	            .put(new JSONObject().put("language", "ara").put("value", "TEST_PROVINCE"))
+	            .put(new JSONObject().put("language", "fra").put("value", "TEST_PROVINCE")));
+
+	    identity.put("zone", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", "TEST_ZONE"))
+	            .put(new JSONObject().put("language", "ara").put("value", "TEST_ZONE"))
+	            .put(new JSONObject().put("language", "fra").put("value", "TEST_ZONE")));
+
+	    identity.put("phone", phone);
+
+	    identity.put("addressLine1", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", address1))
+	            .put(new JSONObject().put("language", "ara").put("value", address1))
+	            .put(new JSONObject().put("language", "fra").put("value", address1)));
+
+	    identity.put("addressLine2", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", address2))
+	            .put(new JSONObject().put("language", "ara").put("value", address2))
+	            .put(new JSONObject().put("language", "fra").put("value", address2)));
+
+	    identity.put("addressLine3", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", address3))
+	            .put(new JSONObject().put("language", "ara").put("value", address3))
+	            .put(new JSONObject().put("language", "fra").put("value", address3)));
+
+	    identity.put("region", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", "TEST_REGION"))
+	            .put(new JSONObject().put("language", "ara").put("value", "TEST_REGION"))
+	            .put(new JSONObject().put("language", "fra").put("value", "TEST_REGION")));
+
+	    identity.put("residenceStatus", new JSONArray()
+	            .put(new JSONObject().put("language", "eng").put("value", "NFR"))
+	            .put(new JSONObject().put("language", "ara").put("value", "NFR"))
+	            .put(new JSONObject().put("language", "fra").put("value", "NFR")));
+
+	    identity.put("email", email);
+
+	    JSONObject demographicDetails = new JSONObject();
+	    demographicDetails.put("identity", identity);
+
+	    mainRequest.put("demographicDetails", demographicDetails);
+	    mainRequest.put("langCode", "eng");
+
+	    requestJson.put("request", mainRequest);
+
+	    // Hit API
+	    Response response = RestClient.postRequestWithCookie(
+	            BaseTestCase.ApplnURI + "/preregistration/v1/applications/prereg",
+	            requestJson.toString(),
+	            MediaType.APPLICATION_JSON,
+	            MediaType.APPLICATION_JSON,
+	            BaseTestCase.COOKIENAME, token
+	    );
+	    String preRegId=null;
+	    JSONObject responseJson = new JSONObject(response.asString());
+	    if (responseJson.has("response") && responseJson.getJSONObject("response").has("preRegistrationId")) {
+	         preRegId = responseJson.getJSONObject("response").getString("preRegistrationId");
+	        System.out.println("✅ preRegistrationId = " + preRegId);
+	    } else {
+	        throw new RuntimeException("❌ preRegistrationId not found in response: " + responseJson.toString());
+	    }
+	    return preRegId;
+	}
+
+	public static String getPreRegistrationFlow() {
+	    Faker faker = new Faker();
+		String userId = faker.internet().emailAddress();
+	    sendOtp(userId, TestDataReader.readData("language"));
+	    validateOtp(userId, OTPListener.getOtp(userId));
+	    String preRegId = createPreRegistration(userId);
+	    return preRegId;
 	}
 	
 	public static void mapCenter(String user) {
