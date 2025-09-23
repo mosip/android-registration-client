@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -194,10 +195,11 @@ public class AppModule {
                                                    ClientCryptoManagerService clientCryptoManagerService,
                                                    KeyStoreRepository keyStoreRepository,
                                                    GlobalParamRepository globalParamRepository,
-                                                   AuditManagerService auditManagerService) {
+                                                   AuditManagerService auditManagerService,
+                                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService);
+                keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider);
     }
 
     @Provides

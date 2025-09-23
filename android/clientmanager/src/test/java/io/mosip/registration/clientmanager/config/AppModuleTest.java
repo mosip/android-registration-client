@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
@@ -91,6 +92,8 @@ public class AppModuleTest {
     @Mock PreRegistrationDataSyncRepositoryDao preRegistrationDataSyncRepositoryDao;
     @Mock PreRegZipHandlingService preRegZipHandlingService;
     @Mock PreRegistrationList preRegistrationList;
+    @Mock
+    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
 
     private AppModule appModule;
 
@@ -168,7 +171,7 @@ public class AppModuleTest {
     public void testProvideRegistrationService() {
         RegistrationService service = appModule.provideRegistrationService(
                 packetWriterService, registrationRepository, mock(MasterDataService.class), identitySchemaRepository,
-                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService
+                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,preRegistrationDataSyncServiceProvider
         );
         assertNotNull(service);
         assertTrue(service instanceof RegistrationServiceImpl);

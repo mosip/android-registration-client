@@ -1,7 +1,10 @@
 package io.mosip.registration.clientmanager.dao;
 
-import io.mosip.registration.clientmanager.entity.PreRegistrationList;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
+
+import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 
 
 /**
@@ -24,19 +27,21 @@ public interface PreRegistrationDataSyncDao {
     public void save(PreRegistrationList preRegistration);
 
    
-    public List<PreRegistrationList> fetchRecordsToBeDeleted(String startDate);
+    public List<PreRegistrationList> fetchRecordsToBeDeleted(Date startDate);
 
    
     public long update(String id,String updatedBy,String updatedTime);
 
     
-    //public void deleteAll(List<PreRegistrationList> preRegistrationList);
+    public void deleteAll(List<PreRegistrationList> preRegistrationList);
 
     
-   // List<PreRegistrationList> getAllPreRegPackets();
+    // List<PreRegistrationList> getAllPreRegPackets();
 
    
     public String getLastPreRegPacketDownloadedTime();
 
     public PreRegistrationList getById(String id);
+
+    public Timestamp getLastPreRegPacketDownloadedTimeAsTimestamp();
 }
