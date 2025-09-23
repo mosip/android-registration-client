@@ -15,9 +15,6 @@ public interface PermittedLocalConfigDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<PermittedLocalConfig> permittedConfigs);
 
-    @Query("SELECT * FROM permitted_local_config WHERE is_active = 1 AND is_deleted = 0")
-    List<PermittedLocalConfig> findByIsActiveTrue();
-
     @Query("SELECT * FROM permitted_local_config WHERE is_active = 1 AND is_deleted = 0 AND config_type = :configType")
     List<PermittedLocalConfig> findByIsActiveTrueAndType(String configType);
 

@@ -251,7 +251,6 @@ public class MasterDataServiceImpl implements MasterDataService {
         Map<String, String> queryParams = new HashMap<>();
 
         try {
-            Log.i(TAG, "MasterData Sync client index"+this.clientCryptoManagerService.getClientKeyIndex());
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
             result = MASTER_DATA_SYNC_FAILED;
@@ -682,12 +681,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         boolean applicantValidDocPresent = clientSettingDto.getDataToSync().stream().filter(masterData -> masterData.getEntityName().equalsIgnoreCase("ApplicantValidDocument")).findAny().isPresent();
         for (MasterData masterData : clientSettingDto.getDataToSync()) {
             try {
-                Log.i(TAG, "Processing master data entity: " + masterData.getEntityName() + " of type: " + masterData.getEntityType());
                 switch (masterData.getEntityType()) {
                     case "structured":
-                        Log.i(TAG, "Saving master data for entity: " + masterData.getEntityName().toString());
-                        Log.i(TAG, "Entity type: " + masterData.getEntityType());
-                        Log.i(TAG, "Data size: " + (masterData.getData() != null ? masterData.getData().length() : "null"));
                         saveStructuredData(masterData.getEntityName(), masterData.getData(), applicantValidDocPresent);
                         break;
                     case "dynamic":
@@ -824,7 +819,6 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     private void saveStructuredData(String entityName, String data, boolean applicantValidDocPresent) throws JSONException {
-        Log.i(TAG, "saveStructuredData called for entity: " + entityName);
         String serverVersion = getServerVersionFromConfigs();
         String defaultAppTypeCode = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE);
         Boolean fullSync = this.globalParamRepository.getGlobalParamValue(MASTER_DATA_LAST_UPDATED) == null ? true : false;
@@ -841,9 +835,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                 machineRepository.saveMachineMaster(new JSONObject(machines.getString(0)));
                 break;
             case "RegistrationCenter":
-                Log.i(TAG, "RegistrationCenter before decrypt");
                 JSONArray centers = getDecryptedDataList(data);
-                Log.i(TAG, "RegistrationCenter Data: " + centers.toString());
                 for (int i = 0; i < centers.length(); i++) {
                     registrationCenterRepository.saveRegistrationCenter(new JSONObject(centers.getString(i)));
                 }
@@ -941,7 +933,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                 List<PermittedLocalConfig> permittedConfigs = new ArrayList<>();
                 for (int i = 0; i < permittedConfigsJsonArray.length(); i++) {
                     JSONObject jsonObjects = new JSONObject(permittedConfigsJsonArray.getString(i));
-                    Log.i(TAG, "PermittedLocalConfig Data: " + jsonObjects.toString());
+
                     PermittedLocalConfig premittedConfig = new PermittedLocalConfig(jsonObjects.getString("code"));
                     premittedConfig.setName(jsonObjects.getString("name"));
                     premittedConfig.setType(jsonObjects.getString("type"));

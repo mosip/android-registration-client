@@ -25,21 +25,8 @@ public class PermittedLocalConfigRepository {
     public void savePermittedConfigs(List<PermittedLocalConfig> permittedConfigs) {
         try {
             permittedLocalConfigDao.insertAll(permittedConfigs);
-            Log.i(TAG, "Saved " + permittedConfigs.size() + " permitted configurations");
         } catch (Exception e) {
             Log.e(TAG, "Error saving permitted configurations", e);
-        }
-    }
-
-    /**
-     * Get all active permitted configurations
-     */
-    public List<PermittedLocalConfig> getAllActivePermittedConfigs() {
-        try {
-            return permittedLocalConfigDao.findByIsActiveTrue();
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting all permitted configurations", e);
-            return null;
         }
     }
 

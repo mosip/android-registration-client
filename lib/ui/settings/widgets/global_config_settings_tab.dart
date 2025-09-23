@@ -5,12 +5,14 @@ import '../../../pigeon/global_config_settings_pigeon.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/global_provider.dart';
+import 'package:restart_app/restart_app.dart';
 
 class GlobalConfigSettingsTab extends StatefulWidget {
   const GlobalConfigSettingsTab({Key? key}) : super(key: key);
 
   @override
-  State<GlobalConfigSettingsTab> createState() => _GlobalConfigSettingsTabState();
+  State<GlobalConfigSettingsTab> createState() =>
+      _GlobalConfigSettingsTabState();
 }
 
 class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
@@ -28,7 +30,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     _loadInitialData();
   }
 
-  /// Equivalent to loadInitialData() in desktop code
+  // Load initial data from the server and local storage
   Future<void> _loadInitialData() async {
     setState(() {
       isLoading = true;
@@ -36,10 +38,14 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     });
     try {
       // Load registration params, local configurations, and permitted configurations in parallel
-
-      serverValues = (await GlobalConfigSettingsApi().getRegistrationParams()).cast<String, Object>();
-      localConfigurations = (await GlobalConfigSettingsApi().getLocalConfigurations()).cast<String, String>();
-      permittedConfigurations = (await GlobalConfigSettingsApi().getPermittedConfigurationNames()).cast<String>();
+      serverValues = (await GlobalConfigSettingsApi().getRegistrationParams())
+          .cast<String, Object>();
+      localConfigurations =
+          (await GlobalConfigSettingsApi().getLocalConfigurations())
+              .cast<String, String>();
+      permittedConfigurations =
+          (await GlobalConfigSettingsApi().getPermittedConfigurationNames())
+              .cast<String>();
 
       for (var key in serverValues!.keys) {
         _controllers[key]?.dispose();
@@ -71,15 +77,12 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
   void _updateLocalValue(String key, String value) {
     setState(() {
       if (value.isEmpty) {
-        // If value is empty, remove from localValues to indicate no override
         localValues.remove(key);
       } else {
         localValues[key] = value;
       }
-      print('localValues: $localValues');
     });
   }
-
 
   bool _isConfigurationPermitted(String configName) {
     return permittedConfigurations.contains(configName);
@@ -100,7 +103,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
 
   bool _hasChanges() {
     if (localValues.isEmpty) {
-      print('_hasChanges: localValues is empty, returning false');
       return false;
     }
 
@@ -109,21 +111,15 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       String serverValue = serverValues?[key]?.toString() ?? '-';
       String localValue = localValues[key]!;
 
-      print('_hasChanges: checking $key - server: $serverValue, local: $localValue');
-
-      // Consider it changed if:
       // 1. Local value is not empty and different from server value, OR
       // 2. Local value is empty but there was a previous local configuration
       if (localValue.isNotEmpty && localValue != serverValue) {
-        print('_hasChanges: found change in $key - returning true');
         return true;
       }
       if (localValue.isEmpty && localConfigurations.containsKey(key)) {
-        print('_hasChanges: found empty local value for $key with existing config - returning true');
         return true;
       }
     }
-    print('_hasChanges: no changes found - returning false');
     return false;
   }
 
@@ -139,18 +135,24 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Submit Changes'),
-        content: Text('${localValues.length} configuration(s) will be updated.'),
+        content: SizedBox(
+          width: 250,
+          height: 20,
+          child: Center(
+            child: Text('${localValues.length} configuration will be updated.'),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
               await _saveChanges();
             },
-            child: const Text('Confirm'),
+            child: Text(AppLocalizations.of(context)!.confirm),
           ),
         ],
       ),
@@ -159,7 +161,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
 
   Future<void> _saveChanges() async {
     try {
-      // Show loading indicator
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -169,7 +170,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text('Saving configuration and refreshing app data...'),
+              Text('Saving configuration changes...'),
             ],
           ),
         ),
@@ -177,12 +178,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
 
       // Save configuration changes
       await GlobalConfigSettingsApi().modifyConfigurations(localValues);
-
-      // Get the GlobalProvider to refresh app data
-      final globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-      
-      // Refresh all global app data that depends on configuration
-      await _refreshGlobalAppData(globalProvider);
 
       // Update local configurations with the saved values
       setState(() {
@@ -195,47 +190,26 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
         Navigator.of(context).pop();
       }
 
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Configuration saved and app data refreshed successfully'),
-          duration: Duration(seconds: 3),
+          content: Text('Configuration saved successfully. Restarting app...'),
+          duration: Duration(seconds: 2),
         ),
       );
+
+      // Wait a moment for the user to see the message, then restart the app
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Restart the app to apply configuration changes
+      Restart.restartApp();
     } catch (e) {
-      // Hide loading indicator if there's an error
       if (mounted) {
         Navigator.of(context).pop();
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving changes: $e')),
       );
-    }
-  }
-
-  /// Refresh all global app data that depends on configuration
-  Future<void> _refreshGlobalAppData(GlobalProvider globalProvider) async {
-    try {
-      // Refresh language data (depends on language configuration)
-      await globalProvider.initializeLanguageDataList(false);
-      
-      // Refresh location hierarchy (depends on location configuration)
-      await globalProvider.initializeLocationHierarchyMap();
-      
-      // Refresh registration center name (depends on center configuration)
-      if (globalProvider.centerId.isNotEmpty) {
-        await globalProvider.getRegCenterName(globalProvider.centerId, globalProvider.selectedLanguage);
-      }
-      
-      // Refresh other configuration-dependent data
-      await globalProvider.refreshConfigurationDependentData();
-      
-      // Notify all listeners to update UI
-      globalProvider.notifyListeners();
-      
-      print('Global app data refreshed successfully after configuration change');
-    } catch (e) {
-      print('Error refreshing global app data: $e');
-      // Don't throw error here, just log it
     }
   }
 
@@ -248,8 +222,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       String serverValue = serverValues![key]?.toString() ?? '-';
       String localValue = _getLocalValue(key);
       bool isEditable = _isConfigurationPermitted(key);
-      bool isModified = localValues.containsKey(key) &&
-          localValues[key] != serverValue;
+      bool isModified =
+          localValues.containsKey(key) && localValues[key] != serverValue;
 
       GlobalConfigItem item = GlobalConfigItem(
         key: key,
@@ -264,7 +238,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     return globalConfigItems;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -276,7 +249,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
         ),
         child: Column(
           children: [
-            // Header with search and actions
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -322,11 +294,9 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                 ],
               ),
             ),
-            // Content - Takes all remaining space
             Expanded(
               child: _buildContent(),
             ),
-            // Save button at bottom
             Container(
               padding: const EdgeInsets.all(10),
               alignment: Alignment.centerRight, // Align content to the end
@@ -337,7 +307,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: solidPrimary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
                   elevation: 4,
                 ),
                 child: Text(AppLocalizations.of(context)!.submit),
@@ -368,20 +339,22 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadInitialData,
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
       );
     }
     if (serverValues == null || serverValues!.isEmpty) {
-      return const Center(child: Text('No configuration parameters found'));
+      return Center(
+          child: Text(
+              AppLocalizations.of(context)!.no_configuration_parameters_found));
     }
 
     final configs = _getConfigurations();
     if (configs.isEmpty) {
-      return const Center(
-        child: Text('No configurations found'),
+      return Center(
+        child: Text(AppLocalizations.of(context)!.no_configurations_found),
       );
     }
 
@@ -390,7 +363,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       child: ListView.separated(
         padding: const EdgeInsets.only(top: 10, bottom: 15),
         itemCount: configs.length,
-        separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey[300]),
+        separatorBuilder: (_, __) =>
+            Divider(height: 1, color: Colors.grey[300]),
         itemBuilder: (context, index) {
           final config = configs[index];
           return Padding(
@@ -403,9 +377,10 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                   child: Text(
                     config.key,
                     style: TextStyle(
-                      //fontFamily: 'monospace',
                       fontSize: 12,
-                      fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: config.isModified
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: config.isModified ? Colors.blue : Colors.black,
                     ),
                   ),
@@ -416,7 +391,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                   child: Text(
                     config.serverValue,
                     style: const TextStyle(
-                      //fontFamily: 'monospace',
                       fontSize: 12,
                     ),
                   ),
@@ -433,7 +407,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     );
   }
 
-  /// Equivalent to setCellFactoryForLocalValue() in desktop code
+  // Builds either an editable TextField or read-only text based on config permissions
   Widget _buildEditableCell(GlobalConfigItem config) {
     if (config.editable) {
       return _buildEditableTextField(config);
@@ -442,7 +416,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     }
   }
 
-  /// Builds editable TextField for permitted configurations
+  // Builds an editable TextField for permitted configurations
   Widget _buildEditableTextField(GlobalConfigItem config) {
     final controller = _controllers[config.key]!;
     return TextField(
@@ -450,7 +424,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       onChanged: (newValue) => _updateLocalValue(config.key, newValue),
       style: TextStyle(
         color: config.isModified ? Colors.blue : Colors.black,
-        //fontFamily: 'monospace',
         fontSize: 12,
         fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
       ),
@@ -470,7 +443,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       ),
     );
   }
-  /// Builds read-only styled text for non-permitted configurations
+
+  // Builds read-only styled text for non-permitted configurations
   Widget _buildReadOnlyText(GlobalConfigItem config) {
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -486,7 +460,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
         config.localValue.isEmpty ? '-' : config.localValue,
         style: TextStyle(
           color: config.isModified ? Colors.blue : Colors.grey[600],
-          //fontFamily: 'monospace',
           fontSize: 12,
           fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
         ),

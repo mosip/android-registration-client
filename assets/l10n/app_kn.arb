@@ -322,5 +322,8 @@
   "retry": "ಮರುಪ್ರಯತ್ನಿಸಿ",
   "key": "ಕೀ",
   "server_value": "ಸರ್ವರ್ ಮೌಲ್ಯ",
-  "local_value": "ಸ್ಥಳೀಯ ಮೌಲ್ಯ"
+  "local_value": "ಸ್ಥಳೀಯ ಮೌಲ್ಯ",
+  "no_configuration_parameters_found": "ಯಾವುದೇ ಸಂರಚನಾ ನಿಯತಾಂಕಗಳು ಕಂಡುಬರಲಿಲ್ಲ",
+  "no_configurations_found": "ಯಾವುದೇ ಸಂರಚನೆಗಳು ಕಂಡುಬರಲಿಲ್ಲ",
+  "confirm": "ದೃಢೀಕರಿಸಿ"
 }

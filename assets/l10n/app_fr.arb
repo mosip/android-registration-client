@@ -322,5 +322,8 @@
   "retry": "RECOMMENCEZ",
   "key": "Clé",
   "server_value": "Valeur du serveur",
-  "local_value": "Valeur locale"
+  "local_value": "Valeur locale",
+  "no_configuration_parameters_found": "Aucun paramètre de configuration trouvé",
+  "no_configurations_found": "Aucune configuration trouvée",
+  "confirm": "Confirmer"
 }

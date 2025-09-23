@@ -31,37 +31,26 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
     }
 
     @Override
-    public List<PermittedLocalConfig> getAllPermittedLocalConfigs() {
-        Log.i(TAG, "Getting the list of permitted configurations");
-        return permittedLocalConfigRepository.getAllActivePermittedConfigs();
-    }
-
-    @Override
     public List<String> getPermittedConfigurations(String configType) {
-        Log.i(TAG, "Getting the list of permitted configurations of type " + configType);
-
         List<PermittedLocalConfig> permittedConfigs =
             permittedLocalConfigRepository.getPermittedConfigsByType(configType);
-        Log.i(TAG, "Returning test configurations: " + permittedConfigs);
+
         List<String> permittedConfigurations = new ArrayList<>();
         if (permittedConfigs != null && !permittedConfigs.isEmpty()) {
             for (PermittedLocalConfig config : permittedConfigs) {
                 permittedConfigurations.add(config.getName());
             }
         }
-        Log.i(TAG, "response " + permittedConfigurations);
         return permittedConfigurations;
     }
 
     @Override
     public Map<String, String> getLocalConfigurations() {
-        Log.i(TAG, "Getting local configurations");
         return localPreferencesRepository.getLocalConfigurations();
     }
 
     @Override
     public void modifyConfigurations(Map<String, String> localPreferences) {
-        Log.i(TAG, "Modifying " + localPreferences.size() + " configurations");
         
         for (Map.Entry<String, String> entry : localPreferences.entrySet()) {
             String name = entry.getKey();
@@ -81,8 +70,6 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
                 Log.e(TAG, "Error modifying configuration: " + name, e);
             }
         }
-        
-        Log.i(TAG, "Successfully modified configurations");
     }
 
 
@@ -94,7 +81,7 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
         localPreference.setName(name);
         localPreference.setVal(value);
         localPreference.setConfigType(configType);
-        localPreference.setMachineName("ANDROID_CLIENT"); // TODO: Get actual machine name
+        localPreference.setMachineName("SYSTEM");
         localPreference.setCrBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
         localPreference.setCrDtime(System.currentTimeMillis());
         localPreference.setIsDeleted(false);

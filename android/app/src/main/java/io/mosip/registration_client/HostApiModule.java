@@ -21,10 +21,7 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
-import io.mosip.registration.clientmanager.dao.LocalPreferencesDao;
-import io.mosip.registration.clientmanager.dao.PermittedLocalConfigDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
-import io.mosip.registration.clientmanager.dao.LocalConfigDAOImpl;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -52,8 +49,6 @@ import io.mosip.registration.clientmanager.repository.MachineRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
-import io.mosip.registration.clientmanager.repository.LocalPreferencesRepository;
-import io.mosip.registration.clientmanager.repository.PermittedLocalConfigRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -234,36 +229,6 @@ public class HostApiModule {
         return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository);
     }
 
-    @Provides
-    @Singleton
-    LocalPreferencesDao provideLocalPreferencesDao(io.mosip.registration.clientmanager.config.ClientDatabase database) {
-        return database.localPreferencesDao();
-    }
-
-    @Provides
-    @Singleton
-    PermittedLocalConfigDao providePermittedLocalConfigDao(io.mosip.registration.clientmanager.config.ClientDatabase database) {
-        return database.permittedLocalConfigDao();
-    }
-
-    @Provides
-    @Singleton
-    LocalPreferencesRepository provideLocalPreferencesRepository(LocalPreferencesDao localPreferencesDao) {
-        return new LocalPreferencesRepository(localPreferencesDao);
-    }
-
-    @Provides
-    @Singleton
-    PermittedLocalConfigRepository providePermittedLocalConfigRepository(PermittedLocalConfigDao permittedLocalConfigDao) {
-        return new PermittedLocalConfigRepository(permittedLocalConfigDao);
-    }
-
-    @Provides
-    @Singleton
-    LocalConfigDAO provideLocalConfigDAO(PermittedLocalConfigRepository permittedLocalConfigRepository,
-                                        LocalPreferencesRepository localPreferencesRepository) {
-        return new LocalConfigDAOImpl(permittedLocalConfigRepository, localPreferencesRepository);
-    }
 
     @Provides
     @Singleton

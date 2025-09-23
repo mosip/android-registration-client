@@ -25,9 +25,6 @@ public interface LocalPreferencesDao {
     @Query("SELECT * FROM local_preferences WHERE is_deleted = 0 AND name = :name")
     LocalPreferences findByIsDeletedFalseAndName(String name);
 
-    @Query("SELECT * FROM local_preferences WHERE is_deleted = 0")
-    List<LocalPreferences> findByIsDeletedFalse();
-
     @Query("UPDATE local_preferences SET is_deleted = 1, del_dtimes = :delDtimes WHERE name = :name")
     void softDeleteByName(String name, Long delDtimes);
 }

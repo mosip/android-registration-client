@@ -23,18 +23,6 @@ public class LocalPreferencesRepository {
     }
 
     /**
-     * Get all local configurations by config type
-     */
-    public List<LocalPreferences> getLocalConfigurationsByType(String configType) {
-        try {
-            return localPreferencesDao.findByIsDeletedFalseAndConfigType(configType);
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting local configurations by type: " + configType, e);
-            return null;
-        }
-    }
-
-    /**
      * Get local configurations as a map (name -> value)
      */
     public Map<String, String> getLocalConfigurations() {
@@ -73,7 +61,6 @@ public class LocalPreferencesRepository {
     public void save(LocalPreferences localPreference) {
         try {
             localPreferencesDao.insert(localPreference);
-            Log.i(TAG, "Saved local preference: " + localPreference.getName());
         } catch (Exception e) {
             Log.e(TAG, "Error saving local preference: " + localPreference.getName(), e);
         }
@@ -85,7 +72,6 @@ public class LocalPreferencesRepository {
     public void update(LocalPreferences localPreference) {
         try {
             localPreferencesDao.update(localPreference);
-            Log.i(TAG, "Updated local preference: " + localPreference.getName());
         } catch (Exception e) {
             Log.e(TAG, "Error updating local preference: " + localPreference.getName(), e);
         }
@@ -97,7 +83,6 @@ public class LocalPreferencesRepository {
     public void softDeleteByName(String name) {
         try {
             localPreferencesDao.softDeleteByName(name, System.currentTimeMillis());
-            Log.i(TAG, "Soft deleted local preference: " + name);
         } catch (Exception e) {
             Log.e(TAG, "Error soft deleting local preference: " + name, e);
         }

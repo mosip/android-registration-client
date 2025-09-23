@@ -35,7 +35,6 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
     public void getRegistrationParams(@NonNull GlobalConfigSettingsPigeon.Result<Map<String, Object>> result) {
         try {
             Map<String, Object> response = masterDataService.getRegistrationParams();
-            Log.i(getClass().getSimpleName(), "Registration params fetched: " + response);
             result.success(response);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching registration params.", e);
@@ -47,7 +46,6 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
     public void getLocalConfigurations(@NonNull GlobalConfigSettingsPigeon.Result<Map<String, String>> result) {
         try {
             Map<String, String> response = localConfigService.getLocalConfigurations();
-            Log.i(getClass().getSimpleName(), "Local configurations fetched: " + response);
             result.success(response);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching local configurations.", e);
@@ -59,7 +57,6 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
     public void getPermittedConfigurationNames(@NonNull GlobalConfigSettingsPigeon.Result<List<String>> result) {
         try {
             List<String> response = localConfigService.getPermittedConfiguration();
-            Log.i(getClass().getSimpleName(), "Permitted configuration names fetched: " + response);
             result.success(response);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching permitted configuration names.", e);
@@ -71,8 +68,6 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
     public void modifyConfigurations(@NonNull Map<String, String> localPreferences, @NonNull GlobalConfigSettingsPigeon.Result<Void> result) {
         try {
             localConfigService.modifyConfigurations(localPreferences);
-
-            Log.i(getClass().getSimpleName(), "Configurations modified successfully");
             result.success(null);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error modifying configurations.", e);

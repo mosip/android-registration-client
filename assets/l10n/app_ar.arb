@@ -322,5 +322,8 @@
   "retry": "إعادة المحاولة",
   "key": "مفتاح",
   "server_value": "قيمة الخادم",
-  "local_value": "القيمة المحلية"
+  "local_value": "القيمة المحلية",
+  "no_configuration_parameters_found": "لم يتم العثور على معلمات التكوين",
+  "no_configurations_found": "لم يتم العثور على أي تكوين",
+  "confirm": "تأكيد"
 }

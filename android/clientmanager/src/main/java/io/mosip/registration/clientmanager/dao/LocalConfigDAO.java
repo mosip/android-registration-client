@@ -12,11 +12,6 @@ import io.mosip.registration.clientmanager.entity.PermittedLocalConfig;
 public interface LocalConfigDAO {
 
     /**
-     * Get all permitted local configurations
-     */
-    List<PermittedLocalConfig> getAllPermittedLocalConfigs();
-
-    /**
      * Get permitted configurations by type
      */
     List<String> getPermittedConfigurations(String configType);
