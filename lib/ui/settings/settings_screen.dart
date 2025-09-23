@@ -140,14 +140,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  String _getControllerName(Settings settings) {
+    if (settings.fxml != null && settings.fxml!.isNotEmpty) {
+      return settings.fxml!.replaceAll('.fxml', 'Controller');
+    } else {
+      return '${settings.name}Controller';
+    }
+  }
+
   Widget _buildTabContent(Settings settings) {
     final selectedLang = context.read<GlobalProvider>().selectedLanguage;
-    switch (settings.name) {
-      case 'scheduledjobs':
+
+    final controllerName = _getControllerName(settings);
+
+    switch (controllerName) {
+      case 'ScheduledJobsController':
         return Center(child: Text("${settings.name}"));
-      case 'globalconfigs':
+      case 'GlobalConfigSettingsController':
         return const GlobalConfigSettingsTab();
-      case 'devices':
+      case 'DeviceSettingsController':
         return Center(child: Text("${settings.name}"));
       default:
         return _buildDescriptionOnlyTab(settings, selectedLang);

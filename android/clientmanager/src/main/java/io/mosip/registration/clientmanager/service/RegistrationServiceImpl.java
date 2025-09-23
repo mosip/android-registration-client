@@ -424,7 +424,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         metaData = new LinkedHashMap<>();
         metaData.put(PacketManagerConstant.META_OFFICER_ID, makerId);
         metaData.put(PacketManagerConstant.META_OFFICER_BIOMETRIC_FILE, null);
-        metaData.put(PacketManagerConstant.META_SUPERVISOR_ID, null);
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_ID, makerId);
         metaData.put(PacketManagerConstant.META_SUPERVISOR_BIOMETRIC_FILE, null);
         metaData.put(PacketManagerConstant.META_SUPERVISOR_PWD, "true");
         metaData.put(PacketManagerConstant.META_OFFICER_PWD, "true");

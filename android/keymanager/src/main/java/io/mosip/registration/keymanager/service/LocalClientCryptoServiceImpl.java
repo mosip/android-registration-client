@@ -431,7 +431,6 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
             cipher_symmetric.updateAAD(aad);
             byte[] plainBytes = cipher_symmetric.doFinal(encrypted_data);
-            Log.i(TAG, "decrypt: Decryption successful"+CryptoUtil.base64encoder.encodeToString(plainBytes));
             cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(plainBytes));
             return cryptoResponseDto;
         }

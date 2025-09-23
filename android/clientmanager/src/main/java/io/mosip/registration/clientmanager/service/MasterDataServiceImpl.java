@@ -380,14 +380,11 @@ public class MasterDataServiceImpl implements MasterDataService {
     @SuppressWarnings("unchecked")
     private void saveGlobalParams(Map<String, Object> responseMap) {
         try {
-            Log.i(TAG, "Processing global configuration sync response");
-            Log.i(TAG, "Response keys: " + responseMap.keySet());
             
             Map<String, String> globalParamMap = new HashMap<>();
 
             if (responseMap.get("configDetail") != null) {
                 Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
-                Log.i(TAG, "ConfigDetail keys: " + configDetailJsonMap.keySet());
 
                 if (configDetailJsonMap != null && configDetailJsonMap.get("globalConfiguration") != null) {
                     String encryptedGlobalConfigs = configDetailJsonMap.get("globalConfiguration").toString();
