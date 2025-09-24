@@ -117,7 +117,6 @@ public class GlobalParamRepository {
     }
 
     public Map<String, Object> getGlobalParamsByPattern(String pattern) {
-        Log.i(TAG, "Fetching list of global params with key pattern " + pattern);
 
         List<GlobalParam> globalParams = globalParamDao.findByNameLikeAndIsActiveTrueAndValIsNotNull(pattern);
         Map<String, Object> globalParamMap = new LinkedHashMap<>();
@@ -126,7 +125,6 @@ public class GlobalParamRepository {
             globalParamMap.put(param.getName(), param.getValue() != null ? param.getValue().trim() : param.getValue());
         }
 
-        Log.i(TAG, "List of global params fetched successfully"+ globalParamMap);
         return globalParamMap;
     }
 
