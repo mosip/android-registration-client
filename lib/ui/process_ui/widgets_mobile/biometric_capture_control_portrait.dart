@@ -118,14 +118,21 @@ class _BiometricCaptureControlPortraitState
                 Positioned(
                     top: 15,
                     right: 15,
-                    child: (biometricAttributeData.exceptions.contains(true))
-                        ? Image.asset(
-                            "assets/images/Group 57548@2x.png",
-                          )
-                        : Image.asset(
-                            "assets/images/Group 57745@2x.png",
-                          )),
-              if (!biometricAttributeData.exceptions.contains(false))
+        child: (biometricAttributeData.exceptions.contains(true))
+            ? Image.asset(
+          "assets/images/Group 57548@2x.png",
+        )
+            : (biometricAttributeData.qualityPercentage <
+            ((int.tryParse(biometricAttributeData.thresholdPercentage) ?? 0).toDouble()))
+            ? Image.asset(
+          "assets/images/Group 57548@2x.png",
+        )
+            : Image.asset(
+          "assets/images/Group 57745@2x.png",
+        ),
+                ),
+
+        if (!biometricAttributeData.exceptions.contains(false))
                 Positioned(
                     top: 15,
                     right: 15,

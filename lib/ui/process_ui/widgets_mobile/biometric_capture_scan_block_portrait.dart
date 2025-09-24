@@ -483,8 +483,11 @@ class _BiometricCaptureScanBlockPortraitState
                                   color: secondaryColors.elementAt(17),
                                 ),
                                 color: (biometricAttributeData.attemptNo < i)
-                                    ? secondaryColors.elementAt(18)
-                                    : secondaryColors.elementAt(11),
+                                    ? secondaryColors.elementAt(18) // grey (not yet attempted)
+                                    : (biometricAttributeData.qualityPercentage <
+                                    ((int.tryParse(biometricAttributeData.thresholdPercentage) ?? 0).toDouble())
+                                    ? secondaryColors.elementAt(26) // 🔴 red if threshold not satisfied
+                                    : secondaryColors.elementAt(11)), // ✅ green if threshold satisfied
                               ),
                               child: Text(
                                 i.toString(),
