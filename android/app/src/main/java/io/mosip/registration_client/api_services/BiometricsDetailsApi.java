@@ -684,7 +684,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         }
     }
 
-    public void handleDeviceInfoResponse(Bundle bundle) {
+    public void handleDeviceInfoResponseForList(Bundle bundle) {
         try {
             byte[] infoBytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
             String[] deviceInfo = biometricsService.handleDeviceInfoResponse(deviceSettingsModality, infoBytes);

@@ -301,12 +301,10 @@ public class MainActivity extends FlutterActivity {
                     biometricsDetailsApi.parseRCaptureResponse(data.getExtras());
                     break;
                 case 4:
-                    // Discovery result for Settings device list
                     biometricsDetailsApi.parseDiscoverResponseForList(data.getExtras());
                     break;
                 case 5:
-                    // Device info for Settings device list
-                    biometricsDetailsApi.handleDeviceInfoResponse(data.getExtras());
+                    biometricsDetailsApi.handleDeviceInfoResponseForList(data.getExtras());
                     break;
             }
         }

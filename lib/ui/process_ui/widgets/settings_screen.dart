@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                   child: Text(
                     AppLocalizations.of(context)!.settings,
@@ -127,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SizedBox(
-            height: 400,
+            height: MediaQuery.of(context).size.height/1.4,
             child: TabBarView(
               children: [
                 for (final settings in settingUiByRole) _buildTabContent(settings),
@@ -139,15 +139,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  String _getControllerName(Settings settings) {
+    if (settings.fxml != null && settings.fxml!.isNotEmpty) {
+      return settings.fxml!.replaceAll('.fxml', 'Controller');
+    } else {
+      return '${settings.name}Controller';
+    }
+  }
+
   Widget _buildTabContent(Settings settings) {
     final selectedLang = context.read<GlobalProvider>().selectedLanguage;
-    switch (settings.name) {
-      case 'scheduledjobs':
+
+    final controllerName = _getControllerName(settings);
+
+    switch (controllerName) {
+      case 'ScheduledJobsController':
         return Center(child: Text("${settings.name}"));
-      case 'globalconfigs':
+      case 'GlobalConfigSettingsController':
         return Center(child: Text("${settings.name}"));
-      case 'devices':
-        return DeviceSettingsTab(settings: settings,selectedLan: selectedLang);
+      case 'DeviceSettingsController':
+        return DeviceSettingsTab(settings: settings, selectedLan: selectedLang);
       default:
         return _buildDescriptionOnlyTab(settings, selectedLang);
     }

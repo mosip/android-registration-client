@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../model/settings.dart';
 import '../../../platform_spi/biometrics_service.dart';
 import '../../../utils/app_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeviceSettingsTab extends StatefulWidget {
   DeviceSettingsTab(
@@ -27,7 +28,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
     List<Map<String, dynamic>> deviceDetails = [];
     try {
       await Future.delayed(const Duration(seconds: 1));
-      List<String> modality = ["Face", "Iris", "Thumbs"];
+      List<String> modality = ["Face", "Iris", "Finger"];
       for (var modalityType in modality) {
         List<String?> data =
             await BiometricsService().getListOfDevices(modalityType);
@@ -89,7 +90,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                     onPressed: () {
                       fetchDeviceDetails();
                     },
-                    child: const Text("Scan Now"),
+                    child: Text(AppLocalizations.of(context)!.scan_now),
                   ),
                 ],
               ),
@@ -123,13 +124,13 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("ID: ${device['deviceId'] ?? 'N/A'}",
+                                Text("ID: ${device['deviceId'] ?? ''}",
                                     style: const TextStyle(fontSize: 12)),
                                 Text(
-                                    "Name: ${device['deviceName'] ?? 'Unknown'}",
+                                    "Name: ${device['deviceName'] ?? ''}",
                                     style: const TextStyle(fontSize: 12)),
                                 Text(
-                                    "Status: ${device['connectionStatus'] ?? 'Unknown'}",
+                                    "Status: ${device['connectionStatus'] ?? ''}",
                                     style: const TextStyle(fontSize: 12)),
                               ],
                             ),
