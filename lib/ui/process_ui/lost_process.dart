@@ -76,7 +76,6 @@ class _LostProcessState extends State<LostProcess>
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     super.initState();
-    context.read<GlobalProvider>().setCurrentPage("lost_process");
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
         if (mounted) {
@@ -1005,17 +1004,17 @@ class _LostProcessState extends State<LostProcess>
                                       }),
                                 ),
                               ),
-                              Visibility(
-                                visible: context.watch<GlobalProvider>().currentPage != "acknowledgement",
-                                child: Container(
-                                  height: 36.h,
-                                  width: 25.w,
-                                  color: solidPrimary,
-                                  child: const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    color: Colors.white,
-                                    size: 17,
-                                  ),
+                              if (context.watch<GlobalProvider>().newProcessTabIndex < size + 2)
+                              Container(
+                                height: 36.h,
+                                width: 25.w,
+                                padding:
+                                const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                color: solidPrimary,
+                                child: Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  color: pureWhite,
+                                  size: 17,
                                 ),
                               ),
                             ],
