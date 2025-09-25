@@ -147,11 +147,11 @@ class _UpdateProcessScreenContentState
 
   evaluateMVELRequired(String fieldData, Field e) async {
     registrationTaskProvider.evaluateMVELRequired(fieldData).then((value) {
-      if (!value && globalProvider.selectedUpdateFields[e.group] == null) {
-        globalProvider.removeFieldFromMap(
-            e.id!, globalProvider.fieldInputValue);
-        registrationTaskProvider.removeDemographicField(e.id!);
-      }
+      // if (!value && globalProvider.selectedUpdateFields[e.group] == null) {
+      //   globalProvider.removeFieldFromMap(
+      //       e.id!, globalProvider.fieldInputValue);
+      //   registrationTaskProvider.removeDemographicField(e.id!);
+      // }
       globalProvider.setMvelRequiredFields(e.id!, value);
     });
   }
