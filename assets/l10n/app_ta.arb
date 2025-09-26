@@ -41,6 +41,7 @@
   "cred_expired": "நற்சான்றிதழ்கள் காணப்படவில்லை அல்லது காலாவதியாகவில்லை. ஆன்லைன் உள்நுழைவை முயற்சிக்கவும்!",
   "not_initialized": "இயந்திரத்தை துவக்க முடியவில்லை!",
   "invalid_user": "பயனர்பெயர் செல்லாது!",
+  "onboard_operator_biomterics": "ஆபரேட்டர் பயோமெட்ரிக் பதிவுசெய்தல்",
   "machine_inactive": "இயந்திரம் செயலில் இல்லை!",
   "center_inactive": "மையம் செயல்படவில்லை!",
   "sync_completed_succesfully": "ஒத்திசைவு வெற்றிகரமாக நிறைவடைந்தது",
@@ -56,6 +57,12 @@
   "network_error": "நெட்வொர்க் இல்லை!",
   "delete": "அழி",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "inactive_logout_heading": "நீங்கள் சும்மா இருந்தீர்கள்",
+  "inactive_logout_description": "பாதுகாப்பு காரணங்களுக்காக, நீங்கள் $TIMER இல் வெளியேற்றப்படுவீர்கள்",
+  "seconds": " நொடிகள்.",
+  "minutes": " நிமிடங்கள்.",
+  "logout_button": "வெளியேறு",
+  "stay_logged_in_button": "உள்நுழைந்தே இருங்கள்",
   "@newRegistrationProcess": {
     "description": "New Registration Process Header",
     "placeholders": {

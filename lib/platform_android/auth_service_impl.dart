@@ -98,6 +98,44 @@ class AuthServiceImpl implements AuthService {
     return forgotPasswordResponse;
   }
 
+  @override
+  Future<String> getIdleTime() async {
+    late String idleTime;
+    try {
+      idleTime = await AuthResponseApi().getIdleTime();
+    } on PlatformException {
+      debugPrint('getIdleTime call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return idleTime;
+  }
+
+  @override
+  Future<String> getAutoLogoutPopupTimeout() async {
+    late String refreshLoginTime;
+    try {
+      refreshLoginTime = await AuthResponseApi().getAutoLogoutPopupTimeout();
+    } on PlatformException {
+      debugPrint('getIdleTime call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return refreshLoginTime;
+  }
+
+  @override
+  Future<List<String?>> getRolesByUserId(String userId) async {
+    List<String?> rolesList = [];
+    try {
+      rolesList = await AuthResponseApi().getRolesByUserId(userId);
+    } on PlatformException {
+      debugPrint('getRolesByUserId call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return rolesList;
+  }
 
 }
 

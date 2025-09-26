@@ -69,7 +69,8 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              Expanded(
+                child:Text(
                 AppLocalizations.of(context)!.registration_acknowledgement,
                 style: const TextStyle(
                   fontSize: 20,
@@ -77,6 +78,8 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                   color: appBlackShade1,
                 ),
               ),
+              ),
+              SizedBox(width: 10.w),
               InkWell(
                 onTap: () {
                   _printAcknowledgementAudit();
@@ -84,7 +87,7 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
                 },
                 child: Container(
                   height: 42.h,
-                  width: 170.w,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
                   decoration: BoxDecoration(
                     color: appSolidPrimary,
                     border: Border.all(

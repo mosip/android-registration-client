@@ -106,6 +106,21 @@ class ProcessSpecServiceImpl implements ProcessSpecService {
     }
     return optionalLanguageCodes;
   }
+
+  @override
+  Future<List<String?>> getSettingSpec() async {
+    List<String?> settingSpec;
+    try {
+      settingSpec = await ProcessSpecApi().getSettingSpec();
+    } on PlatformException {
+      debugPrint("Settings Spec Api failed!");
+      settingSpec = List.empty();
+    } catch (e) {
+      settingSpec = List.empty();
+      debugPrint("Settings spec fetch error: $e");
+    }
+    return settingSpec;
+  }
 }
 
 ProcessSpecService getProcessSpecServiceImpl() => ProcessSpecServiceImpl();

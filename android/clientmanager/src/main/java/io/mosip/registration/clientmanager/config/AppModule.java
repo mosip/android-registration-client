@@ -34,6 +34,7 @@ import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
@@ -180,8 +181,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    LoginService provideLoginService(ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
-        return new LoginService(appContext, clientCryptoManagerService, userDetailRepository);
+    LoginService provideLoginService(ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository, UserRoleRepository userRoleRepository) {
+        return new LoginService(appContext, clientCryptoManagerService, userDetailRepository, userRoleRepository);
     }
 
     @Provides

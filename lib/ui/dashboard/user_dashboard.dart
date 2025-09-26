@@ -209,11 +209,26 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       )
                                     ],
                                   ),
-                                  const SizedBox(height: 10),
-                                  Text(appLocalizations.packets_uploaded,
-                                      style: TextStyle(
-                                          fontSize: isMobileSize ? 15 : 20,
-                                          fontWeight: FontWeight.bold)),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(height: 12), // pushes text slightly downward
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            appLocalizations.packets_uploaded,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: isMobileSize ? 15 : 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             );
@@ -299,52 +314,56 @@ class _UserDashBoardState extends State<UserDashBoard> {
                     margin: isMobileSize
                         ? const EdgeInsets.only(left: 10, right: 10, bottom: 10)
                         : const EdgeInsets.only(
-                            left: 40, right: 40, bottom: 20),
+                        left: 40, right: 40, bottom: 20),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: snapshot.hasData
-                          ? DataTable(
-                              dividerThickness: 2,
-                              headingRowHeight: 60,
-                              columns: [
-                                DataColumn(
-                                    label: Text(appLocalizations.user_id,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: isMobileSize ? 12 : 20,
-                                            color: appBlackShade2))),
-                                DataColumn(
-                                    label: Text(appLocalizations.user_name,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: isMobileSize ? 12 : 20,
-                                            color: appBlackShade2))),
-                                DataColumn(
-                                    label: Text(appLocalizations.status,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: isMobileSize ? 12 : 20,
-                                            color: appBlackShade2))),
-                              ],
-                              rows: snapshot.data!
-                                  .map<DataRow>((data) => DataRow(cells: [
-                                        DataCell(Text(data!.userId.toString(),
-                                            style: TextStyle(
-                                                fontSize:
-                                                    isMobileSize ? 10 : 17,
-                                                color: appBlackShade1,
-                                                fontWeight: FontWeight.w500))),
-                                        DataCell(Text(data.userName.toString(),
-                                            style: TextStyle(
-                                                fontSize:
-                                                    isMobileSize ? 10 : 17,
-                                                color: appBlackShade2,
-                                                fontWeight: FontWeight.w500))),
-                                        DataCell(statusWidget(data.userStatus,
-                                            data.userIsOnboarded))
-                                      ]))
-                                  .toList())
-                          : const SizedBox.shrink(),
+                          ? FittedBox(
+                          fit: BoxFit.scaleDown, // Shrinks table to fit in screen
+                          alignment: Alignment.topLeft,
+                          child:DataTable(
+                          dividerThickness: 2,
+                          headingRowHeight: 60,
+                          columns: [
+                            DataColumn(
+                                label: Text(appLocalizations.user_id,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: isMobileSize ? 12 : 20,
+                                        color: appBlackShade2))),
+                            DataColumn(
+                                label: Text(appLocalizations.user_name,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: isMobileSize ? 12 : 20,
+                                        color: appBlackShade2))),
+                            DataColumn(
+                                label: Text(appLocalizations.status,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: isMobileSize ? 12 : 20,
+                                        color: appBlackShade2))),
+                          ],
+                          rows: snapshot.data!
+                              .map<DataRow>((data) => DataRow(cells: [
+                            DataCell(Text(data!.userId.toString(),
+                                style: TextStyle(
+                                    fontSize:
+                                    isMobileSize ? 10 : 17,
+                                    color: appBlackShade1,
+                                    fontWeight: FontWeight.w500))),
+                            DataCell(Text(data.userName.toString(),
+                                style: TextStyle(
+                                    fontSize:
+                                    isMobileSize ? 10 : 17,
+                                    color: appBlackShade2,
+                                    fontWeight: FontWeight.w500))),
+                            DataCell(statusWidget(data.userStatus,
+                                data.userIsOnboarded))
+                          ]))
+                              .toList())
+                      )
+                              : const SizedBox.shrink(),
                     ),
                   );
                 })

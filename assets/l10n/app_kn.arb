@@ -56,6 +56,12 @@
   "network_error": "ಯಾವುದೇ ನೆಟ್ವರ್ಕ್ ಸಿಗಲಿಲ್ಲ!",
   "delete": "ಅಳಿಸಿ",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "inactive_logout_heading": "ನೀವು ಸುಮ್ಮನಿದ್ದಿರಿ",
+  "inactive_logout_description": "ಭದ್ರತಾ ಕಾರಣಗಳಿಗಾಗಿ, ನೀವು $TIMER ನಲ್ಲಿ ಲಾಗ್ ಔಟ್ ಆಗುತ್ತೀರಿ",
+  "seconds": " ಸೆಕೆಂಡುಗಳು.",
+  "minutes": " ನಿಮಿಷಗಳು.",
+  "logout_button": "ಲಾಗ್ ಔಟ್ ಮಾಡಿ",
+  "stay_logged_in_button": "ಲಾಗಿನ್ ಆಗಿರಿ",
   "@newRegistrationProcess": {
     "description": "New Registration Process Header",
     "placeholders": {
@@ -266,6 +272,7 @@
   "sync_alert_text": "ಸಿಂಕ್ ಮಾಡಿ",
   "onboarded_successfully": "ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಿರುವಿರಿ.",
   "operator_biometric_updated_successfully": "ಆಪರೇಟರ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ.",
+  "onboard_operator_biomterics": "ಆಪರೇಟರ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್ ನೋಂದಣಿ",
   "home": "ಮನೆ",
   "verify_and_save": "ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಉಳಿಸಿ",
   "supervisors_biometric_onboard": "ನಿರೀಕ್ಷಕರ ಬಯೋಮೆಟ್ರಿಕ್ ಔನ್‌ಬೋರ್ಡಿಂಗ್",

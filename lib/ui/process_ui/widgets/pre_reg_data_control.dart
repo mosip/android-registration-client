@@ -241,26 +241,22 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             const BorderSide(color: appGreyShade, width: 1),
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 14),
-                      hintText: "Enter Application ID",
+                      hintText: AppLocalizations.of(context)!.enter_application_id,
                       hintStyle:
                           const TextStyle(color: appBlackShade3, fontSize: 14),
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        fixedSize: const Size(100, 50),
-                        elevation: 0,
-                        backgroundColor: Colors.white,
-                        side: BorderSide(width: 1.0, color: solidPrimary),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                        ),
-                      ),
+                SizedBox(width: 8.w),
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+            backgroundColor: Colors.white,
+            side: BorderSide(width: 1.0, color: solidPrimary),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
                       onPressed: () async {
                         widget.onFetched();
                         if(preRegIdController.text.isEmpty){
@@ -300,20 +296,17 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                         style: TextStyle(fontSize: isPortrait && !isMobileSize ? 22 : 14, color: solidPrimary,fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      fixedSize: const Size(50, 50),
-                      elevation: 0,
-                      backgroundColor: Colors.white,
-                      side: BorderSide(width: 1.0, color: solidPrimary),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(2)),
-                      ),
-                    ),
+
+                SizedBox(width: 8.w),
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            minimumSize: Size(50.w, 50.h),
+            backgroundColor: Colors.white,
+            side: BorderSide(width: 1.0, color: solidPrimary),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
                     onPressed: () async {
                       widget.onFetched();
                       var data = await Navigator.push(
@@ -353,8 +346,8 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                     },
                     child: Icon(Icons.crop_free,size: 32.6,color: solidPrimary),
                   ),
-                ),
-                const Spacer(),
+
+                //const Spacer(),
               ],
             )
           ],
