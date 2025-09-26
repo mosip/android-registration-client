@@ -167,8 +167,8 @@ class _OperatorBiometricsCaptureState
       return globalProvider.onboardingProcessName == "Onboarding"
           ? appLocalizations.supervisors_biometric_onboard
           : appLocalizations.supervisors_biometric_update;
-    }   
-    
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: secondaryColors.elementAt(10),
@@ -471,9 +471,9 @@ class _OperatorBiometricsCaptureState
                             _getBiometricCaptureSelectionBlockMobile(
                                 biometricCaptureControlProvider.leftHand),
                           if (globalProvider.operatorOnboardingAttributes
-                                  .contains("rightThumb") &&
+                              .contains("rightThumb") &&
                               globalProvider.operatorOnboardingAttributes
-                                  .contains("rightThumb") &&
+                                  .contains("leftThumb"))
                             _getBiometricCaptureSelectionBlockMobile(
                                 biometricCaptureControlProvider.thumbs),
                           if (globalProvider.operatorOnboardingAttributes
