@@ -150,7 +150,6 @@ class _OperatorBiometricsCaptureState
           ),
         ));
   }
-
   @override
   Widget build(BuildContext context) {
     globalProvider = context.watch<GlobalProvider>();
@@ -168,7 +167,8 @@ class _OperatorBiometricsCaptureState
       return globalProvider.onboardingProcessName == "Onboarding"
           ? appLocalizations.supervisors_biometric_onboard
           : appLocalizations.supervisors_biometric_update;
-    }    
+    }   
+    
     return SafeArea(
       child: Scaffold(
         backgroundColor: secondaryColors.elementAt(10),
@@ -230,6 +230,7 @@ class _OperatorBiometricsCaptureState
                         .contains("face"))
                         ? ((biometricCaptureControlProvider.face.qualityPercentage >= int.parse(biometricCaptureControlProvider.face.thresholdPercentage)) &&
                         biometricCaptureControlProvider.face.isScanned) : true)) {
+                  setState(() {
                     isSavingBiometrics = true;
                   });
 
@@ -268,7 +269,6 @@ class _OperatorBiometricsCaptureState
                                   "assets/svg/success_message_icon.svg"),
                               Text(
                                 (context
-                                            .read<GlobalProvider>()
                                     .read<GlobalProvider>()
                                     .onboardingProcessName ==
                                     "Onboarding")
@@ -395,15 +395,13 @@ class _OperatorBiometricsCaptureState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      getBiometricTitle(),              
-                      globalProvider.onboardingProcessName == "Onboarding"
+                      getBiometricTitle(),   // Call the function here
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: (isMobileSize) ? 16.w : 24.w,
                         color: blackShade1,
                         fontWeight: semiBold,
                         overflow: TextOverflow.ellipsis,
                       ),
-                          fontWeight: semiBold,
-                          overflow: TextOverflow.ellipsis),
                     ),
                     // SizedBox(
                     //   height: (isMobileSize)?20.h:52.h,
@@ -447,13 +445,13 @@ class _OperatorBiometricsCaptureState
                         maxItemsPerRow: (isMobileSize) ? 1 : 2,
                         children: [
                           if (globalProvider.operatorOnboardingAttributes
-                                  .contains("leftEye") &&
+                              .contains("leftEye") &&
                               globalProvider.operatorOnboardingAttributes
                                   .contains("rightEye"))
                             _getBiometricCaptureSelectionBlockMobile(
                                 biometricCaptureControlProvider.iris),
                           if (globalProvider.operatorOnboardingAttributes
-                                  .contains("rightLittle") &&
+                              .contains("rightLittle") &&
                               globalProvider.operatorOnboardingAttributes
                                   .contains("rightRing") &&
                               globalProvider.operatorOnboardingAttributes
@@ -463,7 +461,7 @@ class _OperatorBiometricsCaptureState
                             _getBiometricCaptureSelectionBlockMobile(
                                 biometricCaptureControlProvider.rightHand),
                           if (globalProvider.operatorOnboardingAttributes
-                                  .contains("leftLittle") &&
+                              .contains("leftLittle") &&
                               globalProvider.operatorOnboardingAttributes
                                   .contains("leftRing") &&
                               globalProvider.operatorOnboardingAttributes
@@ -475,7 +473,7 @@ class _OperatorBiometricsCaptureState
                           if (globalProvider.operatorOnboardingAttributes
                                   .contains("rightThumb") &&
                               globalProvider.operatorOnboardingAttributes
-                                  .contains("leftThumb"))
+                                  .contains("rightThumb") &&
                             _getBiometricCaptureSelectionBlockMobile(
                                 biometricCaptureControlProvider.thumbs),
                           if (globalProvider.operatorOnboardingAttributes
