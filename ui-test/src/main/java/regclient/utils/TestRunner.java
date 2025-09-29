@@ -20,12 +20,15 @@ public class TestRunner {
 	public static String jarUrl = TestRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 	
 	public static void main(String[] args) {	
-		
+		io.mosip.testrig.apirig.testrunner.BaseTestCase.currentModule = "androidregclient";
 		AdminTestUtil.initialize();
 		BaseTestCase.ApplnURI = ArcConfigManager.getiam_apiinternalendpoint();
 		OTPListener otpListener = new OTPListener();
 		otpListener.run();	
 		FetchUiSpec.getUiSpec("newProcess");
+		io.mosip.testrig.apirig.testrunner.BaseTestCase.setRunContext(checkRunType(), jarUrl);
+		io.mosip.testrig.apirig.testrunner.BaseTestCase.copymoduleSpecificAndConfigFile("config");
+		io.mosip.testrig.apirig.utils.AdminTestUtil.init();
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		System.out.println("BaseTestCase.ApplnURI : " + BaseTestCase.ApplnURI);
 		AdminTestUtil.getPreRegistrationFlow();

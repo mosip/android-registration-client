@@ -255,107 +255,81 @@ public class AdminTestUtil extends BaseTestCase {
 
 	public static String createPreRegistration(String userId) {
 	    String token = kernelAuthLib.getTokenByRole("globalAdmin");
-	    Faker faker = new Faker();
 
+	    // Generate base prereg JSON (as String)
+	    String baseJson = io.mosip.testrig.apirig.utils.AdminTestUtil.generateHbsForPrereg(false);
+
+	    // Parse into JSONObject
+	    JSONObject requestJson = new JSONObject(baseJson);
+
+	    // Faker for dynamic values
+	    Faker faker = new Faker();
 	    String randomName = faker.name().fullName();
 	    String address1 = faker.address().streetAddress();
 	    String address2 = faker.address().secondaryAddress();
 	    String address3 = faker.address().buildingNumber();
-	    String phone = faker.number().digits(10);  
+	    String phone = faker.number().digits(10);
 	    String email = faker.internet().emailAddress();
-	    
-	    JSONObject requestJson = new JSONObject();
-	    requestJson.put("id", "mosip.pre-registration.demographic.create");
-	    requestJson.put("version", "1.0");
+	    String dob = "1990/01/01"; // Or faker.date().birthday()
+
+	    // Navigate to identity node
+	    JSONObject request = requestJson.getJSONObject("request");
+	    JSONObject identity = request.getJSONObject("demographicDetails").getJSONObject("identity");
+
+	    // Fill only if empty or placeholder
+	    if (identity.optJSONArray("fullName") != null) {
+	        for (int i = 0; i < identity.getJSONArray("fullName").length(); i++) {
+	            identity.getJSONArray("fullName").getJSONObject(i).put("value", randomName);
+	        }
+	    }
+
+	    if (!identity.has("dateOfBirth") || identity.get("dateOfBirth").toString().contains("{{")) {
+	        identity.put("dateOfBirth", dob);
+	    }
+
+	    if (!identity.has("phone") || identity.get("phone").toString().contains("{{")) {
+	        identity.put("phone", phone);
+	    }
+
+	    if (!identity.has("email") || identity.get("email").toString().contains("{{")) {
+	        identity.put("email", email);
+	    }
+
+	    if (identity.optJSONArray("addressLine1") != null) {
+	        for (int i = 0; i < identity.getJSONArray("addressLine1").length(); i++) {
+	            identity.getJSONArray("addressLine1").getJSONObject(i).put("value", address1);
+	        }
+	    }
+
+	    if (identity.optJSONArray("addressLine2") != null) {
+	        for (int i = 0; i < identity.getJSONArray("addressLine2").length(); i++) {
+	            identity.getJSONArray("addressLine2").getJSONObject(i).put("value", address2);
+	        }
+	    }
+
+	    if (identity.optJSONArray("addressLine3") != null) {
+	        for (int i = 0; i < identity.getJSONArray("addressLine3").length(); i++) {
+	            identity.getJSONArray("addressLine3").getJSONObject(i).put("value", address3);
+	        }
+	    }
+
+	    if (!identity.has("postalCode") || identity.get("postalCode").toString().contains("{{")) {
+	        identity.put("postalCode", propsKernel.getProperty("regCenterId"));
+	    }
+
+	    // Replace placeholders for langCode, id, and version
+	    if (request.has("langCode") && request.getString("langCode").contains("{{")) {
+	        request.put("langCode", "eng"); 
+	    }
+	    if (requestJson.has("id") && requestJson.getString("id").contains("{{")) {
+	        requestJson.put("id", "mosip.pre-registration.demographic.create"); 
+	    }
+	    if (requestJson.has("version") && requestJson.getString("version").contains("{{")) {
+	        requestJson.put("version", "1.0"); 
+	    }
+
+	    // update requesttime
 	    requestJson.put("requesttime", AdminTestUtil.generateCurrentUTCTimeStamp());
-
-	    JSONObject mainRequest = new JSONObject();
-	    JSONArray requiredFields = new JSONArray();
-	    requiredFields.put("IDSchemaVersion")
-	                  .put("fullName")
-	                  .put("dateOfBirth")
-	                  .put("gender")
-	                  .put("addressLine1")
-	                  .put("addressLine2")
-	                  .put("addressLine3")
-	                  .put("region")
-	                  .put("province")
-	                  .put("city")
-	                  .put("zone")
-	                  .put("postalCode")
-	                  .put("phone")
-	                  .put("email")
-	                  .put("residenceStatus");
-	    mainRequest.put("requiredFields", requiredFields);
-
-	    // demographicDetails.identity
-	    JSONObject identity = new JSONObject();
-	    identity.put("gender", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", "MLE"))
-	            .put(new JSONObject().put("language", "ara").put("value", "MLE"))
-	            .put(new JSONObject().put("language", "fra").put("value", "MLE")));
-
-	    identity.put("city", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", "TEST_CITY"))
-	            .put(new JSONObject().put("language", "ara").put("value", "TEST_CITY"))
-	            .put(new JSONObject().put("language", "fra").put("value", "TEST_CITY")));
-
-	    identity.put("postalCode", "14022");
-
-	    identity.put("fullName", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", randomName))
-	            .put(new JSONObject().put("language", "ara").put("value", randomName))
-	            .put(new JSONObject().put("language", "fra").put("value", randomName)));
-
-	    identity.put("dateOfBirth", "1996/01/01");
-	    identity.put("IDSchemaVersion", 0.1);
-
-	    identity.put("province", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", "TEST_PROVINCE"))
-	            .put(new JSONObject().put("language", "ara").put("value", "TEST_PROVINCE"))
-	            .put(new JSONObject().put("language", "fra").put("value", "TEST_PROVINCE")));
-
-	    identity.put("zone", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", "TEST_ZONE"))
-	            .put(new JSONObject().put("language", "ara").put("value", "TEST_ZONE"))
-	            .put(new JSONObject().put("language", "fra").put("value", "TEST_ZONE")));
-
-	    identity.put("phone", phone);
-
-	    identity.put("addressLine1", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", address1))
-	            .put(new JSONObject().put("language", "ara").put("value", address1))
-	            .put(new JSONObject().put("language", "fra").put("value", address1)));
-
-	    identity.put("addressLine2", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", address2))
-	            .put(new JSONObject().put("language", "ara").put("value", address2))
-	            .put(new JSONObject().put("language", "fra").put("value", address2)));
-
-	    identity.put("addressLine3", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", address3))
-	            .put(new JSONObject().put("language", "ara").put("value", address3))
-	            .put(new JSONObject().put("language", "fra").put("value", address3)));
-
-	    identity.put("region", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", "TEST_REGION"))
-	            .put(new JSONObject().put("language", "ara").put("value", "TEST_REGION"))
-	            .put(new JSONObject().put("language", "fra").put("value", "TEST_REGION")));
-
-	    identity.put("residenceStatus", new JSONArray()
-	            .put(new JSONObject().put("language", "eng").put("value", "NFR"))
-	            .put(new JSONObject().put("language", "ara").put("value", "NFR"))
-	            .put(new JSONObject().put("language", "fra").put("value", "NFR")));
-
-	    identity.put("email", email);
-
-	    JSONObject demographicDetails = new JSONObject();
-	    demographicDetails.put("identity", identity);
-
-	    mainRequest.put("demographicDetails", demographicDetails);
-	    mainRequest.put("langCode", "eng");
-
-	    requestJson.put("request", mainRequest);
 
 	    // Hit API
 	    Response response = RestClient.postRequestWithCookie(
@@ -365,16 +339,19 @@ public class AdminTestUtil extends BaseTestCase {
 	            MediaType.APPLICATION_JSON,
 	            BaseTestCase.COOKIENAME, token
 	    );
-	    String preRegId=null;
+
+	    String preRegId = null;
 	    JSONObject responseJson = new JSONObject(response.asString());
 	    if (responseJson.has("response") && responseJson.getJSONObject("response").has("preRegistrationId")) {
-	         preRegId = responseJson.getJSONObject("response").getString("preRegistrationId");
+	        preRegId = responseJson.getJSONObject("response").getString("preRegistrationId");
 	        System.out.println("✅ preRegistrationId = " + preRegId);
 	    } else {
 	        throw new RuntimeException("❌ preRegistrationId not found in response: " + responseJson.toString());
 	    }
 	    return preRegId;
 	}
+
+
 
 	public static String getPreRegistrationFlow() {
 	    Faker faker = new Faker();
