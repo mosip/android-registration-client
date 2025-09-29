@@ -37,10 +37,10 @@ public class KeycloakUserManager {
 		Keycloak key=null;
 		try {
 
-			key=KeycloakBuilder.builder().serverUrl(ConfigManager.getIAMUrl()).realm(ConfigManager.getIAMRealmId())
-					.grantType(OAuth2Constants.CLIENT_CREDENTIALS).clientId(ConfigManager.getAutomationClientId()).clientSecret(ConfigManager.getAutomationClientSecret())
+			key=KeycloakBuilder.builder().serverUrl(ArcConfigManager.getIAMUrl()).realm(ArcConfigManager.getIAMRealmId())
+					.grantType(OAuth2Constants.CLIENT_CREDENTIALS).clientId(ArcConfigManager.getAutomationClientId()).clientSecret(ArcConfigManager.getAutomationClientSecret())
 					.build();
-			System.out.println(ConfigManager.getIAMUrl());
+			System.out.println(ArcConfigManager.getIAMUrl());
 			System.out.println(key.toString() + key.realms());
 		}catch(Exception e)
 		{
@@ -62,7 +62,7 @@ public class KeycloakUserManager {
 	}
 
 	public static void createUsers() {
-		List<String> needsToBeCreatedUsers = List.of(ConfigManager.getIAMUsersToCreate().split(","));
+		List<String> needsToBeCreatedUsers = List.of(ArcConfigManager.getIAMUsersToCreate().split(","));
 		Keycloak keycloakInstance = getKeycloakInstance();
 		for (String needsToBeCreatedUser : needsToBeCreatedUsers) {
 			UserRepresentation user = new UserRepresentation();
@@ -86,7 +86,7 @@ public class KeycloakUserManager {
 			user.setLastName(moduleSpecificUser);
 			user.setEmail("automation" + moduleSpecificUser + "@automationlabs.com");
 			// Get realm
-			RealmResource realmResource = keycloakInstance.realm(ConfigManager.getIAMRealmId());
+			RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 			UsersResource usersRessource = realmResource.users();
 			// Create user (requires manage-users role)
 			Response response = null;
@@ -107,7 +107,7 @@ public class KeycloakUserManager {
 			passwordCred.setType(CredentialRepresentation.PASSWORD);
 
 			//passwordCred.setValue(userPassword.get(passwordIndex));
-			passwordCred.setValue(ConfigManager.getIAMUsersPassword());
+			passwordCred.setValue(ArcConfigManager.getIAMUsersPassword());
 
 			UserResource userResource = usersRessource.get(userId);
 
@@ -117,7 +117,7 @@ public class KeycloakUserManager {
 			// Getting all the roles
 			List<RoleRepresentation> allRoles = realmResource.roles().list();
 			List<RoleRepresentation> availableRoles = new ArrayList<>();
-			List<String> toBeAssignedRoles = List.of(ConfigManager.getRolesForUser().split(","));
+			List<String> toBeAssignedRoles = List.of(ArcConfigManager.getRolesForUser().split(","));
 			for(String role : toBeAssignedRoles) {
 				if(allRoles.stream().anyMatch((r->r.getName().equalsIgnoreCase(role)))){
 					availableRoles.add(allRoles.stream().filter(r->r.getName().equals(role)).findFirst().get());
@@ -142,7 +142,7 @@ public class KeycloakUserManager {
 		user.setFirstName(onboardUser);
 		user.setLastName(onboardUser);
 		user.setEmail("automation" + onboardUser + "@automationlabs.com");
-		RealmResource realmResource = keycloakInstance.realm(ConfigManager.getIAMRealmId());
+		RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 		UsersResource usersRessource = realmResource.users();
 		Response response = null;
 		response = usersRessource.create(user);
@@ -156,7 +156,7 @@ public class KeycloakUserManager {
 		passwordCred.setTemporary(false);
 		passwordCred.setType(CredentialRepresentation.PASSWORD);
 
-		passwordCred.setValue(ConfigManager.getIAMUsersPassword());
+		passwordCred.setValue(ArcConfigManager.getIAMUsersPassword());
 
 		UserResource userResource = usersRessource.get(userId);
 
@@ -164,7 +164,7 @@ public class KeycloakUserManager {
 
 		List<RoleRepresentation> allRoles = realmResource.roles().list();
 		List<RoleRepresentation> availableRoles = new ArrayList<>();
-		List<String> toBeAssignedRoles = List.of(ConfigManager.getRolesForUser().split(","));
+		List<String> toBeAssignedRoles = List.of(ArcConfigManager.getRolesForUser().split(","));
 		for(String role : toBeAssignedRoles) {
 			if(!role.equalsIgnoreCase("Default")) {
 			if(allRoles.stream().anyMatch((r->r.getName().equalsIgnoreCase(role)))){
