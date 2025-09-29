@@ -994,6 +994,7 @@ class _LostProcessState extends State<LostProcess>
                                       }),
                                 ),
                               ),
+                              if (context.watch<GlobalProvider>().newProcessTabIndex < size + 2)
                               Container(
                                 height: 36.h,
                                 width: 25.w,

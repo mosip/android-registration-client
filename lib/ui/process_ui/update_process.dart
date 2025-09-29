@@ -936,6 +936,7 @@ class _UpdateProcessState extends State<UpdateProcess>
                                             }),
                                       ),
                                     ),
+                                    if (context.watch<GlobalProvider>().newProcessTabIndex < size + 2)
                                     Container(
                                       height: 36.h,
                                       width: 25.w,
