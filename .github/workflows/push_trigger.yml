@@ -22,7 +22,7 @@ jobs:
 
   dco:
     name: DCO Check
-    uses: docker://docker://ghcr.io/apps/dco:latest
+    uses: docker://ghcr.io/apps/dco:latest
     permissions:
       contents: read
       pull-requests: write
