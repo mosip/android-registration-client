@@ -26,7 +26,7 @@ import org.testng.collections.Lists;
 import org.testng.internal.Utils;
 import org.testng.xml.XmlSuite;
 
-import regclient.api.ConfigManager;
+import regclient.api.ArcConfigManager;
 
 
 
@@ -170,7 +170,7 @@ public class EmailableReport implements IReporter {
 		for (SuiteResult suiteResult : suiteResults) {
 
 			writer.print("<tr><th colspan=\"7\">");
-			writer.print(Utils.escapeHtml("Android Regclient Ui Automation      -------   Env - "+ConfigManager.getEnv() ));
+			writer.print(Utils.escapeHtml("Android Regclient Ui Automation      -------   Env - "+ArcConfigManager.getEnv() ));
 			writer.print("</th></tr>");
 			writer.print("<tr><th colspan=\"7\"><span class=\"not-bold\"><pre>");
 			writer.print(Utils.escapeHtml("Date and Time  ")+printCurrentDateTime());
