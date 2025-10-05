@@ -272,6 +272,13 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             context: context,
                             builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
                           );
+                          await context.read<
+                              RegistrationTaskProvider>()
+                              .fetchPreRegistrationDetail(
+                              preRegIdController.text);
+
+                          globalProvider.clearMap();
+                          globalProvider.clearScannedPages();
                           globalProvider.preRegControllerRefresh = false;
                         } else {
                           globalProvider.preRegControllerRefresh = true;

@@ -56,7 +56,7 @@ public class RestClient {
 //	
 	public static Response postReqestWithCookiesAndBody(String url, String body, String token, String opsToLog) {
 		Response posttResponse = null;
-		if (ConfigManager.IsDebugEnabled()) {
+		if (ArcConfigManager.IsDebugEnabled()) {
 			posttResponse = given().relaxedHTTPSValidation().body(body).contentType("application/json")
 					.accept("*/*").log().all().when().cookie("Authorization", token).post(url).then().log().all()
 					.extract().response();
