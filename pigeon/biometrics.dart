@@ -1,5 +1,18 @@
 import 'package:pigeon/pigeon.dart';
 
+
+class DeviceInfo {
+  final String deviceName;
+  final String deviceId;
+  final String connectionStatus;
+
+  DeviceInfo({
+    required this.deviceName,
+    required this.deviceId,
+    required this.connectionStatus,
+  });
+}
+
 @HostApi()
 abstract class BiometricsApi {
   @async
@@ -49,5 +62,5 @@ abstract class BiometricsApi {
   bool conditionalBioAttributeValidation(String fieldId, String expression);
 
   @async
-  List<String> getListOfDevices(String modality);
+  List<DeviceInfo> getListOfDevices(String modality);
 }

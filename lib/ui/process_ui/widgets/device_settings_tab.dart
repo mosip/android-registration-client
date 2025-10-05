@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import '../../../model/settings.dart';
 import '../../../platform_spi/biometrics_service.dart';
 import '../../../utils/app_config.dart';
@@ -16,7 +17,7 @@ class DeviceSettingsTab extends StatefulWidget {
 }
 
 class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
-  late Future<List<Map<String, dynamic>>> _devicesFuture;
+  late Future<List<DeviceInfo>> _devicesFuture;
 
   @override
   void initState() {
@@ -24,21 +25,15 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
     _devicesFuture = fetchDeviceDetails();
   }
 
-  Future<List<Map<String, dynamic>>> fetchDeviceDetails() async {
-    List<Map<String, dynamic>> deviceDetails = [];
+  Future<List<DeviceInfo>> fetchDeviceDetails() async {
+    List<DeviceInfo> deviceDetails = [];
     try {
       await Future.delayed(const Duration(seconds: 1));
-      List<String> modality = ["Face", "Iris", "Finger"];
+      List<String> modality = ["Face", "Iris", "Thumbs"];
+
       for (var modalityType in modality) {
-        List<String?> data =
-            await BiometricsService().getListOfDevices(modalityType);
-        for (var e in data) {
-          if (e != null) {
-            final deviceMap = jsonDecode(e) as Map<String, dynamic>;
-            deviceMap['modality'] = modalityType;
-            deviceDetails.add(deviceMap);
-          }
-        }
+        List<DeviceInfo?> data = await BiometricsService().getListOfDevices(modalityType);
+        deviceDetails.addAll(data.whereType<DeviceInfo>());
       }
       return deviceDetails;
     } catch (e) {
@@ -49,7 +44,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
+    return FutureBuilder<List<DeviceInfo>>(
       future: _devicesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -88,7 +83,8 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                           vertical: 12, horizontal: 20),
                     ),
                     onPressed: () {
-                      fetchDeviceDetails();
+                      setState(() {});
+                      _devicesFuture = fetchDeviceDetails();
                     },
                     child: Text(AppLocalizations.of(context)!.scan_now),
                   ),
@@ -124,13 +120,13 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("ID: ${device['deviceId'] ?? ''}",
+                                Text("ID: ${device.deviceId ?? ''}",
                                     style: const TextStyle(fontSize: 12)),
                                 Text(
-                                    "Name: ${device['deviceName'] ?? ''}",
+                                    "Name: ${device.deviceName?? ''}",
                                     style: const TextStyle(fontSize: 12)),
                                 Text(
-                                    "Status: ${device['connectionStatus'] ?? ''}",
+                                    "Status: ${device.connectionStatus ?? ''}",
                                     style: const TextStyle(fontSize: 12)),
                               ],
                             ),

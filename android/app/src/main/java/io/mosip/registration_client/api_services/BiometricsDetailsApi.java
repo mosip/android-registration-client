@@ -104,10 +104,10 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private static final String RIGHT = "Right";
     private static final String LEFT = "Left";
 
-    private final List<String> deviceDetailsList = new ArrayList<>();
-    private BiometricsPigeon.Result<List<String>> deviceListResult;
+    private final List<BiometricsPigeon.DeviceInfo> deviceDetailsList = new ArrayList<>();
+    private BiometricsPigeon.Result<List<BiometricsPigeon.DeviceInfo>> deviceListResult;
 
-    private Modality deviceSettingsModality;
+    private Modality currentDeviceListModality;
 
 
 
@@ -665,16 +665,16 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     }
 
     @Override
-    public void getListOfDevices(@NonNull String modality, @NonNull BiometricsPigeon.Result<List<String>> result) {
+    public void getListOfDevices(@NonNull String modality, @NonNull BiometricsPigeon.Result<List<BiometricsPigeon.DeviceInfo>> result) {
         deviceDetailsList.clear();
         deviceListResult = result;
-        deviceSettingsModality = getModality(modality);
+        currentDeviceListModality = getModality(modality);
         try {
             Intent intent = new Intent();
             intent.setAction(RegistrationConstants.DISCOVERY_INTENT_ACTION);
             queryPackage(intent);
             DiscoverRequest discoverRequest = new DiscoverRequest();
-            discoverRequest.setType(deviceSettingsModality.getSingleType().value());
+            discoverRequest.setType(currentDeviceListModality.getSingleType().value());
             intent.putExtra(RegistrationConstants.SBI_INTENT_REQUEST_KEY,
                     objectMapper.writeValueAsBytes(discoverRequest));
             activity.startActivityForResult(intent, 4);
@@ -687,15 +687,14 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void handleDeviceInfoResponseForList(Bundle bundle) {
         try {
             byte[] infoBytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
-            String[] deviceInfo = biometricsService.handleDeviceInfoResponse(deviceSettingsModality, infoBytes);
-            Map<String, String> deviceMap = new HashMap<>();
-            deviceMap.put("deviceName", deviceInfo[0]);
-            deviceMap.put("deviceId", deviceInfo[1]);
-            deviceMap.put("connectionStatus", deviceInfo[2]);
+            String[] deviceInfo = biometricsService.handleDeviceInfoResponse(currentDeviceListModality, infoBytes);
+            BiometricsPigeon.DeviceInfo deviceInfoObj = new BiometricsPigeon.DeviceInfo.Builder()
+                    .setDeviceName(deviceInfo[0])
+                    .setDeviceId(deviceInfo[1])
+                    .setConnectionStatus(deviceInfo[2])
+                    .build();
 
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(deviceMap);
-            deviceDetailsList.add(json);
+            deviceDetailsList.add(deviceInfoObj);
 
             if (deviceListResult != null) deviceListResult.success(deviceDetailsList);
         } catch (Exception e) {
@@ -708,7 +707,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void parseDiscoverResponseForList(Bundle bundle) {
         try {
             byte[] bytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
-            String discoveredCallbackId = biometricsService.handleDiscoveryResponse(deviceSettingsModality, bytes);
+            String discoveredCallbackId = biometricsService.handleDiscoveryResponse(currentDeviceListModality, bytes);
             if (discoveredCallbackId != null) {
                 infoForList(discoveredCallbackId);
             } else {
