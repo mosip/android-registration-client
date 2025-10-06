@@ -25,4 +25,6 @@ public interface LocalConfigDAO {
      * Modify configurations by saving local preferences
      */
     void modifyConfigurations(Map<String, String> localPreferences);
+
+    void cleanUpLocalPreferences();
 }

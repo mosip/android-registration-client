@@ -78,13 +78,13 @@ public class LocalPreferencesRepository {
     }
 
     /**
-     * Soft delete local preference by name
+     * Delete local preference by name
      */
-    public void softDeleteByName(String name) {
+    public void delete(LocalPreferences localPreference) {
         try {
-            localPreferencesDao.softDeleteByName(name, System.currentTimeMillis());
+            localPreferencesDao.deleteByName(localPreference.getName());
         } catch (Exception e) {
-            Log.e(TAG, "Error soft deleting local preference: " + name, e);
+            Log.e(TAG, "Error deleting local preference: " + localPreference.getName(), e);
         }
     }
 }

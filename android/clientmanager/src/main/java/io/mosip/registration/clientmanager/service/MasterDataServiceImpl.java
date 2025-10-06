@@ -12,6 +12,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ReasonListDto;
 import io.mosip.registration.clientmanager.dto.http.*;
@@ -107,6 +108,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
     private PermittedLocalConfigRepository permittedLocalConfigRepository;
+    private LocalConfigDAO localConfigDAO;
     private String regCenterId;
     private String result = "";
     SharedPreferences sharedPreferences;
@@ -131,7 +133,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  LanguageRepository languageRepository,
                                  JobManagerService jobManagerService,
                                  FileSignatureDao fileSignatureDao,
-                                 PermittedLocalConfigRepository permittedLocalConfigRepository) {
+                                 PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                 LocalConfigDAO localConfigDAO) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -154,6 +157,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.jobManagerService = jobManagerService;
         this.fileSignatureDao = fileSignatureDao;
         this.permittedLocalConfigRepository = permittedLocalConfigRepository;
+        this.localConfigDAO = localConfigDAO;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -940,6 +944,10 @@ public class MasterDataServiceImpl implements MasterDataService {
                     permittedConfigs.add(premittedConfig);
                 }
                 permittedLocalConfigRepository.savePermittedConfigs(permittedConfigs);
+
+                if (localConfigDAO != null) {
+                    localConfigDAO.cleanUpLocalPreferences();
+                }
                 break;
         }
     }

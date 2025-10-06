@@ -57,14 +57,18 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
             String value = entry.getValue();
             
             try {
-                // Soft delete existing record if it exists
                 LocalPreferences existingPreference = localPreferencesRepository.findByIsDeletedFalseAndName(name);
+
                 if (existingPreference != null) {
-                    localPreferencesRepository.softDeleteByName(name);
+                    // Update existing record
+                    existingPreference.setVal(value);
+                    existingPreference.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
+                    existingPreference.setUpdDtimes(System.currentTimeMillis());
+                    localPreferencesRepository.save(existingPreference);
+                } else {
+                    // Create new record if it doesn't exist
+                    saveLocalPreference(name, value, RegistrationConstants.PERMITTED_CONFIG_TYPE);
                 }
-                
-                // Create new record
-                saveLocalPreference(name, value, RegistrationConstants.PERMITTED_CONFIG_TYPE);
                 
             } catch (Exception e) {
                 Log.e(TAG, "Error modifying configuration: " + name, e);
@@ -87,5 +91,39 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
         localPreference.setIsDeleted(false);
         
         localPreferencesRepository.save(localPreference);
+    }
+
+    /**
+     * Clean up local preferences based on permitted configs.
+     * Delete local preference if key is removed from permitted configs.
+     * Mark as deleted if key is deactivated in permitted configs.
+     */
+    public void cleanUpLocalPreferences() {
+        List<PermittedLocalConfig> permittedConfigs =
+            permittedLocalConfigRepository.getPermittedConfigsByType(RegistrationConstants.PERMITTED_CONFIG_TYPE);
+
+        Map<String, String> localConfigs = getLocalConfigurations();
+
+        Map<String, Boolean> permittedStatusMap = new java.util.HashMap<>();
+        for (PermittedLocalConfig config : permittedConfigs) {
+            permittedStatusMap.put(config.getName(), config.getIsActive());
+        }
+
+        for (String key : localConfigs.keySet()) {
+            LocalPreferences pref = localPreferencesRepository.findByIsDeletedFalseAndName(key);
+            if (pref == null) continue;
+
+            if (!permittedStatusMap.containsKey(key)) {
+                localPreferencesRepository.delete(pref);
+                Log.i(TAG, "Local preference deleted (row removed): " + key);
+            } else if (!permittedStatusMap.get(key)) {
+                // Key deactivated, mark as deleted
+                pref.setIsDeleted(true);
+                pref.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
+                pref.setUpdDtimes(System.currentTimeMillis());
+                localPreferencesRepository.save(pref);
+                Log.i(TAG, "Local preference marked deleted (row deactivated): " + key);
+            }
+        }
     }
 }

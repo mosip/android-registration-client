@@ -13,6 +13,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
@@ -166,12 +167,13 @@ public class AppModule {
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
                                                       FileSignatureDao fileSignatureDao,
-                                                      PermittedLocalConfigRepository permittedLocalConfigRepository) {
+                                                      PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                                      LocalConfigDAO localConfigDAO) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, permittedLocalConfigRepository);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, permittedLocalConfigRepository, localConfigDAO);
     }
 
 
