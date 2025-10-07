@@ -320,5 +320,11 @@
   "no_internet_connection": "لا يوجد اتصال بالإنترنت!",
   "connect_and_retry": "يرجى الاتصال بالإنترنت وإعادة المحاولة.",
   "retry": "إعادة المحاولة",
+  "key": "مفتاح",
+  "server_value": "قيمة الخادم",
+  "local_value": "القيمة المحلية",
+  "no_configuration_parameters_found": "لم يتم العثور على معلمات التكوين",
+  "no_configurations_found": "لم يتم العثور على أي تكوين",
+  "confirm": "تأكيد",
   "scan_now": "امسح الآن"
 }

@@ -9,6 +9,8 @@ import 'package:registration_client/ui/process_ui/widgets/device_settings_tab.da
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'widgets/global_config_settings_tab.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
@@ -156,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       case 'ScheduledJobsController':
         return Center(child: Text("${settings.name}"));
       case 'GlobalConfigSettingsController':
-        return Center(child: Text("${settings.name}"));
+        return const GlobalConfigSettingsTab();
       case 'DeviceSettingsController':
         return DeviceSettingsTab(settings: settings, selectedLan: selectedLang);
       default:

@@ -320,5 +320,11 @@
   "no_internet_connection": "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲ!",
   "connect_and_retry": "ದಯವಿಟ್ಟು ಇಂಟರ್ನೆಟ್\u200Cನೊಂದಿಗೆ ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಮರುಪ್ರಯತ್ನಿಸಿ.",
   "retry": "ಮರುಪ್ರಯತ್ನಿಸಿ",
+  "key": "ಕೀ",
+  "server_value": "ಸರ್ವರ್ ಮೌಲ್ಯ",
+  "local_value": "ಸ್ಥಳೀಯ ಮೌಲ್ಯ",
+  "no_configuration_parameters_found": "ಯಾವುದೇ ಸಂರಚನಾ ನಿಯತಾಂಕಗಳು ಕಂಡುಬರಲಿಲ್ಲ",
+  "no_configurations_found": "ಯಾವುದೇ ಸಂರಚನೆಗಳು ಕಂಡುಬರಲಿಲ್ಲ",
+  "confirm": "ದೃಢೀಕರಿಸಿ",
   "scan_now": "ಈಗಸ್ಕ್ಯಾನ್ ಮಾಡಿ"
 }

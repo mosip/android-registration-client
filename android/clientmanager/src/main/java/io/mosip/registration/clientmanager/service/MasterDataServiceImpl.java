@@ -12,6 +12,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ReasonListDto;
 import io.mosip.registration.clientmanager.dto.http.*;
@@ -23,6 +24,7 @@ import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.clientmanager.entity.PermittedLocalConfig;
 import io.mosip.registration.clientmanager.entity.ReasonList;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
@@ -105,6 +107,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
+    private PermittedLocalConfigRepository permittedLocalConfigRepository;
+    private LocalConfigDAO localConfigDAO;
     private String regCenterId;
     private String result = "";
     SharedPreferences sharedPreferences;
@@ -128,7 +132,9 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  CertificateManagerService certificateManagerService,
                                  LanguageRepository languageRepository,
                                  JobManagerService jobManagerService,
-                                 FileSignatureDao fileSignatureDao) {
+                                 FileSignatureDao fileSignatureDao,
+                                 PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                 LocalConfigDAO localConfigDAO) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -150,6 +156,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
         this.fileSignatureDao = fileSignatureDao;
+        this.permittedLocalConfigRepository = permittedLocalConfigRepository;
+        this.localConfigDAO = localConfigDAO;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -376,10 +384,16 @@ public class MasterDataServiceImpl implements MasterDataService {
     @SuppressWarnings("unchecked")
     private void saveGlobalParams(Map<String, Object> responseMap) {
         try {
+            
             Map<String, String> globalParamMap = new HashMap<>();
 
             if (responseMap.get("configDetail") != null) {
                 Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
+
+                if (configDetailJsonMap != null && configDetailJsonMap.get("globalConfiguration") != null) {
+                    String encryptedGlobalConfigs = configDetailJsonMap.get("globalConfiguration").toString();
+                    parseToMap(getParams(encryptedGlobalConfigs), globalParamMap);
+                }
 
                 if (configDetailJsonMap != null && configDetailJsonMap.get("registrationConfiguration") != null) {
                     String encryptedConfigs = configDetailJsonMap.get("registrationConfiguration").toString();
@@ -915,6 +929,26 @@ public class MasterDataServiceImpl implements MasterDataService {
                     }
                 }
                 break;
+            case "PermittedLocalConfig":
+                JSONArray permittedConfigsJsonArray = getDecryptedDataList(data);
+                List<PermittedLocalConfig> permittedConfigs = new ArrayList<>();
+                for (int i = 0; i < permittedConfigsJsonArray.length(); i++) {
+                    JSONObject jsonObjects = new JSONObject(permittedConfigsJsonArray.getString(i));
+
+                    PermittedLocalConfig premittedConfig = new PermittedLocalConfig(jsonObjects.getString("code"));
+                    premittedConfig.setName(jsonObjects.getString("name"));
+                    premittedConfig.setType(jsonObjects.getString("type"));
+                    premittedConfig.setIsActive(jsonObjects.getBoolean("isActive"));
+                    premittedConfig.setIsDeleted(jsonObjects.optBoolean("isDeleted", false));
+                    premittedConfig.setDelDtimes(jsonObjects.optLong("delDtimes", 0L));
+                    permittedConfigs.add(premittedConfig);
+                }
+                permittedLocalConfigRepository.savePermittedConfigs(permittedConfigs);
+
+                if (localConfigDAO != null) {
+                    localConfigDAO.cleanUpLocalPreferences();
+                }
+                break;
         }
     }
 
@@ -1001,4 +1035,10 @@ public class MasterDataServiceImpl implements MasterDataService {
         String value = globalParamRepository.getGlobalParamValue(id);
         return value == null ? "" : value;
     }
+
+    @Override
+    public Map<String, Object> getRegistrationParams() {
+        return globalParamRepository.getGlobalParamsByPattern("mosip.registration%");
+    }
+
 }
