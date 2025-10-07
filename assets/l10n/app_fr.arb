@@ -325,5 +325,6 @@
   "local_value": "Valeur locale",
   "no_configuration_parameters_found": "Aucun paramètre de configuration trouvé",
   "no_configurations_found": "Aucune configuration trouvée",
-  "confirm": "Confirmer"
+  "confirm": "Confirmer",
+  "scan_now": "Analyser maintenant"
 }

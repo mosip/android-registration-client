@@ -167,6 +167,7 @@ public class Biometrics095Service extends BiometricsService {
     public String[] handleDeviceInfoResponse(Modality modality, byte[] response) throws BiometricsServiceException {
         String callbackId = null;
         String serialNo = null;
+        String deviceStatus = null;
         try {
             List<InfoResponse> list = objectMapper.readValue(response, new TypeReference<List<InfoResponse>>() {});
 
@@ -187,6 +188,7 @@ public class Biometrics095Service extends BiometricsService {
             if(deviceDto.getCallbackId().contains(".Info")) {
                 callbackId = deviceDto.getCallbackId().replace(".Info", "");
             }
+            deviceStatus = deviceDto.getDeviceStatus();
             String digitalIdPayload = getJWTPayLoad(deviceDto.getDigitalId());
             byte[] decodedDigitalIdPayload = Base64.getUrlDecoder().decode(digitalIdPayload);
             DigitalId digitalId = objectMapper.readValue(decodedDigitalIdPayload, DigitalId.class);
@@ -201,7 +203,7 @@ public class Biometrics095Service extends BiometricsService {
             throw new BiometricsServiceException(SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorCode(),
                     SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorMessage());
         }
-        return new String[] { callbackId, serialNo };
+        return new String[] { callbackId, serialNo, deviceStatus};
     }
 
     public String handleDiscoveryResponse(Modality modality, byte[] response) throws BiometricsServiceException {

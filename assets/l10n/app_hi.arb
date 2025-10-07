@@ -325,5 +325,6 @@
   "local_value": "स्थानीय मान",
   "no_configuration_parameters_found": "कोई कॉन्फ़िगरेशन पैरामीटर नहीं मिला",
   "no_configurations_found": "कोई कॉन्फ़िगरेशन नहीं मिला",
-  "confirm": "पुष्टि करें"
+  "confirm": "पुष्टि करें",
+  "scan_now": "अभी स्कैन करें"
 }
