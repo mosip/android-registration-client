@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/process_ui/widgets/device_settings_tab.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -82,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                   child: Text(
                     AppLocalizations.of(context)!.settings,
@@ -159,7 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       case 'GlobalConfigSettingsController':
         return const GlobalConfigSettingsTab();
       case 'DeviceSettingsController':
-        return Center(child: Text("${settings.name}"));
+        return DeviceSettingsTab(settings: settings, selectedLan: selectedLang);
       default:
         return _buildDescriptionOnlyTab(settings, selectedLang);
     }

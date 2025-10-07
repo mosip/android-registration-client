@@ -7,8 +7,6 @@
 
 package io.mosip.registration_client;
 
-import io.mosip.registration.clientmanager.constant.ClientManagerConstant;
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -26,8 +24,6 @@ import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,21 +36,13 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
-import io.mosip.registration.clientmanager.constant.AuditEvent;
-import io.mosip.registration.clientmanager.constant.Components;
-import io.mosip.registration.clientmanager.constant.PacketClientStatus;
-import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
-import io.mosip.registration.clientmanager.entity.GlobalParam;
-import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
-import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
@@ -101,7 +89,6 @@ import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 import io.mosip.registration_client.utils.BatchJob;
-import io.mosip.registration_client.utils.CustomToast;
 
 import android.net.Uri;
 
@@ -318,6 +305,12 @@ public class MainActivity extends FlutterActivity {
                     break;
                 case 3:
                     biometricsDetailsApi.parseRCaptureResponse(data.getExtras());
+                    break;
+                case 4:
+                    biometricsDetailsApi.parseDiscoverResponseForList(data.getExtras());
+                    break;
+                case 5:
+                    biometricsDetailsApi.handleDeviceInfoResponseForList(data.getExtras());
                     break;
             }
         }

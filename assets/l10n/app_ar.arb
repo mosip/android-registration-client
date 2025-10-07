@@ -325,5 +325,6 @@
   "local_value": "القيمة المحلية",
   "no_configuration_parameters_found": "لم يتم العثور على معلمات التكوين",
   "no_configurations_found": "لم يتم العثور على أي تكوين",
-  "confirm": "تأكيد"
+  "confirm": "تأكيد",
+  "scan_now": "امسح الآن"
 }
