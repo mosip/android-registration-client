@@ -85,7 +85,6 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
         localPreference.setName(name);
         localPreference.setVal(value);
         localPreference.setConfigType(configType);
-        localPreference.setMachineName("SYSTEM");
         localPreference.setCrBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
         localPreference.setCrDtime(System.currentTimeMillis());
         localPreference.setIsDeleted(false);

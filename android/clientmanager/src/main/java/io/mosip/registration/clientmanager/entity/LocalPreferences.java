@@ -28,9 +28,6 @@ public class LocalPreferences {
     @ColumnInfo(name = "config_type")
     private String configType;
 
-    @ColumnInfo(name = "machine_name")
-    private String machineName;
-
     @ColumnInfo(name = "cr_by")
     private String crBy;
 
