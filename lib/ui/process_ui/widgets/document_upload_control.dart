@@ -42,6 +42,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, String> transliterationLangMapper = {};
   bool hasInteractedWithDropdown = false;
+  String getReadableFileSize(int bytes) {
+    if (bytes < 1024) return "$bytes B";
+    if (bytes < 1024 * 1024) return "${(bytes / 1024).toStringAsFixed(2)} KB";
+    return "${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB";
+  }
 
 
   FixedExtentScrollController scrollController = FixedExtentScrollController();
@@ -509,7 +514,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     ),
                     imageBytesList.isNotEmpty
                         ? SizedBox(
-                            height: 110.h,
+                            height: 120.h,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
@@ -531,7 +536,12 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           child: Image.memory(item!),
                                         ),
                                       ),
-                                      SizedBox(height: 10.h),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        'Size: ${getReadableFileSize(item.length)}',
+                                        style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                                      ),
+                                      SizedBox(height: 2.h),
                                       GestureDetector(
                                         onTap: () {
                                           _deleteImage(widget.field, item);
