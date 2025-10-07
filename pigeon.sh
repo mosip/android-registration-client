@@ -57,3 +57,6 @@ dart run pigeon --input pigeon/document_category.dart --dart_out lib/pigeon/docu
 
 # Generate dash board files
 dart run pigeon --input pigeon/dash_board.dart --dart_out lib/pigeon/dash_board_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/DashBoardPigeon.java --java_package "io.mosip.registration_client.model"
+
+# Generate global config settings files
+dart run pigeon --input pigeon/global_config_settings.dart --dart_out lib/pigeon/global_config_settings_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/GlobalConfigSettingsPigeon.java --java_package "io.mosip.registration_client.model"

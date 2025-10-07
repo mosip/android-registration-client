@@ -8,6 +8,8 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'widgets/global_config_settings_tab.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
@@ -126,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SizedBox(
-            height: 400,
+            height: MediaQuery.of(context).size.height/1.4,
             child: TabBarView(
               children: [
                 for (final settings in settingUiByRole) _buildTabContent(settings),
@@ -138,9 +140,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  String _getControllerName(Settings settings) {
+    if (settings.fxml != null && settings.fxml!.isNotEmpty) {
+      return settings.fxml!.replaceAll('.fxml', 'Controller');
+    } else {
+      return '${settings.name}Controller';
+    }
+  }
+
   Widget _buildTabContent(Settings settings) {
     final selectedLang = context.read<GlobalProvider>().selectedLanguage;
-    return _buildDescriptionOnlyTab(settings, selectedLang);
+
+    final controllerName = _getControllerName(settings);
+
+    switch (controllerName) {
+      case 'ScheduledJobsController':
+        return Center(child: Text("${settings.name}"));
+      case 'GlobalConfigSettingsController':
+        return const GlobalConfigSettingsTab();
+      case 'DeviceSettingsController':
+        return Center(child: Text("${settings.name}"));
+      default:
+        return _buildDescriptionOnlyTab(settings, selectedLang);
+    }
   }
 
   Widget _buildDescriptionOnlyTab(Settings settings, String selectedLang) {

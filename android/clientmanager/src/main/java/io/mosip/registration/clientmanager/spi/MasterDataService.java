@@ -8,6 +8,7 @@ import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MasterDataService {
 
@@ -142,6 +143,8 @@ public interface MasterDataService {
     void saveGlobalParam(String id, String value);
 
     String getGlobalParamValue(String id);
+
+    Map<String, Object> getRegistrationParams();
 
 //    void downloadUrlData(Path path, JSONObject jsonObject);
 }
