@@ -67,7 +67,7 @@ public class RegistrationRepository {
     }
 
     public Registration insertRegistration(String packetId, String containerPath, String centerId,
-                                           String registrationType, JSONObject additionalInfo, String additionalInfoReqId) throws Exception {
+                                           String registrationType, JSONObject additionalInfo, String additionalInfoReqId, String rid) throws Exception {
         Registration registration = new Registration(packetId);
         registration.setFilePath(containerPath);
         registration.setRegType(registrationType);
@@ -76,6 +76,7 @@ public class RegistrationRepository {
         registration.setServerStatus(null);
         registration.setCrDtime(System.currentTimeMillis());
         registration.setCrBy("110006");
+        registration.setId(rid);
         //TODO use objectMapper
         registration.setAdditionalInfo(additionalInfo.toString().getBytes(StandardCharsets.UTF_8));
         registration.setAdditionalInfoReqId(additionalInfoReqId);

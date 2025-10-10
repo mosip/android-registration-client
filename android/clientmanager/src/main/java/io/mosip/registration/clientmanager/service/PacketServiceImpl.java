@@ -132,10 +132,10 @@ public class PacketServiceImpl implements PacketService {
         wrapper.setVersion(PACKET_SYNC_VERSION);
         wrapper.setRequest(new ArrayList<SyncRIDRequest>());
         SyncRIDRequest syncRIDRequest = new SyncRIDRequest();
-        syncRIDRequest.setRegistrationId(registration.getPacketId());
+        syncRIDRequest.setRegistrationId(registration.getId());
         syncRIDRequest.setRegistrationType(registration.getRegType().toUpperCase());
         if (!serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
-            syncRIDRequest.setPacketId(registration.getPacketId());
+            syncRIDRequest.setPacketId(registration.getId());
             syncRIDRequest.setAdditionalInfoReqId(registration.getAdditionalInfoReqId());
         }
         if (String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.APPROVED.name()) || String.valueOf(registration.getClientStatus()).equals(PacketClientStatus.REJECTED.name())) {

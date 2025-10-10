@@ -129,6 +129,50 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         return null;
     }
 
+    private String generatePacketId(String registrationId, String refId) {
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        return new StringBuilder()
+                .append(registrationId)
+                .append("-")
+                .append(refId != null ? refId : "DEFAULT")
+                .append("-")
+                .append(timestamp)
+                .toString();
+    }
+
+    @Override
+    public PacketInfo persistPacketAndGetInfo(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) {
+        try {
+            // Generate unique packet ID (matches server-side pattern)
+            String packetId = generatePacketId(id, refId);
+            Log.i(TAG, "Requesting packet manager to persist packet");
+            Log.i(TAG, "Registration ID: " + id + ", Generated Packet ID: " + packetId);
+
+            // Create the actual packet
+            String containerPath = createPacket(id, version, schemaJson, source, process, offlineMode, refId);
+
+            if (containerPath != null) {
+                // Build PacketInfo to return (matching server-side RegistrationDTO.setPacketId pattern)
+                PacketInfo info = new PacketInfo();
+                info.setId(packetId); // Use generated packet ID (NOT registration ID!)
+                info.setSource(source);
+                info.setProcess(process);
+                info.setRefId(refId);
+                info.setSchemaVersion(version);
+                info.setProviderName(this.getClass().getSimpleName());
+                info.setProviderVersion(defaultProviderVersion);
+                info.setPacketName(containerPath); // Store container path
+                info.setCreationDate(java.time.OffsetDateTime.now().toInstant().toString());
+
+                Log.i(TAG, "Packet created successfully. Path: " + containerPath);
+                return info;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Persist packet with info failed : ", e);
+        }
+        return null;
+    }
+
     private String createPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) throws Exception {
         Log.i(TAG, "Started packet creation");
 

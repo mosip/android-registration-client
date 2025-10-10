@@ -115,6 +115,7 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
             registrationService.submitRegistrationDto(makerName);
         } catch (Exception e) {
             errorCode = e.getMessage();
+            Log.i("RegistrationApi", "Registration submission failed: " + errorCode);
             auditManagerService.audit(AuditEvent.CREATE_PACKET_FAILED, Components.REGISTRATION, errorCode);
             Log.e(getClass().getSimpleName(), "Failed on registration submission", e);
         }

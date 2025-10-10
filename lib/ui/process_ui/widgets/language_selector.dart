@@ -92,6 +92,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             ? "Update"
             : widget.newProcess.flow!,
         widget.newProcess.id!);
+
     registrationTaskProvider.addDemographicField("preferredLang",
         globalProvider.fieldInputValue["preferredLang"].toString());
     String registrationStartError =

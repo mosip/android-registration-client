@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.service;
 
 import static io.mosip.registration.keymanager.util.KeyManagerConstant.EMPTY;
+import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_CONFIGURED;
 import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_EXCEPTION;
 import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_FORCE_CAPTURED;
 import static io.mosip.registration.packetmanager.util.PacketManagerConstant.OTHER_KEY_PAYLOAD;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
@@ -29,6 +31,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -76,6 +79,7 @@ import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.VersionType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
+import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.DateUtils;
@@ -102,6 +106,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     private AuditManagerService auditManagerService;
     public static final String BOOLEAN_FALSE = "false";
 
+    private Biometrics095Service biometricService;
+
     @Inject
     public RegistrationServiceImpl(Context context, PacketWriterService packetWriterService,
                                    RegistrationRepository registrationRepository,
@@ -110,7 +116,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    ClientCryptoManagerService clientCryptoManagerService,
                                    KeyStoreRepository keyStoreRepository,
                                    GlobalParamRepository globalParamRepository,
-                                   AuditManagerService auditManagerService) {
+                                   AuditManagerService auditManagerService, Biometrics095Service biometricService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -121,6 +127,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.keyStoreRepository = keyStoreRepository;
         this.globalParamRepository = globalParamRepository;
         this.auditManagerService = auditManagerService;
+        this.biometricService = biometricService;
     }
 
     @Override
@@ -229,6 +236,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document.setDocument(("pdf".equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
                 Log.i(TAG, entry.getKey() + " >> PDF document size :" + document.getDocument().length);
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
+                packetWriterService.addMetaInfo(this.registrationDto.getRId(),"documents", document);
             });
 
             if (serverVersion!=null && serverVersion.startsWith("1.1.5")) {
@@ -243,27 +251,42 @@ public class RegistrationServiceImpl implements RegistrationService {
                 });
             }
 
-            this.registrationDto.CAPTURED_BIO_FIELDS.forEach( field -> {
-                BiometricRecord biometricRecord = getBiometricRecord(field, serverVersion);
-                biometricRecord.getSegments().removeIf(Objects::isNull);
-                packetWriterService.setBiometric(this.registrationDto.getRId(), field, biometricRecord);
-            });
+//            this.registrationDto.CAPTURED_BIO_FIELDS.forEach( field -> {
+//                BiometricRecord biometricRecord = getBiometricRecord(field, serverVersion);
+//                biometricRecord.getSegments().removeIf(Objects::isNull);
+//                packetWriterService.setBiometric(this.registrationDto.getRId(), field, biometricRecord);
+//            });
+
+            // Process biometrics and add metadata to packet
+            setBiometrics(this.registrationDto);
 
             CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
 
             packetWriterService.addAudits(this.registrationDto.getRId(), getAudits());
             addMetaInfoMap(centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), makerName);
-
-            String containerPath = packetWriterService.persistPacket(this.registrationDto.getRId(),
+            PacketInfo packetInfo = packetWriterService.persistPacketAndGetInfo(this.registrationDto.getRId(),
                     this.registrationDto.getSchemaVersion().toString(),
                     identitySchemaRepository.getSchemaJson(context, this.registrationDto.getSchemaVersion()),
                     SOURCE,
                     this.registrationDto.getProcess(),
                     true, centerMachineDto.getMachineRefId());
 
-            Log.i(TAG, "Packet created : " + containerPath);
+//            Log.i(TAG, "Packet created : " + containerPath);
 
-            if (containerPath == null || containerPath.trim().isEmpty()) {
+            String packetId = null;
+            String containerPath = null;
+            if (packetInfo != null) {
+            packetId = packetInfo.getId();
+            containerPath = packetInfo.getPacketName();
+            Log.i(TAG, "Packet created - RID: " + this.registrationDto.getRId() +
+                    ", Packet ID: " + packetId +
+                    ", Path: " + containerPath);
+
+           }
+
+
+
+            if (packetId == null || containerPath == null || containerPath.trim().isEmpty()) {
                 throw new ClientCheckedException(context, R.string.err_005);
             }
 
@@ -287,13 +310,14 @@ public class RegistrationServiceImpl implements RegistrationService {
             additionalInfo.put("email", getAdditionalInfo(emailObj));
             additionalInfo.put("phone", getAdditionalInfo(phoneObj));
 
-            Registration existingRegistration = registrationRepository.getRegistration(this.registrationDto.getRId());
-            if (existingRegistration != null) {
-                 registrationRepository.deleteRegistration(this.registrationDto.getRId());
-            }
-            
-            registrationRepository.insertRegistration(this.registrationDto.getRId(), containerPath,
-                    centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId());
+//            Registration existingRegistration = registrationRepository.getRegistration(this.registrationDto.getRId());
+//            if (existingRegistration != null) {
+//                 registrationRepository.deleteRegistration(this.registrationDto.getRId());
+//            }
+            Log.i(TAG, "Inserting registration record to db with rid : " + this.registrationDto.getRId());
+
+            registrationRepository.insertRegistration(packetId, containerPath,
+                    centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId());
 
 //        } finally {
             clearRegistration();
@@ -435,9 +459,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         metaData = new LinkedHashMap<>();
         metaData.put(PacketManagerConstant.META_OFFICER_ID, makerId);
         metaData.put(PacketManagerConstant.META_OFFICER_BIOMETRIC_FILE, null);
-        metaData.put(PacketManagerConstant.META_SUPERVISOR_ID, makerId);
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_ID, null);
         metaData.put(PacketManagerConstant.META_SUPERVISOR_BIOMETRIC_FILE, null);
-        metaData.put(PacketManagerConstant.META_SUPERVISOR_PWD, "true");
+        metaData.put(PacketManagerConstant.META_SUPERVISOR_PWD, "false");
         metaData.put(PacketManagerConstant.META_OFFICER_PWD, "true");
         metaData.put(PacketManagerConstant.META_SUPERVISOR_PIN, BOOLEAN_FALSE);
         metaData.put(PacketManagerConstant.META_OFFICER_PIN, BOOLEAN_FALSE);
@@ -453,9 +477,18 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         //biometric device details
         List<Map<String, Object>> capturedRegisteredDevices = new ArrayList<>();
-        for(Modality modality : this.registrationDto.BIO_DEVICES.keySet()) {
-            capturedRegisteredDevices.add((Map<String, Object>) this.registrationDto.BIO_DEVICES.get(modality));
+        Log.i(TAG, "Registered biometric devices : " + this.biometricService.BIO_DEVICES);
+        for(Modality modality : this.biometricService.BIO_DEVICES.keySet()) {
+            Map<String, Object> deviceInfo = (Map<String, Object>) this.biometricService.BIO_DEVICES.get(modality);
+            if (deviceInfo != null) {
+                capturedRegisteredDevices.add(deviceInfo);
+                Log.d(TAG, "Added device info for modality " + modality + ": " + deviceInfo);
+            } else {
+                Log.w(TAG, "Device info is null for modality: " + modality);
+            }
         }
+
+
         packetWriterService.addMetaInfo(rid, "capturedRegisteredDevices", capturedRegisteredDevices);
     }
 
@@ -633,5 +666,52 @@ public class RegistrationServiceImpl implements RegistrationService {
                 return globalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.FACE_ATTEMPTS_KEY);
         }
         return 0;
+    }
+
+    private void setBiometrics(RegistrationDto registrationDto) throws RegBaseCheckedException {
+        Log.i(TAG,"Adding Biometrics to packet manager started..");
+        Map<String, List<BIR>> capturedBiometrics = new HashMap<>();
+        Map<String, Map<String, Object>> capturedMetaInfo = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> exceptionMetaInfo = new LinkedHashMap<>();
+
+        for(String key : registrationDto.getBiometrics().keySet()) {
+            String fieldId = key.split("_")[0];
+            String bioAttribute = key.split("_")[1];
+            BIR bir = buildBIR(registrationDto.getBiometrics().get(key));
+            if (!capturedBiometrics.containsKey(fieldId)) {
+                capturedBiometrics.put(fieldId, new ArrayList<>());
+            }
+            capturedBiometrics.get(fieldId).add(bir);
+            if (!capturedMetaInfo.containsKey(fieldId)) {
+                capturedMetaInfo.put(fieldId, new HashMap<>());
+            }
+            Map<String, Object> metaInfo = new HashMap<>();
+            metaInfo.put("numOfRetries", registrationDto.getBiometrics().get(key).getNumOfRetries());
+            metaInfo.put("isForceCaptured", registrationDto.getBiometrics().get(key).isForceCaptured());
+            metaInfo.put("index", bir.getBdbInfo().getIndex());
+            capturedMetaInfo.get(fieldId).put(bioAttribute, metaInfo);
+        }
+
+        for(String key : registrationDto.EXCEPTIONS.keySet()) {
+            String fieldId = key.split("_")[0];
+            String bioAttribute = key.split("_")[1];
+            BIR bir = buildBIR(new BiometricsDto(null, bioAttribute, null, null, true, null, null, false, 0, 0.0, 0.0f));
+            capturedBiometrics.getOrDefault(fieldId, new ArrayList<>()).add(bir);
+            exceptionMetaInfo.computeIfAbsent(fieldId, field -> new HashMap<>()).put(bioAttribute,
+                    registrationDto.EXCEPTIONS.get(key));
+        }
+
+        capturedBiometrics.keySet().forEach(fieldId -> {
+            BiometricRecord biometricRecord = new BiometricRecord();
+            biometricRecord.setOthers(new HashMap<>());
+            biometricRecord.getOthers().put(OTHER_KEY_CONFIGURED, String.join(",",
+                    registrationDto.CAPTURED_BIO_FIELDS.contains(fieldId) ? Collections.singletonList(fieldId) : Collections.EMPTY_LIST));
+            biometricRecord.setSegments(capturedBiometrics.get(fieldId));
+            Log.d(TAG, "Adding biometric to packet manager for field : " + fieldId);
+            packetWriterService.setBiometric(registrationDto.getRId(), fieldId, biometricRecord);
+        });
+
+        packetWriterService.addMetaInfo(registrationDto.getRId(), "biometrics", capturedMetaInfo);
+        packetWriterService.addMetaInfo(registrationDto.getRId(), "exceptionBiometrics", exceptionMetaInfo);
     }
 }

@@ -136,6 +136,7 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   startRegistration(
       List<String> languages, String flowType, String process) async {
+    print("Starting registration with flowType: $flowType, process: $process, languages: $languages");
     _registrationStartError = await registrationService.startRegistration(
         languages, flowType, process);
     notifyListeners();
