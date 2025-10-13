@@ -20,12 +20,17 @@ on:
 
 jobs:
 
-  dco:
+   dco:
     name: DCO Check
-    uses: docker://ghcr.io/apps/dco:latest
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: DCO Check
+        uses: DCOapp/action@v1.3.5
 
   codeql:
     name: CodeQL Analysis
