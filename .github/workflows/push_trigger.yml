@@ -20,7 +20,7 @@ on:
 
 jobs:
 
-   dco:
+  dco:
     name: DCO Check
     runs-on: ubuntu-latest
     permissions:
@@ -59,19 +59,15 @@ jobs:
     name: Android Registration-Client Build
     needs: [dco, codeql]
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Install npm dependencies
         run: |
           npm install
-
       - name: Update serverBaseURL
         run: |
           find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.serverBaseURL }}/g"
-
       - name: Build Android Registration-Client
         run: |
           cd client
@@ -79,7 +75,6 @@ jobs:
           ./gradlew assembleDebug
           ls app/build/outputs/apk/debug
           find -name '*.apk'
-
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -91,7 +86,6 @@ jobs:
     name: SonarQube Analysis
     needs: [build-android]
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
