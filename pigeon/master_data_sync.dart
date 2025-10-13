@@ -51,4 +51,6 @@ abstract class SyncApi {
   bool getSyncAndUploadInProgressStatus();
   @async
   bool deleteAuditLogsNative();
+  @async
+  bool deletePreRegRecords();
 }

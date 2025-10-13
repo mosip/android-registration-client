@@ -19,7 +19,7 @@ public interface PreRegZipHandlingService {
 
     PreRegistrationDto encryptAndSavePreRegPacket(String preRegistrationId, String preRegPacket, CenterMachineDto centerMachineDto) ;
 
-    String storePreRegPacketToDisk(String preRegistrationId, byte[] encryptedPacket, CenterMachineDto centerMachineDto) throws RegBaseCheckedException, RegBaseUncheckedException;
+    String storePreRegPacketToDisk(String preRegistrationId, byte[] encryptedPacket, CenterMachineDto centerMachineDto) throws RegBaseUncheckedException;
 
 
     byte[] decryptPreRegPacket(String symmetricKey, byte[] encryptedPacket) throws Exception;

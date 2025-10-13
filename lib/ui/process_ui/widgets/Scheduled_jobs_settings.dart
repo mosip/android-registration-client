@@ -140,15 +140,14 @@ class _JobCard extends StatelessWidget {
           await service.getPreRegIds();
           break;
         case 'preRegistrationPacketDeletionJob':
-          // final ok = await service.deletePreRegPackets();
-          // debugPrint('preRegistrationPacketDeletionJob result: $ok');
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text(ok ? 'Pre-registration packets deleted' : 'Failed to delete pre-registration packets'),
-          //     behavior: SnackBarBehavior.floating,
-          //     duration: const Duration(seconds: 3),
-          //   ),
-          // );
+          final ok = await service.deletePreRegRecords();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(ok ? 'Pre reg records deleted successfully' : 'Failed to delete audit logs'),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+            ),
+          );
           break;
         case 'userDetailServiceJob':
           await service.getUserDetailsSync(true);

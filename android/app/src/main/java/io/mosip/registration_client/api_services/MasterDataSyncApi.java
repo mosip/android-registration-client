@@ -370,4 +370,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             result.error(e);
         }
     }
+
+    @Override
+    public void deletePreRegRecords(@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            // Call fetchAndDeleteRecords from PreRegistrationDataSyncService
+            preRegistrationDataSyncService.fetchAndDeleteRecords();
+            // Also persist timestamps so UI can show Last/Next immediately when triggered manually
+            Log.i(TAG, "PreReg Records Deletion Completed");
+            try {
+                long nowMs = System.currentTimeMillis();
+                long nextMs = nowMs + java.util.concurrent.TimeUnit.MINUTES.toMillis(3);
+            } catch (Exception ignored) {}
+            result.success(true);
+        } catch (Exception e) {
+            result.error(e);
+        }
+    }
 }

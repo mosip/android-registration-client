@@ -102,7 +102,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncResponse;
   }
-  
+
   @override
   Future<String> batchJob() async {
     String batchJobResponse = "";
@@ -159,7 +159,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<bool> getSyncAndUploadInProgressStatus() async{
+  Future<bool> getSyncAndUploadInProgressStatus() async {
     bool syncAndUploadResponse = false;
     try {
       syncAndUploadResponse = await SyncApi().getSyncAndUploadInProgressStatus();
@@ -192,6 +192,20 @@ class SyncResponseServiceImpl implements SyncResponseService {
   Future<bool> deleteAuditLogs() async {
     try {
       final ok = await SyncApi().deleteAuditLogsNative();
+      return ok;
+    } on PlatformException catch (e) {
+      debugPrint('deleteAuditLogs PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('deleteAuditLogs failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deletePreRegRecords() async {
+    try {
+      final ok = await SyncApi().deletePreRegRecords();
       return ok;
     } on PlatformException catch (e) {
       debugPrint('deleteAuditLogs PlatformException: ${e.message}');
