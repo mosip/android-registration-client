@@ -5,8 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/process_ui/widgets/device_settings_tab.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'widgets/global_config_settings_tab.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -80,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                   child: Text(
                     AppLocalizations.of(context)!.settings,
@@ -126,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           SizedBox(
-            height: 400,
+            height: MediaQuery.of(context).size.height/1.4,
             child: TabBarView(
               children: [
                 for (final settings in settingUiByRole) _buildTabContent(settings),
@@ -138,9 +141,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  String _getControllerName(Settings settings) {
+    if (settings.fxml != null && settings.fxml!.isNotEmpty) {
+      return settings.fxml!.replaceAll('.fxml', 'Controller');
+    } else {
+      return '${settings.name}Controller';
+    }
+  }
+
   Widget _buildTabContent(Settings settings) {
     final selectedLang = context.read<GlobalProvider>().selectedLanguage;
-    return _buildDescriptionOnlyTab(settings, selectedLang);
+
+    final controllerName = _getControllerName(settings);
+
+    switch (controllerName) {
+      case 'ScheduledJobsController':
+        return Center(child: Text("${settings.name}"));
+      case 'GlobalConfigSettingsController':
+        return const GlobalConfigSettingsTab();
+      case 'DeviceSettingsController':
+        return DeviceSettingsTab(settings: settings, selectedLan: selectedLang);
+      default:
+        return _buildDescriptionOnlyTab(settings, selectedLang);
+    }
   }
 
   Widget _buildDescriptionOnlyTab(Settings settings, String selectedLang) {

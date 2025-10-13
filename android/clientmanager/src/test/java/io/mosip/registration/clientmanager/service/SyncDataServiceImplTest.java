@@ -540,7 +540,7 @@ public class SyncDataServiceImplTest {
                 mockContext, mockObjectMapper, mockSyncRestService, mockClientCryptoManagerService,
                 null, null, null, null, null, null, null, null,
                 mockGlobalParamRepository, null, null, null, mockUserDetailRepository,
-                null, null, null, null
+                null, null, null, null,null,null
         );
 
         Runnable mockOnFinish = mock(Runnable.class);

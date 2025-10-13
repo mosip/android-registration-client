@@ -319,5 +319,12 @@
   "okay": "D'ACCORD",
   "no_internet_connection": "Pas de connexion Internet!",
   "connect_and_retry": "Veuillez vous connecter à Internet et réessayer.",
-  "retry": "RECOMMENCEZ"
+  "retry": "RECOMMENCEZ",
+  "key": "Clé",
+  "server_value": "Valeur du serveur",
+  "local_value": "Valeur locale",
+  "no_configuration_parameters_found": "Aucun paramètre de configuration trouvé",
+  "no_configurations_found": "Aucune configuration trouvée",
+  "confirm": "Confirmer",
+  "scan_now": "Analyser maintenant"
 }
