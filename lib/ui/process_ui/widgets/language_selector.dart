@@ -14,6 +14,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/lost_process.dart';
+import 'package:registration_client/ui/process_ui/biometric_correction_process.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/ui/process_ui/update_process.dart';
@@ -51,6 +52,11 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     if (widget.newProcess.id == "LOST") {
       Navigator.pushNamed(context, LostProcess.routeName,
       arguments: {"process": widget.newProcess});
+    }
+
+    if (widget.newProcess.id == "BIOMETRIC_CORRECTION") {
+      Navigator.pushNamed(context, BiometricCorrectionProcess.routeName,
+          arguments: {"process": widget.newProcess});
     }
   }
 

@@ -67,7 +67,7 @@ public class RegistrationRepository {
     }
 
     public Registration insertRegistration(String packetId, String containerPath, String centerId,
-                                           String registrationType, JSONObject additionalInfo) throws Exception {
+                                           String registrationType, JSONObject additionalInfo, String additionalInfoReqId) throws Exception {
         Registration registration = new Registration(packetId);
         registration.setFilePath(containerPath);
         registration.setRegType(registrationType);
@@ -78,6 +78,7 @@ public class RegistrationRepository {
         registration.setCrBy("110006");
         //TODO use objectMapper
         registration.setAdditionalInfo(additionalInfo.toString().getBytes(StandardCharsets.UTF_8));
+        registration.setAdditionalInfoReqId(additionalInfoReqId);
         this.registrationDao.insert(registration);
         return registration;
     }

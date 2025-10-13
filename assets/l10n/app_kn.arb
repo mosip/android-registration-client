@@ -326,5 +326,7 @@
   "no_configuration_parameters_found": "ಯಾವುದೇ ಸಂರಚನಾ ನಿಯತಾಂಕಗಳು ಕಂಡುಬರಲಿಲ್ಲ",
   "no_configurations_found": "ಯಾವುದೇ ಸಂರಚನೆಗಳು ಕಂಡುಬರಲಿಲ್ಲ",
   "confirm": "ದೃಢೀಕರಿಸಿ",
-  "scan_now": "ಈಗಸ್ಕ್ಯಾನ್ ಮಾಡಿ"
+  "scan_now": "ಈಗಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+  "enter_additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ ನಮೂದಿಸಿ",
+  "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ"
 }

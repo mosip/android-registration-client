@@ -130,5 +130,15 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
             Log.e(getClass().getSimpleName(), "Set application ID failed: " + Arrays.toString(e.getStackTrace()));
         }
     }
+
+    @Override
+    public void setAdditionalReqId(@NonNull String additionalReqId, @NonNull RegistrationDataPigeon.Result<Void> result) {
+        Log.i(getClass().getSimpleName(), "Setting additional request ID: " + additionalReqId);
+        try {
+            this.registrationDto.setAdditionalInfoRequestId(additionalReqId);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Set additional request ID failed: " + Arrays.toString(e.getStackTrace()));
+        }
+    }
 }
 

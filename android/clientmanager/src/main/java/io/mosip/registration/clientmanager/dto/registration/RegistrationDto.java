@@ -85,6 +85,7 @@ public class RegistrationDto extends Observable {
     public Map<String, String> SELECTED_CODES = new HashMap<>();
 
     private String applicationId;
+    private String additionalInfoRequestId;
 
     public RegistrationDto(@NonNull String rid, @NonNull String flowType, @NonNull String process,
                            @NonNull Double schemaVersion, @NonNull List<String> languages,
