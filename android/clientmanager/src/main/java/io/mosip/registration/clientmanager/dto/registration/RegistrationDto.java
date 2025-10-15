@@ -56,6 +56,7 @@ public class RegistrationDto extends Observable {
     public static final String AGE_GROUP_CONFIG = "{'INFANT':'0-5','MINOR':'6-17','ADULT':'18-200'}";
 
     private String rId;
+    private String packetId;
     private String flowType;
     private String process;
     private String preRegistrationId;

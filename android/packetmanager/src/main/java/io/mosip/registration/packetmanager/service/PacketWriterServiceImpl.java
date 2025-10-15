@@ -13,7 +13,10 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -65,6 +68,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
     private String defaultProviderVersion;
     private Context context;
     private String timeFormat;
+    private String zipDatetimePattern = "yyyyMMddHHmmss";
 
     @Inject
     public PacketWriterServiceImpl(Context appContext, PacketManagerHelper packetManagerHelper,
@@ -72,6 +76,10 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         this.context = appContext;
         this.packetKeeper = packetKeeper;
         this.packetManagerHelper = packetManagerHelper;
+        String pattern = ConfigService.getProperty("packetmanager.zip.datetime.pattern", context);
+        if (pattern != null && !pattern.isEmpty()) {
+            this.zipDatetimePattern = pattern;
+        }
     }
 
     public RegistrationPacket initialize(String id) {
@@ -129,55 +137,20 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         return null;
     }
 
-    private String generatePacketId(String registrationId, String refId) {
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        return new StringBuilder()
-                .append(registrationId)
-                .append("-")
-                .append(refId != null ? refId : "DEFAULT")
-                .append("-")
-                .append(timestamp)
-                .toString();
+    private String generatePacketId(String id, String refId) {
+        return id + "-" + refId + "-" + this.getCurrentTimeStamp();
     }
 
-    @Override
-    public PacketInfo persistPacketAndGetInfo(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) {
-        try {
-            // Generate unique packet ID (matches server-side pattern)
-            String packetId = generatePacketId(id, refId);
-            Log.i(TAG, "Requesting packet manager to persist packet");
-            Log.i(TAG, "Registration ID: " + id + ", Generated Packet ID: " + packetId);
-
-            // Create the actual packet
-            String containerPath = createPacket(id, version, schemaJson, source, process, offlineMode, refId);
-
-            if (containerPath != null) {
-                // Build PacketInfo to return (matching server-side RegistrationDTO.setPacketId pattern)
-                PacketInfo info = new PacketInfo();
-                info.setId(packetId); // Use generated packet ID (NOT registration ID!)
-                info.setSource(source);
-                info.setProcess(process);
-                info.setRefId(refId);
-                info.setSchemaVersion(version);
-                info.setProviderName(this.getClass().getSimpleName());
-                info.setProviderVersion(defaultProviderVersion);
-                info.setPacketName(containerPath); // Store container path
-                info.setCreationDate(java.time.OffsetDateTime.now().toInstant().toString());
-
-                Log.i(TAG, "Packet created successfully. Path: " + containerPath);
-                return info;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Persist packet with info failed : ", e);
-        }
-        return null;
+    private String getCurrentTimeStamp() {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(this.zipDatetimePattern);
+        return LocalDateTime.now(ZoneId.of("UTC")).format(format);
     }
 
     private String createPacket(String id, String version, String schemaJson, String source, String process, boolean offlineMode, String refId) throws Exception {
-        Log.i(TAG, "Started packet creation");
 
         if (this.registrationPacket == null || !registrationPacket.getRegistrationId().equalsIgnoreCase(id))
             throw new Exception("Registration packet is null or registration id does not exists");
+            String packetId = generatePacketId(id, refId);
 
         String containerPath = null;
         Map<String, List<Object>> identityProperties = loadSchemaFields(schemaJson);
@@ -185,7 +158,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         try {
             int counter = 1;
             for (String subPacketName : identityProperties.keySet()) {
-                Log.i(TAG, "Started Subpacket: " + subPacketName);
 
                 List<Object> schemaFields = identityProperties.get(subPacketName);
                 byte[] subpacketBytes = createSubpacket(Double.valueOf(version), schemaFields, defaultSubpacketName.equalsIgnoreCase(subPacketName),
@@ -194,7 +166,7 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                 PacketInfo packetInfo = new PacketInfo();
                 packetInfo.setProviderName(this.getClass().getSimpleName());
                 packetInfo.setSchemaVersion(new Double(version).toString());
-                packetInfo.setId(id);
+                packetInfo.setId(packetId);
                 packetInfo.setRefId(refId);
                 packetInfo.setSource(source);
                 packetInfo.setProcess(process);
@@ -206,12 +178,11 @@ public class PacketWriterServiceImpl implements PacketWriterService {
                 packet.setPacketInfo(packetInfo);
                 packet.setPacket(subpacketBytes);
                 packetKeeper.putPacket(packet);
-                Log.i(TAG, "Completed SubPacket Creation");
 
                 if (counter == identityProperties.keySet().size()) {
                     containerPath = packetKeeper.pack(packetInfo.getId(), packetInfo.getSource(), packetInfo.getProcess(), refId);
                     if (containerPath == null) {
-                        packetKeeper.deletePacket(id, source, process);
+                        packetKeeper.deletePacket(packetId, source, process);
                         throw new Exception("Failed to pack the created zip");
                     }
                 }
@@ -225,7 +196,6 @@ public class PacketWriterServiceImpl implements PacketWriterService {
         } finally {
             this.registrationPacket = null;
         }
-        Log.i(TAG, "Exiting packet creation");
         return containerPath;
     }
 

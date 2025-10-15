@@ -139,7 +139,6 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
 
     @Override
     public void setAdditionalReqId(@NonNull String additionalReqId, @NonNull RegistrationDataPigeon.Result<Void> result) {
-        Log.i(getClass().getSimpleName(), "Setting additional request ID: " + additionalReqId);
         try {
             this.registrationDto.setAdditionalInfoRequestId(additionalReqId);
         } catch (Exception e) {

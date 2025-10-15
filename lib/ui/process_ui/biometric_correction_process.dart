@@ -436,7 +436,6 @@ class _BiometricCorrectionProcessState extends State<BiometricCorrectionProcess>
           await registrationTaskProvider.submitRegistrationDto(username);
 
           if (registrationSubmitResponse.errorCode!.isNotEmpty) {
-            print("jehfijei " + registrationSubmitResponse.errorCode!);
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }

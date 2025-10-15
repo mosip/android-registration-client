@@ -219,22 +219,25 @@ class _BiometricCaptureScanBlockPortraitState
 
   bool validateCaptureException() {
     final biometricProvider = context.read<BiometricCaptureControlProvider>();
-    return (biometricAttributeData.attemptNo < biometricAttributeData.noOfCapturesAllowed) && (
-        (biometricProvider.iris.isScanned &&
-            biometricProvider.iris.qualityPercentage <= int.parse(biometricProvider.iris.thresholdPercentage)) ||
+    return (biometricProvider.iris.isScanned &&
+        biometricProvider.iris.qualityPercentage <= int.parse(biometricProvider.iris.thresholdPercentage) &&
+        biometricProvider.iris.attemptNo < biometricProvider.iris.noOfCapturesAllowed) ||
 
-            (biometricProvider.rightHand.isScanned &&
-                biometricProvider.rightHand.qualityPercentage <= int.parse(biometricProvider.rightHand.thresholdPercentage)) ||
+        (biometricProvider.rightHand.isScanned &&
+            biometricProvider.rightHand.qualityPercentage <= int.parse(biometricProvider.rightHand.thresholdPercentage) &&
+            biometricProvider.rightHand.attemptNo < biometricProvider.rightHand.noOfCapturesAllowed) ||
 
-            (biometricProvider.leftHand.isScanned &&
-                biometricProvider.leftHand.qualityPercentage <= int.parse(biometricProvider.leftHand.thresholdPercentage)) ||
+        (biometricProvider.leftHand.isScanned &&
+            biometricProvider.leftHand.qualityPercentage <= int.parse(biometricProvider.leftHand.thresholdPercentage) &&
+            biometricProvider.leftHand.attemptNo < biometricProvider.leftHand.noOfCapturesAllowed) ||
 
-            (biometricProvider.thumbs.isScanned &&
-                biometricProvider.thumbs.qualityPercentage <= int.parse(biometricProvider.thumbs.thresholdPercentage)) ||
+        (biometricProvider.thumbs.isScanned &&
+            biometricProvider.thumbs.qualityPercentage <= int.parse(biometricProvider.thumbs.thresholdPercentage) &&
+            biometricProvider.thumbs.attemptNo < biometricProvider.thumbs.noOfCapturesAllowed) ||
 
-            (biometricProvider.face.isScanned &&
-                biometricProvider.face.qualityPercentage <= int.parse(biometricProvider.face.thresholdPercentage))
-    );
+        (biometricProvider.face.isScanned &&
+            biometricProvider.face.qualityPercentage <= int.parse(biometricProvider.face.thresholdPercentage) &&
+            biometricProvider.face.attemptNo < biometricProvider.face.noOfCapturesAllowed);
   }
 
   noOfTrue(List<bool> list) {
