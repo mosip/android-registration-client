@@ -54,6 +54,7 @@ import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandli
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
@@ -198,10 +199,12 @@ public class AppModule {
                                                    ClientCryptoManagerService clientCryptoManagerService,
                                                    KeyStoreRepository keyStoreRepository,
                                                    GlobalParamRepository globalParamRepository,
-                                                   AuditManagerService auditManagerService) {
+                                                   AuditManagerService auditManagerService,
+                                                   RegistrationCenterRepository registrationCenterRepository,
+                                                   LocationValidationService locationValidationService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService);
+                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService);
     }
 
     @Provides

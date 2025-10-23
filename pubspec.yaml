@@ -71,6 +71,7 @@ dependencies:
   native_image_cropper: ^0.6.0
   qr_code_scanner: ^1.0.1
   restart_app: ^1.2.1
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:

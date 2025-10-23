@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/field.dart';
@@ -93,6 +94,9 @@ class _LostProcessState extends State<LostProcess>
       },
     ));
     _registrationScreenLoadedAudit();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _fetchLocation();
+    });
   }
 
   @override
@@ -205,6 +209,21 @@ class _LostProcessState extends State<LostProcess>
   }
 
   bool continueButton = false;
+
+
+  bool _locationFetched = false;
+
+  Future<void> _fetchLocation() async {
+    if (_locationFetched) return;
+    _locationFetched = true;
+
+    Position? position = await globalProvider.fetchLocation();
+    if (position != null) {
+      globalProvider.setCurrentLocation(position.latitude, position.longitude);
+    } else {
+      debugPrint("Location unavailable — permission denied or service off.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -31,8 +31,10 @@ import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.service.LocalConfigServiceImpl;
+import io.mosip.registration.clientmanager.service.LocationValidationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.LocalConfigService;
+import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
@@ -64,6 +66,7 @@ import io.mosip.registration_client.api_services.DocumentDetailsApi;
 
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.GlobalConfigSettingsApi;
+import io.mosip.registration_client.api_services.LocationApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
@@ -240,6 +243,22 @@ public class HostApiModule {
     @Singleton
     GlobalConfigSettingsApi getGlobalConfigSettingsApiImpl(MasterDataService masterDataService, LocalConfigService localConfigService, GlobalParamRepository globalParamRepository) {
         return new GlobalConfigSettingsApi(masterDataService, localConfigService, globalParamRepository);
+    }
+
+    @Provides
+    @Singleton
+    LocationValidationService provideLocationValidationService() {
+        return new LocationValidationServiceImpl();
+    }
+
+    @Provides
+    @Singleton
+    LocationApi getLocationApiImpl(RegistrationService registrationService, 
+                                   GlobalParamRepository globalParamRepository,
+                                   LocationValidationService locationValidationService,
+                                   MasterDataService masterDataService,
+                                   RegistrationCenterRepository registrationCenterRepository) {
+        return new LocationApi(registrationService, globalParamRepository, locationValidationService, masterDataService, registrationCenterRepository);
     }
 }
 

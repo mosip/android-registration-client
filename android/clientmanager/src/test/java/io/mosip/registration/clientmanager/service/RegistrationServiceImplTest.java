@@ -84,7 +84,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService);
+                keyStoreRepository, globalParamRepository, auditManagerService,null,null);
     }
     
     @Test(expected = ClientCheckedException.class)
