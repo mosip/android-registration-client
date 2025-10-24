@@ -781,7 +781,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     ),
                     imageBytesList.isNotEmpty
                         ? SizedBox(
-                            height: 110.h,
+                            height: 130.h,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: imageBytesList.map((item) {
@@ -802,6 +802,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                           width: 100.w,
                                           child: Image.memory(item!),
                                         ),
+                                      ),
+                                      SizedBox(height: 10.h),
+                                      Text(
+                                        'Size: ${getReadableFileSize(item.length)}',
+                                        style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                                       ),
                                       SizedBox(height: 10.h),
                                       GestureDetector(
