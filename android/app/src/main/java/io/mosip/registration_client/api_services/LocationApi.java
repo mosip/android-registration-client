@@ -47,7 +47,6 @@ public class LocationApi implements LocationPigeon.LocationApi {
         try {
             // Just store the location - validation will happen during submission
             this.registrationService.getRegistrationDto().setGeoLocation(longitude, latitude);
-            Log.i(getClass().getSimpleName(), "Location stored: " + latitude + ", " + longitude);
             result.success(null);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), 
