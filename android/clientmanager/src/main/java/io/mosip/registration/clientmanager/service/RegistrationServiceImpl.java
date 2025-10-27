@@ -523,15 +523,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
                 // Get max allowed distance from config
                 String maxDistanceStr = globalParamRepository.getCachedStringMachineToCenterDistance();
-                double maxAllowedDistance = maxDistanceStr != null ?
-                    Double.parseDouble(maxDistanceStr) : 5.0; // Default 5 km
+                if (maxDistanceStr == null || maxDistanceStr.isEmpty()) {
+                    Log.e(TAG, "Max allowed distance configuration not found");
+                    throw new ClientCheckedException(context, R.string.err_004);
+                }
+                
+                double maxAllowedDistance = Double.parseDouble(maxDistanceStr);
 
                 // Validate distance
                 if (distance > maxAllowedDistance) {
                     String errorMsg = String.format("Machine is %.2f km from center (Max allowed: %.2f km)",
                         distance, maxAllowedDistance);
                     Log.e(TAG, errorMsg);
-                    throw new ClientCheckedException(context,R.string.err_004);
+                    throw new ClientCheckedException(context, R.string.err_004);
                 }
 
                 Log.i(TAG, "Location validated successfully");
