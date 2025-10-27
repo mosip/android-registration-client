@@ -14,7 +14,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/ui/process_ui/lost_process.dart';
-import 'package:registration_client/ui/process_ui/biometric_correction_process.dart';
+import 'package:registration_client/ui/process_ui/correction_process.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 import 'package:registration_client/ui/process_ui/update_process.dart';
@@ -39,22 +39,22 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   late RegistrationTaskProvider registrationTaskProvider;
 
   _triggerNavigation() {
-    if (widget.newProcess.id == "NEW") {
+    if (widget.newProcess.flow == "NEW") {
       Navigator.pushNamed(context, NewProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
 
-    if (widget.newProcess.id == "UPDATE") {
+    if (widget.newProcess.flow == "UPDATE") {
       Navigator.pushNamed(context, UpdateProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
 
-    if (widget.newProcess.id == "LOST") {
+    if (widget.newProcess.flow == "LOST") {
       Navigator.pushNamed(context, LostProcess.routeName,
       arguments: {"process": widget.newProcess});
     }
 
-    if (widget.newProcess.id == "BIOMETRIC_CORRECTION") {
+    if (widget.newProcess.flow == "CORRECTION") {
       Navigator.pushNamed(context, BiometricCorrectionProcess.routeName,
           arguments: {"process": widget.newProcess});
     }

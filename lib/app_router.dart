@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:registration_client/ui/process_ui/lost_process.dart';
-import 'package:registration_client/ui/process_ui/biometric_correction_process.dart';
+import 'package:registration_client/ui/process_ui/correction_process.dart';
 
 import 'package:registration_client/ui/process_ui/new_process.dart';
 

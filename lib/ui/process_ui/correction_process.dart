@@ -25,7 +25,7 @@ import '../../provider/auth_provider.dart';
 class BiometricCorrectionProcess extends StatefulWidget {
   const BiometricCorrectionProcess({super.key});
 
-  static const routeName = '/biometric_correction_process';
+  static const routeName = '/correction_process';
 
   @override
   State<BiometricCorrectionProcess> createState() => _BiometricCorrectionProcessState();
