@@ -217,28 +217,27 @@ class _BiometricCaptureScanBlockPortraitState
     _showCustomAlert(currentAttemptNo, temp);
   }
 
-  bool validateCaptureException(){
-    return (
-        (context.read<BiometricCaptureControlProvider>().iris.isScanned) &&
-            (context.read<BiometricCaptureControlProvider>().iris.qualityPercentage <=
-                int.parse(context.read<BiometricCaptureControlProvider>().iris.thresholdPercentage)) ||
+  bool validateCaptureException() {
+    final biometricProvider = context.read<BiometricCaptureControlProvider>();
+    return (biometricProvider.iris.isScanned &&
+        biometricProvider.iris.qualityPercentage <= int.parse(biometricProvider.iris.thresholdPercentage) &&
+        biometricProvider.iris.attemptNo < biometricProvider.iris.noOfCapturesAllowed) ||
 
-            (context.read<BiometricCaptureControlProvider>().rightHand.isScanned) &&
-                (context.read<BiometricCaptureControlProvider>().rightHand.qualityPercentage <=
-                    int.parse(context.read<BiometricCaptureControlProvider>().rightHand.thresholdPercentage)) ||
+        (biometricProvider.rightHand.isScanned &&
+            biometricProvider.rightHand.qualityPercentage <= int.parse(biometricProvider.rightHand.thresholdPercentage) &&
+            biometricProvider.rightHand.attemptNo < biometricProvider.rightHand.noOfCapturesAllowed) ||
 
-            (context.read<BiometricCaptureControlProvider>().leftHand.isScanned) &&
-                (context.read<BiometricCaptureControlProvider>().leftHand.qualityPercentage <=
-                    int.parse(context.read<BiometricCaptureControlProvider>().leftHand.thresholdPercentage)) ||
+        (biometricProvider.leftHand.isScanned &&
+            biometricProvider.leftHand.qualityPercentage <= int.parse(biometricProvider.leftHand.thresholdPercentage) &&
+            biometricProvider.leftHand.attemptNo < biometricProvider.leftHand.noOfCapturesAllowed) ||
 
-            (context.read<BiometricCaptureControlProvider>().thumbs.isScanned) &&
-                (context.read<BiometricCaptureControlProvider>().thumbs.qualityPercentage <=
-                    int.parse(context.read<BiometricCaptureControlProvider>().thumbs.thresholdPercentage)) ||
+        (biometricProvider.thumbs.isScanned &&
+            biometricProvider.thumbs.qualityPercentage <= int.parse(biometricProvider.thumbs.thresholdPercentage) &&
+            biometricProvider.thumbs.attemptNo < biometricProvider.thumbs.noOfCapturesAllowed) ||
 
-            (context.read<BiometricCaptureControlProvider>().face.isScanned) &&
-                (context.read<BiometricCaptureControlProvider>().face.qualityPercentage <=
-                    int.parse(context.read<BiometricCaptureControlProvider>().face.thresholdPercentage))
-    );
+        (biometricProvider.face.isScanned &&
+            biometricProvider.face.qualityPercentage <= int.parse(biometricProvider.face.thresholdPercentage) &&
+            biometricProvider.face.attemptNo < biometricProvider.face.noOfCapturesAllowed);
   }
 
   noOfTrue(List<bool> list) {
@@ -272,6 +271,21 @@ class _BiometricCaptureScanBlockPortraitState
       list.add(data);
       context.read<GlobalProvider>().fieldInputValue[key] = list;
     }
+  }
+
+  /// Returns true if the user can proceed to the next step for this biometric.
+  bool canProceedToNext() {
+    final int threshold = int.tryParse(biometricAttributeData.thresholdPercentage) ?? 0;
+    final int quality = biometricAttributeData.qualityPercentage.toInt();
+    final int attempts = biometricAttributeData.attemptNo;
+    final int maxAttempts = biometricAttributeData.noOfCapturesAllowed;
+
+    // If quality is above threshold, allow next
+    if (quality >= threshold) return true;
+    // If all attempts are completed, allow next (even if below threshold)
+    if (attempts >= maxAttempts) return true;
+    // Otherwise, do not allow
+    return false;
   }
 
   Widget _scanBlock() {
@@ -2970,33 +2984,35 @@ class _BiometricCaptureScanBlockPortraitState
                   minimumSize:
                   MaterialStateProperty.all<Size>(const Size(200, 68)),
                 ),
-                onPressed: () {
-                  List<String> bioAttributes = (widget
-                      .field.conditionalBioAttributes!.first!.ageGroup!
-                      .compareTo(
-                      context.read<GlobalProvider>().ageGroup) ==
-                      0)
-                      ? _returnBiometricList(
-                      widget.field.conditionalBioAttributes!.first!
-                          .bioAttributes!,
-                      widget.field.id!)
-                      : _returnBiometricList(
-                      widget.field.bioAttributes!, widget.field.id!);
+                onPressed: canProceedToNext()
+                    ? () {
+                        List<String> bioAttributes = (widget
+                                    .field.conditionalBioAttributes!.first!.ageGroup!
+                                    .compareTo(
+                                        context.read<GlobalProvider>().ageGroup) ==
+                                0)
+                            ? _returnBiometricList(
+                                widget.field.conditionalBioAttributes!.first!
+                                    .bioAttributes!,
+                                widget.field.id!)
+                            : _returnBiometricList(
+                                widget.field.bioAttributes!, widget.field.id!);
 
-                  var nextElement = _getNextElement(
-                      bioAttributes,
-                      context
-                          .read<BiometricCaptureControlProvider>()
-                          .biometricAttribute);
-                  setState(() {});
-                  if (nextElement != null) {
-                    context
-                        .read<BiometricCaptureControlProvider>()
-                        .biometricAttribute = nextElement;
-                  } else {
-                    Navigator.pop(context);
-                  }
-                },
+                        var nextElement = _getNextElement(
+                            bioAttributes,
+                            context
+                                .read<BiometricCaptureControlProvider>()
+                                .biometricAttribute);
+                        setState(() {});
+                        if (nextElement != null) {
+                          context
+                              .read<BiometricCaptureControlProvider>()
+                              .biometricAttribute = nextElement;
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      }
+                    : null, // Disable if cannot proceed
                 child: Text(AppLocalizations.of(context)!.next_button,
                     style: TextStyle(
                         fontSize: (isMobileSize) ? 20 : 24, fontWeight: bold)),

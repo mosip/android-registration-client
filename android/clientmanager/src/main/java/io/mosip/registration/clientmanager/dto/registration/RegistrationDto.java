@@ -56,6 +56,7 @@ public class RegistrationDto extends Observable {
     public static final String AGE_GROUP_CONFIG = "{'INFANT':'0-5','MINOR':'6-17','ADULT':'18-200'}";
 
     private String rId;
+    private String packetId;
     private String flowType;
     private String process;
     private String preRegistrationId;
@@ -87,6 +88,7 @@ public class RegistrationDto extends Observable {
     private GeoLocationDto geoLocationDto;
 
     private String applicationId;
+    private String additionalInfoRequestId;
 
     public RegistrationDto(@NonNull String rid, @NonNull String flowType, @NonNull String process,
                            @NonNull Double schemaVersion, @NonNull List<String> languages,

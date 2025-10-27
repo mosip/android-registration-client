@@ -201,10 +201,11 @@ public class AppModule {
                                                    GlobalParamRepository globalParamRepository,
                                                    AuditManagerService auditManagerService,
                                                    RegistrationCenterRepository registrationCenterRepository,
-                                                   LocationValidationService locationValidationService) {
+                                                   LocationValidationService locationValidationService,
+                                                   Biometrics095Service biometricService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService);
+                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, biometricService);
     }
 
     @Provides

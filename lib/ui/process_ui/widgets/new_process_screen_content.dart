@@ -28,6 +28,7 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/terms_and_conditions.dart';
 import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/additional_Info_ReqId_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
 import 'radio_button_control.dart';
@@ -174,6 +175,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                   refreshValue = 1;
                 });
               }),
+        ],
+        if (widget.screen.additionalInfoRequestIdRequired == true) ...[
+           const AdditionalInfoReqIdControl(),
         ],
         (context.watch<GlobalProvider>().preRegControllerRefresh)
             ? const CircularProgressIndicator()
