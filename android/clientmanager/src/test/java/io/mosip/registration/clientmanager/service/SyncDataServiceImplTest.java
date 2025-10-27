@@ -265,7 +265,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncMasterData(onFinish, 0, true);
+        spyService.syncMasterData(onFinish, 0, true, "");
 
         ArgumentCaptor<Callback<ResponseWrapper<ClientSettingDto>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallClientSetting).enqueue(callbackCaptor.capture());
@@ -294,7 +294,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncMasterData(onFinish, 0, true);
+        spyService.syncMasterData(onFinish, 0, true, "");
 
         ArgumentCaptor<Callback<ResponseWrapper<ClientSettingDto>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallClientSetting).enqueue(callbackCaptor.capture());
@@ -321,7 +321,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncMasterData(onFinish, 0, true);
+        spyService.syncMasterData(onFinish, 0, true, "");
 
         ArgumentCaptor<Callback<ResponseWrapper<ClientSettingDto>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallClientSetting).enqueue(callbackCaptor.capture());
@@ -340,7 +340,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncMasterData(onFinish, 0, true);
+        spyService.syncMasterData(onFinish, 0, true, "");
 
         ArgumentCaptor<Callback<ResponseWrapper<ClientSettingDto>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallClientSetting).enqueue(callbackCaptor.capture());
@@ -358,7 +358,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncMasterData(onFinish, 0, true);
+        spyService.syncMasterData(onFinish, 0, true,"");
 
         ArgumentCaptor<Callback<ResponseWrapper<ClientSettingDto>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallClientSetting).enqueue(callbackCaptor.capture());
@@ -390,7 +390,7 @@ public class SyncDataServiceImplTest {
             when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("key1");
             when(mockSyncRestService.getGlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
 
-            spyService.syncGlobalParamsData(mockOnFinish, true);
+            spyService.syncGlobalParamsData(mockOnFinish, true, "");
 
             ArgumentCaptor<Callback<ResponseWrapper<Map<String, Object>>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
             verify(mockCall).enqueue(callbackCaptor.capture());
@@ -418,7 +418,7 @@ public class SyncDataServiceImplTest {
             when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("key1");
             when(mockSyncRestService.getGlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
 
-            spyService.syncGlobalParamsData(mockOnFinish, true);
+            spyService.syncGlobalParamsData(mockOnFinish, true, "");
 
             ArgumentCaptor<Callback<ResponseWrapper<Map<String, Object>>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
             verify(mockCall).enqueue(callbackCaptor.capture());
@@ -450,7 +450,7 @@ public class SyncDataServiceImplTest {
             when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("key1");
             when(mockSyncRestService.getGlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
 
-            spyService.syncGlobalParamsData(mockOnFinish, true);
+            spyService.syncGlobalParamsData(mockOnFinish, true, "");
 
             ArgumentCaptor<Callback<ResponseWrapper<Map<String, Object>>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
             verify(mockCall).enqueue(callbackCaptor.capture());
@@ -473,7 +473,7 @@ public class SyncDataServiceImplTest {
             when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("key1");
             when(mockSyncRestService.getGlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
 
-            spyService.syncGlobalParamsData(mockOnFinish, true);
+            spyService.syncGlobalParamsData(mockOnFinish, true, "");
 
             ArgumentCaptor<Callback<ResponseWrapper<Map<String, Object>>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
             verify(mockCall).enqueue(callbackCaptor.capture());
@@ -540,13 +540,13 @@ public class SyncDataServiceImplTest {
                 mockContext, mockObjectMapper, mockSyncRestService, mockClientCryptoManagerService,
                 null, null, null, null, null, null, null, null,
                 mockGlobalParamRepository, null, null, null, mockUserDetailRepository,
-                null, null, null, null
+                null, null, null, null, null
         );
 
         Runnable mockOnFinish = mock(Runnable.class);
 
         assertThrows(NullPointerException.class, () -> {
-            masterDataService.syncUserDetails(mockOnFinish, true);
+            masterDataService.syncUserDetails(mockOnFinish, true, "");
         });
     }
 

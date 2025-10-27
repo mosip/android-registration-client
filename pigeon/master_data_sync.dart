@@ -20,22 +20,22 @@ abstract class SyncApi {
   SyncTime getLastSyncTime();
 
   @async
-  Sync getPolicyKeySync(bool isManualSync);
+  Sync getPolicyKeySync(bool isManualSync, String jobId);
 
   @async
-  Sync getGlobalParamsSync(bool isManualSync);
+  Sync getGlobalParamsSync(bool isManualSync, String jobId);
 
   @async
-  Sync getUserDetailsSync(bool isManualSync);
+  Sync getUserDetailsSync(bool isManualSync, String jobId);
 
   @async
   Sync getIDSchemaSync(bool isManualSync);
 
   @async
-  Sync getMasterDataSync(bool isManualSync);
+  Sync getMasterDataSync(bool isManualSync, String jobId);
 
   @async
-  Sync getCaCertsSync(bool isManualSync);
+  Sync getCaCertsSync(bool isManualSync, String jobId);
 
   @async
   String batchJob();
@@ -44,13 +44,17 @@ abstract class SyncApi {
   List<String> getReasonList(String langCode);
 
   @async
-  String getPreRegIds();
+  String getPreRegIds(String jobId);
   @async
-  Sync getKernelCertsSync(bool isManualSync);
+  Sync getKernelCertsSync(bool isManualSync, String jobId);
   @async
   bool getSyncAndUploadInProgressStatus();
   @async
-  bool deleteAuditLogsNative();
+  bool deleteAuditLogsNative(String jobId);
   @async
   bool deletePreRegRecords();
+  @async
+  String getLastSyncTimeByJobId(String jobId);
+  @async
+  String getNextSyncTimeByJobId(String jobId);
 }

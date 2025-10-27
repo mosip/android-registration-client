@@ -159,7 +159,7 @@ public class PreRegistrationDataSyncServiceImplTest {
 
         service.fetchPreRegistrationIds(() -> {
             verify(mockContext).getString(anyInt());
-        });
+        }, "");
 
         verify(mockSyncRestService).getPreRegistrationIds(any());
     }
@@ -171,7 +171,7 @@ public class PreRegistrationDataSyncServiceImplTest {
 
         service.fetchPreRegistrationIds(() -> {
             verify(mockContext).getString(anyInt());
-        });
+        }, "");
 
         verify(mockSyncRestService, never()).getPreRegistrationIds(any());
     }
@@ -462,7 +462,7 @@ public class PreRegistrationDataSyncServiceImplTest {
             }).when(mockCall).enqueue(any());
 
             service.fetchPreRegistrationIds(() -> {
-            });
+            }, "");
             verify(mockSyncRestService).getPreRegistrationIds(any());
         }
     }
@@ -558,7 +558,7 @@ public class PreRegistrationDataSyncServiceImplTest {
         }).when(mockCall).enqueue(any());
 
         service.fetchPreRegistrationIds(() -> {
-        });
+        }, "");
         verify(mockSyncRestService).getPreRegistrationIds(any());
     }
 
@@ -578,7 +578,7 @@ public class PreRegistrationDataSyncServiceImplTest {
         }).when(mockCall).enqueue(any());
 
         service.fetchPreRegistrationIds(() -> {
-        });
+        }, "");
         verify(mockSyncRestService).getPreRegistrationIds(any());
     }
 
@@ -974,7 +974,7 @@ public class PreRegistrationDataSyncServiceImplTest {
             Runnable onFinish = () -> onFinishCalled[0] = true;
 
             // Act
-            service.fetchPreRegistrationIds(onFinish);
+            service.fetchPreRegistrationIds(onFinish, "");
 
             // Assert
             // Toast.makeText should be called with "Application Id Sync Completed"
@@ -1033,7 +1033,7 @@ public class PreRegistrationDataSyncServiceImplTest {
             };
 
             // Act
-            service.fetchPreRegistrationIds(onFinish);
+            service.fetchPreRegistrationIds(onFinish, "");
 
             // Wait for onFinish to be called (with timeout)
             synchronized (lock) {
@@ -1088,7 +1088,7 @@ public class PreRegistrationDataSyncServiceImplTest {
             Runnable onFinish = () -> onFinishCalled[0] = true;
 
             // Act
-            service.fetchPreRegistrationIds(onFinish);
+            service.fetchPreRegistrationIds(onFinish, "");
 
             // Assert
             Toast.makeText(mockContext, "Application Id Sync failed service error message", Toast.LENGTH_LONG);

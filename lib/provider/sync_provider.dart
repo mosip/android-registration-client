@@ -5,6 +5,7 @@
  *
 */
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
@@ -12,6 +13,7 @@ import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
+import 'package:registration_client/utils/sync_job_def.dart';
 
 class SyncProvider with ChangeNotifier {
   final SyncResponseService syncResponseService = SyncResponseService();
@@ -58,6 +60,7 @@ class SyncProvider with ChangeNotifier {
 
   getLastSyncTime() async {
     SyncTime lastSyncTime = await syncResponseService.getLastSyncTime();
+    print("Last Sync Time: ${lastSyncTime.syncTime}");
     setLastSuccessfulSyncTime(lastSyncTime.syncTime!);
   }
 
@@ -79,10 +82,41 @@ class SyncProvider with ChangeNotifier {
   setIsGlobalSyncInProgress(bool isGlobalSyncInProgress) {
     _isGlobalSyncInProgress = isGlobalSyncInProgress;
   }
+  
+  Future<String Function(String)> _getJobIdFinder() async {
+    List<SyncJobDef> activeJobs = [];
+    print("Fetching active job IDs");
+    try {
+      List<String?> activeJobJsonList = await syncResponseService.getActiveSyncJobs();
+      activeJobs = activeJobJsonList
+          .whereType<String>()
+          .map((jsonStr) {
+            try {
+              return SyncJobDef.fromJson(json.decode(jsonStr) as Map<String, dynamic>);
+            } catch (e) {
+              log("Failed to parse job JSON: $jsonStr, error: $e");
+              return null;
+            }
+          })
+          .whereType<SyncJobDef>()
+          .toList();
+    } catch (e) {
+      log("Failed to fetch active job IDs: $e");
+    }
+    print("Finding job ID for API name: $activeJobs");
+    return (String apiName) {
+
+      var job = activeJobs.where((job) => job.apiName == apiName).firstOrNull;
+      return job?.id ?? "";
+    };
+  }
 
   autoSync(BuildContext context) async {
+    // Get the job ID finder function
+    String Function(String) findJobIdByApiName = await _getJobIdFinder();
+    print("Auto Sync: Finding job IDs for active jobs");
     await syncResponseService
-        .getGlobalParamsSync(false)
+        .getGlobalParamsSync(false, findJobIdByApiName("synchConfigDataJob"))
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -96,7 +130,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getMasterDataSync(false)
+        .getMasterDataSync(false, findJobIdByApiName("masterSyncJob"))
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -110,7 +144,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getUserDetailsSync(false)
+        .getUserDetailsSync(false, findJobIdByApiName("userDetailServiceJob"))
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -138,7 +172,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getPolicyKeySync(false)
+        .getPolicyKeySync(false, findJobIdByApiName("keyPolicySyncJob"))
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -151,7 +185,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await syncResponseService.getCaCertsSync(false).then((Sync getAutoSync) {
+    await syncResponseService.getCaCertsSync(false, findJobIdByApiName("syncCertificateJob")).then((Sync getAutoSync) {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
         _cacertsSyncSuccess = true;
@@ -163,7 +197,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    await syncResponseService.getKernelCertsSync(false).then((Sync getAutoSync) {
+    await syncResponseService.getKernelCertsSync(false, findJobIdByApiName("publicKeySyncJob")).then((Sync getAutoSync) {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
         _kernelCertsSyncSuccess = true;
@@ -193,19 +227,22 @@ class SyncProvider with ChangeNotifier {
 
   manualSync() async {
     isSyncInProgress = true;
-    Sync syncResult = await syncResponseService.getMasterDataSync(true);
+    // Get the job ID finder function
+    String Function(String) findJobIdByApiName = await _getJobIdFinder();
+    
+    Sync syncResult = await syncResponseService.getMasterDataSync(true, findJobIdByApiName("masterSyncJob"));
     if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
       syncResult = await syncResponseService.getIDSchemaSync(true);
       if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
-        syncResult = await syncResponseService.getUserDetailsSync(true);
+        syncResult = await syncResponseService.getUserDetailsSync(true, findJobIdByApiName("userDetailServiceJob"));
         if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
-          syncResult = await syncResponseService.getGlobalParamsSync(true);
+          syncResult = await syncResponseService.getGlobalParamsSync(true, findJobIdByApiName("synchConfigDataJob"));
           if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
-            syncResult = await syncResponseService.getKernelCertsSync(true);
+            syncResult = await syncResponseService.getKernelCertsSync(true, findJobIdByApiName("publicKeySyncJob"));
             if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
-              syncResult = await syncResponseService.getPolicyKeySync(true);
+              syncResult = await syncResponseService.getPolicyKeySync(true, findJobIdByApiName("keyPolicySyncJob"));
               if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
-                syncResult = await syncResponseService.getCaCertsSync(true);
+                syncResult = await syncResponseService.getCaCertsSync(true, findJobIdByApiName("syncCertificateJob"));
                 await getLastSyncTime();
                 isSyncInProgress= false;
               }
@@ -221,6 +258,6 @@ class SyncProvider with ChangeNotifier {
   }
 
   getPreRegistrationIds() async {
-    await syncResponseService.getPreRegIds();
+    await syncResponseService.getPreRegIds("");
   }
 }

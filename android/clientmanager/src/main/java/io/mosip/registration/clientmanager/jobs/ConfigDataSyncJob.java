@@ -39,7 +39,7 @@ public class ConfigDataSyncJob extends SyncJobServiceBase {
     public boolean triggerJob(int jobId) {
         Log.d(TAG, TAG + " Started");
         try {
-            masterDataService.syncGlobalParamsData(() -> {}, true);
+            masterDataService.syncGlobalParamsData(() -> {}, true, "");
             long timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
             logJobTransaction(jobId, timeStampInSeconds);
             return true;

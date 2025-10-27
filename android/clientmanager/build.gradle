@@ -67,6 +67,8 @@ dependencies {
 
     implementation 'javax.validation:validation-api:2.0.1.Final'
 
+    implementation 'com.cronutils:cron-utils:9.2.0'
+
     //AspectJ
     implementation 'org.aspectj:aspectjrt:1.9.7'
 

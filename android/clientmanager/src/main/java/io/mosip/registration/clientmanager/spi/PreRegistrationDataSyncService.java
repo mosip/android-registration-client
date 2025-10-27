@@ -9,7 +9,7 @@ import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 
 public interface PreRegistrationDataSyncService {
     Map<String, Object> getPreRegistration(String preRegistrationId, boolean forceDownload);
-    void fetchPreRegistrationIds(Runnable onFinish);
+    void fetchPreRegistrationIds(Runnable onFinish, String jobId);
     ResponseDto fetchAndDeleteRecords();
     void deletePreRegRecords(ResponseDto responseDTO, List<PreRegistrationList> preRegList);
     PreRegistrationList getPreRegistrationRecordForDeletion(String preRegistrationId);

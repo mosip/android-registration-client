@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.service;
 
+import static android.content.ContentValues.TAG;
 import static io.mosip.registration.clientmanager.config.SessionManager.USER_NAME;
 
 import android.content.Context;
@@ -96,13 +97,18 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     }
 
     @Override
-    public void fetchPreRegistrationIds(Runnable onFinish) {
+    public void fetchPreRegistrationIds(Runnable onFinish, String jobId) {
         Log.i(TAG,"Fetching Pre-Registration Id's started {}");
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result = APPLICATION_ID_SYNC_FAILED;
             onFinish.run();
+            try {
+                masterDataService.logLastSyncCompletionDateTime(jobId);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log pre reg data sync completion", e);
+            }
             return;
         }
 

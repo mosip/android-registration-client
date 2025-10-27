@@ -165,12 +165,12 @@ public class AppModule {
                                                       CertificateManagerService certificateManagerService,
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
-                                                      FileSignatureDao fileSignatureDao) {
+                                                      FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService);
     }
 
 

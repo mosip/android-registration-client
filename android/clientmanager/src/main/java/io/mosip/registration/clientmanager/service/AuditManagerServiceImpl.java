@@ -106,8 +106,14 @@ public class AuditManagerServiceImpl implements AuditManagerService {
                 return false;
             }
         } else {
-
-            return false;
+            try {
+                long currentDateLong = System.currentTimeMillis();
+                auditRepository.deleteAllAuditsTillDate(currentDateLong);
+                globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, null);
+                return true;
+            } catch (RuntimeException runtimeException) {
+                return false;
+            }
         }
     }
 

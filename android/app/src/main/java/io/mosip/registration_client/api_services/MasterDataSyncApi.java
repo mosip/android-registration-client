@@ -55,6 +55,7 @@ import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
+import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -166,9 +167,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
-
+        Log.i(TAG, "Policy Key Sync Completed" + REG_APP_ID);
         if (centerMachineDto == null) {
             result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
             return;
@@ -176,33 +177,33 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
         try {
             masterDataService.syncCertificate(() -> {
-                Log.i(TAG, "Policy Key Sync Completed");
+
                 result.success(syncResult("PolicyKeySync", 5, masterDataService.onResponseComplete()));
-            }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), isManualSync);
+            }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), isManualSync, jobId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void getGlobalParamsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getGlobalParamsSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
             masterDataService.syncGlobalParamsData(() -> {
                 Log.i(TAG, "Sync Global Params Completed.");
                 result.success(syncResult("GlobalParamsSync", 1, masterDataService.onResponseComplete()));
-            }, isManualSync);
+            }, isManualSync, jobId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void getUserDetailsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getUserDetailsSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
             masterDataService.syncUserDetails(() -> {
                 Log.i(TAG, "User details sync Completed.");
                 result.success(syncResult("UserDetailsSync", 3, masterDataService.onResponseComplete()));
-            }, isManualSync);
+            }, isManualSync, jobId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -222,12 +223,12 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void getMasterDataSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getMasterDataSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         try {
             masterDataService.syncMasterData(() -> {
                 Log.i(TAG, "Master Data Sync Completed.");
                 result.success(syncResult("MasterDataSync", 2, masterDataService.onResponseComplete()));
-            }, 0, isManualSync);
+            }, 0, isManualSync, jobId);
         } catch (Exception e) {
             Log.e(TAG, "Master Data Sync Failed.", e);
             e.printStackTrace();
@@ -244,12 +245,12 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void getCaCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getCaCertsSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         masterDataService.syncCACertificates(() -> {
             Log.i(TAG, "CA Certificate Sync Completed");
             resetAlarm("registrationPacketUploadJob");
             result.success(syncResult("CACertificatesSync", 6, masterDataService.onResponseComplete()));
-        }, isManualSync);
+        }, isManualSync, jobId);
     }
 
     @Override
@@ -269,13 +270,13 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void getPreRegIds(@NonNull MasterDataSyncPigeon.Result<String> result) {
+    public void getPreRegIds(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<String> result) {
         if (NetworkUtils.isNetworkConnected(this.context)) {
             try {
                 preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
                     Log.i(TAG, "Application Id's Sync Completed");
                     result.success("Application Id's Sync Completed.");
-                });
+                }, jobId);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -284,12 +285,13 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
 
     @Override
-    public void getKernelCertsSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getKernelCertsSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        Log.i(TAG, "Starting Kernel Certs Sync" + KERNEL_APP_ID);
         try {
             masterDataService.syncCertificate(() -> {
                 Log.i(TAG, "Policy Key Sync Completed");
                 result.success(syncResult("KernelCertsSync", 7, masterDataService.onResponseComplete()));
-            }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync);
+            }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync, jobId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -357,14 +359,17 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void deleteAuditLogsNative(@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+    public void deleteAuditLogsNative(@NonNull String jobId ,@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
         try {
             boolean ok = auditManagerService.deleteAuditLogs();
             // Also persist timestamps so UI can show Last/Next immediately when triggered manually
             try {
-                long nowMs = System.currentTimeMillis();
-                long nextMs = nowMs + java.util.concurrent.TimeUnit.MINUTES.toMillis(3);
-            } catch (Exception ignored) {}
+                if(ok){
+                    masterDataService.logLastSyncCompletionDateTime(jobId);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to store CA certificates sync last sync time", e);
+            }
             result.success(ok);
         } catch (Exception e) {
             result.error(e);
@@ -386,5 +391,23 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         } catch (Exception e) {
             result.error(e);
         }
+    }
+
+    @Override
+    public void getLastSyncTimeByJobId(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<String> result) {
+        Log.i(TAG, "getLastSyncTimeByJobId called for jobId=" + jobId);
+        int syncJobId = jobManagerService.generateJobServiceId(jobId);
+        String lastSyncTime = jobManagerService.getLastSyncTime(syncJobId);
+        Log.i(TAG, "getLastSyncTimeByJobId returning lastSyncTime=" + lastSyncTime);
+        result.success(lastSyncTime);
+
+    }
+
+    @Override
+    public void getNextSyncTimeByJobId(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<String> result) {
+        Log.i(TAG, "getNextSyncTimeByJobId called for jobId=" + jobId);
+        int syncJobId = jobManagerService.generateJobServiceId(jobId);
+        String nextSyncTime = jobManagerService.getNextSyncTime(syncJobId);
+        result.success(nextSyncTime);
     }
 }
