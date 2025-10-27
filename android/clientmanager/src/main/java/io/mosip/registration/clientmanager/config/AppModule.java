@@ -198,10 +198,11 @@ public class AppModule {
                                                    ClientCryptoManagerService clientCryptoManagerService,
                                                    KeyStoreRepository keyStoreRepository,
                                                    GlobalParamRepository globalParamRepository,
-                                                   AuditManagerService auditManagerService) {
+                                                   AuditManagerService auditManagerService,
+                                                   Biometrics095Service biometricService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService);
+                keyStoreRepository, globalParamRepository, auditManagerService,biometricService);
     }
 
     @Provides

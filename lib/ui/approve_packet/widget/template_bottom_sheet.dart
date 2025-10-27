@@ -67,7 +67,7 @@ class TemplateBottomSheet {
                         context
                             .read<ApprovePacketsProvider>()
                             .setWebViewPlusController(controller);
-                        loadHtmlData(controller, regCurrent.packetId);
+                        loadHtmlData(controller, regCurrent.id!);
                       },
                       javascriptMode: JavascriptMode.unrestricted,
                     ),
