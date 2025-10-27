@@ -22,16 +22,16 @@ import '../../pigeon/demographics_data_pigeon.dart';
 import '../../pigeon/registration_data_pigeon.dart';
 import '../../provider/auth_provider.dart';
 
-class BiometricCorrectionProcess extends StatefulWidget {
-  const BiometricCorrectionProcess({super.key});
+class CorrectionProcess extends StatefulWidget {
+  const CorrectionProcess({super.key});
 
   static const routeName = '/correction_process';
 
   @override
-  State<BiometricCorrectionProcess> createState() => _BiometricCorrectionProcessState();
+  State<CorrectionProcess> createState() => _CorrectionProcessState();
 }
 
-class _BiometricCorrectionProcessState extends State<BiometricCorrectionProcess> with WidgetsBindingObserver {
+class _CorrectionProcessState extends State<CorrectionProcess> with WidgetsBindingObserver {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   late AuthProvider authProvider;

@@ -26,7 +26,7 @@ class AppRouter {
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
     LostProcess.routeName: (context) => const LostProcess(),
-    BiometricCorrectionProcess.routeName: (context) => const BiometricCorrectionProcess(),
+    CorrectionProcess.routeName: (context) => const CorrectionProcess(),
   };
 
   static Route<dynamic>? onUnknownRoute(RouteSettings settings) {

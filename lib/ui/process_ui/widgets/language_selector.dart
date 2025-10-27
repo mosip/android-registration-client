@@ -55,7 +55,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     }
 
     if (widget.newProcess.flow == "CORRECTION") {
-      Navigator.pushNamed(context, BiometricCorrectionProcess.routeName,
+      Navigator.pushNamed(context, CorrectionProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
   }
