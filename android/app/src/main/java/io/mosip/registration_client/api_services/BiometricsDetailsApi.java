@@ -714,7 +714,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         Field[] fields = object.getClass().getDeclaredFields();
 
         for (Field field : fields) {
-            field.setAccessible(true); // Make the private fields accessible
+           // field.setAccessible(true); // Make the private fields accessible
 
             try {
                 Object fieldValue = field.get(object);
