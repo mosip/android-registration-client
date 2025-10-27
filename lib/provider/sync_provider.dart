@@ -137,6 +137,7 @@ class SyncProvider with ChangeNotifier {
         _globalParamsSyncSuccess = true;
         _currentSyncProgress = getAutoSync.syncProgress!;
         notifyListeners();
+        findJobIdByApiName = await _getJobIdFinder();
       } else {
         log(AppLocalizations.of(context)!.master_data_sync_failed);
       }
