@@ -106,10 +106,16 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
         String response = "";
         String errorCode = "";
         try {
-            response = this.registrationService.getRegistrationDto().getRId();
+            RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
+            if (registrationDto.getAdditionalInfoRequestId() != null) {
+                response = registrationDto.getAdditionalInfoRequestId().split("-")[0];
+            } else {
+                response = registrationDto.getRId();
+            }
             registrationService.submitRegistrationDto(makerName);
         } catch (Exception e) {
             errorCode = e.getMessage();
+            Log.i("RegistrationApi", "Registration submission failed: " + errorCode);
             auditManagerService.audit(AuditEvent.CREATE_PACKET_FAILED, Components.REGISTRATION, errorCode);
             Log.e(getClass().getSimpleName(), "Failed on registration submission", e);
         }
@@ -128,6 +134,15 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
             this.registrationDto.setApplicationId(applicationId);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Set application ID failed: " + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @Override
+    public void setAdditionalReqId(@NonNull String additionalReqId, @NonNull RegistrationDataPigeon.Result<Void> result) {
+        try {
+            this.registrationDto.setAdditionalInfoRequestId(additionalReqId);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Set additional request ID failed: " + Arrays.toString(e.getStackTrace()));
         }
     }
 }

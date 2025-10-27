@@ -326,5 +326,7 @@
   "no_configuration_parameters_found": "No configuration parameters found",
   "no_configurations_found": "No configurations found",
   "confirm": "CONFIRM",
-  "scan_now": "Scan Now"
+  "scan_now": "Scan Now",
+  "enter_additional_info_req_id": "Enter Additional Info Request ID",
+  "additional_info_req_id": "Additional Info Request ID"
 }

@@ -349,4 +349,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   setApplicationId(String appId) async {
     await registrationService.setApplicationId(appId);
   }
+
+  setAdditionalReqId(String additionalReqId) async {
+    await registrationService.setAdditionalReqId(additionalReqId);
+  }
 }

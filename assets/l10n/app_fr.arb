@@ -326,5 +326,7 @@
   "no_configuration_parameters_found": "Aucun paramètre de configuration trouvé",
   "no_configurations_found": "Aucune configuration trouvée",
   "confirm": "Confirmer",
-  "scan_now": "Analyser maintenant"
+  "scan_now": "Analyser maintenant",
+  "enter_additional_info_req_id": "Entrez l'identifiant de la demande d'information supplémentaire",
+  "additional_info_req_id": "Identifiant de la demande d'information supplémentaire"
 }

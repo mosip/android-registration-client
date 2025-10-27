@@ -335,5 +335,7 @@
   "no_configuration_parameters_found": "எந்த கட்டமைப்பு அளவுருக்களும் கிடைக்கவில்லை",
   "no_configurations_found": "எந்த கட்டமைப்பும் கிடைக்கவில்லை",
   "confirm": "உறுதிப்படுத்தவும்",
-  "scan_now": "இப்போது ஸ்கேன் செய்யுங்கள்"
+  "scan_now": "இப்போது ஸ்கேன் செய்யுங்கள்",
+  "enter_additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடியை உள்ளிடவும்",
+  "additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடி"
 }
