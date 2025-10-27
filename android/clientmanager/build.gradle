@@ -105,16 +105,18 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.okio:okio:3.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // JWT decoding library
     implementation 'com.auth0.android:jwtdecode:2.0.1'
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
 
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0-rc1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.1'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
 
     implementation 'org.apache.velocity:velocity:1.7'
@@ -144,4 +146,5 @@ dependencies {
     implementation("io.mosip.kernel:kernel-biometrics-api:1.2.0.3"){
         transitive = false
     }
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
