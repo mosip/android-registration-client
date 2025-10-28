@@ -17,7 +17,7 @@ import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../process_ui/widgets/settings_screen.dart';
+import '../../settings/settings_screen.dart';
 import '../../profile/profile.dart';
 
 class MobileHomePage extends StatefulWidget {

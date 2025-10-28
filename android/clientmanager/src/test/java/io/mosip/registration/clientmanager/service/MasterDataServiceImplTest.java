@@ -89,6 +89,8 @@ public class MasterDataServiceImplTest {
     @Mock private Call<ResponseWrapper<CACertificateResponseDto>> mockCACall;
     @Mock private Call<ResponseWrapper<UserDetailResponse>> mockUserCall;
     @Mock private Call<ResponseBody> mockIdSchemaCall;
+    @Mock private PermittedLocalConfigRepository mockPermittedLocalConfigRepository;
+    @Mock private LocalConfigDAO mockLocalConfigDao;
 
     private final String TEST_APP_NAME = "MockAppName";
 
@@ -2139,6 +2141,9 @@ public class MasterDataServiceImplTest {
                 mockJobManagerService,
                 mockFileSignatureDao,
                 null
+                mockFileSignatureDao,
+                mockPermittedLocalConfigRepository,
+                mockLocalConfigDao
         );
         assertNotNull(service);
     }

@@ -14,6 +14,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
@@ -36,6 +37,7 @@ import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
+import io.mosip.registration.clientmanager.repository.PermittedLocalConfigRepository;
 import io.mosip.registration.clientmanager.service.AuditManagerServiceImpl;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
@@ -166,11 +168,15 @@ public class AppModule {
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
                                                       FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService) {
+                                                      FileSignatureDao fileSignatureDao,
+                                                      PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                                      LocalConfigDAO localConfigDAO) {
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
                 certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, permittedLocalConfigRepository, localConfigDAO);
     }
 
 
@@ -197,9 +203,12 @@ public class AppModule {
                                                    GlobalParamRepository globalParamRepository,
                                                    AuditManagerService auditManagerService,
                                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider) {
+                                                   AuditManagerService auditManagerService,
+                                                   Biometrics095Service biometricService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
                 keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider);
+                keyStoreRepository, globalParamRepository, auditManagerService,biometricService);
     }
 
     @Provides

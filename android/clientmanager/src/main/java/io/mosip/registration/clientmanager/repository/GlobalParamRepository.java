@@ -4,16 +4,17 @@ import android.util.Log;
 
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -21,11 +22,14 @@ public class GlobalParamRepository {
     private static final String TAG = GlobalParamRepository.class.getSimpleName();
     private static Map<String, String> globalParamMap = new HashMap<>();
     private GlobalParamDao globalParamDao;
+    private LocalConfigDAO localConfigDAO;
 
     @Inject
-    public GlobalParamRepository(GlobalParamDao globalParamDao) {
+    public GlobalParamRepository(GlobalParamDao globalParamDao, LocalConfigDAO localConfigDAO) {
         this.globalParamDao = globalParamDao;
-        refreshGlobalParams();
+        this.localConfigDAO = localConfigDAO;
+
+        refreshConfigurationCache();
     }
 
     public String getGlobalParamValue(String id) {
@@ -65,12 +69,14 @@ public class GlobalParamRepository {
     public void saveGlobalParam(String id, String value) {
         GlobalParam globalParam = new GlobalParam(id, id, value, true);
         globalParamDao.insertGlobalParam(globalParam);
+        // Update the merged cache directly for immediate effect
         globalParamMap.put(id, value);
     }
 
     public void saveGlobalParams(List<GlobalParam> globalParam) {
         globalParamDao.insertAll(globalParam);
-        refreshGlobalParams();
+        // Refresh with merged configuration to include any local preferences
+        refreshConfigurationCache();
     }
 
     public List<GlobalParam> getGlobalParams() {
@@ -106,8 +112,20 @@ public class GlobalParamRepository {
         return globalParamMap.getOrDefault(RegistrationConstants.APPLICANT_TYPE_MVEL_SCRIPT,"applicanttype.mvel");
     }
 
-    public String getCachedStringPreRegPacketLocation(){
+    public String getCachedStringPreRegPacketLocation() {
         return globalParamMap.get(RegistrationConstants.PRE_REG_PACKET_LOCATION);
+    }
+
+    public Map<String, Object> getGlobalParamsByPattern(String pattern) {
+
+        List<GlobalParam> globalParams = globalParamDao.findByNameLikeAndIsActiveTrueAndValIsNotNull(pattern);
+        Map<String, Object> globalParamMap = new LinkedHashMap<>();
+
+        for (GlobalParam param : globalParams) {
+            globalParamMap.put(param.getName(), param.getValue() != null ? param.getValue().trim() : param.getValue());
+        }
+
+        return globalParamMap;
     }
 
     public List<String> getSelectedHandles() {
@@ -131,4 +149,29 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.REFRESHED_LOGIN_TIME);
     }
 
+    /**
+     * Refresh configuration cache by merging global params with local preferences
+     */
+    public void refreshConfigurationCache() {
+
+        try {
+            // Get fresh global parameters from database
+            List<GlobalParam> globalParams = globalParamDao.getGlobalParams();
+            Map<String, String> freshGlobalParams = new HashMap<>();
+            for (GlobalParam globalParam : globalParams) {
+                freshGlobalParams.put(globalParam.getId(), globalParam.getValue());
+            }
+
+            // Get local preferences (overrides)
+            Map<String, String> localConfigs = localConfigDAO.getLocalConfigurations();
+
+            // Merge: local preferences override global parameters
+            globalParamMap.clear();
+            globalParamMap.putAll(freshGlobalParams);
+            globalParamMap.putAll(localConfigs); // Local preferences take precedence
+        } catch (Exception e) {
+            Log.e(TAG, "Error refreshing configuration cache", e);
+        }
+
+    }
 }

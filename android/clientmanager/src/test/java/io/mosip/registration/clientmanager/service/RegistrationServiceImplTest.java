@@ -79,6 +79,9 @@ public class RegistrationServiceImplTest {
     private RegistrationService registrationService;
     private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
 
+    @Mock
+    private Biometrics095Service biometricService;
+
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -89,6 +92,7 @@ public class RegistrationServiceImplTest {
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
                 keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider);
+                keyStoreRepository, globalParamRepository, auditManagerService, biometricService);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -687,7 +691,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID456", "UIN", "uinValue");
@@ -728,7 +732,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID789", "field1", "value1");
@@ -769,7 +773,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID999", "field2", "value2");
@@ -810,7 +814,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID888", "field3", "value3");
@@ -1074,7 +1078,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID123", "UIN", "uinValue");

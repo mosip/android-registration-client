@@ -24,4 +24,7 @@ public interface GlobalParamDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<GlobalParam> globalParams);
 
+    @Query("SELECT * FROM global_param WHERE name LIKE :pattern AND status = 1 AND value IS NOT NULL")
+    List<GlobalParam> findByNameLikeAndIsActiveTrueAndValIsNotNull(String pattern);
+
 }

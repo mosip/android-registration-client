@@ -36,6 +36,7 @@ class Registration with _$Registration {
   int? crDtime,
   String? updBy,
   int? updDtimes,
+    String? id
   }) = _Registration;
 
   factory Registration.fromJson(Map<String, Object?> json) => _$RegistrationFromJson(json);

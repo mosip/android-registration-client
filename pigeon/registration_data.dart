@@ -30,4 +30,7 @@ abstract class RegistrationDataApi {
 
   @async
   void setApplicationId(String applicationId);
+
+  @async
+  void setAdditionalReqId(String additionalReqId);
 }

@@ -20,5 +20,5 @@ public class ScreenSpecDto {
     private List<FieldSpecDto> fields;
     private Integer order;
     private Boolean preRegFetchRequired;
-
+    private Boolean additionalInfoRequestIdRequired;
 }

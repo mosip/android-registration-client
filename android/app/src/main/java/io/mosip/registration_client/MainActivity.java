@@ -7,8 +7,6 @@
 
 package io.mosip.registration_client;
 
-import io.mosip.registration.clientmanager.constant.ClientManagerConstant;
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -37,25 +35,16 @@ import javax.inject.Inject;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugins.GeneratedPluginRegistrant;
-import io.flutter.plugin.common.MethodChannel;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
-import io.mosip.registration.clientmanager.constant.AuditEvent;
-import io.mosip.registration.clientmanager.constant.Components;
-import io.mosip.registration.clientmanager.constant.PacketClientStatus;
-import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
-import io.mosip.registration.clientmanager.entity.GlobalParam;
-import io.mosip.registration.clientmanager.entity.Registration;
-import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
-import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
@@ -76,6 +65,7 @@ import io.mosip.registration_client.api_services.DemographicsDetailsApi;
 import io.mosip.registration_client.api_services.DocumentCategoryApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
+import io.mosip.registration_client.api_services.GlobalConfigSettingsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
@@ -91,6 +81,7 @@ import io.mosip.registration_client.model.DashBoardPigeon;
 import io.mosip.registration_client.model.DemographicsDataPigeon;
 import io.mosip.registration_client.model.DocumentCategoryPigeon;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
+import io.mosip.registration_client.model.GlobalConfigSettingsPigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
@@ -192,6 +183,9 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     BatchJob batchJob;
+
+    @Inject
+    GlobalConfigSettingsApi globalConfigSettingsApi;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -298,21 +292,7 @@ public class MainActivity extends FlutterActivity {
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
         masterDataSyncApi.setCallbackActivity(this, batchJob);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
-
-        // Custom lightweight channel to fetch active sync jobs for Settings page
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "io.mosip.registration/activeSyncJobs")
-                .setMethodCallHandler((call, result) -> {
-                    if ("getActiveSyncJobs".equals(call.method)) {
-                        try {
-                            List<String> jobs = masterDataSyncApi.getActiveSyncJobs();
-                            result.success(jobs);
-                        } catch (Exception e) {
-                            result.error("ERR_ACTIVE_JOBS", e.getMessage(), null);
-                        }
-                    } else {
-                        result.notImplemented();
-                    }
-                });
+        GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
     }
 
     @Override
@@ -328,6 +308,12 @@ public class MainActivity extends FlutterActivity {
                     break;
                 case 3:
                     biometricsDetailsApi.parseRCaptureResponse(data.getExtras());
+                    break;
+                case 4:
+                    biometricsDetailsApi.parseDiscoverResponseForList(data.getExtras());
+                    break;
+                case 5:
+                    biometricsDetailsApi.handleDeviceInfoResponseForList(data.getExtras());
                     break;
             }
         }

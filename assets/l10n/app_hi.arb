@@ -319,5 +319,14 @@
   "okay": "ठीक है",
   "no_internet_connection": "कोई इंटरनेट कनेक्शन नहीं!",
   "connect_and_retry": "कृपया इंटरनेट से जुड़ें और पुनः प्रयास करें।",
-  "retry": "पुन: प्रयास"
+  "retry": "पुन: प्रयास",
+  "key": "कुंजी",
+  "server_value": "सर्वर मान",
+  "local_value": "स्थानीय मान",
+  "no_configuration_parameters_found": "कोई कॉन्फ़िगरेशन पैरामीटर नहीं मिला",
+  "no_configurations_found": "कोई कॉन्फ़िगरेशन नहीं मिला",
+  "confirm": "पुष्टि करें",
+  "scan_now": "अभी स्कैन करें",
+  "enter_additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी दर्ज करें",
+  "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी"
 }

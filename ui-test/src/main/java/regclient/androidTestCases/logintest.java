@@ -6,7 +6,7 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
-import regclient.api.ConfigManager;
+import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
 import regclient.api.KeycloakUserManager;
 import regclient.page.BasePage;
@@ -123,7 +123,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
 
 
-		loginPage.enterPassword(ConfigManager.getIAMUsersPassword()+"123");
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword()+"123");
 		assertTrue(loginPage.isLoginButtonEnabled(),"Verify if the login button enabled");
 
 		loginPage.clickOnloginButton();
@@ -137,7 +137,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isNextButtonEnabled(),"verify if the next button enabled");
 		loginPage.clickOnNextButton();
 
-		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		assertTrue(loginPage.isLoginButtonEnabled(),"Verify if the login button enabled");
 
 		loginPage.clickOnloginButton();
@@ -285,7 +285,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
 		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
-		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
 		loginPage.clickOnloginButton();
@@ -485,7 +485,7 @@ public class logintest  extends AndroidBaseTest {
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
 		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
-		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
 		loginPage.clickOnloginButton();

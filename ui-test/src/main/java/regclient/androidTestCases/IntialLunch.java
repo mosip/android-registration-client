@@ -5,7 +5,7 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
-import regclient.api.ConfigManager;
+import regclient.api.ArcConfigManager;
 import regclient.api.KeycloakUserManager;
 import regclient.page.BasePage;
 import regclient.pages.english.LoginPageEnglish;
@@ -26,7 +26,7 @@ public class IntialLunch extends AndroidBaseTest {
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
 		assertTrue(loginPage.isForgetOptionDisplayed(), "Verify if forget password option is displayed");
 		assertTrue(loginPage.isPasswordHeaderDisplayed(), "Verify if the password input box header displayed");
-		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
 		loginPage.clickOnloginButton();
