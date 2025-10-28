@@ -173,14 +173,11 @@ class SyncResponseServiceImpl implements SyncResponseService {
     return syncAndUploadResponse;
   }
 
-  static const MethodChannel _activeJobsChannel = MethodChannel('io.mosip.registration/activeSyncJobs');
-
   @override
   Future<List<String?>> getActiveSyncJobs() async {
     try {
-      final result = await _activeJobsChannel.invokeMethod<List<dynamic>>('getActiveSyncJobs');
-      final list = (result ?? const <dynamic>[]).cast<String?>();
-      debugPrint('Active Sync Jobs from Android: $list');
+      final result = await await SyncApi().getActiveSyncJobs();
+      final list = result;
       return list;
     } on PlatformException catch (e) {
       debugPrint('getActiveSyncJobs PlatformException: ${e.message}');
@@ -191,6 +188,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
   }
 
+  @override
   Future<bool> deleteAuditLogs(String jobId) async {
     try {
       final ok = await SyncApi().deleteAuditLogsNative(jobId);
@@ -205,9 +203,9 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<bool> deletePreRegRecords() async {
+  Future<bool> deletePreRegRecords(String jobId) async {
     try {
-      final ok = await SyncApi().deletePreRegRecords();
+      final ok = await SyncApi().deletePreRegRecords(jobId);
       return ok;
     } on PlatformException catch (e) {
       debugPrint('deleteAuditLogs PlatformException: ${e.message}');

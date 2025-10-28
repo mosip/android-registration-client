@@ -46,7 +46,6 @@ public class DeleteAuditLogsJob extends SyncJobServiceBase {
 
             long timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(nowMs);
             logJobTransaction(jobId, timeStampInSeconds);
-            Log.d(TAG, TAG + " Completed with status=" + ok);
             return ok;
         } catch (Exception e) {
             Log.e(TAG, TAG + " failed", e);

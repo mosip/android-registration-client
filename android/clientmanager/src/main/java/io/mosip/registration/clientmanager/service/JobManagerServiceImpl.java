@@ -184,11 +184,9 @@ public class JobManagerServiceImpl implements JobManagerService {
         }
 
         String cronExpression = jobDef.getSyncFreq();
-        Log.i(TAG, "Cron Expression for jobId " + jobId + " is: " + cronExpression);
         // Try cron-based calculation first
         if (CronExpressionParser.isValidCronExpression(cronExpression)) {
             Instant nextExecution = CronExpressionParser.getNextExecutionTime(cronExpression);
-            Log.i(TAG, "nextExecution=" + nextExecution);
             if (nextExecution != null) {
                 return dateUtil.getDateTime(nextExecution.toEpochMilli());
             }
@@ -201,24 +199,6 @@ public class JobManagerServiceImpl implements JobManagerService {
         }
 
         return "NA";
-    }
-
-    public String getNextSyncTimeWithFreq(int jobId, String syncFreq) {
-        long lastSyncTimeSeconds = jobTransactionService.getLastSyncTime(jobId);
-        String nextSync = context.getString(R.string.NA);
-        if (lastSyncTimeSeconds > 0) {
-            long periodMillis = parseSyncFreqToMillis(syncFreq);
-            long periodSeconds = periodMillis > 0 ? TimeUnit.MILLISECONDS.toSeconds(periodMillis) : JOB_PERIODIC_SECONDS;
-            long nowSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-            long delta = nowSeconds - lastSyncTimeSeconds;
-            long steps = delta <= 0 ? 1 : (delta + periodSeconds - 1) / periodSeconds; // ceil
-            long nextSyncTimeSeconds = lastSyncTimeSeconds + steps * periodSeconds;
-            if (nextSyncTimeSeconds <= nowSeconds) {
-                nextSyncTimeSeconds = nowSeconds + periodSeconds; // safety
-            }
-            nextSync = dateUtil.getDateTime(nextSyncTimeSeconds);
-        }
-        return nextSync;
     }
 
     @Override

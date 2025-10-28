@@ -136,8 +136,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  LanguageRepository languageRepository,
                                  JobManagerService jobManagerService,
                                  FileSignatureDao fileSignatureDao,
-                                 JobTransactionService jobTransactionService) {
-                                 FileSignatureDao fileSignatureDao,
+                                 JobTransactionService jobTransactionService,
                                  PermittedLocalConfigRepository permittedLocalConfigRepository,
                                  LocalConfigDAO localConfigDAO) {
         this.context = context;
@@ -216,7 +215,6 @@ public class MasterDataServiceImpl implements MasterDataService {
                             certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
                             try {
                                 logLastSyncCompletionDateTime(jobId);
-                                Log.i(TAG, "Policy Sync last sync time stored successfully");
                             } catch (Exception e) {
                                 Log.e(TAG, "Failed to store policy sync last sync time", e);
                             }
@@ -263,12 +261,10 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync, String jobId) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-        Log.i(TAG, "Master data sync started for retry no: " + jobId);
         Map<String, String> queryParams = new HashMap<>();
 
         try {
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
-
         } catch (Exception e) {
             result = MASTER_DATA_SYNC_FAILED;
             Log.e(TAG, "MasterData : not able to get client key index", e);
@@ -541,7 +537,6 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void syncUserDetails(Runnable onFinish, boolean isManualSync, String jobId) throws Exception {
         String serverVersion = getServerVersionFromConfigs();
-        Log.i(TAG, "jobId for user details sync: " + jobId);
         if (serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
             result = "";
             if (isManualSync) {
@@ -754,9 +749,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void logLastSyncCompletionDateTime(String jobIdString) {
-        Log.i(TAG, "Storing last sync completion time for jobIdString: " + jobIdString);
         int jobId = jobManagerService.generateJobServiceId(jobIdString);
-        Log.i(TAG, "Logging last sync completion time for jobId: " + jobId);
         jobTransactionService.LogJobTransaction(jobId, Instant.now().toEpochMilli());
     }
 

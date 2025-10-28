@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -169,7 +170,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     @Override
     public void getPolicyKeySync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
-        Log.i(TAG, "Policy Key Sync Completed" + REG_APP_ID);
         if (centerMachineDto == null) {
             result.success(syncResult("PolicyKeySync", 5, "policy_key_sync_failed"));
             return;
@@ -286,7 +286,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getKernelCertsSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
-        Log.i(TAG, "Starting Kernel Certs Sync" + KERNEL_APP_ID);
         try {
             masterDataService.syncCertificate(() -> {
                 Log.i(TAG, "Policy Key Sync Completed");
@@ -300,21 +299,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     @Override
     public void getSyncAndUploadInProgressStatus(@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
         result.success(batchJob.getInProgressStatus());
-    }
-
-    // Custom non-generated API to expose active sync jobs list to Flutter
-    public List<String> getActiveSyncJobs() {
-        List<SyncJobDef> list = syncJobDefRepository.getActiveSyncJobs();
-        List<String> result = new ArrayList<>();
-        try {
-            for (SyncJobDef job : list) {
-                result.add(objectMapper.writeValueAsString(job));
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to serialize active sync jobs", e);
-        }
-        Log.i(TAG, "Exposing Active Sync Jobs size=" + result.size());
-        return result;
     }
 
     void resetAlarm(String api) {
@@ -359,55 +343,65 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void deleteAuditLogsNative(@NonNull String jobId ,@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+    public void deleteAuditLogsNative(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
         try {
             boolean ok = auditManagerService.deleteAuditLogs();
             // Also persist timestamps so UI can show Last/Next immediately when triggered manually
             try {
                 if(ok){
                     masterDataService.logLastSyncCompletionDateTime(jobId);
+                    Toast.makeText(context, "Deleted Audit logs", Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to store CA certificates sync last sync time", e);
+                Toast.makeText(context, "Failed to Deleted Audit logs", Toast.LENGTH_LONG).show();
             }
             result.success(ok);
         } catch (Exception e) {
             result.error(e);
+            Toast.makeText(context, "Failed to deleted Audit logs", Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
-    public void deletePreRegRecords(@NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+    public void deletePreRegRecords(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
         try {
             // Call fetchAndDeleteRecords from PreRegistrationDataSyncService
             preRegistrationDataSyncService.fetchAndDeleteRecords();
-            // Also persist timestamps so UI can show Last/Next immediately when triggered manually
-            Log.i(TAG, "PreReg Records Deletion Completed");
-            try {
-                long nowMs = System.currentTimeMillis();
-                long nextMs = nowMs + java.util.concurrent.TimeUnit.MINUTES.toMillis(3);
-            } catch (Exception ignored) {}
+            masterDataService.logLastSyncCompletionDateTime(jobId);
+            Toast.makeText(context, "Deleted Pre-reg records", Toast.LENGTH_LONG).show();
             result.success(true);
         } catch (Exception e) {
             result.error(e);
+            Toast.makeText(context, "Failed to deleted Pre-reg records", Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void getLastSyncTimeByJobId(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<String> result) {
-        Log.i(TAG, "getLastSyncTimeByJobId called for jobId=" + jobId);
         int syncJobId = jobManagerService.generateJobServiceId(jobId);
         String lastSyncTime = jobManagerService.getLastSyncTime(syncJobId);
-        Log.i(TAG, "getLastSyncTimeByJobId returning lastSyncTime=" + lastSyncTime);
         result.success(lastSyncTime);
-
     }
 
     @Override
     public void getNextSyncTimeByJobId(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<String> result) {
-        Log.i(TAG, "getNextSyncTimeByJobId called for jobId=" + jobId);
         int syncJobId = jobManagerService.generateJobServiceId(jobId);
         String nextSyncTime = jobManagerService.getNextSyncTime(syncJobId);
         result.success(nextSyncTime);
+    }
+
+    @Override
+    public void getActiveSyncJobs(@NonNull MasterDataSyncPigeon.Result<List<String>> result) {
+        List<SyncJobDef> list = syncJobDefRepository.getActiveSyncJobs();
+        List<String> value = new ArrayList<>();
+        try {
+            for (SyncJobDef job : list) {
+                value.add(objectMapper.writeValueAsString(job));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to serialize active sync jobs", e);
+        }
+        result.success(value);
     }
 }

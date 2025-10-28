@@ -167,16 +167,15 @@ public class AppModule {
                                                       CertificateManagerService certificateManagerService,
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
-                                                      FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService) {
-                                                      FileSignatureDao fileSignatureDao,
-                                                      PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                                      FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService, PermittedLocalConfigRepository permittedLocalConfigRepository,
                                                       LocalConfigDAO localConfigDAO) {
+
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService);
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, permittedLocalConfigRepository, localConfigDAO);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO);
+
     }
 
 
@@ -202,13 +201,10 @@ public class AppModule {
                                                    KeyStoreRepository keyStoreRepository,
                                                    GlobalParamRepository globalParamRepository,
                                                    AuditManagerService auditManagerService,
-                                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider) {
-                                                   AuditManagerService auditManagerService,
-                                                   Biometrics095Service biometricService) {
+                                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,Biometrics095Service biometricService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider);
-                keyStoreRepository, globalParamRepository, auditManagerService,biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider, biometricService);
     }
 
     @Provides

@@ -60,7 +60,6 @@ class SyncProvider with ChangeNotifier {
 
   getLastSyncTime() async {
     SyncTime lastSyncTime = await syncResponseService.getLastSyncTime();
-    print("Last Sync Time: ${lastSyncTime.syncTime}");
     setLastSuccessfulSyncTime(lastSyncTime.syncTime!);
   }
 
@@ -85,7 +84,6 @@ class SyncProvider with ChangeNotifier {
   
   Future<String Function(String)> _getJobIdFinder() async {
     List<SyncJobDef> activeJobs = [];
-    print("Fetching active job IDs");
     try {
       List<String?> activeJobJsonList = await syncResponseService.getActiveSyncJobs();
       activeJobs = activeJobJsonList
@@ -103,7 +101,6 @@ class SyncProvider with ChangeNotifier {
     } catch (e) {
       log("Failed to fetch active job IDs: $e");
     }
-    print("Finding job ID for API name: $activeJobs");
     return (String apiName) {
 
       var job = activeJobs.where((job) => job.apiName == apiName).firstOrNull;
@@ -114,20 +111,6 @@ class SyncProvider with ChangeNotifier {
   autoSync(BuildContext context) async {
     // Get the job ID finder function
     String Function(String) findJobIdByApiName = await _getJobIdFinder();
-    print("Auto Sync: Finding job IDs for active jobs");
-    await syncResponseService
-        .getGlobalParamsSync(false, findJobIdByApiName("synchConfigDataJob"))
-        .then((Sync getAutoSync) async {
-      setCurrentProgressType(getAutoSync.syncType!);
-      if (getAutoSync.errorCode == "") {
-        _policyKeySyncSuccess = true;
-        _currentSyncProgress = getAutoSync.syncProgress!;
-        notifyListeners();
-      } else {
-        log(AppLocalizations.of(context)!.global_params_sync_failed);
-      }
-      notifyListeners();
-    });
 
     await syncResponseService
         .getMasterDataSync(false, findJobIdByApiName("masterSyncJob"))
@@ -138,8 +121,23 @@ class SyncProvider with ChangeNotifier {
         _currentSyncProgress = getAutoSync.syncProgress!;
         notifyListeners();
         findJobIdByApiName = await _getJobIdFinder();
+
       } else {
         log(AppLocalizations.of(context)!.master_data_sync_failed);
+      }
+      notifyListeners();
+    });
+
+    await syncResponseService
+        .getGlobalParamsSync(false, findJobIdByApiName("synchConfigDataJob"))
+        .then((Sync getAutoSync) async {
+      setCurrentProgressType(getAutoSync.syncType!);
+      if (getAutoSync.errorCode == "") {
+        _policyKeySyncSuccess = true;
+        _currentSyncProgress = getAutoSync.syncProgress!;
+        notifyListeners();
+      } else {
+        log(AppLocalizations.of(context)!.global_params_sync_failed);
       }
       notifyListeners();
     });
@@ -259,6 +257,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   getPreRegistrationIds() async {
-    await syncResponseService.getPreRegIds("");
+    String Function(String) findJobIdByApiName = await _getJobIdFinder();
+    await syncResponseService.getPreRegIds(findJobIdByApiName("preRegistrationDataSyncJob"));
   }
 }

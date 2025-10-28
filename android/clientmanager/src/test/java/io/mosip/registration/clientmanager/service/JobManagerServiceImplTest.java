@@ -82,19 +82,19 @@ public class JobManagerServiceImplTest {
         assertEquals("2024-11-27 00:00:00", lastSync);
     }
 
-//    @Test
-//    public void getNextSyncTime_Test() {
-//        int jobId = 1;
-//        long lastSyncTime = 1609459200L;  // Example timestamp
-//        long nextSyncTime = lastSyncTime + 15 * 60;
-//
-//        when(mockJobTransactionService.getLastSyncTime(jobId)).thenReturn(lastSyncTime);
-//        when(mockDateUtil.getDateTime(nextSyncTime)).thenReturn("2024-11-27 00:15:00");
-//
-//        String nextSync = jobManagerService.getNextSyncTime(jobId);
-//
-//        assertEquals("2024-11-27 00:15:00", nextSync);
-//    }
+    @Test
+    public void getNextSyncTime_Test() {
+        int jobId = 1;
+        long lastSyncTime = 1609459200L;  // Example timestamp
+        long nextSyncTime = lastSyncTime + 15 * 60;
+
+        when(mockJobTransactionService.getLastSyncTime(jobId)).thenReturn(lastSyncTime);
+        when(mockDateUtil.getDateTime(nextSyncTime)).thenReturn("2024-11-27 00:15:00");
+
+        String nextSync = jobManagerService.getNextSyncTime(jobId);
+
+        assertEquals("2024-11-27 00:15:00", nextSync);
+    }
 
     @Test
     public void test_constructor_throws_exception_when_context_is_null() {

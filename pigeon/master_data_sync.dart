@@ -52,9 +52,11 @@ abstract class SyncApi {
   @async
   bool deleteAuditLogsNative(String jobId);
   @async
-  bool deletePreRegRecords();
+  bool deletePreRegRecords(String jobId);
   @async
   String getLastSyncTimeByJobId(String jobId);
   @async
   String getNextSyncTimeByJobId(String jobId);
+  @async
+  List<String> getActiveSyncJobs();
 }

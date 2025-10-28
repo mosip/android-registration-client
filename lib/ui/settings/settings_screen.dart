@@ -9,7 +9,7 @@ import 'package:registration_client/ui/process_ui/widgets/device_settings_tab.da
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
-import 'package:registration_client/ui/process_ui/widgets/scheduled_jobs_settings.dart';
+import 'widgets/scheduled_jobs_settings.dart';
 
 import 'widgets/global_config_settings_tab.dart';
 
@@ -159,6 +159,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String _getControllerName(Settings settings) {
+    print('settings.fxml: ${settings}');
     if (settings.fxml != null && settings.fxml!.isNotEmpty) {
       return settings.fxml!.replaceAll('.fxml', 'Controller');
     } else {
@@ -172,8 +173,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final controllerName = _getControllerName(settings);
 
     switch (controllerName) {
-      case 'ScheduledJobsController':
-        return Center(child: Text("${settings.name}"));
+      case 'ScheduledJobsSettingsController':
+        return ScheduledJobsSettings(jobJsonList: activeJobs);
       case 'GlobalConfigSettingsController':
         return const GlobalConfigSettingsTab();
       case 'DeviceSettingsController':

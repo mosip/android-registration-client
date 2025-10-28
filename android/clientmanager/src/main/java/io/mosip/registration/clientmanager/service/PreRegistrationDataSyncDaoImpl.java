@@ -75,8 +75,6 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
 
     @Override
     public void deleteAll(List<PreRegistrationList> preRegistrationList) {
-        Log.i(TAG, "REGISTRATION - PRE_REGISTRATION_DELETE_ALL - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL" +
-                "Delete all records started");
         try {
             this.preRegistrationRepositoryDao.deleteAll(preRegistrationList);
         } catch (Exception e) {
@@ -87,8 +85,6 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
 
     @Override
     public Timestamp getLastPreRegPacketDownloadedTimeAsTimestamp() {
-        Log.i(TAG, "REGISTRATION - PRE_REGISTRATION_GET_DOWNLOADED_TIME_AS_TIMESTAMP - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL" +
-                "Get last downloaded time as timestamp");
         PreRegistrationList preRegistrationList = this.preRegistrationRepositoryDao
                 .findTopByOrderByLastUpdatedPreRegTimeStampDesc();
         if (preRegistrationList != null && preRegistrationList.getLastUpdatedPreRegTimeStamp() != null) {

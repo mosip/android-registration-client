@@ -2,9 +2,7 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.mosip.registration.clientmanager.config.SessionManager;
+
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
@@ -20,7 +18,7 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
-import org.junit.After;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,7 +89,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider);
+                keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider, biometricService);
                 keyStoreRepository, globalParamRepository, auditManagerService, biometricService);
     }
 

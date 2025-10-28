@@ -13,7 +13,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
@@ -37,7 +36,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -83,7 +81,6 @@ import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.VersionType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricRecord;
 import io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType;
 import io.mosip.registration.packetmanager.dto.PacketWriter.Document;
-import io.mosip.registration.packetmanager.dto.PacketWriter.PacketInfo;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.DateUtils;
@@ -123,8 +120,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    KeyStoreRepository keyStoreRepository,
                                    GlobalParamRepository globalParamRepository,
                                    AuditManagerService auditManagerService,
-                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider) {
-                                   AuditManagerService auditManagerService, Biometrics095Service biometricService) {
+                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider, Biometrics095Service biometricService) {
+
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -243,7 +240,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document.setFormat(entry.getValue().getFormat());
                 document.setRefNumber(entry.getValue().getRefNumber());
                 document.setDocument(("pdf".equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
-                Log.i(TAG, entry.getKey() + " >> PDF document size :" + document.getDocument().length);
+
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
                 packetWriterService.addMetaInfo(this.registrationDto.getRId(),"documents", document);
             });
@@ -255,7 +252,6 @@ public class RegistrationServiceImpl implements RegistrationService {
                 document.setFormat("jpg");
                 document.setValue("POE_EOP");
                 document.setDocument(convertImageToBytes(b.getBioValue()));
-                Log.i(TAG,"Adding Proof of Exception document with size :" + document.getDocument().length);
                 packetWriterService.setDocument(this.registrationDto.getRId(), "proofOfException", document);
             });
         }
@@ -306,8 +302,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
                 centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId());
 
-        Log.i(TAG, "Registration getPreRegistrationId: " + this.registrationDto.getPreRegistrationId());
-
         // Delete pre-registration record after successful packet creation
         if (this.registrationDto.getPreRegistrationId() != null
                 && !this.registrationDto.getPreRegistrationId().trim().isEmpty()) {
@@ -319,8 +313,6 @@ public class RegistrationServiceImpl implements RegistrationService {
                             this.registrationDto.getPreRegistrationId());
             preRegistrationLists.add(preRegistrationList);
             preRegistrationDataSyncServiceProvider.get().deletePreRegRecords(responseDTO, preRegistrationLists);
-
-            Log.i(TAG, "Pre-registration record deleted for ID: " + this.registrationDto.getPreRegistrationId());
         }
 
 //        } finally {

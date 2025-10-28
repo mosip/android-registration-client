@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {

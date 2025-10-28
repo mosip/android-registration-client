@@ -24,7 +24,7 @@ abstract class SyncResponseService {
   Future<Sync> getKernelCertsSync(bool isManualSync, String jobId);
   Future<bool> getSyncAndUploadInProgressStatus();
   Future<bool> deleteAuditLogs(String jobId);
-  Future<bool> deletePreRegRecords();
+  Future<bool> deletePreRegRecords(String jobId);
 
   Future<List<String?>> getActiveSyncJobs();
   Future<String> getLastSyncTimeByJobId(String jobId);

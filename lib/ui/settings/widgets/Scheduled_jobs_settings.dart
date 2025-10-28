@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
-import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
 
+import '../../../provider/sync_provider.dart';
+
 // Dart equivalent of the Java PACKET_JOBS constant
-const List<String> PACKET_JOBS = ['RPS_J00006', 'RSJ_J00014', 'PUJ_J00017'];
+const List<String> PACKET_JOBS = ['RPS_J00006', 'RSJ_J00014', 'PUJ_J00017', 'PVS_J00015'];
 
 class ScheduledJobsSettings extends StatelessWidget {
   const ScheduledJobsSettings({
@@ -77,23 +80,40 @@ class _JobCard extends StatefulWidget {
 class _JobCardState extends State<_JobCard> {
   String? _lastSync;
   String? _nextSync;
+  late SyncProvider syncProvider;
 
 
   @override
   void initState() {
     super.initState();
+    syncProvider = Provider.of<SyncProvider>(context, listen: false);
     _loadLastSyncTime(); // Fetch last sync when widget loads
     _loadNextSyncTime();
   }
 
   Future<void> _loadLastSyncTime() async {
     final service = SyncResponseService();
+
     if (widget.job.id != null && widget.job.id!.isNotEmpty) {
       final value = await service.getLastSyncTimeByJobId(widget.job.id!);
       setState(() => _lastSync = value ?? '-');
+      if(widget.job.apiName == "masterSyncJob" && _lastSync == "NA"){
+        _lastSync =  formatDate(syncProvider.lastSuccessfulSyncTime);
+        setState(() {});
+      }
     } else {
       setState(() => _lastSync = '-');
     }
+  }
+
+  String formatDate(String dateString) {
+    // Parse the input UTC date string
+    DateTime dateTime = DateTime.parse(dateString).toLocal(); // Convert to local time
+
+    // Format the date
+    String formattedDate = DateFormat("yyyy-MMM-dd HH:mm:ss").format(dateTime);
+
+    return formattedDate;
   }
 
   Future<void> _loadNextSyncTime() async {
@@ -107,10 +127,7 @@ class _JobCardState extends State<_JobCard> {
   }
 
   Future<void> _triggerJobSync(BuildContext context, String? apiName, String? jobId) async {
-    print("APIName>>>> $apiName");
     if (apiName == null || apiName.isEmpty) return;
-
-    print('Triggering sync for: ${widget.job.id} / $apiName');
     final service = SyncResponseService();
 
     try {
@@ -140,7 +157,7 @@ class _JobCardState extends State<_JobCard> {
           await service.getGlobalParamsSync(true, jobId ?? '');
           break;
         case 'preRegistrationPacketDeletionJob':
-          await service.deletePreRegRecords();
+          await service.deletePreRegRecords(jobId ?? '');
           break;
         default:
           debugPrint('No handler for sync job: $apiName');
@@ -151,22 +168,8 @@ class _JobCardState extends State<_JobCard> {
       await _loadLastSyncTime();
       await _loadNextSyncTime();
 
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text('Sync completed for ${widget.job.name ?? apiName}'),
-      //     behavior: SnackBarBehavior.floating,
-      //     duration: const Duration(seconds: 3),
-      //   ),
-      // );
     } catch (e) {
       debugPrint('Sync failed for ${widget.job.id}: $e');
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text('Failed to sync ${widget.job.name ?? apiName}'),
-      //     behavior: SnackBarBehavior.floating,
-      //     duration: const Duration(seconds: 3),
-      //   ),
-      // );
     }
   }
 
