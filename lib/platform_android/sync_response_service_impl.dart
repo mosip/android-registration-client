@@ -191,8 +191,8 @@ class SyncResponseServiceImpl implements SyncResponseService {
   @override
   Future<bool> deleteAuditLogs(String jobId) async {
     try {
-      final ok = await SyncApi().deleteAuditLogs(jobId);
-      return ok;
+      final deleteResponse = await SyncApi().deleteAuditLogs(jobId);
+      return deleteResponse;
     } on PlatformException catch (e) {
       debugPrint('deleteAuditLogs PlatformException: ${e.message}');
       return false;
@@ -205,8 +205,8 @@ class SyncResponseServiceImpl implements SyncResponseService {
   @override
   Future<bool> deletePreRegRecords(String jobId) async {
     try {
-      final ok = await SyncApi().deletePreRegRecords(jobId);
-      return ok;
+      final deleteResponse = await SyncApi().deletePreRegRecords(jobId);
+      return deleteResponse;
     } on PlatformException catch (e) {
       debugPrint('deleteAuditLogs PlatformException: ${e.message}');
       return false;
@@ -219,8 +219,8 @@ class SyncResponseServiceImpl implements SyncResponseService {
   @override
   Future<String> getLastSyncTimeByJobId(String jobId) async{
     try {
-      final ok = await SyncApi().getLastSyncTimeByJobId(jobId);
-      return ok;
+      final lastSyncTime = await SyncApi().getLastSyncTimeByJobId(jobId);
+      return lastSyncTime;
     } on PlatformException catch (e) {
       debugPrint('lastSync PlatformException: ${e.message}');
       return "false";
@@ -233,8 +233,8 @@ class SyncResponseServiceImpl implements SyncResponseService {
   @override
   Future<String> getNextSyncTimeByJobId(String jobId) async{
     try {
-      final ok = await SyncApi().getNextSyncTimeByJobId(jobId);
-      return ok;
+      final nextSyncTime = await SyncApi().getNextSyncTimeByJobId(jobId);
+      return nextSyncTime;
     } on PlatformException catch (e) {
       debugPrint('nextSync PlatformException: ${e.message}');
       return "false";

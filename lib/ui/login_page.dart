@@ -617,7 +617,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _autoSyncHandler() async {
-    print("Auto Sync Handler Called");
     if (syncProvider.isGlobalSyncInProgress) {
       authProvider.setIsSyncing(false);
       showLoadingDialog(context);
