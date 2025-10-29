@@ -112,10 +112,6 @@ public class JobManagerServiceImpl implements JobManagerService {
             if (periodMillis <= 0) {
                 periodMillis = JOB_PERIODIC_SECONDS * 1000L;
             }
-            // For testing: force deleteAuditLogsJob to run every 3 minutes
-            if (clientJobService == DeleteAuditLogsJob.class) {
-                periodMillis = TimeUnit.MINUTES.toMillis(3);
-            }
             info = new JobInfo.Builder(jobId, componentName)
                     .setRequiresCharging(false)
                     .setPersisted(true)
