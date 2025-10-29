@@ -260,4 +260,24 @@ class SyncProvider with ChangeNotifier {
     String Function(String) findJobIdByApiName = await _getJobIdFinder();
     await syncResponseService.getPreRegIds(findJobIdByApiName("preRegistrationDataSyncJob"));
   }
+
+  Future<String?> getLastSyncTimeByJobId(String jobId) async {
+    try {
+      final value = await syncResponseService.getLastSyncTimeByJobId(jobId);
+      return value;
+    } catch (e) {
+      log("Failed to get last sync time for job $jobId: $e");
+      return null;
+    }
+  }
+
+  Future<String?> getNextSyncTimeByJobId(String jobId) async {
+    try {
+      final value = await syncResponseService.getNextSyncTimeByJobId(jobId);
+      return value;
+    } catch (e) {
+      log("Failed to get next sync time for job $jobId: $e");
+      return null;
+    }
+  }
 }

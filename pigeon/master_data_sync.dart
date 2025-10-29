@@ -50,7 +50,7 @@ abstract class SyncApi {
   @async
   bool getSyncAndUploadInProgressStatus();
   @async
-  bool deleteAuditLogsNative(String jobId);
+  bool deleteAuditLogs(String jobId);
   @async
   bool deletePreRegRecords(String jobId);
   @async

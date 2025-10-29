@@ -167,7 +167,6 @@ public class JobManagerServiceImpl implements JobManagerService {
     @Override
     public String getLastSyncTime(int jobId) {
         long lastSyncTimeSeconds = jobTransactionService.getLastSyncTime(jobId);
-        Log.i(TAG, "lastSyncTimeSeconds=" + lastSyncTimeSeconds);
         String lastSync = context.getString(R.string.NA);
 
         if (lastSyncTimeSeconds > 0) {

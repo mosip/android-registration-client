@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
@@ -32,9 +33,9 @@ class ScheduledJobsSettings extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Scheduled Job Settings',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          Text(
+            AppLocalizations.of(context)!.scheduled_job_settings,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           LayoutBuilder(
@@ -92,13 +93,11 @@ class _JobCardState extends State<_JobCard> {
   }
 
   Future<void> _loadLastSyncTime() async {
-    final service = SyncResponseService();
-
     if (widget.job.id != null && widget.job.id!.isNotEmpty) {
-      final value = await service.getLastSyncTimeByJobId(widget.job.id!);
+      final value = await syncProvider.getLastSyncTimeByJobId(widget.job.id!);
       setState(() => _lastSync = value ?? '-');
-      if(widget.job.apiName == "masterSyncJob" && _lastSync == "NA"){
-        _lastSync =  formatDate(syncProvider.lastSuccessfulSyncTime);
+      if (widget.job.apiName == "masterSyncJob" && _lastSync == "NA") {
+        _lastSync = formatDate(syncProvider.lastSuccessfulSyncTime);
         setState(() {});
       }
     } else {
@@ -117,9 +116,8 @@ class _JobCardState extends State<_JobCard> {
   }
 
   Future<void> _loadNextSyncTime() async {
-    final service = SyncResponseService();
     if (widget.job.id != null && widget.job.id!.isNotEmpty) {
-      final value = await service.getNextSyncTimeByJobId(widget.job.id!);
+      final value = await syncProvider.getNextSyncTimeByJobId(widget.job.id!);
       setState(() => _nextSync = value ?? '-');
     } else {
       setState(() => _nextSync = '-');

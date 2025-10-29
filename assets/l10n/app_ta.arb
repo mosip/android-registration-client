@@ -337,5 +337,6 @@
   "confirm": "உறுதிப்படுத்தவும்",
   "scan_now": "இப்போது ஸ்கேன் செய்யுங்கள்",
   "enter_additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடியை உள்ளிடவும்",
-  "additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடி"
+  "additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடி",
+  "scheduled_job_settings": "திட்டமிடப்பட்ட வேலை அமைப்புகள்"
 }

@@ -343,7 +343,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void deleteAuditLogsNative(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+    public void deleteAuditLogs(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
         try {
             boolean ok = auditManagerService.deleteAuditLogs();
             // Also persist timestamps so UI can show Last/Next immediately when triggered manually

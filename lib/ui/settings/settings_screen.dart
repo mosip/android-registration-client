@@ -159,7 +159,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String _getControllerName(Settings settings) {
-    print('settings.fxml: ${settings}');
     if (settings.fxml != null && settings.fxml!.isNotEmpty) {
       return settings.fxml!.replaceAll('.fxml', 'Controller');
     } else {

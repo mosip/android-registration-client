@@ -328,5 +328,6 @@
   "confirm": "ದೃಢೀಕರಿಸಿ",
   "scan_now": "ಈಗಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
   "enter_additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ ನಮೂದಿಸಿ",
-  "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ"
+  "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ",
+  "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
 }

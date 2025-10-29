@@ -328,5 +328,6 @@
   "confirm": "تأكيد",
   "scan_now": "امسح الآن",
   "enter_additional_info_req_id": "أدخل معرف طلب المعلومات الإضافية",
-  "additional_info_req_id": "معرف طلب المعلومات الإضافية"
+  "additional_info_req_id": "معرف طلب المعلومات الإضافية",
+  "scheduled_job_settings": "إعدادات المهمة المجدولة"
 }

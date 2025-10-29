@@ -176,7 +176,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
   @override
   Future<List<String?>> getActiveSyncJobs() async {
     try {
-      final result = await await SyncApi().getActiveSyncJobs();
+      final result = await SyncApi().getActiveSyncJobs();
       final list = result;
       return list;
     } on PlatformException catch (e) {
@@ -191,7 +191,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
   @override
   Future<bool> deleteAuditLogs(String jobId) async {
     try {
-      final ok = await SyncApi().deleteAuditLogsNative(jobId);
+      final ok = await SyncApi().deleteAuditLogs(jobId);
       return ok;
     } on PlatformException catch (e) {
       debugPrint('deleteAuditLogs PlatformException: ${e.message}');

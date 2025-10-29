@@ -328,5 +328,6 @@
   "confirm": "CONFIRM",
   "scan_now": "Scan Now",
   "enter_additional_info_req_id": "Enter Additional Info Request ID",
-  "additional_info_req_id": "Additional Info Request ID"
+  "additional_info_req_id": "Additional Info Request ID",
+  "scheduled_job_settings": "Scheduled Job Settings"
 }
