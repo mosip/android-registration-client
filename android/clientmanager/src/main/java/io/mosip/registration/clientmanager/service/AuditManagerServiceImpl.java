@@ -96,24 +96,16 @@ public class AuditManagerServiceImpl implements AuditManagerService {
 
         String tillDate = globalParamRepository.getGlobalParamValue(RegistrationConstants.AUDIT_EXPORTED_TILL);
 
-        if (tillDate != null && !tillDate.isEmpty()) {
-            try {
-                long tillDateLong = Long.parseLong(tillDate);
-                auditRepository.deleteAllAuditsTillDate(tillDateLong);
-                globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, null);
-                return true;
-            } catch (RuntimeException runtimeException) {
-                return false;
-            }
-        } else {
-            try {
-                long currentDateLong = System.currentTimeMillis();
-                auditRepository.deleteAllAuditsTillDate(currentDateLong);
-                globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, null);
-                return true;
-            } catch (RuntimeException runtimeException) {
-                return false;
-            }
+        String tillDateVal = (tillDate != null) ? tillDate : String.valueOf(System.currentTimeMillis());
+
+        try {
+            long tillDateLong = Long.parseLong(tillDateVal);
+            auditRepository.deleteAllAuditsTillDate(tillDateLong);
+            globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, null);
+            return true;
+        } catch (RuntimeException runtimeException) {
+            Log.e(TAG, "Error in deleting audit logs", runtimeException);
+            return false;
         }
     }
 

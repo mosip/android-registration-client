@@ -99,25 +99,13 @@ public class JobManagerServiceImpl implements JobManagerService {
 
         ComponentName componentName = new ComponentName(context, clientJobService);
         JobInfo info;
-        if (syncFreq == null || syncFreq.trim().isEmpty()) {
-            //To schedule only once
-            info = new JobInfo.Builder(jobId, componentName)
-                    .setRequiresCharging(false)
-                    .setPersisted(false)
-                    .build();
-
-        } else {
-            //To schedule periodically
-            long periodMillis = parseSyncFreqToMillis(syncFreq);
-            if (periodMillis <= 0) {
-                periodMillis = JOB_PERIODIC_SECONDS * 1000L;
-            }
-            info = new JobInfo.Builder(jobId, componentName)
-                    .setRequiresCharging(false)
-                    .setPersisted(true)
-                    .setPeriodic(periodMillis)
-                    .build();
-        }
+        //To schedule periodically
+        long periodMillis = JOB_PERIODIC_SECONDS * 1000L;
+        info = new JobInfo.Builder(jobId, componentName)
+                .setRequiresCharging(false)
+                .setPersisted(true)
+                .setPeriodic(periodMillis)
+                .build();
         return jobScheduler.schedule(info);
     }
 
@@ -219,24 +207,6 @@ public class JobManagerServiceImpl implements JobManagerService {
             default:
                 return null;
         }
-    }
-
-    private long parseSyncFreqToMillis(String syncFreq) {
-        try {
-            String s = syncFreq.trim().toLowerCase();
-            if (s.endsWith("ms")) {
-                return Long.parseLong(s.substring(0, s.length() - 2));
-            } else if (s.endsWith("s")) {
-                return Long.parseLong(s.substring(0, s.length() - 1)) * 1000L;
-            } else if (s.endsWith("m")) {
-                return Long.parseLong(s.substring(0, s.length() - 1)) * 60_000L;
-            } else if (s.endsWith("h")) {
-                return Long.parseLong(s.substring(0, s.length() - 1)) * 3_600_000L;
-            } else if (s.endsWith("d")) {
-                return Long.parseLong(s.substring(0, s.length() - 1)) * 86_400_000L;
-            }
-        } catch (Exception ignored) {}
-        return 0L;
     }
 
     private SyncJobDef getJobDefByJobId(int jobId) {
