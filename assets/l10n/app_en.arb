@@ -300,6 +300,8 @@
   "supervisor": "Supervisor",
   "online": "Online",
   "offline": "Offline",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",

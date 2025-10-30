@@ -9,6 +9,7 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
@@ -16,6 +17,7 @@ import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/platform_spi/audit_service.dart';
 import 'package:registration_client/platform_spi/dynamic_response_service.dart';
+import 'package:registration_client/platform_spi/global_config_service.dart';
 
 import 'package:registration_client/platform_spi/machine_key_service.dart';
 import 'package:registration_client/platform_spi/network_service.dart';
@@ -32,6 +34,7 @@ class GlobalProvider with ChangeNotifier {
       DynamicResponseService();
   final Audit audit = Audit();
   final NetworkService networkService = NetworkService();
+  final GlobalConfigService globalConfigService = GlobalConfigService();
 
   //Variables
   int _currentIndex = 0;
@@ -835,5 +838,41 @@ class GlobalProvider with ChangeNotifier {
     setRegId("");
     selectedUpdateFields = {};
     updateUINNumber = "";
+  }
+
+  // Fetch current GPS location
+  // Returns Position if successful, null if GPS disabled or permission denied
+  Future<Position?> fetchLocation() async {
+    // Check if GPS is enabled in configuration
+    String gpsFlag = await globalConfigService.getGpsEnableFlag();
+
+    if (gpsFlag.isEmpty || gpsFlag != "Y") {
+      return null;
+    }
+
+    // Check if location service is enabled on device
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return null;
+    }
+
+    // Check and request permission
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions still denied
+        return null;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return null;
+    }
+
+    // Fetch location if permission is granted
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 }

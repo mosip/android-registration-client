@@ -149,6 +149,14 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.REFRESHED_LOGIN_TIME);
     }
 
+    public String getCachedStringGpsDeviceEnableFlag() {
+        return globalParamMap.get(RegistrationConstants.GPS_DEVICE_ENABLE_FLAG);
+    }
+
+    public String getCachedStringMachineToCenterDistance() {
+        return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */
