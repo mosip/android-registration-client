@@ -1,5 +1,7 @@
 package io.mosip.registration.clientmanager.util;
 
+import android.util.Log;
+
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
@@ -38,8 +40,9 @@ public class CronExpressionParser {
             Optional<ZonedDateTime> next = executionTime.nextExecution(now);
             return next.map(ZonedDateTime::toInstant).orElse(null);
         } catch (Exception e) {
-            return null;
+            Log.e("CronExpressionParser", "Error parsing cron expression", e);
         }
+        return null;
     }
 
     /**
@@ -55,7 +58,8 @@ public class CronExpressionParser {
             cronParser.parse(cronExpression.trim());
             return true;
         } catch (Exception e) {
-            return false;
+            Log.e("CronExpressionParser", "Invalid cron expression", e);
         }
+        return false;
     }
 }

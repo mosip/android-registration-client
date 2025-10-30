@@ -345,10 +345,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     @Override
     public void deleteAuditLogs(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
         try {
-            boolean ok = auditManagerService.deleteAuditLogs();
+            boolean deletedRes = auditManagerService.deleteAuditLogs();
             // Also persist timestamps so UI can show Last/Next immediately when triggered manually
             try {
-                if(ok){
+                if(deletedRes){
                     masterDataService.logLastSyncCompletionDateTime(jobId);
                     Toast.makeText(context, "Deleted Audit logs", Toast.LENGTH_LONG).show();
                 }
@@ -356,7 +356,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 Log.e(TAG, "Failed to store CA certificates sync last sync time", e);
                 Toast.makeText(context, "Failed to Deleted Audit logs", Toast.LENGTH_LONG).show();
             }
-            result.success(ok);
+            result.success(deletedRes);
         } catch (Exception e) {
             result.error(e);
             Toast.makeText(context, "Failed to deleted Audit logs", Toast.LENGTH_LONG).show();
@@ -403,5 +403,97 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             Log.e(TAG, "Failed to serialize active sync jobs", e);
         }
         result.success(value);
+    }
+
+    // Execute job based on API name
+    public void executeJobByApiName(String jobApiName, Context context) {
+        new Thread(() -> {
+            try {
+
+                // Get job ID from database for tracking last/next sync
+                String jobId = getJobIdByApiName(jobApiName);
+
+                // Execute appropriate sync job
+                switch (jobApiName) {
+                    case "registrationPacketUploadJob":
+                        batchJob.syncRegistrationPackets(context);
+                        break;
+                    case "packetSyncStatusJob":
+                        packetService.syncAllPacketStatus();
+                        break;
+                    case "masterSyncJob":
+                        masterDataService.syncMasterData(() -> {
+                            Log.d(getClass().getSimpleName(), "Master data sync callback");
+                        }, 0, true, jobId);
+                        break;
+                    case "synchConfigDataJob":
+                        masterDataService.syncGlobalParamsData(() -> {
+                            Log.d(getClass().getSimpleName(), "Config data sync callback");
+                        }, true, jobId);
+                        break;
+                    case "userDetailServiceJob":
+                        masterDataService.syncUserDetails(() -> {
+                            Log.d(getClass().getSimpleName(), "User details sync callback");
+                        }, true, jobId);
+                        break;
+                    case "keyPolicySyncJob":
+                        CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
+                        if (centerMachineDto != null && centerMachineDto.getMachineRefId() != null) {
+                            masterDataService.syncCertificate(() -> {
+                                Log.d(getClass().getSimpleName(), "Policy key sync callback");
+                            }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), true, jobId);
+                        } else {
+                            Log.w(getClass().getSimpleName(), "Skipping keyPolicySyncJob - machine details not available");
+                        }
+                        break;
+                    case "publicKeySyncJob":
+                        // Public key sync for KERNEL app (SIGN certificates)
+                        masterDataService.syncCertificate(() -> {
+                            Log.d(getClass().getSimpleName(), "Public key sync callback");
+                        }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", true, jobId);
+                        break;
+                    case "syncCertificateJob":
+                        // CA certificate sync
+                        masterDataService.syncCACertificates(() -> {
+                            Log.d(getClass().getSimpleName(), "CA cert sync callback");
+                        }, true, jobId);
+                        break;
+                    case "preRegistrationDataSyncJob":
+                        preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
+                            Log.i(TAG, "Application Id's Sync Completed");
+                        }, jobId);
+                        break;
+
+                    case "deleteAuditLogsJob":
+                        auditManagerService.deleteAuditLogs();
+                        masterDataService.logLastSyncCompletionDateTime(jobId);
+                        break;
+
+                    case "preRegistrationPacketDeletionJob":
+                        preRegistrationDataSyncService.fetchAndDeleteRecords();
+                        masterDataService.logLastSyncCompletionDateTime(jobId);
+                        break;
+                    default:
+                        Log.w(getClass().getSimpleName(), "Unknown job: " + jobApiName);
+                }
+                Log.d(getClass().getSimpleName(), "Completed: " + jobApiName);
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), "Job failed: " + jobApiName, e);
+            }
+        }).start();
+    }
+
+    private String getJobIdByApiName(String apiName) {
+        try {
+            List<SyncJobDef> jobs = syncJobDefRepository.getAllSyncJobDefList();
+            for (SyncJobDef job : jobs) {
+                if (apiName.equals(job.getApiName())) {
+                    return job.getId();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error getting job ID for: " + apiName, e);
+        }
+        return ""; // Return empty string if not found
     }
 }
