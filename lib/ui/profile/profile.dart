@@ -30,6 +30,10 @@ class _ProfilePageState extends State<ProfilePage> {
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
     connectivityProvider =  Provider.of<ConnectivityProvider>(context, listen: false);
     super.initState();
+    // Check GPS status when profile page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      connectivityProvider.checkGPSStatus();
+    });
   }
 
   goToUrl(String url) async {
@@ -145,6 +149,50 @@ class _ProfilePageState extends State<ProfilePage> {
                       context.watch<ConnectivityProvider>().isConnected
                           ? appLocalizations.online
                           : appLocalizations.offline,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: const Color(0xff333333), fontWeight: semiBold),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Divider(color: Color(0xFFF5F8FF), height: 4),
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      color: solidPrimary,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      "GPS",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: const Color(0xff333333), fontWeight: semiBold),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      color: context.watch<ConnectivityProvider>().isGPSEnabled
+                          ? const Color(0xff1A9B42)
+                          : Colors.red,
+                      size: 12,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      context.watch<ConnectivityProvider>().isGPSEnabled
+                          ? appLocalizations.enabled
+                          : appLocalizations.disabled,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: const Color(0xff333333), fontWeight: semiBold),
                     ),

@@ -12,8 +12,10 @@ import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
@@ -74,7 +76,10 @@ public class RegistrationServiceImplTest {
     @Mock
     private ClientCryptoManagerService clientCryptoManagerService;
     private RegistrationService registrationService;
-
+    @Mock
+    private RegistrationCenterRepository registrationCenterRepository;
+    @Mock
+    private LocationValidationService locationValidationService;
     @Mock
     private Biometrics095Service biometricService;
 
@@ -87,7 +92,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, biometricService);
     }
     
     @Test(expected = ClientCheckedException.class)

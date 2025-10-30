@@ -9,5 +9,7 @@ abstract class GlobalConfigService {
 
   Future<void> modifyConfigurations(Map<String, String> localPreferences);
 
+  Future<String> getGpsEnableFlag();
+
   factory GlobalConfigService() => getGlobalConfigServiceImpl();
 }

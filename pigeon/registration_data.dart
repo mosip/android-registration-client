@@ -33,4 +33,7 @@ abstract class RegistrationDataApi {
 
   @async
   void setAdditionalReqId(String additionalReqId);
+
+  @async
+  void setMachineLocation(double latitude, double longitude);
 }

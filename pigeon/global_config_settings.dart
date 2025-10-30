@@ -10,4 +10,6 @@ abstract class GlobalConfigSettingsApi {
   List<String> getPermittedConfigurationNames();
   @async
   void modifyConfigurations(Map<String, String> localPreferences);
+  @async
+  String getGpsEnableFlag();
 }
