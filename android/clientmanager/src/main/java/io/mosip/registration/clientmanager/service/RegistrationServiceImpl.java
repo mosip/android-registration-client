@@ -51,16 +51,20 @@ import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ResponseDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
+import io.mosip.registration.clientmanager.dto.registration.GeoLocationDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
 import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.exception.RegBaseCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
@@ -105,8 +109,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     private KeyStoreRepository keyStoreRepository;
     private GlobalParamRepository globalParamRepository;
     private AuditManagerService auditManagerService;
+    private RegistrationCenterRepository registrationCenterRepository;
+    private LocationValidationService locationValidationService;
     private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
-
     public static final String BOOLEAN_FALSE = "false";
 
     private Biometrics095Service biometricService;
@@ -120,8 +125,10 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    KeyStoreRepository keyStoreRepository,
                                    GlobalParamRepository globalParamRepository,
                                    AuditManagerService auditManagerService,
-                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider, Biometrics095Service biometricService) {
-
+                                   RegistrationCenterRepository registrationCenterRepository,
+                                   LocationValidationService locationValidationService,
+                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
+                                   Biometrics095Service biometricService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -132,6 +139,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.keyStoreRepository = keyStoreRepository;
         this.globalParamRepository = globalParamRepository;
         this.auditManagerService = auditManagerService;
+        this.registrationCenterRepository = registrationCenterRepository;
+        this.locationValidationService = locationValidationService;
         this.preRegistrationDataSyncServiceProvider = preRegistrationDataSyncServiceProvider;
         this.biometricService = biometricService;
     }
@@ -201,6 +210,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (this.registrationDto == null) {
             throw new ClientCheckedException(context, R.string.err_004);
         }
+
+        // Validate location before submission
+        validateLocation();
+
         if (this.registrationDto.getAdditionalInfoRequestId() != null) {
             String newAppId = this.registrationDto.getAdditionalInfoRequestId().split("-")[0];
             this.registrationDto.setApplicationId(newAppId);
@@ -300,7 +313,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         additionalInfo.put("phone", getAdditionalInfo(phoneObj));
 
         registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
-                centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId());
+                centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(), this.registrationDto.getApplicationId());
 
         // Delete pre-registration record after successful packet creation
         if (this.registrationDto.getPreRegistrationId() != null
@@ -466,8 +479,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_INFO_OPERATIONS_DATA, getLabelValueDTOListString(metaData));
 
         //other metaInfo
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LATITUDE, "null");
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LONGITUDE, "null");
+        GeoLocationDto geoLocation = this.registrationDto.getGeoLocationDto();
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LATITUDE,
+            geoLocation != null ? String.valueOf(geoLocation.getLatitude()) : "null");
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LONGITUDE,
+            geoLocation != null ? String.valueOf(geoLocation.getLongitude()) : "null");
         packetWriterService.addMetaInfo(rid, "checkSum", "{}");
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.REGISTRATIONID, rid);
 
@@ -495,6 +511,89 @@ public class RegistrationServiceImpl implements RegistrationService {
             labelValueMap.add(map);
         }
         return labelValueMap;
+    }
+
+    /**
+     * Validate machine location against registration center
+     * @throws Exception if location is outside allowed distance
+     */
+    private void validateLocation() throws Exception {
+        try {
+
+            String enableFlag = globalParamRepository.getCachedStringGpsDeviceEnableFlag();
+            boolean gpsValidationDisabled = "Y".equalsIgnoreCase(enableFlag);
+            if (gpsValidationDisabled) {
+                Log.w(TAG, "GPS distance validation disabled by config, skipping");
+                return;
+            }
+
+            GeoLocationDto geoLocation = this.registrationDto.getGeoLocationDto();
+            if (geoLocation == null) {
+                Log.w(TAG, "Geo location not available, skipping validation");
+                return;
+            }
+
+            // Get center coordinates
+            CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
+            if (centerMachineDto == null) {
+                Log.w(TAG, "Center details not found, skipping distance validation");
+                return;
+            }
+
+            List<RegistrationCenter> centers = registrationCenterRepository.getRegistrationCenter(
+                centerMachineDto.getCenterId());
+
+            if (centers == null || centers.isEmpty()) {
+                Log.w(TAG, "Center not found, skipping distance validation");
+                return;
+            }
+
+            RegistrationCenter center = centers.get(0);
+            String centerLatStr = center.getLatitude();
+            String centerLonStr = center.getLongitude();
+
+            if (centerLatStr == null || centerLonStr == null ||
+                centerLatStr.isEmpty() || centerLonStr.isEmpty()) {
+                Log.e(TAG, "Center coordinates not available");
+                throw new ClientCheckedException(context, R.string.err_004);
+            }
+
+            try {
+                double centerLatitude = Double.parseDouble(centerLatStr);
+                double centerLongitude = Double.parseDouble(centerLonStr);
+
+                // Calculate distance
+                double distance = locationValidationService.getDistance(
+                    geoLocation.getLongitude(), geoLocation.getLatitude(),
+                    centerLongitude, centerLatitude);
+
+                // Get max allowed distance from config
+                String maxDistanceStr = globalParamRepository.getCachedStringMachineToCenterDistance();
+                if (maxDistanceStr == null || maxDistanceStr.isEmpty()) {
+                    Log.e(TAG, "Max allowed distance configuration not found");
+                    throw new ClientCheckedException(context, R.string.err_004);
+                }
+
+                double maxAllowedDistance = Double.parseDouble(maxDistanceStr);
+
+                // Validate distance
+                if (distance > maxAllowedDistance) {
+                    Log.e(TAG, "Distance not matched with allowed range");
+                    throw new ClientCheckedException(context, R.string.err_004);
+                }
+
+                Log.i(TAG, "Location validated successfully");
+
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Invalid center coordinates format", e);
+                // Continue with submission even if coordinates are invalid
+            }
+        } catch (ClientCheckedException e) {
+            throw e;
+        } catch (Exception e) {
+            Log.e(TAG, "Location validation failed: " + e.getMessage(), e);
+            // Continue with submission even if validation fails
+        }
     }
 
     public List<Map<String, String>> getAudits() {

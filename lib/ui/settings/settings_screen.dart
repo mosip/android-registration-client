@@ -81,10 +81,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
     if (settingUiByRole.isEmpty) {
-      return const Center(
-        child: Text(
-          "You don't have access to this page.",
-          style: TextStyle(fontSize: 18, color: Colors.black),
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Center(
+          child: Text(
+            AppLocalizations.of(context)!.no_access_to_this_page,
+            style: TextStyle(fontSize: 18, color: Colors.black),
+          ),
         ),
       );
     }

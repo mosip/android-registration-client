@@ -63,6 +63,9 @@ class _HomePageState extends State<HomePage> {
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await globalProvider.fetchLocation();
+    });
     super.initState();
   }
 

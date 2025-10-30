@@ -13,11 +13,8 @@ import 'package:registration_client/model/process.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
-import 'package:registration_client/ui/process_ui/lost_process.dart';
-import 'package:registration_client/ui/process_ui/correction_process.dart';
+import 'package:registration_client/ui/process_ui/process_type.dart';
 
-import 'package:registration_client/ui/process_ui/new_process.dart';
-import 'package:registration_client/ui/process_ui/update_process.dart';
 import 'package:registration_client/ui/widgets/language_component.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -40,22 +37,22 @@ class _LanguageSelectorState extends State<LanguageSelector> {
 
   _triggerNavigation() {
     if (widget.newProcess.flow == "NEW") {
-      Navigator.pushNamed(context, NewProcess.routeName,
+      Navigator.pushNamed(context, ProcessType.newProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
 
     if (widget.newProcess.flow == "UPDATE") {
-      Navigator.pushNamed(context, UpdateProcess.routeName,
+      Navigator.pushNamed(context, ProcessType.updateProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
 
     if (widget.newProcess.flow == "LOST") {
-      Navigator.pushNamed(context, LostProcess.routeName,
-      arguments: {"process": widget.newProcess});
+      Navigator.pushNamed(context, ProcessType.lostProcess.routeName,
+          arguments: {"process": widget.newProcess});
     }
 
     if (widget.newProcess.flow == "CORRECTION") {
-      Navigator.pushNamed(context, CorrectionProcess.routeName,
+      Navigator.pushNamed(context, ProcessType.correctionProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
   }

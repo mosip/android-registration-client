@@ -85,6 +85,8 @@ public class RegistrationDto extends Observable {
     private OperatorDto reviewer;
     public Map<String, String> SELECTED_CODES = new HashMap<>();
 
+    private GeoLocationDto geoLocationDto;
+
     private String applicationId;
     private String additionalInfoRequestId;
 
@@ -480,5 +482,9 @@ public class RegistrationDto extends Observable {
             documentDto.setRefNumber(reference);
             this.documents.put(fieldId, documentDto);
         }
+    }
+
+    public void setGeoLocation(double  longitude, double latitude) {
+        this.geoLocationDto = new GeoLocationDto(longitude, latitude);
     }
 }

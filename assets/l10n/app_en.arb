@@ -300,6 +300,8 @@
   "supervisor": "Supervisor",
   "online": "Online",
   "offline": "Offline",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",
@@ -329,5 +331,6 @@
   "scan_now": "Scan Now",
   "enter_additional_info_req_id": "Enter Additional Info Request ID",
   "additional_info_req_id": "Additional Info Request ID",
-  "scheduled_job_settings": "Scheduled Job Settings"
+  "scheduled_job_settings": "Scheduled Job Settings",
+  "no_access_to_this_page": "You don't have access to this page"
 }
