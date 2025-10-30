@@ -307,7 +307,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             additionalInfo.put("phone", getAdditionalInfo(phoneObj));
 
             registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
-                    centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId());
+                    centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(), this.registrationDto.getApplicationId());
 
 //        } finally {
             clearRegistration();
