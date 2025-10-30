@@ -328,5 +328,6 @@
   "confirm": "पुष्टि करें",
   "scan_now": "अभी स्कैन करें",
   "enter_additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी दर्ज करें",
-  "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी"
+  "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी",
+  "no_access_to_this_page": "आपको इस पृष्ठ तक पहुँच नहीं है"
 }

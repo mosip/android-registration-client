@@ -328,5 +328,6 @@
   "confirm": "Confirmer",
   "scan_now": "Analyser maintenant",
   "enter_additional_info_req_id": "Entrez l'identifiant de la demande d'information supplémentaire",
-  "additional_info_req_id": "Identifiant de la demande d'information supplémentaire"
+  "additional_info_req_id": "Identifiant de la demande d'information supplémentaire",
+  "no_access_to_this_page": "Vous n'avez pas accès à cette page"
 }

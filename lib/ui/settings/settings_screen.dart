@@ -67,9 +67,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: const Center(
+        child: Center(
           child: Text(
-            "You don't have access to this page.",
+            AppLocalizations.of(context)!.no_access_to_this_page,
             style: TextStyle(fontSize: 18, color: Colors.black),
           ),
         ),
