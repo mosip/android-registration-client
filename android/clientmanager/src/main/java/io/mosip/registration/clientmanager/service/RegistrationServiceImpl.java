@@ -501,8 +501,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     private void validateLocation() throws Exception {
         try {
 
-            String disableFlag = globalParamRepository.getCachedStringGpsDeviceDisableFlag();
-            boolean gpsValidationDisabled = "Y".equalsIgnoreCase(disableFlag);
+            String enableFlag = globalParamRepository.getCachedStringGpsDeviceEnableFlag();
+            boolean gpsValidationDisabled = "Y".equalsIgnoreCase(enableFlag);
             if (gpsValidationDisabled) {
                 Log.w(TAG, "GPS distance validation disabled by config, skipping");
                 return;

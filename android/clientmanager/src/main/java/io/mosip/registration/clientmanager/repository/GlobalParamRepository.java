@@ -149,8 +149,8 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.REFRESHED_LOGIN_TIME);
     }
 
-    public String getCachedStringGpsDeviceDisableFlag() {
-        return globalParamMap.get(RegistrationConstants.GPS_DEVICE_DISABLE_FLAG);
+    public String getCachedStringGpsDeviceEnableFlag() {
+        return globalParamMap.get(RegistrationConstants.GPS_DEVICE_ENABLE_FLAG);
     }
 
     public String getCachedStringMachineToCenterDistance() {
