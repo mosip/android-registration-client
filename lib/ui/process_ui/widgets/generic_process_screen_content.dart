@@ -80,8 +80,6 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
     if (e.id == "preferredLang") {
       return const SizedBox.shrink();
     }
-
-    // For new and correction processes, hide fields where inputRequired is false
     if ((widget.processType == ProcessType.newProcess ||
             widget.processType == ProcessType.correctionProcess) &&
         e.inputRequired == false) {
@@ -151,11 +149,9 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
   }
 
   bool _getDefaultBiometricVisibility() {
-    // For update process, default is false unless explicitly set
     if (widget.processType == ProcessType.updateProcess) {
       return false;
     }
-    // For other processes, default is true
     return true;
   }
 
@@ -177,14 +173,12 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
   }
 
   _checkMvelVisible(Field e) async {
-    // For update process, check for all fields with requiredOn
     if (widget.processType == ProcessType.updateProcess) {
       if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
         await evaluateMVELVisible(jsonEncode(e.toJson()), e);
         await evaluateMVELRequired(jsonEncode(e.toJson()), e);
       }
     } else {
-      // For other processes, only check if field is not required
       if (e.required == false) {
         if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
           await evaluateMVELVisible(jsonEncode(e.toJson()), e);
@@ -195,7 +189,7 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
   }
 
   bool _shouldShowField(Field e) {
-    // For update process, show only fields in selected groups or auto-selected groups
+
     if (widget.processType == ProcessType.updateProcess) {
       if (widget.process.autoSelectedGroups!.contains(e.group)) {
         return true;
@@ -205,7 +199,6 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
       return false;
     }
 
-    // For other processes, check mvel visibility
     if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
       return true;
     }
