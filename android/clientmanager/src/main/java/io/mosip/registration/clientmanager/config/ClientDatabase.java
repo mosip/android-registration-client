@@ -75,7 +75,7 @@ import io.mosip.registration.keymanager.entity.KeyStore;
         version = 1, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
 
-    private static final String DATABASE_NAME = "regClient";
+    private static final String DATABASE_NAME = "regclient";
     private static ClientDatabase INSTANCE;
 
     public synchronized static ClientDatabase getDatabase(Context context) {
