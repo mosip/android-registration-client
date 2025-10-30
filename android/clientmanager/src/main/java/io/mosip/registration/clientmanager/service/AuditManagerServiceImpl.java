@@ -96,10 +96,8 @@ public class AuditManagerServiceImpl implements AuditManagerService {
 
         String tillDate = globalParamRepository.getGlobalParamValue(RegistrationConstants.AUDIT_EXPORTED_TILL);
 
-        String tillDateVal = (tillDate != null) ? tillDate : String.valueOf(System.currentTimeMillis());
-
         try {
-            long tillDateLong = Long.parseLong(tillDateVal);
+            long tillDateLong = (tillDate != null) ? Long.parseLong(tillDate) : System.currentTimeMillis();
             auditRepository.deleteAllAuditsTillDate(tillDateLong);
             globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, null);
             return true;
