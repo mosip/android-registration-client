@@ -145,5 +145,14 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
             Log.e(getClass().getSimpleName(), "Set additional request ID failed: " + Arrays.toString(e.getStackTrace()));
         }
     }
+
+    @Override
+    public void setMachineLocation(@NonNull Double latitude, @NonNull Double longitude, @NonNull RegistrationDataPigeon.Result<Void> result) {
+        try {
+            this.registrationDto.setGeoLocation(longitude, latitude);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(),"Set machine location failed:" + Arrays.toString(e.getStackTrace()));
+        }
+    }
 }
 

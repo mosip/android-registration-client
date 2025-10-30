@@ -64,7 +64,6 @@ import io.mosip.registration_client.api_services.DocumentCategoryApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.GlobalConfigSettingsApi;
-import io.mosip.registration_client.api_services.LocationApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
@@ -81,7 +80,6 @@ import io.mosip.registration_client.model.DemographicsDataPigeon;
 import io.mosip.registration_client.model.DocumentCategoryPigeon;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration_client.model.GlobalConfigSettingsPigeon;
-import io.mosip.registration_client.model.LocationPigeon;
 import io.mosip.registration_client.model.MachinePigeon;
 import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
@@ -185,9 +183,6 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     GlobalConfigSettingsApi globalConfigSettingsApi;
-
-    @Inject
-    LocationApi locationApi;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -295,7 +290,6 @@ public class MainActivity extends FlutterActivity {
         masterDataSyncApi.setCallbackActivity(this, batchJob);
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
-        LocationPigeon.LocationApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), locationApi);
     }
 
     @Override

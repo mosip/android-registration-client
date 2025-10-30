@@ -15,6 +15,7 @@ import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/ui/process_ui/process_type.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 
@@ -28,37 +29,41 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/terms_and_conditions.dart';
+import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/additional_Info_ReqId_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
 import 'radio_button_control.dart';
 
-class UpdateProcessScreenContent extends StatefulWidget {
-  const UpdateProcessScreenContent({
+class GenericProcessScreenContent extends StatefulWidget {
+  const GenericProcessScreenContent({
     super.key,
     required this.context,
     required this.screen,
+    required this.processType,
     required this.process,
   });
+  
   final BuildContext context;
   final Screen screen;
+  final ProcessType processType;
   final Process process;
 
   @override
-  State<UpdateProcessScreenContent> createState() =>
-      _UpdateProcessScreenContentState();
+  State<GenericProcessScreenContent> createState() =>
+      _GenericProcessScreenContentState();
 }
 
-class _UpdateProcessScreenContentState
-    extends State<UpdateProcessScreenContent> {
+class _GenericProcessScreenContentState extends State<GenericProcessScreenContent> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
+  int refreshValue = 0;
 
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
-
     super.initState();
   }
 
@@ -76,6 +81,13 @@ class _UpdateProcessScreenContentState
       return const SizedBox.shrink();
     }
 
+    // For new and correction processes, hide fields where inputRequired is false
+    if ((widget.processType == ProcessType.newProcess ||
+            widget.processType == ProcessType.correctionProcess) &&
+        e.inputRequired == false) {
+      return const SizedBox.shrink();
+    }
+
     switch (e.controlType) {
       case "checkbox":
         if (e.subType == "gender") {
@@ -88,7 +100,7 @@ class _UpdateProcessScreenContentState
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        if (globalProvider.mvelRequiredFields[e.id] ?? false) {
+        if (context.watch<GlobalProvider>().mvelRequiredFields[e.id] ?? _getDefaultBiometricVisibility()) {
           return BiometricCaptureControl(e: e);
         }
         return Container();
@@ -98,6 +110,10 @@ class _UpdateProcessScreenContentState
         }
         if (e.subType == "gender" || e.subType == "residenceStatus") {
           return RadioButtonControl(field: e);
+        }
+        //feature will implement
+        if (e.subType == "selectedHandles") {
+          return const SizedBox.shrink();
         }
         return Text("${e.controlType}");
       case "textbox":
@@ -130,8 +146,17 @@ class _UpdateProcessScreenContentState
           validation: regexPattern,
         );
       default:
-        return Text("${e.controlType}");
+        return (e.controlType != null) ? Text("${e.controlType}") : const SizedBox.shrink();
     }
+  }
+
+  bool _getDefaultBiometricVisibility() {
+    // For update process, default is false unless explicitly set
+    if (widget.processType == ProcessType.updateProcess) {
+      return false;
+    }
+    // For other processes, default is true
+    return true;
   }
 
   evaluateMVELVisible(String fieldData, Field e) async {
@@ -147,45 +172,82 @@ class _UpdateProcessScreenContentState
 
   evaluateMVELRequired(String fieldData, Field e) async {
     registrationTaskProvider.evaluateMVELRequired(fieldData).then((value) {
-      // if (!value && globalProvider.selectedUpdateFields[e.group] == null) {
-      //   globalProvider.removeFieldFromMap(
-      //       e.id!, globalProvider.fieldInputValue);
-      //   registrationTaskProvider.removeDemographicField(e.id!);
-      // }
       globalProvider.setMvelRequiredFields(e.id!, value);
     });
   }
 
-  checkMvelVisible(Field e) async {
-    if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
-      await evaluateMVELVisible(jsonEncode(e.toJson()), e);
-      await evaluateMVELRequired(jsonEncode(e.toJson()), e);
+  _checkMvelVisible(Field e) async {
+    // For update process, check for all fields with requiredOn
+    if (widget.processType == ProcessType.updateProcess) {
+      if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
+        await evaluateMVELVisible(jsonEncode(e.toJson()), e);
+        await evaluateMVELRequired(jsonEncode(e.toJson()), e);
+      }
+    } else {
+      // For other processes, only check if field is not required
+      if (e.required == false) {
+        if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
+          await evaluateMVELVisible(jsonEncode(e.toJson()), e);
+          await evaluateMVELRequired(jsonEncode(e.toJson()), e);
+        }
+      }
     }
+  }
+
+  bool _shouldShowField(Field e) {
+    // For update process, show only fields in selected groups or auto-selected groups
+    if (widget.processType == ProcessType.updateProcess) {
+      if (widget.process.autoSelectedGroups!.contains(e.group)) {
+        return true;
+      } else if (globalProvider.selectedUpdateFields[e.group] != null) {
+        return true;
+      }
+      return false;
+    }
+
+    // For other processes, check mvel visibility
+    if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
+      return true;
+    }
+
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: context.watch<GlobalProvider>().formKey,
-      child: Column(
-        children: [
-          ...widget.screen.fields!.map((e) {
-            checkMvelVisible(e!);
-            if (widget.process.autoSelectedGroups!.contains(e.group)) {
-              return widgetType(e);
-            } else if (globalProvider.selectedUpdateFields[e.group] != null) {
-              return widgetType(e);
-            }
-            // else if (context
-            //         .watch<GlobalProvider>()
-            //         .mvelRequiredFields[e.id] ??
-            //     false) {
-            //   return widgetType(e);
-            // }
-            return Container();
-          }).toList(),
+    return Column(
+      children: [
+        if (widget.screen.preRegFetchRequired == true) ...[
+          PreRegDataControl(
+              screen: widget.screen,
+              onFetched: () {
+                setState(() {
+                  refreshValue = 1;
+                });
+              }),
         ],
-      ),
+
+        if (widget.screen.additionalInfoRequestIdRequired == true) ...[
+          const AdditionalInfoReqIdControl(),
+        ],
+        
+        (context.watch<GlobalProvider>().preRegControllerRefresh)
+            ? const CircularProgressIndicator()
+            : Form(
+                key: context.watch<GlobalProvider>().formKey,
+                child: Column(
+                  children: [
+                    ...widget.screen.fields!.map((e) {
+                      _checkMvelVisible(e!);
+                      if (_shouldShowField(e)) {
+                        return widgetType(e);
+                      }
+                      return Container();
+                    }).toList(),
+                  ],
+                ),
+              ),
+      ],
     );
   }
 }

@@ -74,4 +74,15 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
             result.error(e);
         }
     }
+
+    @Override
+    public void getGpsEnableFlag(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
+        String gpsFlag = "";
+        try {
+            gpsFlag = globalParamRepository.getCachedStringGpsDeviceDisableFlag();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching GPS enable flag", e);
+        }
+        result.success(gpsFlag);
+    }
 }

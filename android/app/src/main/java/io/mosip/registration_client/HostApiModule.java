@@ -66,7 +66,6 @@ import io.mosip.registration_client.api_services.DocumentDetailsApi;
 
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
 import io.mosip.registration_client.api_services.GlobalConfigSettingsApi;
-import io.mosip.registration_client.api_services.LocationApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
@@ -249,16 +248,6 @@ public class HostApiModule {
     @Singleton
     LocationValidationService provideLocationValidationService() {
         return new LocationValidationServiceImpl();
-    }
-
-    @Provides
-    @Singleton
-    LocationApi getLocationApiImpl(RegistrationService registrationService, 
-                                   GlobalParamRepository globalParamRepository,
-                                   LocationValidationService locationValidationService,
-                                   MasterDataService masterDataService,
-                                   RegistrationCenterRepository registrationCenterRepository) {
-        return new LocationApi(registrationService, globalParamRepository, locationValidationService, masterDataService, registrationCenterRepository);
     }
 }
 

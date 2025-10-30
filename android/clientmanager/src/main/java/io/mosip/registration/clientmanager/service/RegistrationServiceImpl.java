@@ -500,6 +500,14 @@ public class RegistrationServiceImpl implements RegistrationService {
      */
     private void validateLocation() throws Exception {
         try {
+
+            String disableFlag = globalParamRepository.getCachedStringGpsDeviceDisableFlag();
+            boolean gpsValidationDisabled = "Y".equalsIgnoreCase(disableFlag);
+            if (gpsValidationDisabled) {
+                Log.w(TAG, "GPS distance validation disabled by config, skipping");
+                return;
+            }
+
             GeoLocationDto geoLocation = this.registrationDto.getGeoLocationDto();
             if (geoLocation == null) {
                 Log.w(TAG, "Geo location not available, skipping validation");
@@ -527,8 +535,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 
             if (centerLatStr == null || centerLonStr == null ||
                 centerLatStr.isEmpty() || centerLonStr.isEmpty()) {
-                Log.w(TAG, "Center coordinates not available, skipping distance validation");
-                return;
+                Log.e(TAG, "Center coordinates not available");
+                throw new ClientCheckedException(context, R.string.err_004);
             }
 
             try {
@@ -551,9 +559,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
                 // Validate distance
                 if (distance > maxAllowedDistance) {
-                    String errorMsg = String.format("Machine is %.2f km from center (Max allowed: %.2f km)",
-                        distance, maxAllowedDistance);
-                    Log.e(TAG, errorMsg);
+                    Log.e(TAG, "Distance not matched with allowed range");
                     throw new ClientCheckedException(context, R.string.err_004);
                 }
 
