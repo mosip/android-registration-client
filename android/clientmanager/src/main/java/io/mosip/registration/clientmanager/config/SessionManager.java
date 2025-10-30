@@ -61,7 +61,7 @@ public class SessionManager {
         if(roles.isEmpty())
             throw new Exception("Unauthorized access, No roles");
 
-        if(!roles.contains("REGISTRATION_SUPERVISOR") && !roles.contains("REGISTRATION_OFFICER"))
+        if(!roles.contains("REGISTRATION_SUPERVISOR") && !roles.contains("REGISTRATION_OFFICER") && !roles.contains("REGISTRATION_OPERATOR"))
             throw new Exception("Unauthorized access, Required roles not found");
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),

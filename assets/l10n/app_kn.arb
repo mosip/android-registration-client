@@ -330,5 +330,6 @@
   "confirm": "ದೃಢೀಕರಿಸಿ",
   "scan_now": "ಈಗಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
   "enter_additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ ನಮೂದಿಸಿ",
-  "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ"
+  "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ",
+  "no_access_to_this_page": "ನಿಮಗೆ ಈ ಪುಟಕ್ಕೆ ಪ್ರವೇಶವಿಲ್ಲ"
 }
