@@ -24,21 +24,22 @@ public interface MasterDataService {
     /**
      * Fetches policy key
      */
-    void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync);
+    void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync, String jobId);
 
     /**
      * Fetches all the master data
      *
      * @throws Exception
      */
-    void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync) throws Exception;
+    void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync, String jobId) throws Exception;
+//    void syncMasterDataWithJob(Runnable onFinish, int retryNo, boolean isManualSync, String jobId) throws Exception;
 
     /**
      * Fetches all the global params from the server and sync locally.
      *
      * @throws Exception
      */
-    void syncGlobalParamsData(Runnable onFinish, boolean isManualSync) throws Exception;
+    void syncGlobalParamsData(Runnable onFinish, boolean isManualSync, String jobId) throws Exception;
 
     /**
      * Fetches latest Id schema and UI specs
@@ -52,11 +53,13 @@ public interface MasterDataService {
      *
      * @throws Exception
      */
-    void syncUserDetails(Runnable onFinish, boolean isManualSync) throws Exception;
+    void syncUserDetails(Runnable onFinish, boolean isManualSync, String jobId) throws Exception;
 
-    void syncCACertificates(Runnable onFinish, boolean isManualSync);
+    void syncCACertificates(Runnable onFinish, boolean isManualSync, String jobId);
 
     String onResponseComplete();
+
+    void logLastSyncCompletionDateTime(String jobId);
 
 
     /**

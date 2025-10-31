@@ -8,24 +8,19 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
-import io.mosip.registration.clientmanager.spi.MasterDataService;
-
-/**
- * Class for implementing PacketStatusSyncJob service
- *
- * @author Anshul vanawat
- * @since 1.0.0
- */
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 
 @SuppressLint("SpecifyJobSchedulerIdRange")
-public class ConfigDataSyncJob extends SyncJobServiceBase {
+public class DeleteAuditLogsJob extends SyncJobServiceBase {
 
-    private static final String TAG = ConfigDataSyncJob.class.getSimpleName();
+    private static final String TAG = DeleteAuditLogsJob.class.getSimpleName();
 
     @Inject
-    public MasterDataService masterDataService;
+    AuditManagerService auditManagerService;
 
-    public ConfigDataSyncJob() {
+    
+
+    public DeleteAuditLogsJob() {
         configureBuilder();
     }
 
@@ -39,14 +34,17 @@ public class ConfigDataSyncJob extends SyncJobServiceBase {
     public boolean triggerJob(int jobId) {
         Log.d(TAG, TAG + " Started");
         try {
-            masterDataService.syncGlobalParamsData(() -> {}, true, "");
-            long timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+            // Do not modify AUDIT_EXPORTED_TILL here; rely on existing configured value
+            boolean ok = auditManagerService.deleteAuditLogs();
+            long nowMs = System.currentTimeMillis();
+            long timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(nowMs);
             logJobTransaction(jobId, timeStampInSeconds);
-            return true;
+            return ok;
         } catch (Exception e) {
             Log.e(TAG, TAG + " failed", e);
         }
-        Log.d(TAG, TAG + " Completed");
         return false;
     }
 }
+
+
