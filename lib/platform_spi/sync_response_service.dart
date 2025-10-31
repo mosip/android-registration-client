@@ -10,19 +10,25 @@ import 'package:registration_client/platform_android/sync_response_service_impl.
 
 abstract class SyncResponseService {
   Future<SyncTime> getLastSyncTime();
-  Future<Sync> getPolicyKeySync(bool isManualSync);
-  Future<Sync> getGlobalParamsSync(bool isManualSync);
-  Future<Sync> getUserDetailsSync(bool isManualSync);
+  Future<Sync> getPolicyKeySync(bool isManualSync, String jobId);
+  Future<Sync> getGlobalParamsSync(bool isManualSync, String jobId);
+  Future<Sync> getUserDetailsSync(bool isManualSync, String jobId);
   Future<Sync> getIDSchemaSync(bool isManualSync);
-  Future<Sync> getMasterDataSync(bool isManualSync);
-  Future<Sync> getCaCertsSync(bool isManualSync);
+  Future<Sync> getMasterDataSync(bool isManualSync, String jobId);
+  Future<Sync> getCaCertsSync(bool isManualSync, String jobId);
   Future<String> batchJob();
-  Future<String> getPreRegIds();
+  Future<String> getPreRegIds(String jobId);
 
   Future<List<String?>> getReasonList(String langCode);
 
-  Future<Sync> getKernelCertsSync(bool isManualSync);
+  Future<Sync> getKernelCertsSync(bool isManualSync, String jobId);
   Future<bool> getSyncAndUploadInProgressStatus();
+  Future<bool> deleteAuditLogs(String jobId);
+  Future<bool> deletePreRegRecords(String jobId);
+
+  Future<List<String?>> getActiveSyncJobs();
+  Future<String> getLastSyncTimeByJobId(String jobId);
+  Future<String> getNextSyncTimeByJobId(String jobId);
 
   factory SyncResponseService() => getSyncResponseServiceImpl();
 }

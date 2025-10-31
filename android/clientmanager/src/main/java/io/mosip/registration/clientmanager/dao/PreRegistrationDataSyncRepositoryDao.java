@@ -2,6 +2,7 @@
 package io.mosip.registration.clientmanager.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -45,5 +46,8 @@ public interface PreRegistrationDataSyncRepositoryDao {
 
     @Query("SELECT * FROM pre_registration_list WHERE id = :id LIMIT 1")
     PreRegistrationList getById(String id);
+
+    @Delete
+    void deleteAll(List<PreRegistrationList> preRegistrationList);
 
 }
