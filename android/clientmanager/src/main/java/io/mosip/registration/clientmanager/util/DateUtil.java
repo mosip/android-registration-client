@@ -9,6 +9,9 @@ import java.util.Date;
 
 public class DateUtil {
 
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MMM-dd");
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+
     DateFormat dateFormat;
     DateFormat timeFormat;
 
@@ -20,14 +23,8 @@ public class DateUtil {
     public String getDateTime(long dateTimeMillis) {
         Date date = new Date(dateTimeMillis);
 
-
-        // Date format (yyyy-MM-dd) and time format (HH:mm:ss)
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-
-        // These will automatically use the system's local timezone
-        String dateStr = dateFormat.format(date);
-        String timeStr = timeFormat.format(date);
+        String dateStr = DATE_FORMAT.format(date);
+        String timeStr = TIME_FORMAT.format(date);
 
         return String.format("%s %s", dateStr, timeStr);
     }

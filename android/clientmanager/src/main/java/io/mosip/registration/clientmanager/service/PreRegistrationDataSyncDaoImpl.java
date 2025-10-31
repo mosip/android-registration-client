@@ -92,7 +92,6 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
                 return Timestamp.valueOf(preRegistrationList.getLastUpdatedPreRegTimeStamp());
             } catch (Exception e) {
                 Log.e(TAG, "Error parsing timestamp: " + e.getMessage());
-                return null;
             }
         }
         return null;

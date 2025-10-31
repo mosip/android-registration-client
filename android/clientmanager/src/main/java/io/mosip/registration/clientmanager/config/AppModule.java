@@ -208,7 +208,7 @@ public class AppModule {
                                                    Biometrics095Service biometricService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, preRegistrationDataSyncServiceProvider, registrationCenterRepository,locationValidationService, biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
     }
 
     @Provides

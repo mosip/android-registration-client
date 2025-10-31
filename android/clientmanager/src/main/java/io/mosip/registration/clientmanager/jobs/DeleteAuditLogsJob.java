@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
-import io.mosip.registration.clientmanager.constant.RegistrationConstants;
-import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 
 @SuppressLint("SpecifyJobSchedulerIdRange")
@@ -20,8 +18,7 @@ public class DeleteAuditLogsJob extends SyncJobServiceBase {
     @Inject
     AuditManagerService auditManagerService;
 
-    @Inject
-    GlobalParamRepository globalParamRepository;
+    
 
     public DeleteAuditLogsJob() {
         configureBuilder();
@@ -37,13 +34,9 @@ public class DeleteAuditLogsJob extends SyncJobServiceBase {
     public boolean triggerJob(int jobId) {
         Log.d(TAG, TAG + " Started");
         try {
+            // Do not modify AUDIT_EXPORTED_TILL here; rely on existing configured value
+            boolean ok = auditManagerService.deleteAuditLogs();
             long nowMs = System.currentTimeMillis();
-            long threeDaysMs = TimeUnit.DAYS.toMillis(3);
-            long cutoff = nowMs - threeDaysMs;
-            // Use existing deletion flow that deletes before AUDIT_EXPORTED_TILL
-            globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, String.valueOf(cutoff));
-            boolean ok = auditManagerService.deleteAuditLogs(); 
-
             long timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(nowMs);
             logJobTransaction(jobId, timeStampInSeconds);
             return ok;
