@@ -138,10 +138,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     tabs: [
                       for (final settings in settingUiByRole)
                         Tab(
-                          text:
-                          settings.label?[context.read<GlobalProvider>().selectedLanguage] ??
-                              settings.label?['eng'] ??
-                              (settings.label?.values.first ?? 'Unknown'),
+                          text: _getTabLabel(settings, context),
                         ),
                     ],
                   ),
@@ -160,6 +157,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
+  }
+  String _getTabLabel(Settings settings, BuildContext context) {
+    final controllerName = _getControllerName(settings);
+
+    switch (controllerName) {
+      case 'ScheduledJobsSettingsController':
+        return AppLocalizations.of(context)!.scheduled_job_settings;
+      case 'GlobalConfigSettingsController':
+        return AppLocalizations.of(context)!.global_config_settings;
+      case 'DeviceSettingsController':
+        return AppLocalizations.of(context)!.device_settings;
+      default:
+        return AppLocalizations.of(context)!.settings;
+    }
   }
 
   String _getControllerName(Settings settings) {

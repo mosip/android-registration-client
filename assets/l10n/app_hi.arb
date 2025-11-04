@@ -332,5 +332,7 @@
   "enter_additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी दर्ज करें",
   "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी",
   "no_access_to_this_page": "आपको इस पृष्ठ तक पहुँच नहीं है",
-  "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स"
+  "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स",
+  "global_config_settings": "वैश्विक कॉन्फ़िगरेशन सेटिंग्स",
+  "device_settings": "डिवाइस सेटिंग्स"
 }

@@ -305,7 +305,7 @@
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",
-  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{Machine not found!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{Your device is not onboarded. Please contact the administrator for onboarding!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -332,5 +332,7 @@
   "enter_additional_info_req_id": "Enter Additional Info Request ID",
   "additional_info_req_id": "Additional Info Request ID",
   "scheduled_job_settings": "Scheduled Job Settings",
-  "no_access_to_this_page": "You don't have access to this page"
+  "no_access_to_this_page": "You don't have access to this page",
+    "global_config_settings": "Global Config Settings",
+    "device_settings": "Device Settings"
 }
