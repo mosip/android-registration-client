@@ -332,5 +332,6 @@
   "enter_additional_info_req_id": "Enter Additional Info Request ID",
   "additional_info_req_id": "Additional Info Request ID",
   "scheduled_job_settings": "Scheduled Job Settings",
-  "no_access_to_this_page": "You don't have access to this page"
+  "no_access_to_this_page": "You don't have access to this page",
+  "device_settings": "Device Settings"
 }

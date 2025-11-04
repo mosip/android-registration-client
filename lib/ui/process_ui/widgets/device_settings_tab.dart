@@ -68,9 +68,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.settings.label?[widget.selectedLan] ??
-                        widget.settings.label?['eng'] ??
-                        (widget.settings.label?.values.first ?? 'UnKnown'),
+                    AppLocalizations.of(context)!.device_settings,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
