@@ -787,8 +787,15 @@ public class RegistrationServiceImpl implements RegistrationService {
         for(String key : registrationDto.EXCEPTIONS.keySet()) {
             String fieldId = key.split("_")[0];
             String bioAttribute = key.split("_")[1];
-            BIR bir = buildBIR(new BiometricsDto(null, bioAttribute, null, null, true, null, null, false, 0, 0.0, 0.0f));
-            capturedBiometrics.getOrDefault(fieldId, new ArrayList<>()).add(bir);
+            registrationDto.EXCEPTIONS.get(key).forEach((v) -> {
+                Modality modality = Modality.getModality(v);
+                BiometricsDto exceptionBiometricDto = new BiometricsDto(
+                        modality.getSingleType().value(),
+                        Modality.getSpecBioSubType(v),
+                        null, null, true, null, null, false, 0, 0.0, 0.0f);
+                BIR bir = buildBIR(exceptionBiometricDto);
+                capturedBiometrics.getOrDefault(fieldId, new ArrayList<>()).add(bir);
+            });
             exceptionMetaInfo.computeIfAbsent(fieldId, field -> new HashMap<>()).put(bioAttribute,
                     registrationDto.EXCEPTIONS.get(key));
         }

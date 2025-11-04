@@ -695,7 +695,7 @@ class _GenericProcessState extends State<GenericProcess>
           }
           RegistrationSubmitResponse registrationSubmitResponse =
               await registrationTaskProvider.submitRegistrationDto(username);
-          if (registrationSubmitResponse.errorCode!.isNotEmpty) {
+          if (registrationSubmitResponse.errorCode != null && registrationSubmitResponse.errorCode!.isNotEmpty) {
             _showInSnackBar(registrationSubmitResponse.errorCode!);
             return;
           }
