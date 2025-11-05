@@ -28,41 +28,51 @@ class ScheduledJobsSettings extends StatelessWidget {
         .map((e) => _ScheduledJob.fromJson(json.decode(e) as Map<String, dynamic>))
         .toList();
 
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.scheduled_job_settings,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final bottomSpacer = bottomInset + kBottomNavigationBarHeight + 230;
+    final mediaSize = MediaQuery.of(context).size;
+    final bool isTablet = mediaSize.shortestSide <= 450;
+    final int crossAxisCount = isTablet ? 1 : 2;
+    final double childAspectRatio = MediaQuery.of(context).orientation == Orientation.landscape ? 5 : 3;
+    return SafeArea(
+      top: false,
+      bottom: true,
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(12.0),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.scheduled_job_settings,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 12),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              int crossAxisCount = 1;
-              if (constraints.maxWidth >= 1200) {
-                crossAxisCount = 3;
-              } else if (constraints.maxWidth >= 700) {
-                crossAxisCount = 2;
-              }
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 3.5,
-                ),
-                itemCount: jobs.length,
-                itemBuilder: (context, index) {
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                  mainAxisSpacing: 8,
+                crossAxisSpacing: 12,
+                  childAspectRatio: childAspectRatio,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
                   final job = jobs[index];
                   return _JobCard(job: job, onRefresh: onRefreshJob);
                 },
-              );
-            },
+                childCount: jobs.length,
+              ),
+            ),
           ),
+          SliverToBoxAdapter(child: SizedBox(height: bottomSpacer)),
         ],
       ),
     );
@@ -184,7 +194,7 @@ class _JobCardState extends State<_JobCard> {
         boxShadow: const [BoxShadow(color: Color(0x11000000), blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
