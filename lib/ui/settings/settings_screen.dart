@@ -179,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       case 'ScheduledJobsSettingsController':
         return ScheduledJobsSettings(jobJsonList: activeJobs);
       case 'GlobalConfigSettingsController':
-        return const GlobalConfigSettingsTab();
+        return GlobalConfigSettingsTab(settings: settings,selectedLan: selectedLang);
       case 'DeviceSettingsController':
         return DeviceSettingsTab(settings: settings, selectedLan: selectedLang);
       default:
