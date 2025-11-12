@@ -99,6 +99,9 @@ public class Registration {
     @ColumnInfo(name = "upd_dtimes")
     private Long updDtimes;
 
+    @ColumnInfo(name = "id")
+    private String id;
+
     @Override
     public String toString() {
         return packetId + "\n" + (serverStatus == null ? clientStatus : serverStatus);

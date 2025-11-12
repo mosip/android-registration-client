@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/dashboard/user_dashboard.dart';
 import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
@@ -16,6 +17,7 @@ import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../settings/settings_screen.dart';
 import '../../profile/profile.dart';
 
 class MobileHomePage extends StatefulWidget {
@@ -24,20 +26,22 @@ class MobileHomePage extends StatefulWidget {
     required this.operationalTasks,
     required this.getProcessUI,
     required this.syncData,
+    required this.getSettingsUI,
   });
   final List<Map<String, dynamic>> operationalTasks;
   final Function getProcessUI;
   final Function syncData;
+  final Function getSettingsUI;
 
   @override
   State<MobileHomePage> createState() => _MobileHomePageState();
 }
 
 class _MobileHomePageState extends State<MobileHomePage> {
-  int selectedTab = 1;
+  int selectedTab = 2;
 
   changeTab(int index) {
-    if (index == 0 || index == 1 || index == 2) {
+    if (index == 0 || index == 1 || index == 2 || index == 3) {
       setState(() {
         selectedTab = index;
       });
@@ -46,11 +50,13 @@ class _MobileHomePageState extends State<MobileHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List bottomNavPages = [
+    List<Widget> bottomNavPages = [
       const UserDashBoard(),
-      // const Center(
-      //   child: Text("Settings"),
-      // ),
+      SettingsScreen(
+        getSettingsUI: (BuildContext context) async {
+          return await widget.getSettingsUI(context);
+        }
+      ),
       Container(
         height: ScreenUtil().screenHeight,
         width: ScreenUtil().screenWidth,
@@ -81,30 +87,30 @@ class _MobileHomePageState extends State<MobileHomePage> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _getBottomNavigationBar(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              bottomNavPages[selectedTab],
-              selectedTab != 1
-                  ? Text(
-                      "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
-                      style: TextStyle(
-                          color: const Color(0xff6F6E6E),
-                          fontSize: 14,
-                          fontWeight: regular),
-                    )
-                  : const SizedBox(),
-              selectedTab != 1
-                  ? Text(
-                      "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
-                      style: TextStyle(
-                          color: const Color(0xff6F6E6E),
-                          fontSize: 14,
-                          fontWeight: regular),
-                    )
-                  : const SizedBox(),
+        body: Column(
+          children: [
+            Expanded(
+              child: bottomNavPages[selectedTab],
+            ),
+            if (selectedTab != 1) ...[
+              Text(
+                "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
+                style: TextStyle(
+                  color: const Color(0xff6F6E6E),
+                  fontSize: 14,
+                  fontWeight: regular,
+                ),
+              ),
+              Text(
+                "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
+                style: TextStyle(
+                  color: const Color(0xff6F6E6E),
+                  fontSize: 14,
+                  fontWeight: regular,
+                ),
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
@@ -127,16 +133,16 @@ class _MobileHomePageState extends State<MobileHomePage> {
             title: AppLocalizations.of(context)!.dashboard,
           ),
         ),
-        // BottomNavigationBarItem(
-        //   label: "",
-        //   icon: BottomNavBarWidget(
-        //     index: 1,
-        //     selectedIndex: selectedTab,
-        //     imagePath: settingsIcon,
-        //     selectedImagePath: settingsSelectedIcon,
-        //     title: AppLocalizations.of(context)!.settings,
-        //   ),
-        // ),
+        BottomNavigationBarItem(
+          label: "",
+          icon: BottomNavBarWidget(
+            index: 1,
+            selectedIndex: selectedTab,
+            imagePath: settingsIcon,
+            selectedImagePath: settingsSelectedIcon,
+            title: AppLocalizations.of(context)!.settings,
+          ),
+        ),
         BottomNavigationBarItem(
           label: "",
           icon: SizedBox(
@@ -162,7 +168,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
         BottomNavigationBarItem(
           label: "",
           icon: BottomNavBarWidget(
-            index: 2,
+            index: 3,
             selectedIndex: selectedTab,
             imagePath: profileIcon,
             selectedImagePath: profileSelectedIcon,

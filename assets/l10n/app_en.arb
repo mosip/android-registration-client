@@ -56,6 +56,12 @@
   "network_error": "No network found!",
   "delete": "DELETE",
   "newRegistrationProcess": "{language, select, eng{New Registration} ara{تسجيل جديد} fra{Nouvelle inscription} other{New Registration}}",
+  "inactive_logout_heading": "You have been idle",
+  "inactive_logout_description": "For security reasons, you'll be logged out in $TIMER",
+  "seconds": " Seconds.",
+  "minutes": " Minutes.",
+  "logout_button": "LOG OUT",
+  "stay_logged_in_button": "STAY LOGGED IN",
   "@newRegistrationProcess": {
     "description": "New Registration Process Header",
     "placeholders": {
@@ -180,6 +186,7 @@
   "system_storage_usage": "System Storage Usage",
   "download_pre_registration_data": "Download Pre-Registration Data",
   "update_operator_biomterics": "Update Operator Biometrics",
+  "onboard_operator_biomterics":"Onboard Operator Biometrics",
   "appliction_upload": "Application Upload",
   "check_updates": "Check Updates",
   "center_remap_sync": "Center Remap Sync.",
@@ -293,6 +300,8 @@
   "supervisor": "Supervisor",
   "online": "Online",
   "offline": "Offline",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",
@@ -312,5 +321,16 @@
   "okay": "OKAY",
   "no_internet_connection": "No Internet Connection!",
   "connect_and_retry": "Please connect with internet and retry.",
-  "retry": "RETRY"
+  "retry": "RETRY",
+  "key": "Key",
+  "server_value": "Server Value",
+  "local_value": "Local Value",
+  "no_configuration_parameters_found": "No configuration parameters found",
+  "no_configurations_found": "No configurations found",
+  "confirm": "CONFIRM",
+  "scan_now": "Scan Now",
+  "enter_additional_info_req_id": "Enter Additional Info Request ID",
+  "additional_info_req_id": "Additional Info Request ID",
+  "scheduled_job_settings": "Scheduled Job Settings",
+  "no_access_to_this_page": "You don't have access to this page"
 }

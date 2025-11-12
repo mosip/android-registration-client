@@ -8,7 +8,7 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
-import regclient.api.ConfigManager;
+import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
 import regclient.api.KeycloakUserManager;
 import regclient.page.AcknowledgementPage;
@@ -174,7 +174,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		loginPage.clickOnNextButton();
 
-		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		loginPage.clickOnloginButton();
 
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
@@ -457,7 +457,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Verify if authentication details page is displayed");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
-		authenticationPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			acknowledgementPage=new AcknowledgementPageEnglish(driver);
@@ -539,8 +539,16 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		pendingApproval.clickOnSubmitButton();
 
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
+		
+		pendingApproval.clickOnSubmitButton();
+		assertTrue(pendingApproval.isInvalidemptyUsernameSumbitButtonEnbled(), "Verify if error empty username submit button enabled");	
+		
+		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser+"123");
+		
+		assertTrue(pendingApproval.isInvalidUsernameMessageDisplayed(), "Verify if invalid username messgae is displayed");	    
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
-		pendingApproval.enterPassword(ConfigManager.getIAMUsersPassword());
+		
+		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
 		pendingApproval.clickOnBackButton();
 		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");
@@ -610,7 +618,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(loginPage.isLoginPageLoaded(),"verify if login page is displayeded in Selected language");		
 	}
 
-	@Test
+	
 	public void newRegistrationAdultUploadMultipleDoccuments(){	
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
@@ -655,7 +663,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		loginPage.clickOnNextButton();
 
-		loginPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		loginPage.clickOnloginButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			registrationTasksPage=new RegistrationTasksPageEnglish(driver);
@@ -1131,8 +1139,11 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 			authenticationPage=new AuthenticationPageArabic(driver);
 		}
 		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Verify if authentication details page is displayed");
+		authenticationPage.clickOnAuthenticatenButton();
+		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),"Username/password required error should be displayed");
+		authenticationPage.clickOnAuthenticatenButton();
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
-		authenticationPage.enterPassword(ConfigManager.getIAMUsersPassword());
+		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
 		if(TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			acknowledgementPage=new AcknowledgementPageEnglish(driver);
@@ -1226,7 +1237,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(), "Verify if Supervisor Authentication page displayed");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
-		pendingApproval.enterPassword(ConfigManager.getIAMUsersPassword());
+		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
 		pendingApproval.clickOnBackButton();
 		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(), "Verify if application upload tite displayed");

@@ -17,6 +17,8 @@ abstract class RegistrationService {
       bool isPreview, Map<String, String> templateValues);
   Future<RegistrationSubmitResponse> submitRegistrationDto(String makerName);
   Future<void> setApplicationId(String applicationId);
+  Future<void> setAdditionalReqId(String additionalReqId);
+  Future<void> setMachineLocation(double latitude, double longitude);
 
   factory RegistrationService() => getRegistrationServiceImpl();
 }

@@ -181,7 +181,7 @@ class _ApproveTableState extends State<ApproveTable> {
                         showTemplate();
                         log("show");
                       },
-                      child: Text(regCurrent.packetId,
+                      child: Text(regCurrent.appId ?? regCurrent.id!,
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2),

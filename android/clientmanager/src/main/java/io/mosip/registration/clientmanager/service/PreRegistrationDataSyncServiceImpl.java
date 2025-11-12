@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.service;
 
+import static android.content.ContentValues.TAG;
 import static io.mosip.registration.clientmanager.config.SessionManager.USER_NAME;
 
 import android.content.Context;
@@ -12,11 +13,14 @@ import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.dto.ErrorResponseDto;
 import io.mosip.registration.clientmanager.dto.PreRegArchiveDto;
 import io.mosip.registration.clientmanager.dto.PreRegistrationDataSyncDto;
 import io.mosip.registration.clientmanager.dto.PreRegistrationDataSyncRequestDto;
 import io.mosip.registration.clientmanager.dto.PreRegistrationDto;
 import io.mosip.registration.clientmanager.dto.PreRegistrationIdsDto;
+import io.mosip.registration.clientmanager.dto.ResponseDto;
+import io.mosip.registration.clientmanager.dto.SuccessResponseDto;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
@@ -37,6 +41,8 @@ import retrofit2.Response;
 import androidx.annotation.NonNull;
 
 import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 import java.time.Instant;
 import java.util.Date;
 import java.sql.Timestamp;
@@ -45,7 +51,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -88,13 +97,18 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     }
 
     @Override
-    public void fetchPreRegistrationIds(Runnable onFinish) {
+    public void fetchPreRegistrationIds(Runnable onFinish, String jobId) {
         Log.i(TAG,"Fetching Pre-Registration Id's started {}");
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result = APPLICATION_ID_SYNC_FAILED;
             onFinish.run();
+            try {
+                masterDataService.logLastSyncCompletionDateTime(jobId);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log pre reg data sync completion", e);
+            }
             return;
         }
 
@@ -135,9 +149,9 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                                 getPreRegistrationPackets(preRegIds);
                                 Log.i(TAG,"Fetching Application data ended successfully");
                             }
-                           Toast.makeText(context, "Application Id Sync Completed", Toast.LENGTH_LONG).show();
-                           result = "";
-                           onFinish.run();
+                            Toast.makeText(context, "Application Id Sync Completed", Toast.LENGTH_LONG).show();
+                            result = "";
+                            onFinish.run();
                         } catch (Exception e) {
                             result = APPLICATION_ID_SYNC_FAILED;
                             Log.e(TAG, APPLICATION_ID_SYNC_FAILED, e);
@@ -214,7 +228,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
 
     private PreRegistrationList fetchPreRegistration(String preRegistrationId, String lastUpdatedTimeStamp) throws Exception {
         Log.i(TAG,"Fetching Pre-Registration started for {}"+ preRegistrationId);
-       // PreRegistrationList preRegistration;
+        // PreRegistrationList preRegistration;
 
         /* Check in Database whether required record already exists or not */
         preRegistration = this.preRegistrationDao.get(preRegistrationId);
@@ -263,7 +277,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     }
 
     private PreRegistrationList downloadAndSavePacket(@NonNull String preRegistrationId,
-                                                     String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
+                                                      String lastUpdatedTimeStamp) throws ClientCheckedException, ExecutionException, InterruptedException {
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
@@ -307,7 +321,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     }
 
     private PreRegistrationList preparePreRegistration(CenterMachineDto centerMachineDto,
-            PreRegistrationDto preRegistrationDto, String appointmentDate,String lastUpdatedTimeStamp) {
+                                                       PreRegistrationDto preRegistrationDto, String appointmentDate,String lastUpdatedTimeStamp) {
 
         LocalDateTime currentUTCTime = LocalDateTime.now(ZoneOffset.UTC);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -318,7 +332,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         preRegistrationList.setId(id);
         preRegistrationList.setPreRegId(preRegistrationDto.getPreRegId());
         if(appointmentDate!=null){
-           preRegistrationList.setAppointmentDate(appointmentDate);
+            preRegistrationList.setAppointmentDate(appointmentDate);
         }
         preRegistrationList.setLastUpdatedPreRegTimeStamp(lastUpdatedTimeStamp == null ?
                 String.valueOf(Timestamp.valueOf(formattedCurrentUTCTime)) : lastUpdatedTimeStamp);
@@ -363,5 +377,130 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         cal.setTime(reqTime);
 
         return formatDate(cal);
+    }
+
+    /**
+     Fetch and delete records based on configured days
+     */
+    public synchronized ResponseDto fetchAndDeleteRecords() {
+
+        ResponseDto responseDTO = new ResponseDto();
+        if (getGlobalConfigValueOf(RegistrationConstants.PRE_REG_DELETION_CONFIGURED_DAYS) != null) {
+
+            Calendar startCal = Calendar.getInstance();
+            startCal.add(Calendar.DATE, -(Integer
+                    .parseInt(Objects.requireNonNull(getGlobalConfigValueOf(RegistrationConstants.PRE_REG_DELETION_CONFIGURED_DAYS)))));
+
+            Date startDate = Date.from(startCal.toInstant());
+
+            // fetch the records that needs to be deleted
+            List<PreRegistrationList> preRegList = preRegistrationDao.fetchRecordsToBeDeleted(startDate);
+
+            deletePreRegRecords(responseDTO, preRegList);
+        }
+
+        return responseDTO;
+    }
+
+    /**
+     * Delete pre-registration records
+     */
+    public void deletePreRegRecords(ResponseDto responseDTO, final List<PreRegistrationList> preRegList) {
+
+        if (preRegList != null && !preRegList.isEmpty()) {
+
+            List<PreRegistrationList> preRegistrationsToBeDeletedList = new LinkedList<>();
+
+            for (PreRegistrationList preRegRecord : preRegList) {
+
+                if (null != preRegRecord) {
+                    try {
+                        File preRegPacket = FileUtils.getFile(preRegRecord.getPacketPath());
+                        if (preRegPacket.exists() && preRegPacket.delete()) {
+                            preRegistrationsToBeDeletedList.add(preRegRecord);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error deleting packet file: " + e.getMessage());
+                    }
+                }
+            }
+
+            if (!preRegistrationsToBeDeletedList.isEmpty()) {
+                deleteRecords(responseDTO, preRegistrationsToBeDeletedList);
+            } else {
+                setErrorResponse(responseDTO, RegistrationConstants.PRE_REG_DELETE_FAILURE, null);
+            }
+        } else {
+            setSuccessResponse(responseDTO, RegistrationConstants.PRE_REG_DELETE_SUCCESS, null);
+        }
+    }
+
+    /**
+     * Delete records.
+     */
+    private ResponseDto deleteRecords(ResponseDto responseDTO, List<PreRegistrationList> preRegList) {
+
+        try {
+            preRegistrationDao.deleteAll(preRegList);
+
+            setSuccessResponse(responseDTO, RegistrationConstants.PRE_REG_DELETE_SUCCESS, null);
+        } catch (RuntimeException runtimeException) {
+            Log.i(TAG, "REGISTRATION - PRE_REGISTRATION_DELETE - PRE_REGISTRATION_DATA_SYNC_SERVICE_IMPL - " + runtimeException.getMessage());
+            setErrorResponse(responseDTO, RegistrationConstants.PRE_REG_DELETE_FAILURE, null);
+        }
+
+        return responseDTO;
+    }
+
+    /**
+     * Get pre-registration record for deletion
+     */
+    public PreRegistrationList getPreRegistrationRecordForDeletion(String preRegistrationId) {
+        if (preRegistrationId == null || preRegistrationId.isEmpty()) {
+            Log.e(TAG, "REGISTRATION - PRE_REGISTRATION_DATA_SYNC - PRE_REGISTRATION_DATA_SYNC_SERVICE_IMPL - The PreRegistrationId is empty");
+        }
+        return preRegistrationDao.get(preRegistrationId);
+    }
+
+    /**
+     * Get last pre-reg packet downloaded time
+     */
+    @Override
+    public Timestamp getLastPreRegPacketDownloadedTime() {
+        return preRegistrationDao.getLastPreRegPacketDownloadedTimeAsTimestamp();
+    }
+
+    /**
+     * Get global config value
+     */
+    private String getGlobalConfigValueOf(String key) {
+        try {
+            return globalParamRepository.getCachedStringGlobalParam(key);
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting global config value for key: " + key, e);
+            return null;
+        }
+    }
+
+    /**
+     * Set success response
+     */
+    private void setSuccessResponse(ResponseDto responseDTO, String code, String message) {
+        SuccessResponseDto successResponseDto = new SuccessResponseDto();
+        successResponseDto.setCode(code);
+        successResponseDto.setMessage(message != null ? message : "Operation completed successfully");
+        responseDTO.setSuccessResponseDTO(successResponseDto);
+    }
+
+    /**
+     * Set error response
+     */
+    private void setErrorResponse(ResponseDto responseDTO, String code, String message) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto();
+        errorResponseDto.setCode(code);
+        errorResponseDto.setMessage(message != null ? message : "Operation failed");
+        List<ErrorResponseDto> errorList = new LinkedList<>();
+        errorList.add(errorResponseDto);
+        responseDTO.setErrorResponseDTOs(errorList);
     }
 }

@@ -101,14 +101,17 @@ class _OperatorBiometricCaptureScanBlockViewState
                 ),
                 Row(
                   children: [
-                    const Spacer(),
+                    //const Spacer(),
                     const SizedBox(
                       width: 28,
                     ),
                     Text(
                       "${biometricAttributeData.title.replaceAll(" ", "")} ${AppLocalizations.of(context)!.capture}",
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.visible,
+                      maxLines: 1,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 28, fontWeight: bold, color: blackShade1),
+                          fontSize: 22, fontWeight: bold, color: blackShade1),
                     ),
                     const Spacer(),
                     IconButton(
@@ -131,34 +134,39 @@ class _OperatorBiometricCaptureScanBlockViewState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    (biometricAttributeData.title == "Iris" &&
-                            biometricAttributeData.exceptions.contains(true))
-                        ? ((biometricAttributeData.exceptions.first == true)
-                            ? SvgPicture.asset(
+                if (biometricAttributeData.title == "Iris" &&
+                    biometricAttributeData.exceptions.contains(true) &&
+                    biometricAttributeData.exceptions.first == true)
+                          Expanded(
+                              child:SvgPicture.asset(
                                 "assets/svg/Left Eye Exception.svg",
                                 height: (isMobileSize) ? 130.h : 260.h,
-                              )
-                            : const SizedBox())
-                        : const SizedBox(),
+                                fit: BoxFit.contain,
+                              ),
+                               ),
+
                     ...temp.map(
-                      (e) => Image.memory(
+                      (e) =>Expanded(
+                        child: Image.memory(
                         e!,
                         height: (isMobileSize) ? 130.h : 260.h,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                    (biometricAttributeData.title == "Iris" &&
-                            biometricAttributeData.exceptions.contains(true))
-                        ? ((biometricAttributeData.exceptions.first == true)
-                            ? const SizedBox()
-                            : Transform.flip(
+                    if (biometricAttributeData.title == "Iris" &&
+                          biometricAttributeData.exceptions.contains(true) &&
+                          biometricAttributeData.exceptions.first != true)
+                          Expanded(
+                              child: Transform.flip(
                                 flipX: true,
                                 child: SvgPicture.asset(
                                   "assets/svg/Left Eye Exception.svg",
                                   height: (isMobileSize) ? 130.h : 260.h,
+                                  fit: BoxFit.contain,
                                 ),
                               ))
-                        : const SizedBox(),
-                  ],
+                          ],
                 ),
                 // Divider(
                 //   height: 82,

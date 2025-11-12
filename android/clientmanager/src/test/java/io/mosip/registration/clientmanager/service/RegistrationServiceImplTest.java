@@ -2,9 +2,7 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.mosip.registration.clientmanager.config.SessionManager;
+
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
@@ -12,14 +10,17 @@ import io.mosip.registration.clientmanager.entity.Audit;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
+import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
-import org.junit.After;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import javax.inject.Provider;
+
 @RunWith(MockitoJUnitRunner.class)
 public class RegistrationServiceImplTest {
 
@@ -74,6 +77,14 @@ public class RegistrationServiceImplTest {
     @Mock
     private ClientCryptoManagerService clientCryptoManagerService;
     private RegistrationService registrationService;
+    @Mock
+    private RegistrationCenterRepository registrationCenterRepository;
+    @Mock
+    private LocationValidationService locationValidationService;
+    @Mock
+    private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
+    @Mock
+    private Biometrics095Service biometricService;
 
     @Before
     public void setUp() {
@@ -84,9 +95,9 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService);
+                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
     }
-    
+
     @Test(expected = ClientCheckedException.class)
     // Test for getRegistrationDto without starting registration
     public void getRegistrationDtoWithoutStartingRegistration() throws Exception {
@@ -453,10 +464,10 @@ public class RegistrationServiceImplTest {
         for (Modality modality : Modality.values()) {
             int count = (int) getAttemptsCount.invoke(registrationService, modality);
             if (modality == Modality.FINGERPRINT_SLAB_LEFT ||
-                modality == Modality.FINGERPRINT_SLAB_RIGHT ||
-                modality == Modality.FINGERPRINT_SLAB_THUMBS ||
-                modality == Modality.IRIS_DOUBLE ||
-                modality == Modality.FACE) {
+                    modality == Modality.FINGERPRINT_SLAB_RIGHT ||
+                    modality == Modality.FINGERPRINT_SLAB_THUMBS ||
+                    modality == Modality.IRIS_DOUBLE ||
+                    modality == Modality.FACE) {
                 assertEquals(2, count);
             } else {
                 assertEquals(0, count);
@@ -673,7 +684,7 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getSelectedHandles()).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
-            !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
+                !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
         // Provide a fully initialized CenterMachineDto
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("centerId");
@@ -683,7 +694,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "", "34259236291839")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID456", "UIN", "uinValue");
@@ -714,7 +725,7 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getSelectedHandles()).thenReturn(Collections.singletonList("handle1"));
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
-            !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
+                !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
         // Provide a fully initialized CenterMachineDto
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("centerId");
@@ -724,7 +735,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "", "34259236291839")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID789", "field1", "value1");
@@ -755,7 +766,7 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getSelectedHandles()).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
-            !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
+                !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
         // Provide a fully initialized CenterMachineDto
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("centerId");
@@ -765,7 +776,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "", "34259236291839")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID999", "field2", "value2");
@@ -796,7 +807,7 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getSelectedHandles()).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
-            !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
+                !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
         // Provide a fully initialized CenterMachineDto
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("centerId");
@@ -806,7 +817,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "", "34259236291839")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID888", "field3", "value3");
@@ -837,7 +848,7 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getSelectedHandles()).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
-            !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
+                !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
         // Provide a fully initialized CenterMachineDto
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("centerId");
@@ -1070,7 +1081,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         Registration mockRegistration = mock(Registration.class);
-        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(mockRegistration);
+        when(registrationRepository.insertRegistration(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), "", "", "34259236291839")).thenReturn(mockRegistration);
 
         registrationService.submitRegistrationDto("makerName");
         Mockito.verify(packetWriterService).setField("RID123", "UIN", "uinValue");

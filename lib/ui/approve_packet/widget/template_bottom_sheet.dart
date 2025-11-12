@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -66,7 +67,7 @@ class TemplateBottomSheet {
                         context
                             .read<ApprovePacketsProvider>()
                             .setWebViewPlusController(controller);
-                        loadHtmlData(controller, regCurrent.packetId);
+                        loadHtmlData(controller, regCurrent.id!);
                       },
                       javascriptMode: JavascriptMode.unrestricted,
                     ),
@@ -79,7 +80,226 @@ class TemplateBottomSheet {
               const SizedBox(
                 height: 18,
               ),
-              Row(
+              isMobileSize?
+              Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Back Arrow
+                          Card(
+                            elevation: 0,
+                            shape: CircleBorder(
+                              side: BorderSide(
+                                color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                              ),
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                              ),
+                              onPressed: (currentInd > 1)
+                                  ? () {
+                                context
+                                    .read<ApprovePacketsProvider>()
+                                    .setCurrentInd(currentInd - 1);
+                                Registration reg = context
+                                    .read<ApprovePacketsProvider>().matchingPackets[(currentInd - 1) - 1]['packet'] as Registration;
+                                log(reg.packetId);
+                                loadHtmlData(
+                                    context
+                                        .read<ApprovePacketsProvider>()
+                                        .webViewPlusController,
+                                    reg.packetId);
+                              }
+                                  : () {
+                                log("Out of range");
+                              },
+                            ),
+                          ),
+                          // Buttons Column
+                          Column(
+                            children: [
+                              // APPROVE BUTTON
+                              SizedBox(
+                                width: 190.sp,
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: solidPrimary,
+                                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                                  ),
+                                  icon: const Icon(Icons.check_outlined, color: Colors.white),
+                                  label: Text(
+                                    AppLocalizations.of(context)!.approve,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  onPressed: reviewStatus == ReviewStatus.APPROVED.name
+                                      ? null
+                                      : () {
+                                    context
+                                        .read<ApprovePacketsProvider>()
+                                        .approvePacket(regCurrent.packetId);
+                                    if (currentInd <
+                                        context.read<ApprovePacketsProvider>().matchingPackets.length) {
+                                      context
+                                          .read<ApprovePacketsProvider>()
+                                          .setCurrentInd(currentInd + 1);
+                                      Registration reg = context
+                                          .read<ApprovePacketsProvider>()
+                                          .matchingPackets[(currentInd + 1) - 1]['packet'] as Registration;
+                                      loadHtmlData(
+                                          context.read<ApprovePacketsProvider>().webViewPlusController,
+                                          reg.packetId);
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // REJECT BUTTON
+                              SizedBox(
+                                width: 190.sp,
+                                child: OutlinedButton.icon(
+                                  icon: const Icon(Icons.close),
+                                  label: Text(
+                                    AppLocalizations.of(context)!.reject,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                                    side: const BorderSide(color: Colors.red, width: 2),
+                                  ),
+                                  onPressed: reviewStatus == ReviewStatus.REJECTED.name
+                                      ? null
+                                      : () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return dialogBox(() {
+                                          context
+                                              .read<ApprovePacketsProvider>()
+                                              .rejectPacket(regCurrent.packetId);
+                                          if (currentInd <
+                                              context.read<ApprovePacketsProvider>().matchingPackets.length) {
+                                            context
+                                                .read<ApprovePacketsProvider>()
+                                                .setCurrentInd(currentInd + 1);
+                                            Registration reg = context
+                                                .read<ApprovePacketsProvider>()
+                                                .matchingPackets[(currentInd + 1) - 1]['packet']
+                                            as Registration;
+                                            loadHtmlData(
+                                                context
+                                                    .read<ApprovePacketsProvider>()
+                                                    .webViewPlusController,
+                                                reg.packetId);
+                                          }
+                                          Navigator.of(context).pop();
+                                        }, context);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              // RESET BUTTON
+                              MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: SizedBox(
+                                  width: 190.sp,
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                                      side: BorderSide(color: Colors.transparent, width: 2),
+                                    ).copyWith(
+                                      side: MaterialStateProperty.resolveWith((states) {
+                                        if (states.contains(MaterialState.hovered)) {
+                                          return BorderSide(color: solidPrimary, width: 2);
+                                        }
+                                        return BorderSide(color: Colors.transparent, width: 2);
+                                      }),
+                                    ),
+                                    onPressed: reviewStatus == ReviewStatus.NOACTIONTAKEN.name
+                                        ? null
+                                        : () {
+                                      context.read<ApprovePacketsProvider>().clearReview(regCurrent.packetId);
+                                    },
+                                    child: Text(
+                                      'RESET',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: solidPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            ],
+                          ),
+
+                          Card(
+                            margin: const EdgeInsets.only(right: 24),
+                            elevation: 0,
+                            shape: CircleBorder(
+                                side: BorderSide(
+                                  color: (currentInd <
+                                      context
+                                          .read<ApprovePacketsProvider>()
+                                          .matchingPackets
+                                          .length)
+                                      ? solidPrimary
+                                      : Colors.grey,
+                                )),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.arrow_forward,
+                                color: (currentInd <
+                                    context
+                                        .read<ApprovePacketsProvider>()
+                                        .matchingPackets
+                                        .length)
+                                    ? solidPrimary
+                                    : Colors.grey,
+                                size: 24,
+                              ),
+                              onPressed: currentInd <
+                                  context
+                                      .read<ApprovePacketsProvider>()
+                                      .matchingPackets
+                                      .length
+                                  ? () {
+                                context
+                                    .read<ApprovePacketsProvider>()
+                                    .setCurrentInd(currentInd + 1);
+                                Registration reg = context
+                                    .read<ApprovePacketsProvider>()
+                                    .matchingPackets[(currentInd + 1) - 1]
+                                ['packet'] as Registration;
+                                log(reg.packetId);
+                                loadHtmlData(
+                                    context
+                                        .read<ApprovePacketsProvider>()
+                                        .webViewPlusController,
+                                    reg.packetId);
+                              }
+                                  : () {
+                                log("Out of range");
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]
+              )
+                  :Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Card(
@@ -87,8 +307,8 @@ class TemplateBottomSheet {
                     elevation: 0,
                     shape: CircleBorder(
                         side: BorderSide(
-                      color: (currentInd > 1) ? solidPrimary : Colors.grey,
-                    )),
+                          color: (currentInd > 1) ? solidPrimary : Colors.grey,
+                        )),
                     child: IconButton(
                       icon: Icon(
                         Icons.arrow_back,
@@ -96,23 +316,23 @@ class TemplateBottomSheet {
                       ),
                       onPressed: (currentInd > 1)
                           ? () {
-                              context
-                                  .read<ApprovePacketsProvider>()
-                                  .setCurrentInd(currentInd - 1);
-                              Registration reg = context
-                                      .read<ApprovePacketsProvider>()
-                                      .matchingPackets[(currentInd - 1) - 1]
-                                  ['packet'] as Registration;
-                              log(reg.packetId);
-                              loadHtmlData(
-                                  context
-                                      .read<ApprovePacketsProvider>()
-                                      .webViewPlusController,
-                                  reg.packetId);
-                            }
+                        context
+                            .read<ApprovePacketsProvider>()
+                            .setCurrentInd(currentInd - 1);
+                        Registration reg = context
+                            .read<ApprovePacketsProvider>()
+                            .matchingPackets[(currentInd - 1) - 1]
+                        ['packet'] as Registration;
+                        log(reg.packetId);
+                        loadHtmlData(
+                            context
+                                .read<ApprovePacketsProvider>()
+                                .webViewPlusController,
+                            reg.packetId);
+                      }
                           : () {
-                              log("Out of range");
-                            },
+                        log("Out of range");
+                      },
                     ),
                   ),
                   Row(
@@ -132,30 +352,30 @@ class TemplateBottomSheet {
                         onPressed: reviewStatus == ReviewStatus.APPROVED.name
                             ? null
                             : () {
+                          context
+                              .read<ApprovePacketsProvider>()
+                              .approvePacket(regCurrent.packetId);
+                          log(currentInd.toString());
+                          if (currentInd <
+                              context
+                                  .read<ApprovePacketsProvider>()
+                                  .matchingPackets
+                                  .length) {
+                            context
+                                .read<ApprovePacketsProvider>()
+                                .setCurrentInd(currentInd + 1);
+                            Registration reg = context
+                                .read<ApprovePacketsProvider>()
+                                .matchingPackets[(currentInd + 1) - 1]
+                            ['packet'] as Registration;
+                            log(reg.packetId);
+                            loadHtmlData(
                                 context
                                     .read<ApprovePacketsProvider>()
-                                    .approvePacket(regCurrent.packetId);
-                                log(currentInd.toString());
-                                if (currentInd <
-                                    context
-                                        .read<ApprovePacketsProvider>()
-                                        .matchingPackets
-                                        .length) {
-                                  context
-                                      .read<ApprovePacketsProvider>()
-                                      .setCurrentInd(currentInd + 1);
-                                  Registration reg = context
-                                          .read<ApprovePacketsProvider>()
-                                          .matchingPackets[(currentInd + 1) - 1]
-                                      ['packet'] as Registration;
-                                  log(reg.packetId);
-                                  loadHtmlData(
-                                      context
-                                          .read<ApprovePacketsProvider>()
-                                          .webViewPlusController,
-                                      reg.packetId);
-                                }
-                              },
+                                    .webViewPlusController,
+                                reg.packetId);
+                          }
+                        },
                         label: Text(AppLocalizations.of(context)!.approve),
                       ),
                       const SizedBox(
@@ -166,39 +386,39 @@ class TemplateBottomSheet {
                         onPressed: reviewStatus == ReviewStatus.REJECTED.name
                             ? null
                             : () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return dialogBox(() {
-                                        context
-                                            .read<ApprovePacketsProvider>()
-                                            .rejectPacket(regCurrent.packetId);
-                                        if (currentInd <
-                                            context
-                                                .read<ApprovePacketsProvider>()
-                                                .matchingPackets
-                                                .length) {
-                                          context
-                                              .read<ApprovePacketsProvider>()
-                                              .setCurrentInd(currentInd + 1);
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return dialogBox(() {
+                                  context
+                                      .read<ApprovePacketsProvider>()
+                                      .rejectPacket(regCurrent.packetId);
+                                  if (currentInd <
+                                      context
+                                          .read<ApprovePacketsProvider>()
+                                          .matchingPackets
+                                          .length) {
+                                    context
+                                        .read<ApprovePacketsProvider>()
+                                        .setCurrentInd(currentInd + 1);
 
-                                          Registration reg = context
-                                              .read<ApprovePacketsProvider>()
-                                              .matchingPackets[(currentInd +
-                                                  1) -
-                                              1]['packet'] as Registration;
-                                          log(reg.packetId);
-                                          loadHtmlData(
-                                              context
-                                                  .read<
-                                                      ApprovePacketsProvider>()
-                                                  .webViewPlusController,
-                                              reg.packetId);
-                                        }
-                                        Navigator.of(context).pop();
-                                      }, context);
-                                    });
-                              },
+                                    Registration reg = context
+                                        .read<ApprovePacketsProvider>()
+                                        .matchingPackets[(currentInd +
+                                        1) -
+                                        1]['packet'] as Registration;
+                                    log(reg.packetId);
+                                    loadHtmlData(
+                                        context
+                                            .read<
+                                            ApprovePacketsProvider>()
+                                            .webViewPlusController,
+                                        reg.packetId);
+                                  }
+                                  Navigator.of(context).pop();
+                                }, context);
+                              });
+                        },
                         style: OutlinedButton.styleFrom(
                           disabledForegroundColor: Colors.white,
                           disabledBackgroundColor: Colors.grey.withOpacity(0.5),
@@ -224,25 +444,25 @@ class TemplateBottomSheet {
                         elevation: 0,
                         shape: CircleBorder(
                             side: BorderSide(
-                          color: reviewStatus == ReviewStatus.NOACTIONTAKEN.name
-                              ? Colors.grey
-                              : solidPrimary,
-                        )),
+                              color: reviewStatus == ReviewStatus.NOACTIONTAKEN.name
+                                  ? Colors.grey
+                                  : solidPrimary,
+                            )),
                         child: IconButton(
                           onPressed:
-                              reviewStatus == ReviewStatus.NOACTIONTAKEN.name
-                                  ? null
-                                  : () {
-                                      context
-                                          .read<ApprovePacketsProvider>()
-                                          .clearReview(regCurrent.packetId);
-                                    },
+                          reviewStatus == ReviewStatus.NOACTIONTAKEN.name
+                              ? null
+                              : () {
+                            context
+                                .read<ApprovePacketsProvider>()
+                                .clearReview(regCurrent.packetId);
+                          },
                           icon: Icon(
                             Icons.refresh_outlined,
                             color:
-                                reviewStatus == ReviewStatus.NOACTIONTAKEN.name
-                                    ? Colors.grey
-                                    : solidPrimary,
+                            reviewStatus == ReviewStatus.NOACTIONTAKEN.name
+                                ? Colors.grey
+                                : solidPrimary,
                             size: 28,
                           ),
                         ),
@@ -254,56 +474,55 @@ class TemplateBottomSheet {
                     elevation: 0,
                     shape: CircleBorder(
                         side: BorderSide(
-                      color: (currentInd <
+                          color: (currentInd <
                               context
                                   .read<ApprovePacketsProvider>()
                                   .matchingPackets
                                   .length)
-                          ? solidPrimary
-                          : Colors.grey,
-                    )),
+                              ? solidPrimary
+                              : Colors.grey,
+                        )),
                     child: IconButton(
                       icon: Icon(
                         Icons.arrow_forward,
                         color: (currentInd <
-                                context
-                                    .read<ApprovePacketsProvider>()
-                                    .matchingPackets
-                                    .length)
+                            context
+                                .read<ApprovePacketsProvider>()
+                                .matchingPackets
+                                .length)
                             ? solidPrimary
                             : Colors.grey,
                         size: 24,
                       ),
                       onPressed: currentInd <
-                              context
-                                  .read<ApprovePacketsProvider>()
-                                  .matchingPackets
-                                  .length
+                          context
+                              .read<ApprovePacketsProvider>()
+                              .matchingPackets
+                              .length
                           ? () {
-                              context
-                                  .read<ApprovePacketsProvider>()
-                                  .setCurrentInd(currentInd + 1);
-                              Registration reg = context
-                                      .read<ApprovePacketsProvider>()
-                                      .matchingPackets[(currentInd + 1) - 1]
-                                  ['packet'] as Registration;
-                              log(reg.packetId);
-                              loadHtmlData(
-                                  context
-                                      .read<ApprovePacketsProvider>()
-                                      .webViewPlusController,
-                                  reg.packetId);
-                            }
+                        context
+                            .read<ApprovePacketsProvider>()
+                            .setCurrentInd(currentInd + 1);
+                        Registration reg = context
+                            .read<ApprovePacketsProvider>()
+                            .matchingPackets[(currentInd + 1) - 1]
+                        ['packet'] as Registration;
+                        log(reg.packetId);
+                        loadHtmlData(
+                            context
+                                .read<ApprovePacketsProvider>()
+                                .webViewPlusController,
+                            reg.packetId);
+                      }
                           : () {
-                              log("Out of range");
-                            },
+                        log("Out of range");
+                      },
                     ),
                   ),
                 ],
               ),
               const SizedBox(
-                height: 18,
-              ),
+                  height: 18),
             ],
           ),
         );

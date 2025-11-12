@@ -29,6 +29,11 @@ public class RegistrationConstants {
     public static final String ENABLE = "Y";
     public static final String DISABLE = "N";
 
+    // Permitted Local Config Types
+    public static final String PERMITTED_JOB_TYPE = "JOB";
+    public static final String PERMITTED_CONFIG_TYPE = "CONFIGURATION";
+    public static final String PERMITTED_SHORTCUT = "SHORTCUT";
+
     //SBI intents
     public static final String DISCOVERY_INTENT_ACTION = "io.sbi.device";
     public static final String D_INFO_INTENT_ACTION = ".Info";
@@ -61,6 +66,8 @@ public class RegistrationConstants {
     public static final String AGEGROUP_CONFIG = "mosip.registration.agegroup-config";
     public static final String ALLOWED_BIO_ATTRIBUTES = "mosip.registration.allowed-bioattributes";
     public static final String DEFAULT_APP_TYPE_CODE = "mosip.registration.default-app-type-code";
+    public static final String IDLE_TIME = "mosip.registration.idle_time";
+    public static final String REFRESHED_LOGIN_TIME = "mosip.registration.refreshed_login_time";
 
     public static final String RESPONSE = "response";
     public static final String ERRORS = "errors";
@@ -104,5 +111,11 @@ public class RegistrationConstants {
     public static final String RIGHT_THUMB = "Right Thumb";
     public static final String RIGHT = "Right";
     public static final String LEFT = "Left";
+    public static final String PRE_REG_DELETION_CONFIGURED_DAYS = "mosip.registration.pre_reg_deletion_configured_days";
+    public static final String PRE_REG_DELETE_SUCCESS = "PRE_REG_DELETE_SUCCESS";
+    public static final String PRE_REG_DELETE_FAILURE = "PRE_REG_DELETE_FAILURE";
+    public static final String JOB_TRIGGER_POINT_USER = "User";
+    public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
+    public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
 
 }

@@ -9,13 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
+import 'package:flutter/services.dart' show MethodChannel;
 
 class SyncResponseServiceImpl implements SyncResponseService {
   @override
-  Future<Sync> getPolicyKeySync(bool isManualSync) async {
+  Future<Sync> getPolicyKeySync(bool isManualSync, String jobId) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getPolicyKeySync(isManualSync);
+      syncResponse = await SyncApi().getPolicyKeySync(isManualSync, jobId);
     } on PlatformException {
       debugPrint('PolicyKeySync Api call failed, PlatformException');
     } catch (e) {
@@ -25,10 +26,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getGlobalParamsSync(bool isManualSync) async {
+  Future<Sync> getGlobalParamsSync(bool isManualSync, String jobId) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getGlobalParamsSync(isManualSync);
+      syncResponse = await SyncApi().getGlobalParamsSync(isManualSync, jobId);
     } on PlatformException {
       debugPrint('GlobalParamsSync Api call failed, PlatformException');
     } catch (e) {
@@ -38,10 +39,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getUserDetailsSync(bool isManualSync) async {
+  Future<Sync> getUserDetailsSync(bool isManualSync, String jobId) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getUserDetailsSync(isManualSync);
+      syncResponse = await SyncApi().getUserDetailsSync(isManualSync, jobId);
     } on PlatformException {
       debugPrint('UserDetailsSync Api call failed, PlatformException');
     } catch (e) {
@@ -64,10 +65,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getMasterDataSync(bool isManualSync) async {
+  Future<Sync> getMasterDataSync(bool isManualSync, String jobId) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getMasterDataSync(isManualSync);
+      syncResponse = await SyncApi().getMasterDataSync(isManualSync, jobId);
     } on PlatformException {
       debugPrint('MasterDataSync Api call failed, PlatformException');
     } catch (e) {
@@ -75,6 +76,8 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncResponse;
   }
+
+  // Removed per request: use getMasterDataSync(bool) only
 
   @override
   Future<SyncTime> getLastSyncTime() async {
@@ -90,10 +93,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getCaCertsSync(bool isManualSync) async {
+  Future<Sync> getCaCertsSync(bool isManualSync, String jobId) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getCaCertsSync(isManualSync);
+      syncResponse = await SyncApi().getCaCertsSync(isManualSync, jobId);
     } on PlatformException {
       debugPrint('CaCerts Api call failed, PlatformException');
     } catch (e) {
@@ -101,7 +104,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
     return syncResponse;
   }
-  
+
   @override
   Future<String> batchJob() async {
     String batchJobResponse = "";
@@ -116,10 +119,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<String> getPreRegIds() async {
+  Future<String> getPreRegIds(String jobId) async {
     String preRegIdResponse = "";
     try {
-      preRegIdResponse = await SyncApi().getPreRegIds();
+      preRegIdResponse = await SyncApi().getPreRegIds(jobId);
     } on PlatformException {
       debugPrint('Application Id Api call failed, PlatformException');
     } catch (e) {
@@ -129,10 +132,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getKernelCertsSync(bool isManualSync) async {
+  Future<Sync> getKernelCertsSync(bool isManualSync, String jobId) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getKernelCertsSync(isManualSync);
+      syncResponse = await SyncApi().getKernelCertsSync(isManualSync, jobId);
     } on PlatformException {
       debugPrint('KernelCerts Api call failed, PlatformException');
     } catch (e) {
@@ -158,7 +161,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<bool> getSyncAndUploadInProgressStatus() async{
+  Future<bool> getSyncAndUploadInProgressStatus() async {
     bool syncAndUploadResponse = false;
     try {
       syncAndUploadResponse = await SyncApi().getSyncAndUploadInProgressStatus();
@@ -168,6 +171,77 @@ class SyncResponseServiceImpl implements SyncResponseService {
       debugPrint('getSyncAndUploadInProgressStatus has failed! ${e.toString()}');
     }
     return syncAndUploadResponse;
+  }
+
+  @override
+  Future<List<String?>> getActiveSyncJobs() async {
+    try {
+      final result = await SyncApi().getActiveSyncJobs();
+      final list = result;
+      return list;
+    } on PlatformException catch (e) {
+      debugPrint('getActiveSyncJobs PlatformException: ${e.message}');
+      return const [];
+    } catch (e) {
+      debugPrint('getActiveSyncJobs failed: $e');
+      return const [];
+    }
+  }
+
+  @override
+  Future<bool> deleteAuditLogs(String jobId) async {
+    try {
+      final deleteResponse = await SyncApi().deleteAuditLogs(jobId);
+      return deleteResponse;
+    } on PlatformException catch (e) {
+      debugPrint('deleteAuditLogs PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('deleteAuditLogs failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deletePreRegRecords(String jobId) async {
+    try {
+      final deleteResponse = await SyncApi().deletePreRegRecords(jobId);
+      return deleteResponse;
+    } on PlatformException catch (e) {
+      debugPrint('deleteAuditLogs PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('deleteAuditLogs failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<String> getLastSyncTimeByJobId(String jobId) async{
+    try {
+      final lastSyncTime = await SyncApi().getLastSyncTimeByJobId(jobId);
+      return lastSyncTime;
+    } on PlatformException catch (e) {
+      debugPrint('lastSync PlatformException: ${e.message}');
+      return "false";
+    } catch (e) {
+      debugPrint('lastSync failed: $e');
+      return "false";
+    }
+  }
+
+  @override
+  Future<String> getNextSyncTimeByJobId(String jobId) async{
+    try {
+      final nextSyncTime = await SyncApi().getNextSyncTimeByJobId(jobId);
+      return nextSyncTime;
+    } on PlatformException catch (e) {
+      debugPrint('nextSync PlatformException: ${e.message}');
+      return "false";
+    } catch (e) {
+      debugPrint('nextSync failed: $e');
+      return "false";
+    }
   }
 }
 

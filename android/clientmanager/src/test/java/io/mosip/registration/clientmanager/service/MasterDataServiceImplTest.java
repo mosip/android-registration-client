@@ -89,6 +89,8 @@ public class MasterDataServiceImplTest {
     @Mock private Call<ResponseWrapper<CACertificateResponseDto>> mockCACall;
     @Mock private Call<ResponseWrapper<UserDetailResponse>> mockUserCall;
     @Mock private Call<ResponseBody> mockIdSchemaCall;
+    @Mock private PermittedLocalConfigRepository mockPermittedLocalConfigRepository;
+    @Mock private LocalConfigDAO mockLocalConfigDao;
 
     private final String TEST_APP_NAME = "MockAppName";
 
@@ -1762,7 +1764,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockMasterCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncMasterData(onFinish, 0, false);
+        spyService.syncMasterData(onFinish, 0, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1786,7 +1788,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockMasterCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncMasterData(onFinish, 0, false);
+        spyService.syncMasterData(onFinish, 0, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1808,7 +1810,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockMasterCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncMasterData(onFinish, 0, false);
+        spyService.syncMasterData(onFinish, 0, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1829,7 +1831,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockGlobalCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncGlobalParamsData(onFinish, false);
+        spyService.syncGlobalParamsData(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1847,7 +1849,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockGlobalCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncGlobalParamsData(onFinish, false);
+        spyService.syncGlobalParamsData(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1866,7 +1868,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockGlobalCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncGlobalParamsData(onFinish, false);
+        spyService.syncGlobalParamsData(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1886,7 +1888,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCACall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCACertificates(onFinish, false);
+        spyService.syncCACertificates(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1905,7 +1907,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCACall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCACertificates(onFinish, false);
+        spyService.syncCACertificates(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1922,7 +1924,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCACall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCACertificates(onFinish, false);
+        spyService.syncCACertificates(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1946,7 +1948,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockUserCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncUserDetails(onFinish, false);
+        spyService.syncUserDetails(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1967,7 +1969,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockUserCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncUserDetails(onFinish, false);
+        spyService.syncUserDetails(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -1989,7 +1991,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockUserCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncUserDetails(onFinish, false);
+        spyService.syncUserDetails(onFinish, false, "");
         verify(onFinish, atLeastOnce()).run();
     }
 
@@ -2076,7 +2078,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockGlobalCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncGlobalParamsData(onFinish, false);
+        spyService.syncGlobalParamsData(onFinish, false, "");
     }
 
     /**
@@ -2137,7 +2139,11 @@ public class MasterDataServiceImplTest {
                 mockCertificateManagerService,
                 mockLanguageRepository,
                 mockJobManagerService,
-                mockFileSignatureDao
+                mockFileSignatureDao,
+                null
+                mockFileSignatureDao,
+                mockPermittedLocalConfigRepository,
+                mockLocalConfigDao
         );
         assertNotNull(service);
     }

@@ -96,6 +96,28 @@ class RegistrationServiceImpl implements RegistrationService {
       debugPrint('Application ID not added ${e.toString()}');
     }
   }
+
+  @override
+  Future<void> setAdditionalReqId(String additionalReqId) async {
+    try {
+      await RegistrationDataApi().setAdditionalReqId(additionalReqId);
+    } on PlatformException {
+      debugPrint('RegistrationDataApi call failed');
+    } catch (e) {
+      debugPrint('Additional info req ID not added ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> setMachineLocation(double latitude, double longitude) async {
+    try {
+      await RegistrationDataApi().setMachineLocation(latitude, longitude);
+    } on PlatformException {
+      debugPrint('RegistrationDataApi call failed');
+    } catch (e) {
+      debugPrint('location not added ${e.toString()}');
+    }
+  }
 }
 
 RegistrationService getRegistrationServiceImpl() => RegistrationServiceImpl();

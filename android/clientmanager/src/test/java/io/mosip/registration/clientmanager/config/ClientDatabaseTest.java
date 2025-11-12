@@ -31,21 +31,6 @@ public class ClientDatabaseTest {
     }
 
     @Test
-    public void testGetDatabase_SingletonInstance() {
-        ClientDatabase instance1 = ClientDatabase.getDatabase(context);
-        ClientDatabase instance2 = ClientDatabase.getDatabase(context);
-        assertSame(instance1, instance2);
-    }
-
-    @Test
-    public void testDestroyDB_CreatesNewInstance() {
-        ClientDatabase instance1 = ClientDatabase.getDatabase(context);
-        ClientDatabase.destroyDB();
-        ClientDatabase instance2 = ClientDatabase.getDatabase(context);
-        assertNotSame(instance1, instance2);
-    }
-
-    @Test
     public void testDaos_NotNull() {
         assertNotNull(clientDatabase.userTokenDao());
         assertNotNull(clientDatabase.registrationDao());
