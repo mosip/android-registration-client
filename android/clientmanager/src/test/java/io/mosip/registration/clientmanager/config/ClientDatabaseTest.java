@@ -25,25 +25,10 @@ public class ClientDatabaseTest {
                 .build();
     }
 
-//    @After
-//    public void tearDown() {
-//        clientDatabase.close();
-//    }
-
-//    @Test
-//    public void testGetDatabase_SingletonInstance() {
-//        ClientDatabase instance1 = ClientDatabase.getDatabase(context);
-//        ClientDatabase instance2 = ClientDatabase.getDatabase(context);
-//        assertSame(instance1, instance2);
-//    }
-
-  //  @Test
-//    public void testDestroyDB_CreatesNewInstance() {
-//        //ClientDatabase instance1 = ClientDatabase.getDatabase(context);
-//        ClientDatabase.destroyDB();
-//        ClientDatabase instance2 = ClientDatabase.getDatabase(context);
-//        assertNotSame(instance1, instance2);
-//    }
+    @After
+    public void tearDown() {
+        clientDatabase.close();
+    }
 
     @Test
     public void testDaos_NotNull() {

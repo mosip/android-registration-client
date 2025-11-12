@@ -16,44 +16,42 @@ public final class ClientDatabaseMigrations {
     public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            try {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `permitted_local_config` (" +
-                        "`code` TEXT NOT NULL, " +
-                        "`name` TEXT, " +
-                        "`config_type` TEXT, " +
-                        "`is_active` INTEGER, " +
-                        "`is_deleted` INTEGER, " +
-                        "`del_dtimes` INTEGER, " +
-                        "PRIMARY KEY(`code`))");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `permitted_local_config` (" +
+                    "`code` TEXT NOT NULL, " +
+                    "`name` TEXT, " +
+                    "`config_type` TEXT, " +
+                    "`is_active` INTEGER, " +
+                    "`is_deleted` INTEGER, " +
+                    "`del_dtimes` INTEGER, " +
+                    "PRIMARY KEY(`code`))");
 
-                database.execSQL("CREATE TABLE IF NOT EXISTS `local_preferences` (" +
-                        "`id` TEXT NOT NULL, " +
-                        "`name` TEXT, " +
-                        "`val` TEXT, " +
-                        "`config_type` TEXT, " +
-                        "`cr_by` TEXT, " +
-                        "`cr_dtime` INTEGER, " +
-                        "`upd_by` TEXT, " +
-                        "`upd_dtimes` INTEGER, " +
-                        "`is_deleted` INTEGER, " +
-                        "`del_dtimes` INTEGER, " +
-                        "PRIMARY KEY(`id`))");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `local_preferences` (" +
+                    "`id` TEXT NOT NULL, " +
+                    "`name` TEXT, " +
+                    "`val` TEXT, " +
+                    "`config_type` TEXT, " +
+                    "`cr_by` TEXT, " +
+                    "`cr_dtime` INTEGER, " +
+                    "`upd_by` TEXT, " +
+                    "`upd_dtimes` INTEGER, " +
+                    "`is_deleted` INTEGER, " +
+                    "`del_dtimes` INTEGER, " +
+                    "PRIMARY KEY(`id`))");
 
-                database.execSQL("CREATE TABLE IF NOT EXISTS `user_role` (" +
-                        "`usr_id` TEXT NOT NULL, " +
-                        "`role_code` TEXT NOT NULL, " +
-                        "`lang_code` TEXT, " +
-                        "PRIMARY KEY(`usr_id`, `role_code`))");
+            database.execSQL("CREATE TABLE IF NOT EXISTS `user_role` (" +
+                    "`usr_id` TEXT NOT NULL, " +
+                    "`role_code` TEXT NOT NULL, " +
+                    "`lang_code` TEXT, " +
+                    "PRIMARY KEY(`usr_id`, `role_code`))");
 
-                if (!hasColumn(database, "registration", "id")) {
-                    database.execSQL("ALTER TABLE `registration` ADD COLUMN `id` TEXT");
-                }
-
-                database.execSQL("UPDATE local_preferences SET config_type = 'CONFIGURATION' WHERE config_type IS NULL");
-                Log.i(TAG, "Migration 1_2 completed successfully.");
-            } catch (Exception e) {
-                Log.e(TAG, "Migration 1_2 failed", e);
+            if (!hasColumn(database, "registration", "id")) {
+                database.execSQL("ALTER TABLE `registration` ADD COLUMN `id` TEXT");
             }
+
+            // Note: This UPDATE has no effect on fresh migrations since local_preferences was just created empty.
+            // Remove if not needed for schema correction scenarios.
+            database.execSQL("UPDATE local_preferences SET config_type = 'CONFIGURATION' WHERE config_type IS NULL");
+            Log.i(TAG, "Migration 1_2 completed successfully.");
         }
     };
 
