@@ -109,20 +109,26 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       return false;
     }
 
-    // Check if any local value is different from server value
     for (String key in localValues.keys) {
-      String serverValue = serverValues?[key]?.toString() ?? '-';
-      String localValue = localValues[key]!;
+      final String localValue = localValues[key]!;
+      final String? previousLocal = localConfigurations[key];
 
-      // 1. Local value is not empty and different from server value, OR
-      // 2. Local value is empty but there was a previous local configuration
-      if (localValue.isNotEmpty && localValue != serverValue) {
-        return true;
+      if (localValue.isEmpty) {
+        if (previousLocal != null) {
+          return true;
+        }
+        final String serverValue = serverValues?[key]?.toString() ?? '';
+        if (serverValue.isNotEmpty) {
+          return true;
+        }
+        continue;
       }
-      if (localValue.isEmpty && localConfigurations.containsKey(key)) {
+
+      if (previousLocal == null || previousLocal != localValue) {
         return true;
       }
     }
+
     return false;
   }
 
@@ -225,8 +231,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       String serverValue = serverValues![key]?.toString() ?? '-';
       String localValue = _getLocalValue(key);
       bool isEditable = _isConfigurationPermitted(key);
-      bool isModified =
-          localValues.containsKey(key) && localValues[key] != serverValue;
+      bool isModified = localValues.containsKey(key);
 
       GlobalConfigItem item = GlobalConfigItem(
         key: key,
@@ -317,24 +322,27 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
             Expanded(
               child: _buildContent(),
             ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.centerRight, // Align content to the end
-              child: ElevatedButton(
-                onPressed: () {
-                  _onSaveChanges();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: solidPrimary,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
-                  elevation: 4,
-                ),
-                child: Text(AppLocalizations.of(context)!.submit),
-              ),
-            ),
           ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: ElevatedButton(
+            onPressed: _onSaveChanges,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: solidPrimary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                vertical: 18,
+                horizontal: 56,
+              ),
+              elevation: 4,
+            ),
+            child: Text(AppLocalizations.of(context)!.submit),
+          ),
         ),
       ),
     );
@@ -381,7 +389,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     return SizedBox(
       width: double.infinity,
       child: ListView.separated(
-        padding: const EdgeInsets.only(top: 10, bottom: 15),
+        padding: const EdgeInsets.only(top: 10, bottom: 90),
         itemCount: configs.length,
         separatorBuilder: (_, __) =>
             Divider(height: 1, color: Colors.grey[300]),
