@@ -13,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
+import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
@@ -62,6 +63,9 @@ class _HomePageState extends State<HomePage> {
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await globalProvider.fetchLocation();
+    });
     super.initState();
   }
 
@@ -107,12 +111,18 @@ class _HomePageState extends State<HomePage> {
     globalProvider.setNotificationLanguages(fieldValues);
   }
 
+  Future<List<String?>> getSettingsUI(BuildContext context) async {
+    await registrationTaskProvider.getListOfSettings();
+    return registrationTaskProvider.listOfSettings;
+  }
+
   Widget getProcessUI(BuildContext context, Process process) {
     List<Screen?> sortedScreens;
     sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
-    if (process.id == "NEW" || process.id == "UPDATE" || process.id == "LOST") {
+    if (process.flow == "NEW" || process.flow == "UPDATE" || process.flow == "LOST" || process.flow == "CORRECTION") {
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");
+      globalProvider.setAdditionalInfoReqId("");
       for (var screen in sortedScreens) {
         for (var field in screen!.fields!) {
           if (field!.controlType == 'dropdown' &&
@@ -258,6 +268,9 @@ class _HomePageState extends State<HomePage> {
       },
       syncData: (BuildContext context) {
         syncData(context);
+      },
+      getSettingsUI: (BuildContext context) async {
+        return await getSettingsUI(context);
       },
     );
   }

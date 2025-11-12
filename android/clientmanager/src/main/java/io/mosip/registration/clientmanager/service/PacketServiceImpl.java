@@ -132,7 +132,7 @@ public class PacketServiceImpl implements PacketService {
         wrapper.setVersion(PACKET_SYNC_VERSION);
         wrapper.setRequest(new ArrayList<SyncRIDRequest>());
         SyncRIDRequest syncRIDRequest = new SyncRIDRequest();
-        syncRIDRequest.setRegistrationId(registration.getPacketId());
+        syncRIDRequest.setRegistrationId(registration.getId());
         syncRIDRequest.setRegistrationType(registration.getRegType().toUpperCase());
         if (!serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
             syncRIDRequest.setPacketId(registration.getPacketId());
@@ -301,7 +301,7 @@ public class PacketServiceImpl implements PacketService {
         for (Registration reg : registrations) {
             PacketIdDto packet = new PacketIdDto();
             if (serverVersion!=null && serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
-                packet.setRegistrationId(reg.getPacketId());
+                packet.setRegistrationId(reg.getId());
             } else {
                 packet.setPacketId(reg.getPacketId());
             }

@@ -43,12 +43,12 @@ public class ConfigDataSyncJobTest {
             Runnable callback = invocation.getArgument(0);
             callback.run(); // Simulate callback execution
             return null;
-        }).when(masterDataService).syncGlobalParamsData(any(), anyBoolean());
+        }).when(masterDataService).syncGlobalParamsData(any(), anyBoolean(), "");
 
         boolean result = configDataSyncJob.triggerJob(jobId);
 
         assertTrue(result);
-        verify(masterDataService).syncGlobalParamsData(any(), anyBoolean());
+        verify(masterDataService).syncGlobalParamsData(any(), anyBoolean(), "");
         verify(configDataSyncJob).logJobTransaction(jobId, TimeUnit.MILLISECONDS.toSeconds(currentTimeMillis));
     }
 
@@ -56,12 +56,12 @@ public class ConfigDataSyncJobTest {
     public void testTriggerJob_SyncThrowsException_ReturnsFalse() throws Exception {
         int jobId = 1;
         doThrow(new RuntimeException("Sync failed"))
-                .when(masterDataService).syncGlobalParamsData(any(), anyBoolean());
+                .when(masterDataService).syncGlobalParamsData(any(), anyBoolean(), "");
 
         boolean result = configDataSyncJob.triggerJob(jobId);
 
         assertFalse(result);
-        verify(masterDataService).syncGlobalParamsData(any(), anyBoolean());
+        verify(masterDataService).syncGlobalParamsData(any(), anyBoolean(), "");
     }
 
     @Test
@@ -71,10 +71,10 @@ public class ConfigDataSyncJobTest {
             Runnable callback = invocation.getArgument(0);
             callback.run();
             return null;
-        }).when(masterDataService).syncGlobalParamsData(any(), anyBoolean());
+        }).when(masterDataService).syncGlobalParamsData(any(), anyBoolean(), "");
 
         configDataSyncJob.triggerJob(jobId);
 
-        verify(masterDataService).syncGlobalParamsData(any(), anyBoolean());
+        verify(masterDataService).syncGlobalParamsData(any(), anyBoolean(), "");
     }
 }

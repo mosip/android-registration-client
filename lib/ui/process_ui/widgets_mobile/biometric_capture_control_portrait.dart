@@ -110,6 +110,10 @@ class _BiometricCaptureControlPortraitState
                         fontWeight: semiBold,
                         color: blackShade1,
                       ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                     )
                   ],
                 ),
@@ -119,18 +123,23 @@ class _BiometricCaptureControlPortraitState
                     top: 15,
                     right: 15,
                     child: (biometricAttributeData.exceptions.contains(true))
+                      ? Image.asset(
+                    "assets/images/Exception_Mark.png",
+                  )
+                      : (biometricAttributeData.qualityPercentage <
+                      ((int.tryParse(biometricAttributeData.thresholdPercentage) ?? 0).toDouble()))
                         ? Image.asset(
-                            "assets/images/Group 57548@2x.png",
+                            "assets/images/Exception_Mark.png",
                           )
                         : Image.asset(
-                            "assets/images/Group 57745@2x.png",
+                            "assets/images/Green_Check.png",
                           )),
               if (!biometricAttributeData.exceptions.contains(false))
                 Positioned(
                     top: 15,
                     right: 15,
                     child: Image.asset(
-                      "assets/images/Group 57548@2x.png",
+                      "assets/images/Exception_Mark.png",
                     )),
               if (biometricAttributeData.isScanned == true)
                 Positioned(
@@ -144,7 +153,7 @@ class _BiometricCaptureControlPortraitState
                                       .toInt() <
                                   int.parse(biometricAttributeData
                                       .thresholdPercentage))
-                              ? secondaryColors.elementAt(26)
+                              ? secondaryColors.elementAt(16)
                               : secondaryColors.elementAt(11),
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
@@ -179,7 +188,8 @@ class _BiometricCaptureControlPortraitState
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  (widget.field.inputRequired!)
+                Expanded(
+                child:(widget.field.inputRequired!)
                       ? RichText(
                           text: TextSpan(
                           text: context
@@ -225,6 +235,7 @@ class _BiometricCaptureControlPortraitState
                   // SizedBox(
                   //   height: (isMobileSize)?20.h:52.h,
                   // ),
+                ),
                 ],
               ),
             ),

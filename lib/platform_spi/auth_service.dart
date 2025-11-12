@@ -25,5 +25,11 @@ abstract class AuthService {
 
   Future<String> forgotPasswordUrl();
 
+  Future<String> getIdleTime();
+
+  Future<String> getAutoLogoutPopupTimeout();
+
+  Future<List<String?>> getRolesByUserId(String userId);
+
   factory AuthService() => getAuthServiceImpl();
 }

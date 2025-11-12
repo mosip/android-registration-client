@@ -39,6 +39,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   );
 
   List<Object?> _listOfProcesses = List.empty(growable: true);
+  List<String?> _listOfSettings = List.empty(growable: true);
   String _stringValueGlobalParam = "";
   String _uiSchema = "";
   String _registrationStartError = '';
@@ -52,6 +53,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   int _numberOfPackets = 0;
 
   List<Object?> get listOfProcesses => _listOfProcesses;
+  List<String?> get listOfSettings => _listOfSettings;
   String get stringValueGlobalParam => _stringValueGlobalParam;
   String get uiSchema => _uiSchema;
   String get previewTemplate => _previewTemplate;
@@ -64,6 +66,11 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   set listOfProcesses(List<Object?> value) {
     _listOfProcesses = value;
+    notifyListeners();
+  }
+
+  set listOfSettings(List<String?> value) {
+    _listOfSettings = value;
     notifyListeners();
   }
 
@@ -113,6 +120,16 @@ class RegistrationTaskProvider with ChangeNotifier {
       _listOfProcesses = [];
     } else {
       _listOfProcesses = result;
+    }
+    notifyListeners();
+  }
+
+  getListOfSettings() async {
+    List<String?> result = await processSpecService.getSettingSpec();
+    if (result.isEmpty) {
+      _listOfSettings = [];
+    } else {
+      _listOfSettings = result;
     }
     notifyListeners();
   }
@@ -331,5 +348,13 @@ class RegistrationTaskProvider with ChangeNotifier {
 
   setApplicationId(String appId) async {
     await registrationService.setApplicationId(appId);
+  }
+
+  setAdditionalReqId(String additionalReqId) async {
+    await registrationService.setAdditionalReqId(additionalReqId);
+  }
+
+  setCurrentLocation(double latitude, double longitude) async {
+    await registrationService.setMachineLocation(latitude, longitude);
   }
 }

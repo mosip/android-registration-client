@@ -13,7 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -66,6 +69,7 @@ public class Biometrics095Service extends BiometricsService {
     private final UserBiometricRepository userBiometricRepository;
     private IBioApiV2 iBioApiV2;
     SharedPreferences sharedPreferences;
+    public Map<Modality, Object> BIO_DEVICES;
 
 
     @Inject
@@ -78,6 +82,7 @@ public class Biometrics095Service extends BiometricsService {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userBiometricRepository = userBiometricRepository;
         this.iBioApiV2 = new MatchSDK();
+        this.BIO_DEVICES = new HashMap<>();
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -167,6 +172,7 @@ public class Biometrics095Service extends BiometricsService {
     public String[] handleDeviceInfoResponse(Modality modality, byte[] response) throws BiometricsServiceException {
         String callbackId = null;
         String serialNo = null;
+        String deviceStatus = null;
         try {
             List<InfoResponse> list = objectMapper.readValue(response, new TypeReference<List<InfoResponse>>() {});
 
@@ -187,10 +193,12 @@ public class Biometrics095Service extends BiometricsService {
             if(deviceDto.getCallbackId().contains(".Info")) {
                 callbackId = deviceDto.getCallbackId().replace(".Info", "");
             }
+            deviceStatus = deviceDto.getDeviceStatus();
             String digitalIdPayload = getJWTPayLoad(deviceDto.getDigitalId());
             byte[] decodedDigitalIdPayload = Base64.getUrlDecoder().decode(digitalIdPayload);
             DigitalId digitalId = objectMapper.readValue(decodedDigitalIdPayload, DigitalId.class);
             serialNo = digitalId.getSerialNo();
+            addBioDevice(modality, deviceDto.getDeviceCode(), digitalId);
         } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.DEVICE_INFO_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Toast.makeText(context, "No SBI found!", Toast.LENGTH_LONG).show();
@@ -201,7 +209,7 @@ public class Biometrics095Service extends BiometricsService {
             throw new BiometricsServiceException(SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorCode(),
                     SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorMessage());
         }
-        return new String[] { callbackId, serialNo };
+        return new String[] { callbackId, serialNo, deviceStatus};
     }
 
     public String handleDiscoveryResponse(Modality modality, byte[] response) throws BiometricsServiceException {
@@ -289,4 +297,20 @@ public class Biometrics095Service extends BiometricsService {
         }
     }
 
+    public void addBioDevice(Modality modality, String deviceCode, DigitalId digitalId) {
+        Map<String, Object> registeredDevice = new LinkedHashMap<>();
+        Map<String, String> digitalIdMap = new HashMap<>();
+        digitalIdMap.put("serialNo", digitalId.getSerialNo());
+        digitalIdMap.put("make", digitalId.getMake());
+        digitalIdMap.put("model", digitalId.getModel());
+        digitalIdMap.put("type", digitalId.getType());
+        digitalIdMap.put("deviceProviderId", digitalId.getDeviceProviderId());
+        digitalIdMap.put("deviceProvider", digitalId.getDeviceProvider());
+        digitalIdMap.put("dateTime", digitalId.getDateTime());
+        digitalIdMap.put("deviceSubType", digitalId.getDeviceSubType());
+        registeredDevice.put("deviceServiceVersion", "0.9.5");
+        registeredDevice.put("digitalId", digitalIdMap);
+        registeredDevice.put("deviceCode", deviceCode);
+        BIO_DEVICES.put(modality, registeredDevice);
+    }
 }

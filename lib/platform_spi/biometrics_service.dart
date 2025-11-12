@@ -7,6 +7,7 @@
 
 import 'dart:typed_data';
 
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/platform_android/biometrics_service_impl.dart';
 
 abstract class BiometricsService {
@@ -35,6 +36,8 @@ abstract class BiometricsService {
   Future<String> getAgeGroup();
 
   Future<bool> conditionalBioAttributeValidation(String fieldId, String expression);
+
+  Future<List<DeviceInfo?>> getListOfDevices(String modality);
 
   factory BiometricsService() => getBiometricsServiceImpl();
 }

@@ -11,10 +11,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
@@ -75,6 +77,7 @@ public class AppModuleTest {
     @Mock SyncJobDefRepository syncJobDefRepository;
     @Mock UserDetailRepository userDetailRepository;
     @Mock LanguageRepository languageRepository;
+    @Mock UserRoleRepository userRoleRepository;
     @Mock JobManagerService jobManagerService;
     @Mock FileSignatureDao fileSignatureDao;
     @Mock UserBiometricRepository userBiometricRepository;
@@ -90,6 +93,16 @@ public class AppModuleTest {
     @Mock PreRegistrationDataSyncRepositoryDao preRegistrationDataSyncRepositoryDao;
     @Mock PreRegZipHandlingService preRegZipHandlingService;
     @Mock PreRegistrationList preRegistrationList;
+    @Mock
+    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
+
+    @Mock Biometrics095Service biometricService;
+
+    @Mock JobTransactionService jobTransactionService;
+
+    @Mock PermittedLocalConfigRepository permittedLocalConfigRepository;
+
+    @Mock LocalConfigDAO localConfigDAO;
 
     private AppModule appModule;
 
@@ -145,7 +158,7 @@ public class AppModuleTest {
                 registrationCenterRepository, documentTypeRepository, applicantValidDocRepository, templateRepository,
                 dynamicFieldRepository, locationRepository, globalParamRepository, identitySchemaRepository,
                 blocklistedWordRepository, syncJobDefRepository, userDetailRepository, certificateManagerService,
-                languageRepository, jobManagerService, fileSignatureDao
+                languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO
         );
         assertNotNull(service);
         assertTrue(service instanceof MasterDataServiceImpl);
@@ -159,7 +172,7 @@ public class AppModuleTest {
 
     @Test
     public void testProvideLoginService() {
-        LoginService service = appModule.provideLoginService(clientCryptoManagerService, userDetailRepository);
+        LoginService service = appModule.provideLoginService(clientCryptoManagerService, userDetailRepository,userRoleRepository);
         assertNotNull(service);
     }
 
@@ -167,7 +180,7 @@ public class AppModuleTest {
     public void testProvideRegistrationService() {
         RegistrationService service = appModule.provideRegistrationService(
                 packetWriterService, registrationRepository, mock(MasterDataService.class), identitySchemaRepository,
-                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService
+                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,preRegistrationDataSyncServiceProvider,biometricService
         );
         assertNotNull(service);
         assertTrue(service instanceof RegistrationServiceImpl);

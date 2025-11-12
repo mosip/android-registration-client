@@ -62,20 +62,20 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
             },
       style: ElevatedButton.styleFrom(
         backgroundColor: solidPrimary,
+        minimumSize: const Size(double.infinity, 60),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
       ),
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.submit,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(color: Colors.white, fontSize: 17),
-            ),
-          ],
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            appLocalizations.authenticate,
+            textAlign: TextAlign.center,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(color: Colors.white, fontSize: 17),
+          ),
         ),
       ),
     );

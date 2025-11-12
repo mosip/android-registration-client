@@ -21,6 +21,7 @@ import dagger.Provides;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
@@ -29,7 +30,11 @@ import io.mosip.registration.clientmanager.service.Biometrics095Service;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
+import io.mosip.registration.clientmanager.service.LocalConfigServiceImpl;
+import io.mosip.registration.clientmanager.service.LocationValidationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
+import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
@@ -60,6 +65,7 @@ import io.mosip.registration_client.api_services.DocumentCategoryApi;
 import io.mosip.registration_client.api_services.DocumentDetailsApi;
 
 import io.mosip.registration_client.api_services.DynamicDetailsApi;
+import io.mosip.registration_client.api_services.GlobalConfigSettingsApi;
 import io.mosip.registration_client.api_services.MachineDetailsApi;
 import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
@@ -223,6 +229,25 @@ public class HostApiModule {
     @Singleton
     DashBoardDetailsApi getDashBoardDetailsApi(UserDetailDao userDetailDao, RegistrationRepository registrationRepository) {
         return new DashBoardDetailsApi(appContext,userDetailDao, registrationRepository);
+    }
+
+
+    @Provides
+    @Singleton
+    LocalConfigService provideLocalConfigService(LocalConfigDAO localConfigDAO) {
+        return new LocalConfigServiceImpl(localConfigDAO);
+    }
+
+    @Provides
+    @Singleton
+    GlobalConfigSettingsApi getGlobalConfigSettingsApiImpl(MasterDataService masterDataService, LocalConfigService localConfigService, GlobalParamRepository globalParamRepository) {
+        return new GlobalConfigSettingsApi(masterDataService, localConfigService, globalParamRepository);
+    }
+
+    @Provides
+    @Singleton
+    LocationValidationService provideLocationValidationService() {
+        return new LocationValidationServiceImpl();
     }
 }
 

@@ -39,7 +39,9 @@ class _LanguageComponentState extends State<LanguageComponent> {
           widget.onTap();
         }
       },
+
       child: Container(
+        height: 60.h,
         padding: EdgeInsets.only(
           left: 25.w,
           right: 25.w,
@@ -50,15 +52,15 @@ class _LanguageComponentState extends State<LanguageComponent> {
           color: widget.isFreezed
               ? appButtonBorderText
               : widget.isSelected
-                  ? appButtonBorderText
-                  : Colors.transparent,
+              ? appButtonBorderText
+              : Colors.transparent,
           border: Border.all(
             width: 1,
             color: widget.isDisabled
                 ? appBlackShade3
                 : widget.isSelected
-                    ? appButtonBorderText
-                    : languageSelectedColor,
+                ? appButtonBorderText
+                : languageSelectedColor,
           ),
           borderRadius: const BorderRadius.all(
             Radius.circular(36),
@@ -69,24 +71,27 @@ class _LanguageComponentState extends State<LanguageComponent> {
           children: [
             widget.isFreezed || widget.isSelected
                 ? Icon(
-                    Icons.check,
-                    color: widget.isFreezed ? appGreyShade : appWhite,
-                  )
+              Icons.check,
+              color: widget.isFreezed ? appGreyShade : appWhite,
+            )
                 : const SizedBox(),
             SizedBox(
               width: widget.isFreezed || widget.isSelected ? 15.02 : 0,
             ),
-            Text(
-              widget.title,
-              style: TextStyle(
-                fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
-                color: widget.isDisabled
-                    ? appBlackShade3
-                    : widget.isFreezed
-                        ? appGreyShade
-                        : widget.isSelected
-                            ? appWhite
-                            : appBlackShade1,
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Text(
+                widget.title,
+                style: TextStyle(
+                  fontSize: widget.isMobile && !isMobileSize ? 24 : 16,
+                  color: widget.isDisabled
+                      ? appBlackShade3
+                      : widget.isFreezed
+                      ? appGreyShade
+                      : widget.isSelected
+                      ? appWhite
+                      : appBlackShade1,
+                ),
               ),
             ),
           ],

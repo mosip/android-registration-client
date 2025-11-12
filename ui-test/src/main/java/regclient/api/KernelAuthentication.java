@@ -62,9 +62,9 @@ public class KernelAuthentication extends BaseTestCase {
 		JSONObject actualrequest = getRequestJson(authRequest);
 
 		JSONObject request=new JSONObject();
-		request.put("appId", ConfigManager.getidRepoAppId());
-		request.put("clientId", ConfigManager.getidRepoClientId());
-		request.put("secretKey", ConfigManager.getIdRepoClientSecret());
+		request.put("appId", ArcConfigManager.getidRepoAppId());
+		request.put("clientId", ArcConfigManager.getidRepoClientId());
+		request.put("secretKey", ArcConfigManager.getIdRepoClientSecret());
 		actualrequest.put("request", request);
 
 		Response reponse=appl.postWithJson(props.get("authclientidsecretkeyURL"), actualrequest);
@@ -78,14 +78,14 @@ public class KernelAuthentication extends BaseTestCase {
 		JSONObject actualrequest = getRequestJson(authInternalRequest);
 
 		JSONObject request = new JSONObject();
-		request.put("appId", ConfigManager.getAdminAppId());
+		request.put("appId", ArcConfigManager.getAdminAppId());
 		request.put("password", admin_password);
 
 		//if(BaseTestCase.currentModule==null) admin_userName=
 		request.put("userName", BaseTestCase.currentModule +"-"+ admin_userName);
 
-		request.put("clientId", ConfigManager.getAdminClientId());
-		request.put("clientSecret", ConfigManager.getAdminClientSecret());
+		request.put("clientId", ArcConfigManager.getAdminClientId());
+		request.put("clientSecret", ArcConfigManager.getAdminClientSecret());
 		actualrequest.put("request", request);
 
 		Response reponse = appl.postWithJson(authenticationInternalEndpoint, actualrequest);
@@ -100,11 +100,11 @@ public class KernelAuthentication extends BaseTestCase {
 		JSONObject actualrequest = getRequestJson(authInternalRequest);
 
 		JSONObject request = new JSONObject();
-		request.put("appId", ConfigManager.getAdminAppId());
+		request.put("appId", ArcConfigManager.getAdminAppId());
 		request.put("password", admin_password);
 		request.put("userName", props.get("admin_zone_userName"));
-		request.put("clientId", ConfigManager.getAdminClientId());
-		request.put("clientSecret", ConfigManager.getAdminClientSecret());
+		request.put("clientId", ArcConfigManager.getAdminClientId());
+		request.put("clientSecret", ArcConfigManager.getAdminClientSecret());
 		actualrequest.put("request", request);
 
 		Response reponse = appl.postWithJson(authenticationInternalEndpoint, actualrequest);

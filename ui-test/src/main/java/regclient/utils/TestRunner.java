@@ -9,9 +9,10 @@ import org.testng.xml.XmlClass;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
+import io.mosip.testrig.apirig.testrunner.BaseTestCase;
+import io.mosip.testrig.apirig.testrunner.OTPListener;
 import regclient.api.AdminTestUtil;
-import regclient.api.BaseTestCase;
-import regclient.api.ConfigManager;
+import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
 
 public class TestRunner {
@@ -19,12 +20,22 @@ public class TestRunner {
 	public static String jarUrl = TestRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 	
 	public static void main(String[] args) {	
+		io.mosip.testrig.apirig.testrunner.BaseTestCase.currentModule = "androidregclient";
 		AdminTestUtil.initialize();
+		BaseTestCase.ApplnURI = ArcConfigManager.getiam_apiinternalendpoint();
+		OTPListener otpListener = new OTPListener();
+		otpListener.run();	
 		FetchUiSpec.getUiSpec("newProcess");
+		io.mosip.testrig.apirig.testrunner.BaseTestCase.setRunContext(checkRunType(), jarUrl);
+		io.mosip.testrig.apirig.testrunner.BaseTestCase.copymoduleSpecificAndConfigFile("config");
+		io.mosip.testrig.apirig.utils.AdminTestUtil.init();
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
+		System.out.println("BaseTestCase.ApplnURI : " + BaseTestCase.ApplnURI);
+		AdminTestUtil.getPreRegistrationFlow();
+		
 		File homeDir = null;
 		TestNG runner = new TestNG();
-		if(!ConfigManager.gettestcases().equals("")) {
+		if(!ArcConfigManager.gettestcases().equals("")) {
 			XmlSuite suite = new XmlSuite();
 			suite.setName("MySuite");
 			suite.addListener("regclient.utils.EmailableReport");
@@ -44,7 +55,7 @@ public class TestRunner {
 
 
 			List<XmlClass> classes = new ArrayList<>();
-			String[] Scenarionames=ConfigManager.gettestcases().split(",");
+			String[] Scenarionames=ArcConfigManager.gettestcases().split(",");
 			for(String test:Scenarionames) {
 				String Scenarioname=test.toLowerCase();
 
@@ -106,6 +117,7 @@ public class TestRunner {
 		System.getProperties().setProperty("emailable.report2.name", "AndroidRegClient-" + BaseTestCase.environment + 
 				 "-run-" + System.currentTimeMillis() + "-report.html");
 		runner.run();
+		otpListener.bTerminate=true;
 		System.exit(0);
 	}
 	
