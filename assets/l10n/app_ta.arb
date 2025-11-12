@@ -314,7 +314,7 @@
   "logout_success": "நீங்கள் வெற்றிகரமாக வெளியேறிவிட்டீர்கள்!",
   "logout_failure": "ஏதோ தவறாகிவிட்டது, சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்",
   "go_to_home": "வீட்டிற்கு போ",
-  "errors": "{messages, select, REG_TRY_AGAIN{உள்நுழைவு தோல்வியுற்றது. மீண்டும் முயற்சி செய்!} REG_INVALID_REQUEST{கடவுச்சொல் தவறானது!} REG_MACHINE_NOT_FOUND{இயந்திரம் கிடைக்கவில்லை!} REG_NETWORK_ERROR{உள்நுழைவு தோல்வியுற்றது. நெட்வொர்க் இணைப்பை சரிபார்க்கவும்!} REG_CRED_EXPIRED{நற்சான்றிதழ்கள் காணப்படவில்லை அல்லது காலாவதியாகவில்லை. ஆன்லைன் உள்நுழைவை முயற்சிக்கவும்!} REG_MACHINE_INACTIVE{இயந்திரம் செயலில் இல்லை!} REG_CENTER_INACTIVE{மையம் செயல்படவில்லை!} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{உள்நுழைவு தோல்வியுற்றது. மீண்டும் முயற்சி செய்!} REG_INVALID_REQUEST{கடவுச்சொல் தவறானது!} REG_MACHINE_NOT_FOUND{இந்த சாதனம் இன்னும் பதிவுசெய்யப்படவில்லை. உதவிக்காக உங்கள் நிர்வாகியை தொடர்புகொள்ளுங்கள்!} REG_NETWORK_ERROR{உள்நுழைவு தோல்வியுற்றது. நெட்வொர்க் இணைப்பை சரிபார்க்கவும்!} REG_CRED_EXPIRED{நற்சான்றிதழ்கள் காணப்படவில்லை அல்லது காலாவதியாகவில்லை. ஆன்லைன் உள்நுழைவை முயற்சிக்கவும்!} REG_MACHINE_INACTIVE{இயந்திரம் செயலில் இல்லை!} REG_CENTER_INACTIVE{மையம் செயல்படவில்லை!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
