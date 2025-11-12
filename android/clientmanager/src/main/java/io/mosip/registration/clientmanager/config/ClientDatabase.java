@@ -72,24 +72,24 @@ import io.mosip.registration.keymanager.entity.KeyStore;
         BlocklistedWord.class, SyncJobDef.class, UserDetail.class, UserBiometric.class, UserPassword.class, JobTransaction.class,
         CACertificateStore.class, Language.class, Audit.class, FileSignature.class, ProcessSpec.class,PreRegistrationList.class,
         PermittedLocalConfig.class, LocalPreferences.class},
-        version = 1, exportSchema = false)
+        version = 2, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
 
-    private static final String DATABASE_NAME = "regclient";
-    private static ClientDatabase INSTANCE;
-
-    public synchronized static ClientDatabase getDatabase(Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = buildDatabase(context);
-        }
-        return INSTANCE;
-    }
-
-    public static ClientDatabase buildDatabase(Context context) {
-        return Room.databaseBuilder(context, ClientDatabase.class, DATABASE_NAME)
-                .allowMainThreadQueries()
-                .build();
-    }
+//    private static final String DATABASE_NAME = "regclient";
+//    private static ClientDatabase INSTANCE;
+//
+//    public synchronized static ClientDatabase getDatabase(Context context) {
+//        if (INSTANCE == null) {
+//            INSTANCE = buildDatabase(context);
+//        }
+//        return INSTANCE;
+//    }
+//
+//    public static ClientDatabase buildDatabase(Context context) {
+//        return Room.databaseBuilder(context, ClientDatabase.class, DATABASE_NAME)
+//                .allowMainThreadQueries()
+//                .build();
+//    }
 
     public abstract UserTokenDao userTokenDao();
 
@@ -149,9 +149,9 @@ public abstract class ClientDatabase extends RoomDatabase {
 
     public abstract LocalPreferencesDao localPreferencesDao();
 
-    public static void destroyDB() {
-        INSTANCE = null;
-    }
+//    public static void destroyDB() {
+//        INSTANCE = null;
+//    }
 }
 
 

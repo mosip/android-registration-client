@@ -8,6 +8,7 @@ import android.content.pm.ApplicationInfo;
 import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
@@ -41,6 +42,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import io.mosip.registration.clientmanager.config.ClientDatabaseMigrations;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RoomModuleTest {
@@ -98,10 +101,13 @@ public class RoomModuleTest {
                     .thenReturn(sharedPreferences);
 
             when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
+            when(builder.addMigrations(any(Migration[].class))).thenReturn(builder);
             when(builder.allowMainThreadQueries()).thenReturn(builder);
             when(builder.build()).thenReturn(clientDatabase);
 
             roomModule = new RoomModule(application, applicationInfo);
+
+            verify(builder).addMigrations(ClientDatabaseMigrations.MIGRATION_1_2);
         }
     }
 
@@ -125,6 +131,7 @@ public class RoomModuleTest {
                     .thenReturn(sharedPreferences);
 
             when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
+            when(builder.addMigrations(any(Migration[].class))).thenReturn(builder);
             when(builder.allowMainThreadQueries()).thenReturn(builder);
             when(builder.build()).thenReturn(clientDatabase);
             when(sharedPreferences.edit()).thenReturn(editor);
@@ -134,6 +141,7 @@ public class RoomModuleTest {
 
             verify(editor).putString("db_password", BuildConfig.DEBUG_PASSWORD);
             verify(editor).apply();
+            verify(builder).addMigrations(ClientDatabaseMigrations.MIGRATION_1_2);
         }
     }
 
@@ -175,6 +183,7 @@ public class RoomModuleTest {
                     .thenReturn(sharedPreferences);
 
             when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
+            when(builder.addMigrations(any(Migration[].class))).thenReturn(builder);
             when(builder.allowMainThreadQueries()).thenReturn(builder);
             when(builder.build()).thenReturn(clientDatabase);
             doNothing().when(existingDb).rawExecSQL(anyString());
@@ -190,6 +199,7 @@ public class RoomModuleTest {
             verify(sharedPreferences).edit();
             verify(editor).putString(eq("db_password"), anyString());
             verify(editor).apply();
+            verify(builder).addMigrations(ClientDatabaseMigrations.MIGRATION_1_2);
         }
     }
 
