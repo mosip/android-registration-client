@@ -305,7 +305,7 @@
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",
-  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{Machine not found!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{This device has not been onboarded yet. Please reach out to your administrator for assistance!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
