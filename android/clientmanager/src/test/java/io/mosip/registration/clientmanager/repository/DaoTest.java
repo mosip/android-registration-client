@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import android.content.Context;
 
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.room.Room;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.robolectric.RobolectricTestRunner;
 
 import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.entity.UserToken;
+import org.junit.After;
 
 @RunWith(RobolectricTestRunner.class)
 public class DaoTest {
@@ -21,7 +23,16 @@ public class DaoTest {
     @Before
     public void init() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        clientDatabase = ClientDatabase.getDatabase(appContext);
+        clientDatabase = Room.inMemoryDatabaseBuilder(appContext, ClientDatabase.class)
+                .allowMainThreadQueries()
+                .build();
+    }
+
+    @After
+    public void tearDown() {
+        if (clientDatabase != null) {
+            clientDatabase.close();
+        }
     }
 
     @Test
