@@ -45,7 +45,6 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
 
     final connectivity = Provider.of<ConnectivityProvider>(context, listen: false);
 
-    // 🔥 When network status changes, offline should trigger popup
     connectivity.addListener(() {
       if (!connectivity.isConnected) {
         Future.microtask(() {
