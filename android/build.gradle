@@ -29,10 +29,10 @@ sonarqube {
         property "sonar.login", "13c9437b3fa54b66de5ec14c4fc2bd04fb55ae77"
         property "sonar.androidLint.reportPaths", "**/reports/lint-results-debug.xml"
 
-        property "sonar.exclusions", "**/src/androidTest/assets/**,**/AppData/Local/Pub/Cache/**,**/app/src/**,**/*Pigeon.java"
+        property "sonar.exclusions", "**/src/androidTest/assets/**,**/AppData/Local/Pub/Cache/**,**/app/src/**"
         property "sonar.java.binaries", "build/intermediates/javac/debug"
         property "sonar.junit.reportPaths", "build/test-results/testDebugUnitTest"
-        property "sonar.coverage.exclusions", "**/dao/**,**/dto/**,**/exception/**,**/spi/**,**/entity/**,**/cbeffutil/**,**/constant/**,**/config/**"
+        // property "sonar.jacoco.reportPaths", "build/jacoco/testReleaseUnitTest.exec"
         property "sonar.coverage.jacoco.xmlReportPaths", "C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\clientmanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml,"+"C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\keymanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml,"+ "C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\packetmanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml,"+"C:\\Users\\sachin.sp\\AndroidStudioProjects\\android-registration-client\\build\\transliterationmanager\\reports\\jacoco\\testDebugUnitTestCoverage\\testDebugUnitTestCoverage.xml"
     }
 }
