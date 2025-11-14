@@ -10,6 +10,4 @@ public class GlobalConstants {
 	public static final String PROPERTIES = "properties";
 	public static final String VALUE = "value";
 
-
-
 }

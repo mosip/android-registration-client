@@ -9,8 +9,9 @@ import regclient.page.OperationalTaskPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
+import regclient.pages.english.SelectLanguagePageEnglish;
 
-public class RegistrationTasksPageFrench extends RegistrationTasksPage{
+public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 
 	public RegistrationTasksPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -24,40 +25,55 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
 	private WebElement dashboardButton;
-	
+
 	@AndroidFindBy(accessibility = "Nouvelle inscription")
 	private WebElement newRegistrationButton;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.ImageView\").instance(0)")
-	private WebElement synchronizeDataButton ;
+	private WebElement synchronizeDataButton;
 
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Policy key Sync Completed\"]")
-	private WebElement policykeySyncCompletedMessage ;
+	private WebElement policykeySyncCompletedMessage;
 
 	@AndroidFindBy(xpath = "//*[contains(@text,'Sync Completed')]")
-	private WebElement masterDataSyncCompletedMessage ;
+	private WebElement masterDataSyncCompletedMessage;
 
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
-	private WebElement scriptSyncCompletedMessage ;
+	private WebElement scriptSyncCompletedMessage;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Profil\")")
 	private WebElement profileButton;
-	
+
 	@AndroidFindBy(accessibility = "Mettre à jour l'UIN")
 	private WebElement updateUinButton;
-	
+
 	@AndroidFindBy(accessibility = "UIN perdu")
 	private WebElement lostUinButton;
-	
+
 	@AndroidFindBy(accessibility = "Correction biométrique")
 	private WebElement biometricCorrectionButton;
+
+	@AndroidFindBy(accessibility = "Paramètres\nOnglet 2 sur 4")
+	private WebElement settingsButton;
 	
-	public  SelectLanguagePage clickOnNewRegistrationButton() {
+	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_message")
+	private WebElement locationPermissionMessage;
+
+	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_allow_foreground_only_button")
+	private WebElement allowWhileUsingButton;
+
+	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_allow_one_time_button")
+	private WebElement allowOnceButton;
+
+	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
+	private WebElement dontAllowButton;
+
+	public SelectLanguagePage clickOnNewRegistrationButton() {
 		clickOnElement(newRegistrationButton);
 		return new SelectLanguagePageFrench(driver);
 	}
 
-	public  void clickOnSynchronizeDataButton() {
+	public void clickOnSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);
 	}
 
@@ -81,52 +97,78 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage{
 		return isElementDisplayed(scriptSyncCompletedMessage);
 	}
 
-	public  DashboardPage clickOnDashboardButton() {
+	public DashboardPage clickOnDashboardButton() {
 		clickOnElement(dashboardButton);
 		return new DashboardPageFrench(driver);
 	}
-	
-	public  OperationalTaskPage clickOnOperationalTasksTitle() {
+
+	public OperationalTaskPage clickOnOperationalTasksTitle() {
 		clickOnElement(operationalTaskPageTitle);
 		return new OperationalTaskPageFrench(driver);
 	}
-	
+
 	public boolean isProfileTitleDisplayed() {
 		return isElementDisplayed(profileButton);
 	}
-	
-	public  ProfilePage clickProfileButton() {
+
+	public ProfilePage clickProfileButton() {
 		clickOnElement(profileButton);
 		return new ProfilePageFrench(driver);
 	}
-	
-	public  SelectLanguagePage clickUpdateMyUINButton() {
+
+	public SelectLanguagePage clickUpdateMyUINButton() {
 		clickOnElement(updateUinButton);
 		return new SelectLanguagePageFrench(driver);
 	}
-	
+
 	public boolean isUpdateUINTitleDisplayed() {
 		return isElementDisplayed(updateUinButton);
 	}
-	
+
 	public boolean isLostUINTitleDisplayed() {
 		return isElementDisplayed(lostUinButton);
 	}
-	
+
 	public boolean isBiometricCorrectionTitleDisplayed() {
 		return isElementDisplayed(biometricCorrectionButton);
 	}
-	
-	public  void clickSynchronizeDataButton() {
+
+	public void clickSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);
 		waitTime(50);
 	}
-	
+
 	public boolean checkLastSyncDate() {
 		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
-		if(contentDesc.contains("Synchronize Data\n"+getCurrentDateWord()+","))
+		if (contentDesc.contains("Synchronize Data\n" + getCurrentDateWord() + ","))
 			return true;
 		else
 			return false;
+	}
+
+	public void clickOnLostUinButton() {
+		clickOnElement(lostUinButton);
+	}
+
+	public void clickOnSettingsButton() {
+		clickOnElement(settingsButton);
+	}
+
+	public  SelectLanguagePage clickOnBiometricCorrectionButton() {
+		clickOnElement(biometricCorrectionButton);
+		return new SelectLanguagePageEnglish(driver);
+	}
+	
+	public void handleLocationPermission() {
+	    try {
+	        if (isElementDisplayed(locationPermissionMessage)) {
+	            clickOnElement(allowWhileUsingButton);
+	        }
+	    } catch (Exception e) {
+	    }
+	}
+
+	public  void clickOnRegistrationTasksTab() {
+		clickOnElement(registrationTasksTitle);
 	}
 }

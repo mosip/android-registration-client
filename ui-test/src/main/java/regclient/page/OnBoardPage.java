@@ -7,14 +7,15 @@ public abstract class OnBoardPage extends BasePage {
 	public OnBoardPage(AppiumDriver driver) {
 		super(driver);
 	}
+
 	public abstract boolean isGetOnBoardTitleDisplayed();
-	
-    public abstract boolean isHelpButtonDisplayed();
-    
-    public abstract boolean isOnBoardWelcomeMessageDisplayed();
-    
-    public abstract SupervisorBiometricVerificationpage clickOnGetOnBoardTitle();
-    
-    public abstract  RegistrationTasksPage clickOnSkipToHomeScreen();
-    
+
+	public abstract boolean isHelpButtonDisplayed();
+
+	public abstract boolean isOnBoardWelcomeMessageDisplayed();
+
+	public abstract SupervisorBiometricVerificationpage clickOnGetOnBoardTitle();
+
+	public abstract RegistrationTasksPage clickOnSkipToHomeScreen();
+
 }

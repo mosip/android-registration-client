@@ -2,7 +2,7 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 
-public abstract class AcknowledgementPage extends BasePage{
+public abstract class AcknowledgementPage extends BasePage {
 
 	public AcknowledgementPage(AppiumDriver driver) {
 		super(driver);
@@ -24,6 +24,6 @@ public abstract class AcknowledgementPage extends BasePage{
 
 	public abstract DemographicDetailsPage clickOnDemographicDetailsTitle();
 
-	public abstract String getAID(); 
-	
+	public abstract String getAID();
+
 }

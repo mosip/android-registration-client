@@ -9,7 +9,6 @@ import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
 
-
 public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 
 	@AndroidFindBy(accessibility = "Iris Scan")
@@ -81,7 +80,7 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception Capture')]")
 	private WebElement exceptionCapturerHeader;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[10]")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Comments\")]/following-sibling::android.widget.EditText")
@@ -103,29 +102,29 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 		super(driver);
 	}
 
-	public  void enterCommentsInTextBox(String comments) {
-		if(!isElementDisplayedOnScreen(commentsTextBox)) {
+	public void enterCommentsInTextBox(String comments) {
+		if (!isElementDisplayedOnScreen(commentsTextBox)) {
 			swipeOrScroll();
 		}
-		clickAndsendKeysToTextBox(commentsTextBox,comments);
+		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
 
 	public void clickOnScanButton() {
 		clickOnElement(scanButton);
-	}	
+	}
 
 	public void clickOnExceptionTypePermanentButton() {
-		if(!isElementDisplayedOnScreen(permanentButton)) {
+		if (!isElementDisplayedOnScreen(permanentButton)) {
 			swipeOrScroll();
 		}
 		clickOnElement(permanentButton);
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
-		if(!isElementDisplayedOnScreen(temporaryButton)) {
+		if (!isElementDisplayedOnScreen(temporaryButton)) {
 			swipeOrScroll();
 		}
-		clickOnElement(temporaryButton);	
+		clickOnElement(temporaryButton);
 	}
 
 	public void markOneEyeException() {
@@ -162,7 +161,8 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnZoomButton() {
-		clickOnElement(zoomButton);
+		waitTime(1);
+		clickAtCoordinates(1035, 1077);
 	}
 
 	public void clickOnIrisScanTitle() {
@@ -191,69 +191,73 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	@SuppressWarnings("deprecation")
-	public  boolean isApplicantBiometricsPageDisplyed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
+	public boolean isApplicantBiometricsPageDisplyed() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
 	}
 
 	@SuppressWarnings("deprecation")
-	public  boolean isAuthenticationBiometricsPageDisplyed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualAuthBiometrics") + "\"))")));
+	public boolean isAuthenticationBiometricsPageDisplyed() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getValueUsingId("individualAuthBiometrics") + "\"))")));
 	}
 
-	public  boolean isExceptionTypeTitleDisplyed() {
+	public boolean isExceptionTypeTitleDisplyed() {
 		return isElementDisplayed(exceptionTypeTitle);
 	}
 
-	public  boolean isRightHandScanTitleDisplyed() {
+	public boolean isRightHandScanTitleDisplyed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
-	public  boolean isLeftHandScanTitleDisplyed() {
+	public boolean isLeftHandScanTitleDisplyed() {
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
-	public  boolean isThumbsScanTitleDisplyed() {
+	public boolean isThumbsScanTitleDisplyed() {
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
-	public  boolean isFaceScanTitleDisplyed() {
+	public boolean isFaceScanTitleDisplyed() {
 		return isElementDisplayed(faceScanTitle);
 	}
 
-	public  boolean isExceptionScanTitleDisplyed() {
+	public boolean isExceptionScanTitleDisplyed() {
 		return isElementDisplayed(exceptionScanTitle);
 	}
 
-	public  boolean isIrisScan() {
-		return isElementDisplayed(irisCapturerHeader,2000);
+	public boolean isIrisScan() {
+		return isElementDisplayed(irisCapturerHeader, 2000);
 	}
 
-	public  boolean isRightHandScan() {
-		return isElementDisplayed(rightHandCapturerHeader,2000);
+	public boolean isRightHandScan() {
+		return isElementDisplayed(rightHandCapturerHeader, 2000);
 	}
 
-	public  boolean isLeftHandScan() {
-		return isElementDisplayed(leftHandCapturerHeader,2000);
+	public boolean isLeftHandScan() {
+		return isElementDisplayed(leftHandCapturerHeader, 2000);
 	}
 
-	public  boolean isThumbsScan() {
-		return isElementDisplayed(thumbsCapturerHeader,2000);
+	public boolean isThumbsScan() {
+		return isElementDisplayed(thumbsCapturerHeader, 2000);
 	}
 
-	public  boolean isFaceScan() {
-		return isElementDisplayed(faceCapturerHeader,2000);
+	public boolean isFaceScan() {
+		return isElementDisplayed(faceCapturerHeader, 2000);
 	}
 
-	public  boolean isExceptionScan() {
-		return isElementDisplayed(exceptionCapturerHeader,2000);
+	public boolean isExceptionScan() {
+		return isElementDisplayed(exceptionCapturerHeader, 2000);
 	}
 
-	public  boolean isCommentHeaderDisplyed() {
+	public boolean isCommentHeaderDisplyed() {
 		return isElementDisplayed(commentsHeader);
 	}
 
-	public  boolean isExceptionCountDisplyed() {
-		if(!isElementDisplayedOnScreen(exceptionCount)) {
+	public boolean isExceptionCountDisplyed() {
+		if (!isElementDisplayedOnScreen(exceptionCount)) {
 			swipeOrScroll();
 			isElementDisplayed(exceptionCount);
 		}

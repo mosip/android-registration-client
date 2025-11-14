@@ -8,7 +8,7 @@ import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
 
 public class LoginPageArabic extends LoginPage {
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement mosipLogo;
 
@@ -51,39 +51,42 @@ public class LoginPageArabic extends LoginPage {
 	@AndroidFindBy(accessibility = "كلمة المرور غير صحيحة!")
 	private WebElement passwordIncorrectErrorMessage;
 
-	@AndroidFindBy(accessibility = "Arabic")
+	@AndroidFindBy(accessibility = "العربية")
 	private WebElement arabicButton;
-	
+
+	@AndroidFindBy(accessibility = "انتقل إلى المنزل")
+	private WebElement skipToHomeButton;
+
 	public LoginPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
-	
-	public  void enterUserName(String username) {
-		clickAndsendKeysToTextBox(userNameTextBox,username);
+
+	public void enterUserName(String username) {
+		clickAndsendKeysToTextBox(userNameTextBox, username);
 	}
 
-	public  void clickOnNextButton() {
+	public void clickOnNextButton() {
 		clickOnElement(nextButton);
 	}
 
-	public  void clickOnBackButton() {
+	public void clickOnBackButton() {
 		clickOnElement(backButton);
 	}
 
-	public  void enterPassword(String password) {
-		clickAndsendKeysToTextBox(passwordTextBox,password);
+	public void enterPassword(String password) {
+		clickAndsendKeysToTextBox(passwordTextBox, password);
 	}
 
-	public  RegistrationTasksPage clickOnloginButton() {
+	public RegistrationTasksPage clickOnloginButton() {
 		clickOnElement(loginButton);
 		return new RegistrationTasksPageArabic(driver);
 	}
 
-	public  boolean isNextButtonEnabled() {
+	public boolean isNextButtonEnabled() {
 		return isElementEnabled(nextButton);
 	}
 
-	public  boolean isLoginButtonEnabled() {
+	public boolean isLoginButtonEnabled() {
 		return isElementEnabled(loginButton);
 	}
 
@@ -133,6 +136,10 @@ public class LoginPageArabic extends LoginPage {
 
 	public void selectLanguage() {
 		clickOnElement(arabicButton);
+	}
+
+	public void clickOnSkipToHomeButton() {
+		clickOnElement(skipToHomeButton);
 	}
 
 }

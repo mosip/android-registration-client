@@ -8,14 +8,14 @@ import regclient.page.OnBoardPage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
-public class OnBoardPageArabic extends OnBoardPage{
+public class OnBoardPageArabic extends OnBoardPage {
 
 	@AndroidFindBy(accessibility = "تعليمات")
 	private WebElement helpButton;
 
 	@AndroidFindBy(accessibility = "إركب")
 	private WebElement getOnBoardTitle;
-	
+
 	@AndroidFindBy(accessibility = "انتقل إلى المنزل")
 	private WebElement skipToHomeScreenButton;
 
@@ -33,16 +33,16 @@ public class OnBoardPageArabic extends OnBoardPage{
 	public boolean isHelpButtonDisplayed() {
 		return isElementDisplayed(helpButton);
 	}
-	
+
 	public boolean isOnBoardWelcomeMessageDisplayed() {
 		return isElementDisplayed(onBoardWelcomeMessage);
 	}
-	
+
 	public SupervisorBiometricVerificationpage clickOnGetOnBoardTitle() {
 		clickOnElement(getOnBoardTitle);
 		return new SupervisorBiometricVerificationpageArabic(driver);
 	}
-	
+
 	public RegistrationTasksPage clickOnSkipToHomeScreen() {
 		clickOnElement(skipToHomeScreenButton);
 		return new RegistrationTasksPageArabic(driver);

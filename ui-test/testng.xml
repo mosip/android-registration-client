@@ -56,6 +56,31 @@
 					<include name="updateMyUINUpdatebiometrics" />
 				</methods>
 			</class>
+			<class name="regclient.androidTestCases.LostUin">
+				<methods>
+					<include name="lostUinAdult" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.ResetPassword">
+				<methods>
+					<include name="resetPassword" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.PreRegFetchingPacket">
+				<methods>
+					<include name="preRegFetching" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.BiometricCorrection">
+				<methods>
+					<include name="biometricCorrection" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.Settings">
+				<methods>
+					<include name="settings" />
+				</methods>
+			</class>
 		</classes>
 	</test>
 	<listeners>

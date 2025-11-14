@@ -17,28 +17,25 @@ import java.util.stream.Collectors;
 import static io.restassured.RestAssured.given;
 
 public class CommonLibrary extends BaseTestCase {
-	private static final org.slf4j.Logger logger= org.slf4j.LoggerFactory.getLogger(CommonLibrary.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CommonLibrary.class);
 	private final ApplicationLibrary applicationLibrary = new ApplicationLibrary();
 
 	public boolean isValidToken(String cookie) {
 
 		logger.info("========= Revalidating the token =========");
-		Response response = applicationLibrary.getWithoutParams("/v1/authmanager/authorize/admin/validateToken", cookie);
-		JSONObject responseJson =null;
+		Response response = applicationLibrary.getWithoutParams("/v1/authmanager/authorize/admin/validateToken",
+				cookie);
+		JSONObject responseJson = null;
 		try {
-			responseJson = (JSONObject) ((JSONObject) new JSONParser().parse(response.asString()))
-					.get("response");
+			responseJson = (JSONObject) ((JSONObject) new JSONParser().parse(response.asString())).get("response");
 		} catch (ParseException | NullPointerException e) {
 			logger.info(e.getMessage());
 		}
 
-		if (responseJson!=null && responseJson.get("errors")==null)
-		{
+		if (responseJson != null && responseJson.get("errors") == null) {
 			logger.info("========= Valid Token =========");
 			return true;
-		}
-		else
-		{
+		} else {
 
 			logger.info("========= InValid Token =========");
 			return false;
@@ -49,7 +46,7 @@ public class CommonLibrary extends BaseTestCase {
 	public Map<String, String> readProperty(String propertyFileName) {
 		Properties prop = new Properties();
 		try {
-			File propertyFile = new File( TestRunner.getResourcePath() +"/config/Kernel.properties");
+			File propertyFile = new File(TestRunner.getResourcePath() + "/config/Kernel.properties");
 			prop.load(new FileInputStream(propertyFile));
 
 		} catch (IOException e) {
@@ -80,11 +77,9 @@ public class CommonLibrary extends BaseTestCase {
 		return getResponse;
 	}
 
-
 	/**
-	 * @param response
-	 *            this method is for logging the response in case of error only.
-	 *            this is used in get request response logging
+	 * @param response this method is for logging the response in case of error
+	 *                 only. this is used in get request response logging
 	 */
 	public void responseLogger(Response response) {
 		int statusCode = response.statusCode();
@@ -97,7 +92,7 @@ public class CommonLibrary extends BaseTestCase {
 
 	public JSONObject readJsonData(String path, boolean isRelative) {
 		logger.info("path : " + path);
-		if(isRelative)
+		if (isRelative)
 			path = TestRunner.getResourcePath() + path;
 		logger.info("Relativepath : " + path);
 		File fileToRead = new File(path);
@@ -106,7 +101,7 @@ public class CommonLibrary extends BaseTestCase {
 			logger.info("fileToRead : " + fileToRead);
 			isOfFile = new FileInputStream(fileToRead);
 		} catch (FileNotFoundException e1) {
-			logger.info("error while reading the file : " + e1.getLocalizedMessage() );
+			logger.info("error while reading the file : " + e1.getLocalizedMessage());
 			e1.printStackTrace();
 			logger.info("File Not Found at the given path");
 		}

@@ -2,12 +2,12 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 
-public abstract class IntroducerBiometricPage extends BasePage{
+public abstract class IntroducerBiometricPage extends BasePage {
 
 	public IntroducerBiometricPage(AppiumDriver driver) {
 		super(driver);
 	}
-	
+
 	public abstract void clickOnScanButton();
 
 	public abstract void markOneEyeException();
@@ -59,6 +59,7 @@ public abstract class IntroducerBiometricPage extends BasePage{
 	public abstract boolean isFaceScan();
 
 	public abstract boolean isExceptionScan();
-
+	
+	public abstract boolean isNextButtonDisplyed();
 
 }

@@ -7,7 +7,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ManageApplicationsPage;
 
-public class ManageApplicationsPageFrench extends ManageApplicationsPage{
+public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 
 	@AndroidFindBy(accessibility = "Manage Applications")
 	private WebElement manageApplicationsTitle;
@@ -15,16 +15,16 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement ApplicationIDTextBox;
 
-	@AndroidFindBy(accessibility = "UPLOAD")
+	@AndroidFindBy(accessibility = "TÉLÉVERSER")
 	private WebElement uploadButton;
 
-	@AndroidFindBy(accessibility = "Client Status")
+	@AndroidFindBy(accessibility = "Statut du client")
 	private WebElement clientStatusDropdown;
 
-	@AndroidFindBy(accessibility = "Server Status")
+	@AndroidFindBy(accessibility = "État du serveur")
 	private WebElement serverStatusDropdown;
 
-	@AndroidFindBy(accessibility = "EXPORT")
+	@AndroidFindBy(accessibility = "EXPORTER")
 	private WebElement exportButton;
 
 	@AndroidFindBy(accessibility = "Created")
@@ -44,27 +44,45 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 
 	@AndroidFindBy(accessibility = "Exported")
 	private WebElement exportedsOption;
-	
-	@AndroidFindBy(accessibility = "Dismiss")
+
+	@AndroidFindBy(accessibility = "Ignorer")
 	private WebElement dismissButton;
-	
-	@AndroidFindBy(accessibility = "Displaying 0 Applications")
+
+	@AndroidFindBy(accessibility = "Affichage de 0 application")
 	private WebElement displayZeroApplication;
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(0)")
 	private WebElement searchCheckBoxButton;
-	
+
 	@AndroidFindBy(accessibility = "Received")
 	private WebElement receivedValueDropdown;
-	
+
 	@AndroidFindBy(accessibility = "Processing")
 	private WebElement processingValueDropdown;
-	
+
 	@AndroidFindBy(accessibility = "Accepted")
 	private WebElement acceptedValueDropdown;
-	
+
 	@AndroidFindBy(accessibility = "Dismiss")
 	private WebElement deletionValueDropdown;
+
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Documents'][2]")
+	private WebElement documentsHeader;
+
+	@AndroidFindBy(accessibility = "android:id/button1")
+	private WebElement useThisFolderButton;
+
+	@AndroidFindBy(accessibility = "android:id/button1")
+	private WebElement allowButton;
+
+	@AndroidFindBy(xpath = "//android.widget.TextView[@resource-id='android:id/title' and @text='Documents']")
+	private WebElement documentsFolder;
+
+	@AndroidFindBy(accessibility = "Aucun réseau trouvé !")
+	private WebElement noNetworkFound;
+
+	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
+	private WebElement latestAidCheckBox;
 
 	public ManageApplicationsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -74,17 +92,18 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 		return isElementDisplayed(manageApplicationsTitle);
 	}
 
-	public  void enterAID(String AID) {
-		clickAndsendKeysToTextBox(ApplicationIDTextBox,AID);
+	public void enterAID(String AID) {
+		clickAndsendKeysToTextBox(ApplicationIDTextBox, AID);
 	}
 
-	public  void enterWrongAID(String AID) {
-		clickAndsendKeysToTextBox(ApplicationIDTextBox,AID);
-	} 
+	public void enterWrongAID(String AID) {
+		clickAndsendKeysToTextBox(ApplicationIDTextBox, AID);
+	}
 
 	public boolean isSearchAIDDisplayed(String AID) {
 		waitTime(2);
-		return isElementDisplayed(driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]")));
+		return isElementDisplayed(
+				driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]")));
 	}
 
 	public boolean isZeroApplicationDisplayed() {
@@ -92,30 +111,29 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 		return isElementDisplayed(displayZeroApplication);
 	}
 
-	public  void clickOnUploadButton() {
+	public void clickOnUploadButton() {
 		clickOnElement(uploadButton);
 		waitTime(10);
 	}
 
 	public boolean isPacketUploadDone(String AID) {
 		waitTime(2);
-		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-		if(element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
+		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
+		if (element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
 			waitTime(10);
-			element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-			if(element.getAttribute("contentDescription").contains("NOT UPLOADED"))
+			element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
+			if (element.getAttribute("contentDescription").contains("NOT UPLOADED"))
 				return false;
 			else
 				return true;
-		}
-		else
+		} else
 			return true;
 	}
 
 	public boolean isPacketApproved(String AID) {
 		waitTime(2);
-		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-		if(element.getAttribute("contentDescription").contains("APPROVED"))
+		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
+		if (element.getAttribute("contentDescription").contains("APPROVED"))
 			return true;
 		else
 			return false;
@@ -123,27 +141,27 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 
 	public boolean isPacketSynned(String AID) {
 		waitTime(2);
-		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-		if(element.getAttribute("contentDescription").contains("SYNCED"))
-			return true;
-		else
-			return false;
-	}
-	
-	public boolean isPacketRejected(String AID) {
-		waitTime(2);
-		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
-		if(element.getAttribute("contentDescription").contains("REJECTED"))
+		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
+		if (element.getAttribute("contentDescription").contains("SYNCED"))
 			return true;
 		else
 			return false;
 	}
 
-	public  void clickClientStatusDropdown() {
+	public boolean isPacketRejected(String AID) {
+		waitTime(2);
+		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
+		if (element.getAttribute("contentDescription").contains("REJECTED"))
+			return true;
+		else
+			return false;
+	}
+
+	public void clickClientStatusDropdown() {
 		clickOnElement(clientStatusDropdown);
 	}
 
-	public  void clickServerStatusDropdown() {
+	public void clickServerStatusDropdown() {
 		clickOnElement(serverStatusDropdown);
 	}
 
@@ -171,25 +189,25 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 		return isElementDisplayed(exportedsOption);
 	}
 
-	public  void clickDismissButton() {
+	public void clickDismissButton() {
 		clickOnElement(dismissButton);
 	}
 
-	public  void clickOnSearchCheckBox() {
+	public void clickOnSearchCheckBox() {
 		clickOnElement(searchCheckBoxButton);
 	}
 
-	public  void selectApprovedValueDropdown() {
+	public void selectApprovedValueDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(approvedOption);
-	}	
+	}
 
-	public  void selectSyncedOptionDropdown() {
+	public void selectSyncedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(syncedOption);
 	}
 
-	public  void selectUploadedOptionDropdown() {
+	public void selectUploadedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(uploadedOption);
 
@@ -214,4 +232,35 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage{
 	public void clickOnBackButton() {
 		driver.navigate().back();
 	}
+
+	public void clickOnExportButton() {
+		clickOnElement(exportButton);
+		waitTime(10);
+	}
+
+	public void clickOnUseThisFolderButton() {
+		if (isElementDisplayed(documentsHeader)) {
+			clickOnElement(useThisFolderButton);
+			if (isElementDisplayed(allowButton)) {
+				clickOnElement(allowButton);
+			}
+		} else if (isElementDisplayed(documentsFolder)) {
+			clickOnElement(documentsFolder);
+			clickOnElement(useThisFolderButton);
+			if (isElementDisplayed(allowButton)) {
+				clickOnElement(allowButton);
+			}
+		} else {
+			throw new RuntimeException("Documents folder or header not found on screen");
+		}
+	}
+
+	public boolean isNoNetworkFoundDisplayed() {
+		return isElementDisplayed(noNetworkFound);
+	}
+
+	public void selectLatestAidCheckBox() {
+		clickOnElement(latestAidCheckBox);
+	}
+
 }

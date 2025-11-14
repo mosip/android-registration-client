@@ -8,40 +8,50 @@ import regclient.page.LoginPage;
 import regclient.page.ProfilePage;
 import regclient.pages.english.LoginPageEnglish;
 
-public class ProfilePageArabic extends ProfilePage{
+public class ProfilePageArabic extends ProfilePage {
 
 	@AndroidFindBy(accessibility = "حساب تعريفي")
 	private WebElement profileTitle;
-	
+
 	@AndroidFindBy(accessibility = "الخروج")
 	private WebElement logoutButton;
-	
-	@AndroidFindBy(accessibility = "There is still some action required!")
+
+	@AndroidFindBy(accessibility = "لا يزال هناك بعض الإجراءات المطلوبة!")
 	private WebElement logoutPopUpMessage;
-	
+
+	@AndroidFindBy(accessibility = "إعادة تعيين كلمة المرور")
+	private WebElement resetPasswordButton;
 
 	public ProfilePageArabic(AppiumDriver driver) {
 		super(driver);
 	}
 
-	public  LoginPage clickOnLogoutButton() {
-		if(isElementDisplayed(logoutButton))
+	public LoginPage clickOnLogoutButton() {
+		if (isElementDisplayed(logoutButton))
+			clickOnElement(logoutButton);
+		return new LoginPageEnglish(driver);
+	}
+
+	public LoginPage clickOnLogoutButtonOnPopUp() {
 		clickOnElement(logoutButton);
 		return new LoginPageEnglish(driver);
-	}	
-	
-	public  LoginPage clickOnLogoutButtonOnPopUp() {
-		clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
-	}	
-	
+	}
+
 	public boolean isProfileTitleDisplayed() {
 		return isElementDisplayed(profileTitle);
 	}
-	
+
 	public boolean isLogoutPopUpMessageDisplayed() {
 		return isElementDisplayed(logoutPopUpMessage);
 	}
 
+	public boolean isResetPasswordButtonDisplayed() {
+		return isElementDisplayed(resetPasswordButton);
+	}
+
+	public LoginPage clickOnResetPasswordButton() {
+		clickOnElement(resetPasswordButton);
+		return new LoginPageEnglish(driver);
+	}
 
 }

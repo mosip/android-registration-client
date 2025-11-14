@@ -183,5 +183,9 @@ public class IntroducerBiometricPageHindi extends IntroducerBiometricPage{
 	public  boolean isExceptionScan() {
 		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
+	
+	public boolean isNextButtonDisplyed() {
+		return isElementDisplayed(nextButton);
+	}
 
 }

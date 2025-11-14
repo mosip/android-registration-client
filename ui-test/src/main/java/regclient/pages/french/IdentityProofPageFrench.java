@@ -7,7 +7,7 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.DocumentUploadPage;
 import regclient.page.IdentityProofPage;
 
-public class IdentityProofPageFrench extends IdentityProofPage{
+public class IdentityProofPageFrench extends IdentityProofPage {
 
 	@AndroidFindBy(accessibility = "SAUVEGARDER")
 	private WebElement saveButton;
@@ -17,15 +17,15 @@ public class IdentityProofPageFrench extends IdentityProofPage{
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
-	
+
 	@AndroidFindBy(className = "android.widget.ImageView")
 	private WebElement captureImage;
-	
+
 	public IdentityProofPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
 
-	public  DocumentUploadPage clickOnSaveButton() {
+	public DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
 		return new DocumentUploadPageFrench(driver);
 	}

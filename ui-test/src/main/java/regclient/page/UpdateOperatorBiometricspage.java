@@ -2,11 +2,11 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 
-public abstract class UpdateOperatorBiometricspage extends BasePage{
+public abstract class UpdateOperatorBiometricspage extends BasePage {
 
 	public UpdateOperatorBiometricspage(AppiumDriver driver) {
 		super(driver);
-		
+
 	}
 
 	public abstract void clickOnIrisScan();
@@ -56,49 +56,49 @@ public abstract class UpdateOperatorBiometricspage extends BasePage{
 	public abstract boolean isThumbsScanQualityDisplyed();
 
 	public abstract boolean isFaceScanQualityDisplyed();
-	
+
 	public abstract void clickOnMarkExceptionButton();
 
-    public abstract void markOneEyeException();
+	public abstract void markOneEyeException();
 
-    public abstract void markOneFingureException();
-    
-    public abstract boolean isExceptionTypeTitleDisplyed();
+	public abstract void markOneFingureException();
 
-    public abstract void clickOnExceptionTypeTemporaryButton();
+	public abstract boolean isExceptionTypeTitleDisplyed();
 
-    public abstract boolean isCommentHeaderDisplyed();
+	public abstract void clickOnExceptionTypeTemporaryButton();
 
-    public abstract void enterCommentsInTextBox(String comments);
+	public abstract boolean isCommentHeaderDisplyed();
 
-    public abstract void clickOnIrisScanTitle();
-    
-    public abstract void clickOnThumbsScanTitle();
-    
-    public abstract boolean isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed();
-    
-    public abstract boolean isZoomButtonDisplyed();
-    
-    public abstract void clickOnRightHandScanTitle();
+	public abstract void enterCommentsInTextBox(String comments);
 
-    public abstract void clickOnLeftHandScanTitle();
-    
-    public abstract void clickOnFaceScanTitle();
-    
-    public abstract boolean checkThresholdValueIris();
-    
-    public abstract boolean checkThresholdValueRightHand();
-	
+	public abstract void clickOnIrisScanTitle();
+
+	public abstract void clickOnThumbsScanTitle();
+
+	public abstract boolean isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed();
+
+	public abstract boolean isZoomButtonDisplyed();
+
+	public abstract void clickOnRightHandScanTitle();
+
+	public abstract void clickOnLeftHandScanTitle();
+
+	public abstract void clickOnFaceScanTitle();
+
+	public abstract boolean checkThresholdValueIris();
+
+	public abstract boolean checkThresholdValueRightHand();
+
 	public abstract boolean checkThresholdValueLeftHand();
-	
+
 	public abstract boolean checkThresholdValueThumbs();
-	
+
 	public abstract boolean checkThresholdValueFace();
-	
+
 	public abstract boolean isSupervisorBiometricUpdatePageLoaded();
-    
+
 	public abstract boolean isVerifyAndSaveButtonEnabled();
-	
+
 	public abstract boolean isOperatorBiometricsUpdatedPopupLoaded();
 
 	public abstract void clickOnHomeButton();
@@ -106,7 +106,9 @@ public abstract class UpdateOperatorBiometricspage extends BasePage{
 	public abstract void clickOnVerifyAndSaveButton();
 
 	public abstract boolean isDismissPageLoaded();
-	
+
 	public abstract void clickOnBackButton();
+
+	public abstract boolean isUpdateOperatorBiometricsPageLoaded();
 
 }

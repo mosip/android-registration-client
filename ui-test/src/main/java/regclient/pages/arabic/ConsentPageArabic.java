@@ -12,13 +12,11 @@ import regclient.page.RegistrationTasksPage;
 import regclient.pages.english.DemographicDetailsPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 
-
-
 public class ConsentPageArabic extends ConsentPage {
 
 	@AndroidFindBy(accessibility = "أُبلغ")
 	private WebElement informedButton;
-	
+
 	@AndroidFindBy(accessibility = "يلغي")
 	private WebElement cancelButton;
 
@@ -27,33 +25,47 @@ public class ConsentPageArabic extends ConsentPage {
 	}
 
 	@SuppressWarnings("deprecation")
-	public boolean isConsentPageDisplayed() {
-			return isElementDisplayed(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("consentdet") + "\"))"));		
+	public boolean isPageDisplayed(String pageKey) {
+		try {
+			String screenTitle = FetchUiSpec.getScreenTitle(pageKey);
+
+			WebElement pageElement = findElementWithRetry(
+					MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0))"
+							+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + screenTitle + "\"))"));
+
+			return isElementDisplayed(pageElement);
+
+		} catch (Exception e) {
+			return false; // page not found or not visible
+		}
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean isCheckBoxReadable() {
-		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("consent") + "\"))")));
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getValueUsingId("consent") + "\"))")));
 	}
-	
-	public  boolean isInformedButtonEnabled() {
+
+	public boolean isInformedButtonEnabled() {
 		return isElementEnabled(informedButton);
 	}
 
-	public  DemographicDetailsPage clickOnInformedButton() {
+	public DemographicDetailsPage clickOnInformedButton() {
 		clickOnElement(informedButton);
 		return new DemographicDetailsPageEnglish(driver);
 	}
 
-
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
-		return new  RegistrationTasksPageEnglish(driver);
+		return new RegistrationTasksPageEnglish(driver);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public boolean updateUINTitleDisplayed() {
-		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
-	
+
 }

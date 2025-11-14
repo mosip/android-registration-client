@@ -2,7 +2,7 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 
-public abstract class PreviewPage extends BasePage{
+public abstract class PreviewPage extends BasePage {
 
 	public PreviewPage(AppiumDriver driver) {
 		super(driver);
@@ -21,14 +21,21 @@ public abstract class PreviewPage extends BasePage{
 	public abstract boolean isApplicationIDPreviewPagePageDisplayed();
 
 	public abstract DemographicDetailsPage clickOnDemographicDetailsTitle();
-	
+
 	public abstract boolean isBothIrisImageDisplayed();
-	
+
 	public abstract boolean isSingleIrisImageDisplayed();
-	
-	public abstract boolean isFingerExceptionText() ;
+
+	public abstract boolean isFingerExceptionText();
 
 	public abstract String getAID();
-	
+
 	public abstract boolean updateUINTitleDisplayed();
+
+	public abstract void validatePreRegAndApplicationIdMatch(String age);
+
+	public abstract String getEmailId();
+
+	public abstract boolean isLostUinTitleDisplayed();
+
 }
