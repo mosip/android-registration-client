@@ -349,4 +349,12 @@ class RegistrationTaskProvider with ChangeNotifier {
   setApplicationId(String appId) async {
     await registrationService.setApplicationId(appId);
   }
+
+  setAdditionalReqId(String additionalReqId) async {
+    await registrationService.setAdditionalReqId(additionalReqId);
+  }
+
+  setCurrentLocation(double latitude, double longitude) async {
+    await registrationService.setMachineLocation(latitude, longitude);
+  }
 }

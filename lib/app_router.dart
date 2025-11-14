@@ -6,25 +6,24 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:registration_client/ui/process_ui/lost_process.dart';
-
-import 'package:registration_client/ui/process_ui/new_process.dart';
+import 'package:registration_client/ui/process_ui/generic_process.dart';
+import 'package:registration_client/ui/process_ui/process_type.dart';
 
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/ui/onboard/onboard_landing_page.dart';
 import 'package:registration_client/ui/onboard/home_page.dart';
-import 'package:registration_client/ui/process_ui/update_process.dart';
 
 class AppRouter {
   AppRouter._();
 
   static Map<String, Widget Function(BuildContext)> routes = {
     LoginPage.route: (context) => const LoginPage(),
-    NewProcess.routeName: (context) => const NewProcess(),
-    UpdateProcess.routeName: (context) => const UpdateProcess(),
+    '/new_process': (context) => const GenericProcess(processType: ProcessType.newProcess),
+    '/update_process': (context) => const GenericProcess(processType: ProcessType.updateProcess),
+    '/lost_process': (context) => const GenericProcess(processType: ProcessType.lostProcess),
+    '/correction_process': (context) => const GenericProcess(processType: ProcessType.correctionProcess),
     OnboardLandingPage.route: (context) => const OnboardLandingPage(),
     HomePage.route: (context) => const HomePage(),
-    LostProcess.routeName: (context) => const LostProcess(),
   };
 
   static Route<dynamic>? onUnknownRoute(RouteSettings settings) {

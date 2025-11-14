@@ -12,6 +12,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ReasonListDto;
 import io.mosip.registration.clientmanager.dto.http.*;
@@ -23,11 +24,13 @@ import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.clientmanager.entity.PermittedLocalConfig;
 import io.mosip.registration.clientmanager.entity.ReasonList;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
@@ -62,6 +65,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -105,9 +109,12 @@ public class MasterDataServiceImpl implements MasterDataService {
     private LanguageRepository languageRepository;
     private JobManagerService jobManagerService;
     private FileSignatureDao fileSignatureDao;
+    private PermittedLocalConfigRepository permittedLocalConfigRepository;
+    private LocalConfigDAO localConfigDAO;
     private String regCenterId;
     private String result = "";
     SharedPreferences sharedPreferences;
+    private JobTransactionService jobTransactionService;
 
     @Inject
     public MasterDataServiceImpl(Context context, ObjectMapper objectMapper, SyncRestService syncRestService,
@@ -128,7 +135,10 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  CertificateManagerService certificateManagerService,
                                  LanguageRepository languageRepository,
                                  JobManagerService jobManagerService,
-                                 FileSignatureDao fileSignatureDao) {
+                                 FileSignatureDao fileSignatureDao,
+                                 JobTransactionService jobTransactionService,
+                                 PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                 LocalConfigDAO localConfigDAO) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -150,6 +160,9 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.languageRepository = languageRepository;
         this.jobManagerService = jobManagerService;
         this.fileSignatureDao = fileSignatureDao;
+        this.jobTransactionService = jobTransactionService;
+        this.permittedLocalConfigRepository = permittedLocalConfigRepository;
+        this.localConfigDAO = localConfigDAO;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -178,7 +191,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync) {
+    public void syncCertificate(Runnable onFinish, String applicationId, String referenceId, String setApplicationId, String setReferenceId, boolean isManualSync, String jobId) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
             result = POLICY_KEY_SYNC_FAILED;
@@ -200,6 +213,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                             certificateRequestDto.setReferenceId(setReferenceId);
                             certificateRequestDto.setCertificateData(response.body().getResponse().getCertificate());
                             certificateManagerService.uploadOtherDomainCertificate(certificateRequestDto);
+                            try {
+                                logLastSyncCompletionDateTime(jobId);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Failed to store policy sync last sync time", e);
+                            }
                             if (isManualSync) {
                                 Toast.makeText(context, "Policy key Sync Completed", Toast.LENGTH_LONG).show();
                             }
@@ -241,9 +259,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync) {
+    public void syncMasterData(Runnable onFinish, int retryNo, boolean isManualSync, String jobId) {
         CenterMachineDto centerMachineDto = getRegistrationCenterMachineDetails();
-
         Map<String, String> queryParams = new HashMap<>();
 
         try {
@@ -284,7 +301,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                             if (retryNo < master_data_recursive_sync_max_retry) {
                                 Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
                                 //rerunning master data to sync completed master data
-                                syncMasterData(onFinish, retryNo + 1, isManualSync);
+                                syncMasterData(onFinish, retryNo + 1, isManualSync, jobId);
                             } else {
                                 result = MASTER_DATA_SYNC_FAILED;
                                 if (isManualSync) {
@@ -298,6 +315,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                                 Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
                             }
                             onFinish.run();
+                        }
+                        try {
+                            logLastSyncCompletionDateTime(jobId);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to store master data sync last sync time", e);
                         }
                     } else {
                         result = MASTER_DATA_SYNC_FAILED;
@@ -327,7 +349,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncGlobalParamsData(Runnable onFinish, boolean isManualSync) throws Exception {
+    public void syncGlobalParamsData(Runnable onFinish, boolean isManualSync, String jobId) throws Exception {
         Log.i(TAG, "config data sync is started");
         String serverVersion = getServerVersionFromConfigs();
 
@@ -344,6 +366,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                         result = "";
                         if (isManualSync) {
                             Toast.makeText(context, context.getString(R.string.global_config_sync_completed), Toast.LENGTH_LONG).show();
+                        }
+                        try {
+                            logLastSyncCompletionDateTime(jobId);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to store master data sync last sync time", e);
                         }
                         onFinish.run();
                     } else {
@@ -376,10 +403,16 @@ public class MasterDataServiceImpl implements MasterDataService {
     @SuppressWarnings("unchecked")
     private void saveGlobalParams(Map<String, Object> responseMap) {
         try {
+
             Map<String, String> globalParamMap = new HashMap<>();
 
             if (responseMap.get("configDetail") != null) {
                 Map<String, Object> configDetailJsonMap = (Map<String, Object>) responseMap.get("configDetail");
+
+                if (configDetailJsonMap != null && configDetailJsonMap.get("globalConfiguration") != null) {
+                    String encryptedGlobalConfigs = configDetailJsonMap.get("globalConfiguration").toString();
+                    parseToMap(getParams(encryptedGlobalConfigs), globalParamMap);
+                }
 
                 if (configDetailJsonMap != null && configDetailJsonMap.get("registrationConfiguration") != null) {
                     String encryptedConfigs = configDetailJsonMap.get("registrationConfiguration").toString();
@@ -502,7 +535,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
 
     @Override
-    public void syncUserDetails(Runnable onFinish, boolean isManualSync) throws Exception {
+    public void syncUserDetails(Runnable onFinish, boolean isManualSync, String jobId) throws Exception {
         String serverVersion = getServerVersionFromConfigs();
         if (serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
             result = "";
@@ -510,6 +543,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                 Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
             }
             Log.i(TAG, "Found 115 version, skipping userdetails sync");
+            try {
+                logLastSyncCompletionDateTime(jobId);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to store user details sync last sync time", e);
+            }
             onFinish.run();
             return;
         }
@@ -527,6 +565,12 @@ public class MasterDataServiceImpl implements MasterDataService {
                         if (isManualSync) {
                             Toast.makeText(context, "User Sync Completed", Toast.LENGTH_LONG).show();
                         }
+                        try {
+                            logLastSyncCompletionDateTime(jobId);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to store user details sync last sync time", e);
+                        }
+
                         onFinish.run();
                     } else {
                         result = USER_DETAILS_SYNC_FAILED;
@@ -564,7 +608,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public void syncCACertificates(Runnable onFinish, boolean isManualSync) {
+    public void syncCACertificates(Runnable onFinish, boolean isManualSync, String jobId) {
         Call<ResponseWrapper<CACertificateResponseDto>> call = syncRestService.getCACertificates(null,
                 BuildConfig.CLIENT_VERSION);
         call.enqueue(new Callback<ResponseWrapper<CACertificateResponseDto>>() {
@@ -579,6 +623,11 @@ public class MasterDataServiceImpl implements MasterDataService {
                             result = "";
                             if (isManualSync) {
                                 Toast.makeText(context, "CA Certificate Sync Completed", Toast.LENGTH_LONG).show();
+                            }
+                            try {
+                                logLastSyncCompletionDateTime(jobId);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Failed to store CA certificates sync last sync time", e);
                             }
                             onFinish.run();
                             return;
@@ -696,6 +745,12 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private String getCurrentTime() {
         return Instant.now().toString();
+    }
+
+    @Override
+    public void logLastSyncCompletionDateTime(String jobIdString) {
+        int jobId = jobManagerService.generateJobServiceId(jobIdString);
+        jobTransactionService.LogJobTransaction(jobId, Instant.now().toEpochMilli());
     }
 
     private void downloadUrlData(Path path, JSONObject jsonObject, boolean isManualSync) {
@@ -915,6 +970,26 @@ public class MasterDataServiceImpl implements MasterDataService {
                     }
                 }
                 break;
+            case "PermittedLocalConfig":
+                JSONArray permittedConfigsJsonArray = getDecryptedDataList(data);
+                List<PermittedLocalConfig> permittedConfigs = new ArrayList<>();
+                for (int i = 0; i < permittedConfigsJsonArray.length(); i++) {
+                    JSONObject jsonObjects = new JSONObject(permittedConfigsJsonArray.getString(i));
+
+                    PermittedLocalConfig premittedConfig = new PermittedLocalConfig(jsonObjects.getString("code"));
+                    premittedConfig.setName(jsonObjects.getString("name"));
+                    premittedConfig.setType(jsonObjects.getString("type"));
+                    premittedConfig.setIsActive(jsonObjects.getBoolean("isActive"));
+                    premittedConfig.setIsDeleted(jsonObjects.optBoolean("isDeleted", false));
+                    premittedConfig.setDelDtimes(jsonObjects.optLong("delDtimes", 0L));
+                    permittedConfigs.add(premittedConfig);
+                }
+                permittedLocalConfigRepository.savePermittedConfigs(permittedConfigs);
+
+                if (localConfigDAO != null) {
+                    localConfigDAO.cleanUpLocalPreferences();
+                }
+                break;
         }
     }
 
@@ -1001,4 +1076,10 @@ public class MasterDataServiceImpl implements MasterDataService {
         String value = globalParamRepository.getGlobalParamValue(id);
         return value == null ? "" : value;
     }
+
+    @Override
+    public Map<String, Object> getRegistrationParams() {
+        return globalParamRepository.getGlobalParamsByPattern("mosip.registration%");
+    }
+
 }

@@ -115,20 +115,6 @@ class OnboardingPage extends StatelessWidget {
                       color: appWhite,
                       fontColor: appSolidPrimary,
                     ),
-                    SizedBox(
-                      height: 40.h,
-                    ),
-                    _getButton(
-                      title: appLocalizations.skip_to_home,
-                      onTap: () {
-                        globalProvider.setCurrentIndex(1);
-                      },
-                      color: Colors.transparent,
-                      fontColor: appWhite,
-                    ),
-                    SizedBox(
-                      height: 40.h,
-                    ),
                   ],
                 ),
               ),

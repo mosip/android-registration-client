@@ -2,6 +2,8 @@ package io.mosip.registration.clientmanager.service;
 
 import android.util.Log;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,12 +48,12 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
         this.preRegistrationRepositoryDao.insert(preRegistration);
     }
 
-    public List<PreRegistrationList> fetchRecordsToBeDeleted(String startDate) {
+    public List<PreRegistrationList> fetchRecordsToBeDeleted(Date startDate) {
 
         Log.i(TAG, "REGISTRATION - PRE_REGISTRATION_DATA_SYNC_RECORD_FETCH - PRE_REGISTRATION_DATA_SYNC_DAO_IMPL" +
                 "Fetch Records that needs to be deleted");
 
-        return this.preRegistrationRepositoryDao.findByAppointmentDateBeforeAndIsDeleted(startDate, false);
+        return this.preRegistrationRepositoryDao.findByAppointmentDateBeforeAndIsDeleted(startDate.toString(), false);
     }
 
     public long update(String id, String updatedBy, String updatedTime) {
@@ -69,5 +71,29 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
         PreRegistrationList preRegistrationList = this.preRegistrationRepositoryDao
                 .findTopByOrderByLastUpdatedPreRegTimeStampDesc();
         return preRegistrationList != null ? preRegistrationList.getLastUpdatedPreRegTimeStamp() : null;
+    }
+
+    @Override
+    public void deleteAll(List<PreRegistrationList> preRegistrationList) {
+        try {
+            this.preRegistrationRepositoryDao.deleteAll(preRegistrationList);
+        } catch (Exception e) {
+            Log.e(TAG, "Error deleting pre-registration records: " + e.getMessage());
+            throw new RuntimeException("Failed to delete pre-registration records", e);
+        }
+    }
+
+    @Override
+    public Timestamp getLastPreRegPacketDownloadedTimeAsTimestamp() {
+        PreRegistrationList preRegistrationList = this.preRegistrationRepositoryDao
+                .findTopByOrderByLastUpdatedPreRegTimeStampDesc();
+        if (preRegistrationList != null && preRegistrationList.getLastUpdatedPreRegTimeStamp() != null) {
+            try {
+                return Timestamp.valueOf(preRegistrationList.getLastUpdatedPreRegTimeStamp());
+            } catch (Exception e) {
+                Log.e(TAG, "Error parsing timestamp: " + e.getMessage());
+            }
+        }
+        return null;
     }
 }

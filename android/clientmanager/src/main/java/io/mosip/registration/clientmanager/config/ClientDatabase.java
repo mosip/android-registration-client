@@ -28,6 +28,8 @@ import io.mosip.registration.clientmanager.dao.SyncJobDefDao;
 import io.mosip.registration.clientmanager.dao.TemplateDao;
 import io.mosip.registration.clientmanager.dao.UserBiometricDao;
 import io.mosip.registration.clientmanager.dao.UserDetailDao;
+import io.mosip.registration.clientmanager.dao.PermittedLocalConfigDao;
+import io.mosip.registration.clientmanager.dao.LocalPreferencesDao;
 import io.mosip.registration.clientmanager.dao.UserPasswordDao;
 import io.mosip.registration.clientmanager.dao.UserTokenDao;
 import io.mosip.registration.clientmanager.dao.UserRoleDao;
@@ -44,6 +46,7 @@ import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.LocationHierarchy;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
+import io.mosip.registration.clientmanager.entity.PermittedLocalConfig;
 import io.mosip.registration.clientmanager.entity.ReasonList;
 import io.mosip.registration.clientmanager.entity.ProcessSpec;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
@@ -56,6 +59,7 @@ import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.entity.UserPassword;
 import io.mosip.registration.clientmanager.entity.UserToken;
 import io.mosip.registration.clientmanager.entity.UserRole;
+import io.mosip.registration.clientmanager.entity.LocalPreferences;
 import io.mosip.registration.keymanager.dao.CACertificateStoreDao;
 import io.mosip.registration.keymanager.dao.KeyStoreDao;
 import io.mosip.registration.keymanager.entity.CACertificateStore;
@@ -66,25 +70,10 @@ import io.mosip.registration.keymanager.entity.KeyStore;
         ApplicantValidDocument.class, Template.class, KeyStore.class,
         Location.class, GlobalParam.class, IdentitySchema.class, LocationHierarchy.class,
         BlocklistedWord.class, SyncJobDef.class, UserDetail.class, UserBiometric.class, UserPassword.class, JobTransaction.class,
-        CACertificateStore.class, Language.class, Audit.class, FileSignature.class, ProcessSpec.class,PreRegistrationList.class},
-        version = 1, exportSchema = false)
+        CACertificateStore.class, Language.class, Audit.class, FileSignature.class, ProcessSpec.class,PreRegistrationList.class,
+        PermittedLocalConfig.class, LocalPreferences.class},
+        version = 2, exportSchema = false)
 public abstract class ClientDatabase extends RoomDatabase {
-
-    private static final String DATABASE_NAME = "regclient";
-    private static ClientDatabase INSTANCE;
-
-    public synchronized static ClientDatabase getDatabase(Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = buildDatabase(context);
-        }
-        return INSTANCE;
-    }
-
-    public static ClientDatabase buildDatabase(Context context) {
-        return Room.databaseBuilder(context, ClientDatabase.class, DATABASE_NAME)
-                .allowMainThreadQueries()
-                .build();
-    }
 
     public abstract UserTokenDao userTokenDao();
 
@@ -140,9 +129,9 @@ public abstract class ClientDatabase extends RoomDatabase {
 
     public abstract PreRegistrationDataSyncRepositoryDao preRegistrationDataSyncRepositoryDao();
 
-    public static void destroyDB() {
-        INSTANCE = null;
-    }
+    public abstract PermittedLocalConfigDao permittedLocalConfigDao();
+
+    public abstract LocalPreferencesDao localPreferencesDao();
 }
 
 

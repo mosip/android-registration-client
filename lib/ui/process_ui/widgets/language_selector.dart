@@ -13,10 +13,8 @@ import 'package:registration_client/model/process.dart';
 
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
-import 'package:registration_client/ui/process_ui/lost_process.dart';
+import 'package:registration_client/ui/process_ui/process_type.dart';
 
-import 'package:registration_client/ui/process_ui/new_process.dart';
-import 'package:registration_client/ui/process_ui/update_process.dart';
 import 'package:registration_client/ui/widgets/language_component.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -38,19 +36,24 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   late RegistrationTaskProvider registrationTaskProvider;
 
   _triggerNavigation() {
-    if (widget.newProcess.id == "NEW") {
-      Navigator.pushNamed(context, NewProcess.routeName,
+    if (widget.newProcess.flow == "NEW") {
+      Navigator.pushNamed(context, ProcessType.newProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
 
-    if (widget.newProcess.id == "UPDATE") {
-      Navigator.pushNamed(context, UpdateProcess.routeName,
+    if (widget.newProcess.flow == "UPDATE") {
+      Navigator.pushNamed(context, ProcessType.updateProcess.routeName,
           arguments: {"process": widget.newProcess});
     }
 
-    if (widget.newProcess.id == "LOST") {
-      Navigator.pushNamed(context, LostProcess.routeName,
-      arguments: {"process": widget.newProcess});
+    if (widget.newProcess.flow == "LOST") {
+      Navigator.pushNamed(context, ProcessType.lostProcess.routeName,
+          arguments: {"process": widget.newProcess});
+    }
+
+    if (widget.newProcess.flow == "CORRECTION") {
+      Navigator.pushNamed(context, ProcessType.correctionProcess.routeName,
+          arguments: {"process": widget.newProcess});
     }
   }
 
@@ -86,6 +89,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
             ? "Update"
             : widget.newProcess.flow!,
         widget.newProcess.id!);
+
     registrationTaskProvider.addDemographicField("preferredLang",
         globalProvider.fieldInputValue["preferredLang"].toString());
     String registrationStartError =

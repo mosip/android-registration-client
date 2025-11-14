@@ -93,23 +93,16 @@ public class AuditManagerServiceImpl implements AuditManagerService {
 
     @Override
     public boolean deleteAuditLogs() {
-        Log.i(TAG, "Deletion of Audit Logs Started");
 
         String tillDate = globalParamRepository.getGlobalParamValue(RegistrationConstants.AUDIT_EXPORTED_TILL);
 
-        if (tillDate != null && !tillDate.isEmpty()) {
-            try {
-                /* Delete Audits before given Time */
-                long tillDateLong = Long.parseLong(tillDate);
-                auditRepository.deleteAllAuditsTillDate(tillDateLong);
-                Log.i(TAG, "deleteAuditLogs: Deletion of Audit Logs Completed for datetime before : {}" + tillDateLong);
-                return true;
-            } catch (RuntimeException runtimeException) {
-                Log.e(TAG, "deleteAuditLogs: Deletion of Audit Logs failed", runtimeException);
-                return false;
-            }
-        } else {
-            Log.e(TAG, "deleteAuditLogs: Deletion of Audit Logs failed, tillDate missing");
+        try {
+            long tillDateLong = (tillDate != null) ? Long.parseLong(tillDate) : System.currentTimeMillis();
+            auditRepository.deleteAllAuditsTillDate(tillDateLong);
+            globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, null);
+            return true;
+        } catch (RuntimeException runtimeException) {
+            Log.e(TAG, "Error in deleting audit logs", runtimeException);
             return false;
         }
     }

@@ -300,6 +300,8 @@
   "supervisor": "Superviseur",
   "online": "En ligne",
   "offline": "Hors ligne",
+  "enabled": "Activé",
+  "disabled": "Désactivé",
   "logout_success": "Vous avez été déconnecté avec succès!",
   "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps",
   "go_to_home": "Aller à la maison",
@@ -319,5 +321,16 @@
   "okay": "D'ACCORD",
   "no_internet_connection": "Pas de connexion Internet!",
   "connect_and_retry": "Veuillez vous connecter à Internet et réessayer.",
-  "retry": "RECOMMENCEZ"
+  "retry": "RECOMMENCEZ",
+  "key": "Clé",
+  "server_value": "Valeur du serveur",
+  "local_value": "Valeur locale",
+  "no_configuration_parameters_found": "Aucun paramètre de configuration trouvé",
+  "no_configurations_found": "Aucune configuration trouvée",
+  "confirm": "Confirmer",
+  "scan_now": "Analyser maintenant",
+  "enter_additional_info_req_id": "Entrez l'identifiant de la demande d'information supplémentaire",
+  "additional_info_req_id": "Identifiant de la demande d'information supplémentaire",
+  "no_access_to_this_page": "Vous n'avez pas accès à cette page",
+  "scheduled_job_settings": "Paramètres des tâches planifiées"
 }

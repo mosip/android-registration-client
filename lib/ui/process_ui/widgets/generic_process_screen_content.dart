@@ -11,9 +11,11 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
+import 'package:registration_client/ui/process_ui/process_type.dart';
 import 'package:registration_client/ui/process_ui/widgets/age_date_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/biometric_capture_control.dart';
 
@@ -28,22 +30,31 @@ import 'package:registration_client/ui/process_ui/widgets/html_box_control.dart'
 import 'package:registration_client/ui/process_ui/widgets/button_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/terms_and_conditions.dart';
 import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
+import 'package:registration_client/ui/process_ui/widgets/additional_Info_ReqId_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
 
 import 'radio_button_control.dart';
 
-class NewProcessScreenContent extends StatefulWidget {
-  const NewProcessScreenContent(
-      {super.key, required this.context, required this.screen});
+class GenericProcessScreenContent extends StatefulWidget {
+  const GenericProcessScreenContent({
+    super.key,
+    required this.context,
+    required this.screen,
+    required this.processType,
+    required this.process,
+  });
+  
   final BuildContext context;
   final Screen screen;
+  final ProcessType processType;
+  final Process process;
 
   @override
-  State<NewProcessScreenContent> createState() =>
-      _NewProcessScreenContentState();
+  State<GenericProcessScreenContent> createState() =>
+      _GenericProcessScreenContentState();
 }
 
-class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
+class _GenericProcessScreenContentState extends State<GenericProcessScreenContent> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   int refreshValue = 0;
@@ -69,8 +80,9 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
     if (e.id == "preferredLang") {
       return const SizedBox.shrink();
     }
-
-    if (e.inputRequired == false) {
+    if ((widget.processType == ProcessType.newProcess ||
+            widget.processType == ProcessType.correctionProcess) &&
+        e.inputRequired == false) {
       return const SizedBox.shrink();
     }
 
@@ -86,7 +98,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
       case "html":
         return HtmlBoxControl(field: e);
       case "biometrics":
-        if (context.watch<GlobalProvider>().mvelRequiredFields[e.id] ?? true) {
+        if (context.watch<GlobalProvider>().mvelRequiredFields[e.id] ?? _getDefaultBiometricVisibility()) {
           return BiometricCaptureControl(e: e);
         }
         return Container();
@@ -132,8 +144,15 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
           validation: regexPattern,
         );
       default:
-        return (e.controlType!=null)? Text("${e.controlType}"): const SizedBox.shrink();
+        return (e.controlType != null) ? Text("${e.controlType}") : const SizedBox.shrink();
     }
+  }
+
+  bool _getDefaultBiometricVisibility() {
+    if (widget.processType == ProcessType.updateProcess) {
+      return false;
+    }
+    return true;
   }
 
   evaluateMVELVisible(String fieldData, Field e) async {
@@ -154,12 +173,37 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
   }
 
   _checkMvelVisible(Field e) async {
-    if (e.required == false) {
+    if (widget.processType == ProcessType.updateProcess) {
       if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
         await evaluateMVELVisible(jsonEncode(e.toJson()), e);
         await evaluateMVELRequired(jsonEncode(e.toJson()), e);
       }
+    } else {
+      if (e.required == false) {
+        if (e.requiredOn != null && e.requiredOn!.isNotEmpty) {
+          await evaluateMVELVisible(jsonEncode(e.toJson()), e);
+          await evaluateMVELRequired(jsonEncode(e.toJson()), e);
+        }
+      }
     }
+  }
+
+  bool _shouldShowField(Field e) {
+
+    if (widget.processType == ProcessType.updateProcess) {
+      if (widget.process.autoSelectedGroups!.contains(e.group)) {
+        return true;
+      } else if (globalProvider.selectedUpdateFields[e.group] != null) {
+        return true;
+      }
+      return false;
+    }
+
+    if (context.watch<GlobalProvider>().mvelVisibleFields[e.id] ?? true) {
+      return true;
+    }
+
+    return false;
   }
 
   @override
@@ -175,6 +219,11 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                 });
               }),
         ],
+
+        if (widget.screen.additionalInfoRequestIdRequired == true) ...[
+          const AdditionalInfoReqIdControl(),
+        ],
+        
         (context.watch<GlobalProvider>().preRegControllerRefresh)
             ? const CircularProgressIndicator()
             : Form(
@@ -183,10 +232,7 @@ class _NewProcessScreenContentState extends State<NewProcessScreenContent> {
                   children: [
                     ...widget.screen.fields!.map((e) {
                       _checkMvelVisible(e!);
-                      if (context
-                              .watch<GlobalProvider>()
-                              .mvelVisibleFields[e.id] ??
-                          true) {
+                      if (_shouldShowField(e)) {
                         return widgetType(e);
                       }
                       return Container();

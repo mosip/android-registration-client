@@ -36,10 +36,14 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.IdentitySchemaDao;
 import io.mosip.registration.clientmanager.dao.JobTransactionDao;
 import io.mosip.registration.clientmanager.dao.LanguageDao;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
+import io.mosip.registration.clientmanager.dao.LocalConfigDAOImpl;
+import io.mosip.registration.clientmanager.dao.LocalPreferencesDao;
 import io.mosip.registration.clientmanager.dao.LocationDao;
 import io.mosip.registration.clientmanager.dao.LocationHierarchyDao;
 import io.mosip.registration.clientmanager.dao.MachineMasterDao;
 import io.mosip.registration.clientmanager.dao.ProcessSpecDao;
+import io.mosip.registration.clientmanager.dao.PermittedLocalConfigDao;
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
 import io.mosip.registration.clientmanager.dao.ReasonListDao;
 import io.mosip.registration.clientmanager.dao.RegistrationCenterDao;
@@ -60,6 +64,8 @@ import io.mosip.registration.clientmanager.repository.DynamicFieldRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.JobTransactionRepository;
+import io.mosip.registration.clientmanager.repository.LocalPreferencesRepository;
+import io.mosip.registration.clientmanager.repository.PermittedLocalConfigRepository;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
 import io.mosip.registration.clientmanager.repository.LocationRepository;
 import io.mosip.registration.clientmanager.repository.MachineRepository;
@@ -106,6 +112,7 @@ public class RoomModule {
             }
             clientDatabase = Room.databaseBuilder(application, ClientDatabase.class, DATABASE_NAME)
                     .openHelperFactory(new SupportFactory(dbPwd.getBytes()))
+                    .addMigrations(ClientDatabaseMigrations.MIGRATION_1_2)
                     .allowMainThreadQueries()
                     .build();
         } catch (Exception e) {
@@ -376,8 +383,8 @@ public class RoomModule {
 
     @Provides
     @Singleton
-    GlobalParamRepository provideGlobalParamRepository(GlobalParamDao globalParamDao) {
-        return new GlobalParamRepository(globalParamDao);
+    GlobalParamRepository provideGlobalParamRepository(GlobalParamDao globalParamDao, LocalConfigDAO localConfigDAO) {
+        return new GlobalParamRepository(globalParamDao, localConfigDAO);
     }
 
     @Provides
@@ -446,5 +453,26 @@ public class RoomModule {
     @Provides
     PreRegistrationDataSyncRepositoryDao providesPreRegistrationDataSyncRepository(ClientDatabase clientDatabase) {
         return clientDatabase.preRegistrationDataSyncRepositoryDao();
+    }
+
+    @Provides
+    @Singleton
+    PermittedLocalConfigDao providesPermittedLocalConfigDao(ClientDatabase clientDatabase) {
+        return clientDatabase.permittedLocalConfigDao();
+    }
+
+    @Provides
+    @Singleton
+    LocalPreferencesDao providesLocalPreferencesDao(ClientDatabase clientDatabase) {
+        return clientDatabase.localPreferencesDao();
+    }
+
+    @Provides
+    @Singleton
+    LocalConfigDAO provideLocalConfigDAO(PermittedLocalConfigDao permittedLocalConfigDao, LocalPreferencesDao localPreferencesDao) {
+        return new LocalConfigDAOImpl(
+            new PermittedLocalConfigRepository(permittedLocalConfigDao),
+            new LocalPreferencesRepository(localPreferencesDao)
+        );
     }
 }

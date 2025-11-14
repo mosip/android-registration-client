@@ -5,8 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/ui/process_ui/widgets/device_settings_tab.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/platform_spi/sync_response_service.dart';
+import 'widgets/scheduled_jobs_settings.dart';
+
+import 'widgets/global_config_settings_tab.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -25,12 +30,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<Settings> settingUiByRole  = [];
   bool isLoadingUiSpec = true;
   late AuthProvider authProvider;
+  late SyncResponseService syncResponseService;
+  List<String?> activeJobs = const [];
 
   @override
   void initState() {
     super.initState();
     authProvider = Provider.of<AuthProvider>(context, listen: false);
+    syncResponseService = SyncResponseService();
     _loadUiSpec();
+    _loadActiveJobs();
   }
 
   Future<void> _loadUiSpec() async {
@@ -53,6 +62,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => isLoadingUiSpec = false);
   }
 
+  Future<void> _loadActiveJobs() async {
+    try {
+      final jobs = await syncResponseService.getActiveSyncJobs();
+      setState(() {
+        activeJobs = jobs;
+      });
+    } catch (e) {
+      debugPrint('Failed to load active sync jobs: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoadingUiSpec) {
@@ -61,10 +81,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
     if (settingUiByRole.isEmpty) {
-      return const Center(
-        child: Text(
-          "You don't have access to this page.",
-          style: TextStyle(fontSize: 18, color: Colors.black),
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Center(
+          child: Text(
+            AppLocalizations.of(context)!.no_access_to_this_page,
+            style: TextStyle(fontSize: 18, color: Colors.black),
+          ),
         ),
       );
     }
@@ -80,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                   child: Text(
                     AppLocalizations.of(context)!.settings,
@@ -125,11 +149,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          SizedBox(
-            height: 400,
+          Expanded(
             child: TabBarView(
               children: [
-                for (final settings in settingUiByRole) _buildTabContent(settings),
+                for (final settings in settingUiByRole)
+                  _buildTabContent(settings),
               ],
             ),
           ),
@@ -138,9 +162,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  String _getControllerName(Settings settings) {
+    if (settings.fxml != null && settings.fxml!.isNotEmpty) {
+      return settings.fxml!.replaceAll('.fxml', 'Controller');
+    } else {
+      return '${settings.name}Controller';
+    }
+  }
+
   Widget _buildTabContent(Settings settings) {
     final selectedLang = context.read<GlobalProvider>().selectedLanguage;
-    return _buildDescriptionOnlyTab(settings, selectedLang);
+
+    final controllerName = _getControllerName(settings);
+
+    switch (controllerName) {
+      case 'ScheduledJobsSettingsController':
+        return ScheduledJobsSettings(jobJsonList: activeJobs);
+      case 'GlobalConfigSettingsController':
+        return GlobalConfigSettingsTab(settings: settings,selectedLan: selectedLang);
+      case 'DeviceSettingsController':
+        return DeviceSettingsTab(settings: settings, selectedLan: selectedLang);
+      default:
+        return _buildDescriptionOnlyTab(settings, selectedLang);
+    }
   }
 
   Widget _buildDescriptionOnlyTab(Settings settings, String selectedLang) {

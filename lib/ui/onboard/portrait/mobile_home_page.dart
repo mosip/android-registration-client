@@ -17,7 +17,7 @@ import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../process_ui/widgets/settings_screen.dart';
+import '../../settings/settings_screen.dart';
 import '../../profile/profile.dart';
 
 class MobileHomePage extends StatefulWidget {
@@ -50,7 +50,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List bottomNavPages = [
+    List<Widget> bottomNavPages = [
       const UserDashBoard(),
       SettingsScreen(
         getSettingsUI: (BuildContext context) async {
@@ -87,30 +87,30 @@ class _MobileHomePageState extends State<MobileHomePage> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: _getBottomNavigationBar(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              bottomNavPages[selectedTab],
-              selectedTab != 1
-                  ? Text(
-                      "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
-                      style: TextStyle(
-                          color: const Color(0xff6F6E6E),
-                          fontSize: 14,
-                          fontWeight: regular),
-                    )
-                  : const SizedBox(),
-              selectedTab != 1
-                  ? Text(
-                      "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
-                      style: TextStyle(
-                          color: const Color(0xff6F6E6E),
-                          fontSize: 14,
-                          fontWeight: regular),
-                    )
-                  : const SizedBox(),
+        body: Column(
+          children: [
+            Expanded(
+              child: bottomNavPages[selectedTab],
+            ),
+            if (selectedTab != 1) ...[
+              Text(
+                "Community Registration - Client Version ${context.watch<GlobalProvider>().versionNoApp}",
+                style: TextStyle(
+                  color: const Color(0xff6F6E6E),
+                  fontSize: 14,
+                  fontWeight: regular,
+                ),
+              ),
+              Text(
+                "Git Commit Id ${context.watch<GlobalProvider>().commitIdApp}",
+                style: TextStyle(
+                  color: const Color(0xff6F6E6E),
+                  fontSize: 14,
+                  fontWeight: regular,
+                ),
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
