@@ -8,10 +8,10 @@ import regclient.page.DashboardPage;
 
 public class DashboardPageArabic extends DashboardPage {
 
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Dashboard\"]/following-sibling::android.view.View[3]")
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"لوحة القيادة\"]/following-sibling::android.view.View[3]")
 	private WebElement packetUploadedNumber;
 
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Dashboard\"]/following-sibling::android.view.View[2]")
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"لوحة القيادة\"]/following-sibling::android.view.View[2]")
 	private WebElement packetSyncedNumber;
 
 	@AndroidFindBy(accessibility = "لوحة القيادة")

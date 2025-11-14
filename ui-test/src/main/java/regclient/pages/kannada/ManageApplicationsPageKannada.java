@@ -69,10 +69,10 @@ public class ManageApplicationsPageKannada extends ManageApplicationsPage{
 	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Documents'][2]")
 	private WebElement documentsHeader;
 
-	@AndroidFindBy(accessibility = "android:id/button1")
+	@AndroidFindBy(id = "android:id/button1")
 	private WebElement useThisFolderButton;
-	
-	@AndroidFindBy(accessibility = "android:id/button1")
+
+	@AndroidFindBy(id = "android:id/button1")
 	private WebElement allowButton;
 	
 	@AndroidFindBy(xpath = "//android.widget.TextView[@resource-id='android:id/title' and @text='Documents']")

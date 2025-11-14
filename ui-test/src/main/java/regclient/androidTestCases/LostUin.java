@@ -32,7 +32,7 @@ import regclient.pages.arabic.AuthenticationPageArabic;
 import regclient.pages.arabic.BiometricDetailsPageArabic;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
-import regclient.pages.arabic.DocumentuploadPageArabic;
+import regclient.pages.arabic.DocumentUploadPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
@@ -262,7 +262,7 @@ public class LostUin extends AndroidBaseTest {
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-					documentuploadPage = new DocumentuploadPageArabic(driver);
+					documentuploadPage = new DocumentUploadPageArabic(driver);
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");

@@ -131,31 +131,31 @@ public class IntroducerBiometricPageKannada extends IntroducerBiometricPage {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public  boolean isIntroducerBiometricsPageDisplyed() {
+	public  boolean isIntroducerBiometricsPageDisplayed() {
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerBiometrics")+"\")")));
 	}
 	
-	public  boolean isExceptionTypeTitleDisplyed() {
+	public  boolean isExceptionTypeTitleDisplayed() {
 		return isElementDisplayed(exceptionTypeTitle);
 	}
 	
-	public  boolean isRightHandScanTitleDisplyed() {
+	public  boolean isRightHandScanTitleDisplayed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
 	
-	public  boolean isLeftHandScanTitleDisplyed() {
+	public  boolean isLeftHandScanTitleDisplayed() {
 		return isElementDisplayed(leftHandScanTitle);
 	}
 	
-	public  boolean isThumbsScanTitleDisplyed() {
+	public  boolean isThumbsScanTitleDisplayed() {
 		return isElementDisplayed(thumbsScanTitle);
 	}
 	
-	public  boolean isFaceScanTitleDisplyed() {
+	public  boolean isFaceScanTitleDisplayed() {
 		return isElementDisplayed(faceScanTitle);
 	}
 	
-	public  boolean isExceptionScanTitleDisplyed() {
+	public  boolean isExceptionScanTitleDisplayed() {
 		return isElementDisplayed(exceptionScanTitle);
 	}
 	
@@ -183,7 +183,7 @@ public class IntroducerBiometricPageKannada extends IntroducerBiometricPage {
 		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
 	
-	public boolean isNextButtonDisplyed() {
+	public boolean isNextButtonDisplayed() {
 		return isElementDisplayed(nextButton);
 	}
 

@@ -1,10 +1,8 @@
 package regclient.androidTestCases;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.testng.Assert.assertTrue;
 
-import java.util.List;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 import org.testng.annotations.Test;
 
@@ -20,16 +18,22 @@ import regclient.page.RegistrationTasksPage;
 import regclient.page.SettingsPage;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
+import regclient.pages.arabic.SettingsPageArabic;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
+import regclient.pages.english.SettingsPageEnglish;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
+import regclient.pages.french.SettingsPageFrench;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
+import regclient.pages.hindi.SettingsPageHindi;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
+import regclient.pages.kannada.SettingsPageKannada;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
+import regclient.pages.tamil.SettingsPageTamil;
 import regclient.utils.TestDataReader;
 
 public class Settings extends AndroidBaseTest {
@@ -86,7 +90,17 @@ public class Settings extends AndroidBaseTest {
 		registrationTasksPage.clickOnSettingsButton();
 
 		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			settingsPage = new regclient.pages.english.SettingsPageEnglish(driver);
+			settingsPage = new SettingsPageEnglish(driver);
+		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+			settingsPage = new SettingsPageHindi(driver);
+		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+			settingsPage = new SettingsPageFrench(driver);
+		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+			settingsPage = new SettingsPageKannada(driver);
+		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+			settingsPage = new SettingsPageTamil(driver);
+		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+			settingsPage = new SettingsPageArabic(driver);
 		}
 
 		assertTrue(settingsPage.isScheduledJobsSettingsTabDisplayed(), "Verify if sceduled job settings tab displayed");

@@ -66,14 +66,15 @@ public class AdminTestUtil extends BaseTestCase {
 		requestJson.put("metadata", new JSONObject());
 		requestJson.put("requesttime", AdminTestUtil.generateCurrentUTCTimeStamp());
 		requestJson.put("version", "string");
-		requestJson.put("request", new HashMap<>());
-		requestJson.getJSONObject("request").put("id", "123");
-		requestJson.getJSONObject("request").put("ipAddress", "192.168.0.424");
-		requestJson.getJSONObject("request").put("isActive", true);
-		requestJson.getJSONObject("request").put("langCode", getLanguageList().get(0));
-		requestJson.getJSONObject("request").put("macAddress", "11111111");
-		requestJson.getJSONObject("request").put("machineSpecId", machinespecificationsID());
-		requestJson.getJSONObject("request").put("name", name);
+		JSONObject request = new JSONObject();
+		request.put("id", "123");
+		request.put("ipAddress", "192.168.0.424");
+		request.put("isActive", true);
+		request.put("langCode", getLanguageList().get(0));
+		request.put("macAddress", "11111111");
+		request.put("machineSpecId", machinespecificationsID());
+		request.put("name", name);
+		requestJson.put("request", request);
 		requestJson.getJSONObject("request").put("serialNum", "FB5962911687");
 		requestJson.getJSONObject("request").put("regCenterId", propsKernel.getProperty("regCenterId"));
 		requestJson.getJSONObject("request").put("validityDateTime", "2021-12-24T05:52:46.758Z");
@@ -170,13 +171,14 @@ public class AdminTestUtil extends BaseTestCase {
 		requestJson.put("metadata", new JSONObject());
 		requestJson.put("requesttime", AdminTestUtil.generateCurrentUTCTimeStamp());
 		requestJson.put("version", "string");
-		requestJson.put("request", new HashMap<>());
-		requestJson.getJSONObject("request").put("id", user);
-		requestJson.getJSONObject("request").put("name", "automation");
-		requestJson.getJSONObject("request").put("isActive", true);
-		requestJson.getJSONObject("request").put("langCode", getLanguageList().get(0));
-		requestJson.getJSONObject("request").put("statusCode", "active");
-		requestJson.getJSONObject("request").put("regCenterId", center);
+		JSONObject request = new JSONObject();
+		request.put("id", user);
+		request.put("name", "automation");
+		request.put("isActive", true);
+		request.put("langCode", getLanguageList().get(0));
+		request.put("statusCode", "active");
+		request.put("regCenterId", center);
+		requestJson.put("request", request);
 
 		response = RestClient.postRequestWithCookie(BaseTestCase.ApplnURI + "/v1/masterdata/usercentermapping",
 				requestJson.toString(), MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, BaseTestCase.COOKIENAME,

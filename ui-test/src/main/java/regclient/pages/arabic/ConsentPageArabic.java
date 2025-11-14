@@ -53,12 +53,12 @@ public class ConsentPageArabic extends ConsentPage {
 
 	public DemographicDetailsPage clickOnInformedButton() {
 		clickOnElement(informedButton);
-		return new DemographicDetailsPageEnglish(driver);
+		return new DemographicDetailsPageArabic(driver);
 	}
 
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
-		return new RegistrationTasksPageEnglish(driver);
+		return new RegistrationTasksPageArabic(driver);
 	}
 
 	@SuppressWarnings("deprecation")

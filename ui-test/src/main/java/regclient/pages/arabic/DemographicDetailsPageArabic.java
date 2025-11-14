@@ -83,12 +83,12 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 				MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0))"
 						+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + screenTitle + "\"))"));
 		clickOnElement(consentTitle);
-		return new ConsentPageEnglish(driver);
+		return new ConsentPageArabic(driver);
 	}
 
 	public DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageArabic(driver);
 
 	}
 
@@ -354,15 +354,11 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 	}
 
 	public boolean checkSecondLanguageTextBoxNotNull(String id) {
-		if (getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
-				+ FetchUiSpec.getValueUsingId(id)
-				+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]"))) == null
-				|| getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
-						+ FetchUiSpec.getValueUsingId(id)
-						+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]"))) == "")
-			return false;
-		else
-			return true;
+		String value = getTextFromLocator(findElementWithRetry(
+				By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
+						+ "\")]/parent::android.view.View/following-sibling::android.view.View"
+						+ "/descendant::android.widget.EditText[2]")));
+		return value != null && !value.isEmpty();
 	}
 
 	public boolean checkDateFormatAndCurrectDate(String id) {
@@ -486,7 +482,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 				assertTrue(el != null, "Name field element not found for: " + label);
 				String name = extract(el).trim();
 				assertTrue(!name.isEmpty(), "Verify name is not empty for: " + label);
-				assertTrue(name.matches(".*[A-Za-z].*"), "Verify name contains letters: " + name);
+				assertTrue(name.matches(".*\\p{L}.*"), "Verify name contains letters: " + name);
 				continue;
 			}
 

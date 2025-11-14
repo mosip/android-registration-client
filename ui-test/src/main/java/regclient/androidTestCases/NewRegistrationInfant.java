@@ -33,7 +33,7 @@ import regclient.pages.arabic.AuthenticationPageArabic;
 import regclient.pages.arabic.BiometricDetailsPageArabic;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
-import regclient.pages.arabic.DocumentuploadPageArabic;
+import regclient.pages.arabic.DocumentUploadPageArabic;
 import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
@@ -253,7 +253,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-					documentuploadPage = new DocumentuploadPageArabic(driver);
+					documentuploadPage = new DocumentUploadPageArabic(driver);
 				}
 				documentuploadPage.uploadDoccuments("infant", "withoutReferenceNumber");
 
@@ -314,7 +314,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIntroducerIrisScan();
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
 					introducerBiometricPage.clickOnScanButton();
@@ -329,15 +329,14 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				}
 				// righthand
 				if (FetchUiSpec.rightHand.equals("yes")) {
-					
+
 					introducerBiometricPage.clickOnScanButton();
 
 					if (!introducerBiometricPage.isRightHandScan()) {
-					    introducerBiometricPage.clickOnScanButton();
+						introducerBiometricPage.clickOnScanButton();
 					}
 
-					assertTrue(introducerBiometricPage.isRightHandScan(),
-					        "Verify if right hand scan 1st attempt");
+					assertTrue(introducerBiometricPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 
 					introducerBiometricPage.closeScanCapturePopUp();
 					introducerBiometricPage.clickOnNextButton();
@@ -345,28 +344,24 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
 					introducerBiometricPage.clickOnScanButton();
-					assertTrue(introducerBiometricPage.isLeftHandScan(),
-					        "Verify if left hand scan 1st attempt");
+					assertTrue(introducerBiometricPage.isLeftHandScan(), "Verify if left hand scan 1st attempt");
 					introducerBiometricPage.closeScanCapturePopUp();
-					assertTrue(introducerBiometricPage.isNextButtonDisplyed(),
-					        "Verify if next button displayed");
+					assertTrue(introducerBiometricPage.isNextButtonDisplayed(), "Verify if next button displayed");
 					introducerBiometricPage.clickOnNextButton();
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
 					introducerBiometricPage.clickOnScanButton();
-					
+
 					if (!introducerBiometricPage.isThumbsScan()) {
-					    introducerBiometricPage.clickOnScanButton();
+						introducerBiometricPage.clickOnScanButton();
 					}
 
-					assertTrue(introducerBiometricPage.isThumbsScan(),
-					        "Verify if thumb scan 1st attempt");
-					
+					assertTrue(introducerBiometricPage.isThumbsScan(), "Verify if thumb scan 1st attempt");
+
 					introducerBiometricPage.closeScanCapturePopUp();
-					
-					assertTrue(introducerBiometricPage.isNextButtonDisplyed(),
-					        "Verify if next button displayed");
+
+					assertTrue(introducerBiometricPage.isNextButtonDisplayed(), "Verify if next button displayed");
 					introducerBiometricPage.clickOnNextButton();
 				}
 				// face
@@ -374,16 +369,15 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 					introducerBiometricPage.clickOnScanButton();
 
 					introducerBiometricPage.closeScanCapturePopUp();
-					assertTrue(introducerBiometricPage.isNextButtonDisplyed(),
-					        "Verify if next button displayed");
+					assertTrue(introducerBiometricPage.isNextButtonDisplayed(), "Verify if next button displayed");
 					introducerBiometricPage.clickOnNextButton();
 				}
 
 				biometricDetailsPage.clickOnContinueButton();
 			}
-		
+
 		}
-		
+
 		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
 			previewPage = new PreviewPageEnglish(driver);
 		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
@@ -480,6 +474,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				break;
 			}
 		}
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());

@@ -15,7 +15,6 @@ import regclient.page.RegistrationTasksPage;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
-import regclient.pages.english.KeycloakPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
@@ -35,6 +34,7 @@ import regclient.utils.TestDataReader;
 
 public class ResetPassword extends AndroidBaseTest {
 
+	@SuppressWarnings("null")
 	@Test(priority = 1)
 	public void resetPassword() throws IOException {
 		BasePage.disableAutoRotation();
@@ -117,7 +117,7 @@ public class ResetPassword extends AndroidBaseTest {
 		profilePage.clickOnResetPasswordButton();
 
 		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			keycloakPage = new KeycloakPageEnglish(driver);
+			profilePage = new ProfilePageEnglish(driver);
 		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
 			profilePage = new ProfilePageHindi(driver);
 		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
@@ -136,7 +136,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 		keycloakPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 
-		keycloakPage.clickOnloginButton();
+		keycloakPage.clickOnLoginButton();
 
 		assertTrue(keycloakPage.openKeycloakPassword(), "Verify if keycloak login page displayed");
 

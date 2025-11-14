@@ -28,15 +28,15 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage {
 
 	public abstract void closeScanCapturePopUp();
 
-	public abstract boolean isRightHandScanTitleDisplyed();
+	public abstract boolean isRightHandScanTitleDisplayed();
 
-	public abstract boolean isLeftHandScanTitleDisplyed();
+	public abstract boolean isLeftHandScanTitleDisplayed();
 
-	public abstract boolean isThumbsScanTitleDisplyed();
+	public abstract boolean isThumbsScanTitleDisplayed();
 
-	public abstract boolean isFaceScanTitleDisplyed();
+	public abstract boolean isFaceScanTitleDisplayed();
 
-	public abstract boolean isExceptionScanTitleDisplyed();
+	public abstract boolean isExceptionScanTitleDisplayed();
 
 	public abstract boolean isIrisScan();
 
@@ -48,27 +48,27 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage {
 
 	public abstract boolean isFaceScan();
 
-	public abstract boolean isIrisScanQualityDisplyed();
+	public abstract boolean isIrisScanQualityDisplayed();
 
-	public abstract boolean isRightHandScanQualityDisplyed();
+	public abstract boolean isRightHandScanQualityDisplayed();
 
-	public abstract boolean isLeftHandScanQualityDisplyed();
+	public abstract boolean isLeftHandScanQualityDisplayed();
 
-	public abstract boolean isThumbsScanQualityDisplyed();
+	public abstract boolean isThumbsScanQualityDisplayed();
 
-	public abstract boolean isFaceScanQualityDisplyed();
+	public abstract boolean isFaceScanQualityDisplayed();
 
 	public abstract void clickOnMarkExceptionButton();
 
 	public abstract void markOneEyeException();
 
-	public abstract void markOneFingureException();
+	public abstract void markOneFingreException();
 
-	public abstract boolean isExceptionTypeTitleDisplyed();
+	public abstract boolean isExceptionTypeTitleDisplayed();
 
 	public abstract void clickOnExceptionTypeTemporaryButton();
 
-	public abstract boolean isCommentHeaderDisplyed();
+	public abstract boolean isCommentHeaderDisplayed();
 
 	public abstract void enterCommentsInTextBox(String comments);
 
@@ -76,13 +76,13 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage {
 
 	public abstract void clickOnThumbsScanTitle();
 
-	public abstract boolean isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed();
+	public abstract boolean isMarkingExceptionsOnFaceIsNotAllowedTextDisplayed();
 
-	public abstract boolean isZoomButtonDisplyed();
+	public abstract boolean isZoomButtonDisplayed();
 
 	public abstract void clickOnRightHandScanTitle();
 
-	public abstract void clickOnleftHandScanTitle();
+	public abstract void clickOnLeftHandScanTitle();
 
 	public abstract void clickOnFaceScanTitle();
 

@@ -1,44 +1,141 @@
 package regclient.page;
 
+import java.time.Duration;
+
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.pagefactory.AndroidFindBy;
 
 public abstract class KeycloakPage extends BasePage {
 
+	private WebDriverWait wait;
+
 	public KeycloakPage(AppiumDriver driver) {
 		super(driver);
-
 	}
 
-	public abstract boolean openKeycloakWebView();
+	@FindBy(id = "kc-page-title")
+	private WebElement keycloakPageTitle;
 
-	public abstract String getPageTitle();
+	@FindBy(id = "English˅")
+	private WebElement languageDropdown;
 
-	public abstract void clickOnLanguageDropdown();
+	@FindBy(id = "English")
+	private WebElement englishLanguage;
 
-	public abstract void clickOnEnglishLanguage();
+	@FindBy(id = "username")
+	private WebElement usernameTextBox;
 
-	public abstract void enterUserName(String username);
+	@FindBy(id = "password")
+	private WebElement passwordTextBox;
 
-	public abstract void enterPassword(String password);
+	@FindBy(id = "kc-login")
+	private WebElement loginButton;
 
-	public abstract void clickOnloginButton();
+	@AndroidFindBy(uiAutomator = "new UiSelector().text(\"Password\")")
+	private WebElement passwordOption;
 
-	public abstract void clickOnPasswordOption();
+	@FindBy(id = "password")
+	private WebElement passwordTextbox;
 
-	public abstract void enterExistPassword(String password);
+	@FindBy(id = "password-new")
+	private WebElement newPasswordTextbox;
 
-	public abstract void enterNewPassword(String password);
+	@FindBy(id = "password-confirm")
+	private WebElement confirmPasswordTextbox;
 
-	public abstract void enterConfirmPassword(String password);
+	@FindBy(xpath = "//button[text()='Save']")
+	private WebElement saveButton;
 
-	public abstract void clickOnSaveButton();
+	@FindBy(xpath = "//*[contains(text(),'Your password has been updated.')]")
+	private WebElement passwordUpdatedMessage;
 
-	public abstract boolean isPasswordUpdatedMessageDisplayed();
+	@FindBy(xpath = "//*[contains(text(),'Sign Out')]")
+	private WebElement signoutButton;
 
-	public abstract void clickOnSignoutButton();
+	@AndroidFindBy(accessibility = "LOGOUT")
+	private WebElement logoutButton;
 
-	public abstract boolean openKeycloakPassword();
+	public boolean openKeycloakWebView() {
+		switchContext("WEBVIEW_chrome");
+		retryFindElement(keycloakPageTitle, Duration.ofSeconds(10));
+		return isElementDisplayed(keycloakPageTitle);
+	}
 
-	public abstract boolean resumeArcApplication();
+	public boolean openKeycloakPassword() {
+		switchContext("NATIVE_APP");
+		retryFindElement(passwordOption, Duration.ofSeconds(10));
+		return isElementDisplayed(passwordOption);
+	}
 
+	public String getPageTitle() {
+		return keycloakPageTitle.getText();
+	}
+
+	public void clickOnLanguageDropdown() {
+		clickOnElement(languageDropdown);
+	}
+
+	public void clickOnEnglishLanguage() {
+		clickOnElement(englishLanguage);
+	}
+
+	public void enterUserName(String username) {
+		clickAndsendKeysToTextBox(usernameTextBox, username);
+	}
+
+	public void enterPassword(String password) {
+		retryFindElement(passwordTextBox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(passwordTextBox, password);
+	}
+
+	public void clickOnLoginButton() {
+		clickOnElement(loginButton);
+	}
+
+	public void clickOnPasswordOption() {
+		switchContext("NATIVE_APP");
+		clickOnElement(passwordOption);
+	}
+
+	public void enterExistPassword(String password) {
+		switchContext("WEBVIEW_chrome");
+		retryFindElement(passwordTextbox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(passwordTextbox, password);
+	}
+
+	public void enterNewPassword(String password) {
+		switchContext("WEBVIEW_chrome");
+		retryFindElement(newPasswordTextbox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(newPasswordTextbox, password);
+	}
+
+	public void enterConfirmPassword(String password) {
+		switchContext("WEBVIEW_chrome");
+		retryFindElement(confirmPasswordTextbox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(confirmPasswordTextbox, password);
+	}
+
+	public void clickOnSaveButton() {
+		switchContext("WEBVIEW_chrome");
+		clickOnElement(saveButton);
+	}
+
+	public boolean isPasswordUpdatedMessageDisplayed() {
+		switchContext("WEBVIEW_chrome");
+		return isElementDisplayed(passwordUpdatedMessage);
+	}
+
+	public void clickOnSignoutButton() {
+		switchContext("WEBVIEW_chrome");
+		clickOnElement(signoutButton);
+	}
+
+	public boolean resumeArcApplication() {
+		openArcApplication("NATIVE_APP");
+		return isElementDisplayed(logoutButton);
+	}
 }

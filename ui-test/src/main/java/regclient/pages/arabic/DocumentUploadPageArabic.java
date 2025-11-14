@@ -14,10 +14,8 @@ import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
 
-public class DocumentuploadPageArabic extends DocumentUploadPage {
+public class DocumentUploadPageArabic extends DocumentUploadPage {
 
 	@AndroidFindBy(accessibility = "تمويه")
 	private WebElement PopUpCloseButton;
@@ -43,13 +41,13 @@ public class DocumentuploadPageArabic extends DocumentUploadPage {
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
 
-	public DocumentuploadPageArabic(AppiumDriver driver) {
+	public DocumentUploadPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageArabic(driver);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -61,7 +59,7 @@ public class DocumentuploadPageArabic extends DocumentUploadPage {
 
 	public DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageArabic(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

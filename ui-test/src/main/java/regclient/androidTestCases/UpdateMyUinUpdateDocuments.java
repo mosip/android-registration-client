@@ -1,6 +1,6 @@
 package regclient.androidTestCases;
 
-import static org.testng.Assert.assertFalse;
+
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
@@ -34,7 +34,7 @@ import regclient.pages.arabic.AuthenticationPageArabic;
 import regclient.pages.arabic.BiometricDetailsPageArabic;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
-import regclient.pages.arabic.DocumentuploadPageArabic;
+import regclient.pages.arabic.DocumentUploadPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
@@ -128,7 +128,6 @@ import regclient.utils.TestDataReader;
 
 public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 
-	@SuppressWarnings("null")
 	@Test
 	public void updateMyUinUpdateDocuments() throws InterruptedException {
 		FetchUiSpec.getUiSpec("updateProcess");
@@ -283,7 +282,7 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-					documentuploadPage = new DocumentuploadPageArabic(driver);
+					documentuploadPage = new DocumentUploadPageArabic(driver);
 				}
 				documentuploadPage.uploadDoccumentsUpdate("adult", "all");
 				documentuploadPage.clickOnContinueButton();

@@ -8,12 +8,12 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
+import regclient.pages.arabic.BiometricDetailsPageArabic;
 
 public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 
 	@AndroidFindBy(accessibility = "القزحية مسح")
-	private WebElement irisScanButton;;
+	private WebElement irisScanButton;
 
 	@AndroidFindBy(accessibility = "وضع علامة استثناء")
 	private WebElement markExceptionButton;
@@ -102,7 +102,7 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageArabic(driver);
 	}
 
 	public void clickOnZoomButton() {
@@ -127,37 +127,37 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageArabic(driver);
 	}
 
 	@SuppressWarnings("deprecation")
-	public boolean isIntroducerBiometricsPageDisplyed() {
+	public boolean isIntroducerBiometricsPageDisplayed() {
 		return isElementDisplayed(
 				findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getValueUsingId("introducerBiometrics") + "\")")));
 	}
 
-	public boolean isExceptionTypeTitleDisplyed() {
+	public boolean isExceptionTypeTitleDisplayed() {
 		return isElementDisplayed(exceptionTypeTitle);
 	}
 
-	public boolean isRightHandScanTitleDisplyed() {
+	public boolean isRightHandScanTitleDisplayed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
-	public boolean isLeftHandScanTitleDisplyed() {
+	public boolean isLeftHandScanTitleDisplayed() {
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
-	public boolean isThumbsScanTitleDisplyed() {
+	public boolean isThumbsScanTitleDisplayed() {
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
-	public boolean isFaceScanTitleDisplyed() {
+	public boolean isFaceScanTitleDisplayed() {
 		return isElementDisplayed(faceScanTitle);
 	}
 
-	public boolean isExceptionScanTitleDisplyed() {
+	public boolean isExceptionScanTitleDisplayed() {
 		return isElementDisplayed(exceptionScanTitle);
 	}
 
@@ -185,7 +185,7 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 		return isElementDisplayed(exceptionCapturerHeader, 2000);
 	}
 
-	public boolean isNextButtonDisplyed() {
+	public boolean isNextButtonDisplayed() {
 		return isElementDisplayed(nextButton);
 	}
 

@@ -35,7 +35,7 @@ import regclient.pages.arabic.AuthenticationPageArabic;
 import regclient.pages.arabic.BiometricDetailsPageArabic;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
-import regclient.pages.arabic.DocumentuploadPageArabic;
+import regclient.pages.arabic.DocumentUploadPageArabic;
 import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
@@ -268,7 +268,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-					documentuploadPage = new DocumentuploadPageArabic(driver);
+					documentuploadPage = new DocumentUploadPageArabic(driver);
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
@@ -706,7 +706,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-					documentuploadPage = new DocumentuploadPageArabic(driver);
+					documentuploadPage = new DocumentUploadPageArabic(driver);
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
@@ -839,7 +839,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIntroducerIrisScan();
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -852,10 +852,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 					if (!FetchUiSpec.eye.equals("yes")) {
 						biometricDetailsPage.clickOnIntroducerRightHandScan();
 					}
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplayed(),
 							"Verify if right hand scan is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -865,10 +865,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplayed(),
 							"Verify if applicant left hand scan title is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -878,10 +878,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplayed(),
 							"Verify if thumbs scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -891,10 +891,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isFaceScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isFaceScanTitleDisplayed(),
 							"Verify if face scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -1249,7 +1249,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-					documentuploadPage = new DocumentuploadPageArabic(driver);
+					documentuploadPage = new DocumentUploadPageArabic(driver);
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
@@ -1314,7 +1314,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIntroducerIrisScan();
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -1327,10 +1327,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 					if (!FetchUiSpec.eye.equals("yes")) {
 						biometricDetailsPage.clickOnIntroducerRightHandScan();
 					}
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplayed(),
 							"Verify if right hand scan is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -1340,10 +1340,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplayed(),
 							"Verify if applicant left hand scan title is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -1353,10 +1353,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplayed(),
 							"Verify if thumbs scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -1366,10 +1366,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isFaceScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isFaceScanTitleDisplayed(),
 							"Verify if face scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 

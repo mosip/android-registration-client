@@ -40,7 +40,7 @@ import regclient.pages.english.DemographicDetailsPageEnglish;
 import regclient.pages.english.DocumentuploadPageEnglish;
 import regclient.pages.english.IntroducerBiometricPageEnglish;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
-import regclient.pages.arabic.DocumentuploadPageArabic;
+import regclient.pages.arabic.DocumentUploadPageArabic;
 import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
@@ -251,7 +251,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
 				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-					documentuploadPage = new DocumentuploadPageArabic(driver);
+					documentuploadPage = new DocumentUploadPageArabic(driver);
 				}
 				documentuploadPage.uploadDoccuments("minor", "withoutReferenceNumber");
 
@@ -372,7 +372,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIntroducerIrisScan();
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -385,10 +385,10 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 					if (!FetchUiSpec.eye.equals("yes")) {
 						biometricDetailsPage.clickOnIntroducerRightHandScan();
 					}
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplayed(),
 							"Verify if right hand scan is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -398,10 +398,10 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplayed(),
 							"Verify if applicant left hand scan title is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -411,10 +411,10 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplayed(),
 							"Verify if thumbs scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -424,10 +424,10 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplyed(),
+					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
 							"Verify if introducer biometric page is displayed");
 
-					assertTrue(introducerBiometricPage.isFaceScanTitleDisplyed(),
+					assertTrue(introducerBiometricPage.isFaceScanTitleDisplayed(),
 							"Verify if face scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
@@ -538,6 +538,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 				break;
 			}
 		}
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
