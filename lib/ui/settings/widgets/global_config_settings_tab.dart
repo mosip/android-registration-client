@@ -26,6 +26,9 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
   final Map<String, TextEditingController> _controllers = {};
   bool isLoading = true;
   String? errorMessage;
+  Map<String, String> originalLocalConfig = {};
+  Map<String, String> currentLocalConfig = {};
+  bool isModified = false;
 
   @override
   void initState() {
@@ -56,7 +59,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
           text: _getLocalValue(key) == '-' ? '' : _getLocalValue(key),
         );
       }
-
+      originalLocalConfig = Map<String, String>.from(localConfigurations);
       setState(() {
         isLoading = false;
       });
@@ -110,25 +113,11 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     }
 
     for (String key in localValues.keys) {
-      final String localValue = localValues[key]!;
-      final String? previousLocal = localConfigurations[key];
+      String original = originalLocalConfig[key] ?? "";
+      String current = localValues[key] ?? "";
 
-      if (localValue.isEmpty) {
-        if (previousLocal != null) {
-          return true;
-        }
-        final String serverValue = serverValues?[key]?.toString() ?? '';
-        if (serverValue.isNotEmpty) {
-          return true;
-        }
-        continue;
-      }
-
-      if (previousLocal == null || previousLocal != localValue) {
-        return true;
-      }
+      if (original != current) return true;
     }
-
     return false;
   }
 
@@ -187,6 +176,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
 
       // Save configuration changes
       await GlobalConfigSettingsApi().modifyConfigurations(localValues);
+      originalLocalConfig = Map<String, String>.from(localConfigurations);
+      currentLocalConfig = Map<String, String>.from(localConfigurations);
 
       // Update local configurations with the saved values
       setState(() {
@@ -325,26 +316,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: ElevatedButton(
-            onPressed: _onSaveChanges,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: solidPrimary,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                vertical: 18,
-                horizontal: 56,
-              ),
-              elevation: 4,
-            ),
-            child: Text(AppLocalizations.of(context)!.submit),
-          ),
-        ),
-      ),
     );
   }
 
@@ -380,25 +351,35 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     }
 
     final configs = _getConfigurations();
-    if (configs.isEmpty) {
-      return Center(
-        child: Text(AppLocalizations.of(context)!.no_configurations_found),
-      );
-    }
+    return ListView.separated(
+      padding: const EdgeInsets.all(10),
 
-    return SizedBox(
-      width: double.infinity,
-      child: ListView.separated(
-        padding: const EdgeInsets.only(top: 10, bottom: 90),
-        itemCount: configs.length,
-        separatorBuilder: (_, __) =>
-            Divider(height: 1, color: Colors.grey[300]),
+      itemCount: configs.length + 1,
+      separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey[300]),
         itemBuilder: (context, index) {
+        if (index == configs.length) {
+          bool enabled = _hasChanges();
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              child: Align(
+                alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: enabled ? _onSaveChanges : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: enabled ? solidPrimary : Colors.grey,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
+                elevation: enabled ? 4 : 0,
+              ),
+              child: Text(AppLocalizations.of(context)!.submit),
+            ),
+              ),
+          );
+        }
           final config = configs[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(
                   flex: 2,
@@ -406,9 +387,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                     config.key,
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: config.isModified
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                    fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
                       color: config.isModified ? Colors.blue : Colors.black,
                     ),
                   ),
@@ -418,9 +397,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                   flex: 1,
                   child: Text(
                     config.serverValue,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
+                  style: const TextStyle(fontSize: 12),
                   ),
                 ),
                 Expanded(
@@ -431,7 +408,6 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
             ),
           );
         },
-      ),
     );
   }
 
