@@ -16,6 +16,8 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../provider/auth_provider.dart';
+
 class OperatorBiometricCaptureScanBlockView extends StatefulWidget {
   const OperatorBiometricCaptureScanBlockView({super.key});
 
@@ -2251,6 +2253,31 @@ class _OperatorBiometricCaptureScanBlockViewState
 
   late BiometricAttributeData biometricAttributeData;
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
+  String getRoleBasedBiometricTitle(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    final bool isOnboarding =
+        globalProvider.onboardingProcessName == "Onboarding";
+
+    if (authProvider.isOfficer) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.onboard_officer_biometric
+          : AppLocalizations.of(context)!.update_officer_biometric;
+    } else if (authProvider.isOperator) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.onboard_operator_biomterics
+          : AppLocalizations.of(context)!.update_operator_biomterics;
+    } else if (authProvider.isSupervisor) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.supervisors_biometric_onboard
+          : AppLocalizations.of(context)!.supervisors_biometric_update;
+    }
+
+    return globalProvider.onboardingProcessName == "Onboarding"
+        ? AppLocalizations.of(context)!.supervisors_biometric_onboard
+        : AppLocalizations.of(context)!.supervisors_biometric_update;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -2323,16 +2350,13 @@ class _OperatorBiometricCaptureScanBlockViewState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        globalProvider.onboardingProcessName == "Onboarding"
-                            ? AppLocalizations.of(context)!
-                                .supervisors_biometric_onboard
-                            : AppLocalizations.of(context)!
-                                .supervisors_biometric_update,
+                        getRoleBasedBiometricTitle(context),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontSize: (isMobileSize) ? 14.h : 24.h,
-                            color: blackShade1,
-                            fontWeight: semiBold,
-                            overflow: TextOverflow.ellipsis),
+                          fontSize: (isMobileSize) ? 14.h : 24.h,
+                          color: blackShade1,
+                          fontWeight: semiBold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 30),

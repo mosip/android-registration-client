@@ -158,12 +158,19 @@ class _OperatorBiometricsCaptureState
     final appLocalizations = AppLocalizations.of(context)!;
 
     String getBiometricTitle() {
-      if (authProvider.isOperator) {
+      if (authProvider.isOfficer) {
+        return globalProvider.onboardingProcessName == "Onboarding"
+            ? appLocalizations.onboard_officer_biometric
+            : appLocalizations.update_officer_biometric;
+      } else if (authProvider.isOperator) {
         return globalProvider.onboardingProcessName == "Onboarding"
             ? appLocalizations.onboard_operator_biomterics
             : appLocalizations.update_operator_biomterics;
+      } else if (authProvider.isSupervisor) {
+        return globalProvider.onboardingProcessName == "Onboarding"
+            ? appLocalizations.supervisors_biometric_onboard
+            : appLocalizations.supervisors_biometric_update;
       }
-
       return globalProvider.onboardingProcessName == "Onboarding"
           ? appLocalizations.supervisors_biometric_onboard
           : appLocalizations.supervisors_biometric_update;

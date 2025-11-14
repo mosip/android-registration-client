@@ -332,5 +332,7 @@
   "enter_additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ ನಮೂದಿಸಿ",
   "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ",
   "no_access_to_this_page": "ನಿಮಗೆ ಈ ಪುಟಕ್ಕೆ ಪ್ರವೇಶವಿಲ್ಲ",
-  "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+  "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "onboard_officer_biometric": "ಅಧಿಕಾರಿಯ ಬಯೋಮೆಟ್ರಿಕ್ ನೋಂದಣಿ",
+  "update_officer_biometric": "ಅಧಿಕಾರಿಯ ಬಯೋಮೆಟ್ರಿಕ್ ನವೀಕರಣ"
 }

@@ -341,5 +341,7 @@
   "enter_additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடியை உள்ளிடவும்",
   "additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடி",
   "no_access_to_this_page": "இந்தப் பக்கத்தை அணுக உங்களுக்கு அனுமதி இல்லை",
-  "scheduled_job_settings": "திட்டமிடப்பட்ட வேலை அமைப்புகள்"
+  "scheduled_job_settings": "திட்டமிடப்பட்ட வேலை அமைப்புகள்",
+  "onboard_officer_biometric": "அதிகாரியின் பயோமெட்ரிக் பதிவு",
+  "update_officer_biometric": "அதிகாரியின் பயோமெட்ரிக் புதுப்பிப்பு"
 }

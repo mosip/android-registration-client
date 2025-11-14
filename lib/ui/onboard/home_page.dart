@@ -146,6 +146,32 @@ class _HomePageState extends State<HomePage> {
     return Container();
   }
 
+  String getRoleBasedBiometricTitle(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    final loc = AppLocalizations.of(context)!;
+
+    final bool isOnboarding = globalProvider.onboardingProcessName == "Onboarding";
+
+    if (authProvider.isOfficer) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.onboard_officer_biometric
+          : AppLocalizations.of(context)!.update_officer_biometric;
+    } else if (authProvider.isOperator) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.onboard_operator_biomterics
+          : AppLocalizations.of(context)!.update_operator_biomterics;
+    } else if (authProvider.isSupervisor) {
+      return isOnboarding
+          ? AppLocalizations.of(context)!.supervisors_biometric_onboard
+          : AppLocalizations.of(context)!.supervisors_biometric_update;
+    }
+
+    return globalProvider.onboardingProcessName == "Onboarding"
+        ? AppLocalizations.of(context)!.supervisors_biometric_onboard
+        : AppLocalizations.of(context)!.supervisors_biometric_update;
+  }
+
   @override
   Widget build(BuildContext context) {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
@@ -191,7 +217,7 @@ class _HomePageState extends State<HomePage> {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",
         ),
-        "title": AppLocalizations.of(context)!.update_operator_biomterics,
+        "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
           await BiometricsApi().startOperatorOnboarding();
           globalProvider.onboardingProcessName = "Updation";
