@@ -114,23 +114,21 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   }
 
   _getDataEntryLabel() {
-    String dataEntryLanguage = "";
-    context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code = context.read<GlobalProvider>().selectedLanguage;
-      dataEntryLanguage +=
-          " / ${AppLocalizations.of(context)!.dataEntryLanguage(code)}";
-    });
-    return dataEntryLanguage.substring(3);
+    String label = "";
+    for (var lang in context.watch<GlobalProvider>().chosenLang) {
+      String code = context.read<GlobalProvider>().langToCode(lang);
+      label += " / ${AppLocalizations.of(context)!.dataEntryLanguage(code)}";
+    }
+    return label.isEmpty ? "" : label.substring(3);
   }
 
   _getNotificationLabel() {
-    String notificationLanguage = "";
-    context.watch<GlobalProvider>().chosenLang.forEach((element) {
-      String code = context.read<GlobalProvider>().selectedLanguage;
-      notificationLanguage +=
-          " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
-    });
-    return notificationLanguage.substring(3);
+    String label = "";
+    for (var lang in context.watch<GlobalProvider>().chosenLang) {
+      String code = context.read<GlobalProvider>().langToCode(lang);
+      label += " / ${AppLocalizations.of(context)!.notificationLanguage(code)}";
+    }
+    return label.isEmpty ? "" : label.substring(3);
   }
 
   @override
