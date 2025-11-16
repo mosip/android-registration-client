@@ -156,7 +156,7 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 
 	public  SelectLanguagePage clickOnBiometricCorrectionButton() {
 		clickOnElement(biometricCorrectionButton);
-		return new SelectLanguagePageEnglish(driver);
+		return new SelectLanguagePageFrench(driver);
 	}
 	
 	public void handleLocationPermission() {

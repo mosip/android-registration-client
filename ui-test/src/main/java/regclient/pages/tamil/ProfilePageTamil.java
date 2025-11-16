@@ -29,12 +29,12 @@ public class ProfilePageTamil extends ProfilePage {
 	public LoginPage clickOnLogoutButton() {
 		if (isElementDisplayed(logoutButton))
 			clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageTamil(driver);
 	}
 
 	public LoginPage clickOnLogoutButtonOnPopUp() {
 		clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageTamil(driver);
 	}
 
 	public boolean isProfileTitleDisplayed() {
@@ -51,7 +51,7 @@ public class ProfilePageTamil extends ProfilePage {
 
 	public LoginPage clickOnResetPasswordButton() {
 		clickOnElement(resetPasswordButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageTamil(driver);
 	}
 
 }

@@ -41,7 +41,7 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 
 	public RegistrationTasksPage clickOnGoToHomeButton() {
 		clickOnElement(goToHomeButton);
-		return new RegistrationTasksPageEnglish(driver);
+		return new RegistrationTasksPageHindi(driver);
 
 	}
 
@@ -74,7 +74,7 @@ public class AcknowledgementPageHindi extends AcknowledgementPage {
 		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
-		return new DemographicDetailsPageEnglish(driver);
+		return new DemographicDetailsPageHindi(driver);
 	}
 
 	public String getAID() {

@@ -68,7 +68,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 			return isElementDisplayed(pageElement);
 
 		} catch (Exception e) {
-			return false; // element not found or not visible
+			return false;
 		}
 	}
 

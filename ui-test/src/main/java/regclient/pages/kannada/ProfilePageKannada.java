@@ -34,7 +34,7 @@ public class ProfilePageKannada extends ProfilePage {
 
 	public LoginPage clickOnLogoutButtonOnPopUp() {
 		clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageKannada(driver);
 	}
 
 	public boolean isProfileTitleDisplayed() {
@@ -51,7 +51,7 @@ public class ProfilePageKannada extends ProfilePage {
 
 	public LoginPage clickOnResetPasswordButton() {
 		clickOnElement(resetPasswordButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageKannada(driver);
 	}
 
 }

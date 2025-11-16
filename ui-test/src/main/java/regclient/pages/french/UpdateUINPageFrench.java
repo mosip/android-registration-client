@@ -42,7 +42,7 @@ public class UpdateUINPageFrench extends UpdateUINPage {
 
 	public ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new ConsentPageEnglish(driver);
+		return new ConsentPageFrench(driver);
 	}
 
 	public boolean isInvalidUINErrorMessageDisplayed() {

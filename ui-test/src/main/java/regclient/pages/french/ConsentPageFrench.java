@@ -32,11 +32,9 @@ public class ConsentPageFrench extends ConsentPage {
 			WebElement pageElement = findElementWithRetry(
 					MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0))"
 							+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + screenTitle + "\"))"));
-
 			return isElementDisplayed(pageElement);
-
 		} catch (Exception e) {
-			return false; // page not found or not visible
+			return false; 
 		}
 	}
 
@@ -53,12 +51,12 @@ public class ConsentPageFrench extends ConsentPage {
 
 	public DemographicDetailsPage clickOnInformedButton() {
 		clickOnElement(informedButton);
-		return new DemographicDetailsPageEnglish(driver);
+		return new DemographicDetailsPageFrench(driver);
 	}
 
 	public RegistrationTasksPage clickOnCancelButton() {
 		clickOnElement(cancelButton);
-		return new RegistrationTasksPageEnglish(driver);
+		return new RegistrationTasksPageFrench(driver);
 	}
 
 	@SuppressWarnings("deprecation")

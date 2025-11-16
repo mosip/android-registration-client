@@ -49,7 +49,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 
 	public BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageFrench(driver);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -61,7 +61,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 
 	public DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageFrench(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

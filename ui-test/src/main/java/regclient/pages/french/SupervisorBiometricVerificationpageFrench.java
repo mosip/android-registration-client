@@ -349,13 +349,10 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 
 	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-
 	}
 
-	@Override
 	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
-
 	}
 
 	public boolean isDismissPageLoaded() {

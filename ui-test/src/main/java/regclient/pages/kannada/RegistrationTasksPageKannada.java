@@ -156,7 +156,7 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 
 	public SelectLanguagePage clickOnBiometricCorrectionButton() {
 		clickOnElement(biometricCorrectionButton);
-		return new SelectLanguagePageEnglish(driver);
+		return new SelectLanguagePageKannada(driver);
 	}
 
 	public void handleLocationPermission() {

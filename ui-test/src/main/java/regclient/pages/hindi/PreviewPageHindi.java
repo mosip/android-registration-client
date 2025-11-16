@@ -52,7 +52,7 @@ public class PreviewPageHindi extends PreviewPage {
 
 	public AuthenticationPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new AuthenticationPageEnglish(driver);
+		return new AuthenticationPageHindi(driver);
 	}
 
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
@@ -89,7 +89,7 @@ public class PreviewPageHindi extends PreviewPage {
 		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
-		return new DemographicDetailsPageEnglish(driver);
+		return new DemographicDetailsPageHindi(driver);
 	}
 
 	public boolean isBothIrisImageDisplayed() {
@@ -112,9 +112,7 @@ public class PreviewPageHindi extends PreviewPage {
 
 	public void validatePreRegAndApplicationIdMatch(String age) {
 		String preRegId = AdminTestUtil.getPreRegistrationFlow(age);
-
 		String applicationID = getAID();
-
 		Assert.assertEquals(applicationID, preRegId, "Mismatch between API PreReg ID and UI Application ID!");
 	}
 

@@ -458,13 +458,11 @@ public class BasePage {
 	}
 
 	protected void switchContext(String targetContext) {
-		// Get all available contexts
 		Set<String> contexts = ((SupportsContextSwitching) driver).getContextHandles();
 		for (String context : contexts) {
 			System.out.println("Available context: " + context);
 		}
 
-		// Try to match the target context
 		for (String context : contexts) {
 			if (context.toLowerCase().contains(targetContext.toLowerCase())) {
 				((SupportsContextSwitching) driver).context(context);
@@ -485,11 +483,11 @@ public class BasePage {
 
 		driver.activateApp("io.mosip.registration_client");
 
-		if (driver.getContextHandles().contains(targetContext)) {
-			driver.context(targetContext);
-		} else {
+		try {
+			switchContext(targetContext);
+		} catch (RuntimeException ex) {
 			System.out.println("Target context not available: " + targetContext);
-			driver.context(targetContext);
+			throw ex;
 		}
 	}
 
@@ -637,8 +635,6 @@ public class BasePage {
 				.addAction(new Pause(finger, Duration.ofMillis(200)))
 				.addAction(finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), endX, endY))
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-
-		// perform a few downward swipes to reach top
 		for (int i = 0; i < 5; i++) {
 			driver.perform(Collections.singletonList(scrollUp));
 		}

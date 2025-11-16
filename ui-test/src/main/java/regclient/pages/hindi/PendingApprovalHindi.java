@@ -3,10 +3,13 @@ package regclient.pages.hindi;
 
 import static org.testng.Assert.assertTrue;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -216,16 +219,24 @@ public class PendingApprovalHindi extends PendingApproval {
 		clickOnElement(latestAIdCheckBox);
 	}
 
-	@Override
 	public boolean isNoNetworkFoundDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
+		return isElementEnabled(noNetworkFound);
 	}
 
-	@Override
 	public void clickOnPendingApprovalSubmitButton(int maxRetries) {
-		// TODO Auto-generated method stub
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 
+		for (int i = 1; i <= maxRetries; i++) {
+			clickOnSubmitButton();
+			try {
+				boolean popupShown = wait.until(d -> isNoNetworkFoundDisplayed());
+				if (popupShown) {
+				}
+			} catch (TimeoutException e) {
+				break;
+			}
+		}
+		System.out.println("Still No Network Found Displayed");
 	}
 
 	public void clickOnAuthenticateButton() {

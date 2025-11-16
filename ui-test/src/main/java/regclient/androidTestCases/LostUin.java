@@ -142,18 +142,22 @@ public class LostUin extends AndroidBaseTest {
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		final String language = TestDataReader.readData("language");
+
+		if ("eng".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		loginPage.selectLanguage();
 
@@ -165,36 +169,39 @@ public class LostUin extends AndroidBaseTest {
 		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		loginPage.clickOnloginButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageHindi(driver);
-
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnLostUinButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(), "Verify if select language page  is loaded");
 		selectLanguagePage.clickOnSubmitButtonWithoutSelectingLanguage();
@@ -211,18 +218,20 @@ public class LostUin extends AndroidBaseTest {
 		selectLanguagePage.clickOnSubmitButton();
 		for (String screen : screenOrder) {
 			if (screen.equals("consentdet") || screen.equals("consent")) {
-				if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+				if ("eng".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageEnglish(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+				} else if ("hin".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageHindi(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+				} else if ("fra".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageFrench(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+				} else if ("kan".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageKannada(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+				} else if ("tam".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageTamil(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+				} else if ("ara".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageArabic(driver);
+				} else {
+					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
 				assertTrue(consentPage.isPageDisplayed("consentdet"), "Verify if Consent page is loaded");
 //				assertTrue(consentPage.isCheckBoxReadable(), "Verify if the check box in readable");
@@ -232,69 +241,75 @@ public class LostUin extends AndroidBaseTest {
 
 			} else if (screen.equals("DemographicDetails")) {
 
-				if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+				if ("eng".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageEnglish(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+				} else if ("hin".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageHindi(driver);
-
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+				} else if ("fra".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageFrench(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+				} else if ("kan".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageKannada(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+				} else if ("tam".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageTamil(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+				} else if ("ara".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageArabic(driver);
+				} else {
+					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
 				assertTrue(demographicPage.isPageDisplayed("DemographicDetails"),
 						"Verify if demographic details page is displayed");
 
 				demographicPage.clickOnContinueButton();
 			} else if (screen.equals("Documents")) {
-				if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+				if ("eng".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentuploadPageEnglish(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+				} else if ("hin".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageHindi(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+				} else if ("fra".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageFrench(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+				} else if ("kan".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentuploadPageKannada(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+				} else if ("tam".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentuploadPageTamil(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
+				} else {
+					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
 				documentuploadPage.clickOnContinueButton();
 
 			} else if (screen.equals("BiometricDetails")) {
-				if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+				if ("eng".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageEnglish(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+				} else if ("hin".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageHindi(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+				} else if ("fra".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageFrench(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+				} else if ("kan".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageKannada(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+				} else if ("tam".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageTamil(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+				} else if ("ara".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageArabic(driver);
+				} else {
+					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
-				if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+				if ("eng".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageEnglish(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+				} else if ("hin".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageHindi(driver);
-
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+				} else if ("fra".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageFrench(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+				} else if ("kan".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageKannada(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+				} else if ("tam".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageTamil(driver);
-				} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+				} else if ("ara".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageArabic(driver);
+				} else {
+					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
 						"Verify if biometric details page is displayed");
@@ -305,7 +320,7 @@ public class LostUin extends AndroidBaseTest {
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIrisScan();
 
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
@@ -328,7 +343,7 @@ public class LostUin extends AndroidBaseTest {
 							"Verify if biometric details page is displayed");
 					applicantBiometricsPage = biometricDetailsPage.clickOnRightHandScanIcon();
 
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
@@ -342,7 +357,7 @@ public class LostUin extends AndroidBaseTest {
 							"Verify if biometric details page is displayed");
 					applicantBiometricsPage = biometricDetailsPage.clickOnLeftHandScanIcon();
 
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
@@ -356,7 +371,7 @@ public class LostUin extends AndroidBaseTest {
 							"Verify if biometric details page is displayed");
 					applicantBiometricsPage = biometricDetailsPage.clickOnThumbsScanIcon();
 
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
@@ -370,7 +385,7 @@ public class LostUin extends AndroidBaseTest {
 							"Verify if biometric details page is displayed");
 					biometricDetailsPage.clickOnFaceScanIcon();
 
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplyed(),
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
@@ -383,18 +398,20 @@ public class LostUin extends AndroidBaseTest {
 				biometricDetailsPage.clickOnContinueButton();
 			}
 		}
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 
 		assertTrue(previewPage.isLostUinTitleDisplayed(), "Verify if lost uin title is displayed");
@@ -408,36 +425,40 @@ public class LostUin extends AndroidBaseTest {
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 		previewPage.clickOnContinueButton();
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
 				"Verify if authentication details page is displayed");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
@@ -449,36 +470,39 @@ public class LostUin extends AndroidBaseTest {
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnOperationalTasksTitle();
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageHindi(driver);
-
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 		assertTrue(operationalTaskPage.isPendingApprovalTitleDisplayed(), "Verify if pending approval tite displayed");
 		operationalTaskPage.clickPendingApprovalTitle();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 		pendingApproval.clickOnAID(Aid);
@@ -515,19 +539,20 @@ public class LostUin extends AndroidBaseTest {
 				"Verify if application upload tite displayed");
 
 		operationalTaskPage.clickApplicationUploadTitle();
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageHindi(driver);
-
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
@@ -553,18 +578,20 @@ public class LostUin extends AndroidBaseTest {
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
 		registrationTasksPage.clickProfileButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
 		// display on Profilepage");

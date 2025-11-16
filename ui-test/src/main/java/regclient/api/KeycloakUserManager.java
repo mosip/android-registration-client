@@ -88,7 +88,7 @@ public class KeycloakUserManager {
 			RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 			UsersResource usersRessource = realmResource.users();
 			// Create user (requires manage-users role)
-			jakarta.ws.rs.core.Response response = null;
+			Response response = null;
 			response = usersRessource.create(user);
 			logger.info("Repsonse: %s %s%n" + response.getStatus() + response.getStatusInfo());
 			if (response.getStatus() == 409) {
@@ -142,7 +142,7 @@ public class KeycloakUserManager {
 		user.setEmail("automation" + onboardUser + "@automationlabs.com");
 		RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 		UsersResource usersRessource = realmResource.users();
-		jakarta.ws.rs.core.Response response = null;
+		Response response = null;
 		response = usersRessource.create(user);
 		logger.info("Response: %s %s%n" + response.getStatus() + response.getStatusInfo());
 

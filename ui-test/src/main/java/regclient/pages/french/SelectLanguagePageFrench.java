@@ -112,15 +112,10 @@ public class SelectLanguagePageFrench extends SelectLanguagePage {
 	public void selectAllSecondLanguage() {
 
 		clickOnElement(englishLanguageButton);
-
 		clickOnElement(frenchLanguageButton);
-
 		clickOnElement(arabicLanguageButton);
-
 		clickOnElement(kannadaLanguageButton);
-
 		clickOnElement(hindiLanguageButton);
-
 		clickOnElement(tamilLanguageButton);
 	}
 

@@ -42,7 +42,7 @@ public class AcknowledgementPageFrench extends AcknowledgementPage {
 
 	public RegistrationTasksPage clickOnGoToHomeButton() {
 		clickOnElement(goToHomeButton);
-		return new RegistrationTasksPageEnglish(driver);
+		return new RegistrationTasksPageFrench(driver);
 	}
 
 	public boolean isAcknowledgementPageDisplayed() {
@@ -74,7 +74,7 @@ public class AcknowledgementPageFrench extends AcknowledgementPage {
 		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
-		return new DemographicDetailsPageEnglish(driver);
+		return new DemographicDetailsPageFrench(driver);
 	}
 
 	public String getAID() {

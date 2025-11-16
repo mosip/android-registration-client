@@ -43,18 +43,22 @@ public class ResetPassword extends AndroidBaseTest {
 		ProfilePage profilePage = null;
 		KeycloakPage keycloakPage = null;
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		final String language = TestDataReader.readData("language");
+
+		if ("eng".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		loginPage.selectLanguage();
 
@@ -64,18 +68,20 @@ public class ResetPassword extends AndroidBaseTest {
 		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		loginPage.clickOnloginButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
@@ -85,18 +91,20 @@ public class ResetPassword extends AndroidBaseTest {
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
 		registrationTasksPage.clickProfileButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		profilePage.clickOnLogoutButton();
 		profilePage.clickOnLogoutButton();
@@ -116,18 +124,20 @@ public class ResetPassword extends AndroidBaseTest {
 				"Verify if reset password button displayed in profile page");
 		profilePage.clickOnResetPasswordButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 
 		assertTrue(keycloakPage.openKeycloakWebView(), "Verify if keycloak login page displayed");

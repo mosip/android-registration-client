@@ -49,7 +49,7 @@ public class DocumentuploadPageTamil extends DocumentUploadPage {
 
 	public  BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageTamil(driver);
 	}
 
 	@SuppressWarnings("deprecation")

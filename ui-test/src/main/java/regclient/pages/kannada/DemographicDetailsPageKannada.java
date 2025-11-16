@@ -66,7 +66,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 							+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + screenTitle + "\"))"));
 			return isElementDisplayed(pageElement);
 		} catch (Exception e) {
-			return false; // element not found or not visible
+			return false;
 		}
 	}
 
@@ -81,18 +81,16 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 				MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0))"
 						+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + screenTitle + "\"))"));
 		clickOnElement(consentTitle);
-		return new ConsentPageEnglish(driver);
+		return new ConsentPageKannada(driver);
 	}
 
 	public DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentuploadPageEnglish(driver);
-
+		return new DocumentuploadPageKannada(driver);
 	}
 
 	public boolean isContinueButtonEnable() {
 		return isElementEnabled(continueButton);
-
 	}
 
 	public boolean isPreRegFetchDataTextBoxDisplay() {

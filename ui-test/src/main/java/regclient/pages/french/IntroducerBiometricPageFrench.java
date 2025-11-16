@@ -111,7 +111,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage {
 
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageFrench(driver);
 	}
 
 	public void clickOnZoomButton() {
@@ -136,7 +136,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage {
 
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageFrench(driver);
 	}
 
 	@SuppressWarnings("deprecation")

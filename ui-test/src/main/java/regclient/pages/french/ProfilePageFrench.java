@@ -29,12 +29,12 @@ public class ProfilePageFrench extends ProfilePage {
 	public LoginPage clickOnLogoutButton() {
 		if (isElementDisplayed(logoutButton))
 			clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageFrench(driver);
 	}
 
 	public LoginPage clickOnLogoutButtonOnPopUp() {
 		clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageFrench(driver);
 	}
 
 	public boolean isProfileTitleDisplayed() {
@@ -51,6 +51,6 @@ public class ProfilePageFrench extends ProfilePage {
 
 	public LoginPage clickOnResetPasswordButton() {
 		clickOnElement(resetPasswordButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageFrench(driver);
 	}
 }

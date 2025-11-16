@@ -52,7 +52,7 @@ public class PreviewPageFrench extends PreviewPage {
 
 	public AuthenticationPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new AuthenticationPageEnglish(driver);
+		return new AuthenticationPageFrench(driver);
 	}
 
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
@@ -89,7 +89,7 @@ public class PreviewPageFrench extends PreviewPage {
 		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
-		return new DemographicDetailsPageEnglish(driver);
+		return new DemographicDetailsPageFrench(driver);
 	}
 
 	public boolean isBothIrisImageDisplayed() {

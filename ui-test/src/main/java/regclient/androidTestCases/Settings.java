@@ -17,27 +17,34 @@ import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SettingsPage;
 import regclient.pages.arabic.LoginPageArabic;
+import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SettingsPageArabic;
 import regclient.pages.english.LoginPageEnglish;
+import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SettingsPageEnglish;
 import regclient.pages.french.LoginPageFrench;
+import regclient.pages.french.ProfilePageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SettingsPageFrench;
 import regclient.pages.hindi.LoginPageHindi;
+import regclient.pages.hindi.ProfilePageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SettingsPageHindi;
 import regclient.pages.kannada.LoginPageKannada;
+import regclient.pages.kannada.ProfilePageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SettingsPageKannada;
 import regclient.pages.tamil.LoginPageTamil;
+import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SettingsPageTamil;
 import regclient.utils.TestDataReader;
 
 public class Settings extends AndroidBaseTest {
 
+	@SuppressWarnings("null")
 	@Test
 	public void settings() throws InterruptedException {
 
@@ -49,18 +56,21 @@ public class Settings extends AndroidBaseTest {
 		ProfilePage profilePage = null;
 		SettingsPage settingsPage = null;
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			loginPage = new LoginPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
-			loginPage = new LoginPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
-			loginPage = new LoginPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
-			loginPage = new LoginPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
-			loginPage = new LoginPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-			loginPage = new LoginPageArabic(driver);
+		final String language = TestDataReader.readData("language");
+		if ("eng".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		loginPage.selectLanguage();
 
@@ -72,35 +82,39 @@ public class Settings extends AndroidBaseTest {
 		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		loginPage.clickOnloginButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnSettingsButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			settingsPage = new SettingsPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
-			settingsPage = new SettingsPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
-			settingsPage = new SettingsPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
-			settingsPage = new SettingsPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
-			settingsPage = new SettingsPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-			settingsPage = new SettingsPageArabic(driver);
+		if ("eng".equalsIgnoreCase(language)) {
+		    settingsPage = new SettingsPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+		    settingsPage = new SettingsPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+		    settingsPage = new SettingsPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+		    settingsPage = new SettingsPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+		    settingsPage = new SettingsPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+		    settingsPage = new SettingsPageArabic(driver);
+		} else {
+		    throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 
 		assertTrue(settingsPage.isScheduledJobsSettingsTabDisplayed(), "Verify if sceduled job settings tab displayed");

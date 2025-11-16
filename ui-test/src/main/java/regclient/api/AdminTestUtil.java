@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,17 @@ public class AdminTestUtil extends BaseTestCase {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return dateFormat.format(date);
 	}
+	
+	public static String generateFutureUTCTimeStamp(int daysToAdd) {
+	    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+	    calendar.add(Calendar.DAY_OF_YEAR, daysToAdd);
+
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+	    return dateFormat.format(calendar.getTime());
+	}
+
 
 	public static String machinespecificationsID() {
 		return AdminTestUtil.getmachinespecificationsID(tokenRoleAdmin);
@@ -77,7 +89,7 @@ public class AdminTestUtil extends BaseTestCase {
 		requestJson.put("request", request);
 		requestJson.getJSONObject("request").put("serialNum", "FB5962911687");
 		requestJson.getJSONObject("request").put("regCenterId", propsKernel.getProperty("regCenterId"));
-		requestJson.getJSONObject("request").put("validityDateTime", "2021-12-24T05:52:46.758Z");
+		requestJson.getJSONObject("request").put("validityDateTime", AdminTestUtil.generateFutureUTCTimeStamp(30));
 		requestJson.getJSONObject("request").put("publicKey", publicKey);
 		requestJson.getJSONObject("request").put("zoneCode", propsKernel.getProperty("zone"));
 		requestJson.getJSONObject("request").put("signPublicKey", signPublicKey);
@@ -204,9 +216,9 @@ public class AdminTestUtil extends BaseTestCase {
 		System.out.println("Response JSON = " + responseJson);
 		if (responseJson.has("response") && responseJson.getJSONObject("response").has("status")
 				&& "success".equalsIgnoreCase(responseJson.getJSONObject("response").getString("status"))) {
-			System.out.println("✅ OTP request sent successfully.");
+			System.out.println("OTP request sent successfully.");
 		} else {
-			throw new RuntimeException("❌ OTP request failed. Response: " + responseJson.toString());
+			throw new RuntimeException("OTP request failed. Response: " + responseJson.toString());
 		}
 	}
 
@@ -243,10 +255,10 @@ public class AdminTestUtil extends BaseTestCase {
 		}
 		if (responseJson.has("response") && responseJson.getJSONObject("response").has("status")
 				&& "success".equalsIgnoreCase(responseJson.getJSONObject("response").getString("status"))) {
-			System.out.println("✅ OTP validation successful.");
+			System.out.println("OTP validation successful.");
 			return response;
 		} else {
-			throw new RuntimeException("❌ OTP validation failed. Response: " + responseJson.toString());
+			throw new RuntimeException("OTP validation failed. Response: " + responseJson.toString());
 		}
 	}
 
@@ -363,9 +375,9 @@ public class AdminTestUtil extends BaseTestCase {
 		JSONObject responseJson = new JSONObject(response.asString());
 		if (responseJson.has("response") && responseJson.getJSONObject("response").has("preRegistrationId")) {
 			preRegId = responseJson.getJSONObject("response").getString("preRegistrationId");
-			System.out.println("✅ preRegistrationId = " + preRegId);
+			System.out.println("preRegistrationId = " + preRegId);
 		} else {
-			throw new RuntimeException("❌ preRegistrationId not found in response: " + responseJson.toString());
+			throw new RuntimeException("preRegistrationId not found in response: " + responseJson.toString());
 		}
 		return preRegId;
 	}

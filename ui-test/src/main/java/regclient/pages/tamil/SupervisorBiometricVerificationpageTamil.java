@@ -190,7 +190,6 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 		driver.navigate().back();
 	}
 	
-	
 	public  boolean isRightHandScanTitleDisplayed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
@@ -365,19 +364,16 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 	
 	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-			
 	}
 
 	@Override
 	public void clickOnVerifyAndSaveButton() {
-		clickOnElement(verifyAndSaveButton);
-		
+		clickOnElement(verifyAndSaveButton);	
 	}
 	
 	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
-	
 	
 	public boolean isOperatorOnboardedPopupLoaded() {
 		return isElementDisplayed(successPopup);	

@@ -156,7 +156,7 @@ public class RegistrationTasksPageHindi extends RegistrationTasksPage {
 
 	public SelectLanguagePage clickOnBiometricCorrectionButton() {
 		clickOnElement(biometricCorrectionButton);
-		return new SelectLanguagePageEnglish(driver);
+		return new SelectLanguagePageHindi(driver);
 	}
 
 	public void handleLocationPermission() {

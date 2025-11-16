@@ -154,14 +154,11 @@ public class SettingsPageKannada extends SettingsPage {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement card = wait.until(ExpectedConditions
 				.presenceOfElementLocated(By.xpath("//*[contains(@content-desc,'" + deviceName + "')]")));
-
 		String desc = card.getAttribute("content-desc");
 		System.out.println("Card text: " + desc);
-
 		Pattern p = Pattern.compile("ID:\\s*([a-zA-Z0-9]+)");
 		Matcher m = p.matcher(desc);
 		assertTrue(m.find(), "ID not found or empty");
-
 		assertTrue(desc.contains("Name: " + deviceName), "Device name mismatch");
 		assertTrue(desc.contains("Status: Ready"), "Device status not Ready");
 	}

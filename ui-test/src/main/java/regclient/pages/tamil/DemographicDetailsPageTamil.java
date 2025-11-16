@@ -64,11 +64,9 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 			WebElement pageElement = findElementWithRetry(
 					MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0))"
 							+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + screenTitle + "\"))"));
-
 			return isElementDisplayed(pageElement);
-
 		} catch (Exception e) {
-			return false; // element not found or not visible
+			return false;
 		}
 	}
 	
@@ -88,13 +86,11 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 
 	public DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentuploadPageEnglish(driver);
-
+		return new DocumentuploadPageTamil(driver);
 	}
 
 	public boolean isContinueButtonEnable() {
 		return isElementEnabled(continueButton);
-
 	}
 
 	public boolean isPreRegFetchDataTextBoxDisplay() {
@@ -701,16 +697,16 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 
 			                if (isElementDisplayed(By.className("android.view.View"))) {
 			                    clickOnElement(findElement(By.className("android.view.View")));
-			                    System.out.println("✅ Postal dropdown handled successfully");
+			                    System.out.println("Postal dropdown handled successfully");
 			                    break; // success
 			                } else {
-			                    System.out.println("⏳ Postal options not visible yet, retrying...");
+			                    System.out.println("Postal options not visible yet, retrying...");
 			                }
 			            } else {
 			                swipeOrScroll();
 			            }
 			        } catch (org.openqa.selenium.StaleElementReferenceException e) {
-			            System.out.println("🔄 Postal element went stale, retrying...");
+			            System.out.println("Postal element went stale, retrying...");
 			        }
 			        waitTime(2);
 			        attempts++;

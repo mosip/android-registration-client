@@ -190,7 +190,6 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		driver.navigate().back();
 	}
 	
-	
 	public  boolean isRightHandScanTitleDisplayed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
@@ -377,7 +376,6 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
-	
 	
 	public boolean isOperatorOnboardedPopupLoaded() {
 		return isElementDisplayed(successPopup);	

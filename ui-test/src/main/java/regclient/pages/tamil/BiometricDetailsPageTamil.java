@@ -69,32 +69,32 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 
 	public ApplicantBiometricsPage clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageTamil(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnRightHandScanIcon() {
 		clickOnElement(rightHandScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageTamil(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnLeftHandScanIcon() {
 		clickOnElement(leftHandScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageTamil(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnThumbsScanIcon() {
 		clickOnElement(thumbsScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageTamil(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnFaceScanIcon() {
 		clickOnElement(faceScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageTamil(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnExceptionScanIcon() {
 		clickOnElement(exceptionScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageTamil(driver);
 
 	}
 
@@ -102,7 +102,7 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris Scan\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageTamil(driver);
 
 	}
 
@@ -110,7 +110,7 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Right\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageTamil(driver);
 
 	}
 
@@ -118,7 +118,7 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Left\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageTamil(driver);
 
 	}
 
@@ -126,7 +126,7 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Thumbs\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageTamil(driver);
 
 	}
 
@@ -134,13 +134,13 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Face\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageTamil(driver);
 
 	}
 
 	public PreviewPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new PreviewPageEnglish(driver);
+		return new PreviewPageTamil(driver);
 	}
 
 	public boolean isAdditionalInfoRequestIdTextboxDisplayed() {
@@ -150,13 +150,11 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 	public void enterAdditionalInfoUsingEmail(String emailId) {
 		int retries = 20, waitSeconds = 10;
 		final String SUFFIX = "-BIOMETRIC_CORRECTION-1";
-
 		for (int i = 1; i <= retries; i++) {
 			String id = OTPListener.getAdditionalReqId(emailId);
 			if (id != null && !id.isEmpty() && !id.equals("{Failed}")) {
 				String sanitized = id.trim().replaceAll("\\p{C}", "");
 				String finalId = sanitized.endsWith(SUFFIX) ? sanitized : sanitized + SUFFIX;
-
 				try {
 					WebElement el = additionalInfoRequestIdTextbox;
 					try {
@@ -166,7 +164,6 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 					}
 					if (finalId.equals(el.getAttribute("value")))
 						return;
-
 					((JavascriptExecutor) driver).executeScript(
 							"arguments[0].value=arguments[1];arguments[0].dispatchEvent(new Event('input',{bubbles:true}));",
 							el, finalId);
@@ -190,6 +187,6 @@ public class BiometricDetailsPageTamil extends BiometricDetailsPage {
 		}
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageEnglish.class);
+	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageTamil.class);
 
 }

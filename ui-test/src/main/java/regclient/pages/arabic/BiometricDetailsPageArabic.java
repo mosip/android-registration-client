@@ -15,10 +15,6 @@ import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
 import regclient.page.PreviewPage;
-import regclient.pages.english.ApplicantBiometricsPageEnglish;
-import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.IntroducerBiometricPageEnglish;
-import regclient.pages.english.PreviewPageEnglish;
 
 public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
@@ -66,32 +62,32 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
 	public ApplicantBiometricsPage clickOnIrisScan() {
 		clickOnElement(irisScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageArabic(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnRightHandScanIcon() {
 		clickOnElement(rightHandScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageArabic(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnLeftHandScanIcon() {
 		clickOnElement(leftHandScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageArabic(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnThumbsScanIcon() {
 		clickOnElement(thumbsScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageArabic(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnFaceScanIcon() {
 		clickOnElement(faceScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageArabic(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnExceptionScanIcon() {
 		clickOnElement(exceptionScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+		return new ApplicantBiometricsPageArabic(driver);
 
 	}
 
@@ -99,7 +95,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris Scan\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageArabic(driver);
 
 	}
 
@@ -107,7 +103,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Right\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageArabic(driver);
 
 	}
 
@@ -115,7 +111,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Left\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageArabic(driver);
 
 	}
 
@@ -123,7 +119,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Thumbs\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageArabic(driver);
 
 	}
 
@@ -131,13 +127,13 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
 				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Face\"]")));
-		return new IntroducerBiometricPageEnglish(driver);
+		return new IntroducerBiometricPageArabic(driver);
 
 	}
 
 	public PreviewPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new PreviewPageEnglish(driver);
+		return new PreviewPageArabic(driver);
 	}
 
 	public boolean isAdditionalInfoRequestIdTextboxDisplayed() {
@@ -187,6 +183,6 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		}
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageEnglish.class);
+	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageArabic.class);
 
 }

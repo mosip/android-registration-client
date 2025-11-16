@@ -102,7 +102,7 @@ public class IntroducerBiometricPageHindi extends IntroducerBiometricPage{
 	
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageHindi(driver);
 	}
 	
 	public void clickOnZoomButton() {
@@ -127,7 +127,7 @@ public class IntroducerBiometricPageHindi extends IntroducerBiometricPage{
 	
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageHindi(driver);
 	}
 	
 	@SuppressWarnings("deprecation")
