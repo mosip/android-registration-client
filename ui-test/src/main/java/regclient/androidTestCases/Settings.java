@@ -1,6 +1,5 @@
 package regclient.androidTestCases;
 
-
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 
@@ -53,22 +52,21 @@ public class Settings extends AndroidBaseTest {
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
-		ProfilePage profilePage = null;
 		SettingsPage settingsPage = null;
 
 		final String language = TestDataReader.readData("language");
 		if ("eng".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageEnglish(driver);
+			loginPage = new LoginPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageHindi(driver);
+			loginPage = new LoginPageHindi(driver);
 		} else if ("fra".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageFrench(driver);
+			loginPage = new LoginPageFrench(driver);
 		} else if ("kan".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageKannada(driver);
+			loginPage = new LoginPageKannada(driver);
 		} else if ("tam".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageTamil(driver);
+			loginPage = new LoginPageTamil(driver);
 		} else if ("ara".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageArabic(driver);
+			loginPage = new LoginPageArabic(driver);
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
@@ -102,19 +100,19 @@ public class Settings extends AndroidBaseTest {
 		registrationTasksPage.clickOnSettingsButton();
 
 		if ("eng".equalsIgnoreCase(language)) {
-		    settingsPage = new SettingsPageEnglish(driver);
+			settingsPage = new SettingsPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
-		    settingsPage = new SettingsPageHindi(driver);
+			settingsPage = new SettingsPageHindi(driver);
 		} else if ("fra".equalsIgnoreCase(language)) {
-		    settingsPage = new SettingsPageFrench(driver);
+			settingsPage = new SettingsPageFrench(driver);
 		} else if ("kan".equalsIgnoreCase(language)) {
-		    settingsPage = new SettingsPageKannada(driver);
+			settingsPage = new SettingsPageKannada(driver);
 		} else if ("tam".equalsIgnoreCase(language)) {
-		    settingsPage = new SettingsPageTamil(driver);
+			settingsPage = new SettingsPageTamil(driver);
 		} else if ("ara".equalsIgnoreCase(language)) {
-		    settingsPage = new SettingsPageArabic(driver);
+			settingsPage = new SettingsPageArabic(driver);
 		} else {
-		    throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 
 		assertTrue(settingsPage.isScheduledJobsSettingsTabDisplayed(), "Verify if sceduled job settings tab displayed");

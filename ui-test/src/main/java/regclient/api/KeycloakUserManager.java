@@ -41,8 +41,7 @@ public class KeycloakUserManager {
 					.realm(ArcConfigManager.getIAMRealmId()).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
 					.clientId(ArcConfigManager.getAutomationClientId())
 					.clientSecret(ArcConfigManager.getAutomationClientSecret()).build();
-			System.out.println(ArcConfigManager.getIAMUrl());
-			System.out.println(key.toString() + key.realms());
+			 logger.debug("Connecting to IAM at {}", ArcConfigManager.getIAMUrl());
 		} catch (Exception e) {
 			throw e;
 
@@ -90,9 +89,9 @@ public class KeycloakUserManager {
 			// Create user (requires manage-users role)
 			Response response = null;
 			response = usersRessource.create(user);
-			logger.info("Repsonse: %s %s%n" + response.getStatus() + response.getStatusInfo());
+			logger.info("Response: {} {}", response.getStatus(), response.getStatusInfo());
 			if (response.getStatus() == 409) {
-				break;
+				continue;
 			}
 
 			String userId = CreatedResponseUtil.getCreatedId(response);
@@ -117,10 +116,9 @@ public class KeycloakUserManager {
 			List<RoleRepresentation> availableRoles = new ArrayList<>();
 			List<String> toBeAssignedRoles = List.of(ArcConfigManager.getRolesForUser().split(","));
 			for (String role : toBeAssignedRoles) {
-				if (allRoles.stream().anyMatch((r -> r.getName().equalsIgnoreCase(role)))) {
-					availableRoles.add(allRoles.stream().filter(r -> r.getName().equals(role)).findFirst().get());
-				} else {
-					logger.info("Role not found in keycloak: %s%n" + role);
+				if (allRoles.stream().anyMatch(r -> r.getName().equalsIgnoreCase(role))) {
+					availableRoles
+							.add(allRoles.stream().filter(r -> r.getName().equalsIgnoreCase(role)).findFirst().get());
 				}
 			}
 			// Assign realm role tester to user
@@ -186,7 +184,9 @@ public class KeycloakUserManager {
 
 	public static String invalidUsername() {
 		int randomNum = new Random().nextInt(900) + 100; // 100–999
-		return KeycloakUserManager.moduleSpecificUser + randomNum;
+		String base = (moduleSpecificUser == null || moduleSpecificUser.isBlank()) ? "invalid-user"
+				: moduleSpecificUser;
+		return base + "-" + randomNum;
 	}
 
 }

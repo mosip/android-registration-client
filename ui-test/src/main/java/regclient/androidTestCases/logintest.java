@@ -613,7 +613,7 @@ public class logintest extends AndroidBaseTest {
 
 			assertTrue(UpdateOperatorBiometricspage.isExceptionTypeTitleDisplayed(),
 					"Verify if applicant biometric mark exception is displayed");
-			UpdateOperatorBiometricspage.markOneFingureException();
+			UpdateOperatorBiometricspage.markOneFingerException();
 
 			// assertFalse(UpdateOperatorBiometricspage.isZoomButtonDisplyed(),"Verify if
 			// zoom button is not displayed for thumb");

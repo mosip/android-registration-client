@@ -507,7 +507,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
-		assertTrue(operationalTaskPage.isPendingApprovalTitleDisplayed(), "Verify if pending approval tite displayed");
+		assertTrue(operationalTaskPage.isPendingApprovalTitleDisplayed(), "Verify if pending approval title displayed");
 		operationalTaskPage.clickPendingApprovalTitle();
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -558,7 +558,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		pendingApproval.clickOnSubmitButton();
 		pendingApproval.clickOnBackButton();
 		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(),
-				"Verify if application upload tite displayed");
+				"Verify if application upload title displayed");
 
 		operationalTaskPage.clickApplicationUploadTitle();
 		if ("eng".equalsIgnoreCase(language)) {

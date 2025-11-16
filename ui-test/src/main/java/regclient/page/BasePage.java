@@ -1,22 +1,15 @@
 package regclient.page;
 
-import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.HidesKeyboard;
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.PerformsTouchActions;
-import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.remote.SupportsContextSwitching;
-import io.appium.java_client.touch.WaitOptions;
-import io.appium.java_client.touch.offset.PointOption;
 import io.netty.handler.timeout.TimeoutException;
-import regclient.api.FetchUiSpec;
+
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
@@ -43,10 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -493,8 +483,16 @@ public class BasePage {
 
 	public static void enableWifiAndData() throws IOException {
 
-		new ProcessBuilder("adb", "shell", "svc", "wifi", "enable").start();
-		new ProcessBuilder("adb", "shell", "svc", "data", "enable").start();
+		Process wifiProcess = new ProcessBuilder("adb", "shell", "svc", "wifi", "enable").start();
+		Process dataProcess = new ProcessBuilder("adb", "shell", "svc", "data", "enable").start();
+		try {
+			if (wifiProcess.waitFor() != 0 || dataProcess.waitFor() != 0) {
+				throw new IOException("Failed to enable WiFi/Data");
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IOException("Interrupted while enabling WiFi/Data", e);
+		}
 	}
 
 	public static void disableWifiAndData() throws IOException {

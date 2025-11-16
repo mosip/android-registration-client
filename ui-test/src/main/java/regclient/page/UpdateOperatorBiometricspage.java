@@ -60,7 +60,7 @@ public abstract class UpdateOperatorBiometricspage extends BasePage {
 
 	public abstract void markOneEyeException();
 
-	public abstract void markOneFingureException();
+	public abstract void markOneFingerException();
 
 	public abstract boolean isExceptionTypeTitleDisplayed();
 

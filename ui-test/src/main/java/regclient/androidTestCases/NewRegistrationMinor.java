@@ -618,7 +618,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 
 		profilePage.clickOnLogoutButton();
 
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
 

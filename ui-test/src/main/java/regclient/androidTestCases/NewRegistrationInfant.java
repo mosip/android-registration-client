@@ -327,6 +327,11 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				} else {
 					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
+				FetchUiSpec.eye = "no";
+				FetchUiSpec.rightHand = "no";
+				FetchUiSpec.leftHand = "no";
+				FetchUiSpec.thumb = "no";
+				FetchUiSpec.face = "no";
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIntroducerIrisScan();

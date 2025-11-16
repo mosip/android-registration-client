@@ -100,7 +100,7 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	private WebElement oneEyeException;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
-	private WebElement firstFingureExceptionImage;
+	private WebElement firstFingerExceptionImage;
 
 	@AndroidFindBy(accessibility = "Mark Exception")
 	private WebElement exceptionTypeTitle;
@@ -250,8 +250,8 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 		clickOnElement(oneEyeException);
 	}
 
-	public void markOneFingureException() {
-		clickOnElement(firstFingureExceptionImage);
+	public void markOneFingerException() {
+		clickOnElement(firstFingerExceptionImage);
 	}
 
 	public boolean isExceptionTypeTitleDisplayed() {

@@ -664,8 +664,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 			}
 		}
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
+		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page displayed after retries");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
