@@ -48,8 +48,6 @@ public class Settings extends AndroidBaseTest {
 	public void settings() throws InterruptedException {
 
 		BasePage.disableAutoRotation();
-		FetchUiSpec.getUiSpec("newProcess");
-		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SettingsPage settingsPage = null;
