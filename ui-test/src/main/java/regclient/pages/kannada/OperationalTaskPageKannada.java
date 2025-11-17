@@ -7,8 +7,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
-
-
 public class OperationalTaskPageKannada extends OperationalTaskPage{
 
 	@AndroidFindBy(accessibility = "ಆಪರೇಟರ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್ ಅನ್ನು ನವೀಕರಿಸಿ")

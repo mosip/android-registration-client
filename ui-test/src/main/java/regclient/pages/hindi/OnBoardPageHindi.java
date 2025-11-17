@@ -48,6 +48,4 @@ public class OnBoardPageHindi extends OnBoardPage{
 		clickOnElement(skipToHomeScreenButton);
 		return new RegistrationTasksPageHindi(driver);
 	}
-
-
 }

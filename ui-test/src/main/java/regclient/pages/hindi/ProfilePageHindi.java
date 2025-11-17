@@ -19,6 +19,8 @@ public class ProfilePageHindi extends ProfilePage{
 	@AndroidFindBy(accessibility = "There is still some action required!")
 	private WebElement logoutPopUpMessage;
 	
+	@AndroidFindBy(accessibility = "पासवर्ड रीसेट")
+	private WebElement resetPasswordButton;	
 
 	public ProfilePageHindi(AppiumDriver driver) {
 		super(driver);
@@ -27,12 +29,12 @@ public class ProfilePageHindi extends ProfilePage{
 	public  LoginPage clickOnLogoutButton() {
 		if(isElementDisplayed(logoutButton))
 		clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageHindi(driver);
 	}	
 	
 	public  LoginPage clickOnLogoutButtonOnPopUp() {
 		clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageHindi(driver);
 	}	
 	
 	public boolean isProfileTitleDisplayed() {
@@ -43,5 +45,13 @@ public class ProfilePageHindi extends ProfilePage{
 		return isElementDisplayed(logoutPopUpMessage);
 	}
 
+	public boolean isResetPasswordButtonDisplayed() {
+		return isElementDisplayed(resetPasswordButton);
+	}
+
+	public  LoginPage clickOnResetPasswordButton() {
+		clickOnElement(resetPasswordButton);
+		return new LoginPageHindi(driver);
+	}	
 
 }

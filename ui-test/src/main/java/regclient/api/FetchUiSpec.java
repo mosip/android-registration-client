@@ -2,6 +2,8 @@ package regclient.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -12,16 +14,19 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.appium.java_client.AppiumDriver;
 import io.restassured.response.Response;
 import regclient.utils.TestDataReader;
 
-public class FetchUiSpec extends BaseTestCase{
+public class FetchUiSpec extends BaseTestCase {
 
 	public static String UiSpec;
 	public static String eye = "no";
@@ -31,22 +36,22 @@ public class FetchUiSpec extends BaseTestCase{
 	public static String face = "no";
 
 	public static void getUiSpec(String type) {
-		if(type.equals("newProcess")) {
+		if (type.equals("newProcess")) {
 			String token = kernelAuthLib.getTokenByRole("globalAdmin");
 			String url = ApplnURI + "/v1/masterdata/uispec/registration-client/latest";
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("type", type);
 			Response response = RestClient.getRequestWithCookieAndQueryParm(url, map, MediaType.APPLICATION_JSON,
 					MediaType.APPLICATION_JSON, "Authorization", token);
-			UiSpec= response.asString();
-		}else if (type.equals("updateProcess")) {
+			UiSpec = response.asString();
+		} else if (type.equals("updateProcess")) {
 			String token = kernelAuthLib.getTokenByRole("globalAdmin");
 			String url = ApplnURI + "/v1/masterdata/uispec/registration-client/latest";
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("type", type);
 			Response response = RestClient.getRequestWithCookieAndQueryParm(url, map, MediaType.APPLICATION_JSON,
 					MediaType.APPLICATION_JSON, "Authorization", token);
-			UiSpec= response.asString();
+			UiSpec = response.asString();
 		}
 	}
 
@@ -61,21 +66,16 @@ public class FetchUiSpec extends BaseTestCase{
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		JsonNode screensNode = rootNode.path("response").get(0)
-				.path("jsonSpec").get(0)
-				.path("spec").path("screens");
+		JsonNode screensNode = rootNode.path("response").get(0).path("jsonSpec").get(0).path("spec").path("screens");
 		List<JsonNode> screens = new ArrayList<>();
 		screensNode.forEach(screens::add);
-		screens.stream()
-		.sorted(Comparator.comparingInt(screen -> screen.path("order").asInt()))
-		.forEach(screen -> screenNames.add(screen.path("name").asText()));
+		screens.stream().sorted(Comparator.comparingInt(screen -> screen.path("order").asInt()))
+				.forEach(screen -> screenNames.add(screen.path("name").asText()));
 		return screenNames;
 	}
 
-	
-	
 	public static String getScreenTitle(String ScreenName) {
-		String screenTitle=null;
+		String screenTitle = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(UiSpec);
@@ -96,8 +96,8 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static String getValueUsingId(String Id ) { 
-		String value=null;
+	public static String getValueUsingId(String Id) {
+		String value = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(UiSpec);
@@ -123,8 +123,8 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static String getControlTypeUsingId(String Id) { 
-		String controlType=null;
+	public static String getControlTypeUsingId(String Id) {
+		String controlType = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(UiSpec);
@@ -149,7 +149,7 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static boolean getRequiredTypeUsingId(String Id) { 
+	public static boolean getRequiredTypeUsingId(String Id) {
 		boolean controlType = false;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -174,8 +174,8 @@ public class FetchUiSpec extends BaseTestCase{
 		return controlType;
 
 	}
-	
-	public static String getRequiredGroupName(String Id) { 
+
+	public static String getRequiredGroupName(String Id) {
 		String group = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -201,7 +201,7 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static boolean getTransliterateTypeUsingId(String Id) { 
+	public static boolean getTransliterateTypeUsingId(String Id) {
 		boolean controlType = false;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -227,8 +227,8 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static String getFormatUsingId(String Id) { 
-		String controlType=null;
+	public static String getFormatUsingId(String Id) {
+		String controlType = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(UiSpec);
@@ -253,8 +253,8 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static String getTextBoxUsingId(String Id ) { 
-		String validator=null;
+	public static String getTextBoxUsingId(String Id) {
+		String validator = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(UiSpec);
@@ -283,8 +283,8 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static String getGroupValueUsingId(String Id ) { 
-		String value=null;
+	public static String getGroupValueUsingId(String Id) {
+		String value = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(UiSpec);
@@ -310,10 +310,10 @@ public class FetchUiSpec extends BaseTestCase{
 
 	}
 
-	public static String getTitleUsingId(String Id ) { 
+	public static String getTitleUsingId(String Id) {
 		JSONObject jsonObject = new JSONObject(UiSpec);
 		JSONArray responseArray = jsonObject.getJSONArray("response");
-		String value=null;
+		String value = null;
 		for (int i = 0; i < responseArray.length(); i++) {
 			JSONObject responseObject = responseArray.getJSONObject(i);
 			JSONArray jsonSpecArray = responseObject.getJSONArray("jsonSpec");
@@ -321,7 +321,7 @@ public class FetchUiSpec extends BaseTestCase{
 			for (int j = 0; j < jsonSpecArray.length(); j++) {
 				JSONObject specObject = jsonSpecArray.getJSONObject(j).getJSONObject("spec");
 				String id = specObject.getString("id");
-				value  = specObject.getJSONObject("label").getString(TestDataReader.readData("language"));
+				value = specObject.getJSONObject("label").getString(TestDataReader.readData("language"));
 
 				if (id.equals(Id)) {
 					return value;
@@ -330,27 +330,28 @@ public class FetchUiSpec extends BaseTestCase{
 		}
 		return value;
 	}
-	
-	public static String getFlowType() { 
-		 String typeValue=null;
-		 ObjectMapper mapper = new ObjectMapper();
-	        try {
-	            JsonNode rootNode = mapper.readTree(UiSpec);
-	            JsonNode responseNode = rootNode.path("response");
-	            if (responseNode.isArray()) {
-	                for (JsonNode node : responseNode) {
-	                    JsonNode jsonSpecNode = node.path("jsonSpec");
-	                    if (jsonSpecNode.isArray()) {
-	                        for (JsonNode specNode : jsonSpecNode) {
-	                             typeValue = specNode.path("type").asText();
-	                        }
-	                    }
-	                }
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        };
-			return typeValue;
+
+	public static String getFlowType() {
+		String typeValue = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			JsonNode rootNode = mapper.readTree(UiSpec);
+			JsonNode responseNode = rootNode.path("response");
+			if (responseNode.isArray()) {
+				for (JsonNode node : responseNode) {
+					JsonNode jsonSpecNode = node.path("jsonSpec");
+					if (jsonSpecNode.isArray()) {
+						for (JsonNode specNode : jsonSpecNode) {
+							typeValue = specNode.path("type").asText();
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		;
+		return typeValue;
 	}
 
 	public static List<String> getAllIds(String page) {
@@ -391,19 +392,19 @@ public class FetchUiSpec extends BaseTestCase{
 		return idList;
 	}
 
-	public static List<String> getAllGroupLabelUsingId(String page){
+	public static List<String> getAllGroupLabelUsingId(String page) {
 		List<String> idList = new ArrayList<>();
 		List<String> groupLabelList = new ArrayList<>();
-		idList=getAllIds(page);
-		for(String id:idList ) {
-			if(FetchUiSpec.getRequiredTypeUsingId(id)) {
-				String groupLabel =getGroupValueUsingId(id );
-				if (groupLabel.equals(null)||groupLabel.equals("")) {
-					groupLabel =getRequiredGroupName(id);
+		idList = getAllIds(page);
+		for (String id : idList) {
+			if (FetchUiSpec.getRequiredTypeUsingId(id)) {
+				String groupLabel = getGroupValueUsingId(id);
+				if (groupLabel.equals(null) || groupLabel.equals("")) {
+					groupLabel = getRequiredGroupName(id);
 				}
 				groupLabelList.add(groupLabel);
-			}else if(id.equals("residenceStatus")) {
-				String groupLabel =getGroupValueUsingId(id );
+			} else if (id.equals("residenceStatus")) {
+				String groupLabel = getGroupValueUsingId(id);
 				groupLabelList.add(groupLabel);
 			}
 		}
@@ -414,69 +415,98 @@ public class FetchUiSpec extends BaseTestCase{
 		return groupLabelList;
 	}
 
+	public static List<String> getDropdownOptions(String id) {
+		switch (id.toLowerCase()) {
+		case "gender":
+			return Arrays.asList("Male", "Female", "Other");
+
+		case "residenceStatus":
+			return Arrays.asList("Foreigner", "Non-Foreigner");
+
+		default:
+			return Collections.emptyList();
+		}
+	}
+
+	public static String getAgeValue(String ageCategory, String id) {
+
+		switch (ageCategory.toLowerCase()) {
+		case "infant":
+			return "3";
+		case "minor":
+			return "11";
+		case "adult":
+			return "20";
+
+		default:
+			return id;
+		}
+	}
+
 	public static void getBiometricDetails(String biometricId) {
-        List<String> bioAttributes = new ArrayList<>();
+		List<String> bioAttributes = new ArrayList<>();
 
-        JSONObject rootObject = new JSONObject(UiSpec);
-        JSONArray responseArray = rootObject.getJSONArray("response");
+		JSONObject rootObject = new JSONObject(UiSpec);
+		JSONArray responseArray = rootObject.getJSONArray("response");
 
-        for (int i = 0; i < responseArray.length(); i++) {
-            JSONObject responseObject = responseArray.getJSONObject(i);
-            JSONArray jsonSpecArray = responseObject.getJSONArray("jsonSpec");
+		for (int i = 0; i < responseArray.length(); i++) {
+			JSONObject responseObject = responseArray.getJSONObject(i);
+			JSONArray jsonSpecArray = responseObject.getJSONArray("jsonSpec");
 
-            for (int j = 0; j < jsonSpecArray.length(); j++) {
-                JSONObject specObject = jsonSpecArray.getJSONObject(j);
-                if (specObject.getString("type").equals("newProcess")) {
-                    JSONObject specDetails = specObject.getJSONObject("spec");
-                    JSONArray screensArray = specDetails.getJSONArray("screens");
+			for (int j = 0; j < jsonSpecArray.length(); j++) {
+				JSONObject specObject = jsonSpecArray.getJSONObject(j);
+				if (specObject.getString("type").equals("newProcess")) {
+					JSONObject specDetails = specObject.getJSONObject("spec");
+					JSONArray screensArray = specDetails.getJSONArray("screens");
 
-                    for (int k = 0; k < screensArray.length(); k++) {
-                        JSONObject screenObject = screensArray.getJSONObject(k);
-                        JSONArray fieldsArray = screenObject.getJSONArray("fields");
+					for (int k = 0; k < screensArray.length(); k++) {
+						JSONObject screenObject = screensArray.getJSONObject(k);
+						JSONArray fieldsArray = screenObject.getJSONArray("fields");
 
-                        for (int l = 0; l < fieldsArray.length(); l++) {
-                            JSONObject fieldObject = fieldsArray.getJSONObject(l);
+						for (int l = 0; l < fieldsArray.length(); l++) {
+							JSONObject fieldObject = fieldsArray.getJSONObject(l);
 
-                            if (fieldObject.getString("id").equals(biometricId)) {
-                                JSONArray bioArray = fieldObject.getJSONArray("bioAttributes");
+							if (fieldObject.getString("id").equals(biometricId)) {
+								JSONArray bioArray = fieldObject.getJSONArray("bioAttributes");
 
-                                for (int m = 0; m < bioArray.length(); m++) {
-                                    bioAttributes.add(bioArray.getString(m));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for (String attribute : bioAttributes) {
-            switch (attribute) {
-                case "leftEye":
-                case "rightEye":
-                    eye = "yes";
-                    break;
-                case "rightIndex":
-                case "rightLittle":
-                case "rightRing":
-                case "rightMiddle":
-                    rightHand = "yes";
-                    break;
-                case "leftIndex":
-                case "leftLittle":
-                case "leftRing":
-                case "leftMiddle":
-                    leftHand = "yes";
-                    break;
-                case "leftThumb":
-                case "rightThumb":
-                    thumb = "yes";
-                    break;
-                case "face":
-                    face = "yes";
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+								for (int m = 0; m < bioArray.length(); m++) {
+									bioAttributes.add(bioArray.getString(m));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		for (String attribute : bioAttributes) {
+			switch (attribute) {
+			case "leftEye":
+			case "rightEye":
+				eye = "yes";
+				break;
+			case "rightIndex":
+			case "rightLittle":
+			case "rightRing":
+			case "rightMiddle":
+				rightHand = "yes";
+				break;
+			case "leftIndex":
+			case "leftLittle":
+			case "leftRing":
+			case "leftMiddle":
+				leftHand = "yes";
+				break;
+			case "leftThumb":
+			case "rightThumb":
+				thumb = "yes";
+				break;
+			case "face":
+				face = "yes";
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 }

@@ -49,7 +49,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 
 	public  BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageHindi(driver);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -59,7 +59,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageHindi(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

@@ -9,10 +9,8 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
 
-
 public class LoginPageKannada extends LoginPage {
-	
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement mosipLogo;
 
@@ -57,38 +55,41 @@ public class LoginPageKannada extends LoginPage {
 
 	@AndroidFindBy(accessibility = "ಕನ್ನಡ")
 	private WebElement kannadaButton;
-	
+
+	@AndroidFindBy(accessibility = "ಮನೆಗೆ ತೆರಳಿ")
+	private WebElement skipToHomeButton;
+
 	public LoginPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
 
-	public  void enterUserName(String username) {
-		clickAndsendKeysToTextBox(userNameTextBox,username);
+	public void enterUserName(String username) {
+		clickAndsendKeysToTextBox(userNameTextBox, username);
 	}
 
-	public  void clickOnNextButton() {
+	public void clickOnNextButton() {
 		clickOnElement(nextButton);
 	}
 
-	public  void clickOnBackButton() {
+	public void clickOnBackButton() {
 		clickOnElement(backButton);
 	}
 
-	public  void enterPassword(String password) {
-		retryFindElement(passwordTextBox,Duration.ofSeconds(10));
-		clickAndsendKeysToTextBox(passwordTextBox,password);
+	public void enterPassword(String password) {
+		retryFindElement(passwordTextBox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(passwordTextBox, password);
 	}
 
-	public  RegistrationTasksPage clickOnloginButton() {
+	public RegistrationTasksPage clickOnloginButton() {
 		clickOnElement(loginButton);
 		return new RegistrationTasksPageKannada(driver);
 	}
 
-	public  boolean isNextButtonEnabled() {
+	public boolean isNextButtonEnabled() {
 		return isElementEnabled(nextButton);
 	}
 
-	public  boolean isLoginButtonEnabled() {
+	public boolean isLoginButtonEnabled() {
 		return isElementEnabled(loginButton);
 	}
 
@@ -138,6 +139,10 @@ public class LoginPageKannada extends LoginPage {
 
 	public void selectLanguage() {
 		clickOnElement(kannadaButton);
+	}
+
+	public void clickOnSkipToHomeButton() {
+		clickOnElement(skipToHomeButton);
 	}
 
 }

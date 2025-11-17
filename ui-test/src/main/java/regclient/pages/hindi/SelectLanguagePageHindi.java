@@ -105,23 +105,16 @@ public class SelectLanguagePageHindi extends SelectLanguagePage{
 			clickOnElement(spanishLanguageNotificationButton);
 			break;
 		default:
-			// Handle the default case if needed
 			break;
 		}
 	}
 
 	public  void selectAllSecondLanguage() {
-
 		clickOnElement(englishLanguageButton);
-
 		clickOnElement(frenchLanguageButton);
-
 		clickOnElement(arabicLanguageButton);
-
 		clickOnElement(kannadaLanguageButton);
-
 		clickOnElement(hindiLanguageButton);
-
 		clickOnElement(tamilLanguageButton);	
 	}
 

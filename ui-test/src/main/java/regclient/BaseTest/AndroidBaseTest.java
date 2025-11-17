@@ -6,7 +6,6 @@ import org.testng.annotations.BeforeMethod;
 
 import regclient.driver.DriverManager;
 
-
 public class AndroidBaseTest extends BaseTest {
 	@BeforeMethod(alwaysRun = true)
 	public void setup() {

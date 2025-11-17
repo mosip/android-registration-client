@@ -50,7 +50,7 @@ public class DocumentuploadPageKannada extends DocumentUploadPage{
 	
 	public  BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageKannada(driver);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -60,7 +60,7 @@ public class DocumentuploadPageKannada extends DocumentUploadPage{
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentuploadPageKannada(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {
