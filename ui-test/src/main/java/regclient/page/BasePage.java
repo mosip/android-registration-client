@@ -622,9 +622,9 @@ public class BasePage {
 	protected void scrollToTop() {
 		Dimension size = driver.manage().window().getSize();
 		int startX = size.getWidth() / 2;
-		int startY = (int) (size.getHeight() * 0.75);
+		int startY = (int) (size.getHeight() * 0.25);
 		int endX = startX;
-		int endY = (int) (size.getHeight() * 0.25);
+		int endY = (int) (size.getHeight() * 0.75);
 
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
 		Sequence scrollUp = new Sequence(finger, 1)
