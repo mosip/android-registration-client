@@ -1,4 +1,4 @@
-[## Auto Logout (Inactivity Timeout)
+## Auto Logout (Inactivity Timeout)
 
 This document explains the application's auto-logout feature triggered by user inactivity.
 
