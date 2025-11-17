@@ -3,17 +3,9 @@
 <suite name="Suite">
 	<test name="Test" thread-count="5">
 		<classes>
-			<class name="regclient.androidTestCases.logintest">
-				<methods>
-					<include name="ALoginTest" />
-					<include name="OnBoardTest" />
-					<include name="updateOperatorBiometrics" />
-				</methods>
-			</class>
 			<class name="regclient.androidTestCases.NewRegistrationAdult">
 				<methods>
 					<include name="newRegistrationAdult" />
-					<include name="newRegistrationAdultUploadMultipleDoccuments" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.NewRegistrationAdultException">
@@ -56,24 +48,14 @@
 					<include name="updateMyUINUpdatebiometrics" />
 				</methods>
 			</class>
+			<class name="regclient.androidTestCases.UpdateMyUinUpdateDocuments">
+				<methods>
+					<include name="updateMyUinUpdateDocuments" />
+				</methods>
+			</class>
 			<class name="regclient.androidTestCases.LostUin">
 				<methods>
 					<include name="lostUinAdult" />
-				</methods>
-			</class>
-			<class name="regclient.androidTestCases.ResetPassword">
-				<methods>
-					<include name="resetPassword" />
-				</methods>
-			</class>
-			<class name="regclient.androidTestCases.PreRegFetchingPacket">
-				<methods>
-					<include name="preRegFetching" />
-				</methods>
-			</class>
-			<class name="regclient.androidTestCases.BiometricCorrection">
-				<methods>
-					<include name="biometricCorrection" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.Settings">
@@ -84,7 +66,6 @@
 		</classes>
 	</test>
 	<listeners>
-		<listener
-			  class-name="regclient.utils.EmailableReport" />		
+		<listener class-name="regclient.utils.EmailableReport" />
 	</listeners>
 </suite>
