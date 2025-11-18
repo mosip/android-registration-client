@@ -8,6 +8,9 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link LocationValidationServiceImpl}.
+ * 
+ * Note: The getDistance method expects parameters in (longitude, latitude, longitude, latitude) order,
+ * which differs from the standard (latitude, longitude) convention used by most geographic APIs.
  */
 public class LocationValidationServiceImplTest {
 
