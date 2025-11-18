@@ -198,6 +198,11 @@ public class GlobalParamRepositoryTest {
 
     @Test
     public void refreshConfigurationCacheHandlesException() {
+        // Test that refreshConfigurationCache handles exceptions gracefully:
+        // 1. Method completes without throwing
+        // 2. Exception is logged
+        // 3. Cache remains usable after exception
+        
         // Save a param before the exception to verify cache state
         globalParamRepository.saveGlobalParam("testParam", "testValue");
         
@@ -208,16 +213,16 @@ public class GlobalParamRepositoryTest {
             RuntimeException testException = new RuntimeException("boom");
             Mockito.doThrow(testException).when(mockLocalConfigDAO).getLocalConfigurations();
             
-            // Method should complete without throwing
+            // Assertion 1: Method should complete without throwing (implicit - test would fail if exception propagated)
             globalParamRepository.refreshConfigurationCache();
             
-            // Verify exception was logged (with Throwable parameter)
+            // Assertion 2: Verify exception was logged (with Throwable parameter)
             logMock.verify(() -> Log.e(
                     Mockito.anyString(),
                     Mockito.eq("Error refreshing configuration cache"),
                     Mockito.any(Throwable.class)));
             
-            // Verify cache is still usable (contains previously saved param)
+            // Assertion 3: Verify cache is still usable (contains previously saved param)
             assertEquals("testValue", globalParamRepository.getCachedStringGlobalParam("testParam"));
         }
         
