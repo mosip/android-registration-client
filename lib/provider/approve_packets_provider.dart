@@ -32,7 +32,7 @@ class ApprovePacketsProvider with ChangeNotifier {
 
   void getAllReasonList(String langCode) async {
     List<String?> responseReasonList =
-        await SyncResponseServiceImpl().getReasonList(langCode);
+    await SyncResponseServiceImpl().getReasonList(langCode);
     reasonList = responseReasonList;
     log(reasonList.toString());
     notifyListeners();
@@ -71,13 +71,12 @@ class ApprovePacketsProvider with ChangeNotifier {
 
   void getTotalCreatedPackets() async {
     List<String?> allPackets =
-        await PacketServiceImpl().getAllCreatedRegistrationPacket();
+    await PacketServiceImpl().getAllCreatedRegistrationPacket();
     totalCreatedPackets = allPackets.length;
     notifyListeners();
   }
 
   void getPackets() async {
-    List<Map<String, Object>> oldPackets = List.from(packetsList);
     packetsList.clear();
     matchingSelected.clear();
     matchingPackets.clear();
@@ -85,7 +84,7 @@ class ApprovePacketsProvider with ChangeNotifier {
     searchList = "";
 
     List<String?> allPackets =
-        await PacketServiceImpl().getAllCreatedRegistrationPacket();
+    await PacketServiceImpl().getAllCreatedRegistrationPacket();
     totalCreatedPackets = allPackets.length;
 
     // Getting all packets
@@ -93,13 +92,14 @@ class ApprovePacketsProvider with ChangeNotifier {
       Registration reg = Registration.fromJson(json.decode(element ?? ""));
       String review = ReviewStatus.NOACTIONTAKEN.name;
       String reviewComment = "";
-      for (var oldPacket in oldPackets) {
-        Registration oldReg = oldPacket['packet'] as Registration;
-        if (reg.packetId == oldReg.packetId) {
-          review = oldPacket['review_status'] as String;
-          reviewComment = oldPacket['review_comment'] as String;
-        }
+
+      // Read review status from secure storage
+      String? savedStatus = await storage.read(key: 'review_${reg.packetId}');
+      if (savedStatus != null) {
+        review = savedStatus;
+        reviewComment = savedStatus == ReviewStatus.APPROVED.name ? "Approved" : "Rejected";
       }
+
       packetsList.add({
         "packet": reg,
         "review_status": review,
@@ -112,7 +112,6 @@ class ApprovePacketsProvider with ChangeNotifier {
       matchingPackets.add(element);
     }
 
-    log("GOT ALL PACKETS : $matchingPackets");
     notifyListeners();
   }
 
@@ -169,7 +168,7 @@ class ApprovePacketsProvider with ChangeNotifier {
         if (regReview != ReviewStatus.NOACTIONTAKEN.name) {
           await packetService.supervisorReview(
               regPacket.packetId, regReview, regComment);
-          await storage.delete(key: regPacket.packetId);
+          await storage.delete(key: 'review_${regPacket.packetId}');
         }
       }
     }
@@ -200,8 +199,9 @@ class ApprovePacketsProvider with ChangeNotifier {
       }
     }
 
+    // Save to secure storage for persistence
+    await storage.write(key: 'review_$packetId', value: ReviewStatus.REJECTED.name);
     selectedReason = null;
-    log("rejected");
     notifyListeners();
   }
 
@@ -227,11 +227,12 @@ class ApprovePacketsProvider with ChangeNotifier {
       }
     }
 
-    log("Approved");
+    // Save to secure storage for persistence
+    await storage.write(key: 'review_$packetId', value: ReviewStatus.APPROVED.name);
     notifyListeners();
   }
 
-  void clearReview(String packetId) {
+  Future<void> clearReview(String packetId) async {
     for (int i = 0; i < packetsList.length; i++) {
       Registration reg = packetsList[i]["packet"] as Registration;
       if (reg.packetId == packetId) {
@@ -249,7 +250,6 @@ class ApprovePacketsProvider with ChangeNotifier {
           matchingSelected[i] = false;
           countSelected -= 1;
         }
-
         matchingPackets[i] = {
           "packet": reg,
           "review_status": ReviewStatus.NOACTIONTAKEN.name,
@@ -257,6 +257,7 @@ class ApprovePacketsProvider with ChangeNotifier {
         };
       }
     }
+    await storage.delete(key: 'review_$packetId');
     notifyListeners();
   }
 }
