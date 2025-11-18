@@ -363,8 +363,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: Align(
                 alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: enabled ? _onSaveChanges : null,
+            child:enabled ? ElevatedButton(
+              onPressed: _onSaveChanges,
               style: ElevatedButton.styleFrom(
                 backgroundColor: enabled ? solidPrimary : Colors.grey,
                 foregroundColor: Colors.white,
@@ -372,7 +372,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                 elevation: enabled ? 4 : 0,
               ),
               child: Text(AppLocalizations.of(context)!.submit),
-            ),
+            ):const SizedBox.shrink(),
               ),
           );
         }
