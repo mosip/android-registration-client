@@ -174,6 +174,32 @@ public class AuditManagerServiceTest {
         Mockito.when(mockGlobalParamRepo.getGlobalParamValue(RegistrationConstants.AUDIT_EXPORTED_TILL))
                 .thenReturn(null);
 
+        long beforeCall = System.currentTimeMillis();
+        boolean result = auditManagerService.deleteAuditLogs();
+        long afterCall = System.currentTimeMillis();
+
+        assertTrue(result);
+        ArgumentCaptor<Long> dateCaptor = ArgumentCaptor.forClass(Long.class);
+        Mockito.verify(mockAuditRepo).deleteAllAuditsTillDate(dateCaptor.capture());
+        
+        long capturedDate = dateCaptor.getValue();
+        assertTrue("Captured date should be between before and after call timestamps",
+                capturedDate >= beforeCall && capturedDate <= afterCall);
+        Mockito.verify(mockGlobalParamRepo).saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL, null);
+    }
+
+    @Test
+    public void test_delete_audit_logs_exception_handling() {
+        Context mockContext = Mockito.mock(Context.class);
+        GlobalParamRepository mockGlobalParamRepo = Mockito.mock(GlobalParamRepository.class);
+        AuditRepository mockAuditRepo = Mockito.mock(AuditRepository.class);
+
+        AuditManagerServiceImpl auditManagerService = new AuditManagerServiceImpl(mockContext, mockAuditRepo, mockGlobalParamRepo);
+
+        String validTillDate = "1625097600000";
+        Mockito.when(mockGlobalParamRepo.getGlobalParamValue(RegistrationConstants.AUDIT_EXPORTED_TILL))
+                .thenReturn(validTillDate);
+
         // Mock deleteAllAuditsTillDate to throw RuntimeException to make deleteAuditLogs return false
         Mockito.doThrow(new RuntimeException("Test exception"))
                 .when(mockAuditRepo).deleteAllAuditsTillDate(Mockito.anyLong());
@@ -181,7 +207,8 @@ public class AuditManagerServiceTest {
         boolean result = auditManagerService.deleteAuditLogs();
 
         assertFalse(result);
-        Mockito.verify(mockAuditRepo).deleteAllAuditsTillDate(Mockito.anyLong());
+        Mockito.verify(mockAuditRepo).deleteAllAuditsTillDate(Long.parseLong(validTillDate));
+        Mockito.verify(mockGlobalParamRepo, never()).saveGlobalParam(anyString(), any());
     }
 
     @Test

@@ -198,15 +198,31 @@ public class GlobalParamRepositoryTest {
 
     @Test
     public void refreshConfigurationCacheHandlesException() {
+        // Save a param before the exception to verify cache state
+        globalParamRepository.saveGlobalParam("testParam", "testValue");
+        
         try (MockedStatic<Log> logMock = Mockito.mockStatic(Log.class)) {
             logMock.when(() -> Log.e(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable.class))).thenReturn(0);
             logMock.when(() -> Log.e(Mockito.anyString(), Mockito.anyString())).thenReturn(0);
 
-            Mockito.doThrow(new RuntimeException("boom")).when(mockLocalConfigDAO).getLocalConfigurations();
+            RuntimeException testException = new RuntimeException("boom");
+            Mockito.doThrow(testException).when(mockLocalConfigDAO).getLocalConfigurations();
+            
+            // Method should complete without throwing
             globalParamRepository.refreshConfigurationCache();
-
-            Mockito.doReturn(new HashMap<String, String>()).when(mockLocalConfigDAO).getLocalConfigurations();
+            
+            // Verify exception was logged (with Throwable parameter)
+            logMock.verify(() -> Log.e(
+                    Mockito.anyString(),
+                    Mockito.eq("Error refreshing configuration cache"),
+                    Mockito.any(Throwable.class)));
+            
+            // Verify cache is still usable (contains previously saved param)
+            assertEquals("testValue", globalParamRepository.getCachedStringGlobalParam("testParam"));
         }
+        
+        // Restore mock for other tests
+        Mockito.doReturn(new HashMap<String, String>()).when(mockLocalConfigDAO).getLocalConfigurations();
     }
 
     @Test

@@ -937,16 +937,40 @@ public class PreRegZipHandlingServiceImplTest {
         GenericValueDto valueDto = new GenericValueDto("LOC_CODE", "RegionName", "eng");
         when(masterDataService.getFieldValues("region", "eng")).thenReturn(Collections.singletonList(valueDto));
 
-        Location location = new Location("LOC", "eng");
-        location.setHierarchyName("Region");
-        location.setHierarchyLevel(1);
-        when(masterDataService.findAllLocationsByLangCode("eng")).thenReturn(Collections.singletonList(location));
-        when(masterDataService.findLocationByHierarchyLevel(1, "eng"))
+        // Setup location hierarchy: level 0 = "Country", level 1 = "Region"
+        // Note: HashMap iteration order is not guaranteed, so we can't rely on index being exactly 1
+        Location countryLocation = new Location("COUNTRY", "eng");
+        countryLocation.setHierarchyName("Country");
+        countryLocation.setHierarchyLevel(0);
+        
+        Location regionLocation = new Location("REGION", "eng");
+        regionLocation.setHierarchyName("Region");
+        regionLocation.setHierarchyLevel(1);
+        
+        when(masterDataService.findAllLocationsByLangCode("eng"))
+                .thenReturn(Arrays.asList(countryLocation, regionLocation));
+        // Note: findLocationByHierarchyLevel may or may not be called depending on HashMap iteration order
+        when(masterDataService.findLocationByHierarchyLevel(anyInt(), eq("eng")))
                 .thenReturn(Collections.singletonList(new GenericValueDto("LOC_CODE", "LocationName", "eng")));
 
         ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
         Object result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "region", "simpleType", jsonObject);
+        
         assertNotNull(result);
+        assertTrue("Result should be a List", result instanceof List<?>);
+        @SuppressWarnings("unchecked")
+        List<SimpleType> simpleTypes = (List<SimpleType>) result;
+        assertEquals("Should have one SimpleType entry", 1, simpleTypes.size());
+        // The value should be "RegionName" from getFieldValues match, or "LOC_CODE" as fallback
+        String actualValue = simpleTypes.get(0).getValue();
+        assertTrue("Value should be RegionName (from getFieldValues) or LOC_CODE (fallback)",
+                "RegionName".equals(actualValue) || "LOC_CODE".equals(actualValue));
+        assertEquals("eng", simpleTypes.get(0).getLanguage());
+        
+        verify(masterDataService).getFieldValues("region", "eng");
+        verify(masterDataService).findAllLocationsByLangCode("eng");
+        // findLocationByHierarchyLevel may or may not be called depending on HashMap iteration order
+        verify(masterDataService, atMost(1)).findLocationByHierarchyLevel(anyInt(), eq("eng"));
     }
 
     @Test
@@ -1038,6 +1062,14 @@ public class PreRegZipHandlingServiceImplTest {
         ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
 
         String path = service.storePreRegPacketToDisk("RID123", "payload".getBytes(), new CenterMachineDto());
-        assertTrue(path.contains("RID123.zip"));
+        assertTrue("Path should contain RID123.zip", path.contains("RID123.zip"));
+        
+        // Verify directory was created
+        File targetDir = new File(tempDir, "preRegPackets");
+        assertTrue("Expected preRegPackets directory to be created", targetDir.exists() && targetDir.isDirectory());
+        
+        // Verify zip file was created
+        File zipFile = new File(targetDir, "RID123.zip");
+        assertTrue("Expected stored packet file to exist", zipFile.exists());
     }
 }

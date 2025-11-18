@@ -1,18 +1,16 @@
 package io.mosip.registration.clientmanager.service;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
@@ -27,11 +25,6 @@ public class LocalConfigServiceImplTest {
     @InjectMocks
     private LocalConfigServiceImpl localConfigService;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     public void testGetLocalConfigurations_returnsDaoResult() {
         Map<String, String> expected = Map.of(
@@ -41,7 +34,7 @@ public class LocalConfigServiceImplTest {
 
         Map<String, String> result = localConfigService.getLocalConfigurations();
 
-        assertSame(expected, result);
+        assertEquals(expected, result);
         verify(localConfigDAO).getLocalConfigurations();
     }
 
@@ -63,7 +56,7 @@ public class LocalConfigServiceImplTest {
 
         List<String> result = localConfigService.getPermittedConfiguration();
 
-        assertSame(permitted, result);
+        assertEquals(permitted, result);
         verify(localConfigDAO).getPermittedConfigurations(RegistrationConstants.PERMITTED_CONFIG_TYPE);
     }
 }

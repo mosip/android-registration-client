@@ -70,11 +70,10 @@ public class DateUtilTest {
         String result = util.getDateTime(millis);
 
         assertNotNull(result);
-        // Check if result contains a year (2024, 2023, or 2025) - be flexible about format
-        assertTrue(result.contains("2024") || result.contains("2023") || result.contains("2025") ||
-                result.contains(", 2024") || result.contains(", 2023") || result.contains(", 2025"));
-        // Check if result contains time pattern (HH:mm format)
-        assertTrue(result.matches(".*\\d{1,2}:\\d{2}.*") || result.length() > 0);
+        // Verify result contains expected date components for fixed timestamp
+        assertTrue("Result should contain a 4-digit year", result.matches(".*\\d{4}.*"));
+        // Verify result contains time in HH:mm or H:mm format
+        assertTrue("Result should contain time in HH:mm format", result.matches(".*\\d{1,2}:\\d{2}.*"));
     }
 
     @Test

@@ -75,7 +75,12 @@ public class PreRegistrationDataSyncDaoImplTest {
 
         // Create a Date object for 2024-01-01
         Date startDate = Date.from(Instant.parse("2024-01-01T00:00:00Z"));
-        // Date.toString() produces format like "Mon Jan 01 00:00:00 GMT 2024"
+        
+        // Note: The implementation uses Date.toString() which produces a locale-dependent format
+        // (typically "EEE MMM dd HH:mm:ss zzz yyyy", e.g., "Mon Jan 01 00:00:00 GMT 2024").
+        // This test mirrors that behavior by using Date.toString() to match what the implementation does.
+        // While using a locale-independent formatter (e.g., SimpleDateFormat with fixed Locale/TimeZone)
+        // would be more robust, this test correctly validates the current implementation behavior.
         String dateString = startDate.toString();
 
         when(preRegistrationRepositoryDao.findByAppointmentDateBeforeAndIsDeleted(dateString, false))
