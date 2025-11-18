@@ -131,7 +131,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
                     if (error == null) {
                         errorCode = "REG_TRY_AGAIN";
                     } else if (error.getMessage().equals("Invalid Request")) {
-                        errorCode = "REG_INVALID_REQUEST";
+                        errorCode = "REG_AUTH_SERVER_DOWN";
                     } else if (error.getMessage().equals("Machine not found")) {
                         errorCode = "REG_MACHINE_NOT_FOUND";
                     } else {
