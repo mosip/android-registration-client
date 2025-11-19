@@ -2,7 +2,7 @@ name: Build Android Registration-Client
 
 on:
   workflow_dispatch:
-  inputs:
+    inputs:
       serverBaseURL:
         description: "Enter the dynamic Server Base URL"
         required: true
@@ -37,8 +37,9 @@ jobs:
           languages: java
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
-  build:
+  build-android-gradle:
     name: Build Android APK
+    if: github.event_name == 'workflow_dispatch'
     needs: prechecks
     runs-on: ubuntu-latest
 
@@ -66,7 +67,7 @@ jobs:
           
   sonar:
     name: SonarCloud Scan
-    needs: build
+    needs: build-android-gradle
     runs-on: ubuntu-latest
 
     steps:
