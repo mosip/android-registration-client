@@ -2,12 +2,98 @@ name: Build Android Registration-Client
 
 on:
   workflow_dispatch:
+  inputs:
+      serverBaseURL:
+        description: "Enter the dynamic Server Base URL"
+        required: true
+        type: string
   push:
     branches:
       - release*
       - develop
+      
+  pull_request:
+    branches:
+      - develop
+      - master
+      - main
+      - 1.*
+      - release-*
+      - sprint-*    
 
 jobs:
+  prechecks:
+    name: Prechecks (DCO, CodeQL)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: DCO Check
+        uses: docker://ghcr.io/dcoapp/dco:latest
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+  build:
+    name: Build Android APK
+    needs: prechecks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Update serverBaseURL in android/build.gradle
+        run: |
+          echo "Updating serverBaseURL to: ${{ github.event.inputs.serverBaseURL }}"
+          sed -i "s|serverBaseURL = .*|serverBaseURL = \"${{ github.event.inputs.serverBaseURL }}\"|g" android/build.gradle
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 5
+          
+  sonar:
+    name: SonarCloud Scan
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: sonar-cache
+
+      - name: Run SonarCloud Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean build testDebugUnitTestCoverage sonarqube --info
   build:
     runs-on: ubuntu-latest
 
