@@ -88,7 +88,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false);
+        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false,"jobId");
 
         verify(onFinish).run();
         assertEquals("policy_key_sync_failed", spyService.onResponseComplete());
@@ -105,7 +105,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false);
+        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false,"jobId");
 
         ArgumentCaptor<Callback<ResponseWrapper<CertificateResponse>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallCertificate).enqueue(callbackCaptor.capture());
@@ -134,7 +134,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false);
+        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false,"jobId");
 
         ArgumentCaptor<Callback<ResponseWrapper<CertificateResponse>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallCertificate).enqueue(callbackCaptor.capture());
@@ -165,7 +165,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false);
+        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false,"jobId");
 
         ArgumentCaptor<Callback<ResponseWrapper<CertificateResponse>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallCertificate).enqueue(callbackCaptor.capture());
@@ -188,7 +188,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false);
+        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false,"jobId");
 
         ArgumentCaptor<Callback<ResponseWrapper<CertificateResponse>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallCertificate).enqueue(callbackCaptor.capture());
@@ -210,7 +210,7 @@ public class SyncDataServiceImplTest {
 
         Runnable onFinish = mock(Runnable.class);
 
-        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false);
+        spyService.syncCertificate(onFinish, "appId", "refId", "setAppId", "setRefId", false,"jobId");
 
         ArgumentCaptor<Callback<ResponseWrapper<CertificateResponse>>> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCallCertificate).enqueue(callbackCaptor.capture());
@@ -237,7 +237,7 @@ public class SyncDataServiceImplTest {
 
         Runnable mockRunnable = mock(Runnable.class);
 
-        spyMasterDataService.syncCertificate(mockRunnable, "appId", "refId", "setAppId", "setRefId", false);
+        spyMasterDataService.syncCertificate(mockRunnable, "appId", "refId", "setAppId", "setRefId", false,"jobId");
 
         verify(mockRunnable).run();
         assertEquals("policy_key_sync_failed", spyMasterDataService.onResponseComplete());
@@ -540,8 +540,8 @@ public class SyncDataServiceImplTest {
                 mockContext, mockObjectMapper, mockSyncRestService, mockClientCryptoManagerService,
                 null, null, null, null, null, null, null, null,
                 mockGlobalParamRepository, null, null, null, mockUserDetailRepository,
-                null, null, null, null, null
-                null, null, null, null,null,null
+                null, null, null, null, null,
+                null, null
         );
 
         Runnable mockOnFinish = mock(Runnable.class);

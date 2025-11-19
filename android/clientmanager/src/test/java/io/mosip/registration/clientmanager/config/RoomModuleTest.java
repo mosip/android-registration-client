@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -83,11 +84,11 @@ public class RoomModuleTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        when(application.getApplicationContext()).thenReturn(context);
-        when(context.getDatabasePath("reg-client")).thenReturn(dbFile);
+        lenient().when(application.getApplicationContext()).thenReturn(context);
+        lenient().when(context.getDatabasePath("reg-client")).thenReturn(dbFile);
         applicationInfo.flags = 0;
-        when(sharedPreferences.getString(eq("db_password"), any())).thenReturn("existingPassword");
-        when(dbFile.exists()).thenReturn(true);
+        lenient().when(sharedPreferences.getString(eq("db_password"), any())).thenReturn("existingPassword");
+        lenient().when(dbFile.exists()).thenReturn(true);
 
         RoomDatabase.Builder<ClientDatabase> builder = mock(RoomDatabase.Builder.class);
         try (MockedStatic<Room> room = org.mockito.Mockito.mockStatic(Room.class);
@@ -100,10 +101,10 @@ public class RoomModuleTest {
                             any(EncryptedSharedPreferences.PrefValueEncryptionScheme.class)))
                     .thenReturn(sharedPreferences);
 
-            when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
-            when(builder.addMigrations(any(Migration[].class))).thenReturn(builder);
-            when(builder.allowMainThreadQueries()).thenReturn(builder);
-            when(builder.build()).thenReturn(clientDatabase);
+            lenient().when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
+            lenient().when(builder.addMigrations(any(Migration[].class))).thenAnswer(invocation -> builder);
+            lenient().when(builder.allowMainThreadQueries()).thenReturn(builder);
+            lenient().when(builder.build()).thenReturn(clientDatabase);
 
             roomModule = new RoomModule(application, applicationInfo);
 
@@ -116,8 +117,8 @@ public class RoomModuleTest {
 
         reset(sharedPreferences, editor);
         applicationInfo.flags = ApplicationInfo.FLAG_DEBUGGABLE;
-        when(sharedPreferences.getString(eq("db_password"), any())).thenReturn(null);
-        when(dbFile.exists()).thenReturn(false);
+        lenient().when(sharedPreferences.getString(eq("db_password"), any())).thenReturn(null);
+        lenient().when(dbFile.exists()).thenReturn(false);
 
         RoomDatabase.Builder<ClientDatabase> builder = mock(RoomDatabase.Builder.class);
         try (MockedStatic<Room> room = org.mockito.Mockito.mockStatic(Room.class);
@@ -130,12 +131,12 @@ public class RoomModuleTest {
                             any(EncryptedSharedPreferences.PrefValueEncryptionScheme.class)))
                     .thenReturn(sharedPreferences);
 
-            when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
-            when(builder.addMigrations(any(Migration[].class))).thenReturn(builder);
-            when(builder.allowMainThreadQueries()).thenReturn(builder);
-            when(builder.build()).thenReturn(clientDatabase);
-            when(sharedPreferences.edit()).thenReturn(editor);
-            when(editor.putString(eq("db_password"), eq(BuildConfig.DEBUG_PASSWORD))).thenReturn(editor);
+            lenient().when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
+            lenient().when(builder.addMigrations(any(Migration[].class))).thenAnswer(invocation -> builder);
+            lenient().when(builder.allowMainThreadQueries()).thenReturn(builder);
+            lenient().when(builder.build()).thenReturn(clientDatabase);
+            lenient().when(sharedPreferences.edit()).thenReturn(editor);
+            lenient().when(editor.putString(eq("db_password"), eq(BuildConfig.DEBUG_PASSWORD))).thenReturn(editor);
 
             new RoomModule(application, applicationInfo);
 
@@ -149,13 +150,13 @@ public class RoomModuleTest {
     public void testConstructor_EncryptExistingDb_Success() throws Exception {
 
         reset(sharedPreferences, editor);
-        when(sharedPreferences.getString(eq("db_password"), eq(null))).thenReturn(null);
-        when(dbFile.exists()).thenReturn(true);
+        lenient().when(sharedPreferences.getString(eq("db_password"), eq(null))).thenReturn(null);
+        lenient().when(dbFile.exists()).thenReturn(true);
         File tempFile = mock(File.class);
-        when(context.getCacheDir()).thenReturn(new File("/cache")); // Required for createTempFile
-        when(dbFile.getPath()).thenReturn("/data/data/app/reg-client"); // Match the path
-        when(sharedPreferences.edit()).thenReturn(editor);
-        when(editor.putString(anyString(), anyString())).thenReturn(editor);
+        lenient().when(context.getCacheDir()).thenReturn(new File("/cache")); // Required for createTempFile
+        lenient().when(dbFile.getPath()).thenReturn("/data/data/app/reg-client"); // Match the path
+        lenient().when(sharedPreferences.edit()).thenReturn(editor);
+        lenient().when(editor.putString(anyString(), anyString())).thenReturn(editor);
 
         RoomDatabase.Builder<ClientDatabase> builder = mock(RoomDatabase.Builder.class);
         try (MockedStatic<Room> room = org.mockito.Mockito.mockStatic(Room.class);
@@ -182,13 +183,13 @@ public class RoomModuleTest {
                             eq(EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)))
                     .thenReturn(sharedPreferences);
 
-            when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
-            when(builder.addMigrations(any(Migration[].class))).thenReturn(builder);
-            when(builder.allowMainThreadQueries()).thenReturn(builder);
-            when(builder.build()).thenReturn(clientDatabase);
+            lenient().when(builder.openHelperFactory(any(SupportFactory.class))).thenReturn(builder);
+            lenient().when(builder.addMigrations(any(Migration[].class))).thenAnswer(invocation -> builder);
+            lenient().when(builder.allowMainThreadQueries()).thenReturn(builder);
+            lenient().when(builder.build()).thenReturn(clientDatabase);
             doNothing().when(existingDb).rawExecSQL(anyString());
-            when(tempFile.renameTo(dbFile)).thenReturn(true);
-            when(dbFile.delete()).thenReturn(true);
+            lenient().when(tempFile.renameTo(dbFile)).thenReturn(true);
+            lenient().when(dbFile.delete()).thenReturn(true);
 
             new RoomModule(application, applicationInfo);
 
