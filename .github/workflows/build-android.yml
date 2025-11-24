@@ -20,9 +20,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Replace serverBaseURL in all build.gradle files
         run: |
