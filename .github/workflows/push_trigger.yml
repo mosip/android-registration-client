@@ -13,7 +13,6 @@ on:
 
   pull_request:
     branches:
-      - develop
       - master
       - main
       - "release-*"
