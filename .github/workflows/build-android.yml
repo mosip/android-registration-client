@@ -4,23 +4,28 @@ on:
   workflow_dispatch:
     inputs:
       defaultServerBaseURL:
-        description: 'Server Base URL'
+        description: 'Enter serverBaseURL for APK'
         required: true
-        default: 'api-internal.sandbox.xyz.net'
+        default: "https://api.default.example.com"
         type: string
   pull_request:
     types: [opened, reopened, synchronize]
   push:
     branches:
-      - release*
+      - 'release*'
       - develop
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      SERVER_BASE_URL: ${{ github.event.inputs.defaultServerBaseURL || 'https://api.default.example.com' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Replace serverBaseURL
+        run: |
+          find android -type f -name "build.gradle*" -print0 \
+          | xargs -0 sed -i "s#api-internal.sandbox.xyz.net#${SERVER_BASE_URL}#g"
       - name: Setup java 17
         uses: actions/setup-java@v2
         with:
@@ -44,6 +49,9 @@ jobs:
 
       # - name: Flutter test
       #   run: flutter test
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
 
       - name: Decode android/app/arc-local-keystore.jks
         run: echo "${{ secrets.JKS_PRIVATE_SECRET }}" | base64 --decode > android/app/arc-local-keystore.jks
