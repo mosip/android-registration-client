@@ -2,6 +2,12 @@ name: Build Android Registration-Client
 
 on:
   workflow_dispatch:
+  inputs:
+      serverBaseURL:
+        description: "Enter serverBaseURL for APK"
+        required: true
+        default: "https://api.default.example.com"
+        type: string
   push:
     branches:
       - release*
@@ -14,6 +20,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Replace serverBaseURL in all build.gradle files
+        run: |
+          find android -type f -name "build.gradle*" -print0 \
+          | xargs -0 sed -i "s#api-internal.sandbox.xyz.net#${{ github.event.inputs.serverBaseURL }}#g"
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        
       - name: Setup java 17
         uses: actions/setup-java@v2
         with:
