@@ -7,21 +7,20 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
-public class OperationalTaskPageEnglish extends OperationalTaskPage{
-
+public class OperationalTaskPageEnglish extends OperationalTaskPage {
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Update Operator Biometrics\")")
 	private WebElement updateOperatorBiometricsButton;
-	
+
 	@AndroidFindBy(accessibility = "System Storage Usage")
 	private WebElement systemStorageUsageTitle;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchronize Data\")")
-	private WebElement synchronizeDataButton ;
-	
+	private WebElement synchronizeDataButton;
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Application Upload\")")
 	private WebElement applicationUploadTitle;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Pending Approval\")")
 	private WebElement pendingApprovalTitle;
 
@@ -29,49 +28,48 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage{
 		super(driver);
 	}
 
-	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
-	clickOnElement(updateOperatorBiometricsButton);
-	return new SupervisorBiometricVerificationpageEnglish(driver);
+	public SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
+		clickOnElement(updateOperatorBiometricsButton);
+		return new SupervisorBiometricVerificationpageEnglish(driver);
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
 		return true;
 	}
 
-	public  void clickSynchronizeDataButton() {
+	public void clickSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);
 		waitTime(50);
 	}
-	
+
 	public boolean checkLastSyncDate() {
 		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
-		if(contentDesc.contains("Synchronize Data\n"+getCurrentDateWord()+","))
+		if (contentDesc.contains("Synchronize Data\n" + getCurrentDateWord() + ","))
 			return true;
 		else
 			return false;
 	}
-	
-	public  void clickApplicationUploadTitle() {
+
+	public void clickApplicationUploadTitle() {
 		clickOnElement(applicationUploadTitle);
 	}
-	
+
 	public boolean isApplicationUploadTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(applicationUploadTitle)) {
+		if (!isElementDisplayedOnScreen(applicationUploadTitle)) {
 			swipeOrScroll();
 		}
 		return isElementDisplayed(applicationUploadTitle);
 	}
-	
-	public  void clickPendingApprovalTitle() {
+
+	public void clickPendingApprovalTitle() {
 		clickOnElement(pendingApprovalTitle);
 	}
-	
+
 	public boolean isPendingApprovalTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+		if (!isElementDisplayedOnScreen(pendingApprovalTitle)) {
 			swipeOrScroll();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
 	}
 
-	
 }

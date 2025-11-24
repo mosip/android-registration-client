@@ -30,7 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  freezed: ^2.1.0+1
   freezed_annotation: ^2.1.0
   json_annotation: ^4.8.0
   flutter_svg: ^2.0.9
@@ -71,12 +70,14 @@ dependencies:
   native_image_cropper: ^0.6.0
   qr_code_scanner: ^1.0.1
   restart_app: ^1.2.1
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_driver:
     sdk: flutter
+  freezed: ^2.1.0+1
   build_runner: ^2.3.3
   json_serializable: ^6.1.5
   flutter_launcher_icons: "^0.13.1"

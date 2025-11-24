@@ -55,39 +55,41 @@ public class LoginPageHindi extends LoginPage {
 
 	@AndroidFindBy(accessibility = "हिन्दी")
 	private WebElement hindiButton;
+	
+	@AndroidFindBy(accessibility = "होम पेज पर जाएं")
+	private WebElement skipToHomeButton;
 
 	public LoginPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
 
-
-	public  void enterUserName(String username) {
-		clickAndsendKeysToTextBox(userNameTextBox,username);
+	public void enterUserName(String username) {
+		clickAndsendKeysToTextBox(userNameTextBox, username);
 	}
 
-	public  void clickOnNextButton() {
+	public void clickOnNextButton() {
 		clickOnElement(nextButton);
 	}
 
-	public  void clickOnBackButton() {
+	public void clickOnBackButton() {
 		clickOnElement(backButton);
 	}
 
-	public  void enterPassword(String password) {
-		retryFindElement(passwordTextBox,Duration.ofSeconds(10));
-		clickAndsendKeysToTextBox(passwordTextBox,password);
+	public void enterPassword(String password) {
+		retryFindElement(passwordTextBox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(passwordTextBox, password);
 	}
 
-	public  RegistrationTasksPage clickOnloginButton() {
+	public RegistrationTasksPage clickOnloginButton() {
 		clickOnElement(loginButton);
 		return new RegistrationTasksPageHindi(driver);
 	}
 
-	public  boolean isNextButtonEnabled() {
+	public boolean isNextButtonEnabled() {
 		return isElementEnabled(nextButton);
 	}
 
-	public  boolean isLoginButtonEnabled() {
+	public boolean isLoginButtonEnabled() {
 		return isElementEnabled(loginButton);
 	}
 
@@ -139,5 +141,7 @@ public class LoginPageHindi extends LoginPage {
 		clickOnElement(hindiButton);
 	}
 
-
+	public void clickOnSkipToHomeButton() {
+		clickOnElement(skipToHomeButton);
+	}
 }

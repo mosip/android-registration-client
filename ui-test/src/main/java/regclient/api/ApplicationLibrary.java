@@ -8,7 +8,6 @@ public class ApplicationLibrary extends BaseTestCase {
 
 	private static final CommonLibrary commonLibrary = new CommonLibrary();
 
-
 	// get requests
 	public Response getWithoutParams(String endpoint, String cookie) {
 		return commonLibrary.getWithoutParams(ApplnURI + endpoint, cookie);

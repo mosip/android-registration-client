@@ -1,6 +1,5 @@
 package regclient.pages.english;
 
-
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
@@ -14,7 +13,7 @@ import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.UpdateUINPage;
 
-public class UpdateUINPageEnglish extends UpdateUINPage{
+public class UpdateUINPageEnglish extends UpdateUINPage {
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement UINNumberTextBox;
@@ -31,13 +30,16 @@ public class UpdateUINPageEnglish extends UpdateUINPage{
 
 	@SuppressWarnings("deprecation")
 	public boolean isUpdateMyUINTitleDisplayed() {
-		return isElementDisplayed (findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
-	}
-	public  void enterUIN(String UIN) {
-		clickAndsendKeysToTextBox(UINNumberTextBox,UIN);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 
-	public  ConsentPage clickOnContinueButton() {
+	public void enterUIN(String UIN) {
+		clickAndsendKeysToTextBox(UINNumberTextBox, UIN);
+	}
+
+	public ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new ConsentPageEnglish(driver);
 	}
@@ -47,18 +49,22 @@ public class UpdateUINPageEnglish extends UpdateUINPage{
 	}
 
 	public void selectUpdateValue(String page) {
-		List<String> groupLabelList=FetchUiSpec.getAllGroupLabelUsingId(page);
-		for(String title : groupLabelList) {
-			WebElement webelement =findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+title+"\")"));
-			assertTrue(isElementDisplayed(webelement),"Verify if "+title+" title is displayed in update uin page");
-			clickOnElement(webelement);			
-		}		
+		List<String> groupLabelList = FetchUiSpec.getAllGroupLabelUsingId(page);
+		for (String title : groupLabelList) {
+			WebElement webelement = findElementWithRetry(
+					MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + title + "\")"));
+			assertTrue(isElementDisplayed(webelement), "Verify if " + title + " title is displayed in update uin page");
+			clickOnElement(webelement);
+		}
 	}
 
 	public void selectUpdateIntroducerDetails() {
-		WebElement webelement =findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getGroupValueUsingId("introducerName")+"\")"));
-		assertTrue(isElementDisplayed(webelement),"Verify if "+FetchUiSpec.getGroupValueUsingId("introducerName")+" title is displayed in update uin page");
-		clickOnElement(webelement);			
-	}				
+		WebElement webelement = findElementWithRetry(
+				MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getGroupValueUsingId("introducerName") + "\")"));
+		assertTrue(isElementDisplayed(webelement), "Verify if " + FetchUiSpec.getGroupValueUsingId("introducerName")
+				+ " title is displayed in update uin page");
+		clickOnElement(webelement);
+	}
 
 }

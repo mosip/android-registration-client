@@ -8,6 +8,8 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets/device_settings_tab.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/platform_spi/sync_response_service.dart';
+import 'widgets/scheduled_jobs_settings.dart';
 
 import 'widgets/global_config_settings_tab.dart';
 
@@ -28,12 +30,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<Settings> settingUiByRole  = [];
   bool isLoadingUiSpec = true;
   late AuthProvider authProvider;
+  late SyncResponseService syncResponseService;
+  List<String?> activeJobs = const [];
 
   @override
   void initState() {
     super.initState();
     authProvider = Provider.of<AuthProvider>(context, listen: false);
+    syncResponseService = SyncResponseService();
     _loadUiSpec();
+    _loadActiveJobs();
   }
 
   Future<void> _loadUiSpec() async {
@@ -56,6 +62,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => isLoadingUiSpec = false);
   }
 
+  Future<void> _loadActiveJobs() async {
+    try {
+      final jobs = await syncResponseService.getActiveSyncJobs();
+      setState(() {
+        activeJobs = jobs;
+      });
+    } catch (e) {
+      debugPrint('Failed to load active sync jobs: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoadingUiSpec) {
@@ -64,10 +81,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
     if (settingUiByRole.isEmpty) {
-      return const Center(
-        child: Text(
-          "You don't have access to this page.",
-          style: TextStyle(fontSize: 18, color: Colors.black),
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Center(
+          child: Text(
+            AppLocalizations.of(context)!.no_access_to_this_page,
+            style: TextStyle(fontSize: 18, color: Colors.black),
+          ),
         ),
       );
     }
@@ -128,11 +149,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height/1.4,
+          Expanded(
             child: TabBarView(
               children: [
-                for (final settings in settingUiByRole) _buildTabContent(settings),
+                for (final settings in settingUiByRole)
+                  _buildTabContent(settings),
               ],
             ),
           ),
@@ -155,10 +176,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final controllerName = _getControllerName(settings);
 
     switch (controllerName) {
-      case 'ScheduledJobsController':
-        return Center(child: Text("${settings.name}"));
+      case 'ScheduledJobsSettingsController':
+        return ScheduledJobsSettings(jobJsonList: activeJobs);
       case 'GlobalConfigSettingsController':
-        return const GlobalConfigSettingsTab();
+        return GlobalConfigSettingsTab(settings: settings,selectedLan: selectedLang);
       case 'DeviceSettingsController':
         return DeviceSettingsTab(settings: settings, selectedLan: selectedLang);
       default:

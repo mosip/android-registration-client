@@ -65,6 +65,24 @@ public class ManageApplicationsPageKannada extends ManageApplicationsPage{
 	
 	@AndroidFindBy(accessibility = "Dismiss")
 	private WebElement deletionValueDropdown;
+	
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Documents'][2]")
+	private WebElement documentsHeader;
+
+	@AndroidFindBy(id = "android:id/button1")
+	private WebElement useThisFolderButton;
+
+	@AndroidFindBy(id = "android:id/button1")
+	private WebElement allowButton;
+	
+	@AndroidFindBy(xpath = "//android.widget.TextView[@resource-id='android:id/title' and @text='Documents']")
+	private WebElement documentsFolder;
+	
+	@AndroidFindBy(accessibility = "No network found!")
+	private WebElement noNetworkFound;
+
+	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
+	private WebElement latestAidCheckBox;
 
 	public ManageApplicationsPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -213,6 +231,36 @@ public class ManageApplicationsPageKannada extends ManageApplicationsPage{
 
 	public void clickOnBackButton() {
 		driver.navigate().back();
+	}
+	
+	public void clickOnExportButton() {
+		clickOnElement(exportButton);
+		waitTime(10);
+	}
+
+	public void clickOnUseThisFolderButton() {
+		if (isElementDisplayed(documentsHeader)) {
+			clickOnElement(useThisFolderButton);
+			if (isElementDisplayed(allowButton)) {
+				clickOnElement(allowButton);
+			}
+		} else if (isElementDisplayed(documentsFolder)) {
+			clickOnElement(documentsFolder);
+			clickOnElement(useThisFolderButton);
+			if (isElementDisplayed(allowButton)) {
+				clickOnElement(allowButton);
+			}
+		} else {
+			throw new RuntimeException("Documents folder or header not found on screen");
+		}
+	}
+	
+	public boolean isNoNetworkFoundDisplayed() {
+		return isElementDisplayed(noNetworkFound);
+	}
+	
+	public void selectLatestAidCheckBox() {
+		clickOnElement(latestAidCheckBox);
 	}
 
 }

@@ -2,16 +2,26 @@
   {
     "name": "androidDevice",
     "caps": {
-      "appium:udid": "HA1TB4W4",
+      "appium:udid": "ADNKCP3523400513",
       "appium:automationName": "UiAutomator2",
-      "appium:app": "E:\app-release.apk",
+      "appium:app": "D:/ARC/qa-base/apk-output/app-release.apk",
       "platformName": "android",
       "appium:appPackage": "io.mosip.registration_client",
       "appium:appActivity": "io.mosip.registration_client.MainActivity",
       "appium:noReset": true,
       "appium:autoGrantPermissions": true,
       "appium:shouldTerminateApp": true,
-      "appium:noSign": true
+      "appium:noSign": true,
+      "appium:newCommandTimeout": 600,
+      "appium:dontStopAppOnReset": true,
+      "appium:appWaitForLaunch": false,
+
+      "appium:adbExecTimeout": 300000,
+      "appium:uiautomator2ServerInstallTimeout": 200000,
+      "appium:uiautomator2ServerLaunchTimeout": 200000,
+
+      "appium:settings[waitForIdleTimeout]": 100, 
+      "appium:settings[ignoreUnimportantViews]": true
     }
   }
 ]

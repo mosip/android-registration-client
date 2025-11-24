@@ -40,7 +40,7 @@ public class UpdateUINPageHindi extends UpdateUINPage{
 
 	public  ConsentPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new ConsentPageEnglish(driver);
+		return new ConsentPageHindi(driver);
 	}
 	
 	public boolean isInvalidUINErrorMessageDisplayed() {

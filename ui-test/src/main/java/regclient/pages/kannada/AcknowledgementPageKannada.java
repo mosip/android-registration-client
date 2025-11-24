@@ -41,8 +41,7 @@ public class AcknowledgementPageKannada extends AcknowledgementPage {
 	
 	public RegistrationTasksPage clickOnGoToHomeButton() {
 		clickOnElement(goToHomeButton);
-		return new RegistrationTasksPageEnglish(driver);
-
+		return new RegistrationTasksPageKannada(driver);
 	}
 	
 	public boolean isAcknowledgementPageDisplayed() {
@@ -72,7 +71,7 @@ public class AcknowledgementPageKannada extends AcknowledgementPage {
 	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
 		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
-		return new DemographicDetailsPageEnglish(driver);
+		return new DemographicDetailsPageKannada(driver);
 	}	
 	
 	public String getAID() {

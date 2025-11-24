@@ -72,7 +72,7 @@ class ExportTable extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(width: tableWidth/35, child:Text("$index.", textAlign: TextAlign.center, )),
-                SizedBox(width: tableWidth/5.5, child: Text(context.watch<ExportPacketsProvider>().matchingPackets[index-1].packetId, textAlign: TextAlign.center,  overflow: TextOverflow.ellipsis,maxLines: 2,)),
+                SizedBox(width: tableWidth/5.5, child: Text(context.watch<ExportPacketsProvider>().matchingPackets[index-1].appId ?? context.watch<ExportPacketsProvider>().matchingPackets[index-1].id!, textAlign: TextAlign.center,  overflow: TextOverflow.ellipsis,maxLines: 2,)),
                 SizedBox(width: tableWidth/9, child: Text(formattedDate,textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, maxLines: 2,)),
                 SizedBox(width: tableWidth/15, child:Text(context.watch<ExportPacketsProvider>().matchingPackets[index-1].regType.toString(), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,maxLines: 2,)),
                 SizedBox(width: tableWidth/9, child: Text(context.watch<ExportPacketsProvider>().matchingPackets[index-1].clientStatus.toString(),textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,maxLines: 2,)),

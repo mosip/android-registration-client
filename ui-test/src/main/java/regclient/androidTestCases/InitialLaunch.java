@@ -10,12 +10,12 @@ import regclient.api.KeycloakUserManager;
 import regclient.page.BasePage;
 import regclient.pages.english.LoginPageEnglish;
 
-public class IntialLunch extends AndroidBaseTest {
+public class InitialLaunch extends AndroidBaseTest {
 
 	@Test
-	public void initallLaunch() {
+	public void initialLaunch() {
 		BasePage.disableAutoRotation();
-		LoginPageEnglish   loginPage= new LoginPageEnglish(driver);
+		LoginPageEnglish loginPage = new LoginPageEnglish(driver);
 
 //		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(), "verify if the welcome msg in selected language displayed");
 		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
@@ -30,7 +30,7 @@ public class IntialLunch extends AndroidBaseTest {
 
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
 		loginPage.clickOnloginButton();
-		
+
 		assertTrue(loginPage.isSyncCompletedSuccessfullyMessageDisplayed(), "Verify if the sync is completed");
 
 	}

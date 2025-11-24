@@ -300,6 +300,8 @@
   "supervisor": "مشرف",
   "online": "متصل",
   "offline": "غير متصل على الانترنت",
+  "enabled": "ممكّن",
+  "disabled": "معطل",
   "logout_success": "لقد تم تسجيل بنجاح!",
   "logout_failure": "حدث خطأ ما، يرجى المحاولة مرة أخرى بعد مرور بعض الوقت",
   "go_to_home": "اذهب إلى المنزل",
@@ -326,5 +328,9 @@
   "no_configuration_parameters_found": "لم يتم العثور على معلمات التكوين",
   "no_configurations_found": "لم يتم العثور على أي تكوين",
   "confirm": "تأكيد",
-  "scan_now": "امسح الآن"
+  "scan_now": "امسح الآن",
+  "enter_additional_info_req_id": "أدخل معرف طلب المعلومات الإضافية",
+  "additional_info_req_id": "معرف طلب المعلومات الإضافية",
+  "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
+  "scheduled_job_settings": "إعدادات المهمة المجدولة"
 }

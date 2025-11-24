@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -54,6 +55,7 @@ import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandli
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
@@ -166,14 +168,15 @@ public class AppModule {
                                                       CertificateManagerService certificateManagerService,
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
-                                                      FileSignatureDao fileSignatureDao,
-                                                      PermittedLocalConfigRepository permittedLocalConfigRepository,
+                                                      FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService, PermittedLocalConfigRepository permittedLocalConfigRepository,
                                                       LocalConfigDAO localConfigDAO) {
+
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, permittedLocalConfigRepository, localConfigDAO);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO);
+
     }
 
 
@@ -198,10 +201,14 @@ public class AppModule {
                                                    ClientCryptoManagerService clientCryptoManagerService,
                                                    KeyStoreRepository keyStoreRepository,
                                                    GlobalParamRepository globalParamRepository,
-                                                   AuditManagerService auditManagerService) {
+                                                   AuditManagerService auditManagerService,
+                                                   RegistrationCenterRepository registrationCenterRepository,
+                                                   LocationValidationService locationValidationService,
+                                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
+                                                   Biometrics095Service biometricService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService);
+                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
     }
 
     @Provides

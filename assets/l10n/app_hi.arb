@@ -300,6 +300,8 @@
   "supervisor": "पर्यवेक्षक",
   "online": "ऑनलाइन",
   "offline": "ऑफलाइन",
+  "enabled": "सक्षम",
+  "disabled": "अक्षम",
   "logout_success": "आप सफलता पूर्वक लॉगआउट कर चुके हैं!",
   "logout_failure": "कुछ गलती हो गई है, कृपया कुछ समय बाद पुनः प्रयास करें",
   "go_to_home": "होम पर जाएं",
@@ -326,5 +328,9 @@
   "no_configuration_parameters_found": "कोई कॉन्फ़िगरेशन पैरामीटर नहीं मिला",
   "no_configurations_found": "कोई कॉन्फ़िगरेशन नहीं मिला",
   "confirm": "पुष्टि करें",
-  "scan_now": "अभी स्कैन करें"
+  "scan_now": "अभी स्कैन करें",
+  "enter_additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी दर्ज करें",
+  "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी",
+  "no_access_to_this_page": "आपको इस पृष्ठ तक पहुँच नहीं है",
+  "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स"
 }

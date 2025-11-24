@@ -158,7 +158,7 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageKannada(driver);
 	}
 
 	public void clickOnZoomButton() {
@@ -187,40 +187,40 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageKannada(driver);
 	}
 
 	@SuppressWarnings("deprecation")
-	public  boolean isApplicantBiometricsPageDisplyed() {
+	public  boolean isApplicantBiometricsPageDisplayed() {
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
 	}
 
 	@SuppressWarnings("deprecation")
-	public  boolean isAuthenticationBiometricsPageDisplyed() {
+	public  boolean isAuthenticationBiometricsPageDisplayed() {
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId("individualAuthBiometrics") + "\"))")));
 	}
 
-	public  boolean isExceptionTypeTitleDisplyed() {
+	public  boolean isExceptionTypeTitleDisplayed() {
 		return isElementDisplayed(exceptionTypeTitle);
 	}
 
-	public  boolean isRightHandScanTitleDisplyed() {
+	public  boolean isRightHandScanTitleDisplayed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
-	public  boolean isLeftHandScanTitleDisplyed() {
+	public  boolean isLeftHandScanTitleDisplayed() {
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
-	public  boolean isThumbsScanTitleDisplyed() {
+	public  boolean isThumbsScanTitleDisplayed() {
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
-	public  boolean isFaceScanTitleDisplyed() {
+	public  boolean isFaceScanTitleDisplayed() {
 		return isElementDisplayed(faceScanTitle);
 	}
 
-	public  boolean isExceptionScanTitleDisplyed() {
+	public  boolean isExceptionScanTitleDisplayed() {
 		return isElementDisplayed(exceptionScanTitle);
 	}
 
@@ -248,11 +248,11 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 		return isElementDisplayed(exceptionCapturerHeader,2000);
 	}
 
-	public  boolean isCommentHeaderDisplyed() {
+	public  boolean isCommentHeaderDisplayed() {
 		return isElementDisplayed(commentsHeader);
 	}
 
-	public  boolean isExceptionCountDisplyed() {
+	public  boolean isExceptionCountDisplayed() {
 		if(!isElementDisplayedOnScreen(exceptionCount)) {
 			swipeOrScroll();
 			isElementDisplayed(exceptionCount);

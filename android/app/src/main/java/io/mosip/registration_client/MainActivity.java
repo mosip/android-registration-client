@@ -24,6 +24,8 @@ import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,13 +38,22 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
+import io.mosip.registration.clientmanager.dto.CenterMachineDto;
+import io.mosip.registration.clientmanager.entity.GlobalParam;
+import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.service.LoginService;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
@@ -89,6 +100,7 @@ import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 import io.mosip.registration_client.utils.BatchJob;
+import io.mosip.registration_client.utils.CustomToast;
 
 import android.net.Uri;
 
@@ -187,22 +199,65 @@ public class MainActivity extends FlutterActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("REGISTRATION_PACKET_UPLOAD")) {
-            batchJob.syncRegistrationPackets(context);
+            String jobApiName = intent.getStringExtra(UploadBackgroundService.EXTRA_JOB_API_NAME);
+            if (jobApiName == null) jobApiName = "registrationPacketUploadJob"; // Backward compatibility
+
+            // Execute the job based on API name
+            masterDataSyncApi.executeJobByApiName(jobApiName, context);
+
+            // Reschedule next execution
+            String finalJobApiName = jobApiName;
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.schedule(()-> {
-                createBackgroundTask("registrationPacketUploadJob");
+                createBackgroundTask(finalJobApiName);
             }, 1, TimeUnit.MINUTES);
-        }
         }
     };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createBackgroundTask("registrationPacketUploadJob");
-        IntentFilter intentFilterUpload = new IntentFilter("REGISTRATION_PACKET_UPLOAD");
+//        createBackgroundTask("registrationPacketUploadJob");
+        IntentFilter intentFilterUpload = new IntentFilter("SYNC_JOB_TRIGGER");
         registerReceiver(broadcastReceiver, intentFilterUpload);
+    }
+
+    private void initializeAutoSync() {
+        try {
+            CenterMachineDto dto = masterDataService.getRegistrationCenterMachineDetails();
+            if (dto != null && dto.getMachineRefId() != null) {
+                Log.d(getClass().getSimpleName(), "Machine configured - initializing auto sync");
+                scheduleAllActiveJobs();
+            } else {
+                Log.w(getClass().getSimpleName(), "Machine not configured yet - skipping auto sync initialization");
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error initializing auto sync", e);
+        }
+    }
+
+    // Schedule all active jobs from database
+    void scheduleAllActiveJobs() {
+        new Thread(() -> {
+            try {
+                List<SyncJobDef> activeJobs = syncJobDefRepository.getAllSyncJobDefList();
+                int scheduledCount = 0;
+
+                for (SyncJobDef job : activeJobs) {
+                    if (job.getIsActive() != null && job.getIsActive() && job.getApiName() != null) {
+                        Log.d(getClass().getSimpleName(), "Scheduling job: " + job.getApiName() +
+                                " (ID: " + job.getId() + ", Cron: " + job.getSyncFreq() + ")");
+
+                        runOnUiThread(() -> createBackgroundTask(job.getApiName()));
+                        scheduledCount++;
+                    }
+                }
+
+                Log.d(getClass().getSimpleName(), "Scheduled " + scheduledCount + " active jobs");
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), "Error scheduling jobs", e);
+            }
+        }).start();
     }
 
     @Override
@@ -211,44 +266,60 @@ public class MainActivity extends FlutterActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    void createBackgroundTask(String api){
-        Intent intent = new Intent(this, UploadBackgroundService.class);
-        PendingIntent pendingIntent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            pendingIntent = PendingIntent.getForegroundService(
-                    this,
-                    0,  // Request code
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE
-            );
-        } else {
-            pendingIntent = PendingIntent.getService(
-                    this,
-                    0,  // Request code
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            );
-        }
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-                Intent permissionIntent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                permissionIntent.setData(Uri.fromParts("package", getPackageName(), null));
-                startActivity(permissionIntent);
-            }
-            long alarmTime = batchJob.getIntervalMillis(api);
-            long currentTime = System.currentTimeMillis();
-            long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
-            Log.d(getClass().getSimpleName(), String.valueOf(delay)+ " Next Execution");
+    public void createBackgroundTask(String api){
+        try {
+            Intent intent = new Intent(this, UploadBackgroundService.class);
+            intent.putExtra(UploadBackgroundService.EXTRA_JOB_API_NAME, api); // Pass job API name
 
-//            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), 30000, pendingIntent);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
-            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+            // Use unique request code per job to prevent conflicts
+            int requestCode = Math.abs(api.hashCode() % 10000);
+
+            PendingIntent pendingIntent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                pendingIntent = PendingIntent.getForegroundService(this, requestCode, intent, PendingIntent.FLAG_IMMUTABLE);
             } else {
-                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+                pendingIntent = PendingIntent.getService(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             }
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                    Intent permissionIntent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                    permissionIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                    startActivity(permissionIntent);
+                    return;
+                }
+
+                // Get next execution time from cron expression
+                long alarmTime = batchJob.getIntervalMillis(api);
+                long currentTime = System.currentTimeMillis();
+                long delay = alarmTime - currentTime;
+
+                // Ensure delay is positive (prevent immediate execution)
+                if (delay < 0 || delay < 60000) {
+                    Log.w(getClass().getSimpleName(), api + " - Calculated delay is too small (" + delay + "ms), using 1 minute minimum");
+                    delay = 60000; // Minimum 1 minute
+                }
+
+                Log.d(getClass().getSimpleName(), api + " - Request code: " + requestCode +
+                        ", Next execution in: " + (delay / 1000) + " seconds");
+
+                // Cancel old alarm before scheduling new one
+                alarmManager.cancel(pendingIntent);
+
+                // Schedule alarm
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+                } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+                } else {
+                    alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
+                }
+
+                Log.d(getClass().getSimpleName(), api + " - Alarm scheduled successfully");
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error scheduling job: " + api, e);
         }
     }
 
@@ -261,6 +332,7 @@ public class MainActivity extends FlutterActivity {
                 .hostApiModule(new HostApiModule(getApplication()))
                 .build();
         appComponent.inject(this);
+        initializeAutoSync();
     }
 
     @Override

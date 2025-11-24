@@ -2,13 +2,12 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 
-
-public abstract class ApplicantBiometricsPage extends BasePage{
+public abstract class ApplicantBiometricsPage extends BasePage {
 
 	public ApplicantBiometricsPage(AppiumDriver driver) {
 		super(driver);
 	}
-	
+
 	public abstract void enterCommentsInTextBox(String comments);
 
 	public abstract void clickOnScanButton();
@@ -45,19 +44,19 @@ public abstract class ApplicantBiometricsPage extends BasePage{
 
 	public abstract BiometricDetailsPage clickOnBackButton();
 
-	public abstract boolean isApplicantBiometricsPageDisplyed();
+	public abstract boolean isApplicantBiometricsPageDisplayed();
 
-	public abstract boolean isExceptionTypeTitleDisplyed();
+	public abstract boolean isExceptionTypeTitleDisplayed();
 
-	public abstract boolean isRightHandScanTitleDisplyed();
+	public abstract boolean isRightHandScanTitleDisplayed();
 
-	public abstract boolean isLeftHandScanTitleDisplyed();
+	public abstract boolean isLeftHandScanTitleDisplayed();
 
-	public abstract boolean isThumbsScanTitleDisplyed();
+	public abstract boolean isThumbsScanTitleDisplayed();
 
-	public abstract boolean isFaceScanTitleDisplyed();
+	public abstract boolean isFaceScanTitleDisplayed();
 
-	public abstract boolean isExceptionScanTitleDisplyed();
+	public abstract boolean isExceptionScanTitleDisplayed();
 
 	public abstract boolean isIrisScan();
 
@@ -71,9 +70,9 @@ public abstract class ApplicantBiometricsPage extends BasePage{
 
 	public abstract boolean isExceptionScan();
 
-	public abstract boolean isCommentHeaderDisplyed();
-	
-	public abstract  boolean isExceptionCountDisplyed();
-	
-	public abstract  boolean isAuthenticationBiometricsPageDisplyed();
+	public abstract boolean isCommentHeaderDisplayed();
+
+	public abstract boolean isExceptionCountDisplayed();
+
+	public abstract boolean isAuthenticationBiometricsPageDisplayed();
 }

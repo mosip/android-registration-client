@@ -112,6 +112,7 @@ public class RoomModule {
             }
             clientDatabase = Room.databaseBuilder(application, ClientDatabase.class, DATABASE_NAME)
                     .openHelperFactory(new SupportFactory(dbPwd.getBytes()))
+                    .addMigrations(ClientDatabaseMigrations.MIGRATION_1_2)
                     .allowMainThreadQueries()
                     .build();
         } catch (Exception e) {

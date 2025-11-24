@@ -22,6 +22,8 @@ public class UploadBackgroundService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "ForegroundServiceChannel";
 
+    public static final String EXTRA_JOB_API_NAME = "job_api_name";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -29,11 +31,17 @@ public class UploadBackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // Get job API name from intent, default to packet upload
+        String jobApiName = intent != null ? intent.getStringExtra(EXTRA_JOB_API_NAME) : "registrationPacketUploadJob";
+
         createNotificationChannel();
         Notification notification = createNotification();
         startForeground(NOTIFICATION_ID, notification);
-        Log.d(getClass().getSimpleName(), "Sync & Upload Packets in background activity");
-        Intent broadcastIntent = new Intent("REGISTRATION_PACKET_UPLOAD");
+        Log.d(getClass().getSimpleName(), "Sync job triggered: " + jobApiName);
+
+        // Send broadcast with job API name
+        Intent broadcastIntent = new Intent("SYNC_JOB_TRIGGER");
+        broadcastIntent.putExtra(EXTRA_JOB_API_NAME, jobApiName);
         sendBroadcast(broadcastIntent);
         return START_STICKY;
     }

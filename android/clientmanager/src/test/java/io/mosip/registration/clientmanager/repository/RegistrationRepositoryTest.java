@@ -121,7 +121,7 @@ public class RegistrationRepositoryTest {
 
         // Execute method
         Registration result = registrationRepository.insertRegistration("10001155851003120250220055513", "/path/to/container",
-                "10011", "NEW", mockJson);
+                "10011", "NEW", mockJson, "", "", "34259236291839");
 
         // Capture inserted object
         ArgumentCaptor<Registration> captor = ArgumentCaptor.forClass(Registration.class);

@@ -190,24 +190,23 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		driver.navigate().back();
 	}
 	
-	
-	public  boolean isRightHandScanTitleDisplyed() {
+	public  boolean isRightHandScanTitleDisplayed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
 	
-	public  boolean isLeftHandScanTitleDisplyed() {
+	public  boolean isLeftHandScanTitleDisplayed() {
 		return isElementDisplayed(leftHandScanTitle);
 	}
 	
-	public  boolean isThumbsScanTitleDisplyed() {
+	public  boolean isThumbsScanTitleDisplayed() {
 		return isElementDisplayed(thumbsScanTitle);
 	}
 	
-	public  boolean isFaceScanTitleDisplyed() {
+	public  boolean isFaceScanTitleDisplayed() {
 		return isElementDisplayed(faceScanTitle);
 	}
 	
-	public  boolean isExceptionScanTitleDisplyed() {
+	public  boolean isExceptionScanTitleDisplayed() {
 		return isElementDisplayed(exceptionScanTitle);
 	}
 	
@@ -231,23 +230,23 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		return isElementDisplayed(faceCapturerHeader,2000);
 	}
 	
-	public  boolean isIrisScanQualityDisplyed() {
+	public  boolean isIrisScanQualityDisplayed() {
 		return isElementDisplayed(irisScanQuality);
 	}
 	
-	public  boolean isRightHandScanQualityDisplyed() {
+	public  boolean isRightHandScanQualityDisplayed() {
 		return isElementDisplayed(rightHandScanQuality);
 	}
 	
-	public  boolean isLeftHandScanQualityDisplyed() {
+	public  boolean isLeftHandScanQualityDisplayed() {
 		return isElementDisplayed(leftHandScanQuality);
 	}
 	
-	public  boolean isThumbsScanQualityDisplyed() {
+	public  boolean isThumbsScanQualityDisplayed() {
 		return isElementDisplayed(thumbsScanQuality);
 	}
 	
-	public  boolean isFaceScanQualityDisplyed() {
+	public  boolean isFaceScanQualityDisplayed() {
 		return isElementDisplayed(faceScanQuality);
 	}
 	
@@ -259,11 +258,11 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		clickOnElement(oneEyeException);
 	}
 	
-	public void markOneFingureException() {
+	public void markOneFingreException() {
 		clickOnElement(firstFingureExceptionImage);
 	}
 	
-	public  boolean isExceptionTypeTitleDisplyed() {
+	public  boolean isExceptionTypeTitleDisplayed() {
 		return isElementDisplayed(exceptionTypeTitle);
 	}
 	
@@ -274,7 +273,7 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		clickOnElement(temporaryButton);	
 	}
 	
-	public  boolean isCommentHeaderDisplyed() {
+	public  boolean isCommentHeaderDisplayed() {
 		return isElementDisplayed(commentsHeader);
 	}
 	
@@ -293,11 +292,11 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		clickOnElement(thumbsScanTitle);
 	}
 	
-	public  boolean isMarkingExceptionsOnFaceIsNotAllowedTextDisplyed() {
+	public  boolean isMarkingExceptionsOnFaceIsNotAllowedTextDisplayed() {
 		return isElementDisplayed(markingExceptionsOnFaceIsNotAllowedText);
 	}
 	
-	public  boolean isZoomButtonDisplyed() {
+	public  boolean isZoomButtonDisplayed() {
 		return isElementDisplayed(zoomButton);
 	}
 	
@@ -305,7 +304,7 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		clickOnElement(rightHandScanTitle);
 	}
 	
-	public void clickOnleftHandScanTitle() {
+	public void clickOnLeftHandScanTitle() {
 		clickOnElement(leftHandScanTitle);
 	}
 	
@@ -377,7 +376,6 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	public boolean isDismissPageLoaded() {
 		return isElementDisplayed(dismissPage);
 	}
-	
 	
 	public boolean isOperatorOnboardedPopupLoaded() {
 		return isElementDisplayed(successPopup);	

@@ -547,6 +547,8 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             userOnboardService.onboardOperator(userOnboardService.getOperatorBiometrics(), () -> {
                 if(userOnboardService.getIsOnboardSuccess()) {
                     result.success("OK");
+                } else {
+                    result.success("FAILED");
                 }
             });
         }catch (Exception e){
@@ -783,28 +785,28 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         return result;
     }
 
-    public static Map<String, String> objectToMap(Object object) {
-        Map<String, String> map = new HashMap<>();
+    // public static Map<String, String> objectToMap(Object object) {
+    //     Map<String, String> map = new HashMap<>();
 
-        // Get all fields of the object using reflection
-        Field[] fields = object.getClass().getDeclaredFields();
+    //     // Get all fields of the object using reflection
+    //     Field[] fields = object.getClass().getDeclaredFields();
 
-        for (Field field : fields) {
-            field.setAccessible(true); // Make the private fields accessible
+    //     for (Field field : fields) {
+    //        // field.setAccessible(true); // Make the private fields accessible
 
-            try {
-                Object fieldValue = field.get(object);
-                if (fieldValue != null) {
-                    // Convert field value to String and add it to the map
-                    map.put(field.getName(), fieldValue.toString());
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+    //         try {
+    //             Object fieldValue = field.get(object);
+    //             if (fieldValue != null) {
+    //                 // Convert field value to String and add it to the map
+    //                 map.put(field.getName(), fieldValue.toString());
+    //             }
+    //         } catch (IllegalAccessException e) {
+    //             e.printStackTrace();
+    //         }
+    //     }
 
-        return map;
-    }
+    //     return map;
+    // }
 
     private void queryPackage(Intent intent) throws ClientCheckedException {
         List activities = activity.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_ALL);

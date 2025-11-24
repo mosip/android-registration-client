@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -147,6 +148,14 @@ public class GlobalParamRepository {
 
     public String getCachedStringRefreshedLoginTime() {
         return globalParamMap.get(RegistrationConstants.REFRESHED_LOGIN_TIME);
+    }
+
+    public String getCachedStringGpsDeviceEnableFlag() {
+        return globalParamMap.get(RegistrationConstants.GPS_DEVICE_ENABLE_FLAG);
+    }
+
+    public String getCachedStringMachineToCenterDistance() {
+        return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
     /**

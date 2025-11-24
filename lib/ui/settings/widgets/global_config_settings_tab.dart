@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/utils/app_config.dart';
+import '../../../model/settings.dart';
 import '../../../pigeon/common_details_pigeon.dart';
 import '../../../pigeon/global_config_settings_pigeon.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,7 +9,9 @@ import '../../../provider/global_provider.dart';
 import 'package:restart_app/restart_app.dart';
 
 class GlobalConfigSettingsTab extends StatefulWidget {
-  const GlobalConfigSettingsTab({Key? key}) : super(key: key);
+  final Settings settings;
+  final String selectedLan;
+  GlobalConfigSettingsTab({Key? key,required this.settings,required this.selectedLan,}) : super(key: key);
 
   @override
   State<GlobalConfigSettingsTab> createState() =>
@@ -106,20 +109,26 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       return false;
     }
 
-    // Check if any local value is different from server value
     for (String key in localValues.keys) {
-      String serverValue = serverValues?[key]?.toString() ?? '-';
-      String localValue = localValues[key]!;
+      final String localValue = localValues[key]!;
+      final String? previousLocal = localConfigurations[key];
 
-      // 1. Local value is not empty and different from server value, OR
-      // 2. Local value is empty but there was a previous local configuration
-      if (localValue.isNotEmpty && localValue != serverValue) {
-        return true;
+      if (localValue.isEmpty) {
+        if (previousLocal != null) {
+          return true;
+        }
+        final String serverValue = serverValues?[key]?.toString() ?? '';
+        if (serverValue.isNotEmpty) {
+          return true;
+        }
+        continue;
       }
-      if (localValue.isEmpty && localConfigurations.containsKey(key)) {
+
+      if (previousLocal == null || previousLocal != localValue) {
         return true;
       }
     }
+
     return false;
   }
 
@@ -222,8 +231,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
       String serverValue = serverValues![key]?.toString() ?? '-';
       String localValue = _getLocalValue(key);
       bool isEditable = _isConfigurationPermitted(key);
-      bool isModified =
-          localValues.containsKey(key) && localValues[key] != serverValue;
+      bool isModified = localValues.containsKey(key);
 
       GlobalConfigItem item = GlobalConfigItem(
         key: key,
@@ -240,6 +248,10 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final heading = widget.settings.label?[widget.selectedLan] ??
+        widget.settings.label?['eng'] ??
+        (widget.settings.label?.values.first ?? 'Unknown');
+
     return Scaffold(
       body: Card(
         margin: const EdgeInsets.all(5),
@@ -248,7 +260,20 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
           borderRadius: BorderRadius.circular(4),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+              child: Text(
+                heading,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -297,24 +322,27 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
             Expanded(
               child: _buildContent(),
             ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.centerRight, // Align content to the end
-              child: ElevatedButton(
-                onPressed: () {
-                  _onSaveChanges();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: solidPrimary,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
-                  elevation: 4,
-                ),
-                child: Text(AppLocalizations.of(context)!.submit),
-              ),
-            ),
           ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: ElevatedButton(
+            onPressed: _onSaveChanges,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: solidPrimary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                vertical: 18,
+                horizontal: 56,
+              ),
+              elevation: 4,
+            ),
+            child: Text(AppLocalizations.of(context)!.submit),
+          ),
         ),
       ),
     );
@@ -361,7 +389,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     return SizedBox(
       width: double.infinity,
       child: ListView.separated(
-        padding: const EdgeInsets.only(top: 10, bottom: 15),
+        padding: const EdgeInsets.only(top: 10, bottom: 90),
         itemCount: configs.length,
         separatorBuilder: (_, __) =>
             Divider(height: 1, color: Colors.grey[300]),

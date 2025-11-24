@@ -111,6 +111,11 @@ public class RegistrationConstants {
     public static final String RIGHT_THUMB = "Right Thumb";
     public static final String RIGHT = "Right";
     public static final String LEFT = "Left";
+    public static final String PRE_REG_DELETION_CONFIGURED_DAYS = "mosip.registration.pre_reg_deletion_configured_days";
+    public static final String PRE_REG_DELETE_SUCCESS = "PRE_REG_DELETE_SUCCESS";
+    public static final String PRE_REG_DELETE_FAILURE = "PRE_REG_DELETE_FAILURE";
     public static final String JOB_TRIGGER_POINT_USER = "User";
+    public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
+    public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
 
 }
