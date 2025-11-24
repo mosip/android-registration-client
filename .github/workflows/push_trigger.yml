@@ -18,6 +18,15 @@ on:
       - sprint-*
       - main
 
+  pull_request:
+    branches:
+      - '!release-branch'
+      - release-*
+      - master
+      - develop
+      - sprint-*
+      - main    
+
 jobs:
 
   dco:
