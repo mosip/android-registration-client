@@ -332,5 +332,6 @@
   "enter_additional_info_req_id": "أدخل معرف طلب المعلومات الإضافية",
   "additional_info_req_id": "معرف طلب المعلومات الإضافية",
   "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
-  "scheduled_job_settings": "إعدادات المهمة المجدولة"
+  "scheduled_job_settings": "إعدادات المهمة المجدولة",
+  "scan": "مسح"
 }

@@ -86,7 +86,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                       setState(() {});
                       _devicesFuture = fetchDeviceDetails();
                     },
-                    child: Text(AppLocalizations.of(context)!.scan_now),
+                    child: Text(AppLocalizations.of(context)!.scan),
                   ),
                 ],
               ),
