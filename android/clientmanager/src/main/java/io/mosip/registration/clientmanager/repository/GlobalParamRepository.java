@@ -158,11 +158,11 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
-    public long getCachedReadTimeoutMillis() {
+    public long getCachedReadTimeout() {
         return parseLongWithDefault(RegistrationConstants.HTTP_API_READ_TIMEOUT);
     }
 
-    public long getCachedWriteTimeoutMillis() {
+    public long getCachedWriteTimeout() {
         return parseLongWithDefault(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
     }
 

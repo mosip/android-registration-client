@@ -57,8 +57,8 @@ public class NetworkModule {
         client.cache(cache);
         client.addInterceptor(new RestAuthInterceptor(appContext));
 
-        long cachedReadTimeout = globalParamRepository.getCachedReadTimeoutMillis();
-        long cachedWriteTimeout = globalParamRepository.getCachedWriteTimeoutMillis();
+        long cachedReadTimeout = globalParamRepository.getCachedReadTimeout();
+        long cachedWriteTimeout = globalParamRepository.getCachedWriteTimeout();
 
         long readTimeout  = cachedReadTimeout > 0
                 ? cachedReadTimeout
