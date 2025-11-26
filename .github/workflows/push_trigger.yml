@@ -73,6 +73,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Check repo structure
+        run: |
+          echo "Listing files:"
+          ls -R .
+          
+      - name: Install npm dependencies
+        working-directory: client
+        run: npm install
       - name: Updating serverBaseURL.
         run: |
           find . -type f -name "*build.gradle" -print0 | xargs -0 sed -i "s/api-internal.sandbox.xyz.net/${{ github.event.inputs.defaultServerBaseURL }}/g"
