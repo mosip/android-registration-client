@@ -62,6 +62,8 @@ ext {
     serverHealthCheckPath = "\"/v1/syncdata/actuator/health\""
     serverActuatorInfoPath = "\"/v1/syncdata/actuator/info\""
     debugPassword = "\"APTyKejHxACQyKBSRciR\""
+    httpReadTimeout = 60000L
+    httpWriteTimeout = 60000L
 }
 
 
