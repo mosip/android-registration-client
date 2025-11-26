@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.config;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,6 +10,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
@@ -19,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import javax.inject.Singleton;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Module
 public class NetworkModule {
@@ -50,10 +53,22 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    OkHttpClient provideOkhttpClient(Cache cache) {
+    OkHttpClient provideOkhttpClient(Cache cache, GlobalParamRepository globalParamRepository) {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.cache(cache);
         client.addInterceptor(new RestAuthInterceptor(appContext));
+
+        String readTimeoutStr = globalParamRepository.getCachedStringReadTimeOut();
+        String writeTimeoutStr = globalParamRepository.getCachedStringWriteTimeOut();
+
+        long readTimeout = BuildConfig.HTTP_READ_TIMEOUT;  // Default from BuildConfig
+        long writeTimeout = BuildConfig.HTTP_WRITE_TIMEOUT; // Default from BuildConfig
+
+        // Try to get from GlobalParamRepository
+        readTimeout = parseTimeout(readTimeoutStr, readTimeout, "readTimeout");
+        writeTimeout = parseTimeout(writeTimeoutStr, writeTimeout, "writeTimeout");
+        client.readTimeout(readTimeout, TimeUnit.MILLISECONDS);
+        client.writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
         return client.build();
     }
 
@@ -71,5 +86,17 @@ public class NetworkModule {
     @Singleton
     SyncRestService provideSyncRestService(Retrofit retrofit) {
         return retrofit.create(SyncRestService.class);
+    }
+
+    private long parseTimeout(String rawValue, long fallback, String label) {
+        if (rawValue == null || rawValue.trim().isEmpty()) {
+            return fallback;
+        }
+        try {
+            return Long.parseLong(rawValue.trim());
+        } catch (NumberFormatException ex) {
+            Log.w("NetworkModule", "Invalid " + label + " in GlobalParamRepository: " + rawValue + ", using fallback: " + fallback, ex);
+            return fallback;
+        }
     }
 }

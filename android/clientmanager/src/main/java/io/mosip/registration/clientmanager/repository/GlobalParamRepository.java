@@ -158,6 +158,15 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
+    public String getCachedStringReadTimeOut() {
+        return globalParamMap.get(RegistrationConstants.HTTP_API_READ_TIMEOUT);
+    }
+
+    public String getCachedStringWriteTimeOut() {
+        return globalParamMap.get(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
+    }
+
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

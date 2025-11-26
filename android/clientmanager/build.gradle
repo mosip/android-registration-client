@@ -21,6 +21,8 @@ android {
         buildConfigField("String", "CLIENT_VERSION", rootProject.ext.clientmanagerLibVersionName)
         buildConfigField("String", "BASE_URL", rootProject.ext.serverBaseURL)
         buildConfigField("String", "DEBUG_PASSWORD", rootProject.ext.debugPassword)
+        buildConfigField("long", "HTTP_READ_TIMEOUT", "${rootProject.ext.httpReadTimeout}L")
+        buildConfigField("long", "HTTP_WRITE_TIMEOUT", "${rootProject.ext.httpWriteTimeout}L")
     }
 
     buildTypes {
