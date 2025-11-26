@@ -36,6 +36,7 @@ public class NetworkModuleTest {
 
     private File tempCacheDir;
     private NetworkModule networkModule;
+    @Mock
     GlobalParamRepository globalParamRepository;
 
 
@@ -48,6 +49,8 @@ public class NetworkModuleTest {
         when(mockApplication.getApplicationContext()).thenReturn(mockContext);
         when(mockApplication.getCacheDir()).thenReturn(tempCacheDir);
         networkModule = new NetworkModule(mockApplication);
+        when(globalParamRepository.getCachedStringReadTimeOut()).thenReturn(null);
+        when(globalParamRepository.getCachedStringWriteTimeOut()).thenReturn(null);
     }
 
     @After
