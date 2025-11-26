@@ -19,13 +19,13 @@ on:
       - "sprint-*"
 
 jobs:
-   codeql:
+  codeql:
     name: CodeQL Security Analysis
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
-
+  
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -36,7 +36,10 @@ jobs:
           languages: "java"
 
       - name: Build for CodeQL
-        run: ./gradlew build || true
+        run: |
+          cd client
+          chmod +x gradlew
+          ./gradlew build || true
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
@@ -44,8 +47,9 @@ jobs:
   build:
     name: Android Build Check
     runs-on: ubuntu-latest
-    needs: [codeql]   
+    needs: [codeql]
     steps:
+      - name: Checkout code
       - uses: actions/checkout@v3
 
       - name: Setup Java 17
