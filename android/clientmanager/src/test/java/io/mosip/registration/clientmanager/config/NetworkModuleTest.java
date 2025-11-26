@@ -49,8 +49,8 @@ public class NetworkModuleTest {
         when(mockApplication.getApplicationContext()).thenReturn(mockContext);
         when(mockApplication.getCacheDir()).thenReturn(tempCacheDir);
         networkModule = new NetworkModule(mockApplication);
-        when(globalParamRepository.getCachedStringReadTimeOut()).thenReturn(null);
-        when(globalParamRepository.getCachedStringWriteTimeOut()).thenReturn(null);
+        when(globalParamRepository.getCachedReadTimeoutMillis()).thenReturn(0L);
+        when(globalParamRepository.getCachedWriteTimeoutMillis()).thenReturn(0L);
     }
 
     @After

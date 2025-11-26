@@ -158,12 +158,12 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
-    public String getCachedStringReadTimeOut() {
-        return globalParamMap.get(RegistrationConstants.HTTP_API_READ_TIMEOUT);
+    public long getCachedReadTimeoutMillis() {
+        return parseLongWithDefault(RegistrationConstants.HTTP_API_READ_TIMEOUT);
     }
 
-    public String getCachedStringWriteTimeOut() {
-        return globalParamMap.get(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
+    public long getCachedWriteTimeoutMillis() {
+        return parseLongWithDefault(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
     }
 
 
@@ -191,5 +191,13 @@ public class GlobalParamRepository {
             Log.e(TAG, "Error refreshing configuration cache", e);
         }
 
+    }
+
+    private long parseLongWithDefault(String key) {
+        String value = globalParamMap.get(key);
+        if (value == null || value.trim().isEmpty()) {
+            return 0L;
+        }
+        return Long.parseLong(value.trim());
     }
 }

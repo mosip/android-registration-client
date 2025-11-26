@@ -2,7 +2,6 @@ package io.mosip.registration.clientmanager.config;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -58,17 +57,19 @@ public class NetworkModule {
         client.cache(cache);
         client.addInterceptor(new RestAuthInterceptor(appContext));
 
-        String readTimeoutStr = globalParamRepository.getCachedStringReadTimeOut();
-        String writeTimeoutStr = globalParamRepository.getCachedStringWriteTimeOut();
+        long cachedReadTimeout = globalParamRepository.getCachedReadTimeoutMillis();
+        long cachedWriteTimeout = globalParamRepository.getCachedWriteTimeoutMillis();
 
-        long readTimeout = BuildConfig.HTTP_READ_TIMEOUT;  // Default from BuildConfig
-        long writeTimeout = BuildConfig.HTTP_WRITE_TIMEOUT; // Default from BuildConfig
+        long readTimeout  = cachedReadTimeout > 0
+                ? cachedReadTimeout
+                : BuildConfig.HTTP_READ_TIMEOUT;
 
-        // Try to get from GlobalParamRepository
-        readTimeout = parseTimeout(readTimeoutStr, readTimeout, "readTimeout");
-        writeTimeout = parseTimeout(writeTimeoutStr, writeTimeout, "writeTimeout");
+        long writeTimeout  = cachedWriteTimeout > 0
+                ? cachedWriteTimeout
+                : BuildConfig.HTTP_WRITE_TIMEOUT;
+
         client.readTimeout(readTimeout, TimeUnit.MILLISECONDS);
-        client.writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
+        client.writeTimeout(writeTimeout , TimeUnit.MILLISECONDS);
         return client.build();
     }
 
@@ -88,15 +89,4 @@ public class NetworkModule {
         return retrofit.create(SyncRestService.class);
     }
 
-    private long parseTimeout(String rawValue, long fallback, String label) {
-        if (rawValue == null || rawValue.trim().isEmpty()) {
-            return fallback;
-        }
-        try {
-            return Long.parseLong(rawValue.trim());
-        } catch (NumberFormatException ex) {
-            Log.w("NetworkModule", "Invalid " + label + " in GlobalParamRepository: " + rawValue + ", using fallback: " + fallback, ex);
-            return fallback;
-        }
-    }
 }
