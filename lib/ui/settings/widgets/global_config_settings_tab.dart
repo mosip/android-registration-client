@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/utils/app_config.dart';
 import '../../../model/settings.dart';
-import '../../../pigeon/common_details_pigeon.dart';
 import '../../../pigeon/global_config_settings_pigeon.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
-import '../../../provider/global_provider.dart';
 import 'package:restart_app/restart_app.dart';
 
 class GlobalConfigSettingsTab extends StatefulWidget {
   final Settings settings;
   final String selectedLan;
-  GlobalConfigSettingsTab({Key? key,required this.settings,required this.selectedLan,}) : super(key: key);
+  const GlobalConfigSettingsTab({Key? key,required this.settings,required this.selectedLan,}) : super(key: key);
 
   @override
   State<GlobalConfigSettingsTab> createState() =>
@@ -24,12 +21,19 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
   Map<String, String> localConfigurations = {};
   List<String> permittedConfigurations = [];
   final Map<String, TextEditingController> _controllers = {};
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   bool isLoading = true;
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
     _loadInitialData();
   }
 
@@ -73,6 +77,7 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     for (var controller in _controllers.values) {
       controller.dispose();
     }
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -228,6 +233,9 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     List<GlobalConfigItem> globalConfigItems = [];
 
     for (String key in serverValues!.keys) {
+      if (_searchQuery.isNotEmpty && !key.toLowerCase().contains(_searchQuery)) {
+        continue;
+      }
       String serverValue = serverValues![key]?.toString() ?? '-';
       String localValue = _getLocalValue(key);
       bool isEditable = _isConfigurationPermitted(key);
@@ -270,6 +278,22 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.search_for_key,
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
                 ),
               ),
             ),
