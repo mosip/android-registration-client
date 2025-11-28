@@ -93,6 +93,16 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
         result.success(documentCategory);
     }
 
+    @Override
+    public void getDocumentSize(@NonNull DocumentCategoryPigeon.Result<String> result) {
+        String documentSize = "";
+        try {
+            documentSize = this.globalParamRepository.getCachedStringDocumentSize();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Fetch document size: " + Arrays.toString(e.getStackTrace()));
+        }
+        result.success(documentSize);
+    }
 
     public String evaluateMvelScript(String scriptName, Map<String, Object> dataContext) {
         try {

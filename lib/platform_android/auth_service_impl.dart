@@ -137,6 +137,19 @@ class AuthServiceImpl implements AuthService {
     return rolesList;
   }
 
+  @override
+  Future<String> getPasswordLength() async {
+    late String passwordLength;
+    try {
+      passwordLength = await AuthResponseApi().getPasswordLength();
+    } on PlatformException {
+      debugPrint('getPasswordLength call failed!');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return passwordLength;
+  }
+
 }
 
 AuthService getAuthServiceImpl() => AuthServiceImpl();

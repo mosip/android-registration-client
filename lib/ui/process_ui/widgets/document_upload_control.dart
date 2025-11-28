@@ -48,6 +48,29 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     return "${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB";
   }
 
+  int maxFileSize = 2 * 1024 * 1024; // Default 2MB
+
+  _fetchMaxFileSize() async {
+    try {
+      String sizeStr = await registrationTaskProvider.documentCategory.getDocumentSize();
+      if (sizeStr.isNotEmpty) {
+        int? size = int.tryParse(sizeStr);
+        if (size != null && size > 0) {
+          setState(() {
+            maxFileSize = size;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Failed to fetch document size limit: $e");
+    }
+  }
+
+  _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red));
+  }
+
 
   FixedExtentScrollController scrollController = FixedExtentScrollController();
   @override
@@ -62,6 +85,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       getScannedDocuments(widget.field);
       myGetDocumentCategoryFuture =
           _getDocumentType(widget.field.subType!, "eng");
+      _fetchMaxFileSize();
     }
 
     if (context
@@ -164,14 +188,15 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   Future<void> addDocument(var item, Field e, String referenceNumber) async {
-    // final bytes = await getImageBytes(item);
-
-    debugPrint(
-        "The selected value for dropdown for ${e.id!} is ${documentController.text}");
-    // Uint8List myBytes = Uint8List.fromList(bytes);
-    // context
-    //     .read<RegistrationTaskProvider>()
-    //     .addDocument(e.id!, selected!, "reference", myBytes);
+    if (item == null) return;
+    if (item is Uint8List) {
+      if (item.lengthInBytes > maxFileSize) {
+        final msg = AppLocalizations.of(context)!
+            .doc_size_existed(getReadableFileSize(item.lengthInBytes));
+        _showError(msg);
+        return;
+      }
+    }
     _getAddDocumentProvider(e, item, referenceNumber);
   }
 

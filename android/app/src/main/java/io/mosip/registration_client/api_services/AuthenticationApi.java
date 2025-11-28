@@ -265,4 +265,14 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
             Log.e(getClass().getSimpleName(), "Getting user role failed!" + Arrays.toString(e.getStackTrace()));
         }
     }
+
+    @Override
+    public void getPasswordLength(@NonNull AuthResponsePigeon.Result<String> result) {
+        try {
+            String passwordLength = this.globalParamRepository.getCachedStringPasswordLength();
+            result.success(passwordLength);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Getting password Length failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
 }
