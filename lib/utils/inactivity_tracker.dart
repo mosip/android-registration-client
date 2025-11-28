@@ -6,6 +6,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 
 import '../main.dart';
+import '../provider/connectivity_provider.dart';
 
 class InactivityTracker extends StatefulWidget {
   final Widget child;
@@ -41,6 +42,17 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
     super.initState();
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     WidgetsBinding.instance.addObserver(this);
+
+    final connectivity = Provider.of<ConnectivityProvider>(context, listen: false);
+
+    connectivity.addListener(() {
+      if (!connectivity.isConnected) {
+        Future.microtask(() {
+          if (mounted) _showWarningDialog();
+        });
+      }
+    });
+
     _startInactivityTimer();
   }
 
@@ -63,7 +75,22 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
   }
 
   void _startInactivityTimer() {
+    final connectivity = Provider.of<ConnectivityProvider>(context, listen: false);
+    if (!connectivity.isConnected) {
+      Future.microtask(() {
+        if (mounted) _showWarningDialog();
+      });
+      return;
+    }
+
     if (!widget.isUserLoggedIn) return;
+
+    if (!connectivity.isConnected) {
+      Future.microtask(() {
+        if (mounted) _showWarningDialog();
+      });
+      return;
+    }
     _inactivityTimer = Timer(widget.timeout, _showWarningDialog);
   }
 

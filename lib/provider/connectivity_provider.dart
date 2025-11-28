@@ -5,6 +5,8 @@
  *
 */
 
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,6 +21,22 @@ class ConnectivityProvider extends ChangeNotifier {
   ConnectivityResult get connectivityResult => _connectivityResult;
   bool get isConnected => _isConnected;
   bool get isGPSEnabled => _isGPSEnabled;
+
+  Timer? _autoCheckTimer;
+
+  void startAutoNetworkCheck() {
+    _autoCheckTimer?.cancel();
+
+    _autoCheckTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      checkNetworkConnection();
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoCheckTimer?.cancel();
+    super.dispose();
+  }
 
   checkNetworkConnection() async {
     String response = await networkService.checkInternetConnection();

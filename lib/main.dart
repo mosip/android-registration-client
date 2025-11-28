@@ -114,6 +114,9 @@ class _BuildAppState extends State<BuildApp> {
   void initState() {
     super.initState();
     _loadIdleTimeFromServer();
+    final connectivity = Provider.of<ConnectivityProvider>(context, listen: false);
+    connectivity.startAutoNetworkCheck();
+
   }
 
   Future<void> _loadIdleTimeFromServer() async {
