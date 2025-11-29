@@ -523,9 +523,16 @@ class _GenericProcessState extends State<GenericProcess>
                   break;
                 }
                 if (globalProvider.isValidBiometricCapture) {
-                  isValid = false;
-                  break;
+                  List<BiometricAttributeData> list = globalProvider.fieldInputValue[field.id!] ?? [];
+                  if (list.isNotEmpty) {
+                    BiometricAttributeData lastCapture = list.last;
+                    if (lastCapture.qualityPercentage < int.parse(lastCapture.thresholdPercentage)) {
+                      isValid = false;
+                      break;
+                    }
+                  }
                 }
+
               }
             }
           }
@@ -565,9 +572,16 @@ class _GenericProcessState extends State<GenericProcess>
                       break;
                     }
                     if (globalProvider.isValidBiometricCapture) {
-                      isValid = false;
-                      break;
+                      List<BiometricAttributeData> list = globalProvider.fieldInputValue[field.id!] ?? [];
+                      if (list.isNotEmpty) {
+                        BiometricAttributeData lastCapture = list.last;
+                        if (lastCapture.qualityPercentage < int.parse(lastCapture.thresholdPercentage)) {
+                          isValid = false;
+                          break;
+                        }
+                      }
                     }
+
                   }
                 }
                 if (response.compareTo(
