@@ -611,10 +611,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
-		profilePage.clickOnLogoutButton();
-
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");

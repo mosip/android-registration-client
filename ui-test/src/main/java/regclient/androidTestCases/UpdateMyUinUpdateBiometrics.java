@@ -561,8 +561,6 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 		}
 		profilePage.clickOnLogoutButton();
 
-		profilePage.clickOnLogoutButton();
-
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}

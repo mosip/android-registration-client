@@ -307,11 +307,13 @@ public class BasePage {
 					swipeOrScroll();
 				} else {
 					System.out.println("Element not found after " + MAX_RETRIES + " attempts.");
-
 				}
 			}
 		}
 
+		if (element == null) {
+			throw new NoSuchElementException("Element not found after " + MAX_RETRIES + " attempts: " + by);
+		}
 		return element;
 	}
 

@@ -553,9 +553,6 @@ public class UpdateMyUinUpdateDemographicDetails extends AndroidBaseTest {
 		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
 		// display on Profilepage");
 		profilePage.clickOnLogoutButton();
-
-		profilePage.clickOnLogoutButton();
-
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
 	}

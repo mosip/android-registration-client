@@ -557,9 +557,6 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		profilePage.clickOnLogoutButton();
-
-		profilePage.clickOnLogoutButton();
-
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 	}
 

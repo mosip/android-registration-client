@@ -1644,8 +1644,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		profilePage.clickOnLogoutButton();
 
-		profilePage.clickOnLogoutButton();
-
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 	}
 

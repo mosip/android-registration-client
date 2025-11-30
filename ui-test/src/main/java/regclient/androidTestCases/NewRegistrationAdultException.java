@@ -639,8 +639,6 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		// display on Profilepage");
 		profilePage.clickOnLogoutButton();
 
-		profilePage.clickOnLogoutButton();
-
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
