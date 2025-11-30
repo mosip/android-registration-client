@@ -102,7 +102,7 @@ public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
 	
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageTamil(driver);
 	}
 	
 	public void clickOnZoomButton() {
@@ -127,35 +127,35 @@ public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
 	
 	public BiometricDetailsPage clickOnBackButton() {
 		driver.navigate().back();
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageTamil(driver);
 	}
 	
 	@SuppressWarnings("deprecation")
-	public  boolean isIntroducerBiometricsPageDisplyed() {
+	public  boolean isIntroducerBiometricsPageDisplayed() {
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""+FetchUiSpec.getValueUsingId("introducerBiometrics")+"\")")));
 	}
 	
-	public  boolean isExceptionTypeTitleDisplyed() {
+	public  boolean isExceptionTypeTitleDisplayed() {
 		return isElementDisplayed(exceptionTypeTitle);
 	}
 	
-	public  boolean isRightHandScanTitleDisplyed() {
+	public  boolean isRightHandScanTitleDisplayed() {
 		return isElementDisplayed(rightHandScanTitle);
 	}
 	
-	public  boolean isLeftHandScanTitleDisplyed() {
+	public  boolean isLeftHandScanTitleDisplayed() {
 		return isElementDisplayed(leftHandScanTitle);
 	}
 	
-	public  boolean isThumbsScanTitleDisplyed() {
+	public  boolean isThumbsScanTitleDisplayed() {
 		return isElementDisplayed(thumbsScanTitle);
 	}
 	
-	public  boolean isFaceScanTitleDisplyed() {
+	public  boolean isFaceScanTitleDisplayed() {
 		return isElementDisplayed(faceScanTitle);
 	}
 	
-	public  boolean isExceptionScanTitleDisplyed() {
+	public  boolean isExceptionScanTitleDisplayed() {
 		return isElementDisplayed(exceptionScanTitle);
 	}
 	
@@ -176,11 +176,15 @@ public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
 	}
 	
 	public  boolean isFaceScan() {
-		return isElementDisplayed(faceCapturerHeader,2000);
+		return isElementDisplayed(faceCapturerHeader,2);
 	}
 	
 	public  boolean isExceptionScan() {
-		return isElementDisplayed(exceptionCapturerHeader,2000);
+		return isElementDisplayed(exceptionCapturerHeader,2);
+	}
+	
+	public boolean isNextButtonDisplayed() {
+		return isElementDisplayed(nextButton);
 	}
 
 }

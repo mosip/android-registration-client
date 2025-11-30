@@ -1,4 +1,4 @@
-package regclient.pages.tamil;
+package regclient.pages.kannada;
 
 import static org.testng.Assert.assertTrue;
 
@@ -15,41 +15,42 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
 import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 
-public class DocumentuploadPageTamil extends DocumentUploadPage {
 
-	@AndroidFindBy(accessibility = "ஸ்க்ரிம்")
+public class DocumentUploadPageKannada extends DocumentUploadPage{
+
+	@AndroidFindBy(accessibility = "ಸ್ಕ್ರಿಮ್")
 	private WebElement PopUpCloseButton;
 
-	@AndroidFindBy(accessibility = "முந்தைய பக்கம்")
+	@AndroidFindBy(accessibility = "ಹಿಂತಿರುಗಿ")
 	private WebElement backButton;
 
-	@AndroidFindBy(accessibility = "தொடர்க")
+	@AndroidFindBy(accessibility = "ಮುಂದುವರಿಸಿ")
 	private WebElement continueButton;
 
-	@AndroidFindBy(accessibility = "அழி")
+	@AndroidFindBy(accessibility = "ಅಳಿಸಿ")
 	private WebElement deleteButton;
 
 	@AndroidFindBy(xpath = "//android.widget.ImageView")
 	private WebElement captureImage;
 	
-	@AndroidFindBy(accessibility = "சேமிக்கவும்")
+	@AndroidFindBy(accessibility = "ಉಳಿಸಿ")
 	private WebElement saveButton;
 
-	@AndroidFindBy(accessibility = "ரீடேக்")
+	@AndroidFindBy(accessibility = "ರೀಟೇಕ್")
 	private WebElement retakeButton;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
 
-	public DocumentuploadPageTamil(AppiumDriver driver) {
+	public DocumentUploadPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
-
+	
 	public  BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageKannada(driver);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -59,7 +60,7 @@ public class DocumentuploadPageTamil extends DocumentUploadPage {
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageKannada(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {
@@ -180,4 +181,5 @@ public class DocumentuploadPageTamil extends DocumentUploadPage {
 
 		}
 	}
+
 }

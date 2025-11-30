@@ -15,7 +15,7 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
 import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 
 public class DocumentUploadPageHindi extends DocumentUploadPage{
 
@@ -49,7 +49,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 
 	public  BiometricDetailsPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageHindi(driver);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -59,7 +59,7 @@ public class DocumentUploadPageHindi extends DocumentUploadPage{
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageHindi(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

@@ -1,6 +1,5 @@
 package regclient.api;
 
-
 import regclient.utils.TestDataReader;
 import regclient.utils.TestRunner;
 
@@ -19,24 +18,18 @@ import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
-
 public class BaseTestCase {
-	private static final org.slf4j.Logger logger= org.slf4j.LoggerFactory.getLogger(BaseTestCase.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BaseTestCase.class);
 	public static String environment;
 	public static List<String> languageList = new ArrayList<>();
 	public static String ApplnURI;
 	public static String ApplnURIForKeyCloak;
 	public static String testLevel;
-	public static Properties props = getproperty(
-			TestRunner.getResourcePath() + "/config/application.properties");
-	public static Properties propsKernel = getproperty(
-			TestRunner.getResourcePath() + "/config/Kernel.properties");
+	public static Properties props = getproperty(TestRunner.getResourcePath() + "/config/application.properties");
+	public static Properties propsKernel = getproperty(TestRunner.getResourcePath() + "/config/Kernel.properties");
 
-
-	public static Properties propsMap = getproperty(
-			TestRunner.getResourcePath() + "/config/valueMapping.properties");
-	public static Properties propsBio = getproperty(
-			TestRunner.getResourcePath() + "/config/bioValue.properties");
+	public static Properties propsMap = getproperty(TestRunner.getResourcePath() + "/config/valueMapping.properties");
+	public static Properties propsBio = getproperty(TestRunner.getResourcePath() + "/config/bioValue.properties");
 	public static String SEPRATOR = "";
 	public static String currentModule = "androidregclient";
 	public final static String COOKIENAME = "Authorization";
@@ -47,11 +40,10 @@ public class BaseTestCase {
 	public static String uinEmail;
 	public static String uinPhone;
 
-	public static String uin="";
-	public static String perpetualVid="";
-	public static String onetimeuseVid="";
-	public static String temporaryVid="";
-	
+	public static String uin = "";
+	public static String perpetualVid = "";
+	public static String onetimeuseVid = "";
+	public static String temporaryVid = "";
 
 	public static String getOSType() {
 		String type = System.getProperty("os.name");
@@ -63,7 +55,7 @@ public class BaseTestCase {
 			return "OTHERS";
 		}
 		return null;
-	}	
+	}
 
 	public static Properties getproperty(String path) {
 		Properties prop = new Properties();
@@ -115,17 +107,17 @@ public class BaseTestCase {
 		return logProp;
 	}
 
-
 	public static JSONObject getRequestJson(String filepath) {
 		return kernelCmnLib.readJsonData(filepath, true);
 
 	}
-	
+
 	public static String GethierarchyName(int locationHierarchyLevels) {
 		kernelAuthLib = new KernelAuthentication();
 		String token = kernelAuthLib.getTokenByRole("admin");
 		String url = ApplnURI + props.getProperty("locationhierarchy");
-		Response response = RestClient.getRequestWithCookie(url+GethierarchyLevelName(locationHierarchyLevels), MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON,"Authorization", token);
+		Response response = RestClient.getRequestWithCookie(url + GethierarchyLevelName(locationHierarchyLevels),
+				MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, "Authorization", token);
 		org.json.JSONObject responseJson = new org.json.JSONObject(response.asString());
 		org.json.JSONObject responseObj = responseJson.getJSONObject("response");
 		JSONArray responseArray = responseObj.getJSONArray("locations");
@@ -142,12 +134,14 @@ public class BaseTestCase {
 		return null;
 
 	}
-	
+
 	public static String GethierarchyLevelName(int locationHierarchyLevels) {
 		kernelAuthLib = new KernelAuthentication();
 		String token = kernelAuthLib.getTokenByRole("admin");
 		String url = ApplnURI + props.getProperty("locationHierarchyLevels");
-		Response response = RestClient.getRequestWithCookie(url+locationHierarchyLevels+"/"+TestDataReader.readData("language"), MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON,"Authorization", token);
+		Response response = RestClient.getRequestWithCookie(
+				url + locationHierarchyLevels + "/" + TestDataReader.readData("language"), MediaType.APPLICATION_JSON,
+				MediaType.APPLICATION_JSON, "Authorization", token);
 		org.json.JSONObject responseJson = new org.json.JSONObject(response.asString());
 		org.json.JSONObject responseObj = responseJson.getJSONObject("response");
 		JSONArray responseArray = responseObj.getJSONArray("locationHierarchyLevels");
@@ -156,4 +150,5 @@ public class BaseTestCase {
 		return hierarchyLevelName;
 
 	}
+
 }

@@ -31,13 +31,11 @@ public class OperationalTaskPageHindi extends OperationalTaskPage{
 	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
 		clickOnElement(updateOperatorBiometricsButton);
 		return new SupervisorBiometricVerificationpageHindi(driver);
-
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
 		return isElementDisplayed(systemStorageUsageTitle);
 	}
-
 
 	public  void clickSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);

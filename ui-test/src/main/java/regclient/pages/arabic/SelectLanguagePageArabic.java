@@ -8,8 +8,7 @@ import regclient.page.ConsentPage;
 import regclient.page.SelectLanguagePage;
 import regclient.utils.TestDataReader;
 
-
-public class SelectLanguagePageArabic extends SelectLanguagePage{
+public class SelectLanguagePageArabic extends SelectLanguagePage {
 
 	@AndroidFindBy(accessibility = "اختار اللغة")
 	private WebElement selectLanguageTitle;
@@ -17,10 +16,10 @@ public class SelectLanguagePageArabic extends SelectLanguagePage{
 	@AndroidFindBy(accessibility = "يُقدِّم")
 	private WebElement submitButton;
 
-	@AndroidFindBy(accessibility = "French")
+	@AndroidFindBy(accessibility = "français")
 	private WebElement frenchLanguageButton;
 
-	@AndroidFindBy(accessibility = "Arabic")
+	@AndroidFindBy(accessibility = "عربي")
 	private WebElement arabicLanguageButton;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"ಕನ್ನಡ\"])[1]")
@@ -70,12 +69,12 @@ public class SelectLanguagePageArabic extends SelectLanguagePage{
 		return isElementDisplayed(selectLanguageTitle);
 	}
 
-	public  void clickOnSubmitButtonWithoutSelectingLanguage() {
+	public void clickOnSubmitButtonWithoutSelectingLanguage() {
 		clickOnElement(submitButton);
 	}
 
-	public  void selectSecondLanguage() {	
-		if(TestDataReader.readData("defaultlanguage").equalsIgnoreCase("ara"))
+	public void selectSecondLanguage() {
+		if (TestDataReader.readData("defaultlanguage").equalsIgnoreCase("ara"))
 			clickOnElement(englishLanguageButton);
 		else
 			clickOnElement(arabicLanguageButton);
@@ -110,7 +109,7 @@ public class SelectLanguagePageArabic extends SelectLanguagePage{
 		}
 	}
 
-	public  void selectAllSecondLanguage() {
+	public void selectAllSecondLanguage() {
 
 		clickOnElement(englishLanguageButton);
 
@@ -122,19 +121,18 @@ public class SelectLanguagePageArabic extends SelectLanguagePage{
 
 		clickOnElement(hindiLanguageButton);
 
-		clickOnElement(tamilLanguageButton);	
+		clickOnElement(tamilLanguageButton);
 	}
 
-
-	public  boolean isArabicLanguageButtonEnabled() {
+	public boolean isArabicLanguageButtonEnabled() {
 		return isElementEnabled(arabicLanguageButton);
 	}
 
-	public  boolean isSubmitButtonEnabled() {
+	public boolean isSubmitButtonEnabled() {
 		return isElementEnabled(submitButton);
 	}
 
-	public  ConsentPage clickOnSubmitButton() {
+	public ConsentPage clickOnSubmitButton() {
 		clickOnElement(submitButton);
 		return new ConsentPageArabic(driver);
 	}

@@ -22,6 +22,9 @@ public class AuthenticationPageKannada extends AuthenticationPage {
 	@AndroidFindBy(accessibility = "ಪ್ರಮಾಣಿತಗೊಳಿಸಿ")
 	private WebElement authenticateButton;
 	
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc='Authentication using Password']/preceding-sibling::android.widget.ImageView")
+	private WebElement authenticationImage;
+	
 	public AuthenticationPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -41,6 +44,10 @@ public class AuthenticationPageKannada extends AuthenticationPage {
 	public AcknowledgementPage clickOnAuthenticatenButton() {
 		clickOnElement(authenticateButton);
 		return new AcknowledgementPageKannada(driver);
+	}
+	
+	public boolean isAuthenticationImageDisplayed() {
+		return isElementDisplayed(authenticationImage);
 	}
 
 }

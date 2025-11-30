@@ -5,8 +5,8 @@
 		<classes>
 			<class name="regclient.androidTestCases.logintest">
 				<methods>
-					<include name="ALoginTest" />
-					<include name="OnBoardTest" />
+					<include name="userloginTest" />
+					<include name="onboardingTest" />
 					<include name="updateOperatorBiometrics" />
 				</methods>
 			</class>
@@ -46,16 +46,51 @@
 					<include name="updateMyUinMinor" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.UpdateMyUINUpdateDemographicDetails">
+			<class name="regclient.androidTestCases.UpdateMyUinUpdateDemographicDetails">
 				<methods>
-					<include name="updateMyUINUpdateDemographicDetails" />
+					<include name="updateMyUinUpdateDemographicDetails" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.UpdateMyUinUpdateBiometrics">
 				<methods>
-					<include name="updateMyUINUpdatebiometrics" />
+					<include name="updateMyUinUpdatebiometrics" />
 				</methods>
 			</class>
+			<class name="regclient.androidTestCases.UpdateMyUinUpdateDocuments">
+				<methods>
+					<include name="updateMyUinUpdateDocuments" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.BiometricCorrection">
+				<methods>
+					<include name="adultBiometricCorrection" />
+					<include name="minorBiometricCorrection" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.LostUin">
+				<methods>
+					<include name="lostUinAdult" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.PreRegFetchingPacket">
+				<methods>
+					<include name="adultPreRegFetching" />
+					<include name="minorPreRegFetching" />
+					<include name="infantPreRegFetching" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.ResetPassword">
+				<methods>
+					<include name="resetPassword" />
+					<include name="resetToDefaultPassword" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.Settings">
+				<methods>
+					<include name="settings" />
+				</methods>
+			</class>
+			
 		</classes>
 	</test>
 	<listeners>

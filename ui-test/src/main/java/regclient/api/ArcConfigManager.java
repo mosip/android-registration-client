@@ -64,10 +64,18 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		return getProperty("es_db_schema", "");
 	}
 	
+	public static String getIAMUsersToCreateOperator() {
+		return getproperty("iam-users-to-create-operator");
+	}
+	
+	public static String getIAMUsersToCreateOnboarder() {
+		return getproperty("iam-users-to-create-onboarder");
+	}
+	
 	public static String getiam_apienvuser() {
 		return getProperty("apiEnvUser", "");
 	}
-	
+
 	public static String getiam_apiinternalendpoint() {
 		return getProperty("apiInternalEndPoint", "");
 	}
@@ -85,7 +93,7 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 			return 10;
 		}
 	}
-	
+
 	public static String getIAMUrl() {
 		return getProperty("keycloak-external-url", "") + "/auth";
 	}
@@ -93,11 +101,11 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 	public static String getSignupPortalUrl() {
 		return getProperty("signup.portal.url", "");
 	}
-	
+
 	public static String getIAMUsersPassword() {
 		return getProperty("iam-users-password", "");
 	}
-	
+
 	public static String getEnv() {
 		return getProperty("db-server", "");
 	}
@@ -109,8 +117,16 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 	public static String getHealthPortalUrl() {
 		return getProperty("baseurl", "");
 	}
-	
+
 	public static String gettestcases() {
 		return getProperty("regclientScenariosToExecute", "");
+	}
+	
+	public static String getRolesForOperatorUser() { 
+		return getproperty("rolesForOperator");
+	}
+	
+	public static String getRolesForOnboardUser() { 
+		return getproperty("rolesForOnboarder");
 	}
 }

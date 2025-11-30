@@ -9,7 +9,7 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
 
-public class LoginPageTamil extends LoginPage{
+public class LoginPageTamil extends LoginPage {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement mosipLogo;
@@ -55,38 +55,41 @@ public class LoginPageTamil extends LoginPage{
 
 	@AndroidFindBy(accessibility = "தமிழ்")
 	private WebElement tamilButton;
-	
+
+	@AndroidFindBy(accessibility = "வீட்டிற்கு செல்க")
+	private WebElement skipToHomeButton;
+
 	public LoginPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
-	
-	public  void enterUserName(String username) {
-		clickAndsendKeysToTextBox(userNameTextBox,username);
+
+	public void enterUserName(String username) {
+		clickAndsendKeysToTextBox(userNameTextBox, username);
 	}
 
-	public  void clickOnNextButton() {
+	public void clickOnNextButton() {
 		clickOnElement(nextButton);
 	}
 
-	public  void clickOnBackButton() {
+	public void clickOnBackButton() {
 		clickOnElement(backButton);
 	}
 
-	public  void enterPassword(String password) {
-		retryFindElement(passwordTextBox,Duration.ofSeconds(10));
-		clickAndsendKeysToTextBox(passwordTextBox,password);
+	public void enterPassword(String password) {
+		retryFindElement(passwordTextBox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(passwordTextBox, password);
 	}
 
-	public  RegistrationTasksPage clickOnloginButton() {
+	public RegistrationTasksPage clickOnloginButton() {
 		clickOnElement(loginButton);
 		return new RegistrationTasksPageTamil(driver);
 	}
 
-	public  boolean isNextButtonEnabled() {
+	public boolean isNextButtonEnabled() {
 		return isElementEnabled(nextButton);
 	}
 
-	public  boolean isLoginButtonEnabled() {
+	public boolean isLoginButtonEnabled() {
 		return isElementEnabled(loginButton);
 	}
 
@@ -136,6 +139,10 @@ public class LoginPageTamil extends LoginPage{
 
 	public void selectLanguage() {
 		clickOnElement(tamilButton);
+	}
+
+	public void clickOnSkipToHomeButton() {
+		clickOnElement(skipToHomeButton);
 	}
 
 }

@@ -33,4 +33,14 @@ public class TestDataReader {
 		return (String) jsonObject.get(value);
 
 	}
+	
+	public static String readData(String key, String defaultValue) {
+	    try {
+	        String val = readData(key); // existing method
+	        return (val == null || val.trim().isEmpty()) ? defaultValue : val;
+	    } catch (Exception e) {
+	        // Log optionally, then return default
+	        return defaultValue;
+	    }
+	}
 }

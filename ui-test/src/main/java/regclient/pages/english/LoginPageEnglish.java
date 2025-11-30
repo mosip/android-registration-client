@@ -25,13 +25,12 @@ public class LoginPageEnglish extends LoginPage {
 
 	@AndroidFindBy(accessibility = "NEXT")
 	private WebElement nextButton;
-	
+
 	@AndroidFindBy(accessibility = "Machine not found!")
 	private WebElement machineNotFound;
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement passwordTextBox;
-	
 
 	@AndroidFindBy(accessibility = "LOGIN")
 	private WebElement loginButton;
@@ -105,45 +104,45 @@ public class LoginPageEnglish extends LoginPage {
 	@AndroidFindBy(accessibility = "COPY TEXT")
 	private WebElement copyTextButton;
 
+	@AndroidFindBy(accessibility = "SKIP TO HOME")
+	private WebElement skipToHomeButton;
 
-	public  void enterUserName(String username) {
-		clickAndsendKeysToTextBox(userNameTextBox,username);
+	public void enterUserName(String username) {
+		clickAndsendKeysToTextBox(userNameTextBox, username);
 	}
 
-	public  void clickOnCopyTextButton() {
+	public void clickOnCopyTextButton() {
 		clickOnElement(copyTextButton);
 	}
 
-	public  void clickOnNextButton() {
+	public void clickOnNextButton() {
 		clickOnElement(nextButton);
 	}
 
-	public  void clickOnBackButton() {
+	public void clickOnBackButton() {
 		clickOnElement(backButton);
 	}
 
-	public  void enterPassword(String password) {
-		retryFindElement(passwordTextBox,Duration.ofSeconds(10));
-		clickAndsendKeysToTextBox(passwordTextBox,password);
+	public void enterPassword(String password) {
+		retryFindElement(passwordTextBox, Duration.ofSeconds(10));
+		clickAndsendKeysToTextBox(passwordTextBox, password);
 	}
 
-	public  RegistrationTasksPage clickOnloginButton() {
+	public RegistrationTasksPage clickOnloginButton() {
 		clickOnElement(loginButton);
 		return new RegistrationTasksPageEnglish(driver);
 	}
 
-	public  boolean isNextButtonEnabled() {
+	public boolean isNextButtonEnabled() {
 		return isElementEnabled(nextButton);
 	}
 
-	public  boolean isLoginButtonEnabled() {
+	public boolean isLoginButtonEnabled() {
 		return isElementEnabled(loginButton);
 	}
 
 	public boolean isLoginPageLoaded() {
 		return true;
-//		return isElementDisplayed(loginMessage);
-		
 	}
 
 	public boolean isPasswordHeaderDisplayed() {
@@ -157,15 +156,13 @@ public class LoginPageEnglish extends LoginPage {
 	public boolean isWelcomeMessageDisplayed() {
 		return isElementDisplayed(welcomeMessageEnglish);
 	}
-	
+
 	public boolean isMachineNotFoundMessageDisplayed() {
 		return isElementDisplayed(machineNotFound);
 	}
 
 	public boolean isWelcomeMessageInSelectedLanguageDisplayed() {
 		return true;
-//		return isElementDisplayed(welcomeMessageEnglish);
-
 	}
 
 	public boolean isHelpButtonDisplayed() {
@@ -196,24 +193,31 @@ public class LoginPageEnglish extends LoginPage {
 		clickOnElement(englishButton);
 	}
 
-
 	public boolean isSyncCompletedSuccessfullyMessageDisplayed() {
-		return isElementDisplayed(syncCompletedSuccessfullyMessage,2000);
+		return isElementDisplayed(syncCompletedSuccessfullyMessage, 2000);
 	}
 
 	public void clickandHold() {
 		clickAndHold();
 	}
 
-	public  void getMachineDetails()  {
-		try {		
+	public void getMachineDetails() {
+		try {
 			getMachineDetail();
 		} catch (UnsupportedFlavorException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void clickOnSkipToHomeButton() {
+		clickOnElement(skipToHomeButton);
+	}
+
+	public boolean isCopyTextPopupDisplayed() {
+		return isElementDisplayed(copyTextButton, 2000);
 	}
 }

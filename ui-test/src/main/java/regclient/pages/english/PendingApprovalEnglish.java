@@ -1,26 +1,31 @@
-/**
- * 
- */
+
 package regclient.pages.english;
 
 import static org.testng.Assert.assertTrue;
 
+import java.time.Duration;
+import java.util.List;
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.PendingApproval;
 
-public class PendingApprovalEnglish extends PendingApproval{
+public class PendingApprovalEnglish extends PendingApproval {
 
 	@AndroidFindBy(accessibility = "Pending Approval")
 	private WebElement pendingApprovalTitle;
 
 	@AndroidFindBy(accessibility = "APPROVE")
 	private WebElement approveButton;
-	
+
 	@AndroidFindBy(accessibility = "REJECT")
 	private WebElement rejectButton;
 
@@ -32,14 +37,12 @@ public class PendingApprovalEnglish extends PendingApproval{
 
 	@AndroidFindBy(accessibility = "SUBMIT")
 	private WebElement submitButton;
-	
+
 	@AndroidFindBy(accessibility = "Username invalid!")
 	private WebElement invalidUsernameMessage;
-	
-	
+
 	@AndroidFindBy(accessibility = "SUBMIT")
 	private WebElement invalidUsernameMessageForempty;
-	
 
 	@AndroidFindBy(accessibility = "Supervisor's Authentication")
 	private WebElement supervisorAuthenticationTitle;
@@ -49,34 +52,55 @@ public class PendingApprovalEnglish extends PendingApproval{
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(1)")
 	private WebElement passwordTextBox;
-	
+
 	@AndroidFindBy(xpath = "//*[contains(@content-desc,\"Pending Approval\")]//preceding-sibling::android.widget.Button")
 	private WebElement backButton;
-	
+
 	@AndroidFindBy(accessibility = "Sl.no Application ID Reg. Date Client Status Review Status Operator ID")
-	private WebElement pageAttributes ;
-	
+	private WebElement pageAttributes;
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"CREATED\")")
 	private WebElement clientStatus;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Pending\").instance(1)")
 	private WebElement reviewStatus;
-	
+
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement applicationIdTextbox;
-	
+
 	@AndroidFindBy(accessibility = "Reject Packet?")
 	private WebElement rejectPacketTitle;
-	
+
 	@AndroidFindBy(accessibility = "Please select a value")
 	private WebElement rejectReasonDropdown;
+
+	@AndroidFindBy(accessibility = "Displaying 1 Applications")
+	private WebElement displayApplication;
+
+	@AndroidFindBy(accessibility = "Please select a reason for packet rejection. You can change your review to approve or reset the review status later.")
+	private WebElement rejectPacketInfoMessage;
+
+	@AndroidFindBy(uiAutomator = "new UiSelector().text(\"Biometrics\")")
+	private WebElement pendingApprovalBiometricsInformation;
+
+	@AndroidFindBy(xpath = "(//android.widget.Button[@content-desc])[1]")
+	private WebElement latestAid;
+
+	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
+	private WebElement latestAIdCheckBox;
+
+	@AndroidFindBy(accessibility = "No network found!")
+	private WebElement noNetworkFound;
+
+	@AndroidFindBy(accessibility = "AUTHENTICATE")
+	private WebElement authenticateButton;
 
 	public PendingApprovalEnglish(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public boolean isPendingApprovalTitleDisplayed() {
-		return isElementDisplayed(pendingApprovalTitle);		
+		return isElementDisplayed(pendingApprovalTitle);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -101,76 +125,128 @@ public class PendingApprovalEnglish extends PendingApproval{
 	}
 
 	public boolean isSupervisorAuthenticationTitleDisplayed() {
-		return isElementDisplayed(supervisorAuthenticationTitle);		
+		return isElementDisplayed(supervisorAuthenticationTitle);
 	}
-	
+
 	public boolean isInvalidUsernameMessageDisplayed() {
-		return isElementDisplayed(invalidUsernameMessage);		
+		return isElementDisplayed(invalidUsernameMessage);
 	}
-	
+
 	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
 		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 
-	public  void enterUserName(String username) {
-		clickAndsendKeysToTextBox2(userNameTextBox,username);
+	public void enterUserName(String username) {
+		clickAndsendKeysToTextBox2(userNameTextBox, username);
 	}
 
-	public  void enterPassword(String password) {
-		clickAndsendKeysToTextBox2(passwordTextBox,password);
+	public void enterPassword(String password) {
+		clickAndsendKeysToTextBox2(passwordTextBox, password);
 	}
-	
+
 	public void clickOnBackButton() {
 		clickOnElement(backButton);
 	}
 
 	public boolean isApprovalButtonDisplayed() {
-		return isElementDisplayed(approveButton);		
+		return isElementDisplayed(approveButton);
 	}
-	
+
 	public boolean isRejectButtonDisplayed() {
-		return isElementDisplayed(rejectButton);		
+		return isElementDisplayed(rejectButton);
 	}
-	
+
 	public boolean isPageAttributesDisplayed() {
-		return isElementDisplayed(pageAttributes);		
+		return isElementDisplayed(pageAttributes);
 	}
-	
+
 	public boolean isClientStatusDisplayed() {
-		return isElementDisplayed(clientStatus);		
+		return isElementDisplayed(clientStatus);
 	}
 
 	public boolean isReviewStatusDisplayed() {
-		return isElementDisplayed(reviewStatus);		
+		return isElementDisplayed(reviewStatus);
 	}
-	
-	public  void enterAID(String AID) {
-		clickAndsendKeysToTextBox(applicationIdTextbox,AID);
+
+	public void enterAID(String AID) {
+		clickAndsendKeysToTextBox(applicationIdTextbox, AID);
 	}
-	
+
 	public void clickOnRejectButton() {
 		clickOnElement(rejectButton);
 	}
-	
+
 	public boolean isRejectPacketTitleDisplayed() {
-		return isElementDisplayed(rejectPacketTitle);		
+		return isElementDisplayed(rejectPacketTitle);
 	}
-	
+
 	public void selectRejectionReasonDropdown() {
-		boolean isdisplayed =isElementDisplayed(rejectReasonDropdown);
-		assertTrue(isdisplayed,"Verify if "+rejectReasonDropdown+" header is displayed");
+		boolean isdisplayed = isElementDisplayed(rejectReasonDropdown);
+		assertTrue(isdisplayed, "Verify if " + rejectReasonDropdown + " header is displayed");
 		clickOnElement(rejectReasonDropdown);
 		waitTime(2);
-		if(!isElementDisplayed(rejectReasonDropdown)) {				
+		if (!isElementDisplayed(rejectReasonDropdown)) {
 			clickOnElement(findElement(By.className("android.view.View")));
-		}else {
+		} else {
 			clickOnElement(rejectReasonDropdown);
 			waitTime(2);
 			clickOnElement(findElement(By.className("android.view.View")));
-		}	
+		}
 	}
-	
+
 	public boolean isSubmitButtonEnabled() {
-		return isElementEnabled(submitButton);		
+		return isElementEnabled(submitButton);
 	}
+
+	public boolean isNumberOfApplicationDisplayed() {
+		waitTime(2);
+		return isElementDisplayed(displayApplication);
+	}
+
+	public boolean isRejectPacketInfoMessageDisplayed() {
+		return isElementDisplayed(rejectPacketInfoMessage);
+	}
+
+	public boolean isPendingApprovalBiometricsInformationDisplayed() {
+		swipeOrScroll();
+		return isElementDisplayed(pendingApprovalBiometricsInformation);
+	}
+
+	public void clickOnLatestAid() {
+		List<WebElement> allButtons = driver.findElements(MobileBy.className("android.widget.Button"));
+		allButtons.get(2).click();
+	}
+
+	public void selectLatestAIdCheckBox() {
+		clickOnElement(latestAIdCheckBox);
+	}
+
+	public boolean isNoNetworkFoundDisplayed() {
+		return isElementEnabled(noNetworkFound);
+	}
+
+	public void clickOnPendingApprovalSubmitButton(int maxRetries) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+		for (int i = 1; i <= maxRetries; i++) {
+			clickOnSubmitButton();
+			try {
+				boolean popupShown = wait.until(d -> isNoNetworkFoundDisplayed());
+				if (popupShown) {
+				}
+			} catch (TimeoutException e) {
+				break;
+			}
+		}
+		System.out.println("Still No Network Found Displayed");
+	}
+
+	public void clickOnAuthenticateButton() {
+		clickOnElement(authenticateButton);
+	}
+
+	public boolean isAuthenticateButtonEnabled() {
+		return isElementEnabled(authenticateButton);
+	}
+
 }

@@ -7,7 +7,7 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.DocumentUploadPage;
 import regclient.page.IdentityProofPage;
 
-public class IdentityProofPageEnglish extends IdentityProofPage{
+public class IdentityProofPageEnglish extends IdentityProofPage {
 
 	@AndroidFindBy(accessibility = "SAVE")
 	private WebElement saveButton;
@@ -17,17 +17,17 @@ public class IdentityProofPageEnglish extends IdentityProofPage{
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
-	
+
 	@AndroidFindBy(className = "android.widget.ImageView")
 	private WebElement captureImage;
-	
+
 	public IdentityProofPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
 
-	public  DocumentUploadPage clickOnSaveButton() {
+	public DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageEnglish(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

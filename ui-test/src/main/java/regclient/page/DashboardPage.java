@@ -2,7 +2,7 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 
-public abstract class DashboardPage extends BasePage{
+public abstract class DashboardPage extends BasePage {
 
 	public DashboardPage(AppiumDriver driver) {
 		super(driver);
