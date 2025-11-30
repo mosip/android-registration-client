@@ -1361,7 +1361,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				assertTrue(applicantBiometricsPage.isFaceScan(),
 						"Verify if face captured and 2 attempts left text is displayed");
 				applicantBiometricsPage.closeScanCapturePopUp();
-				;
 				biometricDetailsPage = applicantBiometricsPage.clickOnNextButton();
 
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
