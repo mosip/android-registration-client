@@ -103,7 +103,7 @@ public class MockSBIPage extends BasePage {
 		clickOnElement(mockSbiSaveButton);
 	}
 
-	public void setAllModalityLowScroe() {
+	public void setAllModalityLowScore() {
 		// ModalityScore should be (20-5=15)
 		setModalityScore("Face", 20);
 		swipeOrScroll();

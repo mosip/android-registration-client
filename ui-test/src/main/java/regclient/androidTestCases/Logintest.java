@@ -70,7 +70,7 @@ import regclient.pages.tamil.UpdateOperatorBiometricspageTamil;
 import regclient.utils.TestDataReader;
 
 @Test
-public class logintest extends AndroidBaseTest {
+public class Logintest extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify user login with valid credentials")
 	public void userloginTest() {

@@ -551,8 +551,6 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 		// display on Profilepage");
 		profilePage.clickOnLogoutButton();
 
-		profilePage.clickOnLogoutButton();
-
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
 	}

@@ -439,7 +439,7 @@ public class BasePage {
 		String localPart = generateStringOfLength(3, 10);
 		String domain = domains[random.nextInt(domains.length)];
 		email = localPart + "@" + domain;
-		return localPart + "@" + domain;
+		return email;
 	}
 
 	protected boolean switchToWebViewIfAvailable() {
@@ -499,8 +499,9 @@ public class BasePage {
 		Process wifiProcess = new ProcessBuilder("adb", "shell", "svc", "wifi", "disable").start();
 		Process dataProcess = new ProcessBuilder("adb", "shell", "svc", "data", "disable").start();
 		try {
-			wifiProcess.waitFor();
-			dataProcess.waitFor();
+			if (wifiProcess.waitFor() != 0 || dataProcess.waitFor() != 0) {
+				throw new IOException("Failed to disable WiFi/Data");
+			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new IOException("Interrupted while disabling WiFi/Data", e);

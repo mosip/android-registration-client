@@ -41,11 +41,11 @@ public class AutoLogoutPageArabic extends AutoLogoutPage {
 
 	public RegistrationTasksPage clickOnStayLoggedInButton() {
 		clickOnElement(stayLoggedInButton);
-		return new RegistrationTasksPageEnglish(driver);
+		return new RegistrationTasksPageArabic(driver);
 	}
 
 	public LoginPage clickOnStayLogoutButton() {
 		clickOnElement(logoutButton);
-		return new LoginPageEnglish(driver);
+		return new LoginPageArabic(driver);
 	}
 }

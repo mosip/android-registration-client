@@ -160,7 +160,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		// Navigate to mocksbi page
 		MockSBIPage mockSBIPage = new MockSBIPage(driver);
 		mockSBIPage.switchToMockSBI();
-		mockSBIPage.setAllModalityLowScroe();
+		mockSBIPage.setAllModalityLowScore();
 		mockSBIPage.switchBackToArcApp();
 
 		// New registration with low biometric score
@@ -951,7 +951,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		// Navigate to mocksbi page
 		MockSBIPage mockSBIPage = new MockSBIPage(driver);
 		mockSBIPage.switchToMockSBI();
-		mockSBIPage.setAllModalityLowScroe();
+		mockSBIPage.setAllModalityLowScore();
 		mockSBIPage.switchBackToArcApp();
 
 		// New registration with low biometric score

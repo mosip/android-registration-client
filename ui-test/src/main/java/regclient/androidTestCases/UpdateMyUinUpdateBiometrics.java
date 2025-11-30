@@ -128,7 +128,7 @@ import regclient.utils.TestDataReader;
 public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify biometric update in update my UIN")
-	public void updateMyUinUpdatebiometrics() throws InterruptedException {
+	public void updateMyUinUpdateBiometrics() throws InterruptedException {
 		FetchUiSpec.getUiSpec("updateProcess");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
 		BasePage.disableAutoRotation();

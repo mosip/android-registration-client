@@ -3,7 +3,7 @@
 <suite name="Suite">
 	<test name="Test" thread-count="5">
 		<classes>
-			<class name="regclient.androidTestCases.logintest">
+			<class name="regclient.androidTestCases.Logintest">
 				<methods>
 					<include name="userloginTest" />
 					<include name="onboardingTest" />
@@ -53,7 +53,7 @@
 			</class>
 			<class name="regclient.androidTestCases.UpdateMyUinUpdateBiometrics">
 				<methods>
-					<include name="updateMyUinUpdatebiometrics" />
+					<include name="updateMyUinUpdateBiometrics" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.UpdateMyUinUpdateDocuments">
