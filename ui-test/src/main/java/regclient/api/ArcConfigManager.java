@@ -65,11 +65,11 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 	}
 	
 	public static String getIAMUsersToCreateOperator() {
-		return getproperty("iam-users-to-create-operator");
+		return getProperty("iam-users-to-create-operator", "");
 	}
 	
 	public static String getIAMUsersToCreateOnboarder() {
-		return getproperty("iam-users-to-create-onboarder");
+		return getProperty("iam-users-to-create-onboarder", "");
 	}
 	
 	public static String getiam_apienvuser() {
@@ -123,10 +123,10 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 	}
 	
 	public static String getRolesForOperatorUser() { 
-		return getproperty("rolesForOperator");
+		return getProperty("rolesForOperator", "");
 	}
 	
 	public static String getRolesForOnboardUser() { 
-		return getproperty("rolesForOnboarder");
+		return getProperty("rolesForOnboarder", "");
 	}
 }

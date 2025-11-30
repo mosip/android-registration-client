@@ -592,7 +592,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		// Return to mocksbi page
 		mockSBIPage.switchToMockSBI();
-		mockSBIPage.setAllModalityHighScroe();
+		mockSBIPage.setAllModalityHighScore();
 		mockSBIPage.switchBackToArcApp();
 
 		// Biometric correction packet process
@@ -758,22 +758,22 @@ public class BiometricCorrection extends AndroidBaseTest {
 				((HidesKeyboard) driver).hideKeyboard();
 				biometricDetailsPage.clickOnContinueButton();
 			}
+		}
 
-			if ("eng".equalsIgnoreCase(language)) {
-				previewPage = new PreviewPageEnglish(driver);
-			} else if ("hin".equalsIgnoreCase(language)) {
-				previewPage = new PreviewPageHindi(driver);
-			} else if ("fra".equalsIgnoreCase(language)) {
-				previewPage = new PreviewPageFrench(driver);
-			} else if ("kan".equalsIgnoreCase(language)) {
-				previewPage = new PreviewPageKannada(driver);
-			} else if ("tam".equalsIgnoreCase(language)) {
-				previewPage = new PreviewPageTamil(driver);
-			} else if ("ara".equalsIgnoreCase(language)) {
-				previewPage = new PreviewPageArabic(driver);
-			} else {
-				throw new IllegalStateException("Unsupported language in testdata.json: " + language);
-			}
+		if ("eng".equalsIgnoreCase(language)) {
+			previewPage = new PreviewPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			previewPage = new PreviewPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			previewPage = new PreviewPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			previewPage = new PreviewPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			previewPage = new PreviewPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			previewPage = new PreviewPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 
 		previewPage.clickOnContinueButton();
@@ -922,7 +922,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 				break;
 		}
 		manageApplicationsPage.clickOnBackButton();
-
 	}
 
 //	@Test(priority = 1, description = "Verify minor biometric correction")
@@ -1207,7 +1206,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 						"Verify if biometric details page is displayed");
 				// Return to mocksbi page
 				mockSBIPage.switchToMockSBI();
-				mockSBIPage.setAllModalityHighScroe();
+				mockSBIPage.setAllModalityHighScore();
 				mockSBIPage.switchBackToArcApp();
 
 				if ("eng".equalsIgnoreCase(language)) {

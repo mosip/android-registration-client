@@ -329,11 +329,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 				applicantBiometricsPage.clickOnScanButton();
 
 				if (!applicantBiometricsPage.isFaceScan()) {
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					Thread.sleep(2000);
 					applicantBiometricsPage.clickOnScanButton();
 				}
 
@@ -362,11 +358,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 				introducerBiometricPage.clickOnScanButton();
 
 				if (!introducerBiometricPage.isIrisScan()) {
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					Thread.sleep(2000);
 					introducerBiometricPage.clickOnScanButton();
 				}
 
@@ -509,9 +501,6 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if error empty username submit button enabled");
-
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
@@ -563,7 +552,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 		profilePage.clickOnLogoutButton();
 
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
 

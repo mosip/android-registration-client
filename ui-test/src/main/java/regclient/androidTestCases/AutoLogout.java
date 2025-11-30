@@ -121,7 +121,7 @@ public class AutoLogout extends AndroidBaseTest{
 		}
 		
 		assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(),
-				"Verify if registration tasks page is loaded");
+				"Verify if auto-logout popup is displayed");
 		
 		autoLogoutPage.clickOnStayLoggedInButton();
 		
@@ -140,7 +140,7 @@ public class AutoLogout extends AndroidBaseTest{
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-
+		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		
@@ -161,9 +161,9 @@ public class AutoLogout extends AndroidBaseTest{
 		}
 		
 		assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(),
-				"Verify if registration tasks page is loaded");
+				"Verify if auto-logout popup is displayed");
 		
-		autoLogoutPage.clickOnStaylogoutButton();
+		autoLogoutPage.clickOnStayLogoutButton();
 		
 		if ("eng".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageEnglish(driver);
@@ -239,7 +239,7 @@ public class AutoLogout extends AndroidBaseTest{
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-
+		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		
@@ -260,7 +260,7 @@ public class AutoLogout extends AndroidBaseTest{
 		}
 		
 		assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(),
-				"Verify if registration tasks page is loaded");
+				"Verify if auto-logout popup is displayed");
 		
 		autoLogoutPage.clickOnStayLoggedInButton();
 		
@@ -300,9 +300,9 @@ public class AutoLogout extends AndroidBaseTest{
 		}
 		
 		assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(),
-				"Verify if registration tasks page is loaded");
+				"Verify if auto-logout popup is displayed");
 		
-		autoLogoutPage.clickOnStaylogoutButton();
+		autoLogoutPage.clickOnStayLogoutButton();
 		
 		if ("eng".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageEnglish(driver);

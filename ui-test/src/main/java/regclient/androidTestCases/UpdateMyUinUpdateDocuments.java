@@ -489,10 +489,7 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 			}
 		}
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
-//		assertFalse(pendingApproval.isSubmitButtonEnabled(),
-//				"Verify if submit button is enable after selecting packet");
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());

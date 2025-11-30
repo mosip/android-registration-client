@@ -45,7 +45,7 @@ public class AutoLogoutPageKannada extends AutoLogoutPage{
 		return new RegistrationTasksPageKannada(driver);
 	}
 	
-	public LoginPage clickOnStaylogoutButton() {
+	public LoginPage clickOnStayLogoutButton() {
 		clickOnElement(logoutButton);
 		return new LoginPageKannada(driver);
 	}

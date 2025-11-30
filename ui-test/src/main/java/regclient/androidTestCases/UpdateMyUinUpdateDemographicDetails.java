@@ -493,8 +493,7 @@ public class UpdateMyUinUpdateDemographicDetails extends AndroidBaseTest {
 			}
 		}
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();

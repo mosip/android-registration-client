@@ -43,7 +43,7 @@ public class AutoLogoutPageFrench extends AutoLogoutPage {
 		return new RegistrationTasksPageFrench(driver);
 	}
 
-	public LoginPage clickOnStaylogoutButton() {
+	public LoginPage clickOnStayLogoutButton() {
 		clickOnElement(logoutButton);
 		return new LoginPageFrench(driver);
 	}

@@ -228,7 +228,7 @@ public class logintest extends AndroidBaseTest {
 
 		profilePage.clickOnLogoutButton();
 
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
 
@@ -274,36 +274,41 @@ public class logintest extends AndroidBaseTest {
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
 		loginPage.clickOnloginButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			onBoardPage = new OnBoardPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			onBoardPage = new OnBoardPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			onBoardPage = new OnBoardPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			onBoardPage = new OnBoardPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			onBoardPage = new OnBoardPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			onBoardPage = new OnBoardPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(onBoardPage.isGetOnBoardTitleDisplayed(), "Verify if on board page is loaded");
 		assertTrue(onBoardPage.isOnBoardWelcomeMessageDisplayed(), "Verify if on board page hello message is loaded");
 		onBoardPage.clickOnGetOnBoardTitle();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
-			supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
-			supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
-			supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
-			supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-			supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageArabic(driver);
+		if ("eng".equalsIgnoreCase(language)) {
+		    supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+		    supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+		    supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+		    supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+		    supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+		    supervisorBiometricVerificationpage = new SupervisorBiometricVerificationpageArabic(driver);
+		} else {
+		    throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+
 
 		assertTrue(supervisorBiometricVerificationpage.isSupervisorBiometricVerificationPageLoaded(),
 				"Verify if operational tasks page is loaded");
@@ -383,7 +388,7 @@ public class logintest extends AndroidBaseTest {
 
 			assertTrue(supervisorBiometricVerificationpage.isExceptionTypeTitleDisplayed(),
 					"Verify if applicant biometric mark exception is displayed");
-			supervisorBiometricVerificationpage.markOneFingreException();
+			supervisorBiometricVerificationpage.markOneFingerException();
 
 			supervisorBiometricVerificationpage.clickOnThumbsScanTitle();
 			supervisorBiometricVerificationpage.clickOnScanButton();
@@ -497,34 +502,38 @@ public class logintest extends AndroidBaseTest {
 				"Verify if registration tasks page is loaded");
 
 		registrationTasksPage.clickOnOperationalTasksTitle();
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
+		if ("eng".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
+		} else if ("hin".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
+		} else if ("fra".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
+		} else if ("kan".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
+		} else if ("tam".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
+		} else if ("ara".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 		operationalTaskPage.clickOnUpdateOperatorBiometricsButton();
 
-		if (TestDataReader.readData("language").equalsIgnoreCase("eng")) {
-			UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageEnglish(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("hin")) {
-			UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageHindi(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("fra")) {
-			UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageFrench(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("kan")) {
-			UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageKannada(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("tam")) {
-			UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageTamil(driver);
-		} else if (TestDataReader.readData("language").equalsIgnoreCase("ara")) {
-			UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageArabic(driver);
+		if ("eng".equalsIgnoreCase(language)) {
+		    UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+		    UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+		    UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+		    UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+		    UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+		    UpdateOperatorBiometricspage = new UpdateOperatorBiometricspageArabic(driver);
+		} else {
+		    throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(UpdateOperatorBiometricspage.isUpdateOperatorBiometricsPageLoaded(),
 				"Verify if update operator biometric page is loaded");

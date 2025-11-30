@@ -186,7 +186,7 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage {
 						waitTime(1);
 						clickOnElement(backgroundScreen);
 						waitTime(1);
-						assertTrue(checkDateFormatAndCurrectDate(id),
+						assertTrue(checkDateFormatAndCurrentDate(id),
 								"Verify date format and current date and time while selecting age date");
 					}
 				}
@@ -307,7 +307,7 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage {
 						waitTime(1);
 						clickOnElement(backgroundScreen);
 						waitTime(1);
-						assertTrue(checkDateFormatAndCurrectDate(id),
+						assertTrue(checkDateFormatAndCurrentDate(id),
 								"Verify date format and current date and time while selecting age date");
 					}
 				}
@@ -363,7 +363,7 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage {
 			return true;
 	}
 
-	public boolean checkDateFormatAndCurrectDate(String id) {
+	public boolean checkDateFormatAndCurrentDate(String id) {
 		if (getTextFromLocator(findElementWithRetry(
 				By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 						+ "\")]/parent::android.view.View/following-sibling::android.view.View")))

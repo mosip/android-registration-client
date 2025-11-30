@@ -508,8 +508,7 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 			}
 		}
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
+		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page displayed after retries");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
@@ -564,7 +563,7 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 
 		profilePage.clickOnLogoutButton();
 
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
 

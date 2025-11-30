@@ -44,7 +44,7 @@ public class AutoLogoutPageEnglish extends AutoLogoutPage{
 		return new RegistrationTasksPageEnglish(driver);
 	}
 	
-	public LoginPage clickOnStaylogoutButton() {
+	public LoginPage clickOnStayLogoutButton() {
 		clickOnElement(logoutButton);
 		return new LoginPageEnglish(driver);
 	}

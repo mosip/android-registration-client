@@ -295,19 +295,19 @@ public class BasePage {
 
 		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
-				try {
-					Thread.sleep(RETRY_DELAY_MS); // Wait before retrying
-				} catch (InterruptedException ie) {
-					Thread.currentThread().interrupt(); // Restore interrupted status
-				}
 				element = driver.findElement(by);
-				break; // Exit loop if the element is found
+				break;
 			} catch (NoSuchElementException e) {
 				if (i < MAX_RETRIES - 1) {
-					swipeOrScroll(); // Call swipeOrScroll() after retry attempt fails
+					try {
+						Thread.sleep(RETRY_DELAY_MS);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+					}
+					swipeOrScroll();
 				} else {
 					System.out.println("Element not found after " + MAX_RETRIES + " attempts.");
-					// throw e; // Optionally re-throw the exception if all retries fail
+
 				}
 			}
 		}
@@ -359,8 +359,8 @@ public class BasePage {
 	protected void clickAtCoordinates(int x, int y) {
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
 		Sequence clickSequence = new Sequence(finger, 1)
-				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y)) 
-				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))																				
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger, Duration.ofMillis(200))) // Pause for 200ms
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())); // Release at x, y
 																							// coordinates
@@ -414,20 +414,9 @@ public class BasePage {
 		return sb.toString();
 	}
 
-	private static String generateSixDigitNumber() {
-		return String.format("%06d", random.nextInt(1000000));
-	}
-
-	private static String generateTwoDigitNumber() {
-		return String.format("%02d", random.nextInt(100));
-	}
-
-	private static String generateOneDigitNumber() {
-		return String.valueOf(random.nextInt(10));
-	}
-
 	private static String generateDateInRange() {
-		int year = 1869 + random.nextInt(200); // Generates a year between 1869 and 2068
+		int currentYear = java.time.Year.now().getValue();
+		int year = 1869 + random.nextInt(currentYear - 1869 + 1); // Up to current year
 		int month = 1 + random.nextInt(12); // Generates a month between 1 and 12
 		int day = 1 + random.nextInt(28); // Generates a day between 1 and 28 (to keep it simple)
 
@@ -507,8 +496,15 @@ public class BasePage {
 	}
 
 	public static void disableWifiAndData() throws IOException {
-		new ProcessBuilder("adb", "shell", "svc", "wifi", "disable").start();
-		new ProcessBuilder("adb", "shell", "svc", "data", "disable").start();
+		Process wifiProcess = new ProcessBuilder("adb", "shell", "svc", "wifi", "disable").start();
+		Process dataProcess = new ProcessBuilder("adb", "shell", "svc", "data", "disable").start();
+		try {
+			wifiProcess.waitFor();
+			dataProcess.waitFor();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IOException("Interrupted while disabling WiFi/Data", e);
+		}
 	}
 
 	public WebElement findElementIfExists(By locator) {
@@ -725,11 +721,8 @@ public class BasePage {
 	}
 
 	protected void dismissAutoSaveOrKeyboard() {
-
-		// Close Chrome autofill sheet if visible
 		if (!driver.findElements(By.id("com.android.chrome:id/sheet_container")).isEmpty()) {
 			try {
-				// Click background to dismiss
 				List<WebElement> bg = driver.findElements(By.id("com.android.chrome:id/background"));
 				if (!bg.isEmpty())
 					bg.get(0).click();
@@ -738,8 +731,6 @@ public class BasePage {
 			} catch (Exception ignored) {
 			}
 		}
-
-		// Hide keyboard
 		try {
 			((HidesKeyboard) driver).hideKeyboard();
 		} catch (Exception ignored) {
@@ -747,21 +738,15 @@ public class BasePage {
 	}
 
 	protected void scrollTo(String contentDescFragment) {
-
-		// Try up to 7 swipes
 		for (int i = 0; i < 7; i++) {
-
-			// 1. Try to find the element (without scrolling)
 			try {
 				WebElement el = driver
 						.findElement(By.xpath("//*[contains(@content-desc,'" + contentDescFragment + "')]"));
 				if (el.isDisplayed()) {
-					return; // Found → stop scrolling
+					return;
 				}
 			} catch (Exception ignore) {
 			}
-
-			// 2. Not found → swipe up
 			swipeUp();
 		}
 

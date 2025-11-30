@@ -44,7 +44,7 @@ public class AutoLogoutPageTamil extends AutoLogoutPage{
 		return new RegistrationTasksPageTamil(driver);
 	}
 	
-	public LoginPage clickOnStaylogoutButton() {
+	public LoginPage clickOnStayLogoutButton() {
 		clickOnElement(logoutButton);
 		return new LoginPageTamil(driver);
 	}

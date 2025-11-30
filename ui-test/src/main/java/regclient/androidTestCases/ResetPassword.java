@@ -15,7 +15,6 @@ import regclient.page.RegistrationTasksPage;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
-import regclient.pages.english.KeycloakPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
@@ -35,6 +34,7 @@ import regclient.utils.TestDataReader;
 
 public class ResetPassword extends AndroidBaseTest {
 
+	@SuppressWarnings("null")
 	@Test(priority = 0, description = "Verify reset password")
 	public void resetPassword() throws IOException {
 		BasePage.disableAutoRotation();
@@ -123,7 +123,7 @@ public class ResetPassword extends AndroidBaseTest {
 		profilePage.clickOnResetPasswordButton();
 
 		if ("eng".equalsIgnoreCase(language)) {
-			keycloakPage = new KeycloakPageEnglish(driver);
+			profilePage = new ProfilePageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageHindi(driver);
 		} else if ("fra".equalsIgnoreCase(language)) {
@@ -218,6 +218,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 	}
 	
+	@SuppressWarnings("null")
 	@Test(priority = 1, description = "Reset to default password")
 	public void resetToDefaultPassword() throws IOException {
 		BasePage.disableAutoRotation();
@@ -301,7 +302,7 @@ public class ResetPassword extends AndroidBaseTest {
 		profilePage.clickOnResetPasswordButton();
 
 		if ("eng".equalsIgnoreCase(language)) {
-			keycloakPage = new KeycloakPageEnglish(driver);
+			profilePage = new ProfilePageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageHindi(driver);
 		} else if ("fra".equalsIgnoreCase(language)) {
@@ -335,5 +336,4 @@ public class ResetPassword extends AndroidBaseTest {
 		assertTrue(keycloakPage.resumeArcApplication(), "Verify if logout displayed in profile page");
 		profilePage.clickOnLogoutButton();
 	}
-	
 }

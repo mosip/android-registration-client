@@ -10,8 +10,6 @@ public abstract class RegistrationTasksPage extends BasePage {
 
 	public abstract SelectLanguagePage clickOnNewRegistrationButton();
 
-	public abstract void clickOnSynchronizeDataButton();
-
 	public abstract boolean isRegistrationTasksPageLoaded();
 
 	public abstract boolean isOperationalTaskDisplayed();

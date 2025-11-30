@@ -437,7 +437,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 					introducerBiometricPage.clickOnNextButton();
 				}
 				// righthand
-				if (FetchUiSpec.rightHand.equals("yes")) { 
+				if (FetchUiSpec.rightHand.equals("yes")) {
 					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplayed(),
 							"Verify if right hand scan is displayed");
 					introducerBiometricPage.clickOnScanButton();
@@ -564,8 +564,6 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
-		// assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code
-		// image is displayed");
 
 		acknowledgementPage.clickOnGoToHomeButton();
 
@@ -631,8 +629,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 			}
 		}
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
+		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page displayed after retries");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
@@ -689,13 +686,12 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
-		profilePage.clickOnLogoutButton();
 
 		profilePage.clickOnLogoutButton();
 
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+		profilePage.clickOnLogoutButton();
+
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
 

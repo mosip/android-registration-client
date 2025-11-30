@@ -12,5 +12,5 @@ public abstract class AutoLogoutPage extends BasePage{
 	
 	public abstract RegistrationTasksPage clickOnStayLoggedInButton();
 	
-	public abstract LoginPage clickOnStaylogoutButton();
+	public abstract LoginPage clickOnStayLogoutButton();
 }

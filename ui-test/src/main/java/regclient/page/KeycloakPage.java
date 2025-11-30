@@ -82,7 +82,6 @@ public abstract class KeycloakPage extends BasePage {
 
 	    scrollToTopSafe();
 
-	    // Always try native first – your screenshot shows a native TextView
 	    By nativePwd = By.xpath("//android.widget.TextView[@text='Password']");
 
 	    try {
@@ -94,7 +93,6 @@ public abstract class KeycloakPage extends BasePage {
 	        System.out.println("Password not found in native.");
 	    }
 
-	    // If native fails, try WEBVIEW
 	    for (String c : ((SupportsContextSwitching) driver).getContextHandles()) {
 	        if (c.contains("WEBVIEW")) {
 	            ((SupportsContextSwitching) driver).context(c);
@@ -105,7 +103,6 @@ public abstract class KeycloakPage extends BasePage {
 	            } catch (Exception ignore) {}
 	        }
 	    }
-
 	    return false;
 	}
 

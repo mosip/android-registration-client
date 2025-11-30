@@ -37,19 +37,17 @@ public class KeycloakUserManager {
 	public static Properties propsKernel = getproperty(TestRunner.getResourcePath() + "/config/Kernel.properties");
 
 	private static Keycloak getKeycloakInstance() {
-		Keycloak key = null;
 		try {
-
-			key = KeycloakBuilder.builder().serverUrl(ArcConfigManager.getIAMUrl())
-					.realm(ArcConfigManager.getIAMRealmId()).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-					.clientId(ArcConfigManager.getAutomationClientId())
-					.clientSecret(ArcConfigManager.getAutomationClientSecret()).build();
-			logger.debug("Connecting to IAM at {}", ArcConfigManager.getIAMUrl());
-		} catch (Exception e) {
-			throw e;
-
-		}
-		return key;
+			       Keycloak key = KeycloakBuilder.builder().serverUrl(ArcConfigManager.getIAMUrl()).realm(ArcConfigManager.getIAMRealmId())
+			               .grantType(OAuth2Constants.CLIENT_CREDENTIALS).clientId(ArcConfigManager.getAutomationClientId()).clientSecret(ArcConfigManager.getAutomationClientSecret())
+			                .build();
+			        System.out.println(ArcConfigManager.getIAMUrl());
+			        System.out.println(key.toString() + key.realms());
+			        return key;
+			    } catch (Exception e) {
+			        logger.error("Failed to initialize Keycloak client", e);
+			        throw new RuntimeException("Failed to initialize Keycloak client", e);
+			    }
 	}
 
 	public static Properties getproperty(String path) {
@@ -225,10 +223,10 @@ public class KeycloakUserManager {
 			List<String> toBeAssignedRoles = List.of(ArcConfigManager.getRolesForOnboardUser().split(","));
 			for (String role : toBeAssignedRoles) {
 				if (!role.equalsIgnoreCase("Default")) {
-				if (allRoles.stream().anyMatch(r -> r.getName().equalsIgnoreCase(role))) {
-					availableRoles
-							.add(allRoles.stream().filter(r -> r.getName().equalsIgnoreCase(role)).findFirst().get());
-				}
+					if (allRoles.stream().anyMatch(r -> r.getName().equalsIgnoreCase(role))) {
+						availableRoles.add(
+								allRoles.stream().filter(r -> r.getName().equalsIgnoreCase(role)).findFirst().get());
+					}
 				}
 			}
 			// Assign realm role tester to user

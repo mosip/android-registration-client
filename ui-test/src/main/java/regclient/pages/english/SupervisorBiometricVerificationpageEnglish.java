@@ -248,7 +248,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 		clickOnElement(oneEyeException);
 	}
 
-	public void markOneFingreException() {
+	public void markOneFingerException() {
 		clickOnElement(firstFingureExceptionImage);
 	}
 

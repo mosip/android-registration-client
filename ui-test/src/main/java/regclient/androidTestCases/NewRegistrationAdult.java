@@ -542,7 +542,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.clickOnSubmitButton();
-		assertTrue(pendingApproval.isInvalidemptyUsernameSumbitButtonEnbled(),
+		assertTrue(pendingApproval.isInvalidEmptyUsernameSubmitButtonEnabled(),
 				"Verify if error empty username submit button enabled");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
