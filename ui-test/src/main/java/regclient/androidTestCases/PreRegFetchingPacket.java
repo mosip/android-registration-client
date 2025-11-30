@@ -590,8 +590,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		profilePage.clickOnLogoutButton();
 
-		profilePage.clickOnLogoutButton();
-
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 	
 	}
@@ -1149,8 +1147,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		profilePage.clickOnLogoutButton();
-
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
