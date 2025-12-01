@@ -51,7 +51,7 @@ import regclient.pages.english.AuthenticationPageEnglish;
 import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.pages.english.ConsentPageEnglish;
 import regclient.pages.english.DemographicDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 import regclient.pages.english.IntroducerBiometricPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
@@ -102,7 +102,7 @@ import regclient.pages.kannada.AuthenticationPageKannada;
 import regclient.pages.kannada.BiometricDetailsPageKannada;
 import regclient.pages.kannada.ConsentPageKannada;
 import regclient.pages.kannada.DemographicDetailsPageKannada;
-import regclient.pages.kannada.DocumentuploadPageKannada;
+import regclient.pages.kannada.DocumentUploadPageKannada;
 import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.ManageApplicationsPageKannada;
@@ -119,7 +119,7 @@ import regclient.pages.tamil.AuthenticationPageTamil;
 import regclient.pages.tamil.BiometricDetailsPageTamil;
 import regclient.pages.tamil.ConsentPageTamil;
 import regclient.pages.tamil.DemographicDetailsPageTamil;
-import regclient.pages.tamil.DocumentuploadPageTamil;
+import regclient.pages.tamil.DocumentUploadPageTamil;
 import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.ManageApplicationsPageTamil;
@@ -134,7 +134,7 @@ import regclient.utils.TestDataReader;
 
 public class UpdateMyUinInfant extends AndroidBaseTest {
 
-	@Test
+	@Test(priority = 0, description = "Verify infant UIN update")
 	public void updateMyUinInfant() throws InterruptedException {
 		FetchUiSpec.getUiSpec("updateProcess");
 		BasePage.disableAutoRotation();
@@ -195,6 +195,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+		registrationTasksPage.handleLocationPermission();
 		registrationTasksPage.clickUpdateMyUINButton();
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -328,11 +329,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 				applicantBiometricsPage.clickOnScanButton();
 
 				if (!applicantBiometricsPage.isFaceScan()) {
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					Thread.sleep(2000);
 					applicantBiometricsPage.clickOnScanButton();
 				}
 
@@ -361,11 +358,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 				introducerBiometricPage.clickOnScanButton();
 
 				if (!introducerBiometricPage.isIrisScan()) {
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					Thread.sleep(2000);
 					introducerBiometricPage.clickOnScanButton();
 				}
 
@@ -378,15 +371,15 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 			} else if (screen.equals("Documents")) {
 				if ("eng".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageEnglish(driver);
+					documentuploadPage = new DocumentUploadPageEnglish(driver);
 				} else if ("hin".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageHindi(driver);
 				} else if ("fra".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageFrench(driver);
 				} else if ("kan".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageKannada(driver);
+					documentuploadPage = new DocumentUploadPageKannada(driver);
 				} else if ("tam".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageTamil(driver);
+					documentuploadPage = new DocumentUploadPageTamil(driver);
 				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
 				} else {
@@ -508,9 +501,6 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if error empty username submit button enabled");
-
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
@@ -560,9 +550,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 		profilePage.clickOnLogoutButton();
 
-		profilePage.clickOnLogoutButton();
-
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
 

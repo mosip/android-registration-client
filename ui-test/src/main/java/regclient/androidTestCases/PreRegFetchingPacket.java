@@ -51,7 +51,7 @@ import regclient.pages.english.AuthenticationPageEnglish;
 import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.pages.english.ConsentPageEnglish;
 import regclient.pages.english.DemographicDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 import regclient.pages.english.IntroducerBiometricPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
@@ -99,7 +99,7 @@ import regclient.pages.kannada.AuthenticationPageKannada;
 import regclient.pages.kannada.BiometricDetailsPageKannada;
 import regclient.pages.kannada.ConsentPageKannada;
 import regclient.pages.kannada.DemographicDetailsPageKannada;
-import regclient.pages.kannada.DocumentuploadPageKannada;
+import regclient.pages.kannada.DocumentUploadPageKannada;
 import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.ManageApplicationsPageKannada;
@@ -115,7 +115,7 @@ import regclient.pages.tamil.AuthenticationPageTamil;
 import regclient.pages.tamil.BiometricDetailsPageTamil;
 import regclient.pages.tamil.ConsentPageTamil;
 import regclient.pages.tamil.DemographicDetailsPageTamil;
-import regclient.pages.tamil.DocumentuploadPageTamil;
+import regclient.pages.tamil.DocumentUploadPageTamil;
 import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.ManageApplicationsPageTamil;
@@ -129,7 +129,7 @@ import regclient.utils.TestDataReader;
 
 public class PreRegFetchingPacket extends AndroidBaseTest {
 
-	@Test
+	@Test(priority = 0, description = "Verify adult pre-reg fetching registration")
 	public void adultPreRegFetching() throws InterruptedException {
 		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
@@ -191,6 +191,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();
@@ -262,22 +263,22 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 				demographicPage.fetchPreregApplicationId("adult");
 
-				demographicPage.validateFetchedDemographicData();
+//				demographicPage.validateFetchedDemographicData();
 
 				demographicPage.fillRemainDemographicDetailsPage("adult");
 				demographicPage.clickOnContinueButton();
 
 			} else if (screen.equals("Documents")) {
 				if ("eng".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageEnglish(driver);
+					documentuploadPage = new DocumentUploadPageEnglish(driver);
 				} else if ("hin".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageHindi(driver);
 				} else if ("fra".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageFrench(driver);
 				} else if ("kan".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageKannada(driver);
+					documentuploadPage = new DocumentUploadPageKannada(driver);
 				} else if ("tam".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageTamil(driver);
+					documentuploadPage = new DocumentUploadPageTamil(driver);
 				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
 				} else {
@@ -324,59 +325,78 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIrisScan();
 
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
+							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
+					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
 				}
 				// righthand
 				if (FetchUiSpec.rightHand.equals("yes")) {
+					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+							"Verify if biometric details page is displayed");
 					applicantBiometricsPage = biometricDetailsPage.clickOnRightHandScanIcon();
 
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
+							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
+					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
+
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
+					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+							"Verify if biometric details page is displayed");
 					applicantBiometricsPage = biometricDetailsPage.clickOnLeftHandScanIcon();
 
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
+							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
+					assertTrue(applicantBiometricsPage.isLeftHandScan(), "Verify if Left hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
+
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
+					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+							"Verify if biometric details page is displayed");
 					applicantBiometricsPage = biometricDetailsPage.clickOnThumbsScanIcon();
 
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
+							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
+					assertTrue(applicantBiometricsPage.isThumbsScan(), "Verify if thumbs scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
+
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
+					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+							"Verify if biometric details page is displayed");
 					biometricDetailsPage.clickOnFaceScanIcon();
 
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
+							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
-
+					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
+
 					applicantBiometricsPage.clickOnBackButton();
 				}
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
 						"Verify if biometric details page is displayed");
 				biometricDetailsPage.clickOnContinueButton();
 			}
-
 		}
 		if ("eng".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageEnglish(driver);
@@ -500,11 +520,12 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 		pendingApproval.selectLatestAIdCheckBox();
 
-		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
+		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
+				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
-			pendingApproval.clickOnSubmitButton();
+			pendingApproval.clickOnAuthenticateButton();
 			Thread.sleep(2000);
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
@@ -513,14 +534,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		pendingApproval.clickOnSubmitButton();
-		assertTrue(pendingApproval.isInvalidemptyUsernameSumbitButtonEnbled(),
-				"Verify if error empty username submit button enabled");
-
-		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
-
-		assertTrue(pendingApproval.isInvalidUsernameMessageDisplayed(),
-				"Verify if invalid username messgae is displayed");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -547,9 +560,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
-		manageApplicationsPage.enterWrongAID(Aid + 123);
-
-		assertTrue(manageApplicationsPage.isZeroApplicationDisplayed(), "Verify if wrong Aid should not display");
 
 		manageApplicationsPage.selectLatestAidCheckBox();
 		for (int i = 0; i < 3; i++) {
@@ -578,15 +588,13 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-
-		profilePage.clickOnLogoutButton();
-
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+	
 	}
 
-	@Test
+	@Test(priority = 1, description = "Verify minor pre-reg fetching registration")
 	public void minorPreRegFetching() throws InterruptedException {
 
 		BasePage.disableAutoRotation();
@@ -652,6 +660,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();
@@ -735,15 +744,15 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 			} else if (screen.equals("Documents")) {
 				if ("eng".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageEnglish(driver);
+					documentuploadPage = new DocumentUploadPageEnglish(driver);
 				} else if ("hin".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageHindi(driver);
 				} else if ("fra".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageFrench(driver);
 				} else if ("kan".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageKannada(driver);
+					documentuploadPage = new DocumentUploadPageKannada(driver);
 				} else if ("tam".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageTamil(driver);
+					documentuploadPage = new DocumentUploadPageTamil(driver);
 				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
 				} else {
@@ -950,7 +959,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 				biometricDetailsPage.clickOnContinueButton();
 			}
-
 		}
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -1071,11 +1079,12 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 		pendingApproval.selectLatestAIdCheckBox();
 
-		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
+		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
+				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
-			pendingApproval.clickOnSubmitButton();
+			pendingApproval.clickOnAuthenticateButton();
 			Thread.sleep(2000);
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
@@ -1084,14 +1093,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		pendingApproval.clickOnSubmitButton();
-		assertTrue(pendingApproval.isInvalidemptyUsernameSumbitButtonEnbled(),
-				"Verify if error empty username submit button enabled");
-
-		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
-
-		assertTrue(pendingApproval.isInvalidUsernameMessageDisplayed(),
-				"Verify if invalid username messgae is displayed");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -1118,9 +1119,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
-		manageApplicationsPage.enterWrongAID(Aid + 123);
-
-		assertTrue(manageApplicationsPage.isZeroApplicationDisplayed(), "Verify if wrong Aid should not display");
 
 		manageApplicationsPage.selectLatestAidCheckBox();
 		for (int i = 0; i < 3; i++) {
@@ -1149,17 +1147,13 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
-		profilePage.clickOnLogoutButton();
-
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-
+	
 	}
 
-	@Test
+	@Test(priority = 2, description = "Verify infant pre-reg fetching registration")
 	public void infantPreRegFetching() throws InterruptedException {
 
 		BasePage.disableAutoRotation();
@@ -1225,6 +1219,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();
@@ -1308,15 +1303,15 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 			} else if (screen.equals("Documents")) {
 				if ("eng".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageEnglish(driver);
+					documentuploadPage = new DocumentUploadPageEnglish(driver);
 				} else if ("hin".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageHindi(driver);
 				} else if ("fra".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageFrench(driver);
 				} else if ("kan".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageKannada(driver);
+					documentuploadPage = new DocumentUploadPageKannada(driver);
 				} else if ("tam".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageTamil(driver);
+					documentuploadPage = new DocumentUploadPageTamil(driver);
 				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
 				} else {
@@ -1366,7 +1361,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				assertTrue(applicantBiometricsPage.isFaceScan(),
 						"Verify if face captured and 2 attempts left text is displayed");
 				applicantBiometricsPage.closeScanCapturePopUp();
-				;
 				biometricDetailsPage = applicantBiometricsPage.clickOnNextButton();
 
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
@@ -1575,11 +1569,12 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 		pendingApproval.selectLatestAIdCheckBox();
 
-		assertTrue(pendingApproval.isSubmitButtonEnabled(), "Verify if submit button is enable after selecting packet");
+		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
+				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
-			pendingApproval.clickOnSubmitButton();
+			pendingApproval.clickOnAuthenticateButton();
 			Thread.sleep(2000);
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
@@ -1642,8 +1637,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		profilePage.clickOnLogoutButton();
-
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");

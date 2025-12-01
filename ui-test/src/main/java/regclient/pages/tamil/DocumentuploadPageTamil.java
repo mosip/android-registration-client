@@ -15,9 +15,9 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
 import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 
-public class DocumentuploadPageTamil extends DocumentUploadPage {
+public class DocumentUploadPageTamil extends DocumentUploadPage {
 
 	@AndroidFindBy(accessibility = "ஸ்க்ரிம்")
 	private WebElement PopUpCloseButton;
@@ -43,7 +43,7 @@ public class DocumentuploadPageTamil extends DocumentUploadPage {
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
 
-	public DocumentuploadPageTamil(AppiumDriver driver) {
+	public DocumentUploadPageTamil(AppiumDriver driver) {
 		super(driver);
 	}
 
@@ -59,7 +59,7 @@ public class DocumentuploadPageTamil extends DocumentUploadPage {
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageEnglish(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

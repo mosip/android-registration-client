@@ -45,7 +45,7 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
 	private WebElement scriptSyncCompletedMessage;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchronize Data\")")
+	@AndroidFindBy(xpath = "//android.widget.ImageView[contains(@content-desc,'Synchronize Data')]")
 	private WebElement synchronizeDataButton;
 
 	@AndroidFindBy(accessibility = "Settings\nTab 2 of 4")
@@ -169,6 +169,10 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 
 	public void clickOnRegistrationTasksTab() {
 		clickOnElement(registrationTasksTitle);
+	}
+	
+	public boolean isSettingsButtonDisplayed() {
+		return isElementDisplayed(settingsButton);
 	}
 
 }

@@ -14,6 +14,7 @@ import io.mosip.testrig.apirig.testrunner.OTPListener;
 import regclient.api.AdminTestUtil;
 import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
+import regclient.api.KeycloakUserManager;
 
 public class TestRunner {
 
@@ -31,10 +32,9 @@ public class TestRunner {
 		io.mosip.testrig.apirig.utils.AdminTestUtil.init();
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		System.out.println("BaseTestCase.ApplnURI : " + BaseTestCase.ApplnURI);
-		AdminTestUtil.getPreRegistrationFlow("adult");
-		AdminTestUtil.getPreRegistrationFlow("minor");
-		AdminTestUtil.getPreRegistrationFlow("infant");
-
+//		AdminTestUtil.getPreRegistrationFlow("adult");
+//		AdminTestUtil.getPreRegistrationFlow("minor");
+//		AdminTestUtil.getPreRegistrationFlow("infant");
 		File homeDir = null;
 		TestNG runner = new TestNG();
 		if (!ArcConfigManager.gettestcases().equals("")) {
@@ -44,7 +44,7 @@ public class TestRunner {
 
 			XmlClass addMachineDetails = new XmlClass("regclient.androidTestCases.AddMachineDetails");
 			XmlClass initialLaunch = new XmlClass("regclient.androidTestCases.InitialLaunch");
-			XmlClass logintest = new XmlClass("regclient.androidTestCases.logintest");
+			XmlClass logintest = new XmlClass("regclient.androidTestCases.Logintest");
 			XmlClass newRegistrationAdult = new XmlClass("regclient.androidTestCases.NewRegistrationAdult");
 			XmlClass newRegistrationAdultException = new XmlClass(
 					"regclient.androidTestCases.NewRegistrationAdultException");
@@ -54,13 +54,17 @@ public class TestRunner {
 					"regclient.androidTestCases.NewRegistrationMinorException");
 			XmlClass updateMyUinInfant = new XmlClass("regclient.androidTestCases.UpdateMyUinInfant");
 			XmlClass updateMyUinMinor = new XmlClass("regclient.androidTestCases.UpdateMyUinMinor");
-			XmlClass updateMyUINUpdatebiometrics = new XmlClass(
+			XmlClass updateMyUinUpdatebiometrics = new XmlClass(
 					"regclient.androidTestCases.UpdateMyUinUpdateBiometrics");
-			XmlClass updateMyUINUpdateDemographicDetails = new XmlClass(
-					"regclient.androidTestCases.UpdateMyUINUpdateDemographicDetails");
+			XmlClass updateMyUinUpdateDemographicDetails = new XmlClass(
+					"regclient.androidTestCases.UpdateMyUinUpdateDemographicDetails");
 			XmlClass updateMyUinUpdateDocuments = new XmlClass("regclient.androidTestCases.UpdateMyUinUpdateDocuments");
 			XmlClass lostUin = new XmlClass("regclient.androidTestCases.LostUin");
 			XmlClass settings = new XmlClass("regclient.androidTestCases.Settings");
+			XmlClass resetPassword = new XmlClass("regclient.androidTestCases.ResetPassword");
+			XmlClass autoLogout = new XmlClass("regclient.androidTestCases.AutoLogout");
+			XmlClass biometricCorrection = new XmlClass("regclient.androidTestCases.BiometricCorrection");
+			XmlClass preRegFetchingPacket = new XmlClass("regclient.androidTestCases.PreRegFetchingPacket");
 
 			List<XmlClass> classes = new ArrayList<>();
 			String[] Scenarionames = ArcConfigManager.gettestcases().split(",");
@@ -78,7 +82,7 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdult"))
 					classes.add(newRegistrationAdult);
-
+				
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultException"))
 					classes.add(newRegistrationAdultException);
 
@@ -97,11 +101,11 @@ public class TestRunner {
 				if (Scenarioname.equalsIgnoreCase("updateMyUinMinor"))
 					classes.add(updateMyUinMinor);
 
-				if (Scenarioname.equalsIgnoreCase("updateMyUINUpdatebiometrics"))
-					classes.add(updateMyUINUpdatebiometrics);
+				if (Scenarioname.equalsIgnoreCase("updateMyUinUpdateDemographicDetails"))
+					classes.add(updateMyUinUpdatebiometrics);
 
-				if (Scenarioname.equalsIgnoreCase("updateMyUINUpdateDemographicDetails"))
-					classes.add(updateMyUINUpdateDemographicDetails);
+				if (Scenarioname.equalsIgnoreCase("updateMyUinUpdateDemographicDetails"))
+					classes.add(updateMyUinUpdateDemographicDetails);
 
 				if (Scenarioname.equalsIgnoreCase("updateMyUinUpdateDocuments"))
 					classes.add(updateMyUinUpdateDocuments);
@@ -111,6 +115,18 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("settings"))
 					classes.add(settings);
+				
+				if (Scenarioname.equalsIgnoreCase("resetPassword"))
+					classes.add(resetPassword);
+				
+				if (Scenarioname.equalsIgnoreCase("autoLogout"))
+					classes.add(autoLogout);
+				
+				if (Scenarioname.equalsIgnoreCase("biometricCorrection"))
+					classes.add(biometricCorrection);
+				
+				if (Scenarioname.equalsIgnoreCase("preRegFetchingPacket"))
+					classes.add(preRegFetchingPacket);
 
 			}
 			XmlTest test = new XmlTest(suite);

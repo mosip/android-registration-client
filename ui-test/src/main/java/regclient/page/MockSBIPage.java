@@ -17,6 +17,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.TouchAction;
@@ -74,27 +75,20 @@ public class MockSBIPage extends BasePage {
 	public void switchBackToArcApp() {
 		AndroidDriver driver = (AndroidDriver) this.driver;
 		try {
-			// detect the package from session capability (not hardcoded)
 			String mainPackage = String.valueOf(driver.getCapabilities().getCapability("appium:appPackage"));
 			String mainActivity = String.valueOf(driver.getCapabilities().getCapability("appium:appActivity"));
-
-			// if current package already matches, nothing to do
 			if (mainPackage != null && mainPackage.equals(driver.getCurrentPackage())) {
 				return;
 			}
-
-			// 1️⃣ Try to simply bring ARC app to foreground if installed
 			if (driver.isAppInstalled(mainPackage)) {
 				driver.activateApp(mainPackage);
 				return;
 			}
-
-			// 2️⃣ Fallback: use startActivity if activateApp didn't work
 			if (mainActivity != null && !mainActivity.isEmpty()) {
 				driver.startActivity(new Activity(mainPackage, mainActivity));
 			}
-
-		} catch (Exception ignored) {
+		} catch (Exception e) {
+			System.err.println("Failed to switch back to ARC app: " + e.getMessage());
 		}
 	}
 
@@ -109,15 +103,16 @@ public class MockSBIPage extends BasePage {
 		clickOnElement(mockSbiSaveButton);
 	}
 
-	public void setAllModalityLowScroe() {
-		setModalityScore("Face", 20); // ModalityScore should be (20-5=15)
-		setModalityScore("Iris", 20);
+	public void setAllModalityLowScore() {
+		// ModalityScore should be (20-5=15)
+		setModalityScore("Face", 20);
+		swipeOrScroll();
 		clickOnElement(mockSbiSaveButton);
 	}
 
-	public void setAllModalityHighScroe() {
-		setModalityScore("Face", 95);
-		setModalityScore("Iris", 95);
+	public void setAllModalityHighScore() {
+		setModalityScore("Face", 90);
+		scrollUntilElementVisible(AppiumBy.id("io.mosip.mock.sbi:id/button12"));
 		clickOnElement(mockSbiSaveButton);
 	}
 
@@ -156,15 +151,12 @@ public class MockSBIPage extends BasePage {
 
 			WebElement seekBar = findElementIfExists(By.xpath(xpath)); // non-throwing
 
-			// fallback: a few swipes + re-checks
 			for (int i = 0; i < 5 && seekBar == null; i++) {
 				swipeOrScroll();
 				waitTime(1);
 				seekBar = findElementIfExists(By.xpath(xpath));
 			}
-
 			if (seekBar == null) {
-				// final attempt using retry (may throw) — catch below
 				seekBar = findElementWithRetry(By.xpath(xpath));
 			}
 

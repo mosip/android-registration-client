@@ -12,7 +12,7 @@ import regclient.pages.english.LoginPageEnglish;
 
 public class InitialLaunch extends AndroidBaseTest {
 
-	@Test
+	@Test(priority = 0, description = "Verify initial app launch after machine details are configured")
 	public void initialLaunch() {
 		BasePage.disableAutoRotation();
 		LoginPageEnglish loginPage = new LoginPageEnglish(driver);

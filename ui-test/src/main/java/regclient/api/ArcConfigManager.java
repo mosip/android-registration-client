@@ -63,7 +63,15 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 	public static String getDbSchema() {
 		return getProperty("es_db_schema", "");
 	}
-
+	
+	public static String getIAMUsersToCreateOperator() {
+		return getProperty("iam-users-to-create-operator", "");
+	}
+	
+	public static String getIAMUsersToCreateOnboarder() {
+		return getProperty("iam-users-to-create-onboarder", "");
+	}
+	
 	public static String getiam_apienvuser() {
 		return getProperty("apiEnvUser", "");
 	}
@@ -112,5 +120,13 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 
 	public static String gettestcases() {
 		return getProperty("regclientScenariosToExecute", "");
+	}
+	
+	public static String getRolesForOperatorUser() { 
+		return getProperty("rolesForOperator", "");
+	}
+	
+	public static String getRolesForOnboardUser() { 
+		return getProperty("rolesForOnboarder", "");
 	}
 }

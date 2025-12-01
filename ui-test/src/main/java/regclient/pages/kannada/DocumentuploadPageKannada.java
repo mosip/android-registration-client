@@ -15,10 +15,10 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
 import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 
 
-public class DocumentuploadPageKannada extends DocumentUploadPage{
+public class DocumentUploadPageKannada extends DocumentUploadPage{
 
 	@AndroidFindBy(accessibility = "ಸ್ಕ್ರಿಮ್")
 	private WebElement PopUpCloseButton;
@@ -44,7 +44,7 @@ public class DocumentuploadPageKannada extends DocumentUploadPage{
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
 
-	public DocumentuploadPageKannada(AppiumDriver driver) {
+	public DocumentUploadPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
 	
@@ -60,7 +60,7 @@ public class DocumentuploadPageKannada extends DocumentUploadPage{
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageKannada(driver);
+		return new DocumentUploadPageKannada(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

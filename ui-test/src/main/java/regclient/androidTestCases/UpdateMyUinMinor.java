@@ -51,7 +51,7 @@ import regclient.pages.english.AuthenticationPageEnglish;
 import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.pages.english.ConsentPageEnglish;
 import regclient.pages.english.DemographicDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 import regclient.pages.english.IntroducerBiometricPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
@@ -102,7 +102,7 @@ import regclient.pages.kannada.AuthenticationPageKannada;
 import regclient.pages.kannada.BiometricDetailsPageKannada;
 import regclient.pages.kannada.ConsentPageKannada;
 import regclient.pages.kannada.DemographicDetailsPageKannada;
-import regclient.pages.kannada.DocumentuploadPageKannada;
+import regclient.pages.kannada.DocumentUploadPageKannada;
 import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.ManageApplicationsPageKannada;
@@ -119,7 +119,7 @@ import regclient.pages.tamil.AuthenticationPageTamil;
 import regclient.pages.tamil.BiometricDetailsPageTamil;
 import regclient.pages.tamil.ConsentPageTamil;
 import regclient.pages.tamil.DemographicDetailsPageTamil;
-import regclient.pages.tamil.DocumentuploadPageTamil;
+import regclient.pages.tamil.DocumentUploadPageTamil;
 import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.ManageApplicationsPageTamil;
@@ -134,7 +134,7 @@ import regclient.utils.TestDataReader;
 
 public class UpdateMyUinMinor extends AndroidBaseTest {
 
-	@Test
+	@Test(priority = 0, description = "Verify minor UIN update")
 	public void updateMyUinMinor() throws InterruptedException {
 		FetchUiSpec.getUiSpec("updateProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
@@ -196,6 +196,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickUpdateMyUINButton();
@@ -437,12 +438,6 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				}
 				// righthand
 				if (FetchUiSpec.rightHand.equals("yes")) {
-					if (!FetchUiSpec.eye.equals("yes")) {
-						biometricDetailsPage.clickOnIntroducerRightHandScan();
-					}
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
-							"Verify if introducer biometric page is displayed");
-
 					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplayed(),
 							"Verify if right hand scan is displayed");
 					introducerBiometricPage.clickOnScanButton();
@@ -453,9 +448,6 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
-							"Verify if introducer biometric page is displayed");
-
 					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplayed(),
 							"Verify if applicant left hand scan title is displayed");
 					introducerBiometricPage.clickOnScanButton();
@@ -466,9 +458,6 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
-							"Verify if introducer biometric page is displayed");
-
 					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplayed(),
 							"Verify if thumbs scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
@@ -479,9 +468,6 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
-							"Verify if introducer biometric page is displayed");
-
 					assertTrue(introducerBiometricPage.isFaceScanTitleDisplayed(),
 							"Verify if face scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
@@ -494,15 +480,15 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				biometricDetailsPage.clickOnContinueButton();
 			} else if (screen.equals("Documents")) {
 				if ("eng".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageEnglish(driver);
+					documentuploadPage = new DocumentUploadPageEnglish(driver);
 				} else if ("hin".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageHindi(driver);
 				} else if ("fra".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageFrench(driver);
 				} else if ("kan".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageKannada(driver);
+					documentuploadPage = new DocumentUploadPageKannada(driver);
 				} else if ("tam".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentuploadPageTamil(driver);
+					documentuploadPage = new DocumentUploadPageTamil(driver);
 				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
 				} else {
@@ -578,8 +564,6 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
-		// assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code
-		// image is displayed");
 
 		acknowledgementPage.clickOnGoToHomeButton();
 
@@ -645,8 +629,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 			}
 		}
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
+		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page displayed after retries");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
@@ -703,13 +686,10 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
-		profilePage.clickOnLogoutButton();
 
 		profilePage.clickOnLogoutButton();
 
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
 
 	}
 

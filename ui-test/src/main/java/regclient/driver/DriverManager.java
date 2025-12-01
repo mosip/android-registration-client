@@ -20,6 +20,9 @@ public class DriverManager {
 	private static AppiumDriver getAndroidDriver() {
 		DesiredCapabilities desiredCapabilities = CapabilitiesReader.getDesiredCapabilities("androidDevice",
 				"/DesiredCapabilities.json");
+		if (service == null) {
+			throw new IllegalStateException("Appium service not started. Call startAppiumServer() first.");
+		}
 		appiumDriver.set(new AndroidDriver(service.getUrl(), desiredCapabilities));
 		return appiumDriver.get();
 	}
@@ -28,7 +31,7 @@ public class DriverManager {
 		return getAndroidDriver();
 	}
 
-	public static void startAppiumServer() {
+	public synchronized static void startAppiumServer() {
 		PropertiesReader propertiesReader = new PropertiesReader();
 		String ipAddress = System.getProperty("ipAddress") != null ? System.getProperty("ipAddress")
 				: propertiesReader.getIpAddress();
@@ -41,7 +44,7 @@ public class DriverManager {
 		service.start();
 	}
 
-	public static void stopAppiumServer() {
+	public synchronized static void stopAppiumServer() {
 		if (service != null)
 			service.stop();
 	}

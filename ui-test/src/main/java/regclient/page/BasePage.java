@@ -2,15 +2,22 @@ package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.HidesKeyboard;
+import io.appium.java_client.MobileBy;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.remote.SupportsContextSwitching;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import io.netty.handler.timeout.TimeoutException;
-
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Pause;
@@ -35,8 +42,12 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -45,6 +56,7 @@ public class BasePage {
 	private static String signPublicKey;
 	private static String publicKey;
 	private static String name;
+	public static String email;
 
 	public BasePage(AppiumDriver driver) {
 		this.driver = driver;
@@ -150,7 +162,6 @@ public class BasePage {
 	}
 
 	protected void swipeOrScroll() {
-
 		Dimension size = driver.manage().window().getSize();
 		int startX = size.getWidth() / 2;
 		int startY = size.getHeight() / 2;
@@ -213,7 +224,6 @@ public class BasePage {
 		try {
 			Thread.sleep(sec * 1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -255,11 +265,9 @@ public class BasePage {
 		Clipboard clipboard = toolkit.getSystemClipboard();
 		Transferable contents = clipboard.getContents(null);
 		if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-
 			String copiedText = (String) contents.getTransferData(DataFlavor.stringFlavor);
 			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode jsonNode = objectMapper.readTree(copiedText);
-
 			signPublicKey = jsonNode.get("signPublicKey").asText();
 			publicKey = jsonNode.get("publicKey").asText();
 			name = jsonNode.get("name").asText();
@@ -287,23 +295,25 @@ public class BasePage {
 
 		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
-				try {
-					Thread.sleep(RETRY_DELAY_MS); // Wait before retrying
-				} catch (InterruptedException ie) {
-					Thread.currentThread().interrupt(); // Restore interrupted status
-				}
 				element = driver.findElement(by);
-				break; // Exit loop if the element is found
+				break;
 			} catch (NoSuchElementException e) {
 				if (i < MAX_RETRIES - 1) {
-					swipeOrScroll(); // Call swipeOrScroll() after retry attempt fails
+					try {
+						Thread.sleep(RETRY_DELAY_MS);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+					}
+					swipeOrScroll();
 				} else {
 					System.out.println("Element not found after " + MAX_RETRIES + " attempts.");
-					// throw e; // Optionally re-throw the exception if all retries fail
 				}
 			}
 		}
 
+		if (element == null) {
+			throw new NoSuchElementException("Element not found after " + MAX_RETRIES + " attempts: " + by);
+		}
 		return element;
 	}
 
@@ -351,11 +361,8 @@ public class BasePage {
 	protected void clickAtCoordinates(int x, int y) {
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
 		Sequence clickSequence = new Sequence(finger, 1)
-				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y)) // Move to x,
-																											// y
-																											// coordinates
-				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg())) // Press down at x, y
-																							// coordinates
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger, Duration.ofMillis(200))) // Pause for 200ms
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())); // Release at x, y
 																							// coordinates
@@ -409,20 +416,9 @@ public class BasePage {
 		return sb.toString();
 	}
 
-	private static String generateSixDigitNumber() {
-		return String.format("%06d", random.nextInt(1000000));
-	}
-
-	private static String generateTwoDigitNumber() {
-		return String.format("%02d", random.nextInt(100));
-	}
-
-	private static String generateOneDigitNumber() {
-		return String.valueOf(random.nextInt(10));
-	}
-
 	private static String generateDateInRange() {
-		int year = 1869 + random.nextInt(200); // Generates a year between 1869 and 2068
+		int currentYear = java.time.Year.now().getValue();
+		int year = 1869 + random.nextInt(currentYear - 1869 + 1); // Up to current year
 		int month = 1 + random.nextInt(12); // Generates a month between 1 and 12
 		int day = 1 + random.nextInt(28); // Generates a day between 1 and 28 (to keep it simple)
 
@@ -444,27 +440,27 @@ public class BasePage {
 		String[] domains = { "example.com", "test.com", "email.com" };
 		String localPart = generateStringOfLength(3, 10);
 		String domain = domains[random.nextInt(domains.length)];
-		return localPart + "@" + domain;
+		email = localPart + "@" + domain;
+		return email;
 	}
 
-	protected void switchContext(String targetContext) {
-		Set<String> contexts = ((SupportsContextSwitching) driver).getContextHandles();
-		for (String context : contexts) {
-			System.out.println("Available context: " + context);
-		}
-
-		for (String context : contexts) {
-			if (context.toLowerCase().contains(targetContext.toLowerCase())) {
-				((SupportsContextSwitching) driver).context(context);
-				System.out.println("Switched to context: " + context);
-				return;
+	protected boolean switchToWebViewIfAvailable() {
+		for (int i = 0; i < 10; i++) { // wait up to ~5 seconds
+			for (String ctx : ((SupportsContextSwitching) driver).getContextHandles()) {
+				if (ctx.toUpperCase().contains("WEBVIEW")) {
+					((SupportsContextSwitching) driver).context(ctx);
+					return true;
+				}
+			}
+			try {
+				Thread.sleep(500);
+			} catch (Exception ignored) {
 			}
 		}
-
-		throw new RuntimeException("Target context not found: " + targetContext);
+		return false; // no webview
 	}
 
-	protected void openArcApplication(String targetContext) {
+	protected void openArcApplication() {
 		AndroidDriver driver = (AndroidDriver) this.driver;
 
 		if (driver.isAppInstalled("com.android.chrome")) {
@@ -473,11 +469,17 @@ public class BasePage {
 
 		driver.activateApp("io.mosip.registration_client");
 
+		// ensure we are in native context (no WEBVIEW)
 		try {
-			switchContext(targetContext);
-		} catch (RuntimeException ex) {
-			System.out.println("Target context not available: " + targetContext);
-			throw ex;
+			driver.context("NATIVE_APP");
+		} catch (Exception ignored) {
+			// fallback: iterate and pick any context that contains NATIVE
+			for (String ctx : ((SupportsContextSwitching) driver).getContextHandles()) {
+				if (ctx.toUpperCase().contains("NATIVE")) {
+					driver.context(ctx);
+					break;
+				}
+			}
 		}
 	}
 
@@ -496,8 +498,16 @@ public class BasePage {
 	}
 
 	public static void disableWifiAndData() throws IOException {
-		new ProcessBuilder("adb", "shell", "svc", "wifi", "disable").start();
-		new ProcessBuilder("adb", "shell", "svc", "data", "disable").start();
+		Process wifiProcess = new ProcessBuilder("adb", "shell", "svc", "wifi", "disable").start();
+		Process dataProcess = new ProcessBuilder("adb", "shell", "svc", "data", "disable").start();
+		try {
+			if (wifiProcess.waitFor() != 0 || dataProcess.waitFor() != 0) {
+				throw new IOException("Failed to disable WiFi/Data");
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IOException("Interrupted while disabling WiFi/Data", e);
+		}
 	}
 
 	public WebElement findElementIfExists(By locator) {
@@ -505,7 +515,7 @@ public class BasePage {
 			return findElementWithRetry(locator); // reuse your existing retry logic
 		} catch (Exception e) {
 			// Optional: log for debugging
-			System.out.println("⚠️ Element not found after retries: " + locator);
+			System.out.println("Element not found after retries: " + locator);
 			return null; // prevents NoSuchElementException / NPE
 		}
 	}
@@ -637,4 +647,148 @@ public class BasePage {
 			driver.perform(Collections.singletonList(scrollUp));
 		}
 	}
+
+	protected void ensureVisibleBySwiping(By fullId, By shortId) {
+		AndroidDriver ad = (AndroidDriver) driver;
+		int tries = 0;
+		while (tries++ < 6 && ad.findElements(fullId).isEmpty() && ad.findElements(shortId).isEmpty()) {
+			Dimension d = ad.manage().window().getSize();
+			int x = d.width / 2;
+			int startY = (int) (d.height * 0.65);
+			int endY = (int) (d.height * 0.35);
+			new TouchAction<>(ad).press(PointOption.point(x, startY))
+					.waitAction(WaitOptions.waitOptions(Duration.ofMillis(300))).moveTo(PointOption.point(x, endY))
+					.release().perform();
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException ignored) {
+			}
+		}
+	}
+
+	protected String findWebViewContext(Duration timeout) {
+		long end = System.currentTimeMillis() + timeout.toMillis();
+		while (System.currentTimeMillis() < end) {
+			Set<String> contexts = ((SupportsContextSwitching) driver).getContextHandles();
+			for (String c : contexts) {
+				if (c != null && c.toUpperCase().contains("WEBVIEW"))
+					return c;
+			}
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException ignored) {
+			}
+		}
+		return null;
+	}
+
+	protected void openArcApplication(String targetContext) {
+		AndroidDriver driver = (AndroidDriver) this.driver;
+
+		if (driver.isAppInstalled("com.android.chrome")) {
+			driver.terminateApp("com.android.chrome");
+		}
+
+		driver.activateApp("io.mosip.registration_client");
+
+		try {
+			switchContext(targetContext);
+		} catch (RuntimeException ex) {
+			System.out.println("Target context not available: " + targetContext);
+			throw ex;
+		}
+	}
+
+	public void switchContext(String target) {
+		SupportsContextSwitching ctx = (SupportsContextSwitching) driver;
+
+		for (String c : ctx.getContextHandles()) {
+			if (c.equalsIgnoreCase(target) || c.contains(target)) {
+				ctx.context(c);
+				return;
+			}
+		}
+		throw new RuntimeException("Context not found: " + target);
+	}
+
+	public void scrollToTopSafe() {
+		try {
+			if (!((SupportsContextSwitching) driver).getContext().equals("NATIVE_APP")) {
+				((SupportsContextSwitching) driver).context("NATIVE_APP");
+			}
+			driver.manage().window().getSize(); // safe now
+			scrollToTop();
+		} catch (Exception e) {
+			System.out.println("scrollToTop skipped — not in a native window");
+		}
+	}
+
+	protected void dismissAutoSaveOrKeyboard() {
+		if (!driver.findElements(By.id("com.android.chrome:id/sheet_container")).isEmpty()) {
+			try {
+				List<WebElement> bg = driver.findElements(By.id("com.android.chrome:id/background"));
+				if (!bg.isEmpty())
+					bg.get(0).click();
+				else
+					((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.BACK));
+			} catch (Exception ignored) {
+			}
+		}
+		try {
+			((HidesKeyboard) driver).hideKeyboard();
+		} catch (Exception ignored) {
+		}
+	}
+
+	protected void scrollTo(String contentDescFragment) {
+		for (int i = 0; i < 7; i++) {
+			try {
+				WebElement el = driver
+						.findElement(By.xpath("//*[contains(@content-desc,'" + contentDescFragment + "')]"));
+				if (el.isDisplayed()) {
+					return;
+				}
+			} catch (Exception ignore) {
+			}
+			swipeUp();
+		}
+
+		throw new NoSuchElementException(
+				"Element with content-desc containing '" + contentDescFragment + "' not found after scrolling.");
+	}
+
+	protected void swipeUp() {
+		Dimension size = driver.manage().window().getSize();
+		int startX = size.width / 2;
+
+		int startY = (int) (size.height * 0.85); // lower point
+		int endY = (int) (size.height * 0.40); // higher point (scroll more)
+
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		Sequence swipe = new Sequence(finger, 1);
+
+		swipe.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
+		swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+		swipe.addAction(finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), startX, endY));
+		swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+		driver.perform(Collections.singletonList(swipe));
+	}
+
+	protected void scrollUntilElementVisible(By locator) {
+		for (int i = 0; i < 10; i++) {
+			try {
+				WebElement el = driver.findElement(locator);
+				if (el.isDisplayed()) {
+					return;
+				}
+			} catch (Exception ignored) {
+			}
+
+			swipeUp();
+		}
+
+		throw new NoSuchElementException("Element not found after scrolling: " + locator);
+	}
+
 }
