@@ -332,5 +332,6 @@
   "enter_additional_info_req_id": "Entrez l'identifiant de la demande d'information supplémentaire",
   "additional_info_req_id": "Identifiant de la demande d'information supplémentaire",
   "no_access_to_this_page": "Vous n'avez pas accès à cette page",
-  "scheduled_job_settings": "Paramètres des tâches planifiées"
+  "scheduled_job_settings": "Paramètres des tâches planifiées",
+  "server_unreachable": "Le serveur d’authentification est inaccessible. Veuillez réessayer plus tard"
 }

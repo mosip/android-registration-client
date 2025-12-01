@@ -353,6 +353,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     if (errorMsg == "") {
       return;
     }
+
+    if (errorMsg == "REG_AUTH_SERVER_DOWN" || errorMsg == "KER-SYN-AUTH-001" || errorMsg == "Invalid Request") {
+      _showInSnackBar(appLocalizations.server_unreachable);
+      return;
+    }
+
     String snackbarText = "";
     snackbarText = appLocalizations.errors(errorMsg);
     if (snackbarText == "Some error occurred!") {
