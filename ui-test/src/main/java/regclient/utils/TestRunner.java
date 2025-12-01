@@ -44,7 +44,7 @@ public class TestRunner {
 
 			XmlClass addMachineDetails = new XmlClass("regclient.androidTestCases.AddMachineDetails");
 			XmlClass initialLaunch = new XmlClass("regclient.androidTestCases.InitialLaunch");
-			XmlClass logintest = new XmlClass("regclient.androidTestCases.logintest");
+			XmlClass logintest = new XmlClass("regclient.androidTestCases.Logintest");
 			XmlClass newRegistrationAdult = new XmlClass("regclient.androidTestCases.NewRegistrationAdult");
 			XmlClass newRegistrationAdultException = new XmlClass(
 					"regclient.androidTestCases.NewRegistrationAdultException");

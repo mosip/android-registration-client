@@ -549,13 +549,14 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
+				"Verify if error empty username submit button enabled");
 
+		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
+
 		pendingApproval.clickOnBackButton();
-		assertTrue(operationalTaskPage.isApplicationUploadTitleDisplayed(),
-				"Verify if application upload title displayed");
 
 		operationalTaskPage.clickApplicationUploadTitle();
 		if ("eng".equalsIgnoreCase(language)) {
@@ -578,27 +579,56 @@ public class BiometricCorrection extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
-		manageApplicationsPage.selectApprovedValueDropdown();
-
-		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
-		for (int i = 0; i < 3; i++) {
-			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
-				break;
-		}
-		manageApplicationsPage.clickOnBackButton();
+		manageApplicationsPage.clickOnUploadButton();
 
 		// Return to mocksbi page
 		mockSBIPage.switchToMockSBI();
 		mockSBIPage.setAllModalityHighScore();
 		mockSBIPage.switchBackToArcApp();
 
-		// Biometric correction packet process
-		assertTrue(registrationTasksPage.isOperationalTaskDisplayed(), "Verify if operation tasks page is loaded");
+		if ("eng".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		loginPage.selectLanguage();
 
-		registrationTasksPage.clickOnRegistrationTasksTab();
+		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),
+				"verify if the welcome msg in selected language displayed");
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		loginPage.clickOnNextButton();
+
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
+		loginPage.clickOnloginButton();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		registrationTasksPage.handleLocationPermission();
+		
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 

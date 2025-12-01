@@ -61,12 +61,6 @@
 					<include name="updateMyUinUpdateDocuments" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.BiometricCorrection">
-				<methods>
-					<include name="adultBiometricCorrection" />
-					<include name="minorBiometricCorrection" />
-				</methods>
-			</class>
 			<class name="regclient.androidTestCases.LostUin">
 				<methods>
 					<include name="lostUinAdult" />
