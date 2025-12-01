@@ -402,7 +402,7 @@ public class UpdateOperatorBiometricspageTamil extends UpdateOperatorBiometricsp
 	public boolean validateThreshold(int expected) {
 	    WebElement el = driver.findElement(MobileBy.AndroidUIAutomator(
 	            "new UiScrollable(new UiSelector().scrollable(true))" +
-	            ".scrollIntoView(new UiSelector().descriptionContains(\"Threshold\"));"
+	            		 ".scrollIntoView(new UiSelector().descriptionContains(\"வரம்பு\"));"
 	    ));
 
 	    String text = el.getAttribute("content-desc");       // "Threshold 75%"

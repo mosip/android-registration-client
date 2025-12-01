@@ -59,7 +59,7 @@ public class DocumentUploadPageTamil extends DocumentUploadPage {
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentUploadPageEnglish(driver);
+		return new DocumentUploadPageTamil(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

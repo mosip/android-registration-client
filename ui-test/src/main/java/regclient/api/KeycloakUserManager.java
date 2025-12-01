@@ -41,8 +41,8 @@ public class KeycloakUserManager {
 			       Keycloak key = KeycloakBuilder.builder().serverUrl(ArcConfigManager.getIAMUrl()).realm(ArcConfigManager.getIAMRealmId())
 			               .grantType(OAuth2Constants.CLIENT_CREDENTIALS).clientId(ArcConfigManager.getAutomationClientId()).clientSecret(ArcConfigManager.getAutomationClientSecret())
 			                .build();
-			        System.out.println(ArcConfigManager.getIAMUrl());
-			        System.out.println(key.toString() + key.realms());
+			       logger.info("Keycloak URL: {}", ArcConfigManager.getIAMUrl());
+			       logger.debug("Keycloak instance initialized: {}", key);
 			        return key;
 			    } catch (Exception e) {
 			        logger.error("Failed to initialize Keycloak client", e);

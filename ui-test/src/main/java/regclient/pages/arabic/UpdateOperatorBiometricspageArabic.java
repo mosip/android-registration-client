@@ -386,8 +386,7 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 	public boolean validateThreshold(int expected) {
 	    WebElement el = driver.findElement(MobileBy.AndroidUIAutomator(
 	            "new UiScrollable(new UiSelector().scrollable(true))" +
-	            ".scrollIntoView(new UiSelector().descriptionContains(\"Threshold\"));"
-	    ));
+	            		 ".scrollIntoView(new UiSelector().descriptionContains(\"الحد\"));"));
 
 	    String text = el.getAttribute("content-desc");       // "Threshold 75%"
 	    int actual = Integer.parseInt(text.replaceAll("[^0-9]", "")); // extract 75

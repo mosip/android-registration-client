@@ -101,7 +101,7 @@ public class TestRunner {
 				if (Scenarioname.equalsIgnoreCase("updateMyUinMinor"))
 					classes.add(updateMyUinMinor);
 
-				if (Scenarioname.equalsIgnoreCase("updateMyUinUpdateDemographicDetails"))
+				if (Scenarioname.equalsIgnoreCase("updateMyUinUpdateBiometrics"))
 					classes.add(updateMyUinUpdatebiometrics);
 
 				if (Scenarioname.equalsIgnoreCase("updateMyUinUpdateDemographicDetails"))

@@ -11,7 +11,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.AutoLogoutPage;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
-import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class AutoLogoutPageKannada extends AutoLogoutPage{
 	
