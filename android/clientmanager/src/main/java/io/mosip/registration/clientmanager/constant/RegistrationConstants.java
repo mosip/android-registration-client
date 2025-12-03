@@ -117,5 +117,7 @@ public class RegistrationConstants {
     public static final String JOB_TRIGGER_POINT_USER = "User";
     public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
     public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
-
+    public static final String PWORD_LENGTH = "mosip.registration.username_pwd_length";
+    public static final String DOC_SIZE = "mosip.registration.document_size";
+    public static final  String MAX_AGE = "mosip.registration.max_age";
 }

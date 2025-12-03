@@ -332,5 +332,21 @@
   "enter_additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी दर्ज करें",
   "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी",
   "no_access_to_this_page": "आपको इस पृष्ठ तक पहुँच नहीं है",
-  "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स"
+  "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स",
+  "doc_size_existed": "फ़ाइल का आकार सीमा {size} से अधिक है",
+  "@doc_size_existed": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "उम्र {age} वर्ष से अधिक नहीं होनी चाहिए।",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  }
 }

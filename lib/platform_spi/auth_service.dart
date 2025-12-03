@@ -31,5 +31,7 @@ abstract class AuthService {
 
   Future<List<String?>> getRolesByUserId(String userId);
 
+  Future<String> getPasswordLength();
+
   factory AuthService() => getAuthServiceImpl();
 }

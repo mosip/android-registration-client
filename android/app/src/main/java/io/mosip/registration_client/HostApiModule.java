@@ -166,8 +166,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
-        return new DemographicsDetailsApi(registrationService, auditManagerService);
+    DemographicsDetailsApi getDemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
+        return new DemographicsDetailsApi(registrationService, auditManagerService, globalParamRepository);
     }
 
     @Provides

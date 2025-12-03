@@ -332,5 +332,21 @@
   "enter_additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ ನಮೂದಿಸಿ",
   "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ",
   "no_access_to_this_page": "ನಿಮಗೆ ಈ ಪುಟಕ್ಕೆ ಪ್ರವೇಶವಿಲ್ಲ",
-  "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+  "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "doc_size_existed": "ಫೈಲ್ ಗಾತ್ರ ಮಿತಿ {size} ಮೀರಿದೆ",
+  "@doc_size_existed": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "ವಯಸ್ಸು {age} ವರ್ಷಗಳಿಗಿಂತ ಹೆಚ್ಚಿರಬಾರದು",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  }
 }

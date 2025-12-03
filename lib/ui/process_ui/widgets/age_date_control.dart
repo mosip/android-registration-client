@@ -38,6 +38,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
   late RegistrationTaskProvider registrationTaskProvider;
   TextEditingController dateController = TextEditingController();
   TextEditingController ageController = TextEditingController();
+  int maxAge = 150;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
       globalProvider = Provider.of<GlobalProvider>(context, listen: false);
       registrationTaskProvider =
           Provider.of<RegistrationTaskProvider>(context, listen: false);
+      _getDOBMaxAge();
     });
     _getSavedDate();
     super.initState();
@@ -109,6 +111,19 @@ class _AgeDateControlState extends State<AgeDateControl> {
     });
   }
 
+  _getDOBMaxAge() async {
+    String maxAgeStr =
+        await registrationTaskProvider.demographics.getDOBMaxAge();
+    if (maxAgeStr.isNotEmpty) {
+      if (!mounted) return;
+      final parsedAge = int.tryParse(maxAgeStr);
+      if (parsedAge == null) return;
+      setState(() {
+        maxAge = parsedAge;
+      });
+    }
+  }
+
   void _getSavedDate() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
@@ -145,6 +160,8 @@ class _AgeDateControlState extends State<AgeDateControl> {
 
   void showBottomPopup(BuildContext context) {
     String dateString = dateController.text;
+    final localMaxAge = maxAge;
+
     showModalBottomSheet(
         backgroundColor: Colors.white,
         context: context,
@@ -187,7 +204,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
               ),
               CustomCupertinoDatePicker(
                 maxDate: DateTime.now(),
-                minDate: DateTime(DateTime.now().year - 125),
+                minDate: DateTime(DateTime.now().year - localMaxAge),
                 selectedDate: dateString != ""
                     ? DateFormat(widget.field.format == null ||
                                 widget.field.format!.toLowerCase() == "none"
@@ -261,17 +278,39 @@ class _AgeDateControlState extends State<AgeDateControl> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
                       flex: 3,
                       child: TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         readOnly: true,
                         controller: dateController,
                         validator: (value) {
-                          if (widget.field.required == true && (value == null || value.isEmpty)) {
+                          if (widget.field.required == true &&
+                              (value == null || value.isEmpty)) {
                             return AppLocalizations.of(context)!
                                 .select_value_message;
+                          }
+                          if (value != null && value.isNotEmpty) {
+                            try {
+                              DateTime date = DateFormat(
+                                      widget.field.format == null ||
+                                              widget.field.format!
+                                                      .toLowerCase() ==
+                                                  "none"
+                                          ? "yyyy/MM/dd"
+                                          : widget.field.format)
+                                  .parse(value);
+                              int age = calculateYearDifference(
+                                      date, DateTime.now())
+                                  .abs();
+                              if (age > maxAge) {
+                                return AppLocalizations.of(context)!.age_should_not_be_greater(maxAge);
+                              }
+                            } catch (e) {
+                              print(e);
+                            }
                           }
                           return null;
                         },
@@ -303,11 +342,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Text("OR"),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: const Text("OR"),
+                    ),
                     const SizedBox(width: 12),
                     Flexible(
                       flex: 1,
                       child: TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: ageController,
                         keyboardType: TextInputType.number,
                         validator: (value) {

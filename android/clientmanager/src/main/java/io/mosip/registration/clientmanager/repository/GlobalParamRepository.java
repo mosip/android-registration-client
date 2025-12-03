@@ -158,6 +158,18 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
+    public String getCachedStringPasswordLength() {
+        return globalParamMap.get(RegistrationConstants.PWORD_LENGTH);
+    }
+
+    public String getCachedStringDocumentSize() {
+        return globalParamMap.get(RegistrationConstants.DOC_SIZE);
+    }
+
+    public String getCachedStringDOBAgeLimit() {
+        return globalParamMap.get(RegistrationConstants.MAX_AGE);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

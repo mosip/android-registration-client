@@ -107,6 +107,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   _initializeAppData() async {
     await globalProvider.setMachineDetails();
     await globalProvider.initializeLanguageDataList(false);
+    await authProvider.getPasswordLength();
     await globalProvider.initializeLocationHierarchyMap();
     await globalProvider.setGitHeadAttributes();
     await globalProvider.getAudit("REG-LOAD-001", "REG-MOD-101");
@@ -277,7 +278,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       _showInSnackBar(appLocalizations.password_required);
       return;
     }
-    if (password.length > 50) {
+    if (password.length > (int.tryParse(authProvider.passwordLength) ?? 50)) {
       _showInSnackBar(appLocalizations.password_exceed);
       return;
     }
@@ -513,7 +514,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           context.watch<AuthProvider>().isValidUser &&
                   !context.watch<AuthProvider>().isNetworkPresent
               ? PasswordComponent(
-                  isDisabled: password.isEmpty || password.length > 50,
+                  isDisabled: password.isEmpty || password.length > (int.tryParse(context.watch<AuthProvider>().passwordLength) ?? 50),
                   onTapLogin: () async {
                     await _getLoginAction();
                     await globalProvider.getThresholdValues();

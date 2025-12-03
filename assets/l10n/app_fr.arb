@@ -332,5 +332,21 @@
   "enter_additional_info_req_id": "Entrez l'identifiant de la demande d'information supplémentaire",
   "additional_info_req_id": "Identifiant de la demande d'information supplémentaire",
   "no_access_to_this_page": "Vous n'avez pas accès à cette page",
-  "scheduled_job_settings": "Paramètres des tâches planifiées"
+  "scheduled_job_settings": "Paramètres des tâches planifiées",
+  "doc_size_existed": "La taille du fichier dépasse la limite de {size}",
+  "@doc_size_existed": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "L'âge ne doit pas dépasser {age} ans.",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  }
 }
