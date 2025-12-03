@@ -115,8 +115,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
     String maxAgeStr =
         await registrationTaskProvider.demographics.getDOBMaxAge();
     if (maxAgeStr.isNotEmpty) {
+      if (!mounted) return;
+      final parsedAge = int.tryParse(maxAgeStr);
+      if (parsedAge == null) return;
       setState(() {
-        maxAge = int.parse(maxAgeStr);
+        maxAge = parsedAge;
       });
     }
   }

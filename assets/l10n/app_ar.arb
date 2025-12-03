@@ -334,5 +334,19 @@
   "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
   "scheduled_job_settings": "إعدادات المهمة المجدولة",
   "doc_size_existed": "حجم الملف يتجاوز الحد {size}",
-  "age_should_not_be_greater": "يجب ألا يزيد العمر عن {age} سنة"
+  "@doc_size_existed": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "يجب ألا يزيد العمر عن {age} سنة",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  }
 }

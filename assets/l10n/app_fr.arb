@@ -334,5 +334,19 @@
   "no_access_to_this_page": "Vous n'avez pas accès à cette page",
   "scheduled_job_settings": "Paramètres des tâches planifiées",
   "doc_size_existed": "La taille du fichier dépasse la limite de {size}",
-  "age_should_not_be_greater": "L'âge ne doit pas dépasser {age} ans."
+  "@doc_size_existed": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "L'âge ne doit pas dépasser {age} ans.",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  }
 }
