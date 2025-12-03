@@ -166,6 +166,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DOC_SIZE);
     }
 
+    public String getCachedStringDOBAgeLimit() {
+        return globalParamMap.get(RegistrationConstants.MAX_AGE);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

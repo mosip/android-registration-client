@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
@@ -30,11 +31,13 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     AuditManagerService auditManagerService;
     private static final String GET_FIELD_FAILED_MESSAGE = "Get field failed!";
 
+    GlobalParamRepository globalParamRepository;
+
     @Inject
-    public DemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
+    public DemographicsDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
         this.registrationService = registrationService;
         this.auditManagerService = auditManagerService;
-
+        this.globalParamRepository = globalParamRepository;
     }
 
 
@@ -193,6 +196,17 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
             this.registrationService.getRegistrationDto().SELECTED_CODES.put(fieldId+"Code", code);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add selected data field failed!" + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @Override
+    public void getDOBMaxAge(@NonNull DemographicsDataPigeon.Result<String> result) {
+        try {
+            Log.i(getClass().getSimpleName(), "Get DOB max age");
+            String dobMaxAge = this.globalParamRepository.getCachedStringDOBAgeLimit();
+            result.success(dobMaxAge);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Get DOB max age failed!" + Arrays.toString(e.getStackTrace()));
         }
     }
 }
