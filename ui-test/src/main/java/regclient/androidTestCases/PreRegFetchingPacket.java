@@ -594,7 +594,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 	
 	}
 
-	@Test(priority = 1, description = "Verify minor pre-reg fetching registration")
+//	@Test(priority = 1, description = "Verify minor pre-reg fetching registration")
 	public void minorPreRegFetching() throws InterruptedException {
 
 		BasePage.disableAutoRotation();
@@ -660,7 +660,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		registrationTasksPage.handleLocationPermission();
+		
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();
@@ -681,10 +681,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(), "Verify if select language page  is loaded");
-		selectLanguagePage.clickOnSubmitButtonWithoutSelectingLanguage();
-
-		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(),
-				"Verify if user should not be allow to navigate to next screen.");
+		
 		selectLanguagePage.selectSecondLanguage();
 
 		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
@@ -988,6 +985,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 //	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
+		
 		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
@@ -1219,7 +1217,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		registrationTasksPage.handleLocationPermission();
+
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();

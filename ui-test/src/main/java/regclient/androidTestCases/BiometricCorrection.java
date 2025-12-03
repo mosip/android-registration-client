@@ -597,7 +597,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		mockSBIPage.switchToMockSBI();
 		mockSBIPage.setAllModalityHighScore();
 		mockSBIPage.switchBackToArcApp();
-// biocorrection flow
+       // biocorrection flow
 		if ("eng".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1041,7 +1041,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		registrationTasksPage.handleLocationPermission();
+	
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();
