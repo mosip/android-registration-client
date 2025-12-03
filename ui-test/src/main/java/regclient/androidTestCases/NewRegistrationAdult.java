@@ -903,7 +903,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		previewPage.clickOnDemographicDetailsTitle();
 
 		for (String screen : screenOrder) {
-			if (screen.equals("DemographicDetails") || screen.equals("DemographicDetails")) {
+			if (screen.equals("DemographicDetails")) {
 				if ("eng".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageEnglish(driver);
 				} else if ("hin".equalsIgnoreCase(language)) {
