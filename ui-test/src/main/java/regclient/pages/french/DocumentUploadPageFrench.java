@@ -15,7 +15,7 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
 import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentuploadPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 
 public class DocumentUploadPageFrench extends DocumentUploadPage {
 

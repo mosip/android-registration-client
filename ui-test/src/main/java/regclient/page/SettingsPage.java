@@ -45,4 +45,16 @@ public abstract class SettingsPage extends BasePage {
 	public abstract boolean isSubmitChangesPopupDisplayed();
 
 	public abstract void clickOnChangesConfirmButton();
+	
+	public abstract boolean isScheduledJobSettingsPageHeaderDisplayed();
+	
+	public abstract boolean isToastVisible(String toastMessage);
+	
+	public abstract boolean isMasterDataSyncCardDisplayed();
+	
+	public abstract void clickOnMasterDataSyncButton();
+	
+	public abstract boolean validateJobCardFields(String jobName);
+	
+
 }

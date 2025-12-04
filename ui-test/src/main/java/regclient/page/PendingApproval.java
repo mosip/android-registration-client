@@ -50,7 +50,7 @@ public abstract class PendingApproval extends BasePage {
 
 	public abstract boolean isInvalidUsernameMessageDisplayed();
 
-	public abstract boolean isInvalidemptyUsernameSumbitButtonEnbled();
+	public abstract boolean isSubmitButtonEnabledWithEmptyUsername();
 
 	public abstract boolean isNumberOfApplicationDisplayed();
 

@@ -21,7 +21,7 @@ public class AuthenticationPageArabic extends AuthenticationPage {
 	@AndroidFindBy(accessibility = "المصادقة")
 	private WebElement authenticateButton;
 
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc='content-desc='المصادقة باستخدام كلمة المرور'']/preceding-sibling::android.widget.ImageView")
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc='المصادقة باستخدام كلمة المرور']/preceding-sibling::android.widget.ImageView")
 	private WebElement authenticationImage;
 
 	public AuthenticationPageArabic(AppiumDriver driver) {

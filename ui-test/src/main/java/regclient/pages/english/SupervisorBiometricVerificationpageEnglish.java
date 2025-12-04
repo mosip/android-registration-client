@@ -9,7 +9,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiometricVerificationpage {
 
-	@AndroidFindBy(accessibility = "Supervisor's Biometric Onboarding")
+	@AndroidFindBy(accessibility = "Onboard Operator Biometrics")
 	private WebElement supervisorBiometricVerificationPageTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
@@ -248,7 +248,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 		clickOnElement(oneEyeException);
 	}
 
-	public void markOneFingreException() {
+	public void markOneFingerException() {
 		clickOnElement(firstFingureExceptionImage);
 	}
 
@@ -355,13 +355,10 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 
 	public boolean isVerifyAndSaveButtonEnabled() {
 		return isElementDisplayed(verifyAndSaveButton);
-
 	}
 
-	@Override
 	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
-
 	}
 
 	public boolean isDismissPageLoaded() {

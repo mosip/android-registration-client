@@ -66,6 +66,27 @@ public class SettingsPageFrench extends SettingsPage {
 
 	@AndroidFindBy(accessibility = "CANCEL")
 	private WebElement changesCancelButton;
+	
+	@AndroidFindBy(accessibility = "Scheduled Job Settings")
+	private WebElement scheduledJobSettingsPageHeader;
+
+	@AndroidFindBy(xpath = "//*[@content-desc[contains(.,'Master Data Sync')]]")
+	private WebElement masterDataSyncCard;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'Master Data Sync')]//android.widget.Button")
+	private WebElement masterDataSyncButton;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'thumbs_fingerprint_threshold')]//android.widget.EditText")
+	private WebElement thumbsThresholdField;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'iris_threshold')]//android.widget.EditText")
+	private WebElement irisThresholdField;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'rightslap_fingerprint_threshold')]//android.widget.EditText")
+	private WebElement rightSlapThresholdField;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'leftslap_fingerprint_threshold')]//android.widget.EditText")
+	private WebElement leftSlapThresholdField;
 
 	public SettingsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -174,4 +195,41 @@ public class SettingsPageFrench extends SettingsPage {
 		clickOnElement(changesConfirmButton);
 	}
 
+	public boolean isScheduledJobSettingsPageHeaderDisplayed() {
+		return isElementDisplayed(scheduledJobSettingsPageHeader);
+	}
+
+	public boolean isMasterDataSyncCardDisplayed() {
+		return isElementDisplayed(masterDataSyncCard);
+	}
+
+	public void clickOnMasterDataSyncButton() {
+		clickOnElement(masterDataSyncButton);
+	}
+
+	public boolean isToastVisible(String toastMessage) {
+		for (int i = 0; i < 15; i++) { // ~3 seconds
+			if (driver.getPageSource().contains(toastMessage)) {
+				return true;
+			}
+			try {
+				Thread.sleep(200);
+			} catch (Exception ignored) {
+			}
+		}
+		return false;
+	}
+
+	public WebElement getSyncButton(String jobName) {
+		return driver.findElement(
+				By.xpath("//android.view.View[contains(@content-desc,'" + jobName + "')]//*[@clickable='true']"));
+	}
+
+	public boolean validateJobCardFields(String jobName) {
+		WebElement card = driver
+				.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + jobName + "')]"));
+		String cd = card.getAttribute("content-desc");
+		return cd.contains(jobName) && cd.contains("Next Run") && cd.contains("Last Sync")
+				&& cd.contains("Cron Expression");
+	}
 }

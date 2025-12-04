@@ -172,4 +172,8 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 		clickOnElement(registrationTasksTitle);
 	}
 
+	public boolean isSettingsButtonDisplayed() {
+		return isElementDisplayed(settingsButton);
+	}
+
 }

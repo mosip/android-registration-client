@@ -143,8 +143,6 @@ public class LoginPageEnglish extends LoginPage {
 
 	public boolean isLoginPageLoaded() {
 		return true;
-//		return isElementDisplayed(loginMessage);
-
 	}
 
 	public boolean isPasswordHeaderDisplayed() {
@@ -165,8 +163,6 @@ public class LoginPageEnglish extends LoginPage {
 
 	public boolean isWelcomeMessageInSelectedLanguageDisplayed() {
 		return true;
-//		return isElementDisplayed(welcomeMessageEnglish);
-
 	}
 
 	public boolean isHelpButtonDisplayed() {

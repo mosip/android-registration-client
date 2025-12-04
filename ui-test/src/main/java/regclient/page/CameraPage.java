@@ -27,7 +27,7 @@ public class CameraPage extends BasePage {
 
 	public void clickimage() {
 		waitTime(1);
-		clickAtCoordinates(1835, 600);
+		clickAtCoordinates(1840, 598);
 	}
 
 	public void clickOkButton() {

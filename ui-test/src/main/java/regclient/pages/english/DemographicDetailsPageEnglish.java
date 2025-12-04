@@ -108,7 +108,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 
 	public DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageEnglish(driver);
 
 	}
 
@@ -219,7 +219,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 						waitTime(1);
 						clickOnElement(backgroundScreen);
 						waitTime(1);
-						assertTrue(checkDateFormatAndCurrectDate(id),
+						assertTrue(checkDateFormatAndCurrentDate(id),
 								"Verify date format and current date and time while selecting age date");
 					}
 				}
@@ -340,7 +340,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 						waitTime(1);
 						clickOnElement(backgroundScreen);
 						waitTime(1);
-						assertTrue(checkDateFormatAndCurrectDate(id),
+						assertTrue(checkDateFormatAndCurrentDate(id),
 								"Verify date format and current date and time while selecting age date");
 					}
 				}
@@ -396,7 +396,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 			return true;
 	}
 
-	public boolean checkDateFormatAndCurrectDate(String id) {
+	public boolean checkDateFormatAndCurrentDate(String id) {
 		if (getTextFromLocator(findElementWithRetry(
 				By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 						+ "\")]/parent::android.view.View/following-sibling::android.view.View")))
@@ -452,11 +452,9 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
 		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
 
-		// Verify label is displayed
 		boolean isDisplayed = isElementDisplayed(appIdLabel);
 		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
 
-		// Enter prereg ID
 		applicationIdTextBox = findElementWithRetry(appIdTextbox);
 		clickAndsendKeysToTextBox(applicationIdTextBox, AdminTestUtil.getPreRegistrationFlow(age));
 		clickOnElement(fetchDataButton);

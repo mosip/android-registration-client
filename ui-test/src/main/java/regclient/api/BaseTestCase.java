@@ -81,7 +81,7 @@ public class BaseTestCase {
 		logger.info("We have created a Config Manager. Beginning to read properties!");
 
 		environment = ArcConfigManager.getiam_apienvuser();
-		logger.info("Environemnt is  ==== :" + environment);
+		logger.info("Environment is  ==== :" + environment);
 		ApplnURI = ArcConfigManager.getiam_apiinternalendpoint();
 		logger.info("Application URI ======" + ApplnURI);
 		ApplnURIForKeyCloak = ArcConfigManager.getIAMUrl();

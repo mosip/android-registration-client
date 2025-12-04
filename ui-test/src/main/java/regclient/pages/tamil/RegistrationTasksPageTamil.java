@@ -171,4 +171,8 @@ public class RegistrationTasksPageTamil extends RegistrationTasksPage {
 	public void clickOnRegistrationTasksTab() {
 		clickOnElement(registrationTasksTitle);
 	}
+	
+	public boolean isSettingsButtonDisplayed() {
+		return isElementDisplayed(settingsButton);
+	}
 }

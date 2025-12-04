@@ -12,10 +12,18 @@ public class BaseTest {
 	@BeforeSuite(alwaysRun = true)
 	public void beforeSuite() {
 		DriverManager.startAppiumServer();
+		try {
+			driver = DriverManager.getDriver();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to initialize AppiumDriver", e);
+		}
 	}
 
 	@AfterSuite(alwaysRun = true)
 	public void afterSuite() {
+		if (driver != null) {
+			driver.quit();
+		}
 		DriverManager.stopAppiumServer();
 	}
 
