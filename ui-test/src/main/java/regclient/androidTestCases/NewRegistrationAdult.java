@@ -542,7 +542,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.clickOnSubmitButton();
-		assertTrue(pendingApproval.isInvalidEmptyUsernameSubmitButtonEnabled(),
+		assertTrue(pendingApproval.isSubmitButtonEnabledWithEmptyUsername(),
 				"Verify if error empty username submit button enabled");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
@@ -595,7 +595,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 	}
 
-	@SuppressWarnings("null")
 	@Test(priority = 1, description = "Verify adult new registration")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
 		BasePage.disableAutoRotation();

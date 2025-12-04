@@ -132,7 +132,7 @@ public class PendingApprovalEnglish extends PendingApproval {
 		return isElementDisplayed(invalidUsernameMessage);
 	}
 
-	public boolean isInvalidEmptyUsernameSubmitButtonEnabled() {
+	public boolean isSubmitButtonEnabledWithEmptyUsername() {
 		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 

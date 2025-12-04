@@ -146,7 +146,7 @@ public class PendingApprovalHindi extends PendingApproval {
 		return isElementDisplayed(invalidUsernameMessage);
 	}
 
-	public boolean isInvalidEmptyUsernameSubmitButtonEnabled() {
+	public boolean isSubmitButtonEnabledWithEmptyUsername() {
 		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 
