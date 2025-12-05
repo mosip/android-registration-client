@@ -305,7 +305,7 @@
   "logout_success": "Vous avez été déconnecté avec succès!",
   "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps",
   "go_to_home": "Aller à la maison",
-  "errors": "{messages, select, REG_TRY_AGAIN{Echec de la connexion.. Réessayez!} REG_INVALID_REQUEST{Mot de passe incorrect!} REG_MACHINE_NOT_FOUND{Machine introuvable!} REG_NETWORK_ERROR{Échec de la connexion. Vérifiez la connexion réseau!} REG_CRED_EXPIRED{Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!} REG_MACHINE_INACTIVE{La machine n'est pas active!} REG_CENTER_INACTIVE{Le centre n'est pas actif!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{Echec de la connexion.. Réessayez!} REG_INVALID_REQUEST{Mot de passe incorrect!} REG_MACHINE_NOT_FOUND{Machine introuvable!} REG_NETWORK_ERROR{Échec de la connexion. Vérifiez la connexion réseau!} REG_CRED_EXPIRED{Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!} REG_MACHINE_INACTIVE{La machine n'est pas active!} REG_CENTER_INACTIVE{Le centre n'est pas actif!} REG_LOGIN_LOCKED{Limite maximale de tentatives de connexion atteinte. Réessayez plus tard!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {

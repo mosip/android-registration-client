@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -20,6 +21,7 @@ import io.mosip.registration.clientmanager.dao.UserTokenDao;
 import io.mosip.registration.clientmanager.entity.UserDetail;
 import io.mosip.registration.clientmanager.entity.UserPassword;
 import io.mosip.registration.clientmanager.entity.UserToken;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.HMACUtils2;
@@ -29,13 +31,15 @@ public class UserDetailRepository {
     private UserDetailDao userDetailDao;
     private UserTokenDao userTokenDao;
     private UserPasswordDao userPasswordDao;
+    private GlobalParamRepository globalParamRepository;
 
     @Inject
     public UserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao,
-                                UserPasswordDao userPasswordDao) {
+                                UserPasswordDao userPasswordDao, GlobalParamRepository globalParamRepository) {
         this.userDetailDao = userDetailDao;
         this.userTokenDao = userTokenDao;
         this.userPasswordDao = userPasswordDao;
+        this.globalParamRepository = globalParamRepository;
     }
 
     public void saveUserDetail(JSONArray users) throws JSONException {
@@ -162,5 +166,84 @@ public class UserDetailRepository {
         }
 
         return userToken.getToken();
+    }
+
+    public boolean isUserLocked(String userId) {
+        UserDetail userDetail = userDetailDao.getUserDetail(userId);
+        if(userDetail == null) {
+            return false;
+        }
+        Long lockUntil = userDetail.getUserLockTillDtimes();
+        if(lockUntil == null) {
+            return false;
+        }
+        long currentTime = System.currentTimeMillis();
+        if(lockUntil > currentTime) {
+            return true;
+        }
+        userDetailDao.updateLoginAttemptMeta(userId, 0, null);
+        return false;
+    }
+
+    public void recordFailedLoginAttempt(String userId) {
+        UserDetail userDetail = userDetailDao.getUserDetail(userId);
+        boolean isNewUser = false;
+        if(userDetail == null) {
+            userDetail = new UserDetail(userId);
+            userDetail.setIsActive(true);
+            isNewUser = true;
+        }
+        Integer failedAttempts = Optional.ofNullable(userDetail.getUnsuccessfulLoginCount()).orElse(0);
+        failedAttempts++;
+        Long lockUntil = userDetail.getUserLockTillDtimes();
+
+        int maxFailedAttempts = 50;
+        try {
+            String count = globalParamRepository.getCachedStringInvalidLoginCount();
+            if (count != null) {
+                maxFailedAttempts = Integer.parseInt(count);
+            }
+        } catch (NumberFormatException e) {
+            Log.e(getClass().getSimpleName(), "Invalid login count config format", e);
+        }
+
+        long lockDurationMillis = TimeUnit.MINUTES.toMillis(2);
+        try {
+            String time = globalParamRepository.getCachedStringInvalidLoginTime();
+            if (time != null) {
+                lockDurationMillis = TimeUnit.MINUTES.toMillis(Long.parseLong(time));
+            }
+        } catch (NumberFormatException e) {
+            Log.e(getClass().getSimpleName(), "Invalid login time config format", e);
+        }
+
+        if(failedAttempts >= maxFailedAttempts) {
+            lockUntil = System.currentTimeMillis() + lockDurationMillis;
+        } else if(lockUntil != null && lockUntil <= System.currentTimeMillis()) {
+            lockUntil = null;
+        }
+
+        if (isNewUser) {
+            userDetail.setUnsuccessfulLoginCount(failedAttempts);
+            userDetail.setUserLockTillDtimes(lockUntil);
+            List<UserDetail> userList = new ArrayList<>();
+            userList.add(userDetail);
+            userDetailDao.insertAllUsers(userList);
+        } else {
+            userDetailDao.updateLoginAttemptMeta(userId, failedAttempts, lockUntil);
+        }
+    }
+
+    public void resetFailedLoginAttempts(String userId) {
+        UserDetail userDetail = userDetailDao.getUserDetail(userId);
+        if(userDetail == null) {
+            return;
+        }
+        Integer failedAttempts = userDetail.getUnsuccessfulLoginCount();
+        Long lockUntil = userDetail.getUserLockTillDtimes();
+        if((failedAttempts == null || failedAttempts == 0) && lockUntil == null) {
+            return;
+        }
+        userDetailDao.updateLoginAttemptMeta(userId, 0, null);
     }
 }

@@ -305,7 +305,7 @@
   "logout_success": "आप सफलता पूर्वक लॉगआउट कर चुके हैं!",
   "logout_failure": "कुछ गलती हो गई है, कृपया कुछ समय बाद पुनः प्रयास करें",
   "go_to_home": "होम पर जाएं",
-  "errors": "{messages, select, REG_TRY_AGAIN{लॉगिन विफल रहा। फिर कोशिश करो!} REG_INVALID_REQUEST{पासवर्ड गलत है!} REG_MACHINE_NOT_FOUND{मशीन नहीं मिली!} REG_NETWORK_ERROR{लॉगिन विफल रहा। नेटवर्क कनेक्शन की जाँच करें!} REG_CRED_EXPIRED{क्रेडेंशियल्स नहीं मिले या समय सीमा समाप्त हो गई है. ऑनलाइन लॉगिन का प्रयास करें!} REG_MACHINE_INACTIVE{मशीन सक्रिय नहीं है!} REG_CENTER_INACTIVE{केंद्र सक्रिय नहीं है!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{लॉगिन विफल रहा। फिर कोशिश करो!} REG_INVALID_REQUEST{पासवर्ड गलत है!} REG_MACHINE_NOT_FOUND{मशीन नहीं मिली!} REG_NETWORK_ERROR{लॉगिन विफल रहा। नेटवर्क कनेक्शन की जाँच करें!} REG_CRED_EXPIRED{क्रेडेंशियल्स नहीं मिले या समय सीमा समाप्त हो गई है. ऑनलाइन लॉगिन का प्रयास करें!} REG_MACHINE_INACTIVE{मशीन सक्रिय नहीं है!} REG_CENTER_INACTIVE{केंद्र सक्रिय नहीं है!} REG_LOGIN_LOCKED{अधिकतम लॉगिन प्रयास सीमा पूरी हो गई. बाद में पुन: प्रयास!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {

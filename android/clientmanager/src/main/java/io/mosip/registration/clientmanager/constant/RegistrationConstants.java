@@ -117,5 +117,6 @@ public class RegistrationConstants {
     public static final String JOB_TRIGGER_POINT_USER = "User";
     public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
     public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
-
+    public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
+    public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
 }

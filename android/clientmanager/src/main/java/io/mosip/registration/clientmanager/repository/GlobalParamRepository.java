@@ -158,6 +158,14 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
+    public String getCachedStringInvalidLoginCount() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_COUNT);
+    }
+
+    public String getCachedStringInvalidLoginTime() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

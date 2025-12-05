@@ -408,8 +408,8 @@ public class RoomModule {
     @Provides
     @Singleton
     UserDetailRepository provideUserDetailRepository(UserDetailDao userDetailDao, UserTokenDao userTokenDao,
-                                                     UserPasswordDao userPasswordDao) {
-        return new UserDetailRepository(userDetailDao, userTokenDao, userPasswordDao);
+                                                     UserPasswordDao userPasswordDao, GlobalParamRepository globalParamRepository) {
+        return new UserDetailRepository(userDetailDao, userTokenDao, userPasswordDao, globalParamRepository);
     }
 
     @Provides
