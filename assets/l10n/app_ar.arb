@@ -305,7 +305,7 @@
   "logout_success": "لقد تم تسجيل بنجاح!",
   "logout_failure": "حدث خطأ ما، يرجى المحاولة مرة أخرى بعد مرور بعض الوقت",
   "go_to_home": "اذهب إلى المنزل",
-  "errors": "{messages, select, REG_TRY_AGAIN{فشل تسجيل الدخول. حاول مرة أخرى!} REG_INVALID_REQUEST{كلمة المرور غير صحيحة!} REG_MACHINE_NOT_FOUND{لم يتم العثور على الجهاز!} REG_NETWORK_ERROR{فشل تسجيل الدخول. تحقق من اتصال الشبكة!} REG_CRED_EXPIRED{لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!} REG_MACHINE_INACTIVE{الآلة غير نشطة!} REG_CENTER_INACTIVE{المركز غير نشط!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{فشل تسجيل الدخول. حاول مرة أخرى!} REG_INVALID_REQUEST{كلمة المرور غير صحيحة!} REG_MACHINE_NOT_FOUND{لم يتم العثور على الجهاز!} REG_NETWORK_ERROR{فشل تسجيل الدخول. تحقق من اتصال الشبكة!} REG_CRED_EXPIRED{لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!} REG_MACHINE_INACTIVE{الآلة غير نشطة!} REG_CENTER_INACTIVE{المركز غير نشط!} REG_LOGIN_LOCKED{تم الوصول إلى الحد الأقصى لمحاولة تسجيل الدخول. حاول مرة أخرى لاحقا!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {

@@ -67,6 +67,18 @@ public class LoginService {
         userDetailRepository.setPasswordHash(userId, password);
     }
 
+    public boolean isUserLocked(String userId) {
+        return userDetailRepository.isUserLocked(userId);
+    }
+
+    public void recordFailedLoginAttempt(String userId) {
+        userDetailRepository.recordFailedLoginAttempt(userId);
+    }
+
+    public void resetFailedLoginAttempts(String userId) {
+        userDetailRepository.resetFailedLoginAttempts(userId);
+    }
+
 
     public List<String> saveAuthToken(String authResponse, String userId) throws Exception {
         CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();

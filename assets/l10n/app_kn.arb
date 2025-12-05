@@ -305,7 +305,7 @@
   "logout_success": "ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಲಾಗ್ ಔಟ್ ಆಗಿರುವಿರಿ!",
   "logout_failure": "ಏನೋ ತಪ್ಪಾಗಿದೆ, ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
   "go_to_home": "ಮನೆಗೆ ಹೋಗು",
-  "errors": "{messages, select, REG_TRY_AGAIN{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು!} REG_INVALID_REQUEST{ಪಾಸ್ ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ!} REG_MACHINE_NOT_FOUND{ಯಂತ್ರ ಸಿಗಲಿಲ್ಲ!} REG_NETWORK_ERROR{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ!} REG_CRED_EXPIRED{ರುಜುವಾತುಗಳು ಸಿಗಲಿಲ್ಲ ಅಥವಾ ಅವಧಿ ಮೀರಿದವು. ದಯವಿಟ್ಟು ಆನ್ ಲೈನ್ ಲಾಗಿನ್ ಪ್ರಯತ್ನಿಸಿ!} REG_MACHINE_INACTIVE{ಯಂತ್ರ ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} REG_CENTER_INACTIVE{ಕೇಂದ್ರವು ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು!} REG_INVALID_REQUEST{ಪಾಸ್ ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ!} REG_MACHINE_NOT_FOUND{ಯಂತ್ರ ಸಿಗಲಿಲ್ಲ!} REG_NETWORK_ERROR{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ!} REG_CRED_EXPIRED{ರುಜುವಾತುಗಳು ಸಿಗಲಿಲ್ಲ ಅಥವಾ ಅವಧಿ ಮೀರಿದವು. ದಯವಿಟ್ಟು ಆನ್ ಲೈನ್ ಲಾಗಿನ್ ಪ್ರಯತ್ನಿಸಿ!} REG_MACHINE_INACTIVE{ಯಂತ್ರ ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} REG_CENTER_INACTIVE{ಕೇಂದ್ರವು ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} REG_LOGIN_LOCKED{ಗರಿಷ್ಠ ಲಾಗಿನ್ ಪ್ರಯತ್ನದ ಮಿತಿಯನ್ನು ತಲುಪಿದೆ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
