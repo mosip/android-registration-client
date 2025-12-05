@@ -130,4 +130,6 @@ public class RegistrationConstants {
     public static final  String MAX_AGE = "mosip.registration.max_age";
     public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
+    public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
+    public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
 }
