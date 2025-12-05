@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -305,6 +306,7 @@ public class PacketServiceImpl implements PacketService {
             } else {
                 packet.setPacketId(reg.getPacketId());
             }
+            packets.add(packet);
         }
         packetStatusRequest.setRequest(packets);
 
@@ -317,10 +319,11 @@ public class PacketServiceImpl implements PacketService {
                     int packetSyncSuccess = 0;
 
                     if (packetStatusList != null && packetStatusList.size() > 0) {
+                        long currentTimestamp = System.currentTimeMillis();
                         for (PacketStatusDto packetStatus : packetStatusList) {
                             PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getRegistrationId() != null ? packetStatus.getRegistrationId() : packetStatus.getPacketId(), packetStatus.getStatusCode());
-                            registrationRepository.updateStatus(updateDto.getRegistrationId(), updateDto.getStatusCode(),
-                                    PacketClientStatus.UPLOADED.name());
+                            // Update server status with timestamp
+                            registrationRepository.updateServerStatusWithTimestamp(updateDto.getRegistrationId(), updateDto.getStatusCode(), currentTimestamp);
                             packetSyncSuccess++;
                         }
                     }
@@ -344,5 +347,62 @@ public class PacketServiceImpl implements PacketService {
         Registration registration = registrationRepository.getRegistration(packetId);
         String packetStatus = registration.getServerStatus() == null ? registration.getClientStatus() : registration.getServerStatus();
         return packetStatus;
+    }
+
+    @Override
+    public void deleteRegistrationPackets() {
+        Log.i(TAG, "Starting registration packet deletion job");
+        try {
+            String configuredDays = globalParamRepository
+                    .getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS);
+            if (configuredDays == null) {
+                configuredDays = "10"; // Default to 10 days if not configured
+            }
+            int days = Integer.parseInt(configuredDays);
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -days);
+            long cutoffTime = cal.getTimeInMillis();
+
+            List<String> serverStatuses = Arrays.asList(
+                    PacketServerStatus.PROCESSED.name(),
+                    PacketServerStatus.ACCEPTED.name());
+
+            List<Registration> registrations = registrationRepository.findByServerStatusAndCrDtimeBefore(serverStatuses,
+                    cutoffTime);
+            
+            if (registrations != null && !registrations.isEmpty()) {
+                for (Registration registration : registrations) {
+                    delete(registration);
+                }
+            } else {
+                Log.i(TAG, "No registrations found to delete");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error during registration packet deletion", e);
+        }
+    }
+
+    private void delete(Registration registration) {
+        try {
+            String filePath = registration.getFilePath();
+            if (filePath != null) {
+                File zipFile = new File(filePath);
+                
+                // Delete ZIP packet file
+                if (zipFile.exists()) {
+                    if (zipFile.delete()) {
+                        Log.i(TAG, "Deleted zip file: " + filePath);
+                    } else {
+                        Log.e(TAG, "Failed to delete zip file: " + filePath);
+                    }
+                }
+            }
+
+            // Delete database record
+            registrationRepository.deleteRegistration(registration.getPacketId());
+        } catch (Exception e) {
+            Log.e(TAG, "Error deleting registration: " + registration.getPacketId(), e);
+        }
     }
 }

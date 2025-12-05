@@ -378,6 +378,33 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
+    public void deleteRegistrationPackets(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            packetService.deleteRegistrationPackets();
+            masterDataService.logLastSyncCompletionDateTime(jobId);
+            Toast.makeText(context, "Deleted Registration packets", Toast.LENGTH_LONG).show();
+            result.success(true);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to delete registration packets", e);
+            result.error(e);
+            Toast.makeText(context, "Failed to delete Registration packets", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void syncPacketStatus(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            packetService.syncAllPacketStatus();
+            masterDataService.logLastSyncCompletionDateTime(jobId);
+            Log.i(TAG, "Packet status sync job completed");
+            result.success(true);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to sync packet status", e);
+            result.error(e);
+        }
+    }
+
+    @Override
     public void getLastSyncTimeByJobId(@NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<String> result) {
         int syncJobId = jobManagerService.generateJobServiceId(jobId);
         String lastSyncTime = jobManagerService.getLastSyncTime(syncJobId);
@@ -472,6 +499,12 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     case "preRegistrationPacketDeletionJob":
                         preRegistrationDataSyncService.fetchAndDeleteRecords();
                         masterDataService.logLastSyncCompletionDateTime(jobId);
+                        break;
+
+                    case "registrationPacketDeletionJob":
+                        packetService.deleteRegistrationPackets();
+                        masterDataService.logLastSyncCompletionDateTime(jobId);
+                        Log.i(TAG, "Registration packet deletion job completed");
                         break;
                     default:
                         Log.w(getClass().getSimpleName(), "Unknown job: " + jobApiName);

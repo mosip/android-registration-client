@@ -73,4 +73,6 @@ public interface PacketService {
      * @return Packet Status
      */
     String getPacketStatus(String packetId);
+
+    void deleteRegistrationPackets();
 }

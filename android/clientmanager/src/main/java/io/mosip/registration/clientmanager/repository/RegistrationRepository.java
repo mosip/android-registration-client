@@ -92,4 +92,15 @@ public class RegistrationRepository {
     public void updateSupervisorReview(String packetId, String supervisorStatus, String supervisorComment) {
         this.registrationDao.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
     }
+
+    public List<Registration> findByServerStatusAndCrDtimeBefore(List<String> serverStatuses, long timestamp) {
+        return this.registrationDao.findByServerStatusAndCrDtimeBefore(serverStatuses, timestamp);
+    }
+
+    /**
+     * Update server status with timestamp
+     */
+    public void updateServerStatusWithTimestamp(String packetId, String serverStatus, long timestamp) {
+        this.registrationDao.updateServerStatusWithTimestamp(packetId, serverStatus, timestamp);
+    }
 }
