@@ -112,6 +112,7 @@ public class RegistrationConstants {
     public static final String RIGHT = "Right";
     public static final String LEFT = "Left";
     public static final String PRE_REG_DELETION_CONFIGURED_DAYS = "mosip.registration.pre_reg_deletion_configured_days";
+    public static final String REG_DELETION_CONFIGURED_DAYS = "mosip.registration.deletion.configured.days";
     public static final String PRE_REG_DELETE_SUCCESS = "PRE_REG_DELETE_SUCCESS";
     public static final String PRE_REG_DELETE_FAILURE = "PRE_REG_DELETE_FAILURE";
     public static final String JOB_TRIGGER_POINT_USER = "User";

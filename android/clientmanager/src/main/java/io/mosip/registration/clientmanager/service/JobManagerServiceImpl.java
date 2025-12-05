@@ -21,6 +21,7 @@ import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.jobs.ConfigDataSyncJob;
 import io.mosip.registration.clientmanager.jobs.DeleteAuditLogsJob;
 import io.mosip.registration.clientmanager.jobs.PacketStatusSyncJob;
+import io.mosip.registration.clientmanager.jobs.RegistrationDeletionJob;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
@@ -195,7 +196,6 @@ public class JobManagerServiceImpl implements JobManagerService {
         }
     }
 
-
     private Class<?> getJobServiceImplClass(String jobAPIName) {
         switch (jobAPIName) {
             case "packetSyncStatusJob":
@@ -204,6 +204,8 @@ public class JobManagerServiceImpl implements JobManagerService {
                 return ConfigDataSyncJob.class;
             case "deleteAuditLogsJob":
                 return DeleteAuditLogsJob.class;
+            case "registrationPacketDeletionJob":
+                return RegistrationDeletionJob.class;
             default:
                 return null;
         }
