@@ -24,6 +24,7 @@ import java.util.*;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -61,6 +62,8 @@ public class UserOnboardServiceTest {
     @Mock
     private RegistrationService registrationService;
     @Mock
+    private GlobalParamRepository globalParamRepository;
+    @Mock
     private UserBiometricRepository userBiometricRepository;
     @Mock
     private ClientCryptoManagerService clientCryptoManagerService;
@@ -79,6 +82,7 @@ public class UserOnboardServiceTest {
         when(context.getString(anyInt())).thenReturn("app_name");
         when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPreferences);
         when(sharedPreferences.getString(anyString(), anyString())).thenReturn("testUserToken");
+        when(globalParamRepository.getCachedStringGlobalParam(anyString())).thenReturn("Staging");
         userOnboardService = new UserOnboardService(
                 context,
                 objectMapper,
@@ -89,7 +93,8 @@ public class UserOnboardServiceTest {
                 registrationService,
                 userBiometricRepository,
                 clientCryptoManagerService,
-                userDetailRepository
+                userDetailRepository,
+                globalParamRepository
         );
         // Patch for cases where constructor didn't set sharedPreferences
         ReflectionTestUtils.setField(userOnboardService, "sharedPreferences", sharedPreferences);
@@ -354,7 +359,7 @@ public class UserOnboardServiceTest {
         UserOnboardService realService = new UserOnboardService(
                 context, objectMapper, auditManagerService,
                 certificateManagerService, syncRestService, cryptoManagerService,
-                registrationService, userBiometricRepository, clientCryptoManagerService, userDetailRepository
+                registrationService, userBiometricRepository, clientCryptoManagerService, userDetailRepository, globalParamRepository
         );
         when(objectMapper.writeValueAsString(any())).thenThrow(new RuntimeException("fail"));
         ReflectionTestUtils.invokeMethod(realService, "buildDataBlock", "FINGER", "LEFT", "abc".getBytes(), "hash");
@@ -421,7 +426,7 @@ public class UserOnboardServiceTest {
         userOnboardService = new UserOnboardService(
                 context, objectMapper, auditManagerService, certificateManagerService,
                 syncRestService, cryptoManagerService, registrationService, userBiometricRepository,
-                clientCryptoManagerService, userDetailRepository
+                clientCryptoManagerService, userDetailRepository, globalParamRepository
         );
         final boolean[] called = {false};
         ReflectionTestUtils.invokeMethod(userOnboardService, "getCertificate", (Runnable) () -> called[0] = true);
@@ -455,7 +460,7 @@ public class UserOnboardServiceTest {
             userOnboardService = new UserOnboardService(
                     context, objectMapper, auditManagerService, certificateManagerService,
                     syncRestService, cryptoManagerService, registrationService, userBiometricRepository,
-                    clientCryptoManagerService, userDetailRepository
+                    clientCryptoManagerService, userDetailRepository, globalParamRepository
             );
             final boolean[] called = {false};
             ReflectionTestUtils.invokeMethod(userOnboardService, "getCertificate", (Runnable) () -> called[0] = true);
@@ -773,7 +778,7 @@ public class UserOnboardServiceTest {
             userOnboardService = new UserOnboardService(
                     context, objectMapper, auditManagerService, certificateManagerService,
                     syncRestService, cryptoManagerService, registrationService, userBiometricRepository,
-                    clientCryptoManagerService, userDetailRepository
+                    clientCryptoManagerService, userDetailRepository, globalParamRepository
             );
             final boolean[] called = {false};
             ReflectionTestUtils.invokeMethod(userOnboardService, "getCertificate", (Runnable) () -> called[0] = true);
@@ -803,7 +808,7 @@ public class UserOnboardServiceTest {
             userOnboardService = new UserOnboardService(
                     context, objectMapper, auditManagerService, certificateManagerService,
                     syncRestService, cryptoManagerService, registrationService, userBiometricRepository,
-                    clientCryptoManagerService, userDetailRepository
+                    clientCryptoManagerService, userDetailRepository, globalParamRepository
             );
             final boolean[] called = {false};
             ReflectionTestUtils.invokeMethod(userOnboardService, "getCertificate", (Runnable) () -> called[0] = true);

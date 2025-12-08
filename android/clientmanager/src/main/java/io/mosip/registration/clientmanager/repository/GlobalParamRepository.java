@@ -158,6 +158,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
+    public String getCachedStringOperatorOnboardingBioAttributes() {
+        return globalParamMap.get(RegistrationConstants.OPERATOR_ONBOARDING_BIO_ATTRIBUTES);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

@@ -34,7 +34,7 @@ class OperatorOnboardingBiometricsCaptureControlInitialization
   Widget build(BuildContext context) {
     _getOperatorOnboardingAttributes() async {
       await BiometricsApi()
-          .getMapValue("mosip.registration.operator.onboarding.bioattributes")
+          .getOperatorOnboardingBioattributes()
           .then((value) {
         context.read<GlobalProvider>().operatorOnboardingAttributes = value;
       });
