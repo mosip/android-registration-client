@@ -120,4 +120,12 @@ public class RegistrationConstants {
     public static final String OPERATOR_ONBOARDING_BIO_ATTRIBUTES = "mosip.registration.operator.onboarding.bioattributes";
     public static final String SERVER_ACTIVE_PROFILE = "mosip.registration.server_profile";
 
+
+    public static final String ONBOARD_YOURSELF_URL = "mosip.registration.onboard_yourself_url";
+    public static final String REGISTERING_INDIVIDUAL_URL = "mosip.registration.registering_individual_url";
+    public static final String SYNC_DATA_URL = "mosip.registration.sync_data_url";
+    public static final String MAPPING_DEVICES_URL = "mosip.registration.mapping_devices_url";
+    public static final String UPLOADING_DATA_URL = "mosip.registration.uploading_data_url";
+    public static final String UPDATING_BIOMETRICS_URL = "mosip.registration.updating_biometrics_url";
+
 }

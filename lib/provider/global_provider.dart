@@ -225,6 +225,50 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Help / guide URLs fetched from global params
+  String _onboardYourselfUrl = "";
+  String _registeringIndividualUrl = "";
+  String _syncDataUrl = "";
+  String _mappingDevicesUrl = "";
+  String _uploadingDataUrl = "";
+  String _updatingBiometricsUrl = "";
+
+  String get onboardYourselfUrl => _onboardYourselfUrl;
+  set onboardYourselfUrl(String value) {
+    _onboardYourselfUrl = value;
+    notifyListeners();
+  }
+
+  String get registeringIndividualUrl => _registeringIndividualUrl;
+  set registeringIndividualUrl(String value) {
+    _registeringIndividualUrl = value;
+    notifyListeners();
+  }
+
+  String get syncDataUrl => _syncDataUrl;
+  set syncDataUrl(String value) {
+    _syncDataUrl = value;
+    notifyListeners();
+  }
+
+  String get mappingDevicesUrl => _mappingDevicesUrl;
+  set mappingDevicesUrl(String value) {
+    _mappingDevicesUrl = value;
+    notifyListeners();
+  }
+
+  String get uploadingDataUrl => _uploadingDataUrl;
+  set uploadingDataUrl(String value) {
+    _uploadingDataUrl = value;
+    notifyListeners();
+  }
+
+  String get updatingBiometricsUrl => _updatingBiometricsUrl;
+  set updatingBiometricsUrl(String value) {
+    _updatingBiometricsUrl = value;
+    notifyListeners();
+  }
+
   saveVersionToGlobalParam(String id, String version) async {
     await networkService.saveVersionToGlobalParam(id, version);
   }
