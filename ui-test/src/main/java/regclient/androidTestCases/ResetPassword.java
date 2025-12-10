@@ -218,7 +218,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 	}
 	
-	@Test(priority = 1, description = "Reset to default password")
+	@Test(priority = 1, description = "Reset to default password", dependsOnMethods = "resetPassword")
 	public void resetToDefaultPassword() throws IOException {
 		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
@@ -265,6 +265,7 @@ public class ResetPassword extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickSynchronizeDataButton();
