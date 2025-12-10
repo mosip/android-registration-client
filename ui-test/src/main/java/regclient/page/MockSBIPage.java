@@ -105,13 +105,13 @@ public class MockSBIPage extends BasePage {
 
 	public void setAllModalityLowScore() {
 		// ModalityScore should be (20-5=15)
-		setModalityScore("Face", 20);
+		setModalityScore("Iris", 20);
 		swipeOrScroll();
 		clickOnElement(mockSbiSaveButton);
 	}
 
 	public void setAllModalityHighScore() {
-		setModalityScore("Face", 90);
+		setModalityScore("Iris", 90);
 		scrollUntilElementVisible(AppiumBy.id("io.mosip.mock.sbi:id/button12"));
 		clickOnElement(mockSbiSaveButton);
 	}

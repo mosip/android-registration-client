@@ -34,7 +34,6 @@ import regclient.utils.TestDataReader;
 
 public class ResetPassword extends AndroidBaseTest {
 
-	@SuppressWarnings("null")
 	@Test(priority = 0, description = "Verify reset password")
 	public void resetPassword() throws IOException {
 		BasePage.disableAutoRotation();
@@ -220,7 +219,6 @@ public class ResetPassword extends AndroidBaseTest {
 
 	}
 	
-	@SuppressWarnings("null")
 	@Test(priority = 1, description = "Reset to default password")
 	public void resetToDefaultPassword() throws IOException {
 		BasePage.disableAutoRotation();

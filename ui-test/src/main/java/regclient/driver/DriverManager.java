@@ -31,7 +31,7 @@ public class DriverManager {
 		return getAndroidDriver();
 	}
 
-	public synchronized static void startAppiumServer() {
+	public static void startAppiumServer() {
 		PropertiesReader propertiesReader = new PropertiesReader();
 		String ipAddress = System.getProperty("ipAddress") != null ? System.getProperty("ipAddress")
 				: propertiesReader.getIpAddress();
@@ -44,7 +44,7 @@ public class DriverManager {
 		service.start();
 	}
 
-	public synchronized static void stopAppiumServer() {
+	public static void stopAppiumServer() {
 		if (service != null)
 			service.stop();
 	}

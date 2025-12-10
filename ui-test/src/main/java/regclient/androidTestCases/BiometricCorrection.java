@@ -341,8 +341,15 @@ public class BiometricCorrection extends AndroidBaseTest {
 					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
-
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
+					applicantBiometricsPage.closeScanCapturePopUp();
+					
+					applicantBiometricsPage.clickOnScanButton();
+					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
+					applicantBiometricsPage.closeScanCapturePopUp();
+					
+					applicantBiometricsPage.clickOnScanButton();
+					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 3rd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
@@ -402,14 +409,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 1st attempt");
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 2nd attempt");
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 3rd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					applicantBiometricsPage.clickOnBackButton();
@@ -1174,8 +1173,15 @@ public class BiometricCorrection extends AndroidBaseTest {
 					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
-
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
+					applicantBiometricsPage.closeScanCapturePopUp();
+					
+					applicantBiometricsPage.clickOnScanButton();
+					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
+					applicantBiometricsPage.closeScanCapturePopUp();
+					
+					applicantBiometricsPage.clickOnScanButton();
+					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
@@ -1232,14 +1238,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 1st attempt");
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 2nd attempt");
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 3rd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					applicantBiometricsPage.clickOnBackButton();
