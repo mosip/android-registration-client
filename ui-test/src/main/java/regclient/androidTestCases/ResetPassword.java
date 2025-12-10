@@ -139,7 +139,6 @@ public class ResetPassword extends AndroidBaseTest {
 		
 		keycloakPage = new KeycloakPage(driver);
 
-//		assertTrue(keycloakPage.openKeycloakWebView(), "Verify if keycloak login page displayed");
 		keycloakPage.enterUserName(KeycloakUserManager.onlyOperatorRoleUser);
 		keycloakPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		keycloakPage.clickOnLoginButton();

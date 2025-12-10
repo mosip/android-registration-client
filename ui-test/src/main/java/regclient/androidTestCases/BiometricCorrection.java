@@ -343,11 +343,11 @@ public class BiometricCorrection extends AndroidBaseTest {
 					applicantBiometricsPage.clickOnScanButton();
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					
+
 					applicantBiometricsPage.clickOnScanButton();
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					
+
 					applicantBiometricsPage.clickOnScanButton();
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 3rd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
@@ -575,7 +575,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
-		
+
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
@@ -590,13 +590,12 @@ public class BiometricCorrection extends AndroidBaseTest {
 				break;
 		}
 		manageApplicationsPage.clickOnBackButton();
-		
 
 		// Return to mocksbi page
 		mockSBIPage.switchToMockSBI();
 		mockSBIPage.setAllModalityHighScore();
 		mockSBIPage.switchBackToArcApp();
-       // biocorrection flow
+		// biocorrection flow
 		if ("eng".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -638,7 +637,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		registrationTasksPage.handleLocationPermission();
-		
+
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 
@@ -730,7 +729,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 				assertTrue(biometricDetailsPage.isAdditionalInfoRequestIdTextboxDisplayed(),
 						"Additional info Request ID textbox should be displayed");
-				
+
 				biometricDetailsPage.enterAdditionalInfoUsingEmail(BasePage.email);
 
 				if (FetchUiSpec.eye.equals("yes")) {
@@ -816,8 +815,9 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(previewPage.isBiometricCorrectionTitleDisplayed(), "Verify if biometric correction title is displayed");
-		
+		assertTrue(previewPage.isBiometricCorrectionTitleDisplayed(),
+				"Verify if biometric correction title is displayed");
+
 		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
@@ -1040,7 +1040,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-	
+
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickOnNewRegistrationButton();
@@ -1175,13 +1175,13 @@ public class BiometricCorrection extends AndroidBaseTest {
 					applicantBiometricsPage.clickOnScanButton();
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					
+
 					applicantBiometricsPage.clickOnScanButton();
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					
+
 					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
+					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 3rd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
@@ -1503,6 +1503,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 		manageApplicationsPage.clickOnBackButton();
 
 		// Biometric correction packet process
+		// Reset biometric capabilities back to individual biometrics for correction flow
+		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		assertTrue(registrationTasksPage.isOperationalTaskDisplayed(), "Verify if operation tasks page is loaded");
 
 		registrationTasksPage.clickOnRegistrationTasksTab();
