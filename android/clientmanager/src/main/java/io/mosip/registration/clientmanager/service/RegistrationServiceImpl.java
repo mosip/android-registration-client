@@ -47,6 +47,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ResponseDto;
@@ -314,6 +315,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
                 centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(), this.registrationDto.getApplicationId());
+
+        // Auto-approve when supervisor approval is disabled (flag not "Y")
+        String supervisorApprovalFlag = globalParamRepository.getCachedStringGlobalParam(
+                RegistrationConstants.SUPERVISOR_APPROVAL_CONFIG_FLAG);
+        if (supervisorApprovalFlag == null || !"Y".equalsIgnoreCase(supervisorApprovalFlag.trim())) {
+            registrationRepository.updateStatus(this.registrationDto.getPacketId(), null,
+                    PacketClientStatus.APPROVED.name());
+        }
 
         // Delete pre-registration record after successful packet creation
         if (this.registrationDto.getPreRegistrationId() != null
