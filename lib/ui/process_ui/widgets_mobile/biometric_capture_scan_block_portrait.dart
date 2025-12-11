@@ -38,6 +38,7 @@ class _BiometricCaptureScanBlockPortraitState
     extends State<BiometricCaptureScanBlockPortrait> {
   bool isPortrait = true;
   late GlobalProvider globalProvider;
+  bool isSdkQualityCheckEnabled = false;
 
   @override
   void initState() {
@@ -50,8 +51,19 @@ class _BiometricCaptureScanBlockPortraitState
         .read<BiometricCaptureControlProvider>()
         .biometricCaptureScanBlockTabIndex = 1;
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    _getSdkQualityCheckStatus();
 
     super.initState();
+  }
+
+  _getSdkQualityCheckStatus() async {
+    String value =
+        await globalProvider.globalConfigService.getQualityCheckWithSdk();
+    if (value == "Y") {
+      setState(() {
+        isSdkQualityCheckEnabled = true;
+      });
+    }
   }
 
   setInitialState() {
@@ -288,6 +300,24 @@ class _BiometricCaptureScanBlockPortraitState
     return false;
   }
 
+  double _getAvgSdkScore() {
+    if (biometricAttributeData.listOfBiometricsDto.isEmpty) {
+      return 0;
+    }
+
+    double avg = 0;
+    int count = 0;
+    for (var i = 0; i < biometricAttributeData.listOfBiometricsDto.length; i++) {
+      if (biometricAttributeData.listOfBiometricsDto[i].sdkScore != null) {
+        avg = avg + biometricAttributeData.listOfBiometricsDto[i].sdkScore!;
+        count++;
+      }
+    }
+    if (count == 0) return 0;
+    avg = avg / count;
+    return avg;
+  }
+
   Widget _scanBlock() {
     return Column(
       children: [
@@ -379,6 +409,63 @@ class _BiometricCaptureScanBlockPortraitState
               const SizedBox(
                 width: double.infinity,
               ),
+              if (biometricAttributeData.isScanned) ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                            text: AppLocalizations.of(context)!.mds_quality,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                fontSize: 14,
+                                fontWeight: semiBold,
+                                color: blackShade1),
+                            children: [
+                              TextSpan(
+                                  text:
+                                      "${biometricAttributeData.qualityPercentage.toInt()}%",
+                                  style: TextStyle(
+                                      color: (biometricAttributeData
+                                                  .qualityPercentage
+                                                  .toInt() <
+                                              int.parse(biometricAttributeData
+                                                  .thresholdPercentage))
+                                          ? secondaryColors.elementAt(26)
+                                          : secondaryColors.elementAt(11)))
+                            ]),
+                      ),
+                      if (isSdkQualityCheckEnabled)
+                        RichText(
+                          text: TextSpan(
+                              text: AppLocalizations.of(context)!.sdk_quality,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: semiBold,
+                                      color: blackShade1),
+                              children: [
+                                TextSpan(
+                                    text: "${_getAvgSdkScore().toInt()}%",
+                                    style: TextStyle(
+                                        color: (_getAvgSdkScore().toInt() <
+                                                int.parse(biometricAttributeData
+                                                    .thresholdPercentage))
+                                            ? secondaryColors.elementAt(26)
+                                            : secondaryColors.elementAt(11)))
+                              ]),
+                        ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  color: secondaryColors.elementAt(22),
+                  thickness: 1,
+                ),
+              ],
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 18),
                 child: Text(

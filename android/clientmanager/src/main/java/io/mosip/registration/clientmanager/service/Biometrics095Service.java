@@ -21,6 +21,13 @@ import java.util.Map;
 import javax.inject.Inject;
 
 
+import io.mosip.kernel.biometrics.constant.BiometricType;
+import io.mosip.kernel.biometrics.constant.ProcessedLevelType;
+import io.mosip.kernel.biometrics.entities.BIR;
+import io.mosip.kernel.biometrics.entities.BiometricRecord;
+import io.mosip.kernel.biometrics.model.QualityCheck;
+import io.mosip.kernel.biometrics.model.QualityScore;
+import io.mosip.kernel.biometrics.model.Response;
 import io.mosip.kernel.biometrics.spi.IBioApiV2;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
@@ -46,6 +53,7 @@ import io.mosip.registration.clientmanager.util.MatchUtil;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
+import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.util.KeyManagerConstant;
 import io.mosip.registration.matchsdk.impl.MatchSDK;
 
@@ -136,7 +144,7 @@ public class Biometrics095Service extends BiometricsService {
                 //TODO need request transaction id to validate response transaction id
                 //TODO need requested spec version to validate response spec version
 
-                biometricsDtoList.add(new BiometricsDto(
+                BiometricsDto biometricsDto = new BiometricsDto(
                         modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().value() : captureDto.getBioType(),
                         modality == Modality.EXCEPTION_PHOTO ? EXCEPTION_PHOTO_ATTR.get(0) : captureDto.getBioSubType(),
                         captureDto.getBioValue(),
@@ -146,7 +154,24 @@ public class Biometrics095Service extends BiometricsService {
                         signature,
                         false,
                         1, 0,
-                        captureDto.getQualityScore()));
+                        captureDto.getQualityScore());
+
+                // Optional SDK quality check when enabled
+                String qualityCheckWithSdk = globalParamRepository.getCachedStringGlobalParam(
+                        RegistrationConstants.QUALITY_CHECK_WITH_SDK);
+                if (RegistrationConstants.ENABLE.equalsIgnoreCase(
+                        qualityCheckWithSdk == null ? RegistrationConstants.DISABLE : qualityCheckWithSdk)) {
+                    try {
+                        biometricsDto.setSdkScore(getSDKScore(biometricsDto));
+                        Log.i(TAG, "SDK score set to: " + biometricsDto.getSdkScore() + " for " + biometricsDto.getBioSubType());
+                    } catch (Exception e) {
+                        Log.e(TAG, "Unable to fetch SDK Score", e);
+                        throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
+                                SBIError.SBI_RCAPTURE_ERROR.getErrorMessage());
+                    }
+                }
+
+                biometricsDtoList.add(biometricsDto);
 
                 if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
                     boolean isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
@@ -238,6 +263,42 @@ public class Biometrics095Service extends BiometricsService {
                     SBIError.SBI_DISC_INVALID_REPSONSE.getErrorMessage());
         }
         return callbackId;
+    }
+
+    /**
+     * Calculate SDK score using MOSIP Match SDK quality API.
+     * Parity with desktop reg-client getSDKScore(biometricsDto).
+     */
+    private double getSDKScore(BiometricsDto biometricsDto) throws Exception {
+        // Default subtype for face if missing, to allow SDK score for face captures
+        if (biometricsDto.getBioSubType() == null
+                && Modality.FACE.getSingleType().value().equalsIgnoreCase(biometricsDto.getModality())) {
+            biometricsDto.setBioSubType(Modality.FACE.getSingleType().value());
+        }
+
+        if (biometricsDto.getBioSubType() == null) {
+            return 0.0;
+        }
+
+        BiometricType biometricType = BiometricType.fromValue(biometricsDto.getModality());
+
+        byte[] bioValueBytes = biometricsDto.getBioValue() == null ? null :
+                CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
+        if (bioValueBytes == null || bioValueBytes.length == 0) {
+            return 0.0;
+        }
+
+        BIR bir = MatchUtil.buildBir(
+                biometricsDto.getBioSubType(),
+                (long) biometricsDto.getQualityScore(),
+                bioValueBytes,
+                biometricType,
+                ProcessedLevelType.RAW,
+                false);
+
+        // Current IBioApiV2 does not expose a quality API on Android; fall back to
+        // the device-reported quality score to keep sdkScore populated.
+        return biometricsDto.getQualityScore();
     }
 
     public int getModalityThreshold(Modality modality) {

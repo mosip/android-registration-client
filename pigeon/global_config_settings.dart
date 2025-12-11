@@ -12,4 +12,6 @@ abstract class GlobalConfigSettingsApi {
   void modifyConfigurations(Map<String, String> localPreferences);
   @async
   String getGpsEnableFlag();
+  @async
+  String getQualityCheckWithSdk();
 }

@@ -71,6 +71,19 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
     return gpsEnableFlag;
   }
 
+  @override
+  Future<String> getQualityCheckWithSdk() async {
+    String qualityCheckWithSdkFlag = "";
+    try {
+      qualityCheckWithSdkFlag = await GlobalConfigSettingsApi().getQualityCheckWithSdk();
+    } on PlatformException {
+      debugPrint("Location Api failed!");
+    }  catch (e) {
+      debugPrint("Location fetch error: $e");
+    }
+    return qualityCheckWithSdkFlag;
+  }
+
 }
 
 GlobalConfigService getGlobalConfigServiceImpl() => GlobalConfigServiceImpl();

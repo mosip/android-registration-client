@@ -85,4 +85,16 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
         }
         result.success(gpsFlag);
     }
+
+    @Override
+    public void getQualityCheckWithSdk(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
+        String qualityCheckWithSdkFlag = "";
+        try {
+            qualityCheckWithSdkFlag = globalParamRepository.getCachedStringQualityCheckWithSdk();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching Quality Check With SDK flag", e);
+        }
+        result.success(qualityCheckWithSdkFlag);
+    }
+
 }

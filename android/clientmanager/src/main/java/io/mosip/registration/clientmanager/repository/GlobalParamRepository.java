@@ -158,6 +158,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
+    public String getCachedStringQualityCheckWithSdk(){
+        return globalParamMap.get(RegistrationConstants.QUALITY_CHECK_WITH_SDK);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */
