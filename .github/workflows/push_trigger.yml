@@ -44,7 +44,7 @@ jobs:
         run: |
           cd client
           chmod +x gradlew
-          ./gradlew compileDebugSources || true
+          ./gradlew assembleDebug
 
       - name: Run CodeQL Analysis
         uses: github/codeql-action/analyze@v3
@@ -61,7 +61,7 @@ jobs:
         run: |
           cd client
           chmod +x gradlew
-          ./gradlew clean assembleDebug --dry-run
+          ./gradlew tasks --all > /dev/null
 
   build-apk:
     name: Build APK
@@ -77,14 +77,13 @@ jobs:
       - name: Replace serverBaseURL
         run: |
           find . -type f -name "*build.gradle" -print0 | \
-          xargs -0 sed -i "s|api-internal.sandbox.xyz.net|${{ github.event.inputs.serverBaseURL }}|g"
+          xargs -0 -r sed -i "s|api-internal.sandbox.xyz.net|${{ github.event.inputs.serverBaseURL }}|g"
 
       - name: Build APK
         run: |
           cd client
           chmod +x gradlew
           ./gradlew assembleDebug
-          ls app/build/outputs/apk/debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
