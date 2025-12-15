@@ -1739,9 +1739,7 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL)).thenReturn("0");
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID)).thenReturn("bioField");
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("2.0.0");
-        when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL)).thenReturn("0");
-        when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("2.0.0");
-        when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID)).thenReturn("bioField");
+
 
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("centerId");

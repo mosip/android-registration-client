@@ -37,4 +37,4 @@ Upon successful login to the Android Registration Client (ARC), the Operator sho
      * RegistrationTransaction table
 
 ## Sequence Diagram
-![LostUINFlow.png](../LostUINFlow.png)]
+![LostUINFlow.png](../LostUINFlow.png)

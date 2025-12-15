@@ -1056,20 +1056,26 @@ public class PreRegZipHandlingServiceImplTest {
             FileUtils.deleteDirectory(tempDir);
         }
 
-        when(mockContext.getFilesDir()).thenReturn(tempDir);
-        when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("preRegPackets");
-        ReflectionTestUtils.setField(service, "appContext", mockContext);
-        ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
+        try {
+            when(mockContext.getFilesDir()).thenReturn(tempDir);
+            when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("preRegPackets");
+            ReflectionTestUtils.setField(service, "appContext", mockContext);
+            ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
 
-        String path = service.storePreRegPacketToDisk("RID123", "payload".getBytes(), new CenterMachineDto());
-        assertTrue("Path should contain RID123.zip", path.contains("RID123.zip"));
-        
-        // Verify directory was created
-        File targetDir = new File(tempDir, "preRegPackets");
-        assertTrue("Expected preRegPackets directory to be created", targetDir.exists() && targetDir.isDirectory());
-        
-        // Verify zip file was created
-        File zipFile = new File(targetDir, "RID123.zip");
-        assertTrue("Expected stored packet file to exist", zipFile.exists());
+            String path = service.storePreRegPacketToDisk("RID123", "payload".getBytes(), new CenterMachineDto());
+            assertTrue("Path should contain RID123.zip", path.contains("RID123.zip"));
+            
+            // Verify directory was created
+            File targetDir = new File(tempDir, "preRegPackets");
+            assertTrue("Expected preRegPackets directory to be created", targetDir.exists() && targetDir.isDirectory());
+            
+            // Verify zip file was created
+            File zipFile = new File(targetDir, "RID123.zip");
+            assertTrue("Expected stored packet file to exist", zipFile.exists());
+        } finally {
+            if (tempDir.exists()) {
+                FileUtils.deleteDirectory(tempDir);
+            }
+        }
     }
 }

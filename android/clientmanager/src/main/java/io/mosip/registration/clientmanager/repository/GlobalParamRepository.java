@@ -198,6 +198,11 @@ public class GlobalParamRepository {
         if (value == null || value.trim().isEmpty()) {
             return 0L;
         }
-        return Long.parseLong(value.trim());
+        try {
+            return Long.parseLong(value.trim());
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Failed to parse long value for key: " + key + ", value: " + value, e);
+            return 0L;
+        }
     }
 }
