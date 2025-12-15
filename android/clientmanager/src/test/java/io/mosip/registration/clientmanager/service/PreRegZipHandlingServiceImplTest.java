@@ -574,13 +574,14 @@ public class PreRegZipHandlingServiceImplTest {
         when(mockCryptoManagerService.symmetricEncryptWithRandomIV(eq(secretKey), any(byte[].class), isNull()))
                 .thenReturn(encryptedBytes);
 
-        doReturn("/tmp/preReg.zip").when(spyService).storePreRegPacketToDisk(anyString(), any(byte[].class), any());
+        String expectedPath = new File(System.getProperty("java.io.tmpdir"), "preReg.zip").getAbsolutePath();
+        doReturn(expectedPath).when(spyService).storePreRegPacketToDisk(anyString(), any(byte[].class), any());
 
         PreRegistrationDto result = spyService.encryptAndSavePreRegPacket("pre123",
                 Base64.getEncoder().encodeToString(decodedPayload.getBytes(StandardCharsets.UTF_8)),
                 new CenterMachineDto());
 
-        assertEquals("/tmp/preReg.zip", result.getPacketPath());
+        assertEquals(expectedPath, result.getPacketPath());
         assertArrayEquals(encryptedBytes, result.getEncryptedPacket());
         assertEquals(CryptoUtil.encodeToURLSafeBase64(secretKey.getEncoded()), result.getSymmetricKey());
     }
