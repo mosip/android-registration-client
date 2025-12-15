@@ -98,7 +98,12 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     if (registrationStartError.isEmpty) {
       _triggerNavigation();
     } else {
-      _showInSnackBar(registrationStartError);
+      // Translate error code using i18n if it's PAK_APPRVL_MAX_TIME
+      String errorMessage = registrationStartError;
+      if (registrationStartError.contains('PAK_APPRVL_MAX_TIME')) {
+        errorMessage = AppLocalizations.of(context)!.reg_pkt_apprvl_time_exceed;
+      }
+      _showInSnackBar(errorMessage);
     }
   }
 

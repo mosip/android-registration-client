@@ -332,5 +332,6 @@
   "enter_additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी दर्ज करें",
   "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी",
   "no_access_to_this_page": "आपको इस पृष्ठ तक पहुँच नहीं है",
-  "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स"
+  "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स",
+  "reg_pkt_apprvl_time_exceed": "अनुमोदन के लिए लंबित पंजीकृत पैकेट अनुमत समय से अधिक हो गए हैं। जारी रखने के लिए बैकलॉग साफ़ करें।"
 }
