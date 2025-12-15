@@ -73,4 +73,10 @@ public interface PacketService {
      * @return Packet Status
      */
     String getPacketStatus(String packetId);
+
+    /**
+     * Validate if any registered packet has exceeded the configured approval wait time.
+     * @return true if approval wait time is breached, otherwise false.
+     */
+    boolean isRegisteredPacketApprovalTimeBreached();
 }

@@ -54,6 +54,10 @@ public class RegistrationRepository {
     }
 
 
+    public Registration getOldestRegistrationByStatus(String status) {
+        return this.registrationDao.findOldestRegistrationByStatus(status);
+    }
+
     public Registration getRegistration(String packetId) {
         return this.registrationDao.findOneByPacketId(packetId);
     }

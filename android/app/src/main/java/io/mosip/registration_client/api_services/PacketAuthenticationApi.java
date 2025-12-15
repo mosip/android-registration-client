@@ -97,6 +97,13 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     public void syncPacketAll(@NonNull List<String> packetIds, @NonNull PacketAuthPigeon.Result<Void> result) {
         Integer packetSize = packetIds.size();
         final Integer[] remainingPack = {packetSize, 0};
+
+        if (packetService.isRegisteredPacketApprovalTimeBreached()) {
+            // Error will be handled by Flutter UI layer using i18n
+            result.success(null);
+            return;
+        }
+
         CustomToast newToast = new CustomToast(activity);
         for (String value : packetIds) {
             try {

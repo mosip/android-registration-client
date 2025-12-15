@@ -15,6 +15,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
@@ -85,6 +86,8 @@ public class RegistrationServiceImplTest {
     private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
     @Mock
     private Biometrics095Service biometricService;
+    @Mock
+    private PacketService packetService;
 
     @Before
     public void setUp() {
@@ -95,7 +98,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService);
     }
 
     @Test(expected = ClientCheckedException.class)

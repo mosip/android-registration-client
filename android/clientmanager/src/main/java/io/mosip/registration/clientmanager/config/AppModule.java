@@ -205,10 +205,11 @@ public class AppModule {
                                                    RegistrationCenterRepository registrationCenterRepository,
                                                    LocationValidationService locationValidationService,
                                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
-                                                   Biometrics095Service biometricService) {
+                                                   Biometrics095Service biometricService,
+                                                   PacketService packetService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService);
     }
 
     @Provides

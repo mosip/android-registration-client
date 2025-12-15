@@ -345,4 +345,35 @@ public class PacketServiceImpl implements PacketService {
         String packetStatus = registration.getServerStatus() == null ? registration.getClientStatus() : registration.getServerStatus();
         return packetStatus;
     }
+
+    @Override
+    public boolean isRegisteredPacketApprovalTimeBreached() {
+        try {
+            String limitInDays = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT);
+            if (limitInDays == null || limitInDays.trim().isEmpty()) {
+                return false;
+            }
+            long limitDays = Long.parseLong(limitInDays.trim());
+            if (limitDays <= 0) {
+                return false;
+            }
+            Registration oldestPendingRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name());
+            if (oldestPendingRegistration == null || oldestPendingRegistration.getCrDtime() == null) {
+                return false;
+            }
+//            long thresholdTimeMillis = System.currentTimeMillis() - (limitDays * 24L * 60L * 60L * 1000L);
+            long thresholdTimeMillis = System.currentTimeMillis() - (10L * 60L * 1000L);
+
+            Log.i(TAG, "Oldest Pending Registration CrDtime: " + oldestPendingRegistration.getCrDtime() +
+                    ", Threshold Time Millis: " + thresholdTimeMillis);
+            return oldestPendingRegistration.getCrDtime() < thresholdTimeMillis;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid REG_PAK_MAX_TIME_APPRV_LIMIT configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate registered packet approval time breach", ex);
+            return false;
+        }
+    }
 }
