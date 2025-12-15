@@ -176,7 +176,7 @@ public class RegistrationServiceImplTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(registrationDto.getRId(), result.getRId());
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
         // Mock additional required dependencies for submitRegistrationDto
@@ -388,7 +388,7 @@ public class RegistrationServiceImplTest {
 
         when(clientCryptoManagerService.getClientKeyIndex()).thenReturn("1");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
         // Should not throw
@@ -739,7 +739,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -795,7 +795,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -851,7 +851,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -907,7 +907,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -963,7 +963,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -1221,7 +1221,7 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getSchemaJson(Mockito.any(), Mockito.anyDouble())).thenReturn("{}");
         when(packetWriterService.persistPacket(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn("containerPath123");
         // Fix: Set BIO_DEVICES field on biometricService mock
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 
@@ -1752,7 +1752,7 @@ public class RegistrationServiceImplTest {
                 Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString()))
                 .thenReturn("path/to/packet.zip");
 
-        Field bioDevicesServiceField = biometricService.getClass().getDeclaredField("BIO_DEVICES");
+        Field bioDevicesServiceField = Biometrics095Service.class.getDeclaredField("BIO_DEVICES");
         bioDevicesServiceField.setAccessible(true);
         bioDevicesServiceField.set(biometricService, new HashMap<>());
 

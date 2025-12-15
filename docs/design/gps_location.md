@@ -61,7 +61,7 @@ These permissions must be granted at runtime when the app requests location acce
         * **Timing**: Permissions are requested immediately before the first packet creation attempt if not already granted.
         * **UI**: The user is presented with the standard system permission dialog. No custom pre-prompt is shown.
         * **Denial Handling**: If the user denies permission, GPS capture is skipped for the current packet. The permission will be requested again on the next packet creation attempt unless "Don't ask again" is selected.
-        * **Revocation**: If permissions are revoked by the user (e.g., via settings) after packet creation but before submission, the system will detect the lack of permission at the point of access, GPS data will not be captured for subsequent packets.
+        * **Revocation**: If permissions are revoked by the user (e.g., via settings) after packet creation (GPS capture) but before submission, the already captured GPS data is **retained** and attached to the packet. It is NOT removed. GPS data will not be captured for subsequent packets where permission is missing.
 3. GPS Location Capture:
     * When packet creation is initiated (New Registration, Lost UIN, Update UIN, Applicant Correction), the system automatically fetches current GPS coordinates.
     * Location is captured using high-accuracy GPS mode via Geo-locator service.
@@ -81,8 +81,8 @@ These permissions must be granted at runtime when the app requests location acce
 6. Offline Mode Support:
     * GPS coordinates are captured and stored locally even in offline mode.
     * Coordinates are attached to packet metadata at the moment of packet creation.
-    * **Precedence**: The latest captured coordinates available in the session at the time of submission are used.
-    * **Immutability**: Once the packet is created and stored locally, the attached GPS metadata is immutable. It is NOT updated even if better location data becomes available later or during sync (upload).
+    * **Precedence**: The system uses the latest coordinates available in the session at the exact moment of packet creation (submission).
+    * **Immutability**: Immediately after packet creation, the GPS metadata is finalized and stored. It is **never** updated for that packet, even if better location data becomes available later or before upload.
     * Packets with GPS metadata are stored locally and synced when connectivity is restored.
 7. Error Handling:
     * If location services are disabled, system logs warning and continues without blocking packet creation.
