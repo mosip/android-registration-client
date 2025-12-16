@@ -643,7 +643,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         // registered packet approval time breach check
         if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
-            throw new ClientCheckedException(RegistrationConstants.PAK_APPRVL_MAX_TIME, RegistrationConstants.PAK_APPRVL_MAX_TIME);
+            throw new ClientCheckedException("PAK_APPRVL_MAX_TIME", "Registered packets approval time breached");
         }
     }
 
