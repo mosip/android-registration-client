@@ -203,7 +203,10 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     public void getDOBMaxAge(@NonNull DemographicsDataPigeon.Result<String> result) {
         String dobMaxAge = "";
         try {
-            dobMaxAge = this.globalParamRepository.getCachedStringDOBAgeLimit();
+            String value = this.globalParamRepository.getCachedStringDOBAgeLimit();
+            if (value != null) {
+                dobMaxAge = value;
+            }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Get DOB max age failed!" + Arrays.toString(e.getStackTrace()));
         }
