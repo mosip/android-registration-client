@@ -77,9 +77,9 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
     try {
       qualityCheckWithSdkFlag = await GlobalConfigSettingsApi().getQualityCheckWithSdk();
     } on PlatformException {
-      debugPrint("Location Api failed!");
+      debugPrint("Quality Check With SDK Api failed!");
     }  catch (e) {
-      debugPrint("Location fetch error: $e");
+      debugPrint("Quality Check With SDK fetch error: $e");
     }
     return qualityCheckWithSdkFlag;
   }
