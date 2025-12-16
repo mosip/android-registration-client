@@ -689,7 +689,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     @Override
     public void getOperatorOnboardingBioattributes(@NonNull BiometricsPigeon.Result<String> result) {
         String response = globalParamRepository.getCachedStringOperatorOnboardingBioAttributes();
-        result.success(response);
+        result.success(response == null ? "" : response);
     }
 
     public void handleDeviceInfoResponseForList(Bundle bundle) {
