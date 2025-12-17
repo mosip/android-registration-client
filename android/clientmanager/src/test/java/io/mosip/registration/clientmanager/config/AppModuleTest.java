@@ -5,14 +5,15 @@ import android.content.Context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.inject.Provider;
-import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
@@ -30,8 +31,6 @@ import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
 import io.mosip.registration.keymanager.repository.CACertificateStoreRepository;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.service.CertificateDBHelper;
-import io.mosip.registration.keymanager.service.CertificateManagerServiceImpl;
-import io.mosip.registration.keymanager.service.CryptoManagerServiceImpl;
 import io.mosip.registration.keymanager.service.LocalClientCryptoServiceImpl;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -42,10 +41,13 @@ import io.mosip.registration.packetmanager.service.PosixAdapterServiceImpl;
 import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
+import io.mosip.registration.packetmanager.util.ConfigService;
 import io.mosip.registration.packetmanager.util.PacketKeeper;
 import io.mosip.registration.packetmanager.util.PacketManagerHelper;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 
 
@@ -104,13 +106,32 @@ public class AppModuleTest {
 
     @Mock LocalConfigDAO localConfigDAO;
 
+    @Mock LocationValidationService locationValidationService;
+
     private AppModule appModule;
+    private MockedStatic<ConfigService> configServiceMock;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         when(mockApplication.getApplicationContext()).thenReturn(mockContext);
         appModule = new AppModule(mockApplication);
+
+        // Mock ConfigService static methods
+        configServiceMock = Mockito.mockStatic(ConfigService.class);
+        // First match null contexts and throw NPE
+        configServiceMock.when(() -> ConfigService.getProperty(anyString(), isNull()))
+                .thenThrow(new NullPointerException());
+        // Then match any non-null context and return null
+        configServiceMock.when(() -> ConfigService.getProperty(anyString(), any(Context.class)))
+                .thenReturn(null);
+    }
+
+    @After
+    public void tearDown() {
+        if (configServiceMock != null) {
+            configServiceMock.close();
+        }
     }
 
     @Test
@@ -180,7 +201,7 @@ public class AppModuleTest {
     public void testProvideRegistrationService() {
         RegistrationService service = appModule.provideRegistrationService(
                 packetWriterService, registrationRepository, mock(MasterDataService.class), identitySchemaRepository,
-                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,preRegistrationDataSyncServiceProvider,biometricService
+                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider,biometricService
         );
         assertNotNull(service);
         assertTrue(service instanceof RegistrationServiceImpl);

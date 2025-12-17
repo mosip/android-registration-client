@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
@@ -35,6 +36,9 @@ public class NetworkModuleTest {
 
     private File tempCacheDir;
     private NetworkModule networkModule;
+    @Mock
+    GlobalParamRepository globalParamRepository;
+
 
     @Before
     public void setUp() throws IOException {
@@ -45,6 +49,8 @@ public class NetworkModuleTest {
         when(mockApplication.getApplicationContext()).thenReturn(mockContext);
         when(mockApplication.getCacheDir()).thenReturn(tempCacheDir);
         networkModule = new NetworkModule(mockApplication);
+        when(globalParamRepository.getCachedReadTimeout()).thenReturn(0L);
+        when(globalParamRepository.getCachedWriteTimeout()).thenReturn(0L);
     }
 
     @After
@@ -76,7 +82,7 @@ public class NetworkModuleTest {
     @Test
     public void testProvideOkhttpClient() {
         Cache cache = networkModule.provideHttpCache();
-        OkHttpClient client = networkModule.provideOkhttpClient(cache);
+        OkHttpClient client = networkModule.provideOkhttpClient(cache,globalParamRepository);
         assertNotNull(client);
         assertEquals(cache, client.cache());
         assertTrue(client.interceptors().stream().anyMatch(i -> i instanceof RestAuthInterceptor));
@@ -85,7 +91,7 @@ public class NetworkModuleTest {
     @Test
     public void testProvideRetrofit() {
         Gson gson = networkModule.provideGson();
-        OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache());
+        OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache(),globalParamRepository);
         Retrofit retrofit = networkModule.provideRetrofit(gson, client);
         assertNotNull(retrofit);
         assertEquals(client, retrofit.callFactory());
@@ -95,7 +101,7 @@ public class NetworkModuleTest {
     @Test
     public void testProvideSyncRestService() {
         Gson gson = networkModule.provideGson();
-        OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache());
+        OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache(),globalParamRepository);
         Retrofit retrofit = networkModule.provideRetrofit(gson, client);
         SyncRestService service = networkModule.provideSyncRestService(retrofit);
         assertNotNull(service);

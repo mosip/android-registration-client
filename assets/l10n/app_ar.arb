@@ -37,7 +37,6 @@
   "login_failed": "فشل تسجيل الدخول. حاول مرة أخرى!",
   "password_incorrect": "كلمة المرور غير صحيحة!",
   "machine_not_found": "لم يتم العثور على الجهاز!",
-  "network_error": "فشل تسجيل الدخول. تحقق من اتصال الشبكة!",
   "cred_expired": "لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!",
   "not_initialized": "تعذر تهيئة الجهاز!",
   "invalid_user": "اسم المستخدم غير صالح!",
@@ -211,8 +210,6 @@
   "language_selector_note": "يرجى ملاحظة أن اللغة قد تعتمد على البيانات التي تم إدخالها أثناء التسجيل المسبق.",
   "cancel": "يلغي",
   "submit": "يُقدِّم",
-  "go_back": "عُد",
-  "informed": "أُبلغ",
   "logo_text": "مدعوم من موسيب",
   "get_onboard": "إركب",
   "skip_to_home": "انتقل إلى المنزل",
@@ -332,5 +329,26 @@
   "enter_additional_info_req_id": "أدخل معرف طلب المعلومات الإضافية",
   "additional_info_req_id": "معرف طلب المعلومات الإضافية",
   "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
-  "scheduled_job_settings": "إعدادات المهمة المجدولة"
+  "scheduled_job_settings": "إعدادات المهمة المجدولة",
+  "doc_size_exceeded": "حجم الملف يتجاوز الحد {size}",
+  "@doc_size_exceeded": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "يجب ألا يزيد العمر عن {age} سنة",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  },
+  "onboard_officer_biometric": "التحقق البيومتري للضابط (التسجيل)",
+  "update_officer_biometric": "تحديث التحقق البيومتري للضابط",
+  "submit_changes": "إرسال التغييرات",
+  "local_preferences_saved_msg": "تم حفظ التفضيلات المحلية بنجاح. يلزم إعادة تشغيل التطبيق لرؤية التغييرات. هل ترغب في الإنهاء الآن؟"
 }
+

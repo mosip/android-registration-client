@@ -60,7 +60,6 @@ public class PacketWriterServiceImplTest {
     @Mock
     PacketKeeper packetKeeper;
 
-    @InjectMocks
     PacketWriterServiceImpl packetWriterService;
 
     private MockedStatic<ConfigService> configServiceMock;
@@ -70,16 +69,33 @@ public class PacketWriterServiceImplTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         if (configServiceMock != null) configServiceMock.close();
         configServiceMock = Mockito.mockStatic(ConfigService.class);
         configServiceMock.when(() -> ConfigService.getProperty(anyString(), any(Context.class)))
-                .thenReturn("default");
+                .thenAnswer(invocation -> {
+                    String key = invocation.getArgument(0);
+                    switch (key) {
+                        case "packetmanager.zip.datetime.pattern":
+                            return "yyyyMMddHHmmss";
+                        case "mosip.kernel.packet.default_subpacket_name":
+                            return "id";
+                        case "default.provider.version":
+                            return "1.0.0";
+                        case "mosip.utc-datetime-pattern":
+                            return "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+                        default:
+                            return "default";
+                    }
+                });
 
         if (logMock != null) logMock.close();
         logMock = Mockito.mockStatic(Log.class);
         logMock.when(() -> Log.e(anyString(), anyString())).thenReturn(0);
+        logMock.when(() -> Log.e(anyString(), anyString(), any(Throwable.class))).thenReturn(0);
+        logMock.when(() -> Log.d(anyString(), anyString())).thenReturn(0);
+        logMock.when(() -> Log.i(anyString(), anyString())).thenReturn(0);
+
+        packetWriterService = new PacketWriterServiceImpl(context, packetManagerHelper, packetKeeper);
     }
 
     @org.junit.After

@@ -12,8 +12,8 @@ To set up Appium for use with this framework, please follow the installation ins
    ```bash
    mvn clean package -DskipTests=true
    ```
-2. The generated JAR file (`uitest-regclient-0.0.1.jar`) will be located in the `target` directory.
-3. **For running tests on a device**: Use the JAR file with dependencies (`uitest-regclient-0.0.1.jar`).
+2. The generated JAR file (`uitest-regclient-1.0.0.jar`) will be located in the `target` directory.
+3. **For running tests on a device**: Use the JAR file with dependencies (`uitest-regclient-1.0.0.jar`).
 
 ## Configurations
 

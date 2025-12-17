@@ -163,6 +163,19 @@ class DemographicServiceImpl implements DemographicService {
       debugPrint('Selected Code not added ${e.toString()}');
     }
   }
+
+  @override
+  Future<String> getDOBMaxAge() async {
+    String maxAge = "";
+    try {
+      maxAge = await DemographicsApi().getDOBMaxAge();
+    } on PlatformException {
+      debugPrint('DemographicsApi call failed');
+    } catch (e) {
+      debugPrint('Max Age not fetched ${e.toString()}');
+    }
+    return maxAge;
+  }
 }
 
 DemographicService getDemographicServiceImpl() => DemographicServiceImpl();
