@@ -9,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.LocalDateTimeDeserializer;
 import io.mosip.registration.clientmanager.util.LocalDateTimeSerializer;
@@ -19,6 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import javax.inject.Singleton;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Module
 public class NetworkModule {
@@ -50,10 +52,24 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    OkHttpClient provideOkhttpClient(Cache cache) {
+    OkHttpClient provideOkhttpClient(Cache cache, GlobalParamRepository globalParamRepository) {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.cache(cache);
         client.addInterceptor(new RestAuthInterceptor(appContext));
+
+        long cachedReadTimeout = globalParamRepository.getCachedReadTimeout();
+        long cachedWriteTimeout = globalParamRepository.getCachedWriteTimeout();
+
+        long readTimeout  = cachedReadTimeout > 0
+                ? cachedReadTimeout
+                : BuildConfig.HTTP_READ_TIMEOUT;
+
+        long writeTimeout  = cachedWriteTimeout > 0
+                ? cachedWriteTimeout
+                : BuildConfig.HTTP_WRITE_TIMEOUT;
+
+        client.readTimeout(readTimeout, TimeUnit.MILLISECONDS);
+        client.writeTimeout(writeTimeout , TimeUnit.MILLISECONDS);
         return client.build();
     }
 
@@ -72,4 +88,5 @@ public class NetworkModule {
     SyncRestService provideSyncRestService(Retrofit retrofit) {
         return retrofit.create(SyncRestService.class);
     }
+
 }

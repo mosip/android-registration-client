@@ -37,7 +37,6 @@
   "login_failed": "Echec de la connexion.. Réessayez!",
   "password_incorrect": "Mot de passe incorrect!",
   "machine_not_found": "Machine introuvable!",
-  "network_error": "Échec de la connexion. Vérifiez la connexion réseau!",
   "cred_expired": "Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!",
   "not_initialized": "La machine n’a pas pu être initialisée!",
   "invalid_user": "Nom d’utilisateur non valide!",
@@ -210,8 +209,6 @@
   "language_selector_note": "Veuillez noter que la langue peut être basée sur les données saisies lors de la pré-inscription.",
   "cancel": "ANNULER",
   "submit": "SOUMETTRE",
-  "go_back": "RETOURNER",
-  "informed": "INFORMÉE",
   "logo_text": "Propulsé par MOSIP",
   "get_onboard": "MONTER À BORD",
   "skip_to_home": "PASSEZ À LA MAISON",
@@ -348,5 +345,9 @@
             "type": "int"
             }
        }
-  }
+  },
+  "onboard_officer_biometric": "Enregistrement biométrique de l’officier",
+  "update_officer_biometric": "Mise à jour biométrique de l’officier",
+  "submit_changes": "Soumettre les modifications",
+  "local_preferences_saved_msg": "Les préférences locales ont été enregistrées avec succès. Le redémarrage de l'application est nécessaire pour voir les changements. Voulez-vous quitter maintenant ?"
 }

@@ -18,6 +18,7 @@ import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.*;
 import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.keymanager.dto.*;
 import io.mosip.registration.keymanager.dto.CACertificateResponseDto;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
@@ -91,6 +92,7 @@ public class MasterDataServiceImplTest {
     @Mock private Call<ResponseBody> mockIdSchemaCall;
     @Mock private PermittedLocalConfigRepository mockPermittedLocalConfigRepository;
     @Mock private LocalConfigDAO mockLocalConfigDao;
+    @Mock private JobTransactionService mockJobTransactionService;
 
     private final String TEST_APP_NAME = "MockAppName";
 
@@ -1677,7 +1679,7 @@ public class MasterDataServiceImplTest {
         MasterDataServiceImpl spyService = Mockito.spy(masterDataService);
         doReturn(null).when(spyService).getRegistrationCenterMachineDetails();
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false,"jobId");
         verify(onFinish).run();
     }
 
@@ -1699,7 +1701,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCertCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false,"jobId");
         verify(onFinish).run();
     }
 
@@ -1719,7 +1721,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCertCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false,"jobId");
         verify(onFinish).run();
     }
 
@@ -1737,7 +1739,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCertCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false,"jobId");
         verify(onFinish).run();
     }
 
@@ -2035,7 +2037,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCertCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false,"");
         // No need to verify anything, test passes if NPE is thrown
     }
 
@@ -2058,7 +2060,7 @@ public class MasterDataServiceImplTest {
             return null;
         }).when(mockCertCall).enqueue(any());
         Runnable onFinish = mock(Runnable.class);
-        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false,"");
     }
 
     /**
@@ -2140,8 +2142,7 @@ public class MasterDataServiceImplTest {
                 mockLanguageRepository,
                 mockJobManagerService,
                 mockFileSignatureDao,
-                null
-                mockFileSignatureDao,
+                mockJobTransactionService,
                 mockPermittedLocalConfigRepository,
                 mockLocalConfigDao
         );

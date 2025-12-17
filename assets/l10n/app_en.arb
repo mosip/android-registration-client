@@ -37,7 +37,6 @@
   "login_failed": "Login Failed. Try Again!",
   "password_incorrect": "Password incorrect!",
   "machine_not_found": "Machine not found!",
-  "network_error": "Login failed. Check network connection!",
   "cred_expired": "Credentials not found or are expired. Please try online login!",
   "not_initialized": "Machine could not be initialized!",
   "invalid_user": "Username invalid!",
@@ -211,8 +210,6 @@
   "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
   "cancel": "CANCEL",
   "submit": "SUBMIT",
-  "go_back": "GO BACK",
-  "informed": "INFORMED",
   "logo_text": "Powered by MOSIP",
   "get_onboard": "GET ONBOARDED",
   "skip_to_home": "SKIP TO HOME",
@@ -348,5 +345,9 @@
           "type": "int"
           }
      }
-  }
+  },
+  "onboard_officer_biometric": "Officer's Biometric Onboarding",
+  "update_officer_biometric": "Officer's Biometric Update",
+  "submit_changes": "Submit Changes",
+  "local_preferences_saved_msg": "Local Preferences have been saved successfully. Application restart is needed to see the changes. Do you want to quit now?"
 }

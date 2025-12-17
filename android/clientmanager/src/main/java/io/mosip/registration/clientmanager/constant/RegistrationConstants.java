@@ -120,4 +120,6 @@ public class RegistrationConstants {
     public static final String PWORD_LENGTH = "mosip.registration.username_pwd_length";
     public static final String DOC_SIZE = "mosip.registration.document_size";
     public static final  String MAX_AGE = "mosip.registration.max_age";
+    public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
+    public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
 }
