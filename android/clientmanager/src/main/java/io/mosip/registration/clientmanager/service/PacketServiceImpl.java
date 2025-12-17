@@ -376,4 +376,69 @@ public class PacketServiceImpl implements PacketService {
             return false;
         }
     }
+
+    @Override
+    public boolean isLastExportTimeExceeded() {
+        try {
+            Registration lastExportedRegistration = registrationRepository.getLastExportedRegistration();
+            Log.i(TAG, "Last Exported Registration: " + (lastExportedRegistration != null ? lastExportedRegistration.getPacketId() : "null"));
+            if (lastExportedRegistration == null) {
+                return false;
+            }
+            Long lastSyncDateMillis = lastExportedRegistration.getUpdDtimes();
+            if (lastSyncDateMillis == null) {
+                return false;
+            }
+//            String configValue = globalParamRepository.getCachedStringGlobalParam(
+//                    RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME);
+            long configValue = System.currentTimeMillis() - (10L * 60L * 1000L);
+//            if (configValue == null || configValue.trim().isEmpty()) {
+//                return false;
+//            }
+//            int maxAllowedDays = Integer.parseInt(configValue.trim());
+            int maxAllowedDays = (int) (configValue / (24L * 60L * 60L * 1000L));
+            if (maxAllowedDays <= 0) {
+                return false;
+            }
+            long currentTimeMillis = System.currentTimeMillis();
+            long diffMillis = currentTimeMillis - lastSyncDateMillis;
+            int actualDays = (int) (diffMillis / (24L * 60L * 60L * 1000L));
+            
+            Log.i(TAG, "Last Export Time: " + lastSyncDateMillis + ", Max Allowed Days: " + maxAllowedDays + ", Actual Days: " + actualDays);
+            return maxAllowedDays <= actualDays;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate last export time", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isYetToExportCountLimitReached() {
+        try {
+            int yetToExportCount = registrationRepository.getYetToExportCount();
+            String maxCountConfig = globalParamRepository.getCachedStringGlobalParam(
+                    RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ);
+            if (maxCountConfig == null || maxCountConfig.trim().isEmpty()) {
+                return false;
+            }
+            double maxCount = Double.parseDouble(maxCountConfig.trim());
+            if (maxCount <= 0) {
+                return false;
+            }
+            
+            Log.i(TAG, "Yet to Export Count: " + yetToExportCount + ", Max Count: " + maxCount);
+            return yetToExportCount >= maxCount;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid REG_PAK_MAX_CNT_OFFLINE_FREQ configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate yet to export count", ex);
+            return false;
+        }
+    }
 }

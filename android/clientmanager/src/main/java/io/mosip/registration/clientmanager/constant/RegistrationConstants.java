@@ -118,5 +118,11 @@ public class RegistrationConstants {
     public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
     public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
     public static final String REG_PAK_MAX_TIME_APPRV_LIMIT = "mosip.registration.reg_pak_max_time_apprv_limit";
+    public static final String OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME = "mosip.registration.last_export_registration_config_time";
+    public static final String REG_PAK_MAX_CNT_OFFLINE_FREQ = "mosip.registration.reg_pak_max_cnt_offline_freq";
+    public static final String ICS_CODE_TWO = "ICS_CODE_TWO";
+    public static final String ICS_CODE_THREE = "ICS_CODE_THREE";
+    public static final String OPT_TO_REG_TIME_EXPORT_EXCEED = "OPT_TO_REG_TIME_EXPORT_EXCEED";
+    public static final String OPT_TO_REG_REACH_MAX_LIMIT = "OPT_TO_REG_REACH_MAX_LIMIT";
 
 }

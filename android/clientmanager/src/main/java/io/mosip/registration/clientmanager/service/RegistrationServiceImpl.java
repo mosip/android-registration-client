@@ -46,6 +46,8 @@ import io.mosip.biometrics.util.face.FaceBDIR;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
@@ -644,6 +646,22 @@ public class RegistrationServiceImpl implements RegistrationService {
         // registered packet approval time breach check
         if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
             throw new ClientCheckedException("PAK_APPRVL_MAX_TIME", "Registered packets approval time breached");
+        }
+
+        // validate last export duration
+        if (packetService != null && packetService.isLastExportTimeExceeded()) {
+            Log.i(TAG, "Checking the last export duration with the configured limit time");
+            auditManagerService.audit(AuditEvent.SYNC_PKT_COUNT_VALIDATE, Components.SYNC_VALIDATE);
+            throw new ClientCheckedException(RegistrationConstants.ICS_CODE_TWO,
+                    RegistrationConstants.OPT_TO_REG_TIME_EXPORT_EXCEED);
+        }
+
+        // validate yet to export count
+        if (packetService != null && packetService.isYetToExportCountLimitReached()) {
+            Log.i(TAG, "Checking the yet to export packets frequency with the configured limit count");
+            auditManagerService.audit(AuditEvent.SYNC_PKT_COUNT_VALIDATE, Components.SYNC_VALIDATE);
+            throw new ClientCheckedException(RegistrationConstants.ICS_CODE_THREE,
+                    RegistrationConstants.OPT_TO_REG_REACH_MAX_LIMIT);
         }
     }
 

@@ -67,4 +67,10 @@ public interface RegistrationDao {
     @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes asc limit 1")
     Registration findOldestRegistrationByStatus(String status);
 
+    @Query("SELECT * FROM registration where client_status in ('UPLOADED', 'EXPORTED') and upd_dtimes is not null order by upd_dtimes desc limit 1")
+    Registration findLastExportedRegistration();
+
+    @Query("SELECT COUNT(*) FROM registration where client_status != 'UPLOADED' AND client_status != 'EXPORTED'")
+    int findYetToExportCount();
+
 }

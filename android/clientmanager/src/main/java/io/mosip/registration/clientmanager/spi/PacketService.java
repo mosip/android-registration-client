@@ -79,4 +79,16 @@ public interface PacketService {
      * @return true if approval wait time is breached, otherwise false.
      */
     boolean isRegisteredPacketApprovalTimeBreached();
+
+    /**
+     * Validate if the time since last export/upload of registration packets has exceeded the configured limit.
+     * @return true if last export time limit is exceeded, otherwise false.
+     */
+    boolean isLastExportTimeExceeded();
+
+    /**
+     * Validate if the count of yet-to-export packets has reached the configured maximum limit.
+     * @return true if yet-to-export count limit is reached, otherwise false.
+     */
+    boolean isYetToExportCountLimitReached();
 }

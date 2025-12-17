@@ -96,4 +96,12 @@ public class RegistrationRepository {
     public void updateSupervisorReview(String packetId, String supervisorStatus, String supervisorComment) {
         this.registrationDao.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
     }
+
+    public Registration getLastExportedRegistration() {
+        return this.registrationDao.findLastExportedRegistration();
+    }
+
+    public int getYetToExportCount() {
+        return this.registrationDao.findYetToExportCount();
+    }
 }
