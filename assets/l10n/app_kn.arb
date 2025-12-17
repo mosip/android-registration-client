@@ -334,5 +334,9 @@
   "no_access_to_this_page": "ನಿಮಗೆ ಈ ಪುಟಕ್ಕೆ ಪ್ರವೇಶವಿಲ್ಲ",
   "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
   "mds_quality": "MDS ಗುಣಮಟ್ಟ ",
-  "sdk_quality": "SDK ಗುಣಮಟ್ಟ "
+  "sdk_quality": "SDK ಗುಣಮಟ್ಟ ",
+  "onboard_officer_biometric": "ಅಧಿಕಾರಿಯ ಬಯೋಮೆಟ್ರಿಕ್ ನೋಂದಣಿ",
+  "update_officer_biometric": "ಅಧಿಕಾರಿಯ ಬಯೋಮೆಟ್ರಿಕ್ ನವೀಕರಣ",
+  "submit_changes": "ಬದಲಾವಣೆಗಳನ್ನು ಸಲ್ಲಿಸಿ",
+  "local_preferences_saved_msg": "ಸ್ಥಳೀಯ ಆದ್ಯತೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಂಗ್ರಹಿಸಲಾಗಿದೆ. ಬದಲಾವಣೆಗಳನ್ನು ನೋಡಲು ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಮರುಪ್ರಾರಂಭಿಸಬೇಕು. ನೀವು ಈಗ ನಿರ್ಗಮಿಸಲು ಬಯಸುವಿರಾ?"
 }

@@ -334,5 +334,9 @@
   "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
   "scheduled_job_settings": "إعدادات المهمة المجدولة",
   "mds_quality": "جودة MDS ",
-  "sdk_quality": "جودة SDK "
+  "sdk_quality": "جودة SDK ",
+  "onboard_officer_biometric": "التحقق البيومتري للضابط (التسجيل)",
+  "update_officer_biometric": "تحديث التحقق البيومتري للضابط",
+  "submit_changes": "إرسال التغييرات",
+  "local_preferences_saved_msg": "تم حفظ التفضيلات المحلية بنجاح. يلزم إعادة تشغيل التطبيق لرؤية التغييرات. هل ترغب في الإنهاء الآن؟"
 }

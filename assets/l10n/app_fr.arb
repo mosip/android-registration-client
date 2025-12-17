@@ -334,5 +334,9 @@
   "no_access_to_this_page": "Vous n'avez pas accès à cette page",
   "scheduled_job_settings": "Paramètres des tâches planifiées",
   "mds_quality": "Qualité MDS ",
-  "sdk_quality": "Qualité du SDK "
+  "sdk_quality": "Qualité du SDK ",
+  "onboard_officer_biometric": "Enregistrement biométrique de l’officier",
+  "update_officer_biometric": "Mise à jour biométrique de l’officier",
+  "submit_changes": "Soumettre les modifications",
+  "local_preferences_saved_msg": "Les préférences locales ont été enregistrées avec succès. Le redémarrage de l'application est nécessaire pour voir les changements. Voulez-vous quitter maintenant ?"
 }

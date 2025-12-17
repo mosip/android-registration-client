@@ -162,6 +162,15 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.QUALITY_CHECK_WITH_SDK);
     }
 
+    public long getCachedReadTimeout() {
+        return parseLongWithDefault(RegistrationConstants.HTTP_API_READ_TIMEOUT);
+    }
+
+    public long getCachedWriteTimeout() {
+        return parseLongWithDefault(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
+    }
+
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */
@@ -186,5 +195,18 @@ public class GlobalParamRepository {
             Log.e(TAG, "Error refreshing configuration cache", e);
         }
 
+    }
+
+    private long parseLongWithDefault(String key) {
+        String value = globalParamMap.get(key);
+        if (value == null || value.trim().isEmpty()) {
+            return 0L;
+        }
+        try {
+            return Long.parseLong(value.trim());
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Failed to parse long value for key: " + key + ", value: " + value, e);
+            return 0L;
+        }
     }
 }
