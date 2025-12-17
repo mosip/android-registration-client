@@ -333,8 +333,8 @@
   "additional_info_req_id": "معرف طلب المعلومات الإضافية",
   "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
   "scheduled_job_settings": "إعدادات المهمة المجدولة",
-  "doc_size_existed": "حجم الملف يتجاوز الحد {size}",
-  "@doc_size_existed": {
+  "doc_size_exceeded": "حجم الملف يتجاوز الحد {size}",
+  "@doc_size_exceeded": {
        "placeholders": {
          "size": {
            "type": "String"

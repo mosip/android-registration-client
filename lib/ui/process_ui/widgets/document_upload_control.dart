@@ -192,7 +192,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     if (item is Uint8List) {
       if (item.lengthInBytes > maxFileSize) {
         final msg = AppLocalizations.of(context)!
-            .doc_size_existed(getReadableFileSize(item.lengthInBytes));
+            .doc_size_exceeded(getReadableFileSize(item.lengthInBytes));
         _showError(msg);
         return;
       }

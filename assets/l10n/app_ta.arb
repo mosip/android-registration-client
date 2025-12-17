@@ -342,8 +342,8 @@
   "additional_info_req_id": "கூடுதல் தகவல் கோரிக்கை ஐடி",
   "no_access_to_this_page": "இந்தப் பக்கத்தை அணுக உங்களுக்கு அனுமதி இல்லை",
   "scheduled_job_settings": "திட்டமிடப்பட்ட வேலை அமைப்புகள்",
-  "doc_size_existed": "கோப்பின் அளவு {size} வரம்பை மீறுகிறது",
-  "@doc_size_existed": {
+  "doc_size_exceeded": "கோப்பின் அளவு {size} வரம்பை மீறுகிறது",
+  "@doc_size_exceeded": {
        "placeholders": {
          "size": {
            "type": "String"

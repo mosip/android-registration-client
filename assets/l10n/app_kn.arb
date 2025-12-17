@@ -333,8 +333,8 @@
   "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ",
   "no_access_to_this_page": "ನಿಮಗೆ ಈ ಪುಟಕ್ಕೆ ಪ್ರವೇಶವಿಲ್ಲ",
   "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
-  "doc_size_existed": "ಫೈಲ್ ಗಾತ್ರ ಮಿತಿ {size} ಮೀರಿದೆ",
-  "@doc_size_existed": {
+  "doc_size_exceeded": "ಫೈಲ್ ಗಾತ್ರ ಮಿತಿ {size} ಮೀರಿದೆ",
+  "@doc_size_exceeded": {
        "placeholders": {
          "size": {
            "type": "String"
