@@ -333,6 +333,8 @@
   "additional_info_req_id": "Additional Info Request ID",
   "scheduled_job_settings": "Scheduled Job Settings",
   "no_access_to_this_page": "You don't have access to this page",
+  "submit_changes": "Submit Changes",
+  "local_preferences_saved_msg": "Local Preferences have been saved successfully. Application restart is needed to see the changes. Do you want to quit now?",
   "reg_pkt_apprvl_time_exceed": "Registered packets pending approval exceeded the allowed time. Clear the backlog to continue.",
   "opt_to_reg_time_export_exceed": "Time since last export or upload of registration packets exceeded maximum limit. Please export or upload packets to server before proceeding with this registration.",
   "opt_to_reg_reach_max_limit": "Yet to export packets count has reached the maximum limit. Please export or upload packets to server before proceeding with this registration."

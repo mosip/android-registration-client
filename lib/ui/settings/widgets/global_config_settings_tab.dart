@@ -143,12 +143,12 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Submit Changes'),
+        title: Text(AppLocalizations.of(context)!.submit_changes),
         content: SizedBox(
           width: 250,
-          height: 20,
+          height: 180,
           child: Center(
-            child: Text('${localValues.length} configuration will be updated.'),
+            child: Text(AppLocalizations.of(context)!.local_preferences_saved_msg),
           ),
         ),
         actions: [

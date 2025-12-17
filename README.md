@@ -27,7 +27,7 @@ git clone -b feature-flutter https://github.com/mosip/android-registration-clien
 
 **Active Branches**:
 
-* [release-0.11.x](https://github.com/mosip/android-registration-client/tree/release-0.11.x)(developer release branch)
+* [release-1.0.x](https://github.com/mosip/android-registration-client/tree/release-1.0.x)(developer release branch)
 * [develop](https://github.com/mosip/android-registration-client/tree/develop)(active development branch)
 
 #### Step 2: Set up Flutter in Android Studio

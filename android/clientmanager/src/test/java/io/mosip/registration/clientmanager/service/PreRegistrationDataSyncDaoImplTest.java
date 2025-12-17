@@ -11,7 +11,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import io.mosip.registration.clientmanager.dao.PreRegistrationDataSyncRepositoryDao;
@@ -67,13 +72,24 @@ public class PreRegistrationDataSyncDaoImplTest {
     @Test
     public void testFetchRecordsToBeDeleted() {
         List<PreRegistrationList> mockList = Arrays.asList(new PreRegistrationList(), new PreRegistrationList());
-        when(preRegistrationRepositoryDao.findByAppointmentDateBeforeAndIsDeleted("2024-01-01", false))
+
+        // Create a Date object for 2024-01-01
+        Date startDate = Date.from(Instant.parse("2024-01-01T00:00:00Z"));
+        
+        // Note: The implementation uses Date.toString() which produces a locale-dependent format
+        // (typically "EEE MMM dd HH:mm:ss zzz yyyy", e.g., "Mon Jan 01 00:00:00 GMT 2024").
+        // This test mirrors that behavior by using Date.toString() to match what the implementation does.
+        // While using a locale-independent formatter (e.g., SimpleDateFormat with fixed Locale/TimeZone)
+        // would be more robust, this test correctly validates the current implementation behavior.
+        String dateString = startDate.toString();
+
+        when(preRegistrationRepositoryDao.findByAppointmentDateBeforeAndIsDeleted(dateString, false))
                 .thenReturn(mockList);
 
-        List<PreRegistrationList> result = preRegistrationDataSyncDao.fetchRecordsToBeDeleted("2024-01-01");
+        List<PreRegistrationList> result = preRegistrationDataSyncDao.fetchRecordsToBeDeleted(startDate);
 
         assertEquals(2, result.size());
-        verify(preRegistrationRepositoryDao, times(1)).findByAppointmentDateBeforeAndIsDeleted("2024-01-01", false);
+        verify(preRegistrationRepositoryDao, times(1)).findByAppointmentDateBeforeAndIsDeleted(dateString, false);
     }
 
     @Test
@@ -107,5 +123,46 @@ public class PreRegistrationDataSyncDaoImplTest {
 
         assertNull(result);
         verify(preRegistrationRepositoryDao, times(1)).findTopByOrderByLastUpdatedPreRegTimeStampDesc();
+    }
+
+    @Test
+    public void testDeleteAll_Success() {
+        List<PreRegistrationList> items = new ArrayList<>();
+        items.add(new PreRegistrationList());
+
+        preRegistrationDataSyncDao.deleteAll(items);
+
+        verify(preRegistrationRepositoryDao).deleteAll(items);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testDeleteAll_ExceptionWrapping() {
+        List<PreRegistrationList> items = Collections.singletonList(new PreRegistrationList());
+        doThrow(new RuntimeException("db fail")).when(preRegistrationRepositoryDao).deleteAll(items);
+
+        preRegistrationDataSyncDao.deleteAll(items);
+    }
+
+    @Test
+    public void testGetLastPreRegPacketDownloadedTimeAsTimestamp_Success() {
+        PreRegistrationList mockPreReg = new PreRegistrationList();
+        mockPreReg.setLastUpdatedPreRegTimeStamp("2024-03-13 12:00:00");
+        when(preRegistrationRepositoryDao.findTopByOrderByLastUpdatedPreRegTimeStampDesc()).thenReturn(mockPreReg);
+
+        Timestamp timestamp = preRegistrationDataSyncDao.getLastPreRegPacketDownloadedTimeAsTimestamp();
+
+        assertNotNull(timestamp);
+        assertEquals(Timestamp.valueOf("2024-03-13 12:00:00"), timestamp);
+    }
+
+    @Test
+    public void testGetLastPreRegPacketDownloadedTimeAsTimestamp_InvalidFormat() {
+        PreRegistrationList mockPreReg = new PreRegistrationList();
+        mockPreReg.setLastUpdatedPreRegTimeStamp("invalid");
+        when(preRegistrationRepositoryDao.findTopByOrderByLastUpdatedPreRegTimeStampDesc()).thenReturn(mockPreReg);
+
+        Timestamp timestamp = preRegistrationDataSyncDao.getLastPreRegPacketDownloadedTimeAsTimestamp();
+
+        assertNull(timestamp);
     }
 }
