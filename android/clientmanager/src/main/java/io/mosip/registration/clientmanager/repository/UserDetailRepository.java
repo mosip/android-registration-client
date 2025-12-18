@@ -187,11 +187,8 @@ public class UserDetailRepository {
 
     public void recordFailedLoginAttempt(String userId) {
         UserDetail userDetail = userDetailDao.getUserDetail(userId);
-        boolean isNewUser = false;
         if(userDetail == null) {
-            userDetail = new UserDetail(userId);
-            userDetail.setIsActive(true);
-            isNewUser = true;
+            return;
         }
         Integer failedAttempts = Optional.ofNullable(userDetail.getUnsuccessfulLoginCount()).orElse(0);
         failedAttempts++;
@@ -217,21 +214,13 @@ public class UserDetailRepository {
             Log.e(getClass().getSimpleName(), "Invalid login time config format", e);
         }
 
-        if(failedAttempts >= maxFailedAttempts) {
+        if(failedAttempts > maxFailedAttempts) {
             lockUntil = System.currentTimeMillis() + lockDurationMillis;
         } else if(lockUntil != null && lockUntil <= System.currentTimeMillis()) {
             lockUntil = null;
         }
 
-        if (isNewUser) {
-            userDetail.setUnsuccessfulLoginCount(failedAttempts);
-            userDetail.setUserLockTillDtimes(lockUntil);
-            List<UserDetail> userList = new ArrayList<>();
-            userList.add(userDetail);
-            userDetailDao.insertAllUsers(userList);
-        } else {
-            userDetailDao.updateLoginAttemptMeta(userId, failedAttempts, lockUntil);
-        }
+        userDetailDao.updateLoginAttemptMeta(userId, failedAttempts, lockUntil);
     }
 
     public void resetFailedLoginAttempts(String userId) {
