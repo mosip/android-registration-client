@@ -181,7 +181,7 @@ public class UserDetailRepository {
         if(lockUntil > currentTime) {
             return true;
         }
-        userDetailDao.updateLoginAttemptMeta(userId, 0, null);
+        userDetailDao.updateLoginAttemptCount(userId, 0, null);
         return false;
     }
 
@@ -220,7 +220,7 @@ public class UserDetailRepository {
             lockUntil = null;
         }
 
-        userDetailDao.updateLoginAttemptMeta(userId, failedAttempts, lockUntil);
+        userDetailDao.updateLoginAttemptCount(userId, failedAttempts, lockUntil);
     }
 
     public void resetFailedLoginAttempts(String userId) {
@@ -233,6 +233,6 @@ public class UserDetailRepository {
         if((failedAttempts == null || failedAttempts == 0) && lockUntil == null) {
             return;
         }
-        userDetailDao.updateLoginAttemptMeta(userId, 0, null);
+        userDetailDao.updateLoginAttemptCount(userId, 0, null);
     }
 }

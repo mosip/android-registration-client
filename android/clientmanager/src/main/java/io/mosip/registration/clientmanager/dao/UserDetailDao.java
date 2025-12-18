@@ -27,7 +27,7 @@ public abstract class UserDetailDao {
     public abstract void updateUserDetail(boolean isOnboarded, String userId,Long updatedDtimes);
 
     @Query("update user_detail set unsuccessful_login_count = :failedAttempts, userlock_till_dtimes = :lockUntil where id = :userId")
-    public abstract void updateLoginAttemptMeta(String userId, Integer failedAttempts, Long lockUntil);
+    public abstract void updateLoginAttemptCount(String userId, Integer failedAttempts, Long lockUntil);
 
     @Transaction
     public void truncateAndInsertAll(List<UserDetail> users) {
