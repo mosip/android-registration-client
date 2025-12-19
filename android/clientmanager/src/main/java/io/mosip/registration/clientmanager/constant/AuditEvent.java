@@ -63,7 +63,8 @@ public enum AuditEvent {
     R_CAPTURE_FAILED("REG-EVT-015", SYSTEM_EVENT.getCode(), "R_CAPTURE_FAILED", "R_capture failed"),
     DISCOVER_SBI_PARSE_FAILED("REG-EVT-016", SYSTEM_EVENT.getCode(), "DISCOVER_SBI_PARSE_FAILED", "SBI discovery response parsing failed"),
     DEVICE_INFO_PARSE_FAILED("REG-EVT-017", SYSTEM_EVENT.getCode(), "DEVICE_INFO_PARSE_FAILED", "Device info response parsing failed"),
-    R_CAPTURE_PARSE_FAILED("REG-EVT-018", SYSTEM_EVENT.getCode(), "R_CAPTURE_PARSE_FAILED", "R_capture response parsing failed");
+    R_CAPTURE_PARSE_FAILED("REG-EVT-018", SYSTEM_EVENT.getCode(), "R_CAPTURE_PARSE_FAILED", "R_capture response parsing failed"),
+    CREATE_PACKET_FAILED("REG-EVT-019", USER_EVENT.getCode(), "CREATE_PACKET_FAILED", "Packet creation failed");
 
     AuditEvent(String id, String type, String name, String description) {
         this.id = id;
