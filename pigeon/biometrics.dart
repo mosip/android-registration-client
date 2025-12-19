@@ -63,4 +63,7 @@ abstract class BiometricsApi {
 
   @async
   List<DeviceInfo> getListOfDevices(String modality);
+
+  @async
+  String getOperatorOnboardingBioattributes();
 }

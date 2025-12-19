@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
-import javax.ws.rs.core.Response;
-
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -84,8 +82,8 @@ public class KeycloakUserManager {
 			RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 			UsersResource usersRessource = realmResource.users();
 			// Create user (requires manage-users role)
-			Response response = null;
-			response = usersRessource.create(user);
+			
+			var response = usersRessource.create(user);
 			logger.info("Response: {} {}", response.getStatus(), response.getStatusInfo());
 			if (response.getStatus() == 409) {
 				continue;
@@ -136,8 +134,8 @@ public class KeycloakUserManager {
 		user.setEmail("automation" + onboardUser + "@automationlabs.com");
 		RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 		UsersResource usersRessource = realmResource.users();
-		Response response = null;
-		response = usersRessource.create(user);
+		
+		var response = usersRessource.create(user);
 		logger.info("Response: %s %s%n" + response.getStatus() + response.getStatusInfo());
 
 		String userId = CreatedResponseUtil.getCreatedId(response);
@@ -194,8 +192,8 @@ public class KeycloakUserManager {
 			RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 			UsersResource usersRessource = realmResource.users();
 			// Create user (requires manage-users role)
-			Response response = null;
-			response = usersRessource.create(user);
+			
+			var response = usersRessource.create(user);
 			logger.info("Response: {} {}", response.getStatus(), response.getStatusInfo());
 			if (response.getStatus() == 409) {
 				continue;
@@ -260,8 +258,8 @@ public class KeycloakUserManager {
 			RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
 			UsersResource usersRessource = realmResource.users();
 			// Create user (requires manage-users role)
-			Response response = null;
-			response = usersRessource.create(user);
+			
+			var response = usersRessource.create(user);
 			logger.info("Response: {} {}", response.getStatus(), response.getStatusInfo());
 			if (response.getStatus() == 409) {
 				continue;

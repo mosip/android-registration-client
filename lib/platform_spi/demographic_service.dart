@@ -35,5 +35,7 @@ abstract class DemographicService {
 
   Future<void> addSelectedCode(String fieldId,String code);
 
+  Future<String> getDOBMaxAge();
+
   factory DemographicService() => getDemographicServiceImpl();
 }

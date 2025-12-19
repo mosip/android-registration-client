@@ -37,7 +37,6 @@
   "login_failed": "ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು!",
   "password_incorrect": "ಪಾಸ್ ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ!",
   "machine_not_found": "ಯಂತ್ರ ಸಿಗಲಿಲ್ಲ!",
-  "network_error": "ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ!",
   "cred_expired": "ರುಜುವಾತುಗಳು ಸಿಗಲಿಲ್ಲ ಅಥವಾ ಅವಧಿ ಮೀರಿದವು. ದಯವಿಟ್ಟು ಆನ್ ಲೈನ್ ಲಾಗಿನ್ ಪ್ರಯತ್ನಿಸಿ!",
   "not_initialized": "ಯಂತ್ರವನ್ನು ಆರಂಭಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ!",
   "invalid_user": "ಬಳಕೆದಾರ ಹೆಸರು ಅಮಾನ್ಯ!",
@@ -210,8 +209,6 @@
   "language_selector_note": "ಪೂರ್ವ-ನೋಂದಣಿ ಸಮಯದಲ್ಲಿ ನಮೂದಿಸಿದ ಡೇಟಾವನ್ನು ಆಧರಿಸಿ ಭಾಷೆ ಇರಬಹುದು ಎಂಬುದನ್ನು ದಯವಿಟ್ಟು ಗಮನಿಸಿ.",
   "cancel": "ರದ್ದುಮಾಡು",
   "submit": "ಸಲ್ಲಿಸು",
-  "go_back": "ಹಿಂದೆ ಹೋಗು",
-  "informed": "ಮಾಹಿತಿ ನೀಡಿದರು",
   "logo_text": "MOSIP ನಿಂದ ನಡೆಸಲ್ಪಡುತ್ತಿದೆ",
   "get_onboard": "ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ",
   "skip_to_home": "ಮನೆಗೆ ತೆರಳಿ",
@@ -305,7 +302,7 @@
   "logout_success": "ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಲಾಗ್ ಔಟ್ ಆಗಿರುವಿರಿ!",
   "logout_failure": "ಏನೋ ತಪ್ಪಾಗಿದೆ, ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
   "go_to_home": "ಮನೆಗೆ ಹೋಗು",
-  "errors": "{messages, select, REG_TRY_AGAIN{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು!} REG_INVALID_REQUEST{ಪಾಸ್ ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ!} REG_MACHINE_NOT_FOUND{ಯಂತ್ರ ಸಿಗಲಿಲ್ಲ!} REG_NETWORK_ERROR{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ!} REG_CRED_EXPIRED{ರುಜುವಾತುಗಳು ಸಿಗಲಿಲ್ಲ ಅಥವಾ ಅವಧಿ ಮೀರಿದವು. ದಯವಿಟ್ಟು ಆನ್ ಲೈನ್ ಲಾಗಿನ್ ಪ್ರಯತ್ನಿಸಿ!} REG_MACHINE_INACTIVE{ಯಂತ್ರ ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} REG_CENTER_INACTIVE{ಕೇಂದ್ರವು ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು!} REG_INVALID_REQUEST{ಪಾಸ್ ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ!} REG_MACHINE_NOT_FOUND{ಈ ಸಾಧನವನ್ನು ಇನ್ನೂ ಆನ್‌ಬೋರ್ಡ್ ಮಾಡಿಲ್ಲ. ಸಹಾಯಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ನಿಮ್ಮ ನಿರ್ವಾಹಕರನ್ನು ಸಂಪರ್ಕಿಸಿ!} REG_NETWORK_ERROR{ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ!} REG_CRED_EXPIRED{ರುಜುವಾತುಗಳು ಸಿಗಲಿಲ್ಲ ಅಥವಾ ಅವಧಿ ಮೀರಿದವು. ದಯವಿಟ್ಟು ಆನ್ ಲೈನ್ ಲಾಗಿನ್ ಪ್ರಯತ್ನಿಸಿ!} REG_MACHINE_INACTIVE{ಯಂತ್ರ ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} REG_CENTER_INACTIVE{ಕೇಂದ್ರವು ಸಕ್ರಿಯವಾಗಿಲ್ಲ!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -332,5 +329,25 @@
   "enter_additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ ನಮೂದಿಸಿ",
   "additional_info_req_id": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ ವಿನಂತಿ ಐಡಿ",
   "no_access_to_this_page": "ನಿಮಗೆ ಈ ಪುಟಕ್ಕೆ ಪ್ರವೇಶವಿಲ್ಲ",
-  "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+  "scheduled_job_settings": "ನಿಗದಿತ ಉದ್ಯೋಗ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "doc_size_exceeded": "ಫೈಲ್ ಗಾತ್ರ ಮಿತಿ {size} ಮೀರಿದೆ",
+  "@doc_size_exceeded": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "ವಯಸ್ಸು {age} ವರ್ಷಗಳಿಗಿಂತ ಹೆಚ್ಚಿರಬಾರದು",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  },
+  "onboard_officer_biometric": "ಅಧಿಕಾರಿಯ ಬಯೋಮೆಟ್ರಿಕ್ ನೋಂದಣಿ",
+  "update_officer_biometric": "ಅಧಿಕಾರಿಯ ಬಯೋಮೆಟ್ರಿಕ್ ನವೀಕರಣ",
+  "submit_changes": "ಬದಲಾವಣೆಗಳನ್ನು ಸಲ್ಲಿಸಿ",
+  "local_preferences_saved_msg": "ಸ್ಥಳೀಯ ಆದ್ಯತೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಂಗ್ರಹಿಸಲಾಗಿದೆ. ಬದಲಾವಣೆಗಳನ್ನು ನೋಡಲು ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಮರುಪ್ರಾರಂಭಿಸಬೇಕು. ನೀವು ಈಗ ನಿರ್ಗಮಿಸಲು ಬಯಸುವಿರಾ?"
 }

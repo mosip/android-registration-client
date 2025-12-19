@@ -40,4 +40,6 @@ abstract class AuthResponseApi {
   String getAutoLogoutPopupTimeout();
   @async
   List<String> getRolesByUserId(String userId);
+  @async
+  String getPasswordLength();
 }

@@ -16,4 +16,16 @@ abstract class CommonDetailsApi {
   String getVersionFromGlobalParam(String id);
   @async
   String saveScreenHeaderToGlobalParam(String id, String value);
+  @async
+  String getOnboardYourselfUrl();
+  @async
+  String getRegisteringIndividualUrl();
+  @async
+  String getSyncDataUrl();
+  @async
+  String getMappingDevicesUrl();
+  @async
+  String getUploadingDataUrl();
+  @async
+  String getUpdatingBiometricsUrl();
 }
