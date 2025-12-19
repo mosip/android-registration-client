@@ -5,7 +5,6 @@ import java.time.Duration;
 import java.util.Set;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -16,8 +15,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
 
 public class KeycloakPage extends BasePage {
-
-	private WebDriverWait wait;
 
 	public KeycloakPage(AppiumDriver driver) {
 		super(driver);
@@ -66,44 +63,51 @@ public class KeycloakPage extends BasePage {
 	private WebElement logoutButton;
 
 	public boolean openKeycloakWebView() {
-	    String webCtx = findWebViewContext(Duration.ofSeconds(5));
-	    if (webCtx != null) {
-	        ((SupportsContextSwitching) driver).context(webCtx);
-	        try { Thread.sleep(250); } catch (InterruptedException ignored) {}
-	    } else {
-	        try { ((SupportsContextSwitching) driver).context("NATIVE_APP"); } catch (Exception ignored) {}
-	    }
+		String webCtx = findWebViewContext(Duration.ofSeconds(5));
+		if (webCtx != null) {
+			((SupportsContextSwitching) driver).context(webCtx);
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException ignored) {
+			}
+		} else {
+			try {
+				((SupportsContextSwitching) driver).context("NATIVE_APP");
+			} catch (Exception ignored) {
+			}
+		}
 
-	    retryFindElement(keycloakPageTitle, Duration.ofSeconds(10));
-	    return isElementDisplayed(keycloakPageTitle);
+		retryFindElement(keycloakPageTitle, Duration.ofSeconds(10));
+		return isElementDisplayed(keycloakPageTitle);
 	}
 
 	public boolean openKeycloakPassword() {
 
-	    scrollToTopSafe();
+		scrollToTopSafe();
 
-	    By nativePwd = By.xpath("//android.widget.TextView[@text='Password']");
+		By nativePwd = By.xpath("//android.widget.TextView[@text='Password']");
 
-	    try {
-	        ((SupportsContextSwitching) driver).context("NATIVE_APP");
-	        new WebDriverWait(driver, Duration.ofSeconds(8))
-	                .until(ExpectedConditions.visibilityOfElementLocated(nativePwd));
-	        return true;
-	    } catch (Exception e) {
-	        System.out.println("Password not found in native.");
-	    }
+		try {
+			((SupportsContextSwitching) driver).context("NATIVE_APP");
+			new WebDriverWait(driver, Duration.ofSeconds(8))
+					.until(ExpectedConditions.visibilityOfElementLocated(nativePwd));
+			return true;
+		} catch (Exception e) {
+			System.out.println("Password not found in native.");
+		}
 
-	    for (String c : ((SupportsContextSwitching) driver).getContextHandles()) {
-	        if (c.contains("WEBVIEW")) {
-	            ((SupportsContextSwitching) driver).context(c);
-	            try {
-	                new WebDriverWait(driver, Duration.ofSeconds(8))
-	                        .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#password")));
-	                return true;
-	            } catch (Exception ignore) {}
-	        }
-	    }
-	    return false;
+		for (String c : ((SupportsContextSwitching) driver).getContextHandles()) {
+			if (c.contains("WEBVIEW")) {
+				((SupportsContextSwitching) driver).context(c);
+				try {
+					new WebDriverWait(driver, Duration.ofSeconds(8))
+							.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#password")));
+					return true;
+				} catch (Exception ignore) {
+				}
+			}
+		}
+		return false;
 	}
 
 	public String getPageTitle() {
@@ -135,34 +139,28 @@ public class KeycloakPage extends BasePage {
 	public void clickOnPasswordOption() {
 		clickOnElement(passwordOption);
 	}
-	
+
 	public void enterExistPassword(String password) {
-//		switchContext("WEBVIEW_chrome");
 		sendKeysToTextBox(passwordField, password);
 	}
-	
+
 	public void enterNewPassword(String password) {
-//		switchContext("WEBVIEW_chrome");
 		clickAndsendKeysToTextBox(newPasswordField, password);
 	}
-	
+
 	public void enterConfirmPassword(String password) {
-//		switchContext("WEBVIEW_chrome");
 		clickAndsendKeysToTextBox(confirmPasswordField, password);
 	}
-	
+
 	public void clickOnSaveButton() {
-//		switchContext("WEBVIEW_chrome");
 		clickOnElement(saveButton);
 	}
 
 	public boolean isPasswordUpdatedMessageDisplayed() {
-//		switchContext("WEBVIEW_chrome");
 		return isElementDisplayed(passwordUpdatedMessage);
 	}
 
 	public void clickOnSignoutButton() {
-//		switchContext("WEBVIEW_chrome");
 		scrollToTop();
 		clickOnElement(signoutButton);
 	}

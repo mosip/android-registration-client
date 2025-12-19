@@ -32,9 +32,9 @@ public class TestRunner {
 		io.mosip.testrig.apirig.utils.AdminTestUtil.init();
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		System.out.println("BaseTestCase.ApplnURI : " + BaseTestCase.ApplnURI);
-//		AdminTestUtil.getPreRegistrationFlow("adult");
-//		AdminTestUtil.getPreRegistrationFlow("minor");
-//		AdminTestUtil.getPreRegistrationFlow("infant");
+		AdminTestUtil.getPreRegistrationFlow("adult");
+		AdminTestUtil.getPreRegistrationFlow("minor");
+		AdminTestUtil.getPreRegistrationFlow("infant");
 		File homeDir = null;
 		TestNG runner = new TestNG();
 		if (!ArcConfigManager.gettestcases().equals("")) {

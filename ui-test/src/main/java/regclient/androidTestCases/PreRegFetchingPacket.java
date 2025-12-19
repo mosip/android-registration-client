@@ -594,7 +594,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 	
 	}
 
-//	@Test(priority = 1, description = "Verify minor pre-reg fetching registration")
+	@Test(priority = 1, description = "Verify minor pre-reg fetching registration")
 	public void minorPreRegFetching() throws InterruptedException {
 
 		BasePage.disableAutoRotation();

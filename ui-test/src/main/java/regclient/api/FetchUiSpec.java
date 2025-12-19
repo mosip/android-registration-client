@@ -420,7 +420,7 @@ public class FetchUiSpec extends BaseTestCase {
 		case "gender":
 			return Arrays.asList("Male", "Female", "Other");
 
-		case "residencestatus":
+		case "residenceStatus":
 			return Arrays.asList("Foreigner", "Non-Foreigner");
 
 		default:

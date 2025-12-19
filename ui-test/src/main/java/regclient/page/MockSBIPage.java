@@ -75,15 +75,19 @@ public class MockSBIPage extends BasePage {
 	public void switchBackToArcApp() {
 		AndroidDriver driver = (AndroidDriver) this.driver;
 		try {
+			// detect the package from session capability
 			String mainPackage = String.valueOf(driver.getCapabilities().getCapability("appium:appPackage"));
 			String mainActivity = String.valueOf(driver.getCapabilities().getCapability("appium:appActivity"));
+			// if current package already matches, nothing to do
 			if (mainPackage != null && mainPackage.equals(driver.getCurrentPackage())) {
 				return;
 			}
+			// Try to simply bring ARC app to foreground if installed
 			if (driver.isAppInstalled(mainPackage)) {
 				driver.activateApp(mainPackage);
 				return;
 			}
+			// Fallback: use startActivity if activateApp didn't work
 			if (mainActivity != null && !mainActivity.isEmpty()) {
 				driver.startActivity(new Activity(mainPackage, mainActivity));
 			}
@@ -150,12 +154,13 @@ public class MockSBIPage extends BasePage {
 					modLower, modality);
 
 			WebElement seekBar = findElementIfExists(By.xpath(xpath)); // non-throwing
-
+			// fallback: a few swipes + re-checks
 			for (int i = 0; i < 5 && seekBar == null; i++) {
 				swipeOrScroll();
 				waitTime(1);
 				seekBar = findElementIfExists(By.xpath(xpath));
 			}
+			// final attempt using retry (may throw) — catch below
 			if (seekBar == null) {
 				seekBar = findElementWithRetry(By.xpath(xpath));
 			}
