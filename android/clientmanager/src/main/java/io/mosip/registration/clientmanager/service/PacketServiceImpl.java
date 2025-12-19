@@ -380,32 +380,35 @@ public class PacketServiceImpl implements PacketService {
     @Override
     public boolean isLastExportTimeExceeded() {
         try {
-            Registration lastExportedRegistration = registrationRepository.getLastExportedRegistration();
-            Log.i(TAG, "Last Exported Registration: " + (lastExportedRegistration != null ? lastExportedRegistration.getPacketId() : "null"));
-            if (lastExportedRegistration == null) {
+            Log.i(TAG, "Validating last export time exceedance");
+            String limitInDays = globalParamRepository.getCachedStringGlobalParam(
+                    RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME);
+
+            if (limitInDays == null || limitInDays.trim().isEmpty()) {
                 return false;
             }
-            Long lastSyncDateMillis = lastExportedRegistration.getUpdDtimes();
-            if (lastSyncDateMillis == null) {
-                return false;
-            }
-//            String configValue = globalParamRepository.getCachedStringGlobalParam(
-//                    RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME);
-            long configValue = System.currentTimeMillis() - (10L * 60L * 1000L);
-//            if (configValue == null || configValue.trim().isEmpty()) {
-//                return false;
-//            }
-//            int maxAllowedDays = Integer.parseInt(configValue.trim());
-            int maxAllowedDays = (int) (configValue / (24L * 60L * 60L * 1000L));
+
+            long maxAllowedDays = Long.parseLong(limitInDays.trim());
             if (maxAllowedDays <= 0) {
                 return false;
             }
-            long currentTimeMillis = System.currentTimeMillis();
-            long diffMillis = currentTimeMillis - lastSyncDateMillis;
-            int actualDays = (int) (diffMillis / (24L * 60L * 60L * 1000L));
+
+            Registration oldestApprovedRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name());
+            Log.i(TAG, "Oldest Approved Registration: " + (oldestApprovedRegistration != null ? oldestApprovedRegistration.getPacketId() : "null"));
+            if (oldestApprovedRegistration == null) {
+                return false;
+            }
+
+            Long creationTimeMillis = oldestApprovedRegistration.getCrDtime();
+            if (creationTimeMillis == null) {
+                return false;
+            }
+
+//            long thresholdTimeMillis = System.currentTimeMillis() - (maxAllowedDays * 24L * 60L * 60L * 1000L);
+            long thresholdTimeMillis = System.currentTimeMillis() - (10L * 60L * 1000L);
             
-            Log.i(TAG, "Last Export Time: " + lastSyncDateMillis + ", Max Allowed Days: " + maxAllowedDays + ", Actual Days: " + actualDays);
-            return maxAllowedDays <= actualDays;
+            Log.i(TAG, "Creation Time: " + creationTimeMillis + ", Max Allowed Days: " + maxAllowedDays + ", Threshold Time Millis: " + thresholdTimeMillis);
+            return creationTimeMillis < thresholdTimeMillis;
 
         } catch (NumberFormatException ex) {
             Log.e(TAG, "Invalid OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME configuration", ex);
