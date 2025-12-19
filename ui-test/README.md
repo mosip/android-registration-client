@@ -154,7 +154,7 @@ Update these files before execution:
 * `resources/testdata.json` — Test data (uin, language, rid, camera id)
 * `resources/config.properties` — `nodePath`, `appiumServerExecutable`
 * `resources/DesiredCapabilies.json` — `udid`, app path
-* `camara.java` — Update camera & retake button coordinates
+* `camera.java` — Update camera & retake button coordinates
 
 📌 Any runtime properties (e.g. `bioValue.properties`) must be placed under:
 ```
