@@ -335,5 +335,6 @@
   "scheduled_job_settings": "Paramètres des tâches planifiées",
   "submit_changes": "Soumettre les modifications",
   "local_preferences_saved_msg": "Les préférences locales ont été enregistrées avec succès. Le redémarrage de l'application est nécessaire pour voir les changements. Voulez-vous quitter maintenant ?",
-  "reg_pkt_apprvl_time_exceed": "Les paquets enregistrés en attente d'approbation ont dépassé le temps autorisé. Videz l'arriéré pour continuer."
+  "reg_pkt_apprvl_time_exceed": "Les paquets enregistrés en attente d'approbation ont dépassé le temps autorisé. Videz l'arriéré pour continuer.",
+  "reg_pkt_export_time_exceed": "Action requise : Téléchargez ou exportez les paquets vers le serveur avant de procéder à l'enregistrement."
 }

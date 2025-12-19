@@ -361,8 +361,9 @@ public class PacketServiceImpl implements PacketService {
             if (oldestPendingRegistration == null || oldestPendingRegistration.getCrDtime() == null) {
                 return false;
             }
-//            long thresholdTimeMillis = System.currentTimeMillis() - (limitDays * 24L * 60L * 60L * 1000L);
-            long thresholdTimeMillis = System.currentTimeMillis() - (10L * 60L * 1000L);
+
+            long thresholdTimeMillis = System.currentTimeMillis() - (limitDays * 24L * 60L * 60L * 1000L);
+
 
             Log.i(TAG, "Oldest Pending Registration CrDtime: " + oldestPendingRegistration.getCrDtime() +
                     ", Threshold Time Millis: " + thresholdTimeMillis);
@@ -404,8 +405,8 @@ public class PacketServiceImpl implements PacketService {
                 return false;
             }
 
-//            long thresholdTimeMillis = System.currentTimeMillis() - (maxAllowedDays * 24L * 60L * 60L * 1000L);
-            long thresholdTimeMillis = System.currentTimeMillis() - (10L * 60L * 1000L);
+            long thresholdTimeMillis = System.currentTimeMillis() - (maxAllowedDays * 24L * 60L * 60L * 1000L);
+
             
             Log.i(TAG, "Creation Time: " + creationTimeMillis + ", Max Allowed Days: " + maxAllowedDays + ", Threshold Time Millis: " + thresholdTimeMillis);
             return creationTimeMillis < thresholdTimeMillis;
@@ -415,32 +416,6 @@ public class PacketServiceImpl implements PacketService {
             return false;
         } catch (Exception ex) {
             Log.e(TAG, "Failed to validate last export time", ex);
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isYetToExportCountLimitReached() {
-        try {
-            int yetToExportCount = registrationRepository.getYetToExportCount();
-            String maxCountConfig = globalParamRepository.getCachedStringGlobalParam(
-                    RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ);
-            if (maxCountConfig == null || maxCountConfig.trim().isEmpty()) {
-                return false;
-            }
-            double maxCount = Double.parseDouble(maxCountConfig.trim());
-            if (maxCount <= 0) {
-                return false;
-            }
-            
-            Log.i(TAG, "Yet to Export Count: " + yetToExportCount + ", Max Count: " + maxCount);
-            return yetToExportCount >= maxCount;
-
-        } catch (NumberFormatException ex) {
-            Log.e(TAG, "Invalid REG_PAK_MAX_CNT_OFFLINE_FREQ configuration", ex);
-            return false;
-        } catch (Exception ex) {
-            Log.e(TAG, "Failed to validate yet to export count", ex);
             return false;
         }
     }

@@ -102,12 +102,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
       String errorMessage = registrationStartError;
       if (registrationStartError.contains('PAK_APPRVL_MAX_TIME')) {
         errorMessage = AppLocalizations.of(context)!.reg_pkt_apprvl_time_exceed;
-      } else if (registrationStartError.contains('ICS_CODE_TWO') || 
-                 registrationStartError.contains('OPT_TO_REG_TIME_EXPORT_EXCEED')) {
-        errorMessage = AppLocalizations.of(context)!.opt_to_reg_time_export_exceed;
-      } else if (registrationStartError.contains('ICS_CODE_THREE') || 
-                 registrationStartError.contains('OPT_TO_REG_REACH_MAX_LIMIT')) {
-        errorMessage = AppLocalizations.of(context)!.opt_to_reg_reach_max_limit;
+      } else if (registrationStartError.contains('PAK_UPLOAD_MAX_TIME')) {
+        errorMessage = AppLocalizations.of(context)!.reg_pkt_export_time_exceed;
       }
       _showInSnackBar(errorMessage);
     }

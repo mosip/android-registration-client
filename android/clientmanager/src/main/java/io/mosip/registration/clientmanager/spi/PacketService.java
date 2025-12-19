@@ -85,10 +85,4 @@ public interface PacketService {
      * @return true if last export time limit is exceeded, otherwise false.
      */
     boolean isLastExportTimeExceeded();
-
-    /**
-     * Validate if the count of yet-to-export packets has reached the configured maximum limit.
-     * @return true if yet-to-export count limit is reached, otherwise false.
-     */
-    boolean isYetToExportCountLimitReached();
 }

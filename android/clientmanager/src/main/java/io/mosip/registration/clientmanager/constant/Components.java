@@ -13,8 +13,7 @@ public enum Components {
     HOME("REG-MOD-102", "Home"),
     REGISTRATION("REG-MOD-103", "Registration"),
     REG_PACKET_LIST("REG-MOD-104", "PacketSync"),
-    JOB_SERVICE("REG-MOD-105", "DataSync"),
-    SYNC_VALIDATE("REG-MOD-106", "SyncValidate");
+    JOB_SERVICE("REG-MOD-105", "DataSync");
 
     Components(String id, String name) {
         this.id = id;
