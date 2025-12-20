@@ -84,5 +84,11 @@ public interface PacketService {
      * Validate if the time since last export/upload of registration packets has exceeded the configured limit.
      * @return true if last export time limit is exceeded, otherwise false.
      */
-    boolean isLastExportTimeExceeded();
+    boolean validatingLastExportDuration();
+
+    /**
+     * Validate if the count of packets yet to be exported has reached the configured maximum limit.
+     * @return true if maximum packet count limit is reached, otherwise false.
+     */
+    boolean isMaxPacketCountLimitReached();
 }

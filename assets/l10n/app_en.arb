@@ -335,6 +335,7 @@
   "no_access_to_this_page": "You don't have access to this page",
   "submit_changes": "Submit Changes",
   "local_preferences_saved_msg": "Local Preferences have been saved successfully. Application restart is needed to see the changes. Do you want to quit now?",
-  "reg_pkt_apprvl_time_exceed": "Registered packets pending approval exceeded the allowed time. Clear the backlog to continue.",
-  "reg_pkt_export_time_exceed": "Action required: Upload or export the packets to the server before proceeding with registration."
+  "reg_pkt_apprvl_time_exceed": "Action required: Pending registered packets have exceeded the allowed approval time. Please clear the backlog to continue.",
+  "reg_pkt_export_time_exceed": "Action required: Upload or export the packets to the server before proceeding with registration.",
+  "reg_pkt_max_limit_reached": "Action required: Packet limit reached. Please export or upload existing packets before creating new registrations."
 }

@@ -104,6 +104,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         errorMessage = AppLocalizations.of(context)!.reg_pkt_apprvl_time_exceed;
       } else if (registrationStartError.contains('PAK_UPLOAD_MAX_TIME')) {
         errorMessage = AppLocalizations.of(context)!.reg_pkt_export_time_exceed;
+      } else if (registrationStartError.contains('PAK_UPLOAD_MAX_COUNT')) {
+        errorMessage = AppLocalizations.of(context)!.reg_pkt_max_limit_reached;
       }
       _showInSnackBar(errorMessage);
     }

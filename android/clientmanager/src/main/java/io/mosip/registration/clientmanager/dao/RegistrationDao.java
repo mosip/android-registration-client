@@ -67,4 +67,7 @@ public interface RegistrationDao {
     @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes asc limit 1")
     Registration findOldestRegistrationByStatus(String status);
 
+    @Query("SELECT COUNT(*) FROM registration where client_status in (:status1, :status2)")
+    int findRegistrationCountByStatuses(String status1, String status2);
+
 }

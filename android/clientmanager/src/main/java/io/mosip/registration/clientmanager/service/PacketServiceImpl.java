@@ -364,9 +364,6 @@ public class PacketServiceImpl implements PacketService {
 
             long thresholdTimeMillis = System.currentTimeMillis() - (limitDays * 24L * 60L * 60L * 1000L);
 
-
-            Log.i(TAG, "Oldest Pending Registration CrDtime: " + oldestPendingRegistration.getCrDtime() +
-                    ", Threshold Time Millis: " + thresholdTimeMillis);
             return oldestPendingRegistration.getCrDtime() < thresholdTimeMillis;
 
         } catch (NumberFormatException ex) {
@@ -379,9 +376,8 @@ public class PacketServiceImpl implements PacketService {
     }
 
     @Override
-    public boolean isLastExportTimeExceeded() {
+    public boolean validatingLastExportDuration() {
         try {
-            Log.i(TAG, "Validating last export time exceedance");
             String limitInDays = globalParamRepository.getCachedStringGlobalParam(
                     RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME);
 
@@ -395,7 +391,6 @@ public class PacketServiceImpl implements PacketService {
             }
 
             Registration oldestApprovedRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name());
-            Log.i(TAG, "Oldest Approved Registration: " + (oldestApprovedRegistration != null ? oldestApprovedRegistration.getPacketId() : "null"));
             if (oldestApprovedRegistration == null) {
                 return false;
             }
@@ -407,8 +402,6 @@ public class PacketServiceImpl implements PacketService {
 
             long thresholdTimeMillis = System.currentTimeMillis() - (maxAllowedDays * 24L * 60L * 60L * 1000L);
 
-            
-            Log.i(TAG, "Creation Time: " + creationTimeMillis + ", Max Allowed Days: " + maxAllowedDays + ", Threshold Time Millis: " + thresholdTimeMillis);
             return creationTimeMillis < thresholdTimeMillis;
 
         } catch (NumberFormatException ex) {
@@ -416,6 +409,38 @@ public class PacketServiceImpl implements PacketService {
             return false;
         } catch (Exception ex) {
             Log.e(TAG, "Failed to validate last export time", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isMaxPacketCountLimitReached() {
+        try {
+            String maxCountStr = globalParamRepository.getCachedStringGlobalParam(
+                    RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ);
+
+            if (maxCountStr == null || maxCountStr.trim().isEmpty()) {
+                return false;
+            }
+
+            double maxCount = Double.parseDouble(maxCountStr.trim());
+            if (maxCount <= 0) {
+                return false;
+            }
+
+            int yetToExportCount = registrationRepository.getYetToExportCount();
+
+            if (yetToExportCount >= maxCount) {
+                return true;
+            }
+
+            return false;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid REG_PAK_MAX_CNT_OFFLINE_FREQ configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate max packet count limit", ex);
             return false;
         }
     }

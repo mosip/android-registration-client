@@ -96,4 +96,9 @@ public class RegistrationRepository {
     public void updateSupervisorReview(String packetId, String supervisorStatus, String supervisorComment) {
         this.registrationDao.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
     }
+
+    public int getYetToExportCount() {
+        return this.registrationDao.findRegistrationCountByStatuses(
+                PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
+    }
 }
