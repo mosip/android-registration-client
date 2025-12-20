@@ -117,10 +117,22 @@ public class RegistrationConstants {
     public static final String JOB_TRIGGER_POINT_USER = "User";
     public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
     public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
+    public static final String OPERATOR_ONBOARDING_BIO_ATTRIBUTES = "mosip.registration.operator.onboarding.bioattributes";
+    public static final String SERVER_ACTIVE_PROFILE = "mosip.registration.server_profile";
+    public static final String ONBOARD_YOURSELF_URL = "mosip.registration.onboard_yourself_url";
+    public static final String REGISTERING_INDIVIDUAL_URL = "mosip.registration.registering_individual_url";
+    public static final String SYNC_DATA_URL = "mosip.registration.sync_data_url";
+    public static final String MAPPING_DEVICES_URL = "mosip.registration.mapping_devices_url";
+    public static final String UPLOADING_DATA_URL = "mosip.registration.uploading_data_url";
+    public static final String UPDATING_BIOMETRICS_URL = "mosip.registration.updating_biometrics_url";
+    public static final String PWORD_LENGTH = "mosip.registration.username_pwd_length";
+    public static final String DOC_SIZE = "mosip.registration.document_size";
+    public static final String MAX_AGE = "mosip.registration.max_age";
     public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
     public static final String REG_PAK_MAX_TIME_APPRV_LIMIT = "mosip.registration.reg_pak_max_time_apprv_limit";
     public static final String OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME = "mosip.registration.last_export_registration_config_time";
     public static final String REG_PAK_MAX_CNT_OFFLINE_FREQ = "mosip.registration.packet.maximum.count.offline.frequency";
-
+    public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
+    public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
 }

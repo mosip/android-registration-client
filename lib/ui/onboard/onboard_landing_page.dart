@@ -35,13 +35,9 @@ class OnboardLandingPage extends StatelessWidget {
     }
   }
 
-  _getStringValueGlobalParamAction(BuildContext context, String key) async {
-    await context
-        .read<RegistrationTaskProvider>()
-        .getStringValueGlobalParam(key);
-    String res =
-        context.read<RegistrationTaskProvider>().stringValueGlobalParam;
-    await goToUrl(res);
+  Future<void> _openUrlIfPresent(String url) async {
+    if (url.isEmpty) return;
+    await goToUrl(url);
   }
 
   @override
@@ -53,48 +49,47 @@ class OnboardLandingPage extends StatelessWidget {
         "icon": "assets/images/Onboarding Yourself.png",
         "title": "Onboarding Yourself",
         "onTap": () {
-          _getStringValueGlobalParamAction(
-              context, "mosip.registration.onboard_yourself_url");
+          _openUrlIfPresent(
+              context.read<GlobalProvider>().onboardYourselfUrl);
         },
       },
       {
         "icon": "assets/images/Onboarding Yourself.png",
         "title": "Registering an Individual",
         "onTap": () async {
-          _getStringValueGlobalParamAction(
-              context, "mosip.registration.registering_individual_url");
+          _openUrlIfPresent(
+              context.read<GlobalProvider>().registeringIndividualUrl);
         },
       },
       {
         "icon": "assets/images/Synchronising Data.png",
         "title": "Synchronising Data",
         "onTap": () async {
-          _getStringValueGlobalParamAction(
-              context, "mosip.registration.sync_data_url");
+          _openUrlIfPresent(context.read<GlobalProvider>().syncDataUrl);
         },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Mapping Devices to Machine",
         "onTap": () async {
-          _getStringValueGlobalParamAction(
-              context, "mosip.registration.mapping_devices_url");
+          _openUrlIfPresent(
+              context.read<GlobalProvider>().mappingDevicesUrl);
         },
       },
       {
         "icon": "assets/images/Uploading Local - Registration Data.png",
         "title": "Uploading Local/Registration Data",
         "onTap": () async {
-          _getStringValueGlobalParamAction(
-              context, "mosip.registration.uploading_data_url");
+          _openUrlIfPresent(
+              context.read<GlobalProvider>().uploadingDataUrl);
         },
       },
       {
         "icon": "assets/images/fingerprint_icon.png",
         "title": "Updating Operator Biometrics",
         "onTap": () async {
-          _getStringValueGlobalParamAction(
-              context, "mosip.registration.updating_biometrics_url");
+          _openUrlIfPresent(
+              context.read<GlobalProvider>().updatingBiometricsUrl);
         },
       },
     ];

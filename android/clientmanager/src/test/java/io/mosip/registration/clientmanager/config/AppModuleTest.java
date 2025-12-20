@@ -262,7 +262,7 @@ public class AppModuleTest {
     public void testProvideUserOnboardService() {
         UserOnboardService service = appModule.provideUserOnboardService(
                 objectMapper, auditManagerService, certificateManagerService, syncRestService, cryptoManagerService,
-                mock(RegistrationService.class), userBiometricRepository, clientCryptoManagerService, userDetailRepository
+                mock(RegistrationService.class), userBiometricRepository, clientCryptoManagerService, userDetailRepository, globalParamRepository
         );
         assertNotNull(service);
         assertTrue(service instanceof UserOnboardService);

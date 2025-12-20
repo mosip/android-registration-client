@@ -54,6 +54,7 @@ public class Biometrics095Service extends BiometricsService {
     private static final String TAG = Biometrics095Service.class.getSimpleName();
 
     private static final String TRUST_DOMAIN_DEVICE = "DEVICE";
+    private static final String DEFAULT_SERVER_ACTIVE_PROFILE = "Staging";
 
     private String rCaptureTrustDomain = TRUST_DOMAIN_DEVICE;
     private String deviceInfoTrustDomain = TRUST_DOMAIN_DEVICE;
@@ -90,7 +91,7 @@ public class Biometrics095Service extends BiometricsService {
 
     public CaptureRequest getRCaptureRequest(Modality modality, String deviceId, List<String> exceptionAttributes) {
         CaptureRequest captureRequest = new CaptureRequest();
-        captureRequest.setEnv("Developer");
+        captureRequest.setEnv(getServerActiveProfile());
         captureRequest.setPurpose("Registration");
         captureRequest.setTimeout(10000);
         captureRequest.setSpecVersion("0.9.5");
@@ -312,5 +313,15 @@ public class Biometrics095Service extends BiometricsService {
         registeredDevice.put("digitalId", digitalIdMap);
         registeredDevice.put("deviceCode", deviceCode);
         BIO_DEVICES.put(modality, registeredDevice);
+    }
+
+    private String getServerActiveProfile() {
+        if (globalParamRepository != null) {
+            String value = globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_ACTIVE_PROFILE);
+            if (value != null && !value.trim().isEmpty()) {
+                return value.trim();
+            }
+        }
+        return DEFAULT_SERVER_ACTIVE_PROFILE;
     }
 }

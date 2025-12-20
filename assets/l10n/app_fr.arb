@@ -37,7 +37,6 @@
   "login_failed": "Echec de la connexion.. Réessayez!",
   "password_incorrect": "Mot de passe incorrect!",
   "machine_not_found": "Machine introuvable!",
-  "network_error": "Échec de la connexion. Vérifiez la connexion réseau!",
   "cred_expired": "Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!",
   "not_initialized": "La machine n’a pas pu être initialisée!",
   "invalid_user": "Nom d’utilisateur non valide!",
@@ -210,8 +209,6 @@
   "language_selector_note": "Veuillez noter que la langue peut être basée sur les données saisies lors de la pré-inscription.",
   "cancel": "ANNULER",
   "submit": "SOUMETTRE",
-  "go_back": "RETOURNER",
-  "informed": "INFORMÉE",
   "logo_text": "Propulsé par MOSIP",
   "get_onboard": "MONTER À BORD",
   "skip_to_home": "PASSEZ À LA MAISON",
@@ -305,7 +302,7 @@
   "logout_success": "Vous avez été déconnecté avec succès!",
   "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps",
   "go_to_home": "Aller à la maison",
-  "errors": "{messages, select, REG_TRY_AGAIN{Echec de la connexion.. Réessayez!} REG_INVALID_REQUEST{Mot de passe incorrect!} REG_MACHINE_NOT_FOUND{Machine introuvable!} REG_NETWORK_ERROR{Échec de la connexion. Vérifiez la connexion réseau!} REG_CRED_EXPIRED{Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!} REG_MACHINE_INACTIVE{La machine n'est pas active!} REG_CENTER_INACTIVE{Le centre n'est pas actif!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{Echec de la connexion.. Réessayez!} REG_INVALID_REQUEST{Mot de passe incorrect!} REG_MACHINE_NOT_FOUND{Cet appareil n’a pas encore été intégré. Veuillez contacter votre administrateur pour obtenir de l’aide !} REG_NETWORK_ERROR{Échec de la connexion. Vérifiez la connexion réseau!} REG_CRED_EXPIRED{Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!} REG_MACHINE_INACTIVE{La machine n'est pas active!} REG_CENTER_INACTIVE{Le centre n'est pas actif!} REG_LOGIN_LOCKED{Limite maximale de tentatives de connexion atteinte. Réessayez plus tard!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -333,9 +330,28 @@
   "additional_info_req_id": "Identifiant de la demande d'information supplémentaire",
   "no_access_to_this_page": "Vous n'avez pas accès à cette page",
   "scheduled_job_settings": "Paramètres des tâches planifiées",
+  "doc_size_exceeded": "La taille du fichier dépasse la limite de {size}",
+  "@doc_size_exceeded": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "L'âge ne doit pas dépasser {age} ans.",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  },
+  "onboard_officer_biometric": "Enregistrement biométrique de l’officier",
+  "update_officer_biometric": "Mise à jour biométrique de l’officier",
   "submit_changes": "Soumettre les modifications",
   "local_preferences_saved_msg": "Les préférences locales ont été enregistrées avec succès. Le redémarrage de l'application est nécessaire pour voir les changements. Voulez-vous quitter maintenant ?",
   "reg_pkt_apprvl_time_exceed": "Action requise : les paquets enregistrés en attente ont dépassé le délai d'approbation autorisé. Veuillez éliminer l'arriéré pour continuer.",
   "reg_pkt_export_time_exceed": "Action requise : Téléchargez ou exportez les paquets vers le serveur avant de procéder à l'enregistrement.",
   "reg_pkt_max_limit_reached": "Action requise : limite de paquets atteinte. Veuillez exporter ou télécharger les paquets existants avant de créer de nouvelles inscriptions."
 }
+

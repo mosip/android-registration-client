@@ -158,6 +158,45 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER);
     }
 
+    public String getCachedStringOperatorOnboardingBioAttributes() {
+        return globalParamMap.get(RegistrationConstants.OPERATOR_ONBOARDING_BIO_ATTRIBUTES);
+    }
+
+    public String getCachedStringOnboardYourselfUrl() {
+        return globalParamMap.get(RegistrationConstants.ONBOARD_YOURSELF_URL);
+    }
+
+    public String getCachedStringRegisteringIndividualUrl() {
+        return globalParamMap.get(RegistrationConstants.REGISTERING_INDIVIDUAL_URL);
+    }
+
+    public String getCachedStringSyncDataUrl() {
+        return globalParamMap.get(RegistrationConstants.SYNC_DATA_URL);
+    }
+
+    public String getCachedStringMappingDevicesUrl() {
+        return globalParamMap.get(RegistrationConstants.MAPPING_DEVICES_URL);
+    }
+
+    public String getCachedStringUploadingDataUrl() {
+        return globalParamMap.get(RegistrationConstants.UPLOADING_DATA_URL);
+    }
+
+    public String getCachedStringUpdatingBiometricsUrl() {
+        return globalParamMap.get(RegistrationConstants.UPDATING_BIOMETRICS_URL);
+    }
+
+    public String getCachedStringPasswordLength() {
+        return globalParamMap.get(RegistrationConstants.PWORD_LENGTH);
+    }
+
+    public String getCachedStringDocumentSize() {
+        return globalParamMap.get(RegistrationConstants.DOC_SIZE);
+    }
+
+    public String getCachedStringDOBAgeLimit() {
+        return globalParamMap.get(RegistrationConstants.MAX_AGE);
+    }
     public long getCachedReadTimeout() {
         return parseLongWithDefault(RegistrationConstants.HTTP_API_READ_TIMEOUT);
     }
@@ -166,6 +205,13 @@ public class GlobalParamRepository {
         return parseLongWithDefault(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
     }
 
+    public String getCachedStringInvalidLoginCount() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_COUNT);
+    }
+
+    public String getCachedStringInvalidLoginTime() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
+    }
 
     /**
      * Refresh configuration cache by merging global params with local preferences

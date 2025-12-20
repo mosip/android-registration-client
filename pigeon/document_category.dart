@@ -5,4 +5,7 @@ import 'package:pigeon/pigeon.dart';
 abstract class DocumentCategoryApi {
   @async
   List<String> getDocumentCategories(String categoryCode,String langCode);
+
+  @async
+  String getDocumentSize();
 }
