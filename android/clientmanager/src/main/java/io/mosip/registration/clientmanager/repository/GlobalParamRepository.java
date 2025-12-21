@@ -213,6 +213,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
     }
 
+    public String getCachedStringDiskSpaceSize() {
+        return globalParamMap.get(RegistrationConstants.DISK_SPACE);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

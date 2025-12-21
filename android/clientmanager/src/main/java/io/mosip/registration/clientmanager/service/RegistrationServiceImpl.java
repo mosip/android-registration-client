@@ -96,7 +96,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private static final String TAG = RegistrationServiceImpl.class.getSimpleName();
     private static final String SOURCE = "REGISTRATION_CLIENT";
-    private static final int MIN_SPACE_REQUIRED_MB = 50;
+    private static final int DEFAULT_MIN_SPACE_REQUIRED_MB = 50;
 
     private Context context;
     private RegistrationDto registrationDto;
@@ -629,8 +629,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
         //free space validation
+        String diskSpaceSizeConfig = globalParamRepository.getCachedStringDiskSpaceSize();
+        int minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
+        
+        if (diskSpaceSizeConfig != null && !diskSpaceSizeConfig.trim().isEmpty()) {
+            try {
+                minSpaceRequiredMB = Integer.parseInt(diskSpaceSizeConfig.trim());
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "Invalid disk space size configuration: " + diskSpaceSizeConfig + ", using default: " + DEFAULT_MIN_SPACE_REQUIRED_MB + " MB", e);
+            }
+        }
+        
         long externalSpace = context.getExternalCacheDir().getUsableSpace();
-        if ((externalSpace / (1024 * 1024)) < MIN_SPACE_REQUIRED_MB)
+        if ((externalSpace / (1024 * 1024)) < minSpaceRequiredMB)
             throw new ClientCheckedException(context, R.string.err_006);
 
         //is machine and center active

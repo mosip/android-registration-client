@@ -132,4 +132,5 @@ public class RegistrationConstants {
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
     public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
     public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
+    public static final String DISK_SPACE = "mosip.registration.disk_space_size";
 }
