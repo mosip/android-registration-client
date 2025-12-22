@@ -358,7 +358,7 @@ public class PacketServiceImpl implements PacketService {
                 return false;
             }
             Registration oldestPendingRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name());
-            if (oldestPendingRegistration == null || oldestPendingRegistration.getCrDtime() == null) {
+            if (oldestPendingRegistration == null) {
                 return false;
             }
 
