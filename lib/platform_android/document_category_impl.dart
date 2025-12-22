@@ -19,5 +19,18 @@ class DocumentCategoryImpl implements DocumentCategory {
     return documentValuesList;
   }
 
+  @override
+  Future<String> getDocumentSize() async{
+    String documentSize = '';
+    try {
+      documentSize = await DocumentCategoryApi().getDocumentSize();
+    } on PlatformException {
+      debugPrint('DynamicServiceResponseApi call failed!');
+    } catch (e) {
+      debugPrint('Document Size not fetched! ${e.toString()}');
+    }
+    return documentSize;
+  }
+
 }
 DocumentCategory getDocumentCategoryImpl() => DocumentCategoryImpl();

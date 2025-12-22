@@ -37,7 +37,6 @@
   "login_failed": "فشل تسجيل الدخول. حاول مرة أخرى!",
   "password_incorrect": "كلمة المرور غير صحيحة!",
   "machine_not_found": "لم يتم العثور على الجهاز!",
-  "network_error": "فشل تسجيل الدخول. تحقق من اتصال الشبكة!",
   "cred_expired": "لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!",
   "not_initialized": "تعذر تهيئة الجهاز!",
   "invalid_user": "اسم المستخدم غير صالح!",
@@ -211,8 +210,6 @@
   "language_selector_note": "يرجى ملاحظة أن اللغة قد تعتمد على البيانات التي تم إدخالها أثناء التسجيل المسبق.",
   "cancel": "يلغي",
   "submit": "يُقدِّم",
-  "go_back": "عُد",
-  "informed": "أُبلغ",
   "logo_text": "مدعوم من موسيب",
   "get_onboard": "إركب",
   "skip_to_home": "انتقل إلى المنزل",
@@ -305,7 +302,7 @@
   "logout_success": "لقد تم تسجيل بنجاح!",
   "logout_failure": "حدث خطأ ما، يرجى المحاولة مرة أخرى بعد مرور بعض الوقت",
   "go_to_home": "اذهب إلى المنزل",
-  "errors": "{messages, select, REG_TRY_AGAIN{فشل تسجيل الدخول. حاول مرة أخرى!} REG_INVALID_REQUEST{كلمة المرور غير صحيحة!} REG_MACHINE_NOT_FOUND{لم يتم العثور على الجهاز!} REG_NETWORK_ERROR{فشل تسجيل الدخول. تحقق من اتصال الشبكة!} REG_CRED_EXPIRED{لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!} REG_MACHINE_INACTIVE{الآلة غير نشطة!} REG_CENTER_INACTIVE{المركز غير نشط!} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{فشل تسجيل الدخول. حاول مرة أخرى!} REG_INVALID_REQUEST{كلمة المرور غير صحيحة!} REG_MACHINE_NOT_FOUND{لم يتم تسجيل هذا الجهاز بعد. يرجى التواصل مع المسؤول للحصول على المساعدة!} REG_NETWORK_ERROR{فشل تسجيل الدخول. تحقق من اتصال الشبكة!} REG_CRED_EXPIRED{لم يتم العثور على بيانات الاعتماد أو انتهت صلاحيتها. يرجى محاولة تسجيل الدخول عبر الإنترنت!} REG_MACHINE_INACTIVE{الآلة غير نشطة!} REG_CENTER_INACTIVE{المركز غير نشط!} REG_LOGIN_LOCKED{تم الوصول إلى الحد الأقصى لمحاولة تسجيل الدخول. حاول مرة أخرى لاحقا!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -332,5 +329,26 @@
   "enter_additional_info_req_id": "أدخل معرف طلب المعلومات الإضافية",
   "additional_info_req_id": "معرف طلب المعلومات الإضافية",
   "no_access_to_this_page": "ليست لديك صلاحية الوصول إلى هذه الصفحة",
-  "scheduled_job_settings": "إعدادات المهمة المجدولة"
+  "scheduled_job_settings": "إعدادات المهمة المجدولة",
+  "doc_size_exceeded": "حجم الملف يتجاوز الحد {size}",
+  "@doc_size_exceeded": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "يجب ألا يزيد العمر عن {age} سنة",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  },
+  "onboard_officer_biometric": "التحقق البيومتري للضابط (التسجيل)",
+  "update_officer_biometric": "تحديث التحقق البيومتري للضابط",
+  "submit_changes": "إرسال التغييرات",
+  "local_preferences_saved_msg": "تم حفظ التفضيلات المحلية بنجاح. يلزم إعادة تشغيل التطبيق لرؤية التغييرات. هل ترغب في الإنهاء الآن؟"
 }
+

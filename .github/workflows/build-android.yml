@@ -2,7 +2,7 @@ name: Build Android Registration-Client
 
 on:
   workflow_dispatch:
-  inputs:
+    inputs:
       serverBaseURL:
         description: "Enter serverBaseURL for APK"
         required: true

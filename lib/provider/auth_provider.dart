@@ -34,6 +34,7 @@ class AuthProvider with ChangeNotifier {
   String _forgotPasswordUrl = "";
   String _refreshedLoginTime = "";
   String _idleTime = "";
+  String _passwordLength = "";
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isSyncing => _isSyncing;
@@ -57,6 +58,7 @@ class AuthProvider with ChangeNotifier {
   String get forgotPasswordUrl => _forgotPasswordUrl;
   String get refreshedLoginTime => _refreshedLoginTime;
   String get idleTime => _idleTime;
+  String get passwordLength => _passwordLength;
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -241,5 +243,11 @@ class AuthProvider with ChangeNotifier {
 
   Future<List<String?>> getUserRole(String userId) async {
     return await auth.getRolesByUserId(userId);
+  }
+
+  getPasswordLength() async {
+    String passwordLength = await auth.getPasswordLength();
+    _passwordLength = passwordLength;
+    notifyListeners();
   }
 }

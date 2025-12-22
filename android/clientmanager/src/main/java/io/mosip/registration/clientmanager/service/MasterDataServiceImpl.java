@@ -1082,4 +1082,40 @@ public class MasterDataServiceImpl implements MasterDataService {
         return globalParamRepository.getGlobalParamsByPattern("mosip.registration%");
     }
 
+    @Override
+    public String getCachedStringOnboardYourselfUrl() {
+        String value = globalParamRepository.getCachedStringOnboardYourselfUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringRegisteringIndividualUrl() {
+        String value = globalParamRepository.getCachedStringRegisteringIndividualUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringSyncDataUrl() {
+        String value = globalParamRepository.getCachedStringSyncDataUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringMappingDevicesUrl() {
+        String value = globalParamRepository.getCachedStringMappingDevicesUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringUploadingDataUrl() {
+        String value = globalParamRepository.getCachedStringUploadingDataUrl();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public String getCachedStringUpdatingBiometricsUrl() {
+        String value = globalParamRepository.getCachedStringUpdatingBiometricsUrl();
+        return value == null ? "" : value;
+    }
+
 }

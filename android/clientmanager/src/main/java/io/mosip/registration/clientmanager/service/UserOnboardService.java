@@ -18,6 +18,7 @@ import io.mosip.registration.clientmanager.dto.http.ServiceError;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
@@ -81,7 +82,7 @@ public class UserOnboardService {
     public static final String BIO = "bio";
     public static final String REQUEST_AUTH = "requestedAuth";
     public static final String PACKET_SYNC_VERSION = "1.0";
-    public static final String SERVER_ACTIVE_PROFILE = "Staging";
+    private static final String DEFAULT_SERVER_ACTIVE_PROFILE = "Staging";
     public static final String TRANSACTION_ID_VALUE = "1234567890";
     public static final String USER_ID_CODE = "USERID";
     public static final String ON_BOARD_BIO_TYPE = "bioType";
@@ -103,6 +104,7 @@ public class UserOnboardService {
     private AuditManagerService auditManagerService;
     private ObjectMapper objectMapper;
     private ClientCryptoManagerService clientCryptoManagerService;
+    private GlobalParamRepository globalParamRepository;
     SharedPreferences sharedPreferences;
     public static final String USER_ID = "user_id";
     public static final String USER_TOKEN = "user_token";
@@ -138,7 +140,7 @@ public class UserOnboardService {
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
                               CertificateManagerService certificateManagerService,
-                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository) {
+                              SyncRestService syncRestService, CryptoManagerService cryptoManagerService, RegistrationService registrationService, UserBiometricRepository userBiometricRepository, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository, GlobalParamRepository globalParamRepository) {
         this.context = context;
         this.userDetailRepository=userDetailRepository;
         this.certificateManagerService = certificateManagerService;
@@ -149,9 +151,20 @@ public class UserOnboardService {
         this.registrationService = registrationService;
         this.userBiometricRepository = userBiometricRepository;
         this.clientCryptoManagerService = clientCryptoManagerService;
+        this.globalParamRepository = globalParamRepository;
         sharedPreferences = this.context.getSharedPreferences(
                         this.context.getString(R.string.app_name),
                         Context.MODE_PRIVATE);
+    }
+
+    private String getServerActiveProfile() {
+        if (globalParamRepository != null) {
+            String value = globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_ACTIVE_PROFILE);
+            if (value != null && !value.trim().isEmpty()) {
+                return value.trim();
+            }
+        }
+        return DEFAULT_SERVER_ACTIVE_PROFILE;
     }
 
     public void onboardOperator(List<BiometricsDto> biometrics, Runnable onFinish) throws ClientCheckedException {
@@ -184,7 +197,7 @@ public class UserOnboardService {
         idaRequestMap.put(VERSION, PACKET_SYNC_VERSION);
         idaRequestMap.put(REQUEST_TIME,
                 DateUtils.formatToISOString(ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime()));
-        idaRequestMap.put(ENV, SERVER_ACTIVE_PROFILE);
+        idaRequestMap.put(ENV, getServerActiveProfile());
         idaRequestMap.put(DOMAIN_URI, BuildConfig.BASE_URL);
         idaRequestMap.put(TRANSACTION_ID, TRANSACTION_ID_VALUE);
         idaRequestMap.put(CONSENT_OBTAINED, true);
@@ -242,7 +255,7 @@ public class UserOnboardService {
         data.put(ON_BOARD_BIO_VALUE, splitEncryptedData.getEncryptedData());
         data.put(TRANSACTION_UNIQUE_ID, TRANSACTION_ID_VALUE);
         data.put(PURPOSE, PURPOSE_AUTH);
-        data.put(ENV, SERVER_ACTIVE_PROFILE);
+        data.put(ENV, getServerActiveProfile());
         data.put(DOMAIN_URI,  BuildConfig.BASE_URL);
         String dataBlockJsonString = this.objectMapper.writeValueAsString(data);
         dataBlock.put(ON_BOARD_BIO_DATA, CryptoUtil.encodeToURLSafeBase64(dataBlockJsonString.getBytes()));
