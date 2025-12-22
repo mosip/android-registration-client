@@ -94,4 +94,70 @@ public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
         }
         result.success(response);
     }
+
+    @Override
+    public void getOnboardYourselfUrl(@NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            response = masterDataService.getCachedStringOnboardYourselfUrl();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching Onboard Yourself URL", e);
+        }
+        result.success(response);
+    }
+
+    @Override
+    public void getRegisteringIndividualUrl(@NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            response = masterDataService.getCachedStringRegisteringIndividualUrl();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching Registering Individual URL", e);
+        }
+        result.success(response);
+    }
+
+    @Override
+    public void getSyncDataUrl(@NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            response = masterDataService.getCachedStringSyncDataUrl();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching Sync Data URL", e);
+        }
+        result.success(response);
+    }
+
+    @Override
+    public void getMappingDevicesUrl(@NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            response = masterDataService.getCachedStringMappingDevicesUrl();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching Mapping Devices URL", e);
+        }
+        result.success(response);
+    }
+
+    @Override
+    public void getUploadingDataUrl(@NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            response = masterDataService.getCachedStringUploadingDataUrl();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching Uploading Data URL", e);
+        }
+        result.success(response);
+    }
+
+    @Override
+    public void getUpdatingBiometricsUrl(@NonNull CommonDetailsPigeon.Result<String> result) {
+        String response = "";
+        try {
+            response = masterDataService.getCachedStringUpdatingBiometricsUrl();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching Updating Biometrics URL", e);
+        }
+        result.success(response);
+    }
 }

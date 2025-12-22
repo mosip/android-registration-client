@@ -37,7 +37,6 @@
   "login_failed": "Login Failed. Try Again!",
   "password_incorrect": "Password incorrect!",
   "machine_not_found": "Machine not found!",
-  "network_error": "Login failed. Check network connection!",
   "cred_expired": "Credentials not found or are expired. Please try online login!",
   "not_initialized": "Machine could not be initialized!",
   "invalid_user": "Username invalid!",
@@ -211,8 +210,6 @@
   "language_selector_note": "Please note that the language might be based on data entered during Pre-registration.",
   "cancel": "CANCEL",
   "submit": "SUBMIT",
-  "go_back": "GO BACK",
-  "informed": "INFORMED",
   "logo_text": "Powered by MOSIP",
   "get_onboard": "GET ONBOARDED",
   "skip_to_home": "SKIP TO HOME",
@@ -305,7 +302,7 @@
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",
-  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{Machine not found!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{This device has not been onboarded yet. Please reach out to your administrator for assistance!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} REG_LOGIN_LOCKED{Maximum login attempt limit reached. Try again later!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -333,5 +330,25 @@
   "additional_info_req_id": "Additional Info Request ID",
   "scheduled_job_settings": "Scheduled Job Settings",
   "no_access_to_this_page": "You don't have access to this page",
+  "doc_size_exceeded": "File size exceeds limit {size}",
+  "@doc_size_exceeded": {
+     "placeholders": {
+       "size": {
+         "type": "String"
+       }
+     }
+  },
+  "age_should_not_be_greater": "Age should not be greater than {age} years",
+  "@age_should_not_be_greater": {
+     "placeholders": {
+          "age": {
+          "type": "int"
+          }
+     }
+  },
+  "onboard_officer_biometric": "Officer's Biometric Onboarding",
+  "update_officer_biometric": "Officer's Biometric Update",
+  "submit_changes": "Submit Changes",
+  "local_preferences_saved_msg": "Local Preferences have been saved successfully. Application restart is needed to see the changes. Do you want to quit now?",
   "search_for_key": "Search for Key"
 }

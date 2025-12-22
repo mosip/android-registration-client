@@ -17,9 +17,12 @@ import org.mockito.*;
 
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.util.CronExpressionParser;
 import io.mosip.registration.clientmanager.util.DateUtil;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class JobManagerServiceImplTest {
@@ -85,8 +88,20 @@ public class JobManagerServiceImplTest {
     @Test
     public void getNextSyncTime_Test() {
         int jobId = 1;
-        long lastSyncTime = 1609459200L;  // Example timestamp
-        long nextSyncTime = lastSyncTime + 15 * 60;
+        // Note: Based on the implementation, getLastSyncTime returns milliseconds (despite variable name)
+        // JOB_PERIODIC_SECONDS = (15 * 60) * 1000 = 900000 milliseconds
+        // So nextSyncTime = lastSyncTime + JOB_PERIODIC_SECONDS
+        long lastSyncTime = 1732530600000L;
+        long nextSyncTime = lastSyncTime + (15 * 60 * 1000L);
+
+        // Mock repository to return a job def with jobId 1 that has an invalid cron expression
+        // This will make getNextSyncTime use the fallback calculation
+        SyncJobDef jobDef = new SyncJobDef("00001"); // Last 5 chars = "00001" = jobId 1
+        jobDef.setId("00001");
+        jobDef.setSyncFreq("15"); // Invalid cron expression, will use fallback
+        List<SyncJobDef> jobDefList = new ArrayList<>();
+        jobDefList.add(jobDef);
+        when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(jobDefList);
 
         when(mockJobTransactionService.getLastSyncTime(jobId)).thenReturn(lastSyncTime);
         when(mockDateUtil.getDateTime(nextSyncTime)).thenReturn("2024-11-27 00:15:00");
@@ -340,7 +355,7 @@ public class JobManagerServiceImplTest {
 
     @Test
     public void test_cancel_inactive_job_in_refresh_status() {
-       when(mockContext.getSystemService(JOB_SCHEDULER_SERVICE)).thenReturn(mockJobScheduler);
+        when(mockContext.getSystemService(JOB_SCHEDULER_SERVICE)).thenReturn(mockJobScheduler);
 
         JobManagerServiceImpl jobManager = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
 
@@ -501,9 +516,74 @@ public class JobManagerServiceImplTest {
     public void test_throws_exception_when_sync_job_def_id_is_null() {
         JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
 
-        assertThrows(NullPointerException.class, () -> {
-            jobManagerService.generateJobServiceId(null);
-        });
+        assertThrows(NullPointerException.class, () -> jobManagerService.generateJobServiceId(null));
     }
 
+    @Test
+    public void test_isJobScheduled_returnsTrueWhenPendingJobExists() {
+        when(mockJobScheduler.getPendingJob(42)).thenReturn(mockJobInfo);
+
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+
+        assertTrue(service.isJobScheduled(42));
+        verify(mockJobScheduler).getPendingJob(42);
+    }
+
+    @Test
+    public void test_isJobScheduled_returnsFalseWhenNoPendingJob() {
+        when(mockJobScheduler.getPendingJob(77)).thenReturn(null);
+
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+
+        assertFalse(service.isJobScheduled(77));
+        verify(mockJobScheduler).getPendingJob(77);
+    }
+
+    @Test
+    public void test_getAllSyncJobDefList_delegatesToRepository() {
+        List<SyncJobDef> expected = Collections.singletonList(new SyncJobDef("job00123"));
+        when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(expected);
+
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+
+        assertSame(expected, service.getAllSyncJobDefList());
+        verify(mockSyncJobDefRepository).getAllSyncJobDefList();
+    }
+
+    @Test
+    public void test_getNextSyncTime_usesCronExpressionWhenValid() {
+        String cronExpression = "0 0/30 * * * ?";
+        SyncJobDef cronJob = new SyncJobDef("cron00001");
+        cronJob.setId("cron00001");
+        cronJob.setSyncFreq(cronExpression);
+        cronJob.setApiName("packetSyncStatusJob");
+        when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(Collections.singletonList(cronJob));
+        when(mockJobTransactionService.getLastSyncTime(anyInt())).thenReturn(0L);
+
+        Instant nextExecution = CronExpressionParser.getNextExecutionTime(cronExpression);
+        assertNotNull("Cron expression should yield a next execution time", nextExecution);
+        long nextExecutionMillis = nextExecution.toEpochMilli();
+        when(mockDateUtil.getDateTime(nextExecutionMillis)).thenReturn("formatted-time");
+
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+
+        String result = service.getNextSyncTime(1);
+
+        assertEquals("formatted-time", result);
+        verify(mockDateUtil).getDateTime(nextExecutionMillis);
+        verify(mockJobTransactionService, never()).getLastSyncTime(1);
+    }
+
+    @Test
+    public void test_getNextSyncTime_returnsNAWhenJobDefMissing() {
+        when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(Collections.emptyList());
+
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+
+        String result = service.getNextSyncTime(999);
+
+        assertEquals("NA", result);
+        verify(mockSyncJobDefRepository).getAllSyncJobDefList();
+        verify(mockJobTransactionService, never()).getLastSyncTime(anyInt());
+    }
 }

@@ -37,7 +37,6 @@
   "login_failed": "लॉगिन विफल रहा। फिर कोशिश करो!",
   "password_incorrect": "पासवर्ड गलत है!",
   "machine_not_found": "मशीन नहीं मिली!",
-  "network_error": "लॉगिन विफल रहा। नेटवर्क कनेक्शन की जाँच करें!",
   "cred_expired": "क्रेडेंशियल्स नहीं मिले या समय सीमा समाप्त हो गई है. ऑनलाइन लॉगिन का प्रयास करें!",
   "not_initialized": "मशीन प्रारंभ नहीं की जा सकी!",
   "invalid_user": "उपयोगकर्ता नाम अमान्य!",
@@ -210,8 +209,6 @@
   "language_selector_note": "कृपया ध्यान दें कि भाषा पूर्व-पंजीकरण के दौरान दर्ज किए गए डेटा पर आधारित हो सकती है।",
   "cancel": "रद्द करना",
   "submit": "जमा करना",
-  "go_back": "वापस जाएं",
-  "informed": "सूचित किया",
   "logo_text": "MOSIP द्वारा संचालित",
   "get_onboard": "सवार होना",
   "skip_to_home": "होम पेज पर जाएं",
@@ -305,7 +302,7 @@
   "logout_success": "आप सफलता पूर्वक लॉगआउट कर चुके हैं!",
   "logout_failure": "कुछ गलती हो गई है, कृपया कुछ समय बाद पुनः प्रयास करें",
   "go_to_home": "होम पर जाएं",
-  "errors": "{messages, select, REG_TRY_AGAIN{लॉगिन विफल रहा। फिर कोशिश करो!} REG_INVALID_REQUEST{पासवर्ड गलत है!} REG_MACHINE_NOT_FOUND{मशीन नहीं मिली!} REG_NETWORK_ERROR{लॉगिन विफल रहा। नेटवर्क कनेक्शन की जाँच करें!} REG_CRED_EXPIRED{क्रेडेंशियल्स नहीं मिले या समय सीमा समाप्त हो गई है. ऑनलाइन लॉगिन का प्रयास करें!} REG_MACHINE_INACTIVE{मशीन सक्रिय नहीं है!} REG_CENTER_INACTIVE{केंद्र सक्रिय नहीं है!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{लॉगिन विफल रहा। फिर कोशिश करो!} REG_INVALID_REQUEST{पासवर्ड गलत है!} REG_MACHINE_NOT_FOUND{इस डिवाइस का ऑनबोर्डिंग अभी तक नहीं हुआ है। सहायता के लिए कृपया अपने प्रशासक से संपर्क करें!} REG_NETWORK_ERROR{लॉगिन विफल रहा। नेटवर्क कनेक्शन की जाँच करें!} REG_CRED_EXPIRED{क्रेडेंशियल्स नहीं मिले या समय सीमा समाप्त हो गई है. ऑनलाइन लॉगिन का प्रयास करें!} REG_MACHINE_INACTIVE{मशीन सक्रिय नहीं है!} REG_CENTER_INACTIVE{केंद्र सक्रिय नहीं है!} REG_LOGIN_LOCKED{अधिकतम लॉगिन प्रयास सीमा पूरी हो गई. बाद में पुन: प्रयास!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -333,5 +330,25 @@
   "additional_info_req_id": "अतिरिक्त जानकारी अनुरोध आईडी",
   "no_access_to_this_page": "आपको इस पृष्ठ तक पहुँच नहीं है",
   "scheduled_job_settings": "अनुसूचित कार्य सेटिंग्स",
+  "doc_size_exceeded": "फ़ाइल का आकार सीमा {size} से अधिक है",
+  "@doc_size_exceeded": {
+       "placeholders": {
+         "size": {
+           "type": "String"
+         }
+       }
+  },
+  "age_should_not_be_greater": "उम्र {age} वर्ष से अधिक नहीं होनी चाहिए।",
+  "@age_should_not_be_greater": {
+       "placeholders": {
+            "age": {
+            "type": "int"
+            }
+       }
+  },
+  "onboard_officer_biometric": "अधिकारी का बायोमेट्रिक ऑनबोर्डिंग",
+  "update_officer_biometric": "अधिकारी का बायोमेट्रिक अपडेट",
+  "submit_changes": "परिवर्तन जमा करें",
+  "local_preferences_saved_msg": "स्थानीय प्राथमिकताएँ सफलतापूर्वक सहेज ली गई हैं। बदलाव देखने के लिए एप्लिकेशन को पुनः शुरू करना आवश्यक है। क्या आप अभी बाहर निकलना चाहते हैं?",
   "search_for_key": "कुंजी खोजें"
 }

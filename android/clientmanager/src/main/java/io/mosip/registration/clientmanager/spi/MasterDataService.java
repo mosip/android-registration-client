@@ -150,4 +150,16 @@ public interface MasterDataService {
     Map<String, Object> getRegistrationParams();
 
 //    void downloadUrlData(Path path, JSONObject jsonObject);
+
+    String getCachedStringOnboardYourselfUrl();
+
+    String getCachedStringRegisteringIndividualUrl();
+
+    String getCachedStringSyncDataUrl();
+
+    String getCachedStringMappingDevicesUrl();
+
+    String getCachedStringUploadingDataUrl();
+
+    String getCachedStringUpdatingBiometricsUrl();
 }
