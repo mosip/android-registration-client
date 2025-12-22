@@ -523,7 +523,7 @@ class GlobalProvider with ChangeNotifier {
     if (lengthStr.isNotEmpty) {
       _uinLength = int.tryParse(lengthStr);
     } else {
-      _uinLength = 12;
+      _uinLength = 10;
     }
     notifyListeners();
   }
