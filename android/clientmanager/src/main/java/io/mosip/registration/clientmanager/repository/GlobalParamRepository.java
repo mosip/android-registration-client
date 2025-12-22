@@ -221,6 +221,14 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.PRID_LENGTH);
     }
 
+    public String getCachedStringUINLength(){
+        return globalParamMap.get(RegistrationConstants.UIN_LENGTH);
+    }
+
+    public String getCachedStringVIDLength(){
+        return globalParamMap.get(RegistrationConstants.VID_LENGTH);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

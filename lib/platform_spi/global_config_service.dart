@@ -13,5 +13,9 @@ abstract class GlobalConfigService {
 
   Future<String> getPRIDLength();
 
+  Future<String> getUINLength();
+
+  Future<String> getVIDLength();
+
   factory GlobalConfigService() => getGlobalConfigServiceImpl();
 }

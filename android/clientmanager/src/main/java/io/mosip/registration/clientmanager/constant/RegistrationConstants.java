@@ -134,4 +134,7 @@ public class RegistrationConstants {
     public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
     public static final String DISK_SPACE = "mosip.registration.disk_space_size";
     public static final String PRID_LENGTH = "mosip.kernel.prid.length";
+    public static final String UIN_LENGTH = "mosip.kernel.uin.length";
+    public static final String VID_LENGTH = "mosip.kernel.vid.length";
+
 }

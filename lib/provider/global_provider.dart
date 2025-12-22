@@ -123,6 +123,8 @@ class GlobalProvider with ChangeNotifier {
   }
 
   int? _pridLength;
+  int? _uinLength;
+  int? _vidLength;
 
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
@@ -149,6 +151,8 @@ class GlobalProvider with ChangeNotifier {
   String get ageGroup => _ageGroup;
 
   int? get pridLength => _pridLength;
+  int? get uinLength => _uinLength;
+  int? get vidLength => _vidLength;
 
   set scannedPages(Map<String, List<Uint8List?>> value) {
     _scannedPages = value;
@@ -510,6 +514,26 @@ class GlobalProvider with ChangeNotifier {
       _pridLength = int.tryParse(lengthStr);
     } else {
       _pridLength = 14; 
+    }
+    notifyListeners();
+  }
+
+  getUINLength() async {
+    String lengthStr = await globalConfigService.getUINLength();
+    if (lengthStr.isNotEmpty) {
+      _uinLength = int.tryParse(lengthStr);
+    } else {
+      _uinLength = 12;
+    }
+    notifyListeners();
+  }
+
+  getVIDLength() async {
+    String lengthStr = await globalConfigService.getVIDLength();
+    if (lengthStr.isNotEmpty) {
+      _vidLength = int.tryParse(lengthStr);
+    } else {
+      _vidLength = 16;
     }
     notifyListeners();
   }

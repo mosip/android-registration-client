@@ -84,6 +84,32 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
     return pridLength;
   }
 
+  @override
+  Future<String> getUINLength() async {
+    String uinLength = "";
+    try {
+      uinLength = await GlobalConfigSettingsApi().getUINLength();
+    } on PlatformException {
+      debugPrint("UIN Length Api failed!");
+    }  catch (e) {
+      debugPrint("UIN Length fetch error: $e");
+    }
+    return uinLength;
+  }
+
+  @override
+  Future<String> getVIDLength() async {
+    String vidLength = "";
+    try {
+      vidLength = await GlobalConfigSettingsApi().getVIDLength();
+    } on PlatformException {
+      debugPrint("VID Length Api failed!");
+    }  catch (e) {
+      debugPrint("VID Length fetch error: $e");
+    }
+    return vidLength;
+  }
+
 }
 
 GlobalConfigService getGlobalConfigServiceImpl() => GlobalConfigServiceImpl();

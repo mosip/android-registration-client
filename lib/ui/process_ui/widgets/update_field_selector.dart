@@ -36,9 +36,11 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, List<Field>> fieldsMap = {};
-  final RegExp validation = RegExp(r'^([0-9]{10})$');
+  final RegExp validation = RegExp(r'^[0-9]+$');
   TextEditingController controller = TextEditingController();
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  int? uinLength;
+  int? vidLength;
 
   @override
   void initState() {
@@ -46,6 +48,10 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
     controller = TextEditingController(text: globalProvider.updateUINNumber);
+    
+    // Fetch UIN and VID lengths from backend
+    _initializeLengths();
+    
     for (var screen in widget.process.screens!) {
       for (var field in screen!.fields!) {
         if (field!.group != null) {
@@ -73,6 +79,20 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
         }
       },
     ));
+  }
+
+  Future<void> _initializeLengths() async {
+    await globalProvider.getUINLength();
+    await globalProvider.getVIDLength();
+    
+    // Update local variables after fetching from backend
+    // Use default values if null: UIN = 10, VID = 16
+    if (mounted) {
+      setState(() {
+        uinLength = globalProvider.uinLength ?? 10;
+        vidLength = globalProvider.vidLength ?? 16;
+      });
+    }
   }
 
   _getFieldTitle(Field field) {
@@ -180,11 +200,22 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                         globalProvider.updateUINNumber = value;
                       },
                       validator: (value) {
-                        if (value == null) {
-                          return appLocalizations.valid_uin;
-                        } else if (!validation.hasMatch(value)) {
+                        if (value == null || value.isEmpty) {
                           return appLocalizations.valid_uin;
                         }
+                        
+                        // Check if length matches either UIN or VID length
+                        if (uinLength != null && vidLength != null) {
+                          if (value.length != uinLength && value.length != vidLength) {
+                            return appLocalizations.valid_uin;
+                          }
+                        }
+                        
+                        // Check if value contains only digits
+                        if (!validation.hasMatch(value)) {
+                          return appLocalizations.valid_uin;
+                        }
+                        
                         return null;
                       },
                       decoration: InputDecoration(

@@ -14,4 +14,8 @@ abstract class GlobalConfigSettingsApi {
   String getGpsEnableFlag();
   @async
   String getPRIDLength();
+  @async
+  String getUINLength();
+  @async
+  String getVIDLength();
 }
