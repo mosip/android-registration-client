@@ -302,7 +302,7 @@
   "logout_success": "Vous avez été déconnecté avec succès!",
   "logout_failure": "Quelque chose s'est mal passé, veuillez réessayer après un certain temps",
   "go_to_home": "Aller à la maison",
-"errors": "{messages, select, REG_TRY_AGAIN{Echec de la connexion.. Réessayez!} REG_INVALID_REQUEST{Mot de passe incorrect!} REG_MACHINE_NOT_FOUND{Cet appareil n’a pas encore été intégré. Veuillez contacter votre administrateur pour obtenir de l’aide !} REG_NETWORK_ERROR{Échec de la connexion. Vérifiez la connexion réseau!} REG_CRED_EXPIRED{Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!} REG_MACHINE_INACTIVE{La machine n'est pas active!} REG_CENTER_INACTIVE{Le centre n'est pas actif!} REG_LOGIN_LOCKED{Limite maximale de tentatives de connexion atteinte. Réessayez plus tard!} other{'Some error occurred!'}}",
+"errors": "{messages, select, REG_TRY_AGAIN{Echec de la connexion.. Réessayez!} REG_INVALID_REQUEST{Mot de passe incorrect!} REG_MACHINE_NOT_FOUND{Cet appareil n’a pas encore été intégré. Veuillez contacter votre administrateur pour obtenir de l’aide !} REG_NETWORK_ERROR{Échec de la connexion. Vérifiez la connexion réseau!} REG_CRED_EXPIRED{Les informations d’identification sont introuvables ou ont expiré. S’il vous plaît essayer la connexion en ligne!} REG_MACHINE_INACTIVE{La machine n'est pas active!} REG_CENTER_INACTIVE{Le centre n'est pas actif!} REG_LOGIN_LOCKED{Limite maximale de tentatives de connexion atteinte. Réessayez plus tard!} KER_SYN_AUTH_001{Impossible d’obtenir le jeton d’authentification!} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {
@@ -349,5 +349,6 @@
   "onboard_officer_biometric": "Enregistrement biométrique de l’officier",
   "update_officer_biometric": "Mise à jour biométrique de l’officier",
   "submit_changes": "Soumettre les modifications",
-  "local_preferences_saved_msg": "Les préférences locales ont été enregistrées avec succès. Le redémarrage de l'application est nécessaire pour voir les changements. Voulez-vous quitter maintenant ?"
+  "local_preferences_saved_msg": "Les préférences locales ont été enregistrées avec succès. Le redémarrage de l'application est nécessaire pour voir les changements. Voulez-vous quitter maintenant ?",
+  "search_for_key": "Rechercher une clé"
 }
