@@ -85,4 +85,15 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
         }
         result.success(gpsFlag);
     }
+
+    @Override
+    public void getPRIDLength(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
+        String pridLength = "";
+        try {
+            pridLength = globalParamRepository.getCachedStringPRIDLength();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching PRID length", e);
+        }
+        result.success(pridLength);
+    }
 }

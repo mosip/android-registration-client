@@ -217,6 +217,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DISK_SPACE);
     }
 
+    public String getCachedStringPRIDLength(){
+        return globalParamMap.get(RegistrationConstants.PRID_LENGTH);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

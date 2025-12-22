@@ -11,5 +11,7 @@ abstract class GlobalConfigService {
 
   Future<String> getGpsEnableFlag();
 
+  Future<String> getPRIDLength();
+
   factory GlobalConfigService() => getGlobalConfigServiceImpl();
 }

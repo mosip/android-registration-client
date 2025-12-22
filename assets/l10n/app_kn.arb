@@ -315,6 +315,14 @@
   "application_id_not_exist": "ಅಪ್ಲಿಕೇಶನ್ ಐಡಿ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ!",
   "correct_application_id": "ದಯವಿಟ್ಟು ನಮೂದಿಸಿದ ಅಪ್ಲಿಕೇಶನ್ ಐಡಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಸರಿಯಾದ ಐಡಿಯನ್ನು ನಮೂದಿಸಿ ಮತ್ತು ಅದನ್ನು ಮತ್ತೆ ಪಡೆಯಲು ಪ್ರಯತ್ನಿಸಿ.",
   "enter_application_id": "ದಯವಿಟ್ಟು ಅಪ್ಲಿಕೇಶನ್ ಐಡಿಯನ್ನು ನಮೂದಿಸಿ",
+  "prid_length_greater": "ಅಪ್ಲಿಕೇಶನ್ ID ನಿಖರವಾಗಿ {length} ಅಂಕೆಗಳಾಗಿರಬೇಕು.",
+  "@prid_length_greater": {
+     "placeholders": {
+         "length": {
+          "type": "int"
+         }
+     }
+  },
   "okay": "ಸರಿ",
   "no_internet_connection": "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲ!",
   "connect_and_retry": "ದಯವಿಟ್ಟು ಇಂಟರ್ನೆಟ್\u200Cನೊಂದಿಗೆ ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಮರುಪ್ರಯತ್ನಿಸಿ.",

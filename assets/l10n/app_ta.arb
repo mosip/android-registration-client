@@ -324,6 +324,14 @@
   "application_id_not_exist": "விண்ணப்ப ஐடி இல்லை",
   "correct_application_id": "உள்ளிட்ட விண்ணப்ப ஐடியைச் சரிபார்க்கவும் அல்லது சரியான ஐடியை உள்ளிட்டு, அதை மீண்டும் பெற முயற்சிக்கவும்.",
   "enter_application_id": "விண்ணப்ப ஐடியை உள்ளிடவும்",
+  "prid_length_greater": "விண்ணப்ப ஐடி சரியாக {length} இலக்கங்களாக இருக்க வேண்டும்.",
+  "@prid_length_greater": {
+     "placeholders": {
+        "length": {
+          "type": "int"
+        }
+     }
+  },
   "okay": "சரி",
   "no_internet_connection": "இணைய இணைப்பு இல்லை!",
   "connect_and_retry": "இணையத்துடன் இணைத்து மீண்டும் முயற்சிக்கவும்.",

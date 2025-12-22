@@ -315,6 +315,14 @@
   "application_id_not_exist": "معرف التطبيق غير موجود!",
   "correct_application_id": "يرجى التحقق من معرف التطبيق الذي تم إدخاله أو إدخال معرف صحيح ومحاولة جلبه مرة أخرى.",
   "enter_application_id": "الرجاء إدخال معرف التطبيق",
+  "prid_length_greater": "يجب أن يتكون معرف التطبيق من أرقام {length} بالضبط",
+  "@prid_length_greater": {
+     "placeholders": {
+        "length": {
+          "type": "int"
+        }
+     }
+  },
   "okay": "تمام",
   "no_internet_connection": "لا يوجد اتصال بالإنترنت!",
   "connect_and_retry": "يرجى الاتصال بالإنترنت وإعادة المحاولة.",

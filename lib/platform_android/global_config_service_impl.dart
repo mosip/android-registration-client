@@ -71,6 +71,19 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
     return gpsEnableFlag;
   }
 
+  @override
+  Future<String> getPRIDLength() async {
+    String pridLength = "";
+    try {
+      pridLength = await GlobalConfigSettingsApi().getPRIDLength();
+    } on PlatformException {
+      debugPrint("PRID Length Api failed!");
+    }  catch (e) {
+      debugPrint("PRID Length fetch error: $e");
+    }
+    return pridLength;
+  }
+
 }
 
 GlobalConfigService getGlobalConfigServiceImpl() => GlobalConfigServiceImpl();

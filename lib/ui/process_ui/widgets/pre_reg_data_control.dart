@@ -37,6 +37,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
     if(globalProvider.preRegId!=""){
       preRegIdController.text = globalProvider.preRegId;
     }
+    globalProvider.getPRIDLength();
     super.initState();
   }
 
@@ -199,6 +200,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    GlobalProvider globalProvider = Provider.of<GlobalProvider>(context);
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -233,6 +235,19 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       //preRegIdController.text = value;
                       globalProvider.setPreRegistrationId(value);
                     },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return null; // Empty validation handled by button click
+                      }
+                      if (globalProvider.pridLength != null) {
+                        // Check if length matches configured value
+                        if (value.length > globalProvider.pridLength!) {
+                          return AppLocalizations.of(context)!
+                              .prid_length_greater(globalProvider.pridLength!);
+                        }
+                      }
+                      return null;
+                    },
                     textAlign: TextAlign.left,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -259,6 +274,10 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
           ),
                       onPressed: () async {
                         widget.onFetched();
+                        // Validate form field first
+                        if (!_formFieldKey.currentState!.validate()) {
+                          return;
+                        }
                         if(preRegIdController.text.isEmpty){
                           globalProvider.preRegControllerRefresh = true;
                           showDialog(
@@ -266,21 +285,34 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.enter_application_id),
                           );
                           globalProvider.preRegControllerRefresh = false;
-                        } else if(!RegExp(r'^\d{14}$').hasMatch(preRegIdController.text)){
-                          globalProvider.preRegControllerRefresh = true;
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
-                          );
-                          await context.read<
-                              RegistrationTaskProvider>()
-                              .fetchPreRegistrationDetail(
-                              preRegIdController.text);
-
-                          globalProvider.clearMap();
-                          globalProvider.clearScannedPages();
-                          globalProvider.preRegControllerRefresh = false;
                         } else {
+                          // Validate length using config value
+                          bool isValidLength = true;
+                          if (globalProvider.pridLength != null) {
+                            String input = preRegIdController.text;
+                            if (input.length != globalProvider.pridLength! || !RegExp(r'^\d+$').hasMatch(input)) {
+                              isValidLength = false;
+                            }
+                          }
+                          
+                          if (!isValidLength) {
+                            globalProvider.preRegControllerRefresh = true;
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => ValidatorAlert(
+                                errorMessage: AppLocalizations.of(context)!.application_id_not_exist,
+                                subError: AppLocalizations.of(context)!.correct_application_id
+                              ),
+                            );
+                            await context.read<
+                                RegistrationTaskProvider>()
+                                .fetchPreRegistrationDetail(
+                                preRegIdController.text);
+
+                            globalProvider.clearMap();
+                            globalProvider.clearScannedPages();
+                            globalProvider.preRegControllerRefresh = false;
+                          } else {
                           globalProvider.preRegControllerRefresh = true;
                             Map<String?, Object?> value = await context.read<
                                 RegistrationTaskProvider>()
@@ -296,6 +328,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                               globalProvider.clearScannedPages();
                               globalProvider.preRegControllerRefresh = false;
                             }
+                          }
                         }
                       },
                       child: Text(
@@ -322,14 +355,29 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             builder: (context) =>
                                 QRCodeScannerApp()),
                       );
-                      if(data!=null && !RegExp(r'^\d{14}$').hasMatch(data)){
-                        globalProvider.preRegControllerRefresh = true;
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>  ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
-                        );
-                        globalProvider.preRegControllerRefresh = false;
-                      } else if(data!=null) {
+                      if(data!=null) {
+                        // Validate scanned data length
+                        bool isValidLength = true;
+                        if (globalProvider.pridLength != null) {
+                          String scannedData = data.toString();
+                          if (scannedData.length != globalProvider.pridLength! || !RegExp(r'^\d+$').hasMatch(scannedData)) {
+                            isValidLength = false;
+                          }
+                        } else {
+                          // Fallback to default validation if config not loaded
+                          if (!RegExp(r'^\d{14}$').hasMatch(data)) {
+                            isValidLength = false;
+                          }
+                        }
+
+                        if (!isValidLength) {
+                          globalProvider.preRegControllerRefresh = true;
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>  ValidatorAlert(errorMessage: AppLocalizations.of(context)!.application_id_not_exist,subError: AppLocalizations.of(context)!.correct_application_id),
+                          );
+                          globalProvider.preRegControllerRefresh = false;
+                        } else {
                         globalProvider.preRegControllerRefresh = true;
                         setState(() {
                           preRegIdController.text = data.toString();
@@ -349,11 +397,11 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                           globalProvider.clearScannedPages();
                           globalProvider.preRegControllerRefresh = false;
                         }
+                        }
                       }
                     },
                     child: Icon(Icons.crop_free,size: 32.6,color: solidPrimary),
                   ),
-
                 //const Spacer(),
               ],
             )
