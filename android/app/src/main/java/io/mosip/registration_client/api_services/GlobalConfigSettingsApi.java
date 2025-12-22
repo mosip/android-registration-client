@@ -102,7 +102,6 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
         String uinLength = "";
         try {
             uinLength = globalParamRepository.getCachedStringUINLength();
-            Log.i(getClass().getSimpleName(), "Fetched UIN length: " + uinLength);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching UIN length", e);
         }
@@ -114,7 +113,6 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
         String vidLength = "";
         try {
             vidLength = globalParamRepository.getCachedStringVIDLength();
-            Log.i(getClass().getSimpleName(), "Fetched VID length: " + vidLength);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching VID length", e);
         }
