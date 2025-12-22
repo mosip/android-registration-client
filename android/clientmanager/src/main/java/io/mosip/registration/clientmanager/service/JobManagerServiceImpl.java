@@ -204,7 +204,7 @@ public class JobManagerServiceImpl implements JobManagerService {
                 return ConfigDataSyncJob.class;
             case "deleteAuditLogsJob":
                 return DeleteAuditLogsJob.class;
-            case "registrationPacketDeletionJob":
+            case "registrationDeletionJob":
                 return RegistrationDeletionJob.class;
             default:
                 return null;

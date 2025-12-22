@@ -501,7 +501,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         break;
 
-                    case "registrationPacketDeletionJob":
+                    case "registrationDeletionJob":
                         packetService.deleteRegistrationPackets();
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         Log.i(TAG, "Registration packet deletion job completed");
