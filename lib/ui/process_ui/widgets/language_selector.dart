@@ -99,8 +99,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
       _triggerNavigation();
     } else {
       // Get error message using the centralized errors() method from i18n
-      String errorCode = registrationStartError.split(RegExp(r'[\s,;:]')).first;
-      String errorMessage = AppLocalizations.of(context)!.errors(errorCode);
+      String errorMessage = AppLocalizations.of(context)!.errors(registrationStartError);
       _showInSnackBar(errorMessage);
     }
   }

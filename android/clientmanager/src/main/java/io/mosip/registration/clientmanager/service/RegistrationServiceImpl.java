@@ -643,19 +643,17 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         // registered packet approval time breach check
         if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
-            throw new ClientCheckedException("PAK_APPRVL_MAX_TIME", "Registered packets approval time breached");
+            throw new ClientCheckedException("PAK_APPRVL_MAX_TIME");
         }
 
         // validate last export duration
         if (packetService != null && packetService.validatingLastExportDuration()) {
-            throw new ClientCheckedException("PAK_UPLOAD_MAX_TIME",
-                    "Registered packets upload time breached");
+            throw new ClientCheckedException("PAK_UPLOAD_MAX_TIME");
         }
 
         // validate max packet count limit
         if (packetService != null && packetService.isMaxPacketCountLimitReached()) {
-            throw new ClientCheckedException("PAK_UPLOAD_MAX_COUNT",
-                    "Maximum packet count limit reached for offline frequency");
+            throw new ClientCheckedException("PAK_UPLOAD_MAX_COUNT");
         }
     }
 
