@@ -98,15 +98,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     if (registrationStartError.isEmpty) {
       _triggerNavigation();
     } else {
-      // Translate error code using i18n
-      String errorMessage = registrationStartError;
-      if (registrationStartError.contains('PAK_APPRVL_MAX_TIME')) {
-        errorMessage = AppLocalizations.of(context)!.reg_pkt_apprvl_time_exceed;
-      } else if (registrationStartError.contains('PAK_UPLOAD_MAX_TIME')) {
-        errorMessage = AppLocalizations.of(context)!.reg_pkt_export_time_exceed;
-      } else if (registrationStartError.contains('PAK_UPLOAD_MAX_COUNT')) {
-        errorMessage = AppLocalizations.of(context)!.reg_pkt_max_limit_reached;
-      }
+      // Get error message using the centralized errors() method from i18n
+      String errorCode = registrationStartError.split(RegExp(r'[\s,;:]')).first;
+      String errorMessage = AppLocalizations.of(context)!.errors(errorCode);
       _showInSnackBar(errorMessage);
     }
   }

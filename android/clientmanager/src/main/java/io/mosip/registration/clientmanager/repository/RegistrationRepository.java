@@ -98,7 +98,6 @@ public class RegistrationRepository {
     }
 
     public int getYetToExportCount() {
-        return this.registrationDao.findRegistrationCountByStatuses(
-                PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name());
+        return this.registrationDao.findApprovedAndRejectedRegistrationCount();
     }
 }
