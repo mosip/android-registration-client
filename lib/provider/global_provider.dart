@@ -510,31 +510,19 @@ class GlobalProvider with ChangeNotifier {
 
   getPRIDLength() async {
     String lengthStr = await globalConfigService.getPRIDLength();
-    if (lengthStr.isNotEmpty) {
-      _pridLength = int.tryParse(lengthStr);
-    } else {
-      _pridLength = 14; 
-    }
+    _pridLength = int.tryParse(lengthStr) ?? 14;
     notifyListeners();
   }
 
   getUINLength() async {
     String lengthStr = await globalConfigService.getUINLength();
-    if (lengthStr.isNotEmpty) {
-      _uinLength = int.tryParse(lengthStr);
-    } else {
-      _uinLength = 10;
-    }
+    _uinLength = int.tryParse(lengthStr) ?? 10;
     notifyListeners();
   }
 
   getVIDLength() async {
     String lengthStr = await globalConfigService.getVIDLength();
-    if (lengthStr.isNotEmpty) {
-      _vidLength = int.tryParse(lengthStr);
-    } else {
-      _vidLength = 16;
-    }
+    _vidLength = int.tryParse(lengthStr) ?? 16;
     notifyListeners();
   }
 

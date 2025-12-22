@@ -50,7 +50,8 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
     controller = TextEditingController(text: globalProvider.updateUINNumber);
     
     // Fetch UIN and VID lengths from backend
-    _initializeLengths();
+    // Fetch UIN and VID lengths from backend
+    _initializeUINVIDLength();
     
     for (var screen in widget.process.screens!) {
       for (var field in screen!.fields!) {
@@ -81,7 +82,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
     ));
   }
 
-  Future<void> _initializeLengths() async {
+  Future<void> _initializeUINVIDLength() async {
     await globalProvider.getUINLength();
     await globalProvider.getVIDLength();
     
