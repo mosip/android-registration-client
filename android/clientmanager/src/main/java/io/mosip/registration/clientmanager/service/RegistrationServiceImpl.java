@@ -67,6 +67,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import javax.inject.Provider;
@@ -112,6 +113,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private RegistrationCenterRepository registrationCenterRepository;
     private LocationValidationService locationValidationService;
     private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
+    private PacketService packetService;
     public static final String BOOLEAN_FALSE = "false";
 
     private Biometrics095Service biometricService;
@@ -128,7 +130,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    RegistrationCenterRepository registrationCenterRepository,
                                    LocationValidationService locationValidationService,
                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
-                                   Biometrics095Service biometricService) {
+                                   Biometrics095Service biometricService,
+                                   PacketService packetService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -143,6 +146,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.locationValidationService = locationValidationService;
         this.preRegistrationDataSyncServiceProvider = preRegistrationDataSyncServiceProvider;
         this.biometricService = biometricService;
+        this.packetService = packetService;
     }
 
     @Override
@@ -636,6 +640,21 @@ public class RegistrationServiceImpl implements RegistrationService {
         //is machine and center active
         if (centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
             throw new ClientCheckedException(context, R.string.err_007);
+
+        // registered packet approval time breach check
+        if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
+            throw new ClientCheckedException("PAK_APPRVL_MAX_TIME");
+        }
+
+        // validate last export duration
+        if (packetService != null && packetService.validatingLastExportDuration()) {
+            throw new ClientCheckedException("PAK_UPLOAD_MAX_TIME");
+        }
+
+        // validate max packet count limit
+        if (packetService != null && packetService.isMaxPacketCountLimitReached()) {
+            throw new ClientCheckedException("PAK_UPLOAD_MAX_COUNT");
+        }
     }
 
     private byte[] convertImageToPDF(List<byte[]> images) {

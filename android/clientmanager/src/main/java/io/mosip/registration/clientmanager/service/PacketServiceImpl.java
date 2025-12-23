@@ -350,6 +350,105 @@ public class PacketServiceImpl implements PacketService {
     }
 
     @Override
+    public boolean isRegisteredPacketApprovalTimeBreached() {
+        try {
+            String limitInDays = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT);
+            if (limitInDays == null || limitInDays.trim().isEmpty()) {
+                return false;
+            }
+            long limitDays = Long.parseLong(limitInDays.trim());
+            if (limitDays <= 0) {
+                return false;
+            }
+            Registration oldestPendingRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name());
+            if (oldestPendingRegistration == null) {
+                return false;
+            }
+
+            long thresholdTimeMillis = System.currentTimeMillis() - (limitDays * 24L * 60L * 60L * 1000L);
+
+            return oldestPendingRegistration.getCrDtime() < thresholdTimeMillis;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid REG_PAK_MAX_TIME_APPRV_LIMIT configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate registered packet approval time breach", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean validatingLastExportDuration() {
+        try {
+            String limitInDays = globalParamRepository.getCachedStringGlobalParam(
+                    RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME);
+
+            if (limitInDays == null || limitInDays.trim().isEmpty()) {
+                return false;
+            }
+
+            long maxAllowedDays = Long.parseLong(limitInDays.trim());
+            if (maxAllowedDays <= 0) {
+                return false;
+            }
+
+            Registration oldestApprovedRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name());
+            if (oldestApprovedRegistration == null) {
+                return false;
+            }
+
+            Long creationTimeMillis = oldestApprovedRegistration.getCrDtime();
+            if (creationTimeMillis == null) {
+                return false;
+            }
+
+            long thresholdTimeMillis = System.currentTimeMillis() - (maxAllowedDays * 24L * 60L * 60L * 1000L);
+
+            return creationTimeMillis < thresholdTimeMillis;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate last export time", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isMaxPacketCountLimitReached() {
+        try {
+            String maxCountStr = globalParamRepository.getCachedStringGlobalParam(
+                    RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ);
+
+            if (maxCountStr == null || maxCountStr.trim().isEmpty()) {
+                return false;
+            }
+
+            double maxCount = Double.parseDouble(maxCountStr.trim());
+            if (maxCount <= 0) {
+                return false;
+            }
+
+            int yetToExportCount = registrationRepository.getYetToExportCount();
+
+            if (yetToExportCount >= maxCount) {
+                return true;
+            }
+
+            return false;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid REG_PAK_MAX_CNT_OFFLINE_FREQ configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate max packet count limit", ex);
+            return false;
+        }
+    }
+
+    @Override
     public void deleteRegistrationPackets() {
         Log.i(TAG, "Starting registration packet deletion job");
         try {
@@ -367,7 +466,7 @@ public class PacketServiceImpl implements PacketService {
 
             List<Registration> registrations = registrationRepository.findByServerStatusAndCrDtimeBefore(serverStatuses,
                     cutoffTime);
-            
+
             if (registrations != null && !registrations.isEmpty()) {
                 for (Registration registration : registrations) {
                     delete(registration);
@@ -385,7 +484,7 @@ public class PacketServiceImpl implements PacketService {
             String filePath = registration.getFilePath();
             if (filePath != null) {
                 File zipFile = new File(filePath);
-                
+
                 // Delete ZIP packet file
                 if (zipFile.exists()) {
                     if (zipFile.delete()) {
