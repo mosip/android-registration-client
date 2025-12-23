@@ -139,5 +139,5 @@ public class RegistrationConstants {
     public static final String PRID_LENGTH = "mosip.kernel.prid.length";
     public static final String UIN_LENGTH = "mosip.kernel.uin.length";
     public static final String VID_LENGTH = "mosip.kernel.vid.length";
-
+    public static final String SUPERVISOR_APPROVAL_CONFIG_FLAG = "mosip.registration.supervisor_approval_config_flag";
 }
