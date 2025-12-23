@@ -54,6 +54,10 @@ public class RegistrationRepository {
     }
 
 
+    public Registration getOldestRegistrationByStatus(String status) {
+        return this.registrationDao.findOldestRegistrationByStatus(status);
+    }
+
     public Registration getRegistration(String packetId) {
         return this.registrationDao.findOneByPacketId(packetId);
     }
@@ -91,5 +95,9 @@ public class RegistrationRepository {
 
     public void updateSupervisorReview(String packetId, String supervisorStatus, String supervisorComment) {
         this.registrationDao.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
+    }
+
+    public int getYetToExportCount() {
+        return this.registrationDao.findApprovedAndRejectedRegistrationCount();
     }
 }

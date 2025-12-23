@@ -64,4 +64,10 @@ public interface RegistrationDao {
     @Query("SELECT COUNT(*) FROM registration where cr_dtimes < CURRENT_DATE")
     int getAllCreatedPacketStatus();
 
+    @Query("SELECT * FROM registration where client_status = :status order by cr_dtimes asc limit 1")
+    Registration findOldestRegistrationByStatus(String status);
+
+    @Query("SELECT COUNT(*) FROM registration where client_status in ('APPROVED', 'REJECTED')")
+    int findApprovedAndRejectedRegistrationCount();
+
 }

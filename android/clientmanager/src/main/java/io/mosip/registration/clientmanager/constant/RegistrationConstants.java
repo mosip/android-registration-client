@@ -127,9 +127,12 @@ public class RegistrationConstants {
     public static final String UPDATING_BIOMETRICS_URL = "mosip.registration.updating_biometrics_url";
     public static final String PWORD_LENGTH = "mosip.registration.username_pwd_length";
     public static final String DOC_SIZE = "mosip.registration.document_size";
-    public static final  String MAX_AGE = "mosip.registration.max_age";
+    public static final String MAX_AGE = "mosip.registration.max_age";
     public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
+    public static final String REG_PAK_MAX_TIME_APPRV_LIMIT = "mosip.registration.reg_pak_max_time_apprv_limit";
+    public static final String OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME = "mosip.registration.last_export_registration_config_time";
+    public static final String REG_PAK_MAX_CNT_OFFLINE_FREQ = "mosip.registration.packet.maximum.count.offline.frequency";
     public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
     public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
 }

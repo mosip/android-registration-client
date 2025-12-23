@@ -98,7 +98,9 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     if (registrationStartError.isEmpty) {
       _triggerNavigation();
     } else {
-      _showInSnackBar(registrationStartError);
+      // Get error message using the centralized errors() method from i18n
+      String errorMessage = AppLocalizations.of(context)!.errors(registrationStartError);
+      _showInSnackBar(errorMessage);
     }
   }
 
