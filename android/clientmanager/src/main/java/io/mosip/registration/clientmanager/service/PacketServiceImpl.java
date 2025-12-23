@@ -474,6 +474,8 @@ public class PacketServiceImpl implements PacketService {
             } else {
                 Log.i(TAG, "No registrations found to delete");
             }
+        } catch (NumberFormatException | NullPointerException ex) {
+            Log.e(TAG, "Invalid or missing REG_DELETION_CONFIGURED_DAYS configuration", ex);
         } catch (Exception e) {
             Log.e(TAG, "Error during registration packet deletion", e);
         }
