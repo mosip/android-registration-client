@@ -355,9 +355,6 @@ public class PacketServiceImpl implements PacketService {
         try {
             String configuredDays = globalParamRepository
                     .getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS);
-            if (configuredDays == null) {
-                configuredDays = "10"; // Default to 10 days if not configured
-            }
             int days = Integer.parseInt(configuredDays);
 
             Calendar cal = Calendar.getInstance();
