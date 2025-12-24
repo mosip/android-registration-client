@@ -41,6 +41,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   int? uinLength;
   int? vidLength;
+  String? idSubType;
 
   @override
   void initState() {
@@ -60,6 +61,14 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
             fieldsMap[field.group!] = [];
           }
           fieldsMap[field.group]!.add(field);
+        }
+
+        // Determine ID subType from available fields
+        if (field.subType != null && idSubType == null) {
+          String subType = field.subType!.toLowerCase();
+          if (subType == "uin" || subType == "vid") {
+            idSubType = subType;
+          }
         }
       }
     }
@@ -82,10 +91,11 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
     ));
   }
 
+
   Future<void> _initializeUINVIDLength() async {
     await globalProvider.getUINLength();
     await globalProvider.getVIDLength();
-    
+
     // Update local variables after fetching from backend
     // Use default values if null: UIN = 10, VID = 16
     if (mounted) {
@@ -204,19 +214,29 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                         if (value == null || value.isEmpty) {
                           return appLocalizations.valid_uin;
                         }
-                        
-                        // Check if length matches either UIN or VID length
-                        if (uinLength != null && vidLength != null) {
-                          if (value.length != uinLength && value.length != vidLength) {
-                            return appLocalizations.valid_uin;
-                          }
+
+                        // Determine validation length based on available field subType in UI spec
+                        int? expectedLength;
+
+                        if (idSubType == "uin") {
+                          expectedLength = uinLength;
+                        } else if (idSubType == "vid") {
+                          expectedLength = vidLength;
+                        } else {
+                          // Default to UIN length if no specific ID subType found
+                          expectedLength = uinLength;
                         }
-                        
+
+                        // Check if length matches the expected length
+                        if (expectedLength != null && value.length != expectedLength) {
+                          return appLocalizations.valid_uin;
+                        }
+
                         // Check if value contains only digits
                         if (!validation.hasMatch(value)) {
                           return appLocalizations.valid_uin;
                         }
-                        
+
                         return null;
                       },
                       decoration: InputDecoration(
