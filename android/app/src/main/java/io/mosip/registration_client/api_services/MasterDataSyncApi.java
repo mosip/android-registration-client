@@ -59,10 +59,12 @@ import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.util.CronExpressionParser;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.utils.BatchJob;
@@ -100,6 +102,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     GlobalParamDao globalParamDao;
     FileSignatureDao fileSignatureDao;
     PreRegistrationDataSyncService preRegistrationDataSyncService;
+    LocalConfigService localConfigService;
     Context context;
     private String regCenterId;
 
@@ -120,7 +123,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              AuditManagerService auditManagerService,
                              MasterDataService masterDataService,
                              PacketService packetService,
-                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService) {
+                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -146,6 +149,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.globalParamDao = globalParamDao;
         this.fileSignatureDao = fileSignatureDao;
         this.preRegistrationDataSyncService = preRegistrationDataSyncService;
+        this.localConfigService = localConfigService;
     }
 
     public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob) {
@@ -430,6 +434,39 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             Log.e(TAG, "Failed to serialize active sync jobs", e);
         }
         result.success(value);
+    }
+
+    @Override
+    public void getPermittedJobs(@NonNull MasterDataSyncPigeon.Result<List<String>> result) {
+        try {
+            List<String> permittedJobs = localConfigService.getPermittedJobs();
+            result.success(permittedJobs != null ? permittedJobs : new ArrayList<>());
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get permitted jobs", e);
+            result.error(e);
+        }
+    }
+
+    @Override
+    public void isValidCronExpression(@NonNull String cronExpression, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            boolean isValid = CronExpressionParser.isValidCronExpression(cronExpression);
+            result.success(isValid);
+        } catch (Exception e) {
+            Log.e(TAG, "Error validating cron expression", e);
+            result.success(false);
+        }
+    }
+
+    @Override
+    public void modifyJobCronExpression(@NonNull String jobId, @NonNull String cronExpression, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            localConfigService.modifyJob(jobId, cronExpression);
+            result.success(true);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to modify job cron expression", e);
+            result.error(e);
+        }
     }
 
     // Execute job based on API name

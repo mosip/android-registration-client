@@ -77,6 +77,51 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
     }
 
 
+    @Override
+    public String getValue(String name) {
+        try {
+            LocalPreferences localPreference = localPreferencesRepository.findByIsDeletedFalseAndName(name);
+            if (localPreference != null && localPreference.getVal() != null) {
+                return localPreference.getVal();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting value for: " + name, e);
+        }
+        return null;
+    }
+
+    @Override
+    public void modifyJob(String name, String value) {
+        Log.i(TAG, "Modifying sync frequency for the job " + name);
+        
+        try {
+            // Check if existing preference exists
+            LocalPreferences localPreferences = localPreferencesRepository
+                    .findByIsDeletedFalseAndName(name);
+            
+            if (localPreferences != null) {
+                // Soft delete existing record
+                updateLocalPreference(localPreferences, RegistrationConstants.PERMITTED_JOB_TYPE);
+            }
+            
+            // Create new record with updated cron expression
+            saveLocalPreference(name, value, RegistrationConstants.PERMITTED_JOB_TYPE);
+        } catch (Exception e) {
+            Log.e(TAG, "Error modifying job: " + name, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Update local preference (soft delete)
+     */
+    private void updateLocalPreference(LocalPreferences localPreference, String configType) {
+        localPreference.setIsDeleted(true);
+        localPreference.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
+        localPreference.setUpdDtimes(System.currentTimeMillis());
+        localPreferencesRepository.save(localPreference);
+    }
+
     /**
      * Save local preference to database
      */

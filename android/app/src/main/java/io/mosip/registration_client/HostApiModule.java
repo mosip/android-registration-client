@@ -199,7 +199,7 @@ public class HostApiModule {
             AuditManagerService auditManagerService,
             MasterDataService masterDataService,
             PacketService packetService,
-            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService) {
+            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService) {
         return new MasterDataSyncApi(clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
@@ -209,7 +209,7 @@ public class HostApiModule {
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
                 syncJobDefRepository, languageRepository, jobManagerService,
-                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao, preRegistrationDataSyncService
+                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao, preRegistrationDataSyncService, localConfigService
         );
     }
 

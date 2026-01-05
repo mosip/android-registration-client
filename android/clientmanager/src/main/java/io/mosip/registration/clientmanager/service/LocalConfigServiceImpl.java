@@ -34,4 +34,19 @@ public class LocalConfigServiceImpl implements LocalConfigService {
     public List<String> getPermittedConfiguration() {
         return localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_CONFIG_TYPE);
     }
+
+    @Override
+    public String getValue(String name) {
+        return localConfigDAO.getValue(name);
+    }
+
+    @Override
+    public void modifyJob(String name, String value) {
+        localConfigDAO.modifyJob(name, value);
+    }
+
+    @Override
+    public List<String> getPermittedJobs() {
+        return localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE);
+    }
 }

@@ -11,7 +11,7 @@ import '../../../provider/sync_provider.dart';
 // Dart equivalent of the Java PACKET_JOBS constant
 const List<String> PACKET_JOBS = ['RPS_J00006', 'RSJ_J00014', 'PUJ_J00017'];
 
-class ScheduledJobsSettings extends StatelessWidget {
+class ScheduledJobsSettings extends StatefulWidget {
   const ScheduledJobsSettings({
     super.key,
     required this.jobJsonList,
@@ -22,8 +22,38 @@ class ScheduledJobsSettings extends StatelessWidget {
   final void Function(String jobId)? onRefreshJob;
 
   @override
+  State<ScheduledJobsSettings> createState() => _ScheduledJobsSettingsState();
+}
+
+class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
+  List<String?> _permittedJobs = [];
+  bool _isLoadingPermittedJobs = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPermittedJobs();
+  }
+
+  Future<void> _loadPermittedJobs() async {
+    try {
+      final service = SyncResponseService();
+      final permittedJobs = await service.getPermittedJobs();
+      setState(() {
+        _permittedJobs = permittedJobs;
+        _isLoadingPermittedJobs = false;
+      });
+    } catch (e) {
+      debugPrint('Failed to load permitted jobs: $e');
+      setState(() {
+        _isLoadingPermittedJobs = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final jobs = jobJsonList
+    final jobs = widget.jobJsonList
         .whereType<String>()
         .map((e) => _ScheduledJob.fromJson(json.decode(e) as Map<String, dynamic>))
         .toList();
@@ -66,7 +96,11 @@ class ScheduledJobsSettings extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final job = jobs[index];
-                  return _JobCard(job: job, onRefresh: onRefreshJob);
+                  return _JobCard(
+                    job: job,
+                    onRefresh: widget.onRefreshJob,
+                    isPermitted: _permittedJobs.contains(job.id),
+                  );
                 },
                 childCount: jobs.length,
               ),
@@ -80,9 +114,10 @@ class ScheduledJobsSettings extends StatelessWidget {
 }
 
 class _JobCard extends StatefulWidget {
-  const _JobCard({required this.job, this.onRefresh});
+  const _JobCard({required this.job, this.onRefresh, required this.isPermitted});
   final _ScheduledJob job;
   final void Function(String jobId)? onRefresh;
+  final bool isPermitted;
 
   @override
   State<_JobCard> createState() => _JobCardState();
@@ -92,14 +127,25 @@ class _JobCardState extends State<_JobCard> {
   String? _lastSync;
   String? _nextSync;
   late SyncProvider syncProvider;
+  final TextEditingController _cronController = TextEditingController();
+  final SyncResponseService _syncResponseService = SyncResponseService();
+  bool _isEditingCron = false;
+  String? _cronError;
 
 
   @override
   void initState() {
     super.initState();
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
+    _cronController.text = widget.job.syncFreq ?? '';
     _loadLastSyncTime(); // Fetch last sync when widget loads
     _loadNextSyncTime();
+  }
+
+  @override
+  void dispose() {
+    _cronController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadLastSyncTime() async {
@@ -131,6 +177,65 @@ class _JobCardState extends State<_JobCard> {
       setState(() => _nextSync = value ?? '-');
     } else {
       setState(() => _nextSync = '-');
+    }
+  }
+
+  Future<void> _modifyCronExpression() async {
+    final cronExpression = _cronController.text.trim();
+    
+    if (cronExpression.isEmpty) {
+      setState(() {
+        _cronError = 'Cron expression cannot be empty';
+      });
+      return;
+    }
+
+    // Validate cron expression
+    final isValid = await _syncResponseService.isValidCronExpression(cronExpression);
+    if (!isValid) {
+      setState(() {
+        _cronError = 'Invalid cron expression';
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid cron expression')),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _cronError = null;
+    });
+
+    // Save cron expression
+    try {
+      final success = await _syncResponseService.modifyJobCronExpression(
+        widget.job.id ?? '',
+        cronExpression,
+      );
+      
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cron expression saved successfully')),
+        );
+        setState(() {
+          _isEditingCron = false;
+        });
+        // Reload next sync time to reflect new schedule
+        await _loadNextSyncTime();
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to save cron expression')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error modifying cron expression: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
   }
 
@@ -210,15 +315,75 @@ class _JobCardState extends State<_JobCard> {
                 children: [
                   Text(job.name ?? job.apiName ?? 'Unknown Job',
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   _kv('Next Run', _nextSync ?? '-'),
                   _kv('Last Sync', _lastSync ?? '-'),
-                  const SizedBox(height: 6),
-                  _kv('Cron Expression', job.syncFreq ?? '-'),
+                  const SizedBox(height: 4),
+                  if (widget.isPermitted && _isEditingCron)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: _cronController,
+                          decoration: InputDecoration(
+                            labelText: 'Cron Expression',
+                            errorText: _cronError,
+                            border: const OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: const EdgeInsets.all(8),
+                          ),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isEditingCron = false;
+                                  _cronController.text = widget.job.syncFreq ?? '';
+                                  _cronError = null;
+                                });
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: _modifyCronExpression,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              ),
+                              child: const Text('Submit'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _kv('Cron Expression', widget.job.syncFreq ?? '-'),
+                        ),
+                        if (widget.isPermitted)
+                          IconButton(
+                            icon: const Icon(Icons.edit, size: 16),
+                            onPressed: () {
+                              setState(() {
+                                _isEditingCron = true;
+                              });
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            tooltip: 'Edit cron expression',
+                          ),
+                      ],
+                    ),
                 ],
               ),
             ),
-            if (!PACKET_JOBS.contains(job.id))
+            if (!PACKET_JOBS.contains(job.id) && !_isEditingCron)
               SizedBox(
                 width: 40,
                 child: OutlinedButton(

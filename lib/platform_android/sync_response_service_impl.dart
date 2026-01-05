@@ -271,6 +271,48 @@ class SyncResponseServiceImpl implements SyncResponseService {
       return "false";
     }
   }
+
+  @override
+  Future<List<String?>> getPermittedJobs() async {
+    try {
+      final permittedJobs = await SyncApi().getPermittedJobs();
+      return permittedJobs;
+    } on PlatformException catch (e) {
+      debugPrint('getPermittedJobs PlatformException: ${e.message}');
+      return [];
+    } catch (e) {
+      debugPrint('getPermittedJobs failed: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<bool> isValidCronExpression(String cronExpression) async {
+    try {
+      final isValid = await SyncApi().isValidCronExpression(cronExpression);
+      return isValid;
+    } on PlatformException catch (e) {
+      debugPrint('isValidCronExpression PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('isValidCronExpression failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> modifyJobCronExpression(String jobId, String cronExpression) async {
+    try {
+      final success = await SyncApi().modifyJobCronExpression(jobId, cronExpression);
+      return success;
+    } on PlatformException catch (e) {
+      debugPrint('modifyJobCronExpression PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('modifyJobCronExpression failed: $e');
+      return false;
+    }
+  }
 }
 
 SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

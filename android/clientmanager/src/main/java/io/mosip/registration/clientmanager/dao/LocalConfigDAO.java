@@ -26,5 +26,19 @@ public interface LocalConfigDAO {
      */
     void modifyConfigurations(Map<String, String> localPreferences);
 
+    /**
+     * Get value for a specific local preference by name
+     * @param name Preference name
+     * @return Preference value or null if not found
+     */
+    String getValue(String name);
+
+    /**
+     * Modify job cron expression
+     * @param name Job ID
+     * @param value Cron expression value
+     */
+    void modifyJob(String name, String value);
+
     void cleanUpLocalPreferences();
 }

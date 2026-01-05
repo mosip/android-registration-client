@@ -22,4 +22,24 @@ public interface LocalConfigService {
      * Get permitted configuration names
      */
     List<String> getPermittedConfiguration();
+
+    /**
+     * Get value for a specific local configuration by name
+     * @param name Configuration name
+     * @return Configuration value or null if not found
+     */
+    String getValue(String name);
+
+    /**
+     * Modify job cron expression
+     * @param name Job ID
+     * @param value Cron expression value
+     */
+    void modifyJob(String name, String value);
+
+    /**
+     * Get permitted job IDs
+     * @return List of permitted job IDs that can be edited
+     */
+    List<String> getPermittedJobs();
 }
