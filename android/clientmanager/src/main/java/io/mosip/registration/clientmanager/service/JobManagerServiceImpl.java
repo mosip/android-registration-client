@@ -84,8 +84,10 @@ public class JobManagerServiceImpl implements JobManagerService {
             return;
         }
 
+        // Use getSyncFrequency to check for custom cron expression first
+        String syncFreq = getSyncFrequency(jobDef);
         if (!isJobScheduled(jobId))
-            scheduleJob(jobId, jobDef.getApiName(), jobDef.getSyncFreq());
+            scheduleJob(jobId, jobDef.getApiName(), syncFreq);
     }
 
     /**

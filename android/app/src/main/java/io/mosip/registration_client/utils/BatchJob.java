@@ -23,6 +23,7 @@ import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.R;
@@ -33,16 +34,19 @@ public class BatchJob {
     AuditManagerService auditManagerService;
     GlobalParamDao globalParamDao;
     SyncJobDefRepository syncJobDefRepository;
+    LocalConfigService localConfigService;
     Activity activity;
     boolean syncAndUploadInProgressStatus = false;
 
     @Inject
     public BatchJob(PacketService packetService, AuditManagerService auditManagerService,
-                    GlobalParamDao globalParamDao, SyncJobDefRepository syncJobDefRepository) {
+                    GlobalParamDao globalParamDao, SyncJobDefRepository syncJobDefRepository,
+                    LocalConfigService localConfigService) {
         this.packetService = packetService;
         this.auditManagerService = auditManagerService;
         this.globalParamDao = globalParamDao;
         this.syncJobDefRepository = syncJobDefRepository;
+        this.localConfigService = localConfigService;
     }
 
     public void setCallbackActivity(MainActivity mainActivity) {
@@ -206,8 +210,20 @@ public class BatchJob {
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
         for (SyncJobDef value : syncJobs) {
             if (Objects.equals(value.getApiName(), api)) {
-                Log.d(getClass().getSimpleName(), api + " Cron Expression : " + String.valueOf(value.getSyncFreq()));
-                cronExp = String.valueOf(value.getSyncFreq());
+                // Check for custom cron expression first (matches desktop client logic)
+                if (localConfigService != null) {
+                    String customCron = localConfigService.getValue(value.getId());
+                    if (customCron != null && !customCron.trim().isEmpty()) {
+                        cronExp = customCron; // Use custom cron expression
+                        Log.d(getClass().getSimpleName(), api + " Custom Cron Expression : " + cronExp);
+                    } else {
+                        cronExp = String.valueOf(value.getSyncFreq()); // Use default from DB
+                        Log.d(getClass().getSimpleName(), api + " Default Cron Expression : " + cronExp);
+                    }
+                } else {
+                    cronExp = String.valueOf(value.getSyncFreq());
+                    Log.d(getClass().getSimpleName(), api + " Cron Expression : " + cronExp);
+                }
                 break;
             }
         }

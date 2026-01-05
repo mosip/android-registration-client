@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
+import 'package:restart_app/restart_app.dart';
 
 import '../../../provider/sync_provider.dart';
 
@@ -129,7 +130,6 @@ class _JobCardState extends State<_JobCard> {
   late SyncProvider syncProvider;
   final TextEditingController _cronController = TextEditingController();
   final SyncResponseService _syncResponseService = SyncResponseService();
-  bool _isEditingCron = false;
   String? _cronError;
 
 
@@ -137,9 +137,23 @@ class _JobCardState extends State<_JobCard> {
   void initState() {
     super.initState();
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
-    _cronController.text = widget.job.syncFreq ?? '';
+    _loadCronExpression(); // Load custom cron expression or default
     _loadLastSyncTime(); // Fetch last sync when widget loads
     _loadNextSyncTime();
+  }
+
+  Future<void> _loadCronExpression() async {
+    if (widget.job.id != null && widget.job.id!.isNotEmpty) {
+      // Check for custom cron expression first (matches desktop client logic)
+      final customCron = await _syncResponseService.getValue(widget.job.id!);
+      if (customCron != null && customCron.trim().isNotEmpty) {
+        _cronController.text = customCron; // Use saved custom cron expression
+      } else {
+        _cronController.text = widget.job.syncFreq ?? ''; // Use default from DB
+      }
+    } else {
+      _cronController.text = widget.job.syncFreq ?? '';
+    }
   }
 
   @override
@@ -216,14 +230,26 @@ class _JobCardState extends State<_JobCard> {
       );
       
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cron expression saved successfully')),
-        );
+        // Clear error
         setState(() {
-          _isEditingCron = false;
+          _cronError = null;
         });
-        // Reload next sync time to reflect new schedule
-        await _loadNextSyncTime();
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cron expression saved successfully. Restarting app...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        
+        // Wait a moment for the user to see the message, then restart the app
+        await Future.delayed(const Duration(seconds: 2));
+        
+        // Restart the app to apply cron expression changes
+        if (mounted) {
+          Restart.restartApp();
+        }
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to save cron expression')),
@@ -305,85 +331,77 @@ class _JobCardState extends State<_JobCard> {
         boxShadow: const [BoxShadow(color: Color(0x11000000), blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(6.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(job.name ?? job.apiName ?? 'Unknown Job',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 4),
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                   _kv('Next Run', _nextSync ?? '-'),
                   _kv('Last Sync', _lastSync ?? '-'),
-                  const SizedBox(height: 4),
-                  if (widget.isPermitted && _isEditingCron)
-                    Column(
+                  if (widget.isPermitted)
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextField(
-                          controller: _cronController,
-                          decoration: InputDecoration(
-                            labelText: 'Cron Expression',
-                            errorText: _cronError,
-                            border: const OutlineInputBorder(),
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(8),
-                          ),
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _isEditingCron = false;
-                                  _cronController.text = widget.job.syncFreq ?? '';
-                                  _cronError = null;
-                                });
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: _modifyCronExpression,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: 32,
+                                child: TextField(
+                                  controller: _cronController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Cron Expression',
+                                    errorText: null,
+                                    errorBorder: _cronError != null 
+                                        ? const OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.red, width: 1))
+                                        : null,
+                                    border: const OutlineInputBorder(),
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                  ),
+                                  style: const TextStyle(fontSize: 11),
+                                ),
                               ),
-                              child: const Text('Submit'),
+                              if (_cronError != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 1.0, left: 4.0),
+                                  child: Text(
+                                    _cronError!,
+                                    style: const TextStyle(fontSize: 9, color: Colors.red, height: 1),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        SizedBox(
+                          height: 32,
+                          width: 65,
+                          child: ElevatedButton(
+                            onPressed: _modifyCronExpression,
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
                             ),
-                          ],
+                            child: const Text('Submit', style: TextStyle(fontSize: 11)),
+                          ),
                         ),
                       ],
                     )
                   else
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _kv('Cron Expression', widget.job.syncFreq ?? '-'),
-                        ),
-                        if (widget.isPermitted)
-                          IconButton(
-                            icon: const Icon(Icons.edit, size: 16),
-                            onPressed: () {
-                              setState(() {
-                                _isEditingCron = true;
-                              });
-                            },
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            tooltip: 'Edit cron expression',
-                          ),
-                      ],
-                    ),
+                    _kv('Cron Expression', widget.job.syncFreq ?? '-'),
                 ],
               ),
             ),
-            if (!PACKET_JOBS.contains(job.id) && !_isEditingCron)
+            if (!PACKET_JOBS.contains(job.id))
               SizedBox(
                 width: 40,
                 child: OutlinedButton(
@@ -402,13 +420,16 @@ class _JobCardState extends State<_JobCard> {
     );
   }
 
-  Widget _kv(String k, String v) => Row(
-    children: [
-      Text(k, style: const TextStyle(fontSize: 12, color: Colors.black54)),
-      const SizedBox(width: 8),
-      Flexible(
-          child: Text(v, style: const TextStyle(fontSize: 12, color: Colors.black87))),
-    ],
+  Widget _kv(String k, String v) => Padding(
+    padding: const EdgeInsets.only(top: 0.5),
+    child: Row(
+      children: [
+        Text(k, style: const TextStyle(fontSize: 11, color: Colors.black54)),
+        const SizedBox(width: 6),
+        Flexible(
+            child: Text(v, style: const TextStyle(fontSize: 11, color: Colors.black87))),
+      ],
+    ),
   );
 }
 

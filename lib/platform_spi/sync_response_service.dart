@@ -35,6 +35,7 @@ abstract class SyncResponseService {
   Future<List<String?>> getPermittedJobs();
   Future<bool> isValidCronExpression(String cronExpression);
   Future<bool> modifyJobCronExpression(String jobId, String cronExpression);
+  Future<String?> getValue(String name);
 
   factory SyncResponseService() => getSyncResponseServiceImpl();
 }

@@ -313,6 +313,20 @@ class SyncResponseServiceImpl implements SyncResponseService {
       return false;
     }
   }
+
+  @override
+  Future<String?> getValue(String name) async {
+    try {
+      final value = await SyncApi().getValue(name);
+      return value;
+    } on PlatformException catch (e) {
+      debugPrint('getValue PlatformException: ${e.message}');
+      return null;
+    } catch (e) {
+      debugPrint('getValue failed: $e');
+      return null;
+    }
+  }
 }
 
 SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

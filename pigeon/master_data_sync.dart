@@ -69,4 +69,6 @@ abstract class SyncApi {
   bool isValidCronExpression(String cronExpression);
   @async
   bool modifyJobCronExpression(String jobId, String cronExpression);
+  @async
+  String? getValue(String name);
 }
