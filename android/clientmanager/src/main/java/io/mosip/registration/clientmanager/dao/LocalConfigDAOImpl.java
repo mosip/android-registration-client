@@ -96,8 +96,6 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
 
     @Override
     public void modifyJob(String name, String value) {
-        Log.i(TAG, "Modifying sync frequency for the job " + name);
-
         // Use database transaction to ensure atomicity and thread safety of read-check-write operations
         clientDatabase.runInTransaction(() -> {
             try {

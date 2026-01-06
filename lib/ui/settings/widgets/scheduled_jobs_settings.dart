@@ -29,12 +29,14 @@ class ScheduledJobsSettings extends StatefulWidget {
 class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
   List<String?> _permittedJobs = [];
   bool _isLoadingPermittedJobs = true;
+  SyncProvider? _syncProvider;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SyncProvider>().startJobPolling();
+      _syncProvider = context.read<SyncProvider>();
+      _syncProvider?.startJobPolling();
     });
     _loadPermittedJobs();
   }
@@ -58,19 +60,8 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
 
   @override
   void dispose() {
-    // Only stop polling if we are sure we started it and valid context access
-    // But since context might be invalid, we skip explicitly stopping here 
-    // unless we store the provider reference. 
-    // Actually, let's store it in initState or just accept it runs? 
-    // Best practice: Access provider in didChangeDependencies or similar?
-    // For now, let's leave start in initState and we can add a deactivate hook.
+    _syncProvider?.stopJobPolling();
     super.dispose();
-  }
-  
-  @override
-  void deactivate() {
-     context.read<SyncProvider>().stopJobPolling();
-     super.deactivate();
   }
 
   @override
@@ -156,15 +147,21 @@ class _JobCardState extends State<_JobCard> {
   }
 
   Future<void> _loadCronExpression() async {
-    if (widget.job.id != null && widget.job.id!.isNotEmpty) {
-      // Check for custom cron expression
-      final customCron = await _syncResponseService.getValue(widget.job.id!);
-      if (customCron != null && customCron.trim().isNotEmpty) {
-        _cronController.text = customCron; // Use saved custom cron expression
+    try {
+      if (widget.job.id != null && widget.job.id!.isNotEmpty) {
+        // Check for custom cron expression
+        final customCron = await _syncResponseService.getValue(widget.job.id!);
+        if (customCron != null && customCron.trim().isNotEmpty) {
+          _cronController.text = customCron; // Use saved custom cron expression
+        } else {
+          _cronController.text = widget.job.syncFreq ?? ''; // Use default from DB
+        }
       } else {
-        _cronController.text = widget.job.syncFreq ?? ''; // Use default from DB
+        _cronController.text = widget.job.syncFreq ?? '';
       }
-    } else {
+    } catch (e) {
+      debugPrint('Failed to load cron expression: $e');
+      // Fallback to default cron expression from job definition
       _cronController.text = widget.job.syncFreq ?? '';
     }
   }
