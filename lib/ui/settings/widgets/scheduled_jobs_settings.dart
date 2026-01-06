@@ -33,6 +33,9 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SyncProvider>().startJobPolling();
+    });
     _loadPermittedJobs();
   }
 
@@ -40,6 +43,7 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
     try {
       final service = SyncResponseService();
       final permittedJobs = await service.getPermittedJobs();
+      if (!mounted) return;
       setState(() {
         _permittedJobs = permittedJobs;
         _isLoadingPermittedJobs = false;
@@ -53,18 +57,29 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
   }
 
   @override
+  void dispose() {
+    // Only stop polling if we are sure we started it and valid context access
+    // But since context might be invalid, we skip explicitly stopping here 
+    // unless we store the provider reference. 
+    // Actually, let's store it in initState or just accept it runs? 
+    // Best practice: Access provider in didChangeDependencies or similar?
+    // For now, let's leave start in initState and we can add a deactivate hook.
+    super.dispose();
+  }
+  
+  @override
+  void deactivate() {
+     context.read<SyncProvider>().stopJobPolling();
+     super.deactivate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final jobs = widget.jobJsonList
         .whereType<String>()
         .map((e) => _ScheduledJob.fromJson(json.decode(e) as Map<String, dynamic>))
         .toList();
 
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-    final bottomSpacer = bottomInset + kBottomNavigationBarHeight + 230;
-    final mediaSize = MediaQuery.of(context).size;
-    final bool isTablet = mediaSize.shortestSide <= 450;
-    final int crossAxisCount = isTablet ? 1 : 2;
-    final double childAspectRatio = MediaQuery.of(context).orientation == Orientation.landscape ? 5 : 3;
     return SafeArea(
       top: false,
       bottom: true,
@@ -89,10 +104,10 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
               sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
+                crossAxisCount: MediaQuery.of(context).size.shortestSide <= 450 ? 1 : 2,
                   mainAxisSpacing: 8,
                 crossAxisSpacing: 12,
-                  childAspectRatio: childAspectRatio,
+                  childAspectRatio: MediaQuery.of(context).orientation == Orientation.landscape ? 5 : 3,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -107,7 +122,7 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
               ),
             ),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: bottomSpacer)),
+          SliverToBoxAdapter(child: SizedBox(height: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight + 230)),
         ],
       ),
     );
@@ -138,8 +153,6 @@ class _JobCardState extends State<_JobCard> {
     super.initState();
     syncProvider = Provider.of<SyncProvider>(context, listen: false);
     _loadCronExpression(); // Load custom cron expression or default
-    _loadLastSyncTime(); // Fetch last sync when widget loads
-    _loadNextSyncTime();
   }
 
   Future<void> _loadCronExpression() async {
@@ -162,35 +175,17 @@ class _JobCardState extends State<_JobCard> {
     super.dispose();
   }
 
-  Future<void> _loadLastSyncTime() async {
-    if (widget.job.id != null && widget.job.id!.isNotEmpty) {
-      final value = await syncProvider.getLastSyncTimeByJobId(widget.job.id!);
-      setState(() => _lastSync = value ?? '-');
-      if (widget.job.apiName == "masterSyncJob" && _lastSync == "NA") {
-        _lastSync = formatDate(syncProvider.lastSuccessfulSyncTime);
-        setState(() {});
-      }
-    } else {
-      setState(() => _lastSync = '-');
-    }
-  }
-
   String formatDate(String dateString) {
-    // Parse the input UTC date string
-    DateTime dateTime = DateTime.parse(dateString).toLocal(); // Convert to local time
+    try {
+      // Parse the input UTC date string
+      DateTime dateTime = DateTime.parse(dateString).toLocal(); // Convert to local time
 
-    // Format the date
-    String formattedDate = DateFormat("yyyy-MMM-dd HH:mm:ss").format(dateTime);
+      // Format the date
+      String formattedDate = DateFormat("yyyy-MMM-dd HH:mm:ss").format(dateTime);
 
-    return formattedDate;
-  }
-
-  Future<void> _loadNextSyncTime() async {
-    if (widget.job.id != null && widget.job.id!.isNotEmpty) {
-      final value = await syncProvider.getNextSyncTimeByJobId(widget.job.id!);
-      setState(() => _nextSync = value ?? '-');
-    } else {
-      setState(() => _nextSync = '-');
+      return formattedDate;
+    } catch(e) {
+      return dateString;
     }
   }
 
@@ -309,9 +304,8 @@ class _JobCardState extends State<_JobCard> {
           return;
       }
 
-      // Refresh last and next sync time after successful sync
-      await _loadLastSyncTime();
-      await _loadNextSyncTime();
+       // Refresh last and next sync time after successful sync
+       await context.read<SyncProvider>().refreshJobStatuses();
 
     } catch (e) {
       debugPrint('Sync failed for ${widget.job.id}: $e');
@@ -342,8 +336,23 @@ class _JobCardState extends State<_JobCard> {
                 children: [
                   Text(job.name ?? job.apiName ?? 'Unknown Job',
                       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                  _kv('Next Run', _nextSync ?? '-'),
-                  _kv('Last Sync', _lastSync ?? '-'),
+                  Consumer<SyncProvider>(
+                    builder: (context, provider, child) {
+                      final status = provider.jobStatuses[job.id];
+                      String lastSync = status?.lastSyncTime ?? '-';
+                      if (widget.job.apiName == "masterSyncJob" && lastSync == "NA") {
+                         lastSync = formatDate(provider.lastSuccessfulSyncTime); 
+                      }
+                      
+                      return Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           _kv('Next Run', status?.nextSyncTime ?? '-'),
+                           _kv('Last Sync', lastSync),
+                         ],
+                      );
+                    },
+                  ),
                   if (widget.isPermitted)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
