@@ -137,6 +137,7 @@ class _JobCardState extends State<_JobCard> {
   final TextEditingController _cronController = TextEditingController();
   final SyncResponseService _syncResponseService = SyncResponseService();
   String? _cronError;
+  bool _isSaving = false;
 
 
   @override
@@ -187,11 +188,18 @@ class _JobCardState extends State<_JobCard> {
   }
 
   Future<void> _modifyCronExpression() async {
+    if (_isSaving) return;
+    
+    setState(() {
+      _isSaving = true;
+    });
+    
     final cronExpression = _cronController.text.trim();
     
     if (cronExpression.isEmpty) {
       setState(() {
         _cronError = 'Cron expression cannot be empty';
+        _isSaving = false;
       });
       return;
     }
@@ -201,6 +209,7 @@ class _JobCardState extends State<_JobCard> {
     if (!isValid) {
       setState(() {
         _cronError = 'Invalid cron expression';
+        _isSaving = false;
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -219,6 +228,7 @@ class _JobCardState extends State<_JobCard> {
     if (jobId == null || jobId.isEmpty) {
       setState(() {
         _cronError = 'Job ID is required';
+        _isSaving = false;
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -256,7 +266,11 @@ class _JobCardState extends State<_JobCard> {
         if (mounted) {
           Restart.restartApp();
         }
+        // Note: No need to reset _isSaving here since app is restarting
       } else if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to save cron expression')),
         );
@@ -264,6 +278,9 @@ class _JobCardState extends State<_JobCard> {
     } catch (e) {
       debugPrint('Error modifying cron expression: $e');
       if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
@@ -408,11 +425,20 @@ class _JobCardState extends State<_JobCard> {
                           height: 32,
                           width: 65,
                           child: ElevatedButton(
-                            onPressed: _modifyCronExpression,
+                            onPressed: _isSaving ? null : _modifyCronExpression,
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.zero,
                             ),
-                            child: const Text('Submit', style: TextStyle(fontSize: 11)),
+                            child: _isSaving
+                                ? const SizedBox(
+                                    width: 12,
+                                    height: 12,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Text('Submit', style: TextStyle(fontSize: 11)),
                           ),
                         ),
                       ],
