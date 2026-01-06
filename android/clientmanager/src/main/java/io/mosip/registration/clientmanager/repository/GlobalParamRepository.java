@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -211,6 +210,10 @@ public class GlobalParamRepository {
 
     public String getCachedStringInvalidLoginTime() {
         return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
+    }
+
+    public String getCachedStringDocType() {
+        return globalParamMap.get(RegistrationConstants.DOC_TYPE);
     }
 
     /**

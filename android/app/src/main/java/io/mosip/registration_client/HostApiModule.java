@@ -178,8 +178,8 @@ public class HostApiModule {
 
     @Provides
     @Singleton
-    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
-        return new DocumentDetailsApi(registrationService, auditManagerService);
+    DocumentDetailsApi getDocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
+        return new DocumentDetailsApi(registrationService, auditManagerService, globalParamRepository);
     }
 
     @Provides

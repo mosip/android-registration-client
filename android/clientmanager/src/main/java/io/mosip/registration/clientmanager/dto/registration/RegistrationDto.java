@@ -227,7 +227,7 @@ public class RegistrationDto extends Observable {
             DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
             documentDto.setType(docType);
             if(format != null) {
-                documentDto.setFormat(format);
+                documentDto.setFormat(format.toLowerCase());
             }else{
                 documentDto.setFormat("pdf");
             }
