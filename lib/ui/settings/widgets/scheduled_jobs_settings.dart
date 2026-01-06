@@ -316,6 +316,7 @@ class _JobCardState extends State<_JobCard> {
       }
 
        // Refresh last and next sync time after successful sync
+       if (!mounted) return;
        await context.read<SyncProvider>().refreshJobStatuses();
 
     } catch (e) {

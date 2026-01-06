@@ -105,7 +105,7 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
 
                 if (localPreferences != null) {
                     // Soft delete existing record
-                    updateLocalPreference(localPreferences, RegistrationConstants.PERMITTED_JOB_TYPE);
+                    updateLocalPreference(localPreferences);
                 }
 
                 // Create new record with updated cron expression
@@ -121,7 +121,7 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
     /**
      * Update local preference (soft delete)
      */
-    private void updateLocalPreference(LocalPreferences localPreference, String configType) {
+    private void updateLocalPreference(LocalPreferences localPreference) {
         localPreference.setIsDeleted(true);
         localPreference.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
         localPreference.setUpdDtimes(System.currentTimeMillis());
