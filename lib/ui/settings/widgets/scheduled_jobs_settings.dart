@@ -157,7 +157,7 @@ class _JobCardState extends State<_JobCard> {
 
   Future<void> _loadCronExpression() async {
     if (widget.job.id != null && widget.job.id!.isNotEmpty) {
-      // Check for custom cron expression first (matches desktop client logic)
+      // Check for custom cron expression
       final customCron = await _syncResponseService.getValue(widget.job.id!);
       if (customCron != null && customCron.trim().isNotEmpty) {
         _cronController.text = customCron; // Use saved custom cron expression
@@ -217,10 +217,24 @@ class _JobCardState extends State<_JobCard> {
       _cronError = null;
     });
 
+    // Validate job ID before proceeding
+    final jobId = widget.job.id;
+    if (jobId == null || jobId.isEmpty) {
+      setState(() {
+        _cronError = 'Job ID is required';
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cannot save cron expression: Job ID is missing')),
+        );
+      }
+      return;
+    }
+
     // Save cron expression
     try {
       final success = await _syncResponseService.modifyJobCronExpression(
-        widget.job.id ?? '',
+        jobId,
         cronExpression,
       );
       

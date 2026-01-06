@@ -210,7 +210,7 @@ public class BatchJob {
         List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
         for (SyncJobDef value : syncJobs) {
             if (Objects.equals(value.getApiName(), api)) {
-                // Check for custom cron expression first (matches desktop client logic)
+                // Check for custom cron expression
                 if (localConfigService != null) {
                     String customCron = localConfigService.getValue(value.getId());
                     if (customCron != null && !customCron.trim().isEmpty()) {

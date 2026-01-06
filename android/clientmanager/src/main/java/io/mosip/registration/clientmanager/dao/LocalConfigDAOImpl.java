@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.config.ClientDatabase;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.entity.LocalPreferences;
 import io.mosip.registration.clientmanager.entity.PermittedLocalConfig;
@@ -22,12 +23,15 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
     private static final String TAG = LocalConfigDAOImpl.class.getSimpleName();
     private PermittedLocalConfigRepository permittedLocalConfigRepository;
     private LocalPreferencesRepository localPreferencesRepository;
+    private ClientDatabase clientDatabase;
 
     @Inject
     public LocalConfigDAOImpl(PermittedLocalConfigRepository permittedLocalConfigRepository,
-                             LocalPreferencesRepository localPreferencesRepository) {
+                             LocalPreferencesRepository localPreferencesRepository,
+                             ClientDatabase clientDatabase) {
         this.permittedLocalConfigRepository = permittedLocalConfigRepository;
         this.localPreferencesRepository = localPreferencesRepository;
+        this.clientDatabase = clientDatabase;
     }
 
     @Override
@@ -93,23 +97,27 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
     @Override
     public void modifyJob(String name, String value) {
         Log.i(TAG, "Modifying sync frequency for the job " + name);
-        
-        try {
-            // Check if existing preference exists
-            LocalPreferences localPreferences = localPreferencesRepository
-                    .findByIsDeletedFalseAndName(name);
-            
-            if (localPreferences != null) {
-                // Soft delete existing record
-                updateLocalPreference(localPreferences, RegistrationConstants.PERMITTED_JOB_TYPE);
+
+        // Use database transaction to ensure atomicity and thread safety of read-check-write operations
+        clientDatabase.runInTransaction(() -> {
+            try {
+                // Check if existing preference exists
+                LocalPreferences localPreferences = localPreferencesRepository
+                        .findByIsDeletedFalseAndName(name);
+
+                if (localPreferences != null) {
+                    // Soft delete existing record
+                    updateLocalPreference(localPreferences, RegistrationConstants.PERMITTED_JOB_TYPE);
+                }
+
+                // Create new record with updated cron expression
+                saveLocalPreference(name, value, RegistrationConstants.PERMITTED_JOB_TYPE);
+            } catch (Exception e) {
+                Log.e(TAG, "Error modifying job: " + name, e);
+                // Re-throw to trigger transaction rollback
+                throw new RuntimeException("Failed to modify job: " + name, e);
             }
-            
-            // Create new record with updated cron expression
-            saveLocalPreference(name, value, RegistrationConstants.PERMITTED_JOB_TYPE);
-        } catch (Exception e) {
-            Log.e(TAG, "Error modifying job: " + name, e);
-            throw e;
-        }
+        });
     }
 
     /**
