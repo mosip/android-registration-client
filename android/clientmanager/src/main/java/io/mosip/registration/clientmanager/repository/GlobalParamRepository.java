@@ -1,11 +1,13 @@
 package io.mosip.registration.clientmanager.repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
+import io.mosip.registration.packetmanager.util.ConfigService;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -214,6 +216,22 @@ public class GlobalParamRepository {
 
     public String getCachedStringDocType() {
         return globalParamMap.get(RegistrationConstants.DOC_TYPE);
+    }
+
+    public String getCachedStringAppName() {
+        return globalParamMap.get(RegistrationConstants.APP_NAME);
+    }
+
+    public String getCachedStringAppId() {
+        return globalParamMap.get(RegistrationConstants.APP_ID);
+    }
+
+    public String getCachedStringDefaultHostIp() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_IP);
+    }
+
+    public String getCachedStringDefaultHostName() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_NAME);
     }
 
     /**
