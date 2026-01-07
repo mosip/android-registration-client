@@ -118,6 +118,9 @@ public class RegistrationConstants {
     public static final String JOB_TRIGGER_POINT_USER = "User";
     public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
     public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
+    public static final String GEO_CAP_FREQ = "mosip.registration.geo.capture.frequency";
+    public static final String OPT_TO_REG_OUTSIDE_LOCATION = "OPT_TO_REG_OUTSIDE_LOCATION";
+    public static final String OPT_TO_REG_LAST_CAPTURED_TIME = "OPT_TO_REG_LAST_CAPTURED_TIME";
     public static final String OPERATOR_ONBOARDING_BIO_ATTRIBUTES = "mosip.registration.operator.onboarding.bioattributes";
     public static final String SERVER_ACTIVE_PROFILE = "mosip.registration.server_profile";
     public static final String ONBOARD_YOURSELF_URL = "mosip.registration.onboard_yourself_url";
@@ -136,4 +139,10 @@ public class RegistrationConstants {
     public static final String REG_PAK_MAX_CNT_OFFLINE_FREQ = "mosip.registration.packet.maximum.count.offline.frequency";
     public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
     public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
+
+    // Sync status validation constants
+    public static final String MOSIP_REGISTRATION = "mosip.registration.";
+    public static final String DOT = ".";
+    public static final String FREQUENCY = "frequency";
+    public static final String OPT_TO_REG_TIME_SYNC_EXCEED = "OPT_TO_REG_TIME_SYNC_EXCEED";
 }
