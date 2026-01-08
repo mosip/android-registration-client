@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
+import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration_client.model.DocumentDataPigeon;
@@ -27,18 +28,20 @@ import io.mosip.registration_client.model.DocumentDataPigeon;
 public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
     private final RegistrationService registrationService;
     AuditManagerService auditManagerService;
+    private final GlobalParamRepository globalParamRepository;
 
     @Inject
-    public DocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService) {
+    public DocumentDetailsApi(RegistrationService registrationService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
         this.registrationService = registrationService;
         this.auditManagerService = auditManagerService;
+        this.globalParamRepository = globalParamRepository;
     }
 
 
     @Override
     public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String reference, @NonNull byte[] bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
         try {
-            this.registrationService.getRegistrationDto().addDocument(fieldId, docType,null,reference,bytes);
+            this.registrationService.getRegistrationDto().addDocument(fieldId, docType, globalParamRepository.getCachedStringDocType(), reference, bytes);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add Document failed!" + Arrays.toString(e.getStackTrace()));
         }

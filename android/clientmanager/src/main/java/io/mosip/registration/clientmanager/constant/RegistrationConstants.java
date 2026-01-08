@@ -139,6 +139,11 @@ public class RegistrationConstants {
     public static final String REG_PAK_MAX_CNT_OFFLINE_FREQ = "mosip.registration.packet.maximum.count.offline.frequency";
     public static final String INVALID_LOGIN_COUNT = "mosip.registration.invalid_login_count";
     public static final String INVALID_LOGIN_TIME = "mosip.registration.invalid_login_time";
+    public static final String DOC_TYPE = "mosip.registration.document_scanner_doctype";
+    public static final String APP_NAME = "mosip.registration.audit_application_name";
+    public static final String APP_ID = "mosip.registration.audit_application_id";
+    public static final String DEFAULT_HOST_IP = "mosip.registration.audit_default_host_ip";
+    public static final String DEFAULT_HOST_NAME = "mosip.registration.audit_default_host_name";
 
     // Sync status validation constants
     public static final String MOSIP_REGISTRATION = "mosip.registration.";
