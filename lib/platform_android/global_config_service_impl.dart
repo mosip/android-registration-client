@@ -72,8 +72,8 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
   }
 
   @override
-  Future<String> getPRIDLength() async {
-    String pridLength = "";
+  Future<int> getPRIDLength() async {
+    int pridLength = 0;
     try {
       pridLength = await GlobalConfigSettingsApi().getPRIDLength();
     } on PlatformException {
@@ -85,8 +85,8 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
   }
 
   @override
-  Future<String> getUINLength() async {
-    String uinLength = "";
+  Future<int> getUINLength() async {
+    int uinLength = 0;
     try {
       uinLength = await GlobalConfigSettingsApi().getUINLength();
     } on PlatformException {
@@ -98,8 +98,8 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
   }
 
   @override
-  Future<String> getVIDLength() async {
-    String vidLength = "";
+  Future<int> getVIDLength() async {
+    int vidLength = 0;
     try {
       vidLength = await GlobalConfigSettingsApi().getVIDLength();
     } on PlatformException {

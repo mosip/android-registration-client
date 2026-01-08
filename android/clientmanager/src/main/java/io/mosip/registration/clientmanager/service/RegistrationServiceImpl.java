@@ -323,7 +323,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         // Auto-approve when supervisor approval is disabled (flag not "Y")
         String supervisorApprovalFlag = globalParamRepository.getCachedStringGlobalParam(
                 RegistrationConstants.SUPERVISOR_APPROVAL_CONFIG_FLAG);
-        if (supervisorApprovalFlag == null || !RegistrationConstants.ENABLE.equalsIgnoreCase(supervisorApprovalFlag.trim())) {
+        if (supervisorApprovalFlag != null && !RegistrationConstants.ENABLE.equalsIgnoreCase(supervisorApprovalFlag.trim())) {
             registrationRepository.updateStatus(this.registrationDto.getPacketId(), null,
                     PacketClientStatus.APPROVED.name());
         }
@@ -642,15 +642,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
         //free space validation
-        String diskSpaceSizeConfig = globalParamRepository.getCachedStringDiskSpaceSize();
-        int minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
-        
-        if (diskSpaceSizeConfig != null && !diskSpaceSizeConfig.trim().isEmpty()) {
-            try {
-                minSpaceRequiredMB = Integer.parseInt(diskSpaceSizeConfig.trim());
-            } catch (NumberFormatException e) {
-                Log.w(TAG, "Invalid disk space size configuration: " + diskSpaceSizeConfig + ", using default: " + DEFAULT_MIN_SPACE_REQUIRED_MB + " MB", e);
-            }
+        int minSpaceRequiredMB = globalParamRepository.getCachedIntegerDiskSpaceSize();
+        if (minSpaceRequiredMB == 0) {
+            minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
         }
         
         long externalSpace = context.getExternalCacheDir().getUsableSpace();

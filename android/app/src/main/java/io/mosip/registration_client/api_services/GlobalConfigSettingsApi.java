@@ -87,35 +87,41 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
     }
 
     @Override
-    public void getPRIDLength(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
-        String pridLength = "";
+    public void getPRIDLength(@NonNull GlobalConfigSettingsPigeon.Result<Long> result) {
+        int pridLength = 0;
         try {
-            pridLength = globalParamRepository.getCachedStringPRIDLength();
+            pridLength = globalParamRepository.getCachedIntegerPRIDLength();
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching PRID length", e);
+            result.error(e);
         }
-        result.success(pridLength);
+        result.success((long) pridLength);
     }
 
     @Override
-    public void getUINLength(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
-        String uinLength = "";
+    public void getUINLength(@NonNull GlobalConfigSettingsPigeon.Result<Long> result) {
+        int uinLength = 0;
         try {
-            uinLength = globalParamRepository.getCachedStringUINLength();
+            uinLength = globalParamRepository.getCachedIntegerUINLength();
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching UIN length", e);
+            result.error(e);
         }
-        result.success(uinLength);
+        result.success((long) uinLength);
     }
 
     @Override
-    public void getVIDLength(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
-        String vidLength = "";
+    public void getVIDLength(@NonNull GlobalConfigSettingsPigeon.Result<Long> result) {
+        int vidLength = 0;
         try {
-            vidLength = globalParamRepository.getCachedStringVIDLength();
+            vidLength = globalParamRepository.getCachedIntegerVIDLength();
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching VID length", e);
+            result.error(e);
         }
-        result.success(vidLength);
+        result.success((long) vidLength);
+
     }
+
+
 }

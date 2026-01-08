@@ -213,20 +213,20 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
     }
 
-    public String getCachedStringDiskSpaceSize() {
-        return globalParamMap.get(RegistrationConstants.DISK_SPACE);
+    public int getCachedIntegerDiskSpaceSize() {
+        return getCachedIntegerGlobalParam(RegistrationConstants.DISK_SPACE);
     }
 
-    public String getCachedStringPRIDLength(){
-        return globalParamMap.get(RegistrationConstants.PRID_LENGTH);
+    public int getCachedIntegerPRIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.PRID_LENGTH);
     }
 
-    public String getCachedStringUINLength(){
-        return globalParamMap.get(RegistrationConstants.UIN_LENGTH);
+    public int getCachedIntegerUINLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.UIN_LENGTH);
     }
 
-    public String getCachedStringVIDLength(){
-        return globalParamMap.get(RegistrationConstants.VID_LENGTH);
+    public int getCachedIntegerVIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.VID_LENGTH);
     }
 
     /**
