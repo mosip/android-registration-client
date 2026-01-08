@@ -207,24 +207,19 @@ public class BatchJob {
     public long getIntervalMillis(String api) {
         // Default everyday at Noon - 12pm
         String cronExp = ClientManagerConstant.DEFAULT_UPLOAD_CRON;
-        List<SyncJobDef> syncJobs = syncJobDefRepository.getAllSyncJobDefList();
-        for (SyncJobDef value : syncJobs) {
-            if (Objects.equals(value.getApiName(), api)) {
-                // Check for custom cron expression
-                if (localConfigService != null) {
-                    String customCron = localConfigService.getValue(value.getId());
-                    if (customCron != null && !customCron.trim().isEmpty()) {
-                        cronExp = customCron; // Use custom cron expression
-                        Log.d(getClass().getSimpleName(), api + " Custom Cron Expression : " + cronExp);
-                    } else {
-                        cronExp = String.valueOf(value.getSyncFreq()); // Use default from DB
-                        Log.d(getClass().getSimpleName(), api + " Default Cron Expression : " + cronExp);
-                    }
-                } else {
-                    cronExp = String.valueOf(value.getSyncFreq());
-                    Log.d(getClass().getSimpleName(), api + " Cron Expression : " + cronExp);
+        SyncJobDef syncJob = syncJobDefRepository.getSyncJobDefByApiName(api);
+        if (syncJob != null) {
+            // Use default from DB first
+            cronExp = String.valueOf(syncJob.getSyncFreq());
+            Log.d(getClass().getSimpleName(), api + " Default Cron Expression : " + cronExp);
+            
+            // Check for custom cron expression and override if available
+            if (localConfigService != null) {
+                String customCron = localConfigService.getValue(syncJob.getId());
+                if (customCron != null && !customCron.trim().isEmpty()) {
+                    cronExp = customCron; // Use custom cron expression
+                    Log.d(getClass().getSimpleName(), api + " Custom Cron Expression : " + cronExp);
                 }
-                break;
             }
         }
         long nextExecution = CronParserUtil.getNextExecutionTimeInMillis(cronExp);

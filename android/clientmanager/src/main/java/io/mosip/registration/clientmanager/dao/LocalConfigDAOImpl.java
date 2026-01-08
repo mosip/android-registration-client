@@ -104,28 +104,21 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
                         .findByIsDeletedFalseAndName(name);
 
                 if (localPreferences != null) {
-                    // Soft delete existing record
-                    updateLocalPreference(localPreferences);
+                    // Update existing record
+                    localPreferences.setVal(value);
+                    localPreferences.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
+                    localPreferences.setUpdDtimes(System.currentTimeMillis());
+                    localPreferencesRepository.save(localPreferences);
+                } else {
+                    // Create new record if it doesn't exist
+                    saveLocalPreference(name, value, RegistrationConstants.PERMITTED_JOB_TYPE);
                 }
-
-                // Create new record with updated cron expression
-                saveLocalPreference(name, value, RegistrationConstants.PERMITTED_JOB_TYPE);
             } catch (Exception e) {
                 Log.e(TAG, "Error modifying job: " + name, e);
                 // Re-throw to trigger transaction rollback
                 throw new RuntimeException("Failed to modify job: " + name, e);
             }
         });
-    }
-
-    /**
-     * Update local preference (soft delete)
-     */
-    private void updateLocalPreference(LocalPreferences localPreference) {
-        localPreference.setIsDeleted(true);
-        localPreference.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
-        localPreference.setUpdDtimes(System.currentTimeMillis());
-        localPreferencesRepository.save(localPreference);
     }
 
     /**

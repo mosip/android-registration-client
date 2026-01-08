@@ -463,15 +463,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         try {
             localConfigService.modifyJob(jobId, cronExpression);
             
-            // Reschedule the job with new cron expression
-            List<SyncJobDef> activeJobs = syncJobDefRepository.getActiveSyncJobs();
-            SyncJobDef jobDef = null;
-            for (SyncJobDef job : activeJobs) {
-                if (job.getId().equals(jobId)) {
-                    jobDef = job;
-                    break;
-                }
-            }
+            // Fetch specific sync job definition by jobId
+            SyncJobDef jobDef = syncJobDefRepository.getSyncJobDefById(jobId);
             
             if (jobDef != null) {
                 // Refresh job status to apply new cron expression
@@ -592,11 +585,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     private String getJobIdByApiName(String apiName) {
         try {
-            List<SyncJobDef> jobs = syncJobDefRepository.getAllSyncJobDefList();
-            for (SyncJobDef job : jobs) {
-                if (apiName.equals(job.getApiName())) {
-                    return job.getId();
-                }
+            SyncJobDef job = syncJobDefRepository.getSyncJobDefByApiName(apiName);
+            if (job != null) {
+                return job.getId();
             }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error getting job ID for: " + apiName, e);
