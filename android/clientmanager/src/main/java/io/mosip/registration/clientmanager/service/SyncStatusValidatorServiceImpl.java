@@ -242,8 +242,8 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
         Log.i(TAG, "Validating center to machine distance started");
 
         String enableFlag = globalParamRepository.getCachedStringGpsDeviceEnableFlag();
-        if (enableFlag == null || "Y".equalsIgnoreCase(enableFlag)) {
-            Log.d(TAG, "GPS distance validation disabled or not configured, skipping");
+        if (enableFlag == null || !"Y".equalsIgnoreCase(enableFlag)) {
+            Log.d(TAG, "GPS distance validation not enabled, skipping");
             return;
         }
 
