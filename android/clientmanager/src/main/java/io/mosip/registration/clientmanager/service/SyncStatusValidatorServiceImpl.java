@@ -227,7 +227,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
 
         long millisecondsDifference = new Date().getTime() - lastSyncDate.getTime();
         long daysDifference = millisecondsDifference / (24 * 60 * 60 * 1000);
-        return (int) daysDifference + 1;
+        return (int) daysDifference;
     }
 
     /**
@@ -304,7 +304,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
                     distanceMeters, maxAllowedDistance));
                 throw new ClientCheckedException(
                     RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION,
-                    "Your client machine location is outside the registration center. Please note that registration can be done only from within the registration centre");
+                    context.getString(R.string.err_outside_registration_center));
             }
 
             Log.i(TAG, "Location validated successfully - machine is within allowed distance");
