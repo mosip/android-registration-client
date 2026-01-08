@@ -121,8 +121,9 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         // Use device Android version for hostName in format Android_{deviceAndroidVersion}
         // If Build.VERSION.RELEASE is null, use the default property name
         String androidVersion = Build.VERSION.RELEASE;
-        String hostName = (androidVersion != null) ? "Android_" + androidVersion :
-                         globalParamRepository.getCachedStringDefaultHostName();
+        String model = Build.MODEL;
+        String hostName = (androidVersion != null && model != null) ? model + "|" + androidVersion :
+                globalParamRepository.getCachedStringDefaultHostName();
         String hostIP = globalParamRepository.getCachedStringDefaultHostIp();
         String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
         String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
