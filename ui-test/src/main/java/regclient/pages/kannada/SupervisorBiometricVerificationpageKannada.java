@@ -258,7 +258,7 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 		clickOnElement(oneEyeException);
 	}
 	
-	public void markOneFingreException() {
+	public void markOneFingerException() {
 		clickOnElement(firstFingureExceptionImage);
 	}
 	

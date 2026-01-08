@@ -109,5 +109,9 @@ public abstract class UpdateOperatorBiometricspage extends BasePage {
 	public abstract void clickOnBackButton();
 
 	public abstract boolean isUpdateOperatorBiometricsPageLoaded();
+	
+	public abstract boolean validateThreshold(int expected);
+
+	public abstract void updateBiometricsAndWaitPopup();
 
 }

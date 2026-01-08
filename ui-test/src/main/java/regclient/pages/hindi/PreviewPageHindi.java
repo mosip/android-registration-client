@@ -45,6 +45,9 @@ public class PreviewPageHindi extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "खोया हुआ UIN")
 	private WebElement lostUinTitle;
+	
+	@AndroidFindBy(accessibility = "बायोमेट्रिक सुधार")
+	private WebElement biometricCorrectionTitle;
 
 	public PreviewPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -124,5 +127,9 @@ public class PreviewPageHindi extends PreviewPage {
 
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionTitle);
 	}
 }

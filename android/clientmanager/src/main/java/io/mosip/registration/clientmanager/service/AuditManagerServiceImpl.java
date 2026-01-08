@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.List;
@@ -117,12 +118,17 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
 
-        String hostName = BuildConfig.BASE_URL;
-        String hostIP = BuildConfig.BASE_URL;
+        // Use device Android version for hostName in format Android_{deviceAndroidVersion}
+        // If Build.VERSION.RELEASE is null, use the default property name
+        String androidVersion = Build.VERSION.RELEASE;
+        String model = Build.MODEL;
+        String hostName = (androidVersion != null && model != null) ? model + "|" + androidVersion :
+                globalParamRepository.getCachedStringDefaultHostName();
+        String hostIP = globalParamRepository.getCachedStringDefaultHostIp();
         String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
         String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
-        String applicationId = this.context.getString(R.string.app_name);
-        String applicationName = this.context.getString(R.string.app_name);
+        String applicationId = globalParamRepository.getCachedStringAppId();
+        String applicationName = globalParamRepository.getCachedStringAppName();
         String description = errorMsg == null ? auditEventEnum.getDescription()
                 : String.format(COLON_SEPARATED_DESCRIPTION, auditEventEnum.getDescription(), errorMsg);
 

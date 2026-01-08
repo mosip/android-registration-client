@@ -251,13 +251,14 @@ public class RegistrationServiceImpl implements RegistrationService {
             }
         }
 
+            String format = globalParamRepository.getCachedStringDocType();
+            String formatToCheck = format != null ? format : "pdf";
             this.registrationDto.getAllDocumentFields().forEach(entry -> {
                 Document document = new Document();
                 document.setType(entry.getValue().getType());
                 document.setFormat(entry.getValue().getFormat());
                 document.setRefNumber(entry.getValue().getRefNumber());
-                document.setDocument(("pdf".equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
-
+                document.setDocument((formatToCheck.equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
                 packetWriterService.addMetaInfo(this.registrationDto.getRId(),"documents", document);
             });

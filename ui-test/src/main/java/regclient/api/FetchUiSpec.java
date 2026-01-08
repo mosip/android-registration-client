@@ -399,7 +399,7 @@ public class FetchUiSpec extends BaseTestCase {
 		for (String id : idList) {
 			if (FetchUiSpec.getRequiredTypeUsingId(id)) {
 				String groupLabel = getGroupValueUsingId(id);
-				if (groupLabel.equals(null) || groupLabel.equals("")) {
+				if (groupLabel == null || groupLabel.isEmpty()) {
 					groupLabel = getRequiredGroupName(id);
 				}
 				groupLabelList.add(groupLabel);

@@ -106,6 +106,7 @@ public class AdminTestUtil extends BaseTestCase {
 		if (!initialized) {
 			ArcConfigManager.init();
 			BaseTestCase.initialize();
+			//user zone and center mapping
 			KeycloakUserManager.createUsers();
 			mapUserToZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create"),
 					propsKernel.getProperty("zone"));
@@ -113,11 +114,28 @@ public class AdminTestUtil extends BaseTestCase {
 			mapUserToCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create"),
 					propsKernel.getProperty("regCenterId"));
 			mapCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create"));
+			//user zone and center mapping
 			KeycloakUserManager.createUsersWithOutDefaultRole();
 			mapUserToZone(KeycloakUserManager.onboardUser, propsKernel.getProperty("zone"));
 			mapZone(KeycloakUserManager.onboardUser);
 			mapUserToCenter(KeycloakUserManager.onboardUser, propsKernel.getProperty("regCenterId"));
 			mapCenter(KeycloakUserManager.onboardUser);
+			//user zone and center mapping
+			KeycloakUserManager.createUsersWithOutSupervisorRole();
+			mapUserToZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-operator"),
+					propsKernel.getProperty("zone"));
+			mapZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-operator"));
+			mapUserToCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-operator"),
+					propsKernel.getProperty("regCenterId"));
+			mapCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-operator"));
+			KeycloakUserManager.createOnboardingUser();
+			mapUserToZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-onboarder"),
+					propsKernel.getProperty("zone"));
+			mapZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-onboarder"));
+			mapUserToCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-onboarder"),
+					propsKernel.getProperty("regCenterId"));
+			mapCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-onboarder"));
+
 			initialized = true;
 		}
 	}
@@ -302,11 +320,6 @@ public class AdminTestUtil extends BaseTestCase {
 
 		String dob = LocalDate.now().minusYears(ageInt).format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
-//	    if (category.equals("minor") || category.equals("infant")) {
-//	        String introducerName = faker.name().fullName();
-//	        String introducerRID = TestDataReader.readData("RID"); // <-- Fetch valid RID
-//	  
-//	    }
 		// Navigate to identity node
 		JSONObject request = requestJson.getJSONObject("request");
 		JSONObject identity = request.getJSONObject("demographicDetails").getJSONObject("identity");

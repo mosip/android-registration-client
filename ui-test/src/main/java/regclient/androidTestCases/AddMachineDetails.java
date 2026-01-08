@@ -17,7 +17,7 @@ import regclient.pages.english.LoginPageEnglish;
 
 public class AddMachineDetails extends AndroidBaseTest {
 
-	@Test
+	@Test(priority = 0, description = "Add machine details")
 	public void addMachineDetails() {
 
 		BasePage.disableAutoRotation();

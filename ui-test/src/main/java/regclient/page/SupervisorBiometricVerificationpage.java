@@ -62,7 +62,7 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage {
 
 	public abstract void markOneEyeException();
 
-	public abstract void markOneFingreException();
+	public abstract void markOneFingerException();
 
 	public abstract boolean isExceptionTypeTitleDisplayed();
 

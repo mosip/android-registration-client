@@ -243,7 +243,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 		clickOnElement(oneEyeException);
 	}
 
-	public void markOneFingreException() {
+	public void markOneFingerException() {
 		clickOnElement(firstFingureExceptionImage);
 	}
 

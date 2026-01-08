@@ -231,9 +231,9 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
 	}
-
+	
 	public void clickOnBackButton() {
-		driver.navigate().back();
+	    driver.findElement(By.xpath("(//android.widget.ImageButton)[1]")).click();
 	}
 
 	public void clickOnExportButton() {
