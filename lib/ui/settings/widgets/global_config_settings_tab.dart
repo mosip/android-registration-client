@@ -462,9 +462,9 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
     return Container(
       key: Key('${uniqueId}_container'),
       child: Semantics(
-        label: uniqueId,
-        hint: uniqueId,
-        tooltip: uniqueId,
+        label: 'Edit local value for ${config.key}',
+        hint: 'Current server value is ${config.serverValue}',
+        tooltip: 'Enter a custom value to override the server default of ${config.serverValue}',
         textField: true,
         excludeSemantics: false,
         container: true,
