@@ -145,7 +145,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
                 Log.d(TAG, String.format(
                     "Job [%s] (%s): Configured frequency=%d days, Actual days since last sync=%d",
                     jobId, apiName, configuredFrequency, actualDays));
-                if (configuredFrequency <= actualDays) {
+                if (actualDays > configuredFrequency) {
                     syncFailureCount++;
                     errorDetails.append("- ").append(apiName)
                         .append(": Last sync was ").append(actualDays)

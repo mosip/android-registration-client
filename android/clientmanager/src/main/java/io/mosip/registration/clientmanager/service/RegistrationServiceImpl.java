@@ -197,7 +197,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds, rid);
 
-        // Validate machine distance from registration center
+        // Validate machine distance from registration center if location is available
         if (syncStatusValidatorService != null && this.registrationDto.getGeoLocationDto() != null) {
             try {
                 syncStatusValidatorService.validateCenterToMachineDistance(
