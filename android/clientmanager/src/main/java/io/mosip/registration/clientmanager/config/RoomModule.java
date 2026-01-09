@@ -469,11 +469,10 @@ public class RoomModule {
 
     @Provides
     @Singleton
-    LocalConfigDAO provideLocalConfigDAO(PermittedLocalConfigDao permittedLocalConfigDao, LocalPreferencesDao localPreferencesDao, ClientDatabase clientDatabase) {
+    LocalConfigDAO provideLocalConfigDAO(PermittedLocalConfigDao permittedLocalConfigDao, LocalPreferencesDao localPreferencesDao) {
         return new LocalConfigDAOImpl(
             new PermittedLocalConfigRepository(permittedLocalConfigDao),
-            new LocalPreferencesRepository(localPreferencesDao),
-            clientDatabase
+            new LocalPreferencesRepository(localPreferencesDao)
         );
     }
 }
