@@ -15,7 +15,7 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
 
-public class DocumentuploadPageEnglish extends DocumentUploadPage {
+public class DocumentUploadPageEnglish extends DocumentUploadPage {
 
 	@AndroidFindBy(accessibility = "Scrim")
 	private WebElement PopUpCloseButton;
@@ -41,7 +41,7 @@ public class DocumentuploadPageEnglish extends DocumentUploadPage {
 	@AndroidFindBy(className = "android.widget.ImageView")
 	private WebElement captureImage;
 
-	public DocumentuploadPageEnglish(AppiumDriver driver) {
+	public DocumentUploadPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
 
@@ -58,7 +58,7 @@ public class DocumentuploadPageEnglish extends DocumentUploadPage {
 
 	public DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageEnglish(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {
@@ -71,6 +71,7 @@ public class DocumentuploadPageEnglish extends DocumentUploadPage {
 	}
 
 	public void uploadDoccuments(String age, String type) {
+		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("Documents");
 		for (String id : idList) {
 			if (FetchUiSpec.getRequiredTypeUsingId(id)) {

@@ -217,6 +217,34 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
+  Future<bool> deleteRegistrationPackets(String jobId) async {
+    try {
+      final deleteResponse = await SyncApi().deleteRegistrationPackets(jobId);
+      return deleteResponse;
+    } on PlatformException catch (e) {
+      debugPrint('deleteRegistrationPackets PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('deleteRegistrationPackets failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> syncPacketStatus(String jobId) async {
+    try {
+      final syncResponse = await SyncApi().syncPacketStatus(jobId);
+      return syncResponse;
+    } on PlatformException catch (e) {
+      debugPrint('syncPacketStatus PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('syncPacketStatus failed: $e');
+      return false;
+    }
+  }
+
+  @override
   Future<String> getLastSyncTimeByJobId(String jobId) async{
     try {
       final lastSyncTime = await SyncApi().getLastSyncTimeByJobId(jobId);

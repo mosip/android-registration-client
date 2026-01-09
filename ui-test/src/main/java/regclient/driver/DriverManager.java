@@ -20,6 +20,9 @@ public class DriverManager {
 	private static AppiumDriver getAndroidDriver() {
 		DesiredCapabilities desiredCapabilities = CapabilitiesReader.getDesiredCapabilities("androidDevice",
 				"/DesiredCapabilities.json");
+		if (service == null) {
+			throw new IllegalStateException("Appium service not started. Call startAppiumServer() first.");
+		}
 		appiumDriver.set(new AndroidDriver(service.getUrl(), desiredCapabilities));
 		return appiumDriver.get();
 	}

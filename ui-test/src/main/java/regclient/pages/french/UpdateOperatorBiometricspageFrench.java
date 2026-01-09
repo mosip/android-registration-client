@@ -1,8 +1,13 @@
 package regclient.pages.french;
 
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.UpdateOperatorBiometricspage;
 
@@ -377,6 +382,31 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 
 	public boolean isUpdateOperatorBiometricsPageLoaded() {
 		return isElementDisplayed(updateOperatorBiometrics);
+	}
+	
+	public boolean validateThreshold(int expected) {
+	    WebElement el = driver.findElement(MobileBy.AndroidUIAutomator(
+	            "new UiScrollable(new UiSelector().scrollable(true))" +
+	            		 ".scrollIntoView(new UiSelector().descriptionContains(\"Seuil\"));"
+	    ));
+
+	    String text = el.getAttribute("content-desc");       // "Threshold 75%"
+	    int actual = Integer.parseInt(text.replaceAll("[^0-9]", "")); // extract 75
+
+	    return actual == expected;
+	}
+	
+	public void updateBiometricsAndWaitPopup() {
+	    for (int i = 1; i <= 5; i++) {
+	        clickOnVerifyAndSaveButton();
+	        try {
+	            new WebDriverWait(driver, Duration.ofSeconds(60))
+	                    .until(ExpectedConditions.visibilityOf(successPopup));
+	            return;   // success
+	        } catch (Exception ignored) {}
+	        try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+	    }
+	    throw new AssertionError("Biometrics update success popup not displayed after 5 retries.");
 	}
 
 }

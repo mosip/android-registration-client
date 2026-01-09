@@ -45,6 +45,9 @@ public class PreviewPageTamil extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "இழந்த UIN")
 	private WebElement lostUinTitle;
+	
+	@AndroidFindBy(accessibility = "பயோமெட்ரிக் திருத்தம்")
+	private WebElement biometricCorrectionTitle;
 
 	public PreviewPageTamil(AppiumDriver driver) {
 		super(driver);
@@ -124,5 +127,9 @@ public class PreviewPageTamil extends PreviewPage {
 
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionTitle);
 	}
 }

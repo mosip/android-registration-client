@@ -24,7 +24,7 @@ public abstract class DemographicDetailsPage extends BasePage {
 
 	public abstract boolean checkSecondLanguageTextBoxNotNull(String id);
 
-	public abstract boolean checkDateFormatAndCurrectDate(String id);
+	public abstract boolean checkDateFormatAndCurrentDate(String id);
 
 	public abstract void fillIntroducerDetailsInDemographicDetailsPage(String age);
 

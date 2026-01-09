@@ -91,4 +91,6 @@ public interface PacketService {
      * @return true if maximum packet count limit is reached, otherwise false.
      */
     boolean isMaxPacketCountLimitReached();
+
+    void deleteRegistrationPackets();
 }

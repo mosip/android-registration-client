@@ -112,6 +112,7 @@ public class RegistrationConstants {
     public static final String RIGHT = "Right";
     public static final String LEFT = "Left";
     public static final String PRE_REG_DELETION_CONFIGURED_DAYS = "mosip.registration.pre_reg_deletion_configured_days";
+    public static final String REG_DELETION_CONFIGURED_DAYS = "mosip.registration.reg_deletion_configured_days";
     public static final String PRE_REG_DELETE_SUCCESS = "PRE_REG_DELETE_SUCCESS";
     public static final String PRE_REG_DELETE_FAILURE = "PRE_REG_DELETE_FAILURE";
     public static final String JOB_TRIGGER_POINT_USER = "User";
@@ -140,4 +141,9 @@ public class RegistrationConstants {
     public static final String UIN_LENGTH = "mosip.kernel.uin.length";
     public static final String VID_LENGTH = "mosip.kernel.vid.length";
     public static final String SUPERVISOR_APPROVAL_CONFIG_FLAG = "mosip.registration.supervisor_approval_config_flag";
+    public static final String DOC_TYPE = "mosip.registration.document_scanner_doctype";
+    public static final String APP_NAME = "mosip.registration.audit_application_name";
+    public static final String APP_ID = "mosip.registration.audit_application_id";
+    public static final String DEFAULT_HOST_IP = "mosip.registration.audit_default_host_ip";
+    public static final String DEFAULT_HOST_NAME = "mosip.registration.audit_default_host_name";
 }

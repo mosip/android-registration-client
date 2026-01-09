@@ -37,5 +37,7 @@ public abstract class PreviewPage extends BasePage {
 	public abstract String getEmailId();
 
 	public abstract boolean isLostUinTitleDisplayed();
+	
+	public abstract boolean isBiometricCorrectionTitleDisplayed();
 
 }

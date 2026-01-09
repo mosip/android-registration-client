@@ -29,7 +29,7 @@ public class IdentityProofPageTamil extends IdentityProofPage{
 
 	public  DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageTamil(driver);
+		return new DocumentUploadPageTamil(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

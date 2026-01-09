@@ -100,4 +100,15 @@ public class RegistrationRepository {
     public int getYetToExportCount() {
         return this.registrationDao.findApprovedAndRejectedRegistrationCount();
     }
+
+    public List<Registration> findByServerStatusAndCrDtimeBefore(List<String> serverStatuses, long timestamp) {
+        return this.registrationDao.findByServerStatusAndCrDtimeBefore(serverStatuses, timestamp);
+    }
+
+    /**
+     * Update server status with timestamp
+     */
+    public void updateServerStatusWithTimestamp(String packetId, String serverStatus, long timestamp) {
+        this.registrationDao.updateServerStatusWithTimestamp(packetId, serverStatus, timestamp);
+    }
 }

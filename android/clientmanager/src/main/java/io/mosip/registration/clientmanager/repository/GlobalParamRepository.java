@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -227,6 +226,25 @@ public class GlobalParamRepository {
 
     public int getCachedIntegerVIDLength(){
         return getCachedIntegerGlobalParam(RegistrationConstants.VID_LENGTH);
+    }
+    public String getCachedStringDocType() {
+        return globalParamMap.get(RegistrationConstants.DOC_TYPE);
+    }
+
+    public String getCachedStringAppName() {
+        return globalParamMap.get(RegistrationConstants.APP_NAME);
+    }
+
+    public String getCachedStringAppId() {
+        return globalParamMap.get(RegistrationConstants.APP_ID);
+    }
+
+    public String getCachedStringDefaultHostIp() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_IP);
+    }
+
+    public String getCachedStringDefaultHostName() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_NAME);
     }
 
     /**

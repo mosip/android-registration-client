@@ -57,7 +57,6 @@ public interface RegistrationDao {
     @Query("SELECT COUNT(*) FROM registration where client_status in (:syncedStatus, :approvedStatus)")
     int findRegistrationCountBySyncedStatusAndApprovedStatus(String syncedStatus, String approvedStatus);
 
-
     @Query("SELECT COUNT(*) FROM registration where client_status in (:syncedStatus)")
     int findRegistrationCountBySyncedStatus(String syncedStatus);
 
@@ -70,4 +69,10 @@ public interface RegistrationDao {
     @Query("SELECT COUNT(*) FROM registration where client_status in ('APPROVED', 'REJECTED')")
     int findApprovedAndRejectedRegistrationCount();
 
+    @Query("SELECT * FROM registration where server_status IN (:serverStatuses) AND cr_dtimes < :timestamp")
+    List<Registration> findByServerStatusAndCrDtimeBefore(List<String> serverStatuses, long timestamp);
+
+    // Update server status with timestamp (for status sync)
+    @Query("UPDATE registration SET server_status = :serverStatus, server_status_dtimes = :timestamp WHERE packet_id = :packetId")
+    void updateServerStatusWithTimestamp(String packetId, String serverStatus, long timestamp);
 }

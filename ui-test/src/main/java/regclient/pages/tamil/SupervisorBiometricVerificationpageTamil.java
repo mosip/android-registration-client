@@ -258,7 +258,7 @@ public class SupervisorBiometricVerificationpageTamil extends SupervisorBiometri
 		clickOnElement(oneEyeException);
 	}
 	
-	public void markOneFingreException() {
+	public void markOneFingerException() {
 		clickOnElement(firstFingureExceptionImage);
 	}
 	

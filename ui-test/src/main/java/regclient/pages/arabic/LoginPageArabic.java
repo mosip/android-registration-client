@@ -51,7 +51,7 @@ public class LoginPageArabic extends LoginPage {
 	@AndroidFindBy(accessibility = "كلمة المرور غير صحيحة!")
 	private WebElement passwordIncorrectErrorMessage;
 
-	@AndroidFindBy(accessibility = "العربية")
+	@AndroidFindBy(accessibility = "عربي")
 	private WebElement arabicButton;
 
 	@AndroidFindBy(accessibility = "انتقل إلى المنزل")

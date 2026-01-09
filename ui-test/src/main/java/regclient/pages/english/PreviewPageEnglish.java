@@ -48,6 +48,9 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "Lost UIN")
 	private WebElement lostUinTitle;
+	
+	@AndroidFindBy(accessibility = "Biometric correction")
+	private WebElement biometricCorrectionTitle;
 
 	public PreviewPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -131,6 +134,10 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
+	}
+	
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(biometricCorrectionTitle);
 	}
 
 }

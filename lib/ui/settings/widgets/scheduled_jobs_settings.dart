@@ -9,7 +9,7 @@ import 'package:registration_client/utils/sync_job_def.dart';
 import '../../../provider/sync_provider.dart';
 
 // Dart equivalent of the Java PACKET_JOBS constant
-const List<String> PACKET_JOBS = ['RPS_J00006', 'RSJ_J00014', 'PUJ_J00017', 'PVS_J00015'];
+const List<String> PACKET_JOBS = ['RPS_J00006', 'RSJ_J00014', 'PUJ_J00017'];
 
 class ScheduledJobsSettings extends StatelessWidget {
   const ScheduledJobsSettings({
@@ -166,6 +166,12 @@ class _JobCardState extends State<_JobCard> {
           break;
         case 'preRegistrationPacketDeletionJob':
           await service.deletePreRegRecords(jobId ?? '');
+          break;
+        case 'registrationDeletionJob':
+          await service.deleteRegistrationPackets(jobId ?? '');
+          break;
+        case 'packetSyncStatusJob':
+          await service.syncPacketStatus(jobId ?? '');
           break;
         default:
           debugPrint('No handler for sync job: $apiName');

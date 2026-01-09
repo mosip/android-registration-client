@@ -25,6 +25,8 @@ abstract class SyncResponseService {
   Future<bool> getSyncAndUploadInProgressStatus();
   Future<bool> deleteAuditLogs(String jobId);
   Future<bool> deletePreRegRecords(String jobId);
+  Future<bool> deleteRegistrationPackets(String jobId);
+  Future<bool> syncPacketStatus(String jobId);
 
   Future<List<String?>> getActiveSyncJobs();
   Future<String> getLastSyncTimeByJobId(String jobId);

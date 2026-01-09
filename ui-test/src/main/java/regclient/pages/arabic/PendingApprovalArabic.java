@@ -191,7 +191,7 @@ public class PendingApprovalArabic extends PendingApproval {
 		return isElementEnabled(submitButton);
 	}
 
-	public boolean isInvalidemptyUsernameSumbitButtonEnbled() {
+	public boolean isSubmitButtonEnabledWithEmptyUsername() {
 		return isElementEnabled(invalidUsernameMessageForempty);
 	}
 
@@ -245,5 +245,6 @@ public class PendingApprovalArabic extends PendingApproval {
 	public boolean isAuthenticateButtonEnabled() {
 		return isElementEnabled(authenticateButton);
 	}
+
 
 }

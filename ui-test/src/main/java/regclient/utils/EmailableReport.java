@@ -28,10 +28,6 @@ import org.testng.xml.XmlSuite;
 
 import regclient.api.ArcConfigManager;
 
-
-
-
-
 /**
  * Reporter that generates a single-page HTML report of the test results.
  */
@@ -124,26 +120,72 @@ public class EmailableReport implements IReporter {
 	}
 
 	protected void writeStylesheet() {
-		writer.print("<style type=\"text/css\">");
-		writer.print("table {margin-bottom:10px;border-collapse:collapse;empty-cells:show;width: 100%;}");
-		writer.print("th,td {border:1px solid #009;padding:.25em .5em}");
-		writer.print("th {vertical-align:bottom}");
-		writer.print("td {vertical-align:top}");
-		writer.print("table a {font-weight:bold}");
-		writer.print(".stripe td {background-color: #E6EBF9}");
-		writer.print(".num {text-align:center}");
-		writer.print(".passedodd td {background-color: #3F3}");
-		writer.print(".passedeven td {background-color: #0A0}");
-		writer.print(".skippedodd td {background-color: #FFA500}");
-		writer.print(".skippedeven td {background-color: #FFA500}");
-		writer.print(".failedodd td,.attn {background-color: #F33}");
-		writer.print(".failedeven td,.stripe .attn {background-color: #D00}");
-		writer.print(".stacktrace {white-space:pre;font-family:monospace}");
-		writer.print(".totop {font-size:85%;text-align:center;border-bottom:2px solid #000}");
-		writer.print(".orange-bg {background-color: #FFA500}");
-		writer.print(".green-bg {background-color: #0A0}");
-		writer.print("</style>");
+	    writer.print("<style type=\"text/css\">");
+
+	    // base
+	    writer.print("body {font-family: Arial, Helvetica, sans-serif; font-size:13px; color:#111;}");
+
+	    // global table spacing
+	    writer.print("table {margin-bottom:20px;border-collapse:collapse;empty-cells:show;width: 100%;}");
+	    writer.print(".env-table { margin-bottom:28px; }");
+	    writer.print(".summary-block { margin-bottom:22px; }");
+	    writer.print(".scenario-block { margin-top:14px; margin-bottom:26px; }");
+
+	    // fixed layout for summary to keep columns aligned
+	    writer.print("#summary, #summary table { table-layout: fixed; }");
+
+	    // default cell styles
+	    writer.print("th, td {border:1px solid #bbb; padding:.35em .6em; font-size:13px; vertical-align:middle;}");
+	    writer.print("th { background:#f2f2f2; font-weight:700; }");
+	    writer.print("td { color:#111; }");
+
+	    // summary top styles (title and labels)
+	    writer.print(".summary-title { text-align:center; font-weight:700; padding:6px 0; }");
+	    writer.print(".summary-label { background:#efefef; text-align:center; font-weight:600; }");
+
+	    // colored bars used in the top summary overview
+	    writer.print(".bar { height:30px; text-align:center; vertical-align:middle; font-weight:700; color:#111; }");
+	    writer.print(".bar-total { background:#ffffff; }");
+	    writer.print(".bar-passed { background:#2fb500; }");
+	    writer.print(".bar-ignored { background:#ff9900; }");
+	    writer.print(".bar-known { background:#eaff7f; }");
+	    writer.print(".bar-skipped { background:#ffd54f; }");
+	    writer.print(".bar-failed { background:#e04b4b; }");
+
+	    // per-row result colors (apply to both td and th, with !important to override older rules)
+	    // PASS -> green
+	    writer.print(".passedeven td, .passedodd td, .passedeven th, .passedodd th { background-color: #2fb500 !important; }");
+	    // SKIP -> yellow
+	    writer.print(".skippedeven td, .skippedodd td, .skippedeven th, .skippedodd th { background-color: #ffd54f !important; }");
+	    // FAIL -> red
+	    writer.print(".failedeven td, .failedodd td, .failedeven th, .failedodd th, .attn, .attn th { background-color: #e04b4b !important; }");
+
+	    // if you want slightly different header colors per odd/even
+	    writer.print(".passedeven th { background-color: #daf5d8 !important; }");
+	    writer.print(".failedeven th { background-color: #f8d7da !important; }");
+	    writer.print(".skippedeven th { background-color: #fff7dd !important; }");
+
+	    // number/time alignment
+	    writer.print(".num { text-align:center; white-space:nowrap; font-weight:600; }");
+
+	    // description cell - wrap but avoid pushing width
+	    writer.print(".desc { overflow:hidden; text-overflow:ellipsis; word-wrap:break-word; max-height:8em; padding-right:6px; }");
+
+	    // exception / details styling
+	    writer.print(".result { margin-top:12px; margin-bottom:8px; }");
+	    writer.print(".exception-header { text-align:center; font-weight:700; background:#f2f2f2; padding:6px; border:1px solid #bbb; }");
+	    writer.print(".stacktrace-box { background:#fff; border:1px solid #ccc; padding:12px; font-family:monospace; font-size:12px; white-space:pre-wrap; overflow:auto; }");
+
+	    // back-to-summary spacing
+	    writer.print(".totop { font-size:85%; text-align:center; margin-top:8px; margin-bottom:18px; }");
+
+	    writer.print("</style>");
 	}
+
+
+
+
+
 
 	protected void writeBody() {
 		writer.print("<body>");
@@ -158,196 +200,197 @@ public class EmailableReport implements IReporter {
 	}
 
 	protected void writeSuiteSummary() {
-		NumberFormat integerFormat = NumberFormat.getIntegerInstance();
-		NumberFormat decimalFormat = NumberFormat.getNumberInstance();
+	    NumberFormat integerFormat = NumberFormat.getIntegerInstance();
 
-		totalPassedTests = 0;
-		totalSkippedTests = 0;
-		totalFailedTests = 0;
-		long totalDuration = 0;
-		writer.print("<table>");
-		int testIndex = 0;
-		for (SuiteResult suiteResult : suiteResults) {
+	    totalPassedTests = 0;
+	    totalSkippedTests = 0;
+	    totalFailedTests = 0;
+	    long totalDuration = 0;
 
-			writer.print("<tr><th colspan=\"7\">");
-			writer.print(Utils.escapeHtml("Android Regclient Ui Automation      -------   Env - "+ArcConfigManager.getEnv() ));
-			writer.print("</th></tr>");
-			writer.print("<tr><th colspan=\"7\"><span class=\"not-bold\"><pre>");
-			writer.print(Utils.escapeHtml("Date and Time  ")+printCurrentDateTime());
-			writer.print("</pre></span>");
-			//			writer.print(GlobalConstants.TRTR);
+	    // compute totals across suites
+	    for (SuiteResult suiteResult : suiteResults) {
+	        for (TestResult testResult : suiteResult.getTestResults()) {
+	            totalPassedTests += testResult.getPassedTestCount();
+	            totalSkippedTests += testResult.getSkippedTestCount();
+	            totalFailedTests += testResult.getFailedTestCount();
+	            totalDuration += testResult.getDuration();
+	        }
+	    }
 
-			writer.print("<tr>");
-			//			writer.print("<th>Test Suite</th>");
-			writer.print("<th># Passed</th>");
-			writer.print("<th># Skipped</th>");
-			writer.print("<th># Failed</th>");
-			writer.print("<th>Time (ms)</th>");
-			// writer.print("<th>Included Groups</th>");
-			// writer.print("<th>Excluded Groups</th>");
-			writer.print("</tr>");
+	    // top block (env info)
+	    writer.print("<table class='env-table'>");
+	    writer.print("<tr><th colspan='7'>");
+	    writer.print(Utils.escapeHtml("Use Cases Test Report ---- Report Date: " + printCurrentDateTime()
+	            + " ---- Tested Environment: " + ArcConfigManager.getEnv()));
+	    writer.print("</th></tr>");
+	    writer.print("</table>");
 
-			for (TestResult testResult : suiteResult.getTestResults()) {
-				int passedTests = testResult.getPassedTestCount();
-				int skippedTests = testResult.getSkippedTestCount();
-				int failedTests = testResult.getFailedTestCount();
-				long duration = testResult.getDuration();
+	    // summary-of-test-results block
+	    writer.print("<table class='summary-table' style='border:2px solid #2b2b90;'>");
 
-				writer.print("<tr");
-				if ((testIndex % 2) == 1) {
-					writer.print(" class=\"stripe\"");
-				}
-				writer.print(">");
+	    // define columns widths: tweak percentages to match screenshot proportions
+	    writer.print("<colgroup>");
+	    writer.print("<col style='width:14%'>"); // # Total
+	    writer.print("<col style='width:14%'>"); // # Passed
+	    writer.print("<col style='width:14%'>"); // # Ignored
+	    writer.print("<col style='width:14%'>"); // # Known Issues
+	    writer.print("<col style='width:14%'>"); // # Skipped
+	    writer.print("<col style='width:20%'>"); // # Failed
+	    writer.print("<col style='width:10%'>"); // Time
+	    writer.print("</colgroup>");
 
-				buffer.setLength(0);
-				//				writeTableData(buffer.append("<a href=\"#t").append(testIndex).append("\">")
-				//						.append(Utils.escapeHtml(testResult.getTestName())).append("</a>").toString());
-				writeTableData(integerFormat.format(passedTests), (passedTests > 0 ? "num green-bg" : "num"));
-				writeTableData(integerFormat.format(skippedTests), (skippedTests > 0 ? "num orange-bg" : "num"));
-				writeTableData(integerFormat.format(failedTests), (failedTests > 0 ? "num attn" : "num"));
-				writeTableData(decimalFormat.format(duration), "num");
-				/*
-				 * writeTableData(testResult.getIncludedGroups());
-				 * writeTableData(testResult.getExcludedGroups());
-				 */
+	    // Title row
+	    writer.print("<tr>");
+	    writer.print("<th colspan='7' class='summary-title'>Summary of Test Results</th>");
+	    writer.print("</tr>");
 
-				writer.print("</tr>");
+	    // Labels row
+	    writer.print("<tr>");
+	    writer.print("<td class='summary-label'># Total</td>");
+	    writer.print("<td class='summary-label'># Passed</td>");
+	    writer.print("<td class='summary-label'># Ignored</td>");
+	    writer.print("<td class='summary-label'># Known Issues</td>");
+	    writer.print("<td class='summary-label'># Skipped</td>");
+	    writer.print("<td class='summary-label'># Failed</td>");
+	    writer.print("<td class='summary-label'>Time (HH:MM:SS)</td>");
+	    writer.print("</tr>");
 
-				totalPassedTests += passedTests;
-				totalSkippedTests += skippedTests;
-				totalFailedTests += failedTests;
-				totalDuration += duration;
+	    // Values row (colored bars)
+	    writer.print("<tr>");
+	    writer.print("<td class='bar bar-total num'>" + integerFormat.format(totalPassedTests + totalFailedTests + totalSkippedTests) + "</td>");
+	    writer.print("<td class='bar bar-passed num'>" + integerFormat.format(totalPassedTests) + "</td>");
+	    // If you have an 'ignored' concept use it; here using 0 placeholder or compute if available
+	    int totalIgnored = 0;
+	    writer.print("<td class='bar bar-ignored num'>" + integerFormat.format(totalIgnored) + "</td>");
+	    // If you track known issues, compute; placeholder 0 here
+	    int totalKnown = 0;
+	    writer.print("<td class='bar bar-known num'>" + integerFormat.format(totalKnown) + "</td>");
+	    writer.print("<td class='bar bar-skipped num'>" + integerFormat.format(totalSkippedTests) + "</td>");
+	    writer.print("<td class='bar bar-failed num'>" + integerFormat.format(totalFailedTests) + "</td>");
+	    writer.print("<td class='time-cell'>" + formatDurationMillis(totalDuration) + "</td>");
+	    writer.print("</tr>");
 
-				testIndex++;
-			}
-		}
-
-		// Print totals if there was more than one test
-		if (testIndex > 1) {
-			writer.print("<tr>");
-			writer.print("<th>Total</th>");
-			writeTableHeader(integerFormat.format(totalPassedTests), "num");
-			writeTableHeader(integerFormat.format(totalSkippedTests), (totalSkippedTests > 0 ? "num attn" : "num"));
-			writeTableHeader(integerFormat.format(totalFailedTests), (totalFailedTests > 0 ? "num attn" : "num"));
-			writeTableHeader(decimalFormat.format(totalDuration), "num");
-			writer.print("<th colspan=\"2\"></th>");
-			writer.print("</tr>");
-		}
-
-		writer.print("</table>");
+	    writer.print("</table>");
 	}
 
 	/**
 	 * Writes a summary of all the test scenarios.
 	 */
 	protected void writeScenarioSummary() {
-		writer.print("<table id='summary'>");
-		writer.print("<thead>");
-		writer.print("<tr>");
-		// writer.print("<th>Class</th>");
-		writer.print("<th> Test </th>");
-		writer.print("<th>Time (ms)</th>");
-		writer.print("</tr>");
-		writer.print("</thead>");
+	    writer.print("<table id='summary' class='summary-block'>");
 
-		int testIndex = 0;
-		int scenarioIndex = 0;
-		for (SuiteResult suiteResult : suiteResults) {
-			/*
-			 * writer.print("<tbody><tr><th colspan=\"4\">"); //
-			 * writer.print(Utils.escapeHtml(suiteResult.getSuiteName()));
-			 * writer.print("</th></tr></tbody>");
-			 */
+	    // fixed columns widths: method 25%, desc 65%, time 10% (tweak if you like)
+	    writer.print("<colgroup>");
+	    writer.print("<col style='width:25%'>");
+	    writer.print("<col style='width:65%'>");
+	    writer.print("<col style='width:10%'>");
+	    writer.print("</colgroup>");
 
-			for (TestResult testResult : suiteResult.getTestResults()) {
-				writer.print("<tbody id=\"t");
-				writer.print(testIndex);
-				writer.print("\">");
+	    writer.print("<thead>");
+	    writer.print("<tr>");
+	    writer.print("<th> Test </th>");
+	    writer.print("<th> Description </th>");
+	    writer.print("<th>Time (HH:MM:SS)</th>");
+	    writer.print("</tr>");
+	    writer.print("</thead>");
 
-				String testName = Utils.escapeHtml("Scenarios");
+	    int testIndex = 0;
+	    int scenarioIndex = 0;
+	    for (SuiteResult suiteResult : suiteResults) {
+	        for (TestResult testResult : suiteResult.getTestResults()) {
+	            writer.print("<tbody id=\"t");
+	            writer.print(testIndex);
+	            writer.print("\">");
 
-				scenarioIndex += writeScenarioSummary(testName + " &#8212; Failed (configuration methods)",
-						testResult.getFailedConfigurationResults(), "failed", scenarioIndex);
-				scenarioIndex += writeScenarioSummary(testName + " &#8212; Failed", testResult.getFailedTestResults(),
-						"failed", scenarioIndex);
-				scenarioIndex += writeScenarioSummary(testName + " &#8212; Skipped (configuration methods)",
-						testResult.getSkippedConfigurationResults(), "skipped", scenarioIndex);
-				scenarioIndex += writeScenarioSummary(testName + " &#8212; Skipped", testResult.getSkippedTestResults(),
-						"skipped", scenarioIndex);
-				scenarioIndex += writeScenarioSummary(testName + " &#8212; Passed", testResult.getPassedTestResults(),
-						"passed", scenarioIndex);
+	            String testName = Utils.escapeHtml("Scenarios");
 
-				writer.print("</tbody>");
+	            // The calls below print blocks for Failed / Skipped / Passed etc.
+	            scenarioIndex += writeScenarioSummary(testName + " &#8212; Failed (configuration methods)",
+	                    testResult.getFailedConfigurationResults(), "failed", scenarioIndex);
+	            scenarioIndex += writeScenarioSummary(testName + " &#8212; Failed", testResult.getFailedTestResults(),
+	                    "failed", scenarioIndex);
+	            scenarioIndex += writeScenarioSummary(testName + " &#8212; Skipped (configuration methods)",
+	                    testResult.getSkippedConfigurationResults(), "skipped", scenarioIndex);
+	            scenarioIndex += writeScenarioSummary(testName + " &#8212; Skipped", testResult.getSkippedTestResults(),
+	                    "skipped", scenarioIndex);
+	            scenarioIndex += writeScenarioSummary(testName + " &#8212; Passed", testResult.getPassedTestResults(),
+	                    "passed", scenarioIndex);
 
-				testIndex++;
-			}
-		}
+	            writer.print("</tbody>");
 
-		writer.print("</table>");
+	            testIndex++;
+	        }
+	    }
+
+	    writer.print("</table>");
 	}
+
+
+
+
 
 	/**
 	 * Writes the scenario summary for the results of a given state for a single
 	 * test.
 	 */
 	private int writeScenarioSummary(String description, List<ClassResult> classResults, String cssClassPrefix,
-			int startingScenarioIndex) {
-		int scenarioCount = 0;
-		if (!classResults.isEmpty()) {
-			writer.print("<tr><th colspan=\"2\">");
-			writer.print(description);
-			writer.print("</th></tr>");
+	        int startingScenarioIndex) {
+	    int scenarioCount = 0;
+	    if (!classResults.isEmpty()) {
+	        // Apply result-based class to the block header row so it adopts the correct color.
+	        // e.g. cssClassPrefix == "failed" -> header row class "failedodd" (uses CSS rule for that class)
+	        writer.print("<tr class=\"" + cssClassPrefix + "odd\"><th colspan=\"3\">");
+	        writer.print(description);
+	        writer.print("</th></tr>");
 
-			int scenarioIndex = startingScenarioIndex;
-			int classIndex = 0;
-			for (ClassResult classResult : classResults) {
-				String cssClass = cssClassPrefix + ((classIndex % 2) == 0 ? "even" : "odd");
+	        int scenarioIndex = startingScenarioIndex;
+	        int classIndex = 0;
+	        for (ClassResult classResult : classResults) {
+	            int methodIndex = 0;
 
-				buffer.setLength(0);
-				int scenariosPerClass = 0;
-				int methodIndex = 0;
+	            for (MethodResult methodResult : classResult.getMethodResults()) {
+	                List<ITestResult> results = methodResult.getResults();
+	                int resultsCount = results.size();
+	                assert resultsCount > 0;
+	                ITestResult firstResult = results.iterator().next();
 
-				for (MethodResult methodResult : classResult.getMethodResults()) {
-					List<ITestResult> results = methodResult.getResults();
-					int resultsCount = results.size();
-					assert resultsCount > 0;
-					ITestResult firstResult = results.iterator().next();
-					String methodName=firstResult.getName();
-					// Write the remaining scenarios for the method
+	                String methodName = Utils.escapeHtml(firstResult.getMethod().getMethodName());
+	                String methodDesc = firstResult.getMethod().getDescription();
+	                if (methodDesc == null) {
+	                    methodDesc = "";
+	                } else {
+	                    methodDesc = Utils.escapeHtml(methodDesc);
+	                }
 
-					for (int i = 0; i < resultsCount; i++) {
+	                // pick odd/even suffix based on methodIndex to alternate row classes
+	                String suffix = ((methodIndex % 2) == 0) ? "even" : "odd";
+	                String rowClassPrefix = cssClassPrefix + suffix; // e.g., "failedeven" or "passedeven"
 
-						ITestResult result = results.get(i);
-						//		String [] scenarioDetails = getScenarioDetails(result);
+	                for (int i = 0; i < resultsCount; i++) {
+	                    ITestResult result = results.get(i);
+	                    long scenarioStart = result.getStartMillis();
+	                    long scenarioDuration = result.getEndMillis() - scenarioStart;
 
-						//		String scenarioName = Utils.escapeHtml("Scenario_" + scenarioDetails[0]);
-						//	String scenarioDescription = Utils.escapeHtml(scenarioDetails[1]);
+	                    // each row: method | description | time (HH:MM:SS)
+	                    writer.print("<tr class=\"" + rowClassPrefix + "\">");
+	                    writer.print("<td><a href=\"#m" + scenarioIndex + "\">" + methodName + "</a></td>");
+	                    writer.print("<td class='desc'>" + methodDesc + "</td>");
+	                    writer.print("<td class='num'>" + formatDurationMillis(scenarioDuration) + "</td>");
+	                    writer.print("</tr>");
 
-						long scenarioStart = result.getStartMillis();
-						long scenarioDuration = result.getEndMillis() - scenarioStart;
-
-						//						buffer.append("<tr class=\"").append(cssClass).append("\">").append("<td><a href=\"#m")
-						//								.append(scenarioIndex).append("\">").append(scenarioName).append("</a></td>")
-						//								.append("<td>").append(scenarioDescription).append("</td>")
-						//								.append("<td>").append(scenarioDuration).append("</td></tr>");
-						buffer.append("<tr class=\"").append(cssClass).append("\">")  // Start of table row with a specified CSS class
-						.append("<td><a href=\"#m").append(scenarioIndex).append("\">").append(methodName).append("</a></td>")  // Table cell with a hyperlink
-						.append("<td>").append(scenarioDuration).append("</td></tr>");  // Table cell with scenario duration
-
-						scenarioIndex++;
-					}
-					scenariosPerClass += resultsCount;
-					methodIndex++;
-				}
-
-				// Write the test results for the class
-				writer.print(buffer);
-				classIndex++;
-			}
-			scenarioCount = scenarioIndex - startingScenarioIndex;
-		}
-		return scenarioCount;
+	                    scenarioIndex++;
+	                }
+	                methodIndex++;
+	            }
+	            classIndex++;
+	        }
+	        scenarioCount = scenarioIndex - startingScenarioIndex;
+	    }
+	    return scenarioCount;
 	}
+
+
+
 
 	 public static String printCurrentDateTime() {
 	        LocalDateTime localDateTime = LocalDateTime.now();        
@@ -407,49 +450,38 @@ public class EmailableReport implements IReporter {
 	 * Writes the details for an individual test scenario.
 	 */
 	private void writeScenario(int scenarioIndex, String label, ITestResult result) {
-		writer.print("<h3 id=\"m");
-		writer.print(scenarioIndex);
-		writer.print("\">");
-		writer.print(label);
-		writer.print("</h3>");
+	    writer.print("<h3 id=\"m");
+	    writer.print(scenarioIndex);
+	    writer.print("\">");
+	    writer.print(label);
+	    writer.print("</h3>");
 
-		writer.print("<table class=\"result\">");
+	    writer.print("<table class=\"result\">");
 
-		// Write test parameters (if any)
-		Object[] parameters = result.getParameters();
-		int parameterCount = (parameters == null ? 0 : parameters.length);
+	    // Reporter messages (if any)
+	    List<String> reporterMessages = Reporter.getOutput(result);
+	    if (!reporterMessages.isEmpty()) {
+	        writer.print("<tr><td colspan=\"1\">");
+	        writeReporterMessages(reporterMessages);
+	        writer.print("</td></tr>");
+	    }
 
-		/*
-		 * if (parameterCount > 0) { writer.print("<tr class=\"param\">"); for (int i =
-		 * 1; i <= parameterCount; i++) { writer.print("<th>Parameter #");
-		 * writer.print(i); writer.print("</th>"); }
-		 * writer.print("</tr><tr class=\"param stripe\">"); for (Object parameter :
-		 * parameters) { writer.print("<td>");
-		 * writer.print(Utils.escapeHtml(Utils.toString(parameter)));
-		 * writer.print("</td>"); } writer.print("</tr>"); }
-		 */
+	    // Exception (if any)
+	    Throwable throwable = result.getThrowable();
+	    if (throwable != null) {
+	        // nicer exception header
+	        writer.print("<tr><td colspan=\"1\" class='exception-header'>Exception</td></tr>");
+	        writer.print("<tr><td>");
+	        writer.print("<div class='stacktrace-box'>");
+	        writer.print(Utils.shortStackTrace(throwable, true));
+	        writer.print("</div>");
+	        writer.print("</td></tr>");
+	    }
 
-		// Write reporter messages (if any)
-		List<String> reporterMessages = Reporter.getOutput(result);
-		if (!reporterMessages.isEmpty()) {
-			writer.print("<tr><td colspan=\"" + parameterCount + "\">");
-			writeReporterMessages(reporterMessages);
-			writer.print("</td></tr>");
-		}
-
-		// Write exception (if any)
-		Throwable throwable = result.getThrowable();
-		if (throwable != null) {
-			writer.print("<tr><th colspan=\"" + parameterCount + "\">"
-					+ (result.getStatus() == ITestResult.SUCCESS ? "Expected Exception" : "Exception") + "</th></tr>");
-			writer.print("<tr><td colspan=\"" + parameterCount + "\">");
-			writeStackTrace(throwable);
-			writer.print("</td></tr>");
-		}
-
-		writer.print("</table>");
-		writer.print("<p class=\"totop\"><a href=\"#summary\">back to summary</a></p>");
+	    writer.print("</table>");
+	    writer.print("<p class=\"totop\"><a href=\"#summary\">back to summary</a></p>");
 	}
+
 
 	protected void writeReporterMessages(List<String> reporterMessages) {
 		writer.print("<div class=\"messages\">");
@@ -799,5 +831,17 @@ public class EmailableReport implements IReporter {
 			return results;
 		}
 	}
+	
+	private String formatDurationMillis(long millis) {
+	    if (millis < 0) {
+	        millis = 0;
+	    }
+	    long totalSeconds = millis / 1000;
+	    long hours = totalSeconds / 3600;
+	    long minutes = (totalSeconds % 3600) / 60;
+	    long seconds = totalSeconds % 60;
+	    return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+	}
+
 
 }

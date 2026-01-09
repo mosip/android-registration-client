@@ -27,7 +27,7 @@ public class IdentityProofPageEnglish extends IdentityProofPage {
 
 	public DocumentUploadPage clickOnSaveButton() {
 		clickOnElement(saveButton);
-		return new DocumentuploadPageEnglish(driver);
+		return new DocumentUploadPageEnglish(driver);
 	}
 
 	public boolean isRetakeButtonDisplayed() {

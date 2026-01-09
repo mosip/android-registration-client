@@ -172,4 +172,7 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 		clickOnElement(registrationTasksTitle);
 	}
 
+	public boolean isSettingsButtonDisplayed() {
+		return isElementDisplayed(settingsButton);
+	}
 }
