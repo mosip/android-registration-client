@@ -36,7 +36,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, List<Field>> fieldsMap = {};
-  final RegExp validation = RegExp(r'^[0-9]+$');
+  final RegExp inputValidation = RegExp(r'^[0-9]+$');
   TextEditingController controller = TextEditingController();
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   int? uinLength;
@@ -215,24 +215,14 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                         }
 
                         // Determine validation length based on available field subType in UI spec
-                        int? expectedLength;
-
-                        if (idSubType == "uin") {
-                          expectedLength = uinLength;
-                        } else if (idSubType == "vid") {
-                          expectedLength = vidLength;
-                        } else {
-                          // Default to UIN length if no specific ID subType found
-                          expectedLength = uinLength;
-                        }
-
+                        int? expectedLength = idSubType == "vid" ? vidLength : uinLength;
                         // Check if length matches the expected length
                         if (expectedLength != null && value.length != expectedLength) {
                           return appLocalizations.valid_uin;
                         }
 
                         // Check if value contains only digits
-                        if (!validation.hasMatch(value)) {
+                        if (!inputValidation.hasMatch(value)) {
                           return appLocalizations.valid_uin;
                         }
 
