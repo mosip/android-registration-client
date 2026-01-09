@@ -25,15 +25,15 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
 
     @Inject
     public LocalConfigDAOImpl(PermittedLocalConfigRepository permittedLocalConfigRepository,
-                             LocalPreferencesRepository localPreferencesRepository) {
+            LocalPreferencesRepository localPreferencesRepository) {
         this.permittedLocalConfigRepository = permittedLocalConfigRepository;
         this.localPreferencesRepository = localPreferencesRepository;
     }
 
     @Override
     public List<String> getPermittedConfigurations(String configType) {
-        List<PermittedLocalConfig> permittedConfigs =
-            permittedLocalConfigRepository.getPermittedConfigsByType(configType);
+        List<PermittedLocalConfig> permittedConfigs = permittedLocalConfigRepository
+                .getPermittedConfigsByType(configType);
 
         List<String> permittedConfigurations = new ArrayList<>();
         if (permittedConfigs != null && !permittedConfigs.isEmpty()) {
@@ -51,31 +51,18 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
 
     @Override
     public void modifyConfigurations(Map<String, String> localPreferences) {
-        
+
         for (Map.Entry<String, String> entry : localPreferences.entrySet()) {
             String name = entry.getKey();
             String value = entry.getValue();
-            
-            try {
-                LocalPreferences existingPreference = localPreferencesRepository.findByIsDeletedFalseAndName(name);
 
-                if (existingPreference != null) {
-                    // Update existing record
-                    existingPreference.setVal(value);
-                    existingPreference.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
-                    existingPreference.setUpdDtimes(System.currentTimeMillis());
-                    localPreferencesRepository.save(existingPreference);
-                } else {
-                    // Create new record if it doesn't exist
-                    saveLocalPreference(name, value, RegistrationConstants.PERMITTED_CONFIG_TYPE);
-                }
-                
+            try {
+                saveOrUpdateLocalPreference(name, value, RegistrationConstants.PERMITTED_CONFIG_TYPE);
             } catch (Exception e) {
                 Log.e(TAG, "Error modifying configuration: " + name, e);
             }
         }
     }
-
 
     @Override
     public String getValue(String name) {
@@ -92,22 +79,36 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
 
     @Override
     public void modifyJob(String name, String value) {
-        try {
-            LocalPreferences localPreferences = localPreferencesRepository
-                    .findByIsDeletedFalseAndName(name);
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Job name cannot be null or empty");
+        }
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Job value cannot be null or empty");
+        }
 
-            if (localPreferences != null) {
-                // Update existing record
-                localPreferences.setVal(value);
-                localPreferences.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
-                localPreferences.setUpdDtimes(System.currentTimeMillis());
-                localPreferencesRepository.save(localPreferences);
-            } else {
-                // Create new record if it doesn't exist
-                saveLocalPreference(name, value, RegistrationConstants.PERMITTED_JOB_TYPE);
-            }
+        try {
+            saveOrUpdateLocalPreference(name, value, RegistrationConstants.PERMITTED_JOB_TYPE);
         } catch (Exception e) {
             Log.e(TAG, "Error modifying job: " + name, e);
+            throw new RuntimeException("Failed to modify job: " + name, e);
+        }
+    }
+
+    /**
+     * Save local preference to database
+     */
+    private void saveOrUpdateLocalPreference(String name, String value, String configType) {
+        LocalPreferences existingPreference = localPreferencesRepository.findByIsDeletedFalseAndName(name);
+
+        if (existingPreference != null) {
+            // Update existing record
+            existingPreference.setVal(value);
+            existingPreference.setUpdBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
+            existingPreference.setUpdDtimes(System.currentTimeMillis());
+            localPreferencesRepository.save(existingPreference);
+        } else {
+            // Create new record if it doesn't exist
+            saveLocalPreference(name, value, configType);
         }
     }
 
@@ -122,7 +123,7 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
         localPreference.setCrBy(RegistrationConstants.JOB_TRIGGER_POINT_USER);
         localPreference.setCrDtime(System.currentTimeMillis());
         localPreference.setIsDeleted(false);
-        
+
         localPreferencesRepository.save(localPreference);
     }
 
@@ -132,8 +133,8 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
      * Mark as deleted if key is deactivated in permitted configs.
      */
     public void cleanUpLocalPreferences() {
-        List<PermittedLocalConfig> permittedConfigs =
-            permittedLocalConfigRepository.getPermittedConfigsByType(RegistrationConstants.PERMITTED_CONFIG_TYPE);
+        List<PermittedLocalConfig> permittedConfigs = permittedLocalConfigRepository
+                .getPermittedConfigsByType(RegistrationConstants.PERMITTED_CONFIG_TYPE);
 
         Map<String, String> localConfigs = getLocalConfigurations();
 
@@ -144,7 +145,8 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
 
         for (String key : localConfigs.keySet()) {
             LocalPreferences pref = localPreferencesRepository.findByIsDeletedFalseAndName(key);
-            if (pref == null) continue;
+            if (pref == null)
+                continue;
 
             if (!permittedStatusMap.containsKey(key)) {
                 localPreferencesRepository.delete(pref);

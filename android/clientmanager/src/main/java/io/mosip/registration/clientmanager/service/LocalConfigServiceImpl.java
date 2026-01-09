@@ -59,6 +59,11 @@ public class LocalConfigServiceImpl implements LocalConfigService {
             throw new IllegalArgumentException("Invalid cron expression: " + value);
         }
 
+        if (!getPermittedJobs().contains(name)) {
+            Log.e(TAG, "Cannot modify job " + name + ": not a permitted job");
+            throw new IllegalArgumentException("Job modification not permitted for: " + name);
+        }
+
         // Delegate to DAO only after validation passes
         // The DAO layer handles the transaction-safe persistence
         localConfigDAO.modifyJob(name, value);
