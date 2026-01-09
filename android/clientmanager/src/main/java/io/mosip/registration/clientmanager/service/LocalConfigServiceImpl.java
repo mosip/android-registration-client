@@ -46,6 +46,12 @@ public class LocalConfigServiceImpl implements LocalConfigService {
 
     @Override
     public void modifyJob(String name, String value) {
+        // Validate job name is not null or empty
+        if (name == null || name.trim().isEmpty()) {
+            Log.e(TAG, "Cannot modify job: job name is null or empty");
+            throw new IllegalArgumentException("Job name cannot be null or empty");
+        }
+
         // Validate cron expression before persisting to database
         // This prevents invalid cron expressions from being stored, which could cause
         // job scheduling failures or runtime errors when the cron is used

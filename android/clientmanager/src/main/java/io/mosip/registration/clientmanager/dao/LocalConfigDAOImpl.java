@@ -96,9 +96,11 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
 
     /**
      * Save local preference to database
+     * Uses configType-aware lookup to prevent cross-contamination between JOB and CONFIGURATION preferences
      */
     private void saveOrUpdateLocalPreference(String name, String value, String configType) {
-        LocalPreferences existingPreference = localPreferencesRepository.findByIsDeletedFalseAndName(name);
+        LocalPreferences existingPreference = localPreferencesRepository
+                .findByIsDeletedFalseAndNameAndConfigType(name, configType);
 
         if (existingPreference != null) {
             // Update existing record
@@ -144,7 +146,9 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
         }
 
         for (String key : localConfigs.keySet()) {
-            LocalPreferences pref = localPreferencesRepository.findByIsDeletedFalseAndName(key);
+            // Use configType-aware lookup to ensure we only clean up CONFIGURATION type preferences
+            LocalPreferences pref = localPreferencesRepository
+                    .findByIsDeletedFalseAndNameAndConfigType(key, RegistrationConstants.PERMITTED_CONFIG_TYPE);
             if (pref == null)
                 continue;
 
