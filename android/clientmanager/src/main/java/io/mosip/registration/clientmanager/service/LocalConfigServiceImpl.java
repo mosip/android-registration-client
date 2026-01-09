@@ -40,8 +40,8 @@ public class LocalConfigServiceImpl implements LocalConfigService {
     }
 
     @Override
-    public String getValue(String name) {
-        return localConfigDAO.getValue(name);
+    public String getValue(String name, String configType) {
+        return localConfigDAO.getValue(name, configType);
     }
 
     @Override

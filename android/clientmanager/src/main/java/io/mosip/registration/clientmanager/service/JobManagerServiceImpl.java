@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.jobs.ConfigDataSyncJob;
 import io.mosip.registration.clientmanager.jobs.DeleteAuditLogsJob;
@@ -197,7 +198,7 @@ public class JobManagerServiceImpl implements JobManagerService {
      */
     private String getSyncFrequency(SyncJobDef syncJob) {
         if (localConfigService != null) {
-            String localPreference = localConfigService.getValue(syncJob.getId());
+            String localPreference = localConfigService.getValue(syncJob.getId(), RegistrationConstants.PERMITTED_JOB_TYPE);
             if (localPreference != null && !localPreference.trim().isEmpty()) {
                 return localPreference;
             }

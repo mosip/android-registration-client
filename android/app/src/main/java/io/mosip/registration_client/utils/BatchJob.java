@@ -16,6 +16,7 @@ import io.mosip.registration.clientmanager.constant.ClientManagerConstant;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.entity.Registration;
@@ -215,7 +216,7 @@ public class BatchJob {
             
             // Check for custom cron expression and override if available
             if (localConfigService != null) {
-                String customCron = localConfigService.getValue(syncJob.getId());
+                String customCron = localConfigService.getValue(syncJob.getId(), RegistrationConstants.PERMITTED_JOB_TYPE);
                 if (customCron != null && !customCron.trim().isEmpty()) {
                     cronExp = customCron; // Use custom cron expression
                     Log.d(getClass().getSimpleName(), api + " Custom Cron Expression : " + cronExp);

@@ -24,11 +24,12 @@ public interface LocalConfigService {
     List<String> getPermittedConfiguration();
 
     /**
-     * Get value for a specific local configuration by name
-     * @param name Configuration name
-     * @return Configuration value or null if not found
+     * Get value for a specific local preference by name and config type
+     * @param name Preference name
+     * @param configType Configuration type (PERMITTED_JOB_TYPE or PERMITTED_CONFIG_TYPE)
+     * @return Preference value or null if not found
      */
-    String getValue(String name);
+    String getValue(String name, String configType);
 
     /**
      * Modify job cron expression

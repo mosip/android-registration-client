@@ -65,14 +65,15 @@ public class LocalConfigDAOImpl implements LocalConfigDAO {
     }
 
     @Override
-    public String getValue(String name) {
+    public String getValue(String name, String configType) {
         try {
-            LocalPreferences localPreference = localPreferencesRepository.findByIsDeletedFalseAndName(name);
+            LocalPreferences localPreference = localPreferencesRepository
+                    .findByIsDeletedFalseAndNameAndConfigType(name, configType);
             if (localPreference != null && localPreference.getVal() != null) {
                 return localPreference.getVal();
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting value for: " + name, e);
+            Log.e(TAG, "Error getting value for: " + name + ", configType: " + configType, e);
         }
         return null;
     }

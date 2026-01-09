@@ -491,7 +491,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     @Override
     public void getValue(@NonNull String name, @NonNull MasterDataSyncPigeon.Result<String> result) {
         try {
-            String value = localConfigService.getValue(name);
+            // getValue is used for retrieving job cron expressions, so use PERMITTED_JOB_TYPE
+            String value = localConfigService.getValue(name, RegistrationConstants.PERMITTED_JOB_TYPE);
             result.success(value);
         } catch (Exception e) {
             Log.e(TAG, "Failed to get value for: " + name, e);
