@@ -106,7 +106,11 @@ public class AppModuleTest {
 
     @Mock LocalConfigDAO localConfigDAO;
 
+    @Mock LocalConfigService localConfigService;
+
     @Mock LocationValidationService locationValidationService;
+
+    @Mock PacketService packetService;
 
     private AppModule appModule;
     private MockedStatic<ConfigService> configServiceMock;
@@ -201,7 +205,7 @@ public class AppModuleTest {
     public void testProvideRegistrationService() {
         RegistrationService service = appModule.provideRegistrationService(
                 packetWriterService, registrationRepository, mock(MasterDataService.class), identitySchemaRepository,
-                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider,biometricService
+                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider,biometricService, packetService
         );
         assertNotNull(service);
         assertTrue(service instanceof RegistrationServiceImpl);
@@ -244,7 +248,7 @@ public class AppModuleTest {
 
     @Test
     public void testProvideJobManagerService() {
-        JobManagerService service = appModule.provideJobManagerService(syncJobDefRepository, mock(JobTransactionService.class), dateUtil);
+        JobManagerService service = appModule.provideJobManagerService(syncJobDefRepository, mock(JobTransactionService.class), dateUtil, localConfigService);
         assertNotNull(service);
         assertTrue(service instanceof JobManagerServiceImpl);
     }

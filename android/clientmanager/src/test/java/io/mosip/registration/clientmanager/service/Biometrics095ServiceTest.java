@@ -71,6 +71,9 @@ public class Biometrics095ServiceTest {
 
     @Test
     public void testGetRCaptureRequest() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_ACTIVE_PROFILE))
+                .thenReturn("Developer");
+        
         Modality modality = Modality.FACE;
         String deviceId = "testDevice";
         List<String> exceptionAttributes = new ArrayList<>();
@@ -169,6 +172,8 @@ public class Biometrics095ServiceTest {
     public void test_creates_capture_request_with_standard_environment_settings() {
         when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         when(mockContext.getString(anyInt())).thenReturn("app_name");
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_ACTIVE_PROFILE))
+                .thenReturn("Developer");
 
         Biometrics095Service biometrics095Service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService,

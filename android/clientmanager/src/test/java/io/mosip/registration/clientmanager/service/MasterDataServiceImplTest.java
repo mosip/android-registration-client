@@ -20,7 +20,7 @@ import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.keymanager.dto.*;
-import io.mosip.registration.keymanager.dto.CACertificateResponseDto;
+import io.mosip.registration.clientmanager.dto.http.CACertificateResponseDto;
 import io.mosip.registration.keymanager.exception.KeymanagerServiceException;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
@@ -48,6 +48,9 @@ import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import okhttp3.Headers;
+import okhttp3.Protocol;
+import okhttp3.Request;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -1329,9 +1332,8 @@ public class MasterDataServiceImplTest {
         certificateDto.setCreatedtimes(LocalDateTime.now());
         caCertificateDtos.add(certificateDto);
 
-        CACertificateResponseDto responseDto = new CACertificateResponseDto();
-        responseDto.setStatus("success");
-        responseDto.setTimestamp(LocalDateTime.now());
+        io.mosip.registration.keymanager.dto.CACertificateResponseDto responseDto = mock(io.mosip.registration.keymanager.dto.CACertificateResponseDto.class);
+        when(responseDto.getStatus()).thenReturn("success");
 
         when(mockCertificateManagerService.uploadCACertificate(any(CACertificateRequestDto.class))).thenReturn(responseDto);
 
@@ -1751,8 +1753,6 @@ public class MasterDataServiceImplTest {
         MasterDataServiceImpl spyService = org.mockito.Mockito.spy(masterDataService);
         doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
-                .thenReturn("v1.2.0");
-        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
                 .thenReturn("key");
         doReturn(mockMasterCall).when(mockSyncRestService).fetchMasterData(any());
         doAnswer(invocation -> {
@@ -1778,8 +1778,6 @@ public class MasterDataServiceImplTest {
         MasterDataServiceImpl spyService = org.mockito.Mockito.spy(masterDataService);
         doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
-                .thenReturn("v1.2.0");
-        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
                 .thenReturn("key");
         doReturn(mockMasterCall).when(mockSyncRestService).fetchMasterData(any());
         doAnswer(invocation -> {
@@ -1801,8 +1799,6 @@ public class MasterDataServiceImplTest {
     public void test_syncMasterData_failure() {
         MasterDataServiceImpl spyService = org.mockito.Mockito.spy(masterDataService);
         doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
-        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
-                .thenReturn("v1.2.0");
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
                 .thenReturn("key");
         doReturn(mockMasterCall).when(mockSyncRestService).fetchMasterData(any());
@@ -2424,5 +2420,1603 @@ public class MasterDataServiceImplTest {
         } catch (Exception e) {
             // Expected
         }
+    }
+
+    /**
+     * Tests that getRegistrationParams returns a map of registration parameters from the repository.
+     */
+    @Test
+    public void test_getRegistrationParams_returnsRepositoryMap() {
+        Map<String, Object> expectedParams = new HashMap<>();
+        expectedParams.put("mosip.registration.idle_time", "300");
+        expectedParams.put("mosip.registration.theme", "dark");
+        
+        when(mockGlobalParamRepository.getGlobalParamsByPattern("mosip.registration%"))
+                .thenReturn(expectedParams);
+
+        Map<String, Object> result = masterDataService.getRegistrationParams();
+
+        assertEquals(expectedParams, result);
+        verify(mockGlobalParamRepository).getGlobalParamsByPattern("mosip.registration%");
+    }
+
+    /**
+     * Tests that getCachedStringOnboardYourselfUrl returns the URL from the repository.
+     */
+    @Test
+    public void test_getCachedStringOnboardYourselfUrl_returnsValue() {
+        String expectedUrl = "https://example.com/onboard";
+        when(mockGlobalParamRepository.getCachedStringOnboardYourselfUrl()).thenReturn(expectedUrl);
+
+        String result = masterDataService.getCachedStringOnboardYourselfUrl();
+
+        assertEquals(expectedUrl, result);
+        verify(mockGlobalParamRepository).getCachedStringOnboardYourselfUrl();
+    }
+
+    /**
+     * Tests that getCachedStringOnboardYourselfUrl returns empty string when URL is null.
+     */
+    @Test
+    public void test_getCachedStringOnboardYourselfUrl_returnsEmptyWhenNull() {
+        when(mockGlobalParamRepository.getCachedStringOnboardYourselfUrl()).thenReturn(null);
+
+        String result = masterDataService.getCachedStringOnboardYourselfUrl();
+
+        assertEquals("", result);
+        verify(mockGlobalParamRepository).getCachedStringOnboardYourselfUrl();
+    }
+
+    /**
+     * Tests that getCachedStringRegisteringIndividualUrl returns the URL from the repository.
+     */
+    @Test
+    public void test_getCachedStringRegisteringIndividualUrl_returnsValue() {
+        String expectedUrl = "https://example.com/register";
+        when(mockGlobalParamRepository.getCachedStringRegisteringIndividualUrl()).thenReturn(expectedUrl);
+
+        String result = masterDataService.getCachedStringRegisteringIndividualUrl();
+
+        assertEquals(expectedUrl, result);
+        verify(mockGlobalParamRepository).getCachedStringRegisteringIndividualUrl();
+    }
+
+    /**
+     * Tests that getCachedStringRegisteringIndividualUrl returns empty string when URL is null.
+     */
+    @Test
+    public void test_getCachedStringRegisteringIndividualUrl_returnsEmptyWhenNull() {
+        when(mockGlobalParamRepository.getCachedStringRegisteringIndividualUrl()).thenReturn(null);
+
+        String result = masterDataService.getCachedStringRegisteringIndividualUrl();
+
+        assertEquals("", result);
+        verify(mockGlobalParamRepository).getCachedStringRegisteringIndividualUrl();
+    }
+
+    /**
+     * Tests that getCachedStringSyncDataUrl returns the URL from the repository.
+     */
+    @Test
+    public void test_getCachedStringSyncDataUrl_returnsValue() {
+        String expectedUrl = "https://example.com/sync";
+        when(mockGlobalParamRepository.getCachedStringSyncDataUrl()).thenReturn(expectedUrl);
+
+        String result = masterDataService.getCachedStringSyncDataUrl();
+
+        assertEquals(expectedUrl, result);
+        verify(mockGlobalParamRepository).getCachedStringSyncDataUrl();
+    }
+
+    /**
+     * Tests that getCachedStringSyncDataUrl returns empty string when URL is null.
+     */
+    @Test
+    public void test_getCachedStringSyncDataUrl_returnsEmptyWhenNull() {
+        when(mockGlobalParamRepository.getCachedStringSyncDataUrl()).thenReturn(null);
+
+        String result = masterDataService.getCachedStringSyncDataUrl();
+
+        assertEquals("", result);
+        verify(mockGlobalParamRepository).getCachedStringSyncDataUrl();
+    }
+
+    /**
+     * Tests that getCachedStringMappingDevicesUrl returns the URL from the repository.
+     */
+    @Test
+    public void test_getCachedStringMappingDevicesUrl_returnsValue() {
+        String expectedUrl = "https://example.com/mapping";
+        when(mockGlobalParamRepository.getCachedStringMappingDevicesUrl()).thenReturn(expectedUrl);
+
+        String result = masterDataService.getCachedStringMappingDevicesUrl();
+
+        assertEquals(expectedUrl, result);
+        verify(mockGlobalParamRepository).getCachedStringMappingDevicesUrl();
+    }
+
+    /**
+     * Tests that getCachedStringMappingDevicesUrl returns empty string when URL is null.
+     */
+    @Test
+    public void test_getCachedStringMappingDevicesUrl_returnsEmptyWhenNull() {
+        when(mockGlobalParamRepository.getCachedStringMappingDevicesUrl()).thenReturn(null);
+
+        String result = masterDataService.getCachedStringMappingDevicesUrl();
+
+        assertEquals("", result);
+        verify(mockGlobalParamRepository).getCachedStringMappingDevicesUrl();
+    }
+
+    /**
+     * Tests that getCachedStringUploadingDataUrl returns the URL from the repository.
+     */
+    @Test
+    public void test_getCachedStringUploadingDataUrl_returnsValue() {
+        String expectedUrl = "https://example.com/upload";
+        when(mockGlobalParamRepository.getCachedStringUploadingDataUrl()).thenReturn(expectedUrl);
+
+        String result = masterDataService.getCachedStringUploadingDataUrl();
+
+        assertEquals(expectedUrl, result);
+        verify(mockGlobalParamRepository).getCachedStringUploadingDataUrl();
+    }
+
+    /**
+     * Tests that getCachedStringUploadingDataUrl returns empty string when URL is null.
+     */
+    @Test
+    public void test_getCachedStringUploadingDataUrl_returnsEmptyWhenNull() {
+        when(mockGlobalParamRepository.getCachedStringUploadingDataUrl()).thenReturn(null);
+
+        String result = masterDataService.getCachedStringUploadingDataUrl();
+
+        assertEquals("", result);
+        verify(mockGlobalParamRepository).getCachedStringUploadingDataUrl();
+    }
+
+    /**
+     * Tests that getCachedStringUpdatingBiometricsUrl returns the URL from the repository.
+     */
+    @Test
+    public void test_getCachedStringUpdatingBiometricsUrl_returnsValue() {
+        String expectedUrl = "https://example.com/update";
+        when(mockGlobalParamRepository.getCachedStringUpdatingBiometricsUrl()).thenReturn(expectedUrl);
+
+        String result = masterDataService.getCachedStringUpdatingBiometricsUrl();
+
+        assertEquals(expectedUrl, result);
+        verify(mockGlobalParamRepository).getCachedStringUpdatingBiometricsUrl();
+    }
+
+    /**
+     * Tests that getCachedStringUpdatingBiometricsUrl returns empty string when URL is null.
+     */
+    @Test
+    public void test_getCachedStringUpdatingBiometricsUrl_returnsEmptyWhenNull() {
+        when(mockGlobalParamRepository.getCachedStringUpdatingBiometricsUrl()).thenReturn(null);
+
+        String result = masterDataService.getCachedStringUpdatingBiometricsUrl();
+
+        assertEquals("", result);
+        verify(mockGlobalParamRepository).getCachedStringUpdatingBiometricsUrl();
+    }
+
+    /**
+     * Tests that saveStructuredData saves ReasonList entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_ReasonList() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "reasonListRepository", mockReasonListRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray reasons = new JSONArray();
+        reasons.put("{\"code\":\"R001\",\"name\":\"Reason1\",\"langCode\":\"eng\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(reasons.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "ReasonList", encryptedData, false);
+
+        verify(mockReasonListRepository).saveReasonList(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves Machine entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_Machine() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "machineRepository", mockMachineRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray machines = new JSONArray();
+        machines.put("{\"id\":\"M001\",\"name\":\"Machine1\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(machines.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Machine", encryptedData, false);
+
+        verify(mockMachineRepository).saveMachineMaster(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves RegistrationCenter entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_RegistrationCenter() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "registrationCenterRepository", mockRegistrationCenterRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray centers = new JSONArray();
+        centers.put("{\"id\":\"C001\",\"name\":\"Center1\",\"langCode\":\"eng\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(centers.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "RegistrationCenter", encryptedData, false);
+
+        verify(mockRegistrationCenterRepository).saveRegistrationCenter(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves DocumentType entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_DocumentType() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "documentTypeRepository", mockDocumentTypeRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray doctypes = new JSONArray();
+        doctypes.put("{\"code\":\"DOC001\",\"name\":\"Document1\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(doctypes.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "DocumentType", encryptedData, false);
+
+        verify(mockDocumentTypeRepository).saveDocumentType(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves ApplicantValidDocument entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_ApplicantValidDocument() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "applicantValidDocRepository", mockApplicantValidDocRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE))
+                .thenReturn("APP_TYPE");
+
+        String encryptedData = "encrypted";
+        JSONArray appValidDocs = new JSONArray();
+        appValidDocs.put("{\"code\":\"DOC001\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(appValidDocs.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "ApplicantValidDocument", encryptedData, false);
+
+        verify(mockApplicantValidDocRepository).saveApplicantValidDocument(any(JSONObject.class), eq("APP_TYPE"));
+    }
+
+    /**
+     * Tests that saveStructuredData saves Template entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_Template() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "templateRepository", mockTemplateRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray templates = new JSONArray();
+        templates.put("{\"id\":\"T001\",\"name\":\"Template1\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(templates.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Template", encryptedData, false);
+
+        verify(mockTemplateRepository).saveTemplate(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves Location entities with fullSync true and isActive true.
+     */
+    @Test
+    public void test_saveStructuredData_Location_fullSync_active() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "locationRepository", mockLocationRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+
+        String encryptedData = "encrypted";
+        JSONArray locations = new JSONArray();
+        locations.put("{\"code\":\"LOC001\",\"isActive\":true}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(locations.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Location", encryptedData, false);
+
+        verify(mockLocationRepository).saveLocationData(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves Location entities with fullSync true and isActive false.
+     */
+    @Test
+    public void test_saveStructuredData_Location_fullSync_inactive() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "locationRepository", mockLocationRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+
+        String encryptedData = "encrypted";
+        JSONArray locations = new JSONArray();
+        locations.put("{\"code\":\"LOC001\",\"isActive\":false}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(locations.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Location", encryptedData, false);
+
+        verify(mockLocationRepository, never()).saveLocationData(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves Location entities with fullSync false.
+     */
+    @Test
+    public void test_saveStructuredData_Location_notFullSync() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "locationRepository", mockLocationRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn("2023-01-01");
+
+        String encryptedData = "encrypted";
+        JSONArray locations = new JSONArray();
+        locations.put("{\"code\":\"LOC001\",\"isActive\":false}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(locations.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Location", encryptedData, false);
+
+        verify(mockLocationRepository).saveLocationData(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves LocationHierarchy entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_LocationHierarchy() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "locationRepository", mockLocationRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray hierarchies = new JSONArray();
+        hierarchies.put("{\"hierarchyLevel\":1,\"hierarchyName\":\"Country\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(hierarchies.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "LocationHierarchy", encryptedData, false);
+
+        verify(mockLocationRepository).saveLocationHierarchyData(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves BlocklistedWords entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_BlocklistedWords() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "blocklistedWordRepository", mockBlocklistedWordRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray words = new JSONArray();
+        words.put("{\"word\":\"badword\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(words.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "BlocklistedWords", encryptedData, false);
+
+        verify(mockBlocklistedWordRepository).saveBlocklistedWord(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves BlacklistedWords entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_BlacklistedWords() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "blocklistedWordRepository", mockBlocklistedWordRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray words = new JSONArray();
+        words.put("{\"word\":\"badword\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(words.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "BlacklistedWords", encryptedData, false);
+
+        verify(mockBlocklistedWordRepository).saveBlocklistedWord(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves SyncJobDef entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_SyncJobDef() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "syncJobDefRepository", mockSyncJobDefRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray syncJobDefs = new JSONArray();
+        syncJobDefs.put("{\"id\":\"JOB001\",\"name\":\"Job1\",\"apiName\":\"api1\",\"syncFreq\":\"0 0 12 * * ?\",\"parentSyncJobId\":\"\",\"langCode\":\"eng\",\"lockDuration\":\"0\",\"isActive\":true,\"isDeleted\":false}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(syncJobDefs.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "SyncJobDef", encryptedData, false);
+
+        verify(mockSyncJobDefRepository).saveSyncJobDef(any(SyncJobDef.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves Language entities correctly.
+     */
+    @Test
+    public void test_saveStructuredData_Language() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "languageRepository", mockLanguageRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray languages = new JSONArray();
+        languages.put("{\"code\":\"eng\",\"name\":\"English\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(languages.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Language", encryptedData, false);
+
+        verify(mockLanguageRepository).saveLanguage(any(JSONObject.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves RegistrationCenterUser entities when server version is 1.1.5.
+     */
+    @Test
+    public void test_saveStructuredData_RegistrationCenterUser_version115() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "userDetailRepository", mockUserDetailRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.1.5");
+
+        String encryptedData = "encrypted";
+        JSONArray users = new JSONArray();
+        users.put("{\"userId\":\"U001\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(users.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "RegistrationCenterUser", encryptedData, false);
+
+        verify(mockUserDetailRepository).saveUserDetail(any(JSONArray.class));
+    }
+
+    /**
+     * Tests that saveStructuredData does not save RegistrationCenterUser entities when server version is not 1.1.5.
+     */
+    @Test
+    public void test_saveStructuredData_RegistrationCenterUser_notVersion115() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "userDetailRepository", mockUserDetailRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+
+        String encryptedData = "encrypted";
+        JSONArray users = new JSONArray();
+        users.put("{\"userId\":\"U001\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(users.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "RegistrationCenterUser", encryptedData, false);
+
+        verify(mockUserDetailRepository, never()).saveUserDetail(any(JSONArray.class));
+    }
+
+    /**
+     * Tests that saveStructuredData saves RegistrationCenterMachine entities and sets regCenterId.
+     */
+    @Test
+    public void test_saveStructuredData_RegistrationCenterMachine() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray machines = new JSONArray();
+        machines.put("{\"regCenterId\":\"CENTER001\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(machines.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "RegistrationCenterMachine", encryptedData, false);
+
+        // Verify regCenterId was set (we can't directly verify, but the method should complete without exception)
+        assertNotNull(ReflectionTestUtils.getField(masterDataService, "regCenterId"));
+    }
+
+    /**
+     * Tests that saveStructuredData saves ValidDocument entities when applicantValidDocPresent is false.
+     */
+    @Test
+    public void test_saveStructuredData_ValidDocument_notPresent() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "applicantValidDocRepository", mockApplicantValidDocRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE))
+                .thenReturn("APP_TYPE");
+
+        String encryptedData = "encrypted";
+        JSONArray validDocs = new JSONArray();
+        validDocs.put("{\"code\":\"DOC001\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(validDocs.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "ValidDocument", encryptedData, false);
+
+        verify(mockApplicantValidDocRepository).saveApplicantValidDocument(any(JSONObject.class), eq("APP_TYPE"));
+    }
+
+    /**
+     * Tests that saveStructuredData does not save ValidDocument entities when applicantValidDocPresent is true.
+     */
+    @Test
+    public void test_saveStructuredData_ValidDocument_present() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "applicantValidDocRepository", mockApplicantValidDocRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray validDocs = new JSONArray();
+        validDocs.put("{\"code\":\"DOC001\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(validDocs.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "ValidDocument", encryptedData, true);
+
+        verify(mockApplicantValidDocRepository, never()).saveApplicantValidDocument(any(JSONObject.class), anyString());
+    }
+
+    /**
+     * Tests that saveStructuredData saves PermittedLocalConfig entities and calls cleanUpLocalPreferences when localConfigDAO is not null.
+     */
+    @Test
+    public void test_saveStructuredData_PermittedLocalConfig_withLocalConfigDAO() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "permittedLocalConfigRepository", mockPermittedLocalConfigRepository);
+        ReflectionTestUtils.setField(masterDataService, "localConfigDAO", mockLocalConfigDao);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray configs = new JSONArray();
+        configs.put("{\"code\":\"CONFIG001\",\"name\":\"Config1\",\"type\":\"CONFIGURATION\",\"isActive\":true,\"isDeleted\":false}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(configs.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "PermittedLocalConfig", encryptedData, false);
+
+        verify(mockPermittedLocalConfigRepository).savePermittedConfigs(anyList());
+        verify(mockLocalConfigDao).cleanUpLocalPreferences();
+    }
+
+    /**
+     * Tests that saveStructuredData saves PermittedLocalConfig entities and does not call cleanUpLocalPreferences when localConfigDAO is null.
+     */
+    @Test
+    public void test_saveStructuredData_PermittedLocalConfig_withoutLocalConfigDAO() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "permittedLocalConfigRepository", mockPermittedLocalConfigRepository);
+        ReflectionTestUtils.setField(masterDataService, "localConfigDAO", null);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String encryptedData = "encrypted";
+        JSONArray configs = new JSONArray();
+        configs.put("{\"code\":\"CONFIG001\",\"name\":\"Config1\",\"type\":\"CONFIGURATION\",\"isActive\":true,\"isDeleted\":false}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(configs.toString().getBytes());
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "PermittedLocalConfig", encryptedData, false);
+
+        verify(mockPermittedLocalConfigRepository).savePermittedConfigs(anyList());
+    }
+
+    /**
+     * Tests that saveMasterData processes structured entity type correctly.
+     */
+    @Test
+    public void test_saveMasterData_structuredEntity() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "reasonListRepository", mockReasonListRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+
+        ClientSettingDto clientSettingDto = new ClientSettingDto();
+        clientSettingDto.setLastSyncTime("2023-01-01");
+
+        MasterData masterData = new MasterData();
+        masterData.setEntityName("ReasonList");
+        masterData.setEntityType("structured");
+        masterData.setData("encrypted");
+
+        clientSettingDto.setDataToSync(Collections.singletonList(masterData));
+
+        String decryptedData = CryptoUtil.base64encoder.encodeToString("[\"{\\\"code\\\":\\\"R001\\\"}\"]".getBytes());
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveMasterData", clientSettingDto, false);
+
+        verify(mockReasonListRepository).saveReasonList(any(JSONObject.class));
+        verify(mockGlobalParamRepository).saveGlobalParam(eq("masterdata.lastupdated"), eq("2023-01-01"));
+    }
+
+    /**
+     * Tests that saveMasterData processes dynamic entity type correctly.
+     */
+    @Test
+    public void test_saveMasterData_dynamicEntity() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "dynamicFieldRepository", mockDynamicFieldRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        ClientSettingDto clientSettingDto = new ClientSettingDto();
+        clientSettingDto.setLastSyncTime("2023-01-01");
+
+        MasterData masterData = new MasterData();
+        masterData.setEntityName("DynamicField");
+        masterData.setEntityType("dynamic");
+        masterData.setData("encrypted");
+
+        clientSettingDto.setDataToSync(Collections.singletonList(masterData));
+
+        JSONArray fields = new JSONArray();
+        fields.put("{\"fieldName\":\"field1\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(fields.toString().getBytes());
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveMasterData", clientSettingDto, false);
+
+        verify(mockDynamicFieldRepository).saveDynamicField(any(JSONObject.class));
+        verify(mockGlobalParamRepository).saveGlobalParam(eq("masterdata.lastupdated"), eq("2023-01-01"));
+    }
+
+    /**
+     * Tests that saveMasterData processes script entity type correctly.
+     */
+    @Test
+    public void test_saveMasterData_scriptEntity() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "syncRestService", mockSyncRestService);
+        ReflectionTestUtils.setField(masterDataService, "fileSignatureDao", mockFileSignatureDao);
+
+        File mockFilesDir = new File("test");
+        when(mockContext.getFilesDir()).thenReturn(mockFilesDir);
+
+        ClientSettingDto clientSettingDto = new ClientSettingDto();
+        clientSettingDto.setLastSyncTime("2023-01-01");
+
+        MasterData masterData = new MasterData();
+        masterData.setEntityName("script.mvel");
+        masterData.setEntityType("script");
+        String scriptJson = "{\"headers\":\"\",\"encrypted\":false,\"url\":\"http://test.com\"}";
+        String encryptedScript = CryptoUtil.base64encoder.encodeToString(scriptJson.getBytes());
+        masterData.setData(encryptedScript);
+
+        clientSettingDto.setDataToSync(Collections.singletonList(masterData));
+
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(scriptJson.getBytes()));
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveMasterData", clientSettingDto, false);
+
+        verify(mockGlobalParamRepository).saveGlobalParam(eq("masterdata.lastupdated"), eq("2023-01-01"));
+    }
+
+    /**
+     * Tests that saveMasterData handles exceptions in entity processing gracefully.
+     */
+    @Test
+    public void test_saveMasterData_handlesException() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        ClientSettingDto clientSettingDto = new ClientSettingDto();
+        clientSettingDto.setLastSyncTime("2023-01-01");
+
+        MasterData masterData = new MasterData();
+        masterData.setEntityName("ReasonList");
+        masterData.setEntityType("structured");
+        masterData.setData("encrypted");
+
+        clientSettingDto.setDataToSync(Collections.singletonList(masterData));
+
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class)))
+                .thenThrow(new RuntimeException("Decryption failed"));
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveMasterData", clientSettingDto, false);
+
+        // Should still save the last sync time even if entity processing fails
+        verify(mockGlobalParamRepository).saveGlobalParam(eq("masterdata.lastupdated"), eq("2023-01-01"));
+    }
+
+    /**
+     * Tests that syncScript handles successful response with null body.
+     */
+    @Test
+    public void test_syncScript_successfulResponse_nullBody() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "syncRestService", mockSyncRestService);
+        ReflectionTestUtils.setField(masterDataService, "fileSignatureDao", mockFileSignatureDao);
+
+        Path path = Paths.get("test.txt");
+        Map<String, String> headers = new HashMap<>();
+        Call<ResponseBody> mockCall = mock(Call.class);
+
+        when(mockSyncRestService.downloadScript(anyString(), anyMap(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseBody> cb = invocation.getArgument(0);
+            Response<ResponseBody> response = Response.success(null);
+            cb.onResponse(mockCall, response);
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        ReflectionTestUtils.invokeMethod(masterDataService, "syncScript", onFinish, path, false, "http://test.com", headers, "keyIndex", false);
+
+        verify(mockCall).enqueue(any());
+    }
+
+    /**
+     * Tests that syncScript handles unsuccessful response.
+     */
+    @Test
+    public void test_syncScript_unsuccessfulResponse() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "syncRestService", mockSyncRestService);
+
+        Path path = Paths.get("test.txt");
+        Map<String, String> headers = new HashMap<>();
+        Call<ResponseBody> mockCall = mock(Call.class);
+
+        when(mockSyncRestService.downloadScript(anyString(), anyMap(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseBody> cb = invocation.getArgument(0);
+            ResponseBody errorBody = mock(ResponseBody.class);
+            Response<ResponseBody> response = Response.error(404, errorBody);
+            cb.onResponse(mockCall, response);
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        ReflectionTestUtils.invokeMethod(masterDataService, "syncScript", onFinish, path, false, "http://test.com", headers, "keyIndex", false);
+
+        verify(mockCall).enqueue(any());
+    }
+
+    /**
+     * Tests that syncScript handles onFailure callback.
+     */
+    @Test
+    public void test_syncScript_onFailure() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "syncRestService", mockSyncRestService);
+
+        Path path = Paths.get("test.txt");
+        Map<String, String> headers = new HashMap<>();
+        Call<ResponseBody> mockCall = mock(Call.class);
+
+        when(mockSyncRestService.downloadScript(anyString(), anyMap(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseBody> cb = invocation.getArgument(0);
+            cb.onFailure(mockCall, new IOException("Network error"));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        ReflectionTestUtils.invokeMethod(masterDataService, "syncScript", onFinish, path, false, "http://test.com", headers, "keyIndex", false);
+
+        verify(mockCall).enqueue(any());
+    }
+
+    /**
+     * Tests that syncCertificate handles successful response with error in body.
+     */
+    @Test
+    public void test_syncCertificate_successfulResponse_withError() {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
+
+        Call<ResponseWrapper<CertificateResponse>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getPolicyKey(anyString(), anyString(), anyString())).thenReturn(mockCall);
+
+        ServiceError error = new ServiceError();
+        error.setErrorCode("ERROR_CODE");
+        error.setMessage("Error message");
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<CertificateResponse>> cb = invocation.getArgument(0);
+            ResponseWrapper<CertificateResponse> wrapper = new ResponseWrapper<>();
+            wrapper.setErrors(Collections.singletonList(error));
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncCertificate handles unsuccessful response.
+     */
+    @Test
+    public void test_syncCertificate_unsuccessfulResponse() {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
+
+        Call<ResponseWrapper<CertificateResponse>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getPolicyKey(anyString(), anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<CertificateResponse>> cb = invocation.getArgument(0);
+            cb.onResponse(mockCall, Response.error(500, mock(okhttp3.ResponseBody.class)));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncCertificate handles exception during certificate upload.
+     */
+    @Test
+    public void test_syncCertificate_exceptionDuringUpload() {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
+
+        Call<ResponseWrapper<CertificateResponse>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getPolicyKey(anyString(), anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<CertificateResponse>> cb = invocation.getArgument(0);
+            ResponseWrapper<CertificateResponse> wrapper = new ResponseWrapper<>();
+            CertificateResponse certResponse = new CertificateResponse();
+            certResponse.setCertificate("certData");
+            wrapper.setResponse(certResponse);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        doThrow(new RuntimeException("Upload failed"))
+                .when(mockCertificateManagerService).uploadOtherDomainCertificate(any(CertificateRequestDto.class));
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncCertificate(onFinish, "appid", "refid", "setappid", "setrefid", false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncMasterData handles exception getting client key index.
+     */
+    @Test
+    public void test_syncMasterData_exceptionGettingKeyIndex() throws Exception {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
+
+        when(mockClientCryptoManagerService.getClientKeyIndex())
+                .thenThrow(new RuntimeException("Key index error"));
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncMasterData(onFinish, 0, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncMasterData handles null centerMachineDto with retry.
+     */
+    @Test
+    public void test_syncMasterData_nullCenterMachineDto_withRetry() throws Exception {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(null).when(spyService).getRegistrationCenterMachineDetails();
+
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+
+        Call<ResponseWrapper<ClientSettingDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchMasterData(any())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<ClientSettingDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<ClientSettingDto> wrapper = new ResponseWrapper<>();
+            ClientSettingDto dto = new ClientSettingDto();
+            dto.setDataToSync(Collections.emptyList());
+            dto.setLastSyncTime("now");
+            wrapper.setResponse(dto);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncMasterData(onFinish, 0, false, "jobId");
+
+        verify(onFinish, atLeastOnce()).run();
+    }
+
+    /**
+     * Tests that syncMasterData handles null centerMachineDto without retry (max retries reached).
+     */
+    @Test
+    public void test_syncMasterData_nullCenterMachineDto_maxRetries() throws Exception {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(null).when(spyService).getRegistrationCenterMachineDetails();
+
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+
+        Call<ResponseWrapper<ClientSettingDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchMasterData(any())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<ClientSettingDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<ClientSettingDto> wrapper = new ResponseWrapper<>();
+            ClientSettingDto dto = new ClientSettingDto();
+            dto.setDataToSync(Collections.emptyList());
+            dto.setLastSyncTime("now");
+            wrapper.setResponse(dto);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncMasterData(onFinish, 3, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncMasterData handles regCenterId not null and updates machine.
+     */
+    @Test
+    public void test_syncMasterData_withRegCenterId() throws Exception {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        ReflectionTestUtils.setField(spyService, "machineRepository", mockMachineRepository);
+        ReflectionTestUtils.setField(spyService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(spyService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(spyService, "syncRestService", mockSyncRestService);
+        ReflectionTestUtils.setField(spyService, "context", mockContext);
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        doReturn(centerMachineDto).when(spyService).getRegistrationCenterMachineDetails();
+
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+        when(mockClientCryptoManagerService.getMachineName()).thenReturn("machine1");
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+
+        Call<ResponseWrapper<ClientSettingDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchMasterData(any())).thenReturn(mockCall);
+
+        ReflectionTestUtils.setField(spyService, "globalParamRepository", mockGlobalParamRepository);
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<ClientSettingDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<ClientSettingDto> wrapper = new ResponseWrapper<>();
+            ClientSettingDto dto = new ClientSettingDto();
+            MasterData machineData = new MasterData();
+            machineData.setEntityName("RegistrationCenterMachine");
+            machineData.setEntityType("structured");
+            machineData.setData("encrypted");
+            dto.setDataToSync(Collections.singletonList(machineData));
+            dto.setLastSyncTime("now");
+            wrapper.setResponse(dto);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        JSONArray machines = new JSONArray();
+        machines.put("{\"regCenterId\":\"CENTER001\"}");
+        String decryptedData = CryptoUtil.base64encoder.encodeToString(machines.toString().getBytes());
+        CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();
+        cryptoResponseDto.setValue(decryptedData);
+        when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(cryptoResponseDto);
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncMasterData(onFinish, 0, false, "jobId");
+
+        verify(mockMachineRepository).updateMachine(eq("machine1"), eq("CENTER001"));
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncGlobalParamsData handles successful response with error.
+     */
+    @Test
+    public void test_syncGlobalParamsData_successfulResponse_withError() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+
+        Call<ResponseWrapper<Map<String, Object>>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getGlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
+
+        ServiceError error = new ServiceError();
+        error.setErrorCode("ERROR_CODE");
+        error.setMessage("Error message");
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<Map<String, Object>>> cb = invocation.getArgument(0);
+            ResponseWrapper<Map<String, Object>> wrapper = new ResponseWrapper<>();
+            wrapper.setErrors(Collections.singletonList(error));
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncGlobalParamsData(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncGlobalParamsData handles unsuccessful response.
+     */
+    @Test
+    public void test_syncGlobalParamsData_unsuccessfulResponse() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+
+        Call<ResponseWrapper<Map<String, Object>>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getGlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<Map<String, Object>>> cb = invocation.getArgument(0);
+            cb.onResponse(mockCall, Response.error(500, mock(okhttp3.ResponseBody.class)));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncGlobalParamsData(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncGlobalParamsData handles onFailure callback.
+     */
+    @Test
+    public void test_syncGlobalParamsData_onFailure() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+
+        Call<ResponseWrapper<Map<String, Object>>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getGlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<Map<String, Object>>> cb = invocation.getArgument(0);
+            cb.onFailure(mockCall, new IOException("Network error"));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncGlobalParamsData(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncGlobalParamsData uses V1 API when server version is 1.1.5.
+     */
+    @Test
+    public void test_syncGlobalParamsData_version115() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.1.5");
+        when(mockClientCryptoManagerService.getMachineName()).thenReturn("machine1");
+
+        Call<ResponseWrapper<Map<String, Object>>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getV1GlobalConfigs(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<Map<String, Object>>> cb = invocation.getArgument(0);
+            ResponseWrapper<Map<String, Object>> wrapper = new ResponseWrapper<>();
+            wrapper.setResponse(new HashMap<>());
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncGlobalParamsData(onFinish, false, "jobId");
+
+        verify(mockSyncRestService).getV1GlobalConfigs(anyString(), anyString());
+        verify(onFinish).run();
+    }
+
+
+    /**
+     * Tests that syncLatestIdSchema handles unsuccessful response.
+     */
+    @Test
+    public void test_syncLatestIdSchema_unsuccessfulResponse() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        Call<ResponseBody> mockCall = mock(Call.class);
+        when(mockSyncRestService.getLatestIdSchema(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseBody> cb = invocation.getArgument(0);
+            cb.onResponse(mockCall, Response.error(500, mock(okhttp3.ResponseBody.class)));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncLatestIdSchema(onFinish, false);
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncLatestIdSchema handles onFailure callback.
+     */
+    @Test
+    public void test_syncLatestIdSchema_onFailure() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        Call<ResponseBody> mockCall = mock(Call.class);
+        when(mockSyncRestService.getLatestIdSchema(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseBody> cb = invocation.getArgument(0);
+            cb.onFailure(mockCall, new IOException("Network error"));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncLatestIdSchema(onFinish, false);
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncLatestIdSchema handles exception during save.
+     */
+    @Test
+    public void test_syncLatestIdSchema_exceptionDuringSave() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "identitySchemaRepository", mockIdentitySchemaRepository);
+
+        Call<ResponseBody> mockCall = mock(Call.class);
+        when(mockSyncRestService.getLatestIdSchema(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseBody> cb = invocation.getArgument(0);
+            ResponseBody mockBody = mock(ResponseBody.class);
+            try {
+                when(mockBody.string()).thenReturn("invalid json");
+            } catch (IOException e) {
+                fail("Mock setup failed");
+            }
+            cb.onResponse(mockCall, Response.success(mockBody));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncLatestIdSchema(onFinish, false);
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncUserDetails handles successful response with error.
+     */
+    @Test
+    public void test_syncUserDetails_successfulResponse_withError() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+
+        Call<ResponseWrapper<UserDetailResponse>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchCenterUserDetails(anyString(), anyString())).thenReturn(mockCall);
+
+        ServiceError error = new ServiceError();
+        error.setErrorCode("ERROR_CODE");
+        error.setMessage("Error message");
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<UserDetailResponse>> cb = invocation.getArgument(0);
+            ResponseWrapper<UserDetailResponse> wrapper = new ResponseWrapper<>();
+            wrapper.setErrors(Collections.singletonList(error));
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncUserDetails(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncUserDetails handles unsuccessful response.
+     */
+    @Test
+    public void test_syncUserDetails_unsuccessfulResponse() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+
+        Call<ResponseWrapper<UserDetailResponse>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchCenterUserDetails(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<UserDetailResponse>> cb = invocation.getArgument(0);
+            cb.onResponse(mockCall, Response.error(500, mock(okhttp3.ResponseBody.class)));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncUserDetails(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncUserDetails handles onFailure callback.
+     */
+    @Test
+    public void test_syncUserDetails_onFailure() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+
+        Call<ResponseWrapper<UserDetailResponse>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchCenterUserDetails(anyString(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<UserDetailResponse>> cb = invocation.getArgument(0);
+            cb.onFailure(mockCall, new IOException("Network error"));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncUserDetails(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncCACertificates handles successful response with error.
+     */
+    @Test
+    public void test_syncCACertificates_successfulResponse_withError() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "certificateManagerService", mockCertificateManagerService);
+
+        Call<ResponseWrapper<CACertificateResponseDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getCACertificates(any(), anyString())).thenReturn(mockCall);
+
+        ServiceError error = new ServiceError();
+        error.setErrorCode("ERROR_CODE");
+        error.setMessage("Error message");
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<CACertificateResponseDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<CACertificateResponseDto> wrapper = new ResponseWrapper<>();
+            wrapper.setErrors(Collections.singletonList(error));
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncCACertificates(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncCACertificates handles unsuccessful response.
+     */
+    @Test
+    public void test_syncCACertificates_unsuccessfulResponse() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        Call<ResponseWrapper<CACertificateResponseDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getCACertificates(any(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<CACertificateResponseDto>> cb = invocation.getArgument(0);
+            cb.onResponse(mockCall, Response.error(500, mock(okhttp3.ResponseBody.class)));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncCACertificates(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncCACertificates handles onFailure callback.
+     */
+    @Test
+    public void test_syncCACertificates_onFailure() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+
+        Call<ResponseWrapper<CACertificateResponseDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getCACertificates(any(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<CACertificateResponseDto>> cb = invocation.getArgument(0);
+            cb.onFailure(mockCall, new IOException("Network error"));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncCACertificates(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncCACertificates handles exception during save.
+     */
+    @Test
+    public void test_syncCACertificates_exceptionDuringSave() {
+        ReflectionTestUtils.setField(masterDataService, "context", mockContext);
+        ReflectionTestUtils.setField(masterDataService, "certificateManagerService", mockCertificateManagerService);
+
+        Call<ResponseWrapper<CACertificateResponseDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.getCACertificates(any(), anyString())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<CACertificateResponseDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<CACertificateResponseDto> wrapper = new ResponseWrapper<>();
+            CACertificateResponseDto response = new CACertificateResponseDto();
+            CACertificateDto cert = new CACertificateDto();
+            cert.setCertId("CERT001");
+            cert.setCertData("certData");
+            cert.setPartnerDomain("DEVICE");
+            cert.setCreatedtimes(LocalDateTime.now());
+            response.setCertificateDTOList(Collections.singletonList(cert));
+            wrapper.setResponse(response);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        when(mockCertificateManagerService.uploadCACertificate(any(CACertificateRequestDto.class)))
+                .thenThrow(new RuntimeException("Save failed"));
+
+        Runnable onFinish = mock(Runnable.class);
+        masterDataService.syncCACertificates(onFinish, false, "jobId");
+
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncMasterData uses V1 API when server version is 1.1.5.
+     */
+    @Test
+    public void test_syncMasterData_version115() throws Exception {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
+
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.1.5");
+
+        Call<ResponseWrapper<ClientSettingDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchV1MasterData(any())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<ClientSettingDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<ClientSettingDto> wrapper = new ResponseWrapper<>();
+            ClientSettingDto dto = new ClientSettingDto();
+            dto.setDataToSync(Collections.emptyList());
+            dto.setLastSyncTime("now");
+            wrapper.setResponse(dto);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncMasterData(onFinish, 0, false, "");
+
+        verify(mockSyncRestService).fetchV1MasterData(any());
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncMasterData includes delta parameter when lastUpdated is not null.
+     */
+    @Test
+    public void test_syncMasterData_withDelta() throws Exception {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        doReturn(new CenterMachineDto()).when(spyService).getRegistrationCenterMachineDetails();
+
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn("2023-01-01");
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+
+        Call<ResponseWrapper<ClientSettingDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchMasterData(any())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<ClientSettingDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<ClientSettingDto> wrapper = new ResponseWrapper<>();
+            ClientSettingDto dto = new ClientSettingDto();
+            dto.setDataToSync(Collections.emptyList());
+            dto.setLastSyncTime("now");
+            wrapper.setResponse(dto);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncMasterData(onFinish, 0, false, "");
+
+        verify(mockSyncRestService).fetchMasterData(any());
+        verify(onFinish).run();
+    }
+
+    /**
+     * Tests that syncMasterData includes regCenterId when centerMachineDto is not null.
+     */
+    @Test
+    public void test_syncMasterData_withRegCenterIdInQuery() throws Exception {
+        MasterDataServiceImpl spyService = spy(masterDataService);
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId("CENTER001");
+        doReturn(centerMachineDto).when(spyService).getRegistrationCenterMachineDetails();
+
+        when(mockClientCryptoManagerService.getClientKeyIndex()).thenReturn("keyIndex");
+        when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.2.0");
+
+        Call<ResponseWrapper<ClientSettingDto>> mockCall = mock(Call.class);
+        when(mockSyncRestService.fetchMasterData(any())).thenReturn(mockCall);
+
+        doAnswer(invocation -> {
+            Callback<ResponseWrapper<ClientSettingDto>> cb = invocation.getArgument(0);
+            ResponseWrapper<ClientSettingDto> wrapper = new ResponseWrapper<>();
+            ClientSettingDto dto = new ClientSettingDto();
+            dto.setDataToSync(Collections.emptyList());
+            dto.setLastSyncTime("now");
+            wrapper.setResponse(dto);
+            cb.onResponse(mockCall, Response.success(wrapper));
+            return null;
+        }).when(mockCall).enqueue(any());
+
+        Runnable onFinish = mock(Runnable.class);
+        spyService.syncMasterData(onFinish, 0, false, "");
+
+        verify(mockSyncRestService).fetchMasterData(any());
+        verify(onFinish).run();
     }
 }

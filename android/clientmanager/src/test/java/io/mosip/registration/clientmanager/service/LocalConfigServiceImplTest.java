@@ -1,9 +1,13 @@
 package io.mosip.registration.clientmanager.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -58,5 +62,132 @@ public class LocalConfigServiceImplTest {
 
         assertEquals(permitted, result);
         verify(localConfigDAO).getPermittedConfigurations(RegistrationConstants.PERMITTED_CONFIG_TYPE);
+    }
+
+    @Test
+    public void testGetValue_delegatesToDao() {
+        String name = "test.name";
+        String configType = "CONFIG";
+        String expectedValue = "testValue";
+        when(localConfigDAO.getValue(name, configType)).thenReturn(expectedValue);
+
+        String result = localConfigService.getValue(name, configType);
+
+        assertEquals(expectedValue, result);
+        verify(localConfigDAO).getValue(name, configType);
+    }
+
+    @Test
+    public void testGetPermittedJobs_delegatesToDao() {
+        List<String> permittedJobs = Arrays.asList("job1", "job2", "job3");
+        when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE))
+                .thenReturn(permittedJobs);
+
+        List<String> result = localConfigService.getPermittedJobs();
+
+        assertEquals(permittedJobs, result);
+        verify(localConfigDAO).getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE);
+    }
+
+    @Test
+    public void testModifyJob_nullName_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob(null, "0 0 12 * * ?");
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_emptyName_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob("", "0 0 12 * * ?");
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_blankName_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob("   ", "0 0 12 * * ?");
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_nullValue_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob("job1", null);
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_emptyValue_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob("job1", "");
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_blankValue_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob("job1", "   ");
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_invalidCronExpression_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob("job1", "invalid cron");
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_jobNotPermitted_throwsIllegalArgumentException() {
+        List<String> permittedJobs = Arrays.asList("job1");
+        when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE))
+                .thenReturn(permittedJobs);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            localConfigService.modifyJob("unauthorizedJob", "0 0 12 * * ?");
+        });
+
+        verify(localConfigDAO, never()).modifyJob(anyString(), anyString());
+    }
+
+    @Test
+    public void testModifyJob_validInput_delegatesToDao() {
+        String jobName = "job1";
+        String cronExpression = "0 0 12 * * ?";
+        List<String> permittedJobs = Arrays.asList(jobName);
+        when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE))
+                .thenReturn(permittedJobs);
+
+        localConfigService.modifyJob(jobName, cronExpression);
+
+        verify(localConfigDAO).modifyJob(jobName, cronExpression);
+    }
+
+    @Test
+    public void testModifyJob_validInputWithWhitespace_delegatesToDao() {
+        String jobName = "job1";
+        String cronExpression = " 0 0 12 * * ? ";
+        List<String> permittedJobs = Arrays.asList(jobName);
+        when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE))
+                .thenReturn(permittedJobs);
+
+        localConfigService.modifyJob(jobName, cronExpression);
+
+        verify(localConfigDAO).modifyJob(jobName, cronExpression);
     }
 }
