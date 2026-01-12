@@ -247,6 +247,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_NAME);
     }
 
+    public String getCachedStringFieldsToRetainOnPridFetch(){
+        return globalParamMap.get(RegistrationConstants.FIELDS_TO_RETAIN_ON_PRID_FETCH);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

@@ -400,6 +400,23 @@ public class RegistrationDto extends Observable {
 
     public OperatorDto getMaker() { return maker; }
 
+    public void removeConfiguredFields(String config) {
+        List<String> keysToRemove = config == null ? Collections.EMPTY_LIST : List.of(config.split(RegistrationConstants.COMMA));
+
+        // Remove fields specified in the configuration
+        Set<String> allKeys = new HashSet<>();
+        allKeys.addAll(this.demographics.keySet());
+        allKeys.addAll(this.documents.keySet());
+        allKeys.addAll(this.biometrics.keySet());
+        allKeys.forEach(k -> {
+            if(keysToRemove.contains(k)) {
+                this.demographics.remove(k);
+                this.documents.remove(k);
+                this.biometrics.remove(k);
+            }
+        });
+    }
+
     public void cleanup() {
         this.demographics.clear();
         this.documents.clear();

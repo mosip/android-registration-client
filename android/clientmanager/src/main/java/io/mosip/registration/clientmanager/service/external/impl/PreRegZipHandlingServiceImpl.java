@@ -247,6 +247,7 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
                 List<FieldSpecDto> fieldList = this.identitySchemaService.getAllFieldSpec(appContext, registrationDto.getSchemaVersion());
                 this.registrationService.getRegistrationDto().getDocuments().clear();
                 this.registrationService.getRegistrationDto().getDemographics().clear();
+                this.registrationService.getRegistrationDto().removeConfiguredFields(globalParamRepository.getCachedStringFieldsToRetainOnPridFetch());
 
                 for(FieldSpecDto field : fieldList) {
                     if(field.getId().equalsIgnoreCase("IDSchemaVersion"))
