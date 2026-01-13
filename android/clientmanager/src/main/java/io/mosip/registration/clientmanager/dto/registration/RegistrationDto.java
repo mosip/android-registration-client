@@ -411,16 +411,17 @@ public class RegistrationDto extends Observable {
             return;
         }
 
-        // Remove fields specified in the configuration
+        // Remove fields that are NOT in the configured list to retain
         Set<String> allKeys = new HashSet<>();
         allKeys.addAll(this.demographics.keySet());
         allKeys.addAll(this.documents.keySet());
-        allKeys.forEach(key -> {
-            if(keysToRemove.contains(key)) {
+
+        for (String key : allKeys) {
+            if (!keysToRetain.contains(key)) {
                 this.demographics.remove(key);
                 this.documents.remove(key);
             }
-        });
+        }
     }
 
     public void cleanup() {
