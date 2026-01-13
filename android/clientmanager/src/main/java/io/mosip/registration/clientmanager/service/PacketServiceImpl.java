@@ -451,7 +451,7 @@ public class PacketServiceImpl implements PacketService {
     @Override
     public boolean validatingRegisteredPacketNotApproveCount() {
         try {
-            Integer maxCount = globalParamRepository.getCachedIntRegMaxCountApproveLimit();
+            int maxCount = globalParamRepository.getCachedIntRegMaxCountApproveLimit();
             if (maxCount <= 0) {
                 return false;
             }
@@ -460,9 +460,6 @@ public class PacketServiceImpl implements PacketService {
 
             return registeredPacketCount >= maxCount;
 
-        } catch (NumberFormatException ex) {
-            Log.e(TAG, "Invalid REG_PAK_MAX_CNT_APPRV_LIMIT configuration", ex);
-            return false;
         } catch (Exception ex) {
             Log.e(TAG, "Failed to validate registered packet count and duration", ex);
             return false;
