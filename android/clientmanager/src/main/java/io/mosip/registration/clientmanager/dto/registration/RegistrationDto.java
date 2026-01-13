@@ -408,11 +408,11 @@ public class RegistrationDto extends Observable {
         allKeys.addAll(this.demographics.keySet());
         allKeys.addAll(this.documents.keySet());
         allKeys.addAll(this.biometrics.keySet());
-        allKeys.forEach(k -> {
-            if(keysToRemove.contains(k)) {
-                this.demographics.remove(k);
-                this.documents.remove(k);
-                this.biometrics.remove(k);
+        allKeys.forEach(key -> {
+            if(keysToRemove.contains(key)) {
+                this.demographics.remove(key);
+                this.documents.remove(key);
+                this.biometrics.remove(key);
             }
         });
     }
