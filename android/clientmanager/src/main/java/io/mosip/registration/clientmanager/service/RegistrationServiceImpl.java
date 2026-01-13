@@ -670,6 +670,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (packetService != null && packetService.isMaxPacketCountLimitReached()) {
             throw new ClientCheckedException("PAK_UPLOAD_MAX_COUNT");
         }
+
+        // validate registered packet not approved count
+        if (packetService != null && packetService.validatingRegisteredPacketNotApproveCount()) {
+            throw new ClientCheckedException("REG_PKT_APPRVL_CNT_EXCEED");
+        }
     }
 
     private byte[] convertImageToPDF(List<byte[]> images) {
