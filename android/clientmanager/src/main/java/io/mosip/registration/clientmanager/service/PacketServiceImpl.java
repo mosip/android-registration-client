@@ -461,7 +461,7 @@ public class PacketServiceImpl implements PacketService {
             return registeredPacketCount >= maxCount;
 
         } catch (Exception ex) {
-            Log.e(TAG, "Failed to validate registered packet count and duration", ex);
+            Log.e(TAG, "Failed to validate registered packet count", ex);
             return false;
         }
     }
