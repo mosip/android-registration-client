@@ -80,7 +80,9 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
             throw e;
         } catch (Exception e) {
             Log.e(TAG, "Unexpected error during sync status validation", e);
-            throw new ClientCheckedException(context, R.string.err_004);
+            throw new ClientCheckedException(
+                RegistrationConstants.OPT_TO_REG_TIME_SYNC_EXCEED,
+                "Sync validation error: " + e.getMessage());
         }
     }
 
@@ -213,8 +215,12 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
             return;
         }
 
+        // If GPS is enabled, machine coordinates are required
         if (machineLongitude == null || machineLatitude == null) {
-            return;
+            Log.e(TAG, "GPS validation enabled but machine coordinates not available");
+            throw new ClientCheckedException(
+                RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION,
+                context.getString(R.string.err_outside_registration_center));
         }
 
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
@@ -270,7 +276,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
             }
 
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Invalid center coordinates format", e);
+            Log.e(TAG, "Invalid number format in center coordinates or max distance configuration", e);
             throw new ClientCheckedException(context, R.string.err_004);
         }
     }

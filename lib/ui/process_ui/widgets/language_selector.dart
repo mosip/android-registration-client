@@ -86,7 +86,8 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     double? latitude;
     double? longitude;
     try {
-      final position = await globalProvider.fetchLocation();
+      final position = await globalProvider.fetchLocation()
+          .timeout(const Duration(seconds: 10), onTimeout: () => null);
       if (position != null) {
         latitude = position.latitude;
         longitude = position.longitude;
