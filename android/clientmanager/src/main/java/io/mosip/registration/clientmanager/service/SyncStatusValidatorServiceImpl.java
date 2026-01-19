@@ -73,14 +73,8 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
      */
     @Override
     public void validateSyncStatus() throws Exception {
-        Log.i(TAG, "Validating sync status started");
-
         try {
-            // Validate sync job frequencies
             validatingSyncJobsConfig();
-
-            Log.i(TAG, "Sync status validation completed successfully");
-
         } catch (ClientCheckedException e) {
             Log.e(TAG, "Sync status validation failed", e);
             throw e;
@@ -97,17 +91,13 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
      * @throws ClientCheckedException if any job is overdue
      */
     private void validatingSyncJobsConfig() throws Exception {
-        Log.i(TAG, "Validating sync jobs configuration started");
-
         List<SyncJobDef> activeJobs = syncJobDefRepository.getActiveSyncJobs();
         if (activeJobs == null || activeJobs.isEmpty()) {
-            Log.w(TAG, "No active sync jobs found, skipping validation");
             return;
         }
 
         Map<String, String> jobFrequencyMap = getSyncJobFrequencies(activeJobs);
         if (jobFrequencyMap.isEmpty()) {
-            Log.w(TAG, "No sync job frequencies configured, skipping validation");
             return;
         }
         int syncFailureCount = 0;
@@ -124,7 +114,6 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
 
             String configuredFrequencyStr = jobFrequencyMap.get(jobId);
             if (configuredFrequencyStr == null || configuredFrequencyStr.trim().isEmpty()) {
-                Log.d(TAG, "No frequency configured for job: " + jobId + " (" + apiName + ")");
                 continue;
             }
 
@@ -134,26 +123,17 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
                 long lastSyncTimeMillis = jobTransactionService.getLastSyncTime(serviceJobId);
 
                 if (lastSyncTimeMillis == 0) {
-                    Log.d(TAG, "No sync history for job: " + jobId + " (" + apiName + 
-                        ") - Skipping validation");
                     continue;
                 }
 
                 Date lastSyncDate = new Date(lastSyncTimeMillis);
                 int actualDays = getActualDays(lastSyncDate);
 
-                Log.d(TAG, String.format(
-                    "Job [%s] (%s): Configured frequency=%d days, Actual days since last sync=%d",
-                    jobId, apiName, configuredFrequency, actualDays));
                 if (actualDays > configuredFrequency) {
                     syncFailureCount++;
                     errorDetails.append("- ").append(apiName)
                         .append(": Last sync was ").append(actualDays)
                         .append(" days ago (limit: ").append(configuredFrequency).append(" days)\n");
-                    
-                    Log.w(TAG, String.format(
-                        "Sync job [%s] (%s) is overdue. Configured: %d days, Actual: %d days since last sync",
-                        jobId, apiName, configuredFrequency, actualDays));
                 }
 
             } catch (NumberFormatException e) {
@@ -168,8 +148,6 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
             Log.e(TAG, errorMessage);
             throw new ClientCheckedException(RegistrationConstants.OPT_TO_REG_TIME_SYNC_EXCEED, errorMessage);
         }
-
-        Log.i(TAG, "All sync jobs validated successfully");
     }
 
     /**
@@ -179,8 +157,6 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
      * @return Map of jobId to frequency value
      */
     private Map<String, String> getSyncJobFrequencies(List<SyncJobDef> activeJobs) {
-        Log.i(TAG, "Fetching sync job frequencies started");
-
         Map<String, String> jobsMap = new HashMap<>();
 
         for (SyncJobDef syncJobDef : activeJobs) {
@@ -188,7 +164,6 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
             String apiName = syncJobDef.getApiName();
 
             if (apiName == null || apiName.trim().isEmpty()) {
-                Log.w(TAG, "Skipping job with null or empty apiName: " + jobId);
                 continue;
             }
 
@@ -202,15 +177,9 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
             if (configuredValue != null && !configuredValue.trim().isEmpty() 
                 && !configuredValue.equalsIgnoreCase("null")) {
                 jobsMap.put(jobId, configuredValue.trim());
-                Log.d(TAG, String.format(
-                    "Loaded frequency for job [%s] (%s): %s days",
-                    jobId, apiName, configuredValue.trim()));
-            } else {
-                Log.d(TAG, "Frequency property not found for job [" + jobId + "] (" + apiName + "): " + propertyName);
             }
         }
 
-        Log.i(TAG, "Fetched " + jobsMap.size() + " sync job frequency configurations");
         return jobsMap;
     }
 
@@ -239,16 +208,12 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
      */
     @Override
     public void validateCenterToMachineDistance(Double machineLongitude, Double machineLatitude) throws Exception {
-        Log.i(TAG, "Validating center to machine distance started");
-
         String enableFlag = globalParamRepository.getCachedStringGpsDeviceEnableFlag();
         if (enableFlag == null || !"Y".equalsIgnoreCase(enableFlag)) {
-            Log.d(TAG, "GPS distance validation not enabled, skipping");
             return;
         }
 
         if (machineLongitude == null || machineLatitude == null) {
-            Log.d(TAG, "Machine GPS location not available, skipping validation");
             return;
         }
 
@@ -294,20 +259,15 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
 
             double maxAllowedDistance = Double.parseDouble(maxDistanceStr);
 
-            Log.d(TAG, String.format(
-                "Distance validation: Calculated=%.2f meters, Max allowed=%.2f meters",
-                distanceMeters, maxAllowedDistance));
-
             if (distanceMeters > maxAllowedDistance) {
                 Log.e(TAG, String.format(
-                    "Machine is outside allowed distance: %.2f meters (limit: %.2f meters)",
+                    "Distance validation failed - Machine: %.6f,%.6f | Center: %.6f,%.6f | Distance: %.2f m (limit: %.2f m)",
+                    machineLatitude, machineLongitude, centerLatitude, centerLongitude,
                     distanceMeters, maxAllowedDistance));
                 throw new ClientCheckedException(
                     RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION,
                     context.getString(R.string.err_outside_registration_center));
             }
-
-            Log.i(TAG, "Location validated successfully - machine is within allowed distance");
 
         } catch (NumberFormatException e) {
             Log.e(TAG, "Invalid center coordinates format", e);

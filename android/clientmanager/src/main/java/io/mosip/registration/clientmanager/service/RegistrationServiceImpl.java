@@ -164,7 +164,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationDto startRegistration(@NonNull List<String> languages, String flowType, String process) throws Exception {
+    public RegistrationDto startRegistration(@NonNull List<String> languages, String flowType, String process, Double latitude, Double longitude) throws Exception {
         if (registrationDto != null) {
             registrationDto.cleanup();
         }
@@ -197,15 +197,18 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds, rid);
 
-        // Validate machine distance from registration center if location is available
-        if (syncStatusValidatorService != null && this.registrationDto.getGeoLocationDto() != null) {
-            try {
-                syncStatusValidatorService.validateCenterToMachineDistance(
-                    this.registrationDto.getGeoLocationDto().getLongitude(),
-                    this.registrationDto.getGeoLocationDto().getLatitude());
-            } catch (ClientCheckedException e) {
-                Log.e(TAG, "Location validation failed", e);
-                throw e;
+        // Set GPS location if provided and validate distance from registration center
+        if (latitude != null && longitude != null) {
+            this.registrationDto.setGeoLocation(longitude, latitude);
+            
+            // Validate machine distance from registration center if location is available
+            if (syncStatusValidatorService != null) {
+                try {
+                    syncStatusValidatorService.validateCenterToMachineDistance(longitude, latitude);
+                } catch (ClientCheckedException e) {
+                    Log.e(TAG, "Location validation failed", e);
+                    throw e;
+                }
             }
         }
 
