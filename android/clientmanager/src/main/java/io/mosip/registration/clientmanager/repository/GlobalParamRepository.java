@@ -285,4 +285,90 @@ public class GlobalParamRepository {
             return 0L;
         }
     }
+
+    // ========== BioSDK Provider Configuration Methods ==========
+    // Property keys are constructed dynamically (not from RegistrationConstants)
+    // Pattern: "mosip.biometric.sdk.providers.{modality}.{vendor}.{property}"
+
+    /**
+     * Gets the class name for a specific modality provider
+     * Property key: "mosip.biometric.sdk.providers.{modality}.{vendor}.classname"
+     * @param modality "finger", "iris", or "face"
+     * @param vendorName vendor name (e.g., "mockvendor")
+     * @return fully qualified class name or null if not found
+     */
+    public String getBioSDKProviderClassName(String modality, String vendorName) {
+        String key = String.format("mosip.biometric.sdk.providers.%s.%s.classname", modality, vendorName);
+        return getCachedStringGlobalParam(key);
+    }
+
+    /**
+     * Gets the version for a specific modality provider
+     * Property key: "mosip.biometric.sdk.providers.{modality}.{vendor}.version"
+     * @param modality "finger", "iris", or "face"
+     * @param vendorName vendor name (e.g., "mockvendor")
+     * @return version string or null if not found
+     */
+    public String getBioSDKProviderVersion(String modality, String vendorName) {
+        String key = String.format("mosip.biometric.sdk.providers.%s.%s.version", modality, vendorName);
+        return getCachedStringGlobalParam(key);
+    }
+
+    /**
+     * Gets the arguments for a specific modality provider
+     * Property key: "mosip.biometric.sdk.providers.{modality}.{vendor}.args"
+     * @param modality "finger", "iris", or "face"
+     * @param vendorName vendor name (e.g., "mockvendor")
+     * @return arguments string (empty string if not found)
+     */
+    public String getBioSDKProviderArgs(String modality, String vendorName) {
+        String key = String.format("mosip.biometric.sdk.providers.%s.%s.args", modality, vendorName);
+        String value = getCachedStringGlobalParam(key);
+        return value != null ? value : "";
+    }
+
+    /**
+     * Gets the threshold for a specific modality provider
+     * Property key: "mosip.biometric.sdk.providers.{modality}.{vendor}.threshold"
+     * @param modality "finger", "iris", or "face"
+     * @param vendorName vendor name (e.g., "mockvendor")
+     * @return threshold value as string or null if not found
+     */
+    public String getBioSDKProviderThreshold(String modality, String vendorName) {
+        String key = String.format("mosip.biometric.sdk.providers.%s.%s.threshold", modality, vendorName);
+        return getCachedStringGlobalParam(key);
+    }
+
+    /**
+     * Gets the vendor name for a specific modality
+     * Searches for pattern: "mosip.biometric.sdk.providers.{modality}.{vendor}.classname"
+     * @param modality "finger", "iris", or "face"
+     * @return vendor name or null if not found
+     */
+    public String getBioSDKVendorName(String modality) {
+        String prefix = "mosip.biometric.sdk.providers." + modality + ".";
+        String classnameSuffix = ".classname";
+        String pattern = prefix + "%" + classnameSuffix;
+        
+        try {
+            Map<String, Object> dbParams = getGlobalParamsByPattern(pattern);
+            for (String key : dbParams.keySet()) {
+                if (key.startsWith(prefix) && key.endsWith(classnameSuffix)) {
+                    // Extract vendor name: mosip.biometric.sdk.providers.{modality}.{vendor}.classname
+                    String vendorKey = key.substring(prefix.length());
+                    int dotIndex = vendorKey.indexOf('.');
+                    if (dotIndex > 0) {
+                        String vendorName = vendorKey.substring(0, dotIndex);
+                        Log.d(TAG, String.format("Found vendor '%s' for modality '%s'", vendorName, modality));
+                        return vendorName;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Error searching for vendor name for modality: " + modality, e);
+        }
+        
+        Log.w(TAG, String.format("No vendor configured for modality: %s", modality));
+        return null;
+    }
 }

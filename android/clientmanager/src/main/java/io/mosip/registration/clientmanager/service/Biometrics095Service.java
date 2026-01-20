@@ -42,12 +42,12 @@ import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.BiometricsService;
+import io.mosip.registration.clientmanager.util.BioSDKLoader;
 import io.mosip.registration.clientmanager.util.MatchUtil;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.util.KeyManagerConstant;
-import io.mosip.registration.matchsdk.impl.MatchSDK;
 
 public class Biometrics095Service extends BiometricsService {
 
@@ -82,7 +82,10 @@ public class Biometrics095Service extends BiometricsService {
         this.globalParamRepository = globalParamRepository;
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userBiometricRepository = userBiometricRepository;
-        this.iBioApiV2 = new MatchSDK();
+        
+        // Load BioSDK from assets (AAR file) - default to FACE modality for initialization
+        this.iBioApiV2 = BioSDKLoader.loadBioSDK(context, Modality.FACE, globalParamRepository);
+        
         this.BIO_DEVICES = new HashMap<>();
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
@@ -149,11 +152,19 @@ public class Biometrics095Service extends BiometricsService {
                         1, 0,
                         captureDto.getQualityScore()));
 
+                Log.i(TAG, "BiometricsDtoList: started");
+                Log.i(TAG, "BiometricsDtoList: before inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
                 if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
-                    boolean isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
-                    if(isMatched){
-                        Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
-                        return new ArrayList<>();
+                    Log.i(TAG, "BiometricsDtoList: inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
+                    IBioApiV2 modalityBioSDK = BioSDKLoader.loadBioSDK(context, modality, globalParamRepository);
+                    if (modalityBioSDK != null) {
+                        boolean isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, modalityBioSDK);
+                        if(isMatched){
+                            Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
+                            return new ArrayList<>();
+                        }
+                    } else {
+                        Log.w(TAG, "BioSDK not found for " + modality + ", skipping deduplication check");
                     }
                 }
             }
