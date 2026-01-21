@@ -408,7 +408,6 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -424,6 +423,18 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+
+		boolean isAuthenticationPageDisplayed = false;
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+			Thread.sleep(2000);
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed,
+				"Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();

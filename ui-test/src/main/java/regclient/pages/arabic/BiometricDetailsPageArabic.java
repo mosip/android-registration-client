@@ -48,9 +48,10 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
 	@SuppressWarnings("deprecation")
 	public boolean isBiometricDetailsPageDisplayed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
-						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
+		scrollToTop();
+		return isElementDisplayed(
+				findElementWithRetry(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "\")")));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -94,7 +95,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	public IntroducerBiometricPage clickOnIntroducerIrisScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris Scan\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"القزحية مسح\"]")));
 		return new IntroducerBiometricPageArabic(driver);
 
 	}
@@ -102,7 +103,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	public IntroducerBiometricPage clickOnIntroducerRightHandScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Right\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"اليد اليمنى مسح\"]")));
 		return new IntroducerBiometricPageArabic(driver);
 
 	}
@@ -110,7 +111,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	public IntroducerBiometricPage clickOnIntroducerLeftHandScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Left\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"اليد اليسرى مسح\"]")));
 		return new IntroducerBiometricPageArabic(driver);
 
 	}
@@ -118,7 +119,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	public IntroducerBiometricPage clickOnIntroducerThumbScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Thumbs\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"الأبهام مسح\"]")));
 		return new IntroducerBiometricPageArabic(driver);
 
 	}
@@ -126,7 +127,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	public IntroducerBiometricPage clickOnIntroducerFaceScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Face\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"الوجه مسح\"]")));
 		return new IntroducerBiometricPageArabic(driver);
 
 	}

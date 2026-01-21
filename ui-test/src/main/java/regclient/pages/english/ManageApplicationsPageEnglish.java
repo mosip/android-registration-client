@@ -87,6 +87,9 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "Displaying 1 Applications")
 	private WebElement displayOneApplication;
 
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.Button\").instance(0)")
+	private WebElement backButton;
+
 	public ManageApplicationsPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
@@ -231,9 +234,10 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
 	}
-	
+
 	public void clickOnBackButton() {
-	    driver.findElement(By.xpath("(//android.widget.ImageButton)[1]")).click();
+		clickOnElement(backButton);
+
 	}
 
 	public void clickOnExportButton() {

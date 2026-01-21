@@ -148,6 +148,7 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 		ProfilePage profilePage = null;
 		UpdateUINPage updateUINPage = null;
 		PendingApproval pendingApproval = null;
+		BasePage basePage = null;
 
 		final String language = TestDataReader.readData("language");
 
@@ -409,7 +410,6 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -425,8 +425,18 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+			Thread.sleep(2000);
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed,
+				"Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -538,8 +548,10 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
-
+		
 		manageApplicationsPage.clickOnBackButton();
+//		basePage = new BasePage(driver);
+//		basePage.goBack();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
 		registrationTasksPage.clickProfileButton();

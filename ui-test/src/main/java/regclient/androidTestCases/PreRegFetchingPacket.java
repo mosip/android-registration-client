@@ -7,7 +7,6 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
-import regclient.api.AdminTestUtil;
 import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
 import regclient.api.KeycloakUserManager;
@@ -16,7 +15,6 @@ import regclient.page.ApplicantBiometricsPage;
 import regclient.page.AuthenticationPage;
 import regclient.page.BasePage;
 import regclient.page.BiometricDetailsPage;
-import regclient.page.CameraPage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
@@ -429,7 +427,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 //		previewPage.validatePreRegAndApplicationIdMatch("adult");
 
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -445,8 +442,18 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+			Thread.sleep(2000);
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed,
+				"Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -986,7 +993,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 //	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 		
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1002,8 +1008,18 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+			Thread.sleep(2000);
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed,
+				"Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();

@@ -77,10 +77,25 @@ public class BasePage {
 		element.click();
 	}
 
+	public void clickOnElementByLocator(By locator) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		wait.ignoring(StaleElementReferenceException.class);
+		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+		element.click();
+	}
+
 	private void waitForElementToBeVisible(WebElement element) {
 		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(30));
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
+	
+	protected void waitForElementToBeClickable(WebElement element) {
+		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(30));
+		wait.until(ExpectedConditions.refreshed(
+	            ExpectedConditions.elementToBeClickable(element)
+	        ));
+	}
+
 
 	protected boolean isElementDisplayed(WebElement element, int waitTime) {
 		try {
@@ -94,8 +109,16 @@ public class BasePage {
 	protected boolean isElementEnabled(WebElement element) {
 		try {
 			waitForElementToBeVisible(element);
-			element.isEnabled();
-			return true;
+			return element.isEnabled();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	protected boolean isElementDisabled(WebElement element) {
+		try {
+			waitForElementToBeVisible(element);
+			return !element.isEnabled();
 		} catch (Exception e) {
 			return false;
 		}
@@ -758,25 +781,41 @@ public class BasePage {
 	}
 
 	protected void swipeUp() {
+		hideKeyboardIfVisible(); // ⭐ EXTRA SAFETY
+
 		Dimension size = driver.manage().window().getSize();
 		int startX = size.width / 2;
-
-		int startY = (int) (size.height * 0.85); // lower point
-		int endY = (int) (size.height * 0.40); // higher point (scroll more)
+		int startY = (int) (size.height * 0.85);
+		int endY = (int) (size.height * 0.40);
 
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-		Sequence swipe = new Sequence(finger, 1);
-
-		swipe.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
-		swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-		swipe.addAction(finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), startX, endY));
-		swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+		Sequence swipe = new Sequence(finger, 1)
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+				.addAction(
+						finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), startX, endY))
+				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		driver.perform(Collections.singletonList(swipe));
 	}
 
 	protected void scrollUntilElementVisible(By locator) {
-		for (int i = 0; i < 10; i++) {
+
+		hideKeyboardIfVisible();
+
+		// 1️⃣ FIRST: if element is already visible → DO NOTHING
+		try {
+			WebElement el = driver.findElement(locator);
+			if (el.isDisplayed()) {
+				return;
+			}
+		} catch (Exception ignored) {
+			// element not yet visible
+		}
+
+		// 2️⃣ SCROLL DOWN to find element
+		for (int i = 0; i < 6; i++) {
+			swipeUp();
 			try {
 				WebElement el = driver.findElement(locator);
 				if (el.isDisplayed()) {
@@ -784,11 +823,88 @@ public class BasePage {
 				}
 			} catch (Exception ignored) {
 			}
-
-			swipeUp();
 		}
 
-		throw new NoSuchElementException("Element not found after scrolling: " + locator);
+		// 3️⃣ LAST RESORT: go back to top and try again
+		scrollToTopSafe();
+		hideKeyboardIfVisible();
+
+		for (int i = 0; i < 6; i++) {
+			swipeUp();
+			try {
+				WebElement el = driver.findElement(locator);
+				if (el.isDisplayed()) {
+					return;
+				}
+			} catch (Exception ignored) {
+			}
+		}
+
+		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
 	}
+
+	public void clickAndsendKeysToTextBoxByLocator(By locator, String value) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		wait.ignoring(StaleElementReferenceException.class);
+
+		wait.until(Webdriver -> {
+			WebElement element = Webdriver.findElement(locator);
+			element.click();
+			element.clear();
+			element.sendKeys(value);
+			return true;
+		});
+	}
+
+	public boolean isElementEnabled(By locator) {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+			wait.ignoring(StaleElementReferenceException.class);
+
+			return wait.until(Webdriver -> {
+				WebElement element = Webdriver.findElement(locator);
+				return element.isEnabled();
+			});
+
+		} catch (TimeoutException | NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	public void hideKeyboardAndClick(By locator) {
+		hideKeyboardIfVisible();
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		wait.ignoring(StaleElementReferenceException.class);
+
+		WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
+
+		el.click();
+	}
+
+	public void hideKeyboardIfVisible() {
+		try {
+			((HidesKeyboard) driver).hideKeyboard();
+		} catch (Exception e) {
+			// Keyboard not visible – ignore
+		}
+	}
+
+	public void scrollUntilVisible(By locator, int maxScrolls) {
+		int count = 0;
+		while (count < maxScrolls) {
+			if (isElementDisplayed(locator)) {
+				return;
+			}
+			swipeOrScroll();
+			count++;
+		}
+		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
+	}
+
+	public void goBack() {
+		driver.navigate().back();
+	}
+
 
 }

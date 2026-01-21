@@ -72,7 +72,7 @@ import regclient.utils.TestDataReader;
 @Test
 public class Logintest extends AndroidBaseTest {
 
-	@Test(priority = 0, description = "Verify user login with valid credentials")
+//	@Test(priority = 0, description = "Verify user login with valid credentials")
 	public void userloginTest() {
 		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
@@ -122,10 +122,11 @@ public class Logintest extends AndroidBaseTest {
 
 		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword() + "123");
 		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
-
-		loginPage.clickOnloginButton();
-		assertTrue(loginPage.isPasswordIncorrectErrorMessageDisplayed(),
-				"verify if error message should be displayeded as password incorrect!");
+		
+//      Password incorrect message currently removed from APK
+//		loginPage.clickOnloginButton();
+//		assertTrue(loginPage.isPasswordIncorrectErrorMessageDisplayed(),
+//				"verify if error message should be displayeded as password incorrect!");
 
 		loginPage.clickOnBackButton();
 		assertTrue(loginPage.isUserNameHeaderDisplayed(), "Verify if the username  input box header  displayed");

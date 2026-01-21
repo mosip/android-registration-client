@@ -100,6 +100,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 							+ FetchUiSpec.getValueUsingId(id)
 							+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
 					CameraPage cameraPage = new CameraPage(driver);
+					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");

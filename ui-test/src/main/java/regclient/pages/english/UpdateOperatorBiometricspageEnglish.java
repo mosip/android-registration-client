@@ -378,10 +378,8 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 		clickOnElement(homeButton);
 	}
 
-	@Override
 	public void clickOnVerifyAndSaveButton() {
 		clickOnElement(verifyAndSaveButton);
-
 	}
 
 	public void clickOnBackButton() {
