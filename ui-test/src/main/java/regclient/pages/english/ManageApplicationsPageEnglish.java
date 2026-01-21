@@ -234,10 +234,9 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
 	}
-
+	
 	public void clickOnBackButton() {
 		clickOnElement(backButton);
-
 	}
 
 	public void clickOnExportButton() {

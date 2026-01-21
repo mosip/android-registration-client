@@ -352,7 +352,20 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	}
 
 	public void clickOnVerifyAndSaveButton() {
-		clickOnElement(verifyAndSaveButton);
+		boolean isDismissLoaded = false;
+
+		for (int i = 0; i < 3; i++) {
+			clickOnElement(verifyAndSaveButton);
+
+			if (isDismissPageLoaded()) {
+				isDismissLoaded = true;
+				break;
+			}
+		}
+
+		if (!isDismissLoaded) {
+			System.out.println("INFO: Dismiss page not loaded after clicking Verify & Save 3 times");
+		}
 	}
 
 	public boolean isDismissPageLoaded() {

@@ -83,6 +83,9 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
 	private WebElement latestAidCheckBox;
+	
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.Button\").instance(0)")
+	private WebElement backButton;
 
 	public ManageApplicationsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -230,7 +233,7 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 	}
 
 	public void clickOnBackButton() {
-		driver.navigate().back();
+		clickOnElement(backButton);
 	}
 
 	public void clickOnExportButton() {

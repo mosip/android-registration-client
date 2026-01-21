@@ -438,6 +438,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
 //		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
 //				"Verify if application ID In PreviewPage is displayed");
+
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
@@ -591,16 +592,53 @@ public class BiometricCorrection extends AndroidBaseTest {
 				break;
 		}
 		manageApplicationsPage.clickOnBackButton();
-		assertTrue(registrationTasksPage.isOperationalTaskDisplayed(), "Verify if operation tasks page is loaded");
-		
+
 		// Return to mocksbi page
 		mockSBIPage.switchToMockSBI();
-		mockSBIPage.clickOnMockSbiSettingsButton();
 		mockSBIPage.setAllModalityHighScore();
 		mockSBIPage.switchBackToArcApp();
 		// biocorrection flow
-	
-		registrationTasksPage.clickOnRegistrationTasksTab();
+		if ("eng".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		loginPage.selectLanguage();
+
+		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),
+				"verify if the welcome msg in selected language displayed");
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		loginPage.clickOnNextButton();
+
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
+		loginPage.clickOnloginButton();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		registrationTasksPage.handleLocationPermission();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
@@ -781,7 +819,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 		assertTrue(previewPage.isBiometricCorrectionTitleDisplayed(),
 				"Verify if biometric correction title is displayed");
-		
+
+		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -797,19 +836,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-
-		boolean isAuthenticationPageDisplayed = false;
-		for (int i = 0; i < 3; i++) {
-			previewPage.clickOnContinueButton();
-			Thread.sleep(2000);
-			if (authenticationPage.isAuthenticationPageDisplayed()) {
-				isAuthenticationPageDisplayed = true;
-				break;
-			}
-		}
-		assertTrue(isAuthenticationPageDisplayed,
-				"Authentication page not displayed after retries");
-		
+		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
+				"Verify if authentication details page is displayed");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -938,26 +966,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 				break;
 		}
 		manageApplicationsPage.clickOnBackButton();
-		registrationTasksPage.clickProfileButton();
-
-		if ("eng".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageEnglish(driver);
-		} else if ("hin".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageHindi(driver);
-		} else if ("fra".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageFrench(driver);
-		} else if ("kan".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageKannada(driver);
-		} else if ("tam".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageTamil(driver);
-		} else if ("ara".equalsIgnoreCase(language)) {
-			profilePage = new ProfilePageArabic(driver);
-		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
-		}
-		profilePage.clickOnLogoutButton();
-		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-	
 	}
 
 	@Test(priority = 1, description = "Verify minor biometric correction")

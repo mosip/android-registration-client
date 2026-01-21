@@ -28,10 +28,20 @@ public interface SyncJobDefDao {
     /**
      * To get a job in the List of {@link SyncJobDef}
      *
+     * @param jobId the job id
      * @return sync job
      */
-    @Query("select * from sync_job_def where is_deleted == 0 or is_deleted is null and id=:jobId")
+    @Query("select * from sync_job_def where (is_deleted == 0 or is_deleted is null) and id=:jobId")
     SyncJobDef findOneById(String jobId);
+
+    /**
+     * To get a job by API name in the List of {@link SyncJobDef}
+     *
+     * @param apiName the API name
+     * @return sync job
+     */
+    @Query("select * from sync_job_def where (is_deleted == 0 or is_deleted is null) and api_name=:apiName")
+    SyncJobDef findOneByApiName(String apiName);
 
     /**
      * To get all the List of active {@link SyncJobDef}

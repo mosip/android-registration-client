@@ -217,6 +217,34 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
+  Future<bool> deleteRegistrationPackets(String jobId) async {
+    try {
+      final deleteResponse = await SyncApi().deleteRegistrationPackets(jobId);
+      return deleteResponse;
+    } on PlatformException catch (e) {
+      debugPrint('deleteRegistrationPackets PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('deleteRegistrationPackets failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> syncPacketStatus(String jobId) async {
+    try {
+      final syncResponse = await SyncApi().syncPacketStatus(jobId);
+      return syncResponse;
+    } on PlatformException catch (e) {
+      debugPrint('syncPacketStatus PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('syncPacketStatus failed: $e');
+      return false;
+    }
+  }
+
+  @override
   Future<String> getLastSyncTimeByJobId(String jobId) async{
     try {
       final lastSyncTime = await SyncApi().getLastSyncTimeByJobId(jobId);
@@ -241,6 +269,62 @@ class SyncResponseServiceImpl implements SyncResponseService {
     } catch (e) {
       debugPrint('nextSync failed: $e');
       return "false";
+    }
+  }
+
+  @override
+  Future<List<String?>> getPermittedJobs() async {
+    try {
+      final permittedJobs = await SyncApi().getPermittedJobs();
+      return permittedJobs;
+    } on PlatformException catch (e) {
+      debugPrint('getPermittedJobs PlatformException: ${e.message}');
+      return [];
+    } catch (e) {
+      debugPrint('getPermittedJobs failed: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<bool> isValidCronExpression(String cronExpression) async {
+    try {
+      final isValid = await SyncApi().isValidCronExpression(cronExpression);
+      return isValid;
+    } on PlatformException catch (e) {
+      debugPrint('isValidCronExpression PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('isValidCronExpression failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> modifyJobCronExpression(String jobId, String cronExpression) async {
+    try {
+      final success = await SyncApi().modifyJobCronExpression(jobId, cronExpression);
+      return success;
+    } on PlatformException catch (e) {
+      debugPrint('modifyJobCronExpression PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('modifyJobCronExpression failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<String?> getValue(String name) async {
+    try {
+      final value = await SyncApi().getValue(name);
+      return value;
+    } on PlatformException catch (e) {
+      debugPrint('getValue PlatformException: ${e.message}');
+      return null;
+    } catch (e) {
+      debugPrint('getValue failed: $e');
+      return null;
     }
   }
 }

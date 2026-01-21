@@ -12,4 +12,10 @@ abstract class GlobalConfigSettingsApi {
   void modifyConfigurations(Map<String, String> localPreferences);
   @async
   String getGpsEnableFlag();
+  @async
+  int getPRIDLength();
+  @async
+  int getUINLength();
+  @async
+  int getVIDLength();
 }

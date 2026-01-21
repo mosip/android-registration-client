@@ -459,8 +459,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				break;
 			}
 		}
-		assertTrue(isAuthenticationPageDisplayed,
-				"Authentication page not displayed after retries");
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -600,6 +599,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				break;
 		}
 		manageApplicationsPage.clickOnBackButton();
+
 		registrationTasksPage.clickProfileButton();
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -617,9 +617,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-	
 
 	}
 
@@ -1172,6 +1172,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if Biometrics Information In PreviewPage is displayed");
 
 		String Aid = previewPage.getAID();
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1197,8 +1198,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				break;
 			}
 		}
-		assertTrue(isAuthenticationPageDisplayed,
-				"Authentication page not displayed after retries");
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -1316,7 +1316,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		manageApplicationsPage.clickOnSearchCheckBox();
 		manageApplicationsPage.clickOnUploadButton();
 
-		
 		registrationTasksPage.clickProfileButton();
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -1336,7 +1335,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-	
+
 	}
 
 }

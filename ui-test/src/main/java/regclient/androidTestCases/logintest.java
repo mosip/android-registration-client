@@ -70,9 +70,10 @@ import regclient.pages.tamil.UpdateOperatorBiometricspageTamil;
 import regclient.utils.TestDataReader;
 
 @Test
-public class Logintest extends AndroidBaseTest {
+public class LoginTest extends AndroidBaseTest {
 
-//	@Test(priority = 0, description = "Verify user login with valid credentials")
+
+	@Test(priority = 0, description = "Verify user login with valid credentials")
 	public void userloginTest() {
 		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;

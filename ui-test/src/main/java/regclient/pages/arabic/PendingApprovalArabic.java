@@ -230,4 +230,5 @@ public class PendingApprovalArabic extends PendingApproval {
 		return isElementEnabled(authenticateButton);
 	}
 
+
 }

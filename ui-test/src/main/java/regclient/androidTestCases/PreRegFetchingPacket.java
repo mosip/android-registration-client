@@ -992,7 +992,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 //	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {

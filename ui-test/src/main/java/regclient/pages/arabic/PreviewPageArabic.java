@@ -48,7 +48,7 @@ public class PreviewPageArabic extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "فقدت UIN")
 	private WebElement lostUinTitle;
-
+	
 	@AndroidFindBy(accessibility = "تصحيح البيانات البيومترية")
 	private WebElement biometricCorrectionTitle;
 
@@ -133,9 +133,10 @@ public class PreviewPageArabic extends PreviewPage {
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
 	}
-
+	
 	public boolean isBiometricCorrectionTitleDisplayed() {
 		return isElementDisplayed(biometricCorrectionTitle);
 	}
+
 
 }

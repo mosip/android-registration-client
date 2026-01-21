@@ -88,14 +88,11 @@ public class BasePage {
 		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(30));
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
-	
+
 	protected void waitForElementToBeClickable(WebElement element) {
 		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(30));
-		wait.until(ExpectedConditions.refreshed(
-	            ExpectedConditions.elementToBeClickable(element)
-	        ));
+		wait.until(ExpectedConditions.refreshed(ExpectedConditions.elementToBeClickable(element)));
 	}
-
 
 	protected boolean isElementDisplayed(WebElement element, int waitTime) {
 		try {
@@ -803,17 +800,15 @@ public class BasePage {
 
 		hideKeyboardIfVisible();
 
-		// 1️⃣ FIRST: if element is already visible → DO NOTHING
 		try {
 			WebElement el = driver.findElement(locator);
 			if (el.isDisplayed()) {
 				return;
 			}
 		} catch (Exception ignored) {
-			// element not yet visible
+
 		}
 
-		// 2️⃣ SCROLL DOWN to find element
 		for (int i = 0; i < 6; i++) {
 			swipeUp();
 			try {
@@ -825,7 +820,6 @@ public class BasePage {
 			}
 		}
 
-		// 3️⃣ LAST RESORT: go back to top and try again
 		scrollToTopSafe();
 		hideKeyboardIfVisible();
 
@@ -901,10 +895,4 @@ public class BasePage {
 		}
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
 	}
-
-	public void goBack() {
-		driver.navigate().back();
-	}
-
-
 }

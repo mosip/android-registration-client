@@ -358,7 +358,6 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 
 	public void clickOnVerifyAndSaveButton() {
-
 		boolean isDismissLoaded = false;
 
 		for (int i = 0; i < 3; i++) {
