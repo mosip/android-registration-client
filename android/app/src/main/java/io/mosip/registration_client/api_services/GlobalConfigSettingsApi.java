@@ -85,4 +85,43 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
         }
         result.success(gpsFlag);
     }
+
+    @Override
+    public void getPRIDLength(@NonNull GlobalConfigSettingsPigeon.Result<Long> result) {
+        int pridLength = 0;
+        try {
+            pridLength = globalParamRepository.getCachedIntegerPRIDLength();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching PRID length", e);
+            result.error(e);
+        }
+        result.success((long) pridLength);
+    }
+
+    @Override
+    public void getUINLength(@NonNull GlobalConfigSettingsPigeon.Result<Long> result) {
+        int uinLength = 0;
+        try {
+            uinLength = globalParamRepository.getCachedIntegerUINLength();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching UIN length", e);
+            result.error(e);
+        }
+        result.success((long) uinLength);
+    }
+
+    @Override
+    public void getVIDLength(@NonNull GlobalConfigSettingsPigeon.Result<Long> result) {
+        int vidLength = 0;
+        try {
+            vidLength = globalParamRepository.getCachedIntegerVIDLength();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching VID length", e);
+            result.error(e);
+        }
+        result.success((long) vidLength);
+
+    }
+
+
 }

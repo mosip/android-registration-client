@@ -47,6 +47,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ResponseDto;
@@ -67,6 +68,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
+import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import javax.inject.Provider;
@@ -96,7 +98,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private static final String TAG = RegistrationServiceImpl.class.getSimpleName();
     private static final String SOURCE = "REGISTRATION_CLIENT";
-    private static final int MIN_SPACE_REQUIRED_MB = 50;
+    private static final int DEFAULT_MIN_SPACE_REQUIRED_MB = 50;
 
     private Context context;
     private RegistrationDto registrationDto;
@@ -112,6 +114,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private RegistrationCenterRepository registrationCenterRepository;
     private LocationValidationService locationValidationService;
     private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
+    private PacketService packetService;
     public static final String BOOLEAN_FALSE = "false";
 
     private Biometrics095Service biometricService;
@@ -128,7 +131,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    RegistrationCenterRepository registrationCenterRepository,
                                    LocationValidationService locationValidationService,
                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
-                                   Biometrics095Service biometricService) {
+                                   Biometrics095Service biometricService,
+                                   PacketService packetService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -143,6 +147,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.locationValidationService = locationValidationService;
         this.preRegistrationDataSyncServiceProvider = preRegistrationDataSyncServiceProvider;
         this.biometricService = biometricService;
+        this.packetService = packetService;
     }
 
     @Override
@@ -247,13 +252,14 @@ public class RegistrationServiceImpl implements RegistrationService {
             }
         }
 
+            String format = globalParamRepository.getCachedStringDocType();
+            String formatToCheck = format != null ? format : "pdf";
             this.registrationDto.getAllDocumentFields().forEach(entry -> {
                 Document document = new Document();
                 document.setType(entry.getValue().getType());
                 document.setFormat(entry.getValue().getFormat());
                 document.setRefNumber(entry.getValue().getRefNumber());
-                document.setDocument(("pdf".equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
-
+                document.setDocument((formatToCheck.equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
                 packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
                 packetWriterService.addMetaInfo(this.registrationDto.getRId(),"documents", document);
             });
@@ -314,6 +320,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
                 centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(), this.registrationDto.getApplicationId());
+
+        // Auto-approve when supervisor approval is disabled (flag not "Y")
+        String supervisorApprovalFlag = globalParamRepository.getCachedStringGlobalParam(
+                RegistrationConstants.SUPERVISOR_APPROVAL_CONFIG_FLAG);
+        if (supervisorApprovalFlag != null && !RegistrationConstants.ENABLE.equalsIgnoreCase(supervisorApprovalFlag.trim())) {
+            registrationRepository.updateStatus(this.registrationDto.getPacketId(), null,
+                    PacketClientStatus.APPROVED.name());
+        }
 
         // Delete pre-registration record after successful packet creation
         if (this.registrationDto.getPreRegistrationId() != null
@@ -629,13 +643,33 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
         //free space validation
+        int minSpaceRequiredMB = globalParamRepository.getCachedIntegerDiskSpaceSize();
+        if (minSpaceRequiredMB == 0) {
+            minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
+        }
+        
         long externalSpace = context.getExternalCacheDir().getUsableSpace();
-        if ((externalSpace / (1024 * 1024)) < MIN_SPACE_REQUIRED_MB)
+        if ((externalSpace / (1024 * 1024)) < minSpaceRequiredMB)
             throw new ClientCheckedException(context, R.string.err_006);
 
         //is machine and center active
         if (centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
             throw new ClientCheckedException(context, R.string.err_007);
+
+        // registered packet approval time breach check
+        if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
+            throw new ClientCheckedException("PAK_APPRVL_MAX_TIME");
+        }
+
+        // validate last export duration
+        if (packetService != null && packetService.validatingLastExportDuration()) {
+            throw new ClientCheckedException("PAK_UPLOAD_MAX_TIME");
+        }
+
+        // validate max packet count limit
+        if (packetService != null && packetService.isMaxPacketCountLimitReached()) {
+            throw new ClientCheckedException("PAK_UPLOAD_MAX_COUNT");
+        }
     }
 
     private byte[] convertImageToPDF(List<byte[]> images) {

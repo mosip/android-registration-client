@@ -36,4 +36,24 @@ public class SyncJobDefRepository {
         List<SyncJobDef> activeJobs = this.syncJobDefDao.findAllByActiveStatus(true);
         return activeJobs;
     }
+
+    /**
+     * Get a sync job definition by job ID
+     *
+     * @param jobId the job ID
+     * @return sync job definition or null if not found
+     */
+    public SyncJobDef getSyncJobDefById(String jobId) {
+        return this.syncJobDefDao.findOneById(jobId);
+    }
+
+    /**
+     * Get a sync job definition by API name
+     *
+     * @param apiName the API name
+     * @return sync job definition or null if not found
+     */
+    public SyncJobDef getSyncJobDefByApiName(String apiName) {
+        return this.syncJobDefDao.findOneByApiName(apiName);
+    }
 }

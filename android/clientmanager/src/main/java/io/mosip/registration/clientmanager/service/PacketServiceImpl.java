@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -305,6 +306,7 @@ public class PacketServiceImpl implements PacketService {
             } else {
                 packet.setPacketId(reg.getPacketId());
             }
+            packets.add(packet);
         }
         packetStatusRequest.setRequest(packets);
 
@@ -317,10 +319,11 @@ public class PacketServiceImpl implements PacketService {
                     int packetSyncSuccess = 0;
 
                     if (packetStatusList != null && packetStatusList.size() > 0) {
+                        long currentTimestamp = System.currentTimeMillis();
                         for (PacketStatusDto packetStatus : packetStatusList) {
                             PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getRegistrationId() != null ? packetStatus.getRegistrationId() : packetStatus.getPacketId(), packetStatus.getStatusCode());
-                            registrationRepository.updateStatus(updateDto.getRegistrationId(), updateDto.getStatusCode(),
-                                    PacketClientStatus.UPLOADED.name());
+                            // Update server status with timestamp
+                            registrationRepository.updateServerStatusWithTimestamp(updateDto.getRegistrationId(), updateDto.getStatusCode(), currentTimestamp);
                             packetSyncSuccess++;
                         }
                     }
@@ -344,5 +347,160 @@ public class PacketServiceImpl implements PacketService {
         Registration registration = registrationRepository.getRegistration(packetId);
         String packetStatus = registration.getServerStatus() == null ? registration.getClientStatus() : registration.getServerStatus();
         return packetStatus;
+    }
+
+    @Override
+    public boolean isRegisteredPacketApprovalTimeBreached() {
+        try {
+            String limitInDays = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT);
+            if (limitInDays == null || limitInDays.trim().isEmpty()) {
+                return false;
+            }
+            long limitDays = Long.parseLong(limitInDays.trim());
+            if (limitDays <= 0) {
+                return false;
+            }
+            Registration oldestPendingRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name());
+            if (oldestPendingRegistration == null) {
+                return false;
+            }
+
+            long thresholdTimeMillis = System.currentTimeMillis() - (limitDays * 24L * 60L * 60L * 1000L);
+
+            return oldestPendingRegistration.getCrDtime() < thresholdTimeMillis;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid REG_PAK_MAX_TIME_APPRV_LIMIT configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate registered packet approval time breach", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean validatingLastExportDuration() {
+        try {
+            String limitInDays = globalParamRepository.getCachedStringGlobalParam(
+                    RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME);
+
+            if (limitInDays == null || limitInDays.trim().isEmpty()) {
+                return false;
+            }
+
+            long maxAllowedDays = Long.parseLong(limitInDays.trim());
+            if (maxAllowedDays <= 0) {
+                return false;
+            }
+
+            Registration oldestApprovedRegistration = registrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name());
+            if (oldestApprovedRegistration == null) {
+                return false;
+            }
+
+            Long creationTimeMillis = oldestApprovedRegistration.getCrDtime();
+            if (creationTimeMillis == null) {
+                return false;
+            }
+
+            long thresholdTimeMillis = System.currentTimeMillis() - (maxAllowedDays * 24L * 60L * 60L * 1000L);
+
+            return creationTimeMillis < thresholdTimeMillis;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate last export time", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isMaxPacketCountLimitReached() {
+        try {
+            String maxCountStr = globalParamRepository.getCachedStringGlobalParam(
+                    RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ);
+
+            if (maxCountStr == null || maxCountStr.trim().isEmpty()) {
+                return false;
+            }
+
+            double maxCount = Double.parseDouble(maxCountStr.trim());
+            if (maxCount <= 0) {
+                return false;
+            }
+
+            int yetToExportCount = registrationRepository.getYetToExportCount();
+
+            if (yetToExportCount >= maxCount) {
+                return true;
+            }
+
+            return false;
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, "Invalid REG_PAK_MAX_CNT_OFFLINE_FREQ configuration", ex);
+            return false;
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate max packet count limit", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public void deleteRegistrationPackets() {
+        Log.i(TAG, "Starting registration packet deletion job");
+        try {
+            String configuredDays = globalParamRepository
+                    .getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS);
+            int days = Integer.parseInt(configuredDays);
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -days);
+            long cutoffTime = cal.getTimeInMillis();
+
+            List<String> serverStatuses = Arrays.asList(
+                    PacketServerStatus.PROCESSED.name(),
+                    PacketServerStatus.ACCEPTED.name());
+
+            List<Registration> registrations = registrationRepository.findByServerStatusAndCrDtimeBefore(serverStatuses,
+                    cutoffTime);
+
+            if (registrations != null && !registrations.isEmpty()) {
+                for (Registration registration : registrations) {
+                    delete(registration);
+                }
+            } else {
+                Log.i(TAG, "No registrations found to delete");
+            }
+        } catch (NumberFormatException | NullPointerException ex) {
+            Log.e(TAG, "Invalid or missing REG_DELETION_CONFIGURED_DAYS configuration", ex);
+        } catch (Exception e) {
+            Log.e(TAG, "Error during registration packet deletion", e);
+        }
+    }
+
+    private void delete(Registration registration) {
+        try {
+            String filePath = registration.getFilePath();
+            if (filePath != null) {
+                File zipFile = new File(filePath);
+
+                // Delete ZIP packet file
+                if (zipFile.exists()) {
+                    if (zipFile.delete()) {
+                        Log.i(TAG, "Deleted zip file: " + filePath);
+                    } else {
+                        Log.e(TAG, "Failed to delete zip file: " + filePath);
+                    }
+                }
+            }
+
+            // Delete database record
+            registrationRepository.deleteRegistration(registration.getPacketId());
+        } catch (Exception e) {
+            Log.e(TAG, "Error deleting registration: " + registration.getPacketId(), e);
+        }
     }
 }

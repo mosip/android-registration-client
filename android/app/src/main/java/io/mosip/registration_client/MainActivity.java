@@ -214,12 +214,27 @@ public class MainActivity extends FlutterActivity {
         }
     };
 
+    private BroadcastReceiver rescheduleReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String jobApiName = intent.getStringExtra(UploadBackgroundService.EXTRA_JOB_API_NAME);
+            if (jobApiName != null) {
+                Log.d(getClass().getSimpleName(), "Rescheduling job due to cron change: " + jobApiName);
+                createBackgroundTask(jobApiName);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        createBackgroundTask("registrationPacketUploadJob");
         IntentFilter intentFilterUpload = new IntentFilter("SYNC_JOB_TRIGGER");
         registerReceiver(broadcastReceiver, intentFilterUpload);
+        
+        // Register receiver for rescheduling jobs when cron expression changes
+        IntentFilter rescheduleFilter = new IntentFilter("RESCHEDULE_JOB");
+        registerReceiver(rescheduleReceiver, rescheduleFilter);
     }
 
     private void initializeAutoSync() {
@@ -264,6 +279,11 @@ public class MainActivity extends FlutterActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
+        try {
+            unregisterReceiver(rescheduleReceiver);
+        } catch (Exception e) {
+            // Receiver might not be registered, ignore
+        }
     }
 
     public void createBackgroundTask(String api){

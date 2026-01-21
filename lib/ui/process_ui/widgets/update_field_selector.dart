@@ -36,9 +36,12 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, List<Field>> fieldsMap = {};
-  final RegExp validation = RegExp(r'^([0-9]{10})$');
+  final RegExp inputValidation = RegExp(r'^[0-9]+$');
   TextEditingController controller = TextEditingController();
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  int? uinLength;
+  int? vidLength;
+  String? idSubType;
 
   @override
   void initState() {
@@ -46,6 +49,10 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
     controller = TextEditingController(text: globalProvider.updateUINNumber);
+    
+    // Fetch UIN and VID lengths from backend
+    _initializeUINVIDLength();
+    
     for (var screen in widget.process.screens!) {
       for (var field in screen!.fields!) {
         if (field!.group != null) {
@@ -53,6 +60,14 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
             fieldsMap[field.group!] = [];
           }
           fieldsMap[field.group]!.add(field);
+        }
+
+        // Determine ID subType from available fields
+        if (field.subType != null && idSubType == null) {
+          String subType = field.subType!.toLowerCase();
+          if (subType == "uin" || subType == "vid") {
+            idSubType = subType;
+          }
         }
       }
     }
@@ -73,6 +88,21 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
         }
       },
     ));
+  }
+
+
+  Future<void> _initializeUINVIDLength() async {
+    await globalProvider.getUINLength();
+    await globalProvider.getVIDLength();
+
+    // Update local variables after fetching from backend
+    // Use default values if null: UIN = 10, VID = 16
+    if (mounted) {
+      setState(() {
+        uinLength = globalProvider.uinLength ?? 10;
+        vidLength = globalProvider.vidLength ?? 16;
+      });
+    }
   }
 
   _getFieldTitle(Field field) {
@@ -180,11 +210,22 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                         globalProvider.updateUINNumber = value;
                       },
                       validator: (value) {
-                        if (value == null) {
-                          return appLocalizations.valid_uin;
-                        } else if (!validation.hasMatch(value)) {
+                        if (value == null || value.isEmpty) {
                           return appLocalizations.valid_uin;
                         }
+
+                        // Determine validation length based on available field subType in UI spec
+                        int? expectedLength = idSubType == "vid" ? vidLength : uinLength;
+                        // Check if length matches the expected length
+                        if (expectedLength != null && value.length != expectedLength) {
+                          return appLocalizations.valid_uin;
+                        }
+
+                        // Check if value contains only digits
+                        if (!inputValidation.hasMatch(value)) {
+                          return appLocalizations.valid_uin;
+                        }
+
                         return null;
                       },
                       decoration: InputDecoration(

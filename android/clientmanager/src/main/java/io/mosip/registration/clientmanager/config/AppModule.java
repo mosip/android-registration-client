@@ -53,6 +53,7 @@ import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
 import io.mosip.registration.clientmanager.service.external.impl.PreRegZipHandlingServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
@@ -205,10 +206,11 @@ public class AppModule {
                                                    RegistrationCenterRepository registrationCenterRepository,
                                                    LocationValidationService locationValidationService,
                                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
-                                                   Biometrics095Service biometricService) {
+                                                   Biometrics095Service biometricService,
+                                                   PacketService packetService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService);
+                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService);
     }
 
     @Provides
@@ -258,8 +260,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil) {
-        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService, dateUtil);
+    JobManagerService provideJobManagerService(SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil, LocalConfigService localConfigService) {
+        return new JobManagerServiceImpl(appContext, syncJobDefRepository, jobTransactionService, dateUtil, localConfigService);
     }
 
     @Provides

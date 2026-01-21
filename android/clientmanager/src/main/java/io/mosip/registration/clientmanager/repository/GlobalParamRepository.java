@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -203,6 +202,49 @@ public class GlobalParamRepository {
 
     public long getCachedWriteTimeout() {
         return parseLongWithDefault(RegistrationConstants.HTTP_API_WRITE_TIMEOUT);
+    }
+
+    public String getCachedStringInvalidLoginCount() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_COUNT);
+    }
+
+    public String getCachedStringInvalidLoginTime() {
+        return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
+    }
+
+    public int getCachedIntegerDiskSpaceSize() {
+        return getCachedIntegerGlobalParam(RegistrationConstants.DISK_SPACE);
+    }
+
+    public int getCachedIntegerPRIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.PRID_LENGTH);
+    }
+
+    public int getCachedIntegerUINLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.UIN_LENGTH);
+    }
+
+    public int getCachedIntegerVIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.VID_LENGTH);
+    }
+    public String getCachedStringDocType() {
+        return globalParamMap.get(RegistrationConstants.DOC_TYPE);
+    }
+
+    public String getCachedStringAppName() {
+        return globalParamMap.get(RegistrationConstants.APP_NAME);
+    }
+
+    public String getCachedStringAppId() {
+        return globalParamMap.get(RegistrationConstants.APP_ID);
+    }
+
+    public String getCachedStringDefaultHostIp() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_IP);
+    }
+
+    public String getCachedStringDefaultHostName() {
+        return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_NAME);
     }
 
     /**
