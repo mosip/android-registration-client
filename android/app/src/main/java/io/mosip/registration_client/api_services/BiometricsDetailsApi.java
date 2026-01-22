@@ -1048,8 +1048,9 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
             Uri uri = bundle.getParcelable(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
             InputStream respData = activity.getContentResolver().openInputStream(uri);
+            boolean isOperatorOnboarding = fieldId.equals(OPERATOR_BIOMETRICS);
             List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
-                    getExceptionAttributes());
+                    getExceptionAttributes(), isOperatorOnboarding);
             // if attempts is zero, there is no need to maintain the counter
             if (fieldId.equals(OPERATOR_BIOMETRICS)) {
                 removeDuplicatesFromOperatorBiometricList(currentModality);

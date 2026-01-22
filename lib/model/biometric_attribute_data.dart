@@ -9,6 +9,7 @@ class BiometricAttributeData {
   String exceptionType;
   String thresholdPercentage;
   double qualityPercentage;
+  double sdkQualityPercentage;
   List<BiometricsDto> listOfBiometricsDto;
   List<dynamic> listofImages;
   int noOfCapturesAllowed;
@@ -24,6 +25,7 @@ class BiometricAttributeData {
     required this.exceptions,
     required this.exceptionType,
     required this.qualityPercentage,
+    this.sdkQualityPercentage = 0.0,
     required this.listofImages,
     required this.listOfBiometricsDto,
     required this.thresholdPercentage,

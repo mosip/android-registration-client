@@ -330,6 +330,18 @@ class BiometricCaptureControlProvider with ChangeNotifier {
     return avg;
   }
 
+  avgSDKScore(List<BiometricsDto> list) {
+    double avg = 0;
+    int count = 0;
+    for (var dto in list) {
+      if (dto.sdkScore != null && dto.sdkScore! > 0) {
+        avg = avg + dto.sdkScore!;
+        count++;
+      }
+    }
+    return count > 0 ? avg / count : 0.0;
+  }
+
   int returnNoOfAttributes(List<String?> attributes) {
     int count = 0;
     if (attributes.contains("leftEye") && attributes.contains("rightEye")) {

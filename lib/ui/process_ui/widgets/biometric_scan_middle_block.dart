@@ -50,6 +50,18 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
     return avg;
   }
 
+  avgSDKScore(List<BiometricsDto> list) {
+    double avg = 0;
+    int count = 0;
+    for (var dto in list) {
+      if (dto.sdkScore != null && dto.sdkScore! > 0) {
+        avg = avg + dto.sdkScore!;
+        count++;
+      }
+    }
+    return count > 0 ? avg / count : 0.0;
+  }
+
   listOfImages(List<dynamic> images) {
     List<Widget> temp = [];
     for (var e in images) {
@@ -241,6 +253,9 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                         });
                         widget.biometricAttributeData.qualityPercentage =
                             avgScore(widget
+                                .biometricAttributeData.listOfBiometricsDto);
+                        widget.biometricAttributeData.sdkQualityPercentage =
+                            avgSDKScore(widget
                                 .biometricAttributeData.listOfBiometricsDto);
                         await BiometricsApi()
                             .extractImageValues(
@@ -485,6 +500,10 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                                 widget.biometricAttributeData
                                         .qualityPercentage =
                                     avgScore(widget.biometricAttributeData
+                                        .listOfBiometricsDto);
+                                widget.biometricAttributeData
+                                        .sdkQualityPercentage =
+                                    avgSDKScore(widget.biometricAttributeData
                                         .listOfBiometricsDto);
                               });
                               await BiometricsApi()

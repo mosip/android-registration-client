@@ -398,6 +398,45 @@ class _BiometricCaptureScanBlockPortraitState
               SizedBox(
                 height: 21.h,
               ),
+              // MDS Quality and SDK Quality display
+              if (biometricAttributeData.isScanned)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // MDS Quality
+                      Text(
+                        "MDS Quality ${biometricAttributeData.qualityPercentage.toInt()}%",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontSize: 18,
+                          fontWeight: semiBold,
+                          color: (biometricAttributeData.qualityPercentage.toInt() >=
+                                  int.parse(biometricAttributeData.thresholdPercentage))
+                              ? secondaryColors.elementAt(11)
+                              : secondaryColors.elementAt(26),
+                        ),
+                      ),
+                      // SDK Quality
+                      if (biometricAttributeData.sdkQualityPercentage > 0)
+                        Text(
+                          "SDK Quality ${biometricAttributeData.sdkQualityPercentage.toInt()}%",
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 18,
+                            fontWeight: semiBold,
+                            color: (biometricAttributeData.sdkQualityPercentage.toInt() >=
+                                    int.parse(biometricAttributeData.thresholdPercentage))
+                                ? secondaryColors.elementAt(11)
+                                : secondaryColors.elementAt(26),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              if (biometricAttributeData.isScanned)
+                SizedBox(
+                  height: 15.h,
+                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -491,6 +530,12 @@ class _BiometricCaptureScanBlockPortraitState
                                           .read<
                                           BiometricCaptureControlProvider>()
                                           .avgScore(biometricAttributeData
+                                          .listOfBiometricsDto);
+                                  biometricAttributeData.sdkQualityPercentage =
+                                      context
+                                          .read<
+                                          BiometricCaptureControlProvider>()
+                                          .avgSDKScore(biometricAttributeData
                                           .listOfBiometricsDto);
                                 });
                                 await BiometricsApi()
@@ -591,6 +636,9 @@ class _BiometricCaptureScanBlockPortraitState
                 biometricAttributeData.qualityPercentage =
                     biometricCaptureControlProvider
                         .avgScore(biometricAttributeData.listOfBiometricsDto);
+                biometricAttributeData.sdkQualityPercentage =
+                    biometricCaptureControlProvider
+                        .avgSDKScore(biometricAttributeData.listOfBiometricsDto);
                 await BiometricsApi()
                     .extractImageValues(widget.field.id!,
                     biometricAttributeData.title.replaceAll(" ", ""))

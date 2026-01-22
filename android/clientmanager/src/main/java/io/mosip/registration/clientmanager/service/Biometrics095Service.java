@@ -21,13 +21,21 @@ import java.util.Map;
 import javax.inject.Inject;
 
 
+import io.mosip.kernel.biometrics.constant.BiometricType;
+import io.mosip.kernel.biometrics.constant.ProcessedLevelType;
+import io.mosip.kernel.biometrics.entities.BIR;
+import io.mosip.kernel.biometrics.entities.BiometricRecord;
+import io.mosip.kernel.biometrics.model.Response;
 import io.mosip.kernel.biometrics.spi.IBioApiV2;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.constant.SBIError;
+import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.sbi.CaptureBioDetail;
 import io.mosip.registration.clientmanager.dto.sbi.CaptureDto;
@@ -44,6 +52,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.BiometricsService;
 import io.mosip.registration.clientmanager.util.BioSDKLoader;
 import io.mosip.registration.clientmanager.util.MatchUtil;
+import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -117,6 +126,11 @@ public class Biometrics095Service extends BiometricsService {
 
     public List<BiometricsDto> handleRCaptureResponse(Modality modality, InputStream response, List<String> exceptionAttributes)
             throws BiometricsServiceException {
+        return handleRCaptureResponse(modality, response, exceptionAttributes, false);
+    }
+
+    public List<BiometricsDto> handleRCaptureResponse(Modality modality, InputStream response, List<String> exceptionAttributes, boolean isOperatorOnboarding)
+            throws BiometricsServiceException {
         List<BiometricsDto> biometricsDtoList = new ArrayList<>();
         try {
             CaptureResponse captureResponse = objectMapper.readValue(response, new TypeReference<CaptureResponse>(){});
@@ -140,7 +154,7 @@ public class Biometrics095Service extends BiometricsService {
                 //TODO need request transaction id to validate response transaction id
                 //TODO need requested spec version to validate response spec version
 
-                biometricsDtoList.add(new BiometricsDto(
+                BiometricsDto biometricsDto = new BiometricsDto(
                         modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().value() : captureDto.getBioType(),
                         modality == Modality.EXCEPTION_PHOTO ? EXCEPTION_PHOTO_ATTR.get(0) : captureDto.getBioSubType(),
                         captureDto.getBioValue(),
@@ -150,15 +164,41 @@ public class Biometrics095Service extends BiometricsService {
                         signature,
                         false,
                         1, 0,
-                        captureDto.getQualityScore()));
+                        captureDto.getQualityScore());
+
+                biometricsDtoList.add(biometricsDto);
+
+                // SDK Quality Check (if enabled)
+//                if (RegistrationConstants.ENABLE.equalsIgnoreCase(
+//                        globalParamRepository != null ?
+//                            globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.QUALITY_CHECK_WITH_SDK) :
+//                            RegistrationConstants.DISABLE)) {
+                    try {
+                        double sdkScore = getSDKScore(biometricsDto, modality);
+                        biometricsDto.setSdkScore(sdkScore);
+                        Log.i(TAG, "SDK quality score calculated: " + sdkScore + " for " + modality);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Unable to fetch SDK Score", e);
+                        biometricsDto.setSdkScore(0.0);
+                    }
+               // }
 
                 Log.i(TAG, "BiometricsDtoList: started");
                 Log.i(TAG, "BiometricsDtoList: before inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
                 if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
                     Log.i(TAG, "BiometricsDtoList: inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
                     IBioApiV2 modalityBioSDK = BioSDKLoader.loadBioSDK(context, modality, globalParamRepository);
+                    Log.i(TAG,"modalityBioSDK=======> "+modalityBioSDK);
                     if (modalityBioSDK != null) {
-                        boolean isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, modalityBioSDK);
+                        boolean isMatched;
+                        if (isOperatorOnboarding) {
+                            String currentUserId = sharedPreferences.getString(SessionManager.USER_ID, "");
+                            isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, 
+                                    userBiometricRepository, modalityBioSDK, currentUserId);
+                        } else {
+                            isMatched = MatchUtil.validateBiometricDataForRegistration(modality, captureDto, biometricsDtoList, 
+                                    userBiometricRepository, modalityBioSDK);
+                        }
                         if(isMatched){
                             Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
                             return new ArrayList<>();
@@ -268,6 +308,108 @@ public class Biometrics095Service extends BiometricsService {
         return 0;
     }
 
+    private double getSDKScore(BiometricsDto biometricsDto, Modality modality) throws Exception {
+        // Get biometric type from bioAttribute (like desktop: Biometric.getSingleTypeByAttribute)
+        BiometricType biometricType = null;
+        try {
+            String bioAttribute = biometricsDto.getBioSubType();
+            if (bioAttribute != null && !bioAttribute.isEmpty()) {
+                // Try to get BiometricType from attribute using Biometric utility class (like desktop)
+                io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric biometric = 
+                    io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric.getBiometricByAttribute(bioAttribute);
+                if (biometric != null) {
+                    // Convert packetmanager BiometricType to kernel BiometricType
+                    io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType packetBiometricType = biometric.getBiometricType();
+                    if (packetBiometricType != null) {
+                        biometricType = BiometricType.fromValue(packetBiometricType.name());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error getting biometric type from attribute, using modality", e);
+        }
+        
+        // Fallback to modality if attribute lookup failed
+        if (biometricType == null) {
+            biometricType = BiometricType.fromValue(biometricsDto.getModality());
+        }
+        
+        byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
+        BIR bir = MatchUtil.buildBir(
+            biometricsDto.getBioSubType(),
+            (long) biometricsDto.getQualityScore(),
+            iso,
+            biometricType,
+            ProcessedLevelType.RAW,
+            false
+        );
+        
+        BIR[] birList = new BIR[] { bir };
+        
+        IBioApiV2 bioProvider = BioSDKLoader.loadBioSDK(context, modality, globalParamRepository);
+        if (bioProvider == null) {
+            throw new Exception("SDK provider not found for modality: " + modality);
+        }
+        
+        // Try to call getModalityQuality method directly on the SDK instance (like desktop)
+        // The SDK might have this method even if it doesn't implement iBioProviderApi interface
+        try {
+            // Try getModalityQuality method (like desktop iBioProviderApi.getModalityQuality)
+            java.lang.reflect.Method qualityMethod = bioProvider.getClass().getMethod("getModalityQuality", BIR[].class, Map.class);
+            Object result = qualityMethod.invoke(bioProvider, birList, null);
+            if (result instanceof Map) {
+                Map<BiometricType, Float> scoreMap = (Map<BiometricType, Float>) result;
+                if (scoreMap != null && scoreMap.containsKey(biometricType)) {
+                    Float score = scoreMap.get(biometricType);
+                    if (score != null && score > 0) {
+                        Log.i(TAG, "SDK quality score calculated using getModalityQuality(): " + score);
+                        return score.doubleValue();
+                    }
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            Log.d(TAG, "getModalityQuality method not found in SDK, trying alternative methods");
+        } catch (Exception e) {
+            Log.d(TAG, "Error calling getModalityQuality method, trying alternative methods", e);
+        }
+        
+        // Try alternative method names that might exist
+        String[] qualityMethodNames = {
+            "quality",
+            "checkQuality",
+            "calculateQuality",
+            "getQuality"
+        };
+        
+        for (String methodName : qualityMethodNames) {
+            try {
+                java.lang.reflect.Method qualityMethod = bioProvider.getClass().getMethod(methodName, BIR[].class, Map.class);
+                Object result = qualityMethod.invoke(bioProvider, birList, null);
+                if (result instanceof Map) {
+                    Map<BiometricType, Float> scoreMap = (Map<BiometricType, Float>) result;
+                    if (scoreMap != null && scoreMap.containsKey(biometricType)) {
+                        Float score = scoreMap.get(biometricType);
+                        if (score != null && score > 0) {
+                            Log.i(TAG, "SDK quality score calculated using " + methodName + "(): " + score);
+                            return score.doubleValue();
+                        }
+                    }
+                }
+            } catch (NoSuchMethodException e) {
+                // Try next method name
+                continue;
+            } catch (Exception e) {
+                Log.d(TAG, "Error calling " + methodName + " method", e);
+                // Try next method name
+                continue;
+            }
+        }
+        
+        // If no quality method found, use device quality score as fallback
+        Log.d(TAG, "SDK quality method not found, using device quality score as SDK score");
+        return biometricsDto.getQualityScore();
+    }
+
     public int getAttemptsCount(Modality modality) {
         switch (modality) {
             case FINGERPRINT_SLAB_LEFT:
@@ -335,4 +477,5 @@ public class Biometrics095Service extends BiometricsService {
         }
         return DEFAULT_SERVER_ACTIVE_PROFILE;
     }
+
 }
