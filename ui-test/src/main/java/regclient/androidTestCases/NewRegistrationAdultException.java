@@ -311,11 +311,6 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isExceptionCountDisplayed(),
 							"Verify if exception count is displayed");
-					// applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
-					//
-					// assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if
-					// Comments header is displayed");
-					// applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 
 					applicantBiometricsPage.clickOnIrisScanTitle();
 					applicantBiometricsPage.clickOnScanButton();
@@ -370,13 +365,6 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isExceptionTypeTitleDisplayed(),
 							"Verify if applicant biometric mark exception type is displayed");
-					// assertTrue(applicantBiometricsPage.isExceptionCountDisplyed(),"Verify if
-					// exception count is displayed");
-					// applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
-					//
-					// assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if
-					// Comments header is displayed");
-					// applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 
 					applicantBiometricsPage.clickOnleftHandScanTitle();
 					applicantBiometricsPage.clickOnScanButton();
@@ -405,11 +393,6 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isExceptionCountDisplayed(),
 							"Verify if exception count is displayed");
-					// applicantBiometricsPage.clickOnExceptionTypeTemporaryButton();
-					//
-					// assertTrue(applicantBiometricsPage.isCommentHeaderDisplyed(),"Verify if
-					// Comments header is displayed");
-					// applicantBiometricsPage.enterCommentsInTextBox(TestDataReader.readData("comments"));
 
 					applicantBiometricsPage.clickOnThumbsScanTitle();
 					applicantBiometricsPage.clickOnScanButton();
@@ -496,16 +479,17 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		}
 
 		boolean isAuthenticationPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			previewPage.clickOnContinueButton();
-			Thread.sleep(2000);
+
 			if (authenticationPage.isAuthenticationPageDisplayed()) {
 				isAuthenticationPageDisplayed = true;
 				break;
 			}
 		}
-		assertTrue(isAuthenticationPageDisplayed,
-				"Authentication page not displayed after retries");
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -580,15 +564,17 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
 			}
 		}
-		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page displayed after retries");
+
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -622,7 +608,14 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid),
 				"Verify if  packet is approved after approve in pending approval");
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
+
+		for (int i = 0; i < 3; i++) {
+			manageApplicationsPage.clickOnUploadButton();
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				break;
+			}
+		}
 
 		manageApplicationsPage.clickOnBackButton();
 
@@ -644,8 +637,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
+
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");

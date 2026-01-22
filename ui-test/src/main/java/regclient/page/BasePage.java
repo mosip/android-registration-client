@@ -72,25 +72,34 @@ public class BasePage {
 		}
 	}
 
+	protected boolean isElementDisplayed(By locator) {
+		try {
+			waitForElementToBeVisible(locator, 10);
+			return driver.findElement(locator).isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	protected void clickOnElement(WebElement element) {
 		waitForElementToBeVisible(element);
 		element.click();
 	}
 
-	public void clickOnElementByLocator(By locator) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+	public void click(By locator) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.ignoring(StaleElementReferenceException.class);
 		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 		element.click();
 	}
 
 	private void waitForElementToBeVisible(WebElement element) {
-		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(30));
+		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
 
 	protected void waitForElementToBeClickable(WebElement element) {
-		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(30));
+		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(10));
 		wait.until(ExpectedConditions.refreshed(ExpectedConditions.elementToBeClickable(element)));
 	}
 
@@ -113,12 +122,13 @@ public class BasePage {
 	}
 
 	protected boolean isElementDisabled(WebElement element) {
-		try {
-			waitForElementToBeVisible(element);
-			return !element.isEnabled();
-		} catch (Exception e) {
-			return false;
-		}
+	    try {
+	        waitForElementToBeVisible(element);
+	        return !element.isEnabled()
+	                || "false".equalsIgnoreCase(element.getAttribute("clickable"));
+	    } catch (Exception e) {
+	        return true;
+	    }
 	}
 
 	protected void clickAndsendKeysToTextBox(WebElement element, String text) {
@@ -241,12 +251,11 @@ public class BasePage {
 	}
 
 	public static void waitTime(int sec) {
-		try {
-			Thread.sleep(sec * 1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
+	    try {
+	        Thread.sleep(sec * 1000L); // true seconds
+	    } catch (InterruptedException e) {
+	        Thread.currentThread().interrupt();
+	    }
 	}
 
 	public WebElement retryFindElement(WebElement element, Duration timeout) {
@@ -360,22 +369,6 @@ public class BasePage {
 		}
 
 		return element;
-	}
-
-	protected boolean isElementDisplayed(By by) {
-		int attempts = 0;
-		while (attempts < 4) {
-			try {
-				waitForElementToBeVisible(driver.findElement(by));
-				return driver.findElement(by).isDisplayed();
-			} catch (Exception e) {
-				attempts++;
-				if (attempts == 4) {
-					return false; // After 3 attempts, return false
-				}
-			}
-		}
-		return false;
 	}
 
 	protected void clickAtCoordinates(int x, int y) {
@@ -838,7 +831,7 @@ public class BasePage {
 	}
 
 	public void clickAndsendKeysToTextBoxByLocator(By locator, String value) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.ignoring(StaleElementReferenceException.class);
 
 		wait.until(Webdriver -> {
@@ -852,7 +845,7 @@ public class BasePage {
 
 	public boolean isElementEnabled(By locator) {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 			wait.ignoring(StaleElementReferenceException.class);
 
 			return wait.until(Webdriver -> {
@@ -894,5 +887,24 @@ public class BasePage {
 			count++;
 		}
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
+	}
+
+	protected void clickAndSendKeysToTextBox(By locator, String text) {
+		this.waitForElementToBeVisible(locator, 10);
+
+		WebElement element = driver.findElement(locator);
+
+		element.click();
+		waitTime(1);
+		element.clear();
+		waitTime(1);
+		element.sendKeys(text);
+		waitTime(1);
+		((HidesKeyboard) driver).hideKeyboard();
+	}
+
+	protected void waitForElementToBeVisible(By locator, int waitTime) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(waitTime));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 }

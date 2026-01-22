@@ -193,10 +193,6 @@ public class PendingApprovalKannada extends PendingApproval {
 		return isElementEnabled(submitButton);
 	}
 
-	public boolean isSubmitButtonEnabledWithEmptyUsername() {
-		return isElementEnabled(invalidUsernameMessageForempty);
-	}
-
 	public boolean isNumberOfApplicationDisplayed() {
 		waitTime(2);
 		return isElementDisplayed(displayApplication);

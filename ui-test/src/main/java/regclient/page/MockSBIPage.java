@@ -65,20 +65,15 @@ public class MockSBIPage extends BasePage {
 
 	public void clickOnMockSbiSettingsButton() {
 
-		boolean isDisplayed = false;
-
 		for (int i = 0; i < 3; i++) {
 			clickOnElement(mockSbiSettingsButton);
 
 			if (isElementDisplayed(deviceConfigTitle, 3)) {
-				isDisplayed = true;
-				break;
+				return;
 			}
 		}
 
-		if (!isDisplayed) {
-			System.out.println("INFO: Device Config page not displayed after clicking Settings");
-		}
+		throw new RuntimeException("Device Config page not displayed after clicking Settings");
 	}
 
 	public void setAllToNotReadyAndSave() {

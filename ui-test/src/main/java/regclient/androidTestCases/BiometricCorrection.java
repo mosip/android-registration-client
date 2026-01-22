@@ -1508,7 +1508,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		// Biometric correction packet process
 		// Reset biometric capabilities back to individual biometrics for correction flow
-//		FetchUiSpec.getBiometricDetails("individualBiometrics");
+
 		assertTrue(registrationTasksPage.isOperationalTaskDisplayed(), "Verify if operation tasks page is loaded");
 
 		registrationTasksPage.clickOnRegistrationTasksTab();

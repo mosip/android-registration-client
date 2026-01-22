@@ -425,9 +425,10 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		}
 
 		boolean isAuthenticationPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			previewPage.clickOnContinueButton();
-			Thread.sleep(2000);
+
 			if (authenticationPage.isAuthenticationPageDisplayed()) {
 				isAuthenticationPageDisplayed = true;
 				break;
@@ -502,13 +503,14 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
-			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
-			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-				isPageDisplayed = true;
-				break;
-			}
+		    pendingApproval.clickOnAuthenticateButton();
+
+		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+		        isPageDisplayed = true;
+		        break;
+		    }
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
@@ -537,7 +539,13 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
+		for (int i = 0; i < 3; i++) {
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        break;
+		    }
+		}
 
 		manageApplicationsPage.clickOnBackButton();
 

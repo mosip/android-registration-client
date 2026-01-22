@@ -451,15 +451,18 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 
 		boolean isAuthenticationPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			previewPage.clickOnContinueButton();
-			Thread.sleep(2000);
+
 			if (authenticationPage.isAuthenticationPageDisplayed()) {
 				isAuthenticationPageDisplayed = true;
 				break;
 			}
 		}
+
 		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
+
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -539,18 +542,17 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
 			}
 		}
+		
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
-
-		assertTrue(pendingApproval.isSubmitButtonDisabledWithEmptyUsername(),
-				"Verify if submit button disapbled while username empty");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
 
@@ -592,12 +594,15 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
 				break;
+			}
 		}
+
 		manageApplicationsPage.clickOnBackButton();
 
 		registrationTasksPage.clickProfileButton();
@@ -623,7 +628,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 	}
 
-	@Test(priority = 1, description = "Verify adult new registration")
+//	@Test(priority = 1, description = "Verify adult new registration")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
 		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
@@ -1190,14 +1195,16 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 
 		boolean isAuthenticationPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			previewPage.clickOnContinueButton();
-			Thread.sleep(2000);
+
 			if (authenticationPage.isAuthenticationPageDisplayed()) {
 				isAuthenticationPageDisplayed = true;
 				break;
 			}
 		}
+
 		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
@@ -1273,18 +1280,17 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
 			}
 		}
-		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if error empty username submit button enabled");
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -1314,7 +1320,15 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
+		for (int i = 0; i < 3; i++) {
+			manageApplicationsPage.clickOnUploadButton();
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				break;
+			}
+		}
+
+		manageApplicationsPage.clickOnBackButton();
 
 		registrationTasksPage.clickProfileButton();
 

@@ -427,16 +427,17 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 		}
 
 		boolean isAuthenticationPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			previewPage.clickOnContinueButton();
-			Thread.sleep(2000);
+
 			if (authenticationPage.isAuthenticationPageDisplayed()) {
 				isAuthenticationPageDisplayed = true;
 				break;
 			}
 		}
-		assertTrue(isAuthenticationPageDisplayed,
-				"Authentication page not displayed after retries");
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
+
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -509,16 +510,17 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
-			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
-			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-				isPageDisplayed = true;
-				break;
-			}
+		    pendingApproval.clickOnAuthenticateButton();
+
+		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+		        isPageDisplayed = true;
+		        break;
+		    }
 		}
 
-		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page displayed after retries");
+		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page not displayed after retries");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		pendingApproval.clickOnSubmitButton();
@@ -547,11 +549,15 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
-		
+		for (int i = 0; i < 3; i++) {
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        break;
+		    }
+		}
+
 		manageApplicationsPage.clickOnBackButton();
-//		basePage = new BasePage(driver);
-//		basePage.goBack();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
 		registrationTasksPage.clickProfileButton();

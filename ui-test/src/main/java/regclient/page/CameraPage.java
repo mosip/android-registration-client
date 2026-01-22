@@ -40,10 +40,13 @@ public class CameraPage extends BasePage {
 
 	public void clickOkButton() {
 
+	    boolean coordinateClicked = false;
+
 	    for (int i = 0; i < 3; i++) {
 
-	        if (isCoordinatesDisplayed(43, 78)) {
+	        if (!coordinateClicked && isCoordinatesDisplayed(43, 78)) {
 	            clickAtCoordinates(43, 78);
+	            coordinateClicked = true;
 	        } else if (isElementDisplayed(okButton)) {
 	            clickOnElement(okButton);
 	        }
@@ -73,7 +76,11 @@ public class CameraPage extends BasePage {
 	}
 	
 	private boolean isCoordinatesDisplayed(int x, int y) {
-	    return true;
+	    try {
+	        return true;
+	    } catch (Exception e) {
+	        return false;
+	    }
 	}
 
 

@@ -132,10 +132,6 @@ public class PendingApprovalEnglish extends PendingApproval {
 		return isElementDisplayed(invalidUsernameMessage);
 	}
 
-	public boolean isSubmitButtonEnabledWithEmptyUsername() {
-		return isElementEnabled(invalidUsernameMessageForempty);
-	}
-
 	public void enterUserName(String username) {
 		clickAndsendKeysToTextBox2(userNameTextBox, username);
 	}

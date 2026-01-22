@@ -75,7 +75,7 @@ public class LoginPageArabic extends LoginPage {
 	}
 
 	public void enterPassword(String password) {
-		clickAndsendKeysToTextBoxByLocator(passwordTextBox, password);
+		clickAndSendKeysToTextBox(passwordTextBox, password);
 	}
 
 	public RegistrationTasksPage clickOnloginButton() {
