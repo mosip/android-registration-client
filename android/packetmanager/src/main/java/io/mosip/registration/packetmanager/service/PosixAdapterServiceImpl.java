@@ -73,7 +73,12 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
         File baseDir = StorageUtils.getPacketStorageDir(context);
-        BASE_LOCATION = baseDir.getAbsolutePath();
+        if (baseDir.exists() || baseDir.mkdirs()) {
+            BASE_LOCATION = baseDir.getAbsolutePath();
+        } else {
+            Log.e(TAG, "Failed to initialize packet storage directory: " + baseDir.getAbsolutePath());
+            BASE_LOCATION = null;
+        }
     }
 
     @Override
@@ -205,16 +210,16 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
             throws IOException {
 
         if (BASE_LOCATION == null) {
+            Log.e(TAG, "BASE_LOCATION is not initialized");
             return;
         }
 
         File baseDir = new File(BASE_LOCATION);
-        if (!baseDir.getAbsolutePath().startsWith(appContext.getFilesDir().getAbsolutePath())) {
-            String state = Environment.getExternalStorageState(baseDir);
-            //storage availability check
-            if (!Environment.MEDIA_MOUNTED.equals(state)) {
-                return;
-            }
+        String state = Environment.getExternalStorageState(baseDir);
+        //storage availability check
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            Log.e(TAG, "External storage not mounted. State: " + state + ", Path: " + baseDir.getAbsolutePath());
+            return;
         }
 
         File containerFolder = new File(BASE_LOCATION, account);

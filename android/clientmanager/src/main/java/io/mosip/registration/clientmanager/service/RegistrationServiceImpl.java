@@ -676,16 +676,17 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         long allowedDiskSpaceSizeInBytes = (long) minSpaceRequiredMB * 1024 * 1024;
 
-        String packetStoreLocation = globalParamRepository.getCachedStringPacketStoreLocation();
-        File actualDiskSpace = (packetStoreLocation != null && !packetStoreLocation.isEmpty())
-                ? new File(packetStoreLocation)
-                : StorageUtils.getPacketStorageDir(context);
+        File actualDiskSpace = StorageUtils.getPacketStorageDir(context);
+
+        if (!actualDiskSpace.exists() && !actualDiskSpace.mkdirs()) {
+            Log.e(TAG, "Packet store directory not available: " + actualDiskSpace.getAbsolutePath());
+            return true; // treat as low space/unavailable
+        }
 
         long usableSpace = actualDiskSpace.getUsableSpace();
-
         if (usableSpace == 0) {
-            actualDiskSpace = context.getFilesDir();
-            usableSpace = actualDiskSpace.getUsableSpace();
+            Log.e(TAG, "Usable space is 0 for path: " + actualDiskSpace.getAbsolutePath());
+            return true; // treat as low space/unavailable
         }
 
         return usableSpace < allowedDiskSpaceSizeInBytes;
