@@ -220,7 +220,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
             Log.e(TAG, "GPS validation enabled but machine coordinates not available");
             throw new ClientCheckedException(
                 RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION,
-                context.getString(R.string.err_outside_registration_center));
+                context.getString(R.string.err_003));
         }
 
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
@@ -272,7 +272,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
                     distanceMeters, maxAllowedDistance));
                 throw new ClientCheckedException(
                     RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION,
-                    context.getString(R.string.err_outside_registration_center));
+                    context.getString(R.string.err_003));
             }
 
         } catch (NumberFormatException e) {
