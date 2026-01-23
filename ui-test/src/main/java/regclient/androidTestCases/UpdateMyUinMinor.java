@@ -552,8 +552,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				break;
 			}
 		}
-		assertTrue(isAuthenticationPageDisplayed,
-				"Authentication page not displayed after retries");
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -632,12 +631,12 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
-		    pendingApproval.clickOnAuthenticateButton();
+			pendingApproval.clickOnAuthenticateButton();
 
-		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-		        isPageDisplayed = true;
-		        break;
-		    }
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
 		}
 
 		assertTrue(isPageDisplayed, "Verify if Supervisor Authentication page not displayed after retries");
@@ -673,13 +672,19 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				"Verify if  packet is approved after approve in pending approval");
 
 		manageApplicationsPage.clickOnSearchCheckBox();
-		for (int i = 0; i < 3; i++) {
-		    manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
 
-		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-		        break;
-		    }
+		for (int i = 0; i < 3; i++) {
+			manageApplicationsPage.clickOnUploadButton();
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
+				break;
+			}
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");

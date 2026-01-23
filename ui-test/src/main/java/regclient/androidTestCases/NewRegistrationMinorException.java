@@ -708,13 +708,18 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 				"Verify if  packet is approved after approve in pending approval");
 
 		manageApplicationsPage.clickOnSearchCheckBox();
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
 		    manageApplicationsPage.clickOnUploadButton();
 
 		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
 		        break;
 		    }
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
 		manageApplicationsPage.clickClientStatusDropdown();
 

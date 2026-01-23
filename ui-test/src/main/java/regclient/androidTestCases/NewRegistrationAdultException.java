@@ -609,13 +609,19 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 				"Verify if  packet is approved after approve in pending approval");
 		manageApplicationsPage.clickOnSearchCheckBox();
 
-		for (int i = 0; i < 3; i++) {
-			manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
 
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-				break;
-			}
+		for (int i = 0; i < 3; i++) {
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
+		        break;
+		    }
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 
 		manageApplicationsPage.clickOnBackButton();
 

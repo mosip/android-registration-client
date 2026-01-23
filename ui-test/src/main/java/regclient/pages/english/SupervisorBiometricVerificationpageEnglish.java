@@ -358,20 +358,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 
 	public void clickOnVerifyAndSaveButton() {
-		boolean isDismissLoaded = false;
-
-		for (int i = 0; i < 3; i++) {
-			clickOnElement(verifyAndSaveButton);
-
-			if (isDismissPageLoaded()) {
-				isDismissLoaded = true;
-				break;
-			}
-		}
-
-		if (!isDismissLoaded) {
-			System.out.println("INFO: Dismiss page not loaded after clicking Verify & Save 3 times");
-		}
+		clickOnElement(verifyAndSaveButton);
 	}
 
 	public boolean isDismissPageLoaded() {

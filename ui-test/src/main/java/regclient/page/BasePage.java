@@ -122,13 +122,12 @@ public class BasePage {
 	}
 
 	protected boolean isElementDisabled(WebElement element) {
-	    try {
-	        waitForElementToBeVisible(element);
-	        return !element.isEnabled()
-	                || "false".equalsIgnoreCase(element.getAttribute("clickable"));
-	    } catch (Exception e) {
-	        return true;
-	    }
+		try {
+			waitForElementToBeVisible(element);
+			return !element.isEnabled() || "false".equalsIgnoreCase(element.getAttribute("clickable"));
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	protected void clickAndsendKeysToTextBox(WebElement element, String text) {
@@ -251,11 +250,11 @@ public class BasePage {
 	}
 
 	public static void waitTime(int sec) {
-	    try {
-	        Thread.sleep(sec * 1000L); // true seconds
-	    } catch (InterruptedException e) {
-	        Thread.currentThread().interrupt();
-	    }
+		try {
+			Thread.sleep(sec * 1000L); // true seconds
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	public WebElement retryFindElement(WebElement element, Duration timeout) {

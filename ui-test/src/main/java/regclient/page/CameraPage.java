@@ -40,21 +40,21 @@ public class CameraPage extends BasePage {
 
 	public void clickOkButton() {
 
-	    boolean coordinateClicked = false;
+		boolean coordinateClicked = false;
 
-	    for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 
-	        if (!coordinateClicked && isCoordinatesDisplayed(43, 78)) {
-	            clickAtCoordinates(43, 78);
-	            coordinateClicked = true;
-	        } else if (isElementDisplayed(okButton)) {
-	            clickOnElement(okButton);
-	        }
+			if (!coordinateClicked) {
+				clickAtCoordinates(43, 78);
+				coordinateClicked = true;
+			} else if (isElementDisplayed(okButton)) {
+				clickOnElement(okButton);
+			}
 
-	        if (isElementDisplayed(retakeButton, 2)) {
-	            break;
-	        }
-	    }
+			if (isElementDisplayed(retakeButton, 2)) {
+				break;
+			}
+		}
 	}
 
 	public void clickCancelButtonOfQrScanner() {
@@ -74,14 +74,5 @@ public class CameraPage extends BasePage {
 	public boolean isRetakeButtonDisplayed() {
 		return isElementDisplayed(retakeButton);
 	}
-	
-	private boolean isCoordinatesDisplayed(int x, int y) {
-	    try {
-	        return true;
-	    } catch (Exception e) {
-	        return false;
-	    }
-	}
-
 
 }

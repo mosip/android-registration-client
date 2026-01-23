@@ -491,12 +491,12 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
-		    pendingApproval.clickOnAuthenticateButton();
+			pendingApproval.clickOnAuthenticateButton();
 
-		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-		        isPageDisplayed = true;
-		        break;
-		    }
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
 		}
 
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
@@ -533,13 +533,19 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 				"Verify if  packet is approved after approve in pending approval");
 
 		manageApplicationsPage.clickOnSearchCheckBox();
-		for (int i = 0; i < 3; i++) {
-		    manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
 
-		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-		        break;
-		    }
+		for (int i = 0; i < 3; i++) {
+			manageApplicationsPage.clickOnUploadButton();
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
+				break;
+			}
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
@@ -560,8 +566,7 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
+
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");

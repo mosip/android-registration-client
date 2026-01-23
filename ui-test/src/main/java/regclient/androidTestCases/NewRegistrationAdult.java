@@ -595,13 +595,18 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
 
-		for (int i = 0; i < 3; i++) {
-			manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
 
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-				break;
-			}
+		for (int i = 0; i < 3; i++) {
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
+		        break;
+		    }
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
 		manageApplicationsPage.clickOnBackButton();
 
@@ -1320,13 +1325,18 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 		manageApplicationsPage.clickOnSearchCheckBox();
-		for (int i = 0; i < 3; i++) {
-			manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
 
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-				break;
-			}
+		for (int i = 0; i < 3; i++) {
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
+		        break;
+		    }
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
 		manageApplicationsPage.clickOnBackButton();
 

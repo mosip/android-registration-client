@@ -570,13 +570,19 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if manage Applications Page displayed");
 
 		manageApplicationsPage.selectLatestAidCheckBox();
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
 
 			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
 				break;
 			}
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
@@ -1101,12 +1107,12 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
-		    pendingApproval.clickOnAuthenticateButton();
+			pendingApproval.clickOnAuthenticateButton();
 
-		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-		        isPageDisplayed = true;
-		        break;
-		    }
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
@@ -1496,7 +1502,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 //	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1512,7 +1518,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		
+
 		boolean isAuthenticationPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
@@ -1604,12 +1610,12 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
-		    pendingApproval.clickOnAuthenticateButton();
+			pendingApproval.clickOnAuthenticateButton();
 
-		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-		        isPageDisplayed = true;
-		        break;
-		    }
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
@@ -1641,13 +1647,19 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if manage Applications Page displayed");
 
 		manageApplicationsPage.selectLatestAidCheckBox();
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
 
 			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
 				break;
 			}
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");

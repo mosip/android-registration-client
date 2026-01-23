@@ -548,13 +548,18 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		manageApplicationsPage.clickOnSearchCheckBox();
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
 		    manageApplicationsPage.clickOnUploadButton();
 
 		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
 		        break;
 		    }
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
 		manageApplicationsPage.clickOnBackButton();
 
