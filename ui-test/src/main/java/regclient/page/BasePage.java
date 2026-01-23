@@ -895,11 +895,14 @@ public class BasePage {
 
 		element.click();
 		waitTime(1);
+
 		element.clear();
 		waitTime(1);
+
 		element.sendKeys(text);
 		waitTime(1);
-		((HidesKeyboard) driver).hideKeyboard();
+
+		hideKeyboardIfVisible();
 	}
 
 	protected void waitForElementToBeVisible(By locator, int waitTime) {
