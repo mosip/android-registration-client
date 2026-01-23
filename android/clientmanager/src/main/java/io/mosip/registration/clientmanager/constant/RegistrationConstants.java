@@ -146,4 +146,5 @@ public class RegistrationConstants {
     public static final String APP_ID = "mosip.registration.audit_application_id";
     public static final String DEFAULT_HOST_IP = "mosip.registration.audit_default_host_ip";
     public static final String DEFAULT_HOST_NAME = "mosip.registration.audit_default_host_name";
+    public static final String PACKET_STORE_LOCATION = "mosip.registration.registration_packet_store_location";
 }

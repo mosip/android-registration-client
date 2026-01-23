@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -91,6 +92,7 @@ import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 import io.mosip.registration.packetmanager.util.DateUtils;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
+import io.mosip.registration.packetmanager.util.StorageUtils;
 import lombok.NonNull;
 
 @Singleton
@@ -643,14 +645,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
         //free space validation
-        int minSpaceRequiredMB = globalParamRepository.getCachedIntegerDiskSpaceSize();
-        if (minSpaceRequiredMB == 0) {
-            minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
+        if (validatingDiskSpace()) {
+            throw new ClientCheckedException("PAK_DISK_SPACE_LOW");
         }
-        
-        long externalSpace = context.getExternalCacheDir().getUsableSpace();
-        if ((externalSpace / (1024 * 1024)) < minSpaceRequiredMB)
-            throw new ClientCheckedException(context, R.string.err_006);
 
         //is machine and center active
         if (centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
@@ -671,6 +668,30 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException("PAK_UPLOAD_MAX_COUNT");
         }
     }
+
+    private boolean validatingDiskSpace() {
+        int minSpaceRequiredMB = globalParamRepository.getCachedIntegerDiskSpaceSize();
+        if (minSpaceRequiredMB == 0) {
+            minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
+        }
+        long allowedDiskSpaceSizeInBytes = (long) minSpaceRequiredMB * 1024 * 1024;
+
+        String packetStoreLocation = globalParamRepository.getCachedStringPacketStoreLocation();
+        File actualDiskSpace = (packetStoreLocation != null && !packetStoreLocation.isEmpty())
+                ? new File(packetStoreLocation)
+                : StorageUtils.getPacketStorageDir(context);
+
+        long usableSpace = actualDiskSpace.getUsableSpace();
+
+        if (usableSpace == 0) {
+            actualDiskSpace = context.getFilesDir();
+            usableSpace = actualDiskSpace.getUsableSpace();
+        }
+
+        return usableSpace < allowedDiskSpaceSizeInBytes;
+    }
+
+
 
     private byte[] convertImageToPDF(List<byte[]> images) {
         try (PDDocument pdDocument = new PDDocument();

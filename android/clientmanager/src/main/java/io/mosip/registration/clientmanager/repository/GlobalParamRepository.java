@@ -247,6 +247,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_NAME);
     }
 
+    public String getCachedStringPacketStoreLocation() {
+        return globalParamMap.get(RegistrationConstants.PACKET_STORE_LOCATION);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */
