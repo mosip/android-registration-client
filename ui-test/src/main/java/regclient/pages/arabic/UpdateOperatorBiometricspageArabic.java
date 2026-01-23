@@ -394,20 +394,4 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 		return actual >= expected;
 	}
 
-	public void updateBiometricsAndWaitPopup() {
-		for (int i = 1; i <= 5; i++) {
-			clickOnVerifyAndSaveButton();
-			try {
-				new WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.visibilityOf(successPopup));
-				return; // success
-			} catch (Exception ignored) {
-			}
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException ignored) {
-			}
-		}
-		throw new AssertionError("Biometrics update success popup not displayed after 5 retries.");
-	}
-
 }
