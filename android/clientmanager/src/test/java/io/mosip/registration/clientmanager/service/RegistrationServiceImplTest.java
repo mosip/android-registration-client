@@ -1877,7 +1877,7 @@ public class RegistrationServiceImplTest {
         // Verify: Registration succeeds, no validation called
         assertNotNull(result);
         assertNull(result.getGeoLocationDto());
-        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
     }
 
     @Test
@@ -2012,7 +2012,7 @@ public class RegistrationServiceImplTest {
         // Verify: Registration succeeds, no GPS set, no validation called
         assertNotNull(result);
         assertNull(result.getGeoLocationDto());
-        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
     }
 
     @Test
@@ -2039,6 +2039,6 @@ public class RegistrationServiceImplTest {
         // Verify: Registration succeeds, no GPS set, no validation called
         assertNotNull(result);
         assertNull(result.getGeoLocationDto());
-        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
     }
 }

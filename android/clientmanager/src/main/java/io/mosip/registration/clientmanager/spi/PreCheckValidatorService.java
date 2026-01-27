@@ -16,10 +16,11 @@ public interface PreCheckValidatorService {
 
     /**
      * Validates machine distance from registration center using GPS.
+     * Validation is skipped if GPS is disabled. If GPS is enabled, both coordinates must be non-null.
      * 
-     * @param machineLongitude Machine longitude (validation skipped if null)
-     * @param machineLatitude Machine latitude (validation skipped if null)
-     * @throws Exception if machine is outside allowed distance
+     * @param machineLongitude Machine longitude (required if GPS enabled)
+     * @param machineLatitude Machine latitude (required if GPS enabled)
+     * @throws Exception if GPS is enabled and coordinates are null, or if machine is outside allowed distance
      */
     void validateCenterToMachineDistance(Double machineLongitude, Double machineLatitude) throws Exception;
 }
