@@ -449,7 +449,7 @@ public class PacketServiceImpl implements PacketService {
     }
 
     @Override
-    public boolean validatingRegisteredPacketNotApproveCount() {
+    public boolean isMaxNotApprovedPacketCountLimitReached() {
         try {
             int maxCount = globalParamRepository.getCachedIntRegMaxCountApproveLimit();
             if (maxCount <= 0) {

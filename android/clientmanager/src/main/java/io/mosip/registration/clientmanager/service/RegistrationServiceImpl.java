@@ -672,7 +672,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         // validate registered packet not approved count
-        if (packetService != null && packetService.validatingRegisteredPacketNotApproveCount()) {
+        if (packetService != null && packetService.isMaxNotApprovedPacketCountLimitReached()) {
             throw new ClientCheckedException("REG_PKT_APPRVL_CNT_EXCEED");
         }
     }
