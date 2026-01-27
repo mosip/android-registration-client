@@ -122,6 +122,10 @@ class GlobalProvider with ChangeNotifier {
     _checkAgeGroupChange = value;
   }
 
+  int? _pridLength;
+  int? _uinLength;
+  int? _vidLength;
+
   //GettersSetters
   setScannedPages(String field, List<Uint8List?> value) {
     _scannedPages[field] = value;
@@ -145,6 +149,10 @@ class GlobalProvider with ChangeNotifier {
   }
 
   String get ageGroup => _ageGroup;
+
+  int? get pridLength => _pridLength;
+  int? get uinLength => _uinLength;
+  int? get vidLength => _vidLength;
 
   set scannedPages(Map<String, List<Uint8List?>> value) {
     _scannedPages = value;
@@ -498,6 +506,24 @@ class GlobalProvider with ChangeNotifier {
     for (var e in thresholdValuesMap.keys) {
       thresholdValuesMap[e] = await BiometricsApi().getMapValue(e);
     }
+  }
+
+  getPRIDLength() async {
+    int length = await globalConfigService.getPRIDLength();
+    _pridLength = length == 0 ? 14 : length;
+    notifyListeners();
+  }
+
+  getUINLength() async {
+    int length = await globalConfigService.getUINLength();
+    _uinLength = length == 0 ? 10 : length;
+    notifyListeners();
+  }
+
+  getVIDLength() async {
+    int length = await globalConfigService.getVIDLength();
+    _vidLength = length == 0 ? 16 : length;
+    notifyListeners();
   }
 
   chooseLanguage(Map<String, String> label) {

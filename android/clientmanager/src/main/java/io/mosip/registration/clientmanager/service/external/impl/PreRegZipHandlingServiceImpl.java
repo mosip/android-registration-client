@@ -245,8 +245,7 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
                 //Always use latest schema, ignoring missing / removed fields
                 RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
                 List<FieldSpecDto> fieldList = this.identitySchemaService.getAllFieldSpec(appContext, registrationDto.getSchemaVersion());
-                this.registrationService.getRegistrationDto().getDocuments().clear();
-                this.registrationService.getRegistrationDto().getDemographics().clear();
+                this.registrationService.getRegistrationDto().retainConfiguredFields(globalParamRepository.getCachedStringFieldsToRetainOnPridFetch());
 
                 for(FieldSpecDto field : fieldList) {
                     if(field.getId().equalsIgnoreCase("IDSchemaVersion"))

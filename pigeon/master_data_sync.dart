@@ -63,4 +63,12 @@ abstract class SyncApi {
   String getNextSyncTimeByJobId(String jobId);
   @async
   List<String> getActiveSyncJobs();
+  @async
+  List<String> getPermittedJobs();
+  @async
+  bool isValidCronExpression(String cronExpression);
+  @async
+  bool modifyJobCronExpression(String jobId, String cronExpression);
+  @async
+  String? getValue(String name);
 }

@@ -59,10 +59,12 @@ import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.service.JobManagerServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.util.CronExpressionParser;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.utils.BatchJob;
@@ -100,6 +102,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     GlobalParamDao globalParamDao;
     FileSignatureDao fileSignatureDao;
     PreRegistrationDataSyncService preRegistrationDataSyncService;
+    LocalConfigService localConfigService;
     Context context;
     private String regCenterId;
 
@@ -120,7 +123,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              AuditManagerService auditManagerService,
                              MasterDataService masterDataService,
                              PacketService packetService,
-                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService) {
+                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -146,6 +149,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.globalParamDao = globalParamDao;
         this.fileSignatureDao = fileSignatureDao;
         this.preRegistrationDataSyncService = preRegistrationDataSyncService;
+        this.localConfigService = localConfigService;
     }
 
     public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob) {
@@ -432,6 +436,70 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         result.success(value);
     }
 
+    @Override
+    public void getPermittedJobs(@NonNull MasterDataSyncPigeon.Result<List<String>> result) {
+        try {
+            List<String> permittedJobs = localConfigService.getPermittedJobs();
+            result.success(permittedJobs != null ? permittedJobs : new ArrayList<>());
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get permitted jobs", e);
+            result.error(e);
+        }
+    }
+
+    @Override
+    public void isValidCronExpression(@NonNull String cronExpression, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            boolean isValid = CronExpressionParser.isValidCronExpression(cronExpression);
+            result.success(isValid);
+        } catch (Exception e) {
+            Log.e(TAG, "Error validating cron expression", e);
+            result.success(false);
+        }
+    }
+
+    @Override
+    public void modifyJobCronExpression(@NonNull String jobId, @NonNull String cronExpression, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        try {
+            localConfigService.modifyJob(jobId, cronExpression);
+            
+            // Fetch specific sync job definition by jobId
+            SyncJobDef jobDef = syncJobDefRepository.getSyncJobDefById(jobId);
+            
+            if (jobDef != null) {
+                // Refresh job status to apply new cron expression
+                // This will reschedule JobScheduler jobs with new cron
+                jobManagerService.refreshJobStatus(jobDef);
+                
+                // For AlarmManager-based jobs (like batch jobs), reschedule immediately
+                if (jobDef.getApiName() != null && activity != null) {
+                    // Reschedule using MainActivity's createBackgroundTask via broadcast
+                    Intent rescheduleIntent = new Intent("RESCHEDULE_JOB");
+                    rescheduleIntent.putExtra(UploadBackgroundService.EXTRA_JOB_API_NAME, jobDef.getApiName());
+                    context.sendBroadcast(rescheduleIntent);
+                    Log.d(TAG, "Sent reschedule broadcast for job: " + jobDef.getApiName());
+                }
+            }
+            
+            result.success(true);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to modify job cron expression", e);
+            result.error(e);
+        }
+    }
+
+    @Override
+    public void getValue(@NonNull String name, @NonNull MasterDataSyncPigeon.Result<String> result) {
+        try {
+            // getValue is used for retrieving job cron expressions, so use PERMITTED_JOB_TYPE
+            String value = localConfigService.getValue(name, RegistrationConstants.PERMITTED_JOB_TYPE);
+            result.success(value);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get value for: " + name, e);
+            result.error(e);
+        }
+    }
+
     // Execute job based on API name
     public void executeJobByApiName(String jobApiName, Context context) {
         new Thread(() -> {
@@ -518,11 +586,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     private String getJobIdByApiName(String apiName) {
         try {
-            List<SyncJobDef> jobs = syncJobDefRepository.getAllSyncJobDefList();
-            for (SyncJobDef job : jobs) {
-                if (apiName.equals(job.getApiName())) {
-                    return job.getId();
-                }
+            SyncJobDef job = syncJobDefRepository.getSyncJobDefByApiName(apiName);
+            if (job != null) {
+                return job.getId();
             }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error getting job ID for: " + apiName, e);

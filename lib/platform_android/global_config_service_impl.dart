@@ -71,6 +71,45 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
     return gpsEnableFlag;
   }
 
+  @override
+  Future<int> getPRIDLength() async {
+    int pridLength = 0;
+    try {
+      pridLength = await GlobalConfigSettingsApi().getPRIDLength();
+    } on PlatformException {
+      debugPrint("PRID Length Api failed!");
+    }  catch (e) {
+      debugPrint("PRID Length fetch error: $e");
+    }
+    return pridLength;
+  }
+
+  @override
+  Future<int> getUINLength() async {
+    int uinLength = 0;
+    try {
+      uinLength = await GlobalConfigSettingsApi().getUINLength();
+    } on PlatformException {
+      debugPrint("UIN Length Api failed!");
+    }  catch (e) {
+      debugPrint("UIN Length fetch error: $e");
+    }
+    return uinLength;
+  }
+
+  @override
+  Future<int> getVIDLength() async {
+    int vidLength = 0;
+    try {
+      vidLength = await GlobalConfigSettingsApi().getVIDLength();
+    } on PlatformException {
+      debugPrint("VID Length Api failed!");
+    }  catch (e) {
+      debugPrint("VID Length fetch error: $e");
+    }
+    return vidLength;
+  }
+
 }
 
 GlobalConfigService getGlobalConfigServiceImpl() => GlobalConfigServiceImpl();

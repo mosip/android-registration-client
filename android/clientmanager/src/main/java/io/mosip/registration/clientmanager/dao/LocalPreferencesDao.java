@@ -25,6 +25,9 @@ public interface LocalPreferencesDao {
     @Query("SELECT * FROM local_preferences WHERE is_deleted = 0 AND name = :name")
     LocalPreferences findByIsDeletedFalseAndName(String name);
 
+    @Query("SELECT * FROM local_preferences WHERE is_deleted = 0 AND name = :name AND config_type = :configType")
+    LocalPreferences findByIsDeletedFalseAndNameAndConfigType(String name, String configType);
+
     @Query("DELETE FROM local_preferences WHERE name = :name")
     void deleteByName(String name);
 }

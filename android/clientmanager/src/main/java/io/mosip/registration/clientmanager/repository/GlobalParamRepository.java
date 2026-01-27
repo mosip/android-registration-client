@@ -212,6 +212,21 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.INVALID_LOGIN_TIME);
     }
 
+    public int getCachedIntegerDiskSpaceSize() {
+        return getCachedIntegerGlobalParam(RegistrationConstants.DISK_SPACE);
+    }
+
+    public int getCachedIntegerPRIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.PRID_LENGTH);
+    }
+
+    public int getCachedIntegerUINLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.UIN_LENGTH);
+    }
+
+    public int getCachedIntegerVIDLength(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.VID_LENGTH);
+    }
     public String getCachedStringDocType() {
         return globalParamMap.get(RegistrationConstants.DOC_TYPE);
     }
@@ -232,6 +247,13 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.DEFAULT_HOST_NAME);
     }
 
+    public String getCachedStringFieldsToRetainOnPridFetch(){
+        return globalParamMap.get(RegistrationConstants.FIELDS_TO_RETAIN_ON_PRID_FETCH);
+    }
+
+    public int getCachedIntRegMaxCountApproveLimit(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_APPRV_LIMIT);
+    }
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

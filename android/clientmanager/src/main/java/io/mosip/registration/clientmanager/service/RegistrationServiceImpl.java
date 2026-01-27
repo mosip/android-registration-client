@@ -47,6 +47,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.Modality;
+import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ResponseDto;
@@ -98,7 +99,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private static final String TAG = RegistrationServiceImpl.class.getSimpleName();
     private static final String SOURCE = "REGISTRATION_CLIENT";
-    private static final int MIN_SPACE_REQUIRED_MB = 50;
+    private static final int DEFAULT_MIN_SPACE_REQUIRED_MB = 50;
 
     private Context context;
     private RegistrationDto registrationDto;
@@ -336,6 +337,14 @@ public class RegistrationServiceImpl implements RegistrationService {
         registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
                 centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(), this.registrationDto.getApplicationId());
 
+        // Auto-approve when supervisor approval is disabled (flag not "Y")
+        String supervisorApprovalFlag = globalParamRepository.getCachedStringGlobalParam(
+                RegistrationConstants.SUPERVISOR_APPROVAL_CONFIG_FLAG);
+        if (supervisorApprovalFlag != null && !RegistrationConstants.ENABLE.equalsIgnoreCase(supervisorApprovalFlag.trim())) {
+            registrationRepository.updateStatus(this.registrationDto.getPacketId(), null,
+                    PacketClientStatus.APPROVED.name());
+        }
+
         // Delete pre-registration record after successful packet creation
         if (this.registrationDto.getPreRegistrationId() != null
                 && !this.registrationDto.getPreRegistrationId().trim().isEmpty()) {
@@ -568,8 +577,13 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
         //free space validation
+        int minSpaceRequiredMB = globalParamRepository.getCachedIntegerDiskSpaceSize();
+        if (minSpaceRequiredMB == 0) {
+            minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
+        }
+        
         long externalSpace = context.getExternalCacheDir().getUsableSpace();
-        if ((externalSpace / (1024 * 1024)) < MIN_SPACE_REQUIRED_MB)
+        if ((externalSpace / (1024 * 1024)) < minSpaceRequiredMB)
             throw new ClientCheckedException(context, R.string.err_006);
 
         //is machine and center active
@@ -594,6 +608,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         // validate max packet count limit
         if (packetService != null && packetService.isMaxPacketCountLimitReached()) {
             throw new ClientCheckedException("PAK_UPLOAD_MAX_COUNT");
+        }
+
+        // validate registered packet not approved count
+        if (packetService != null && packetService.isMaxNotApprovedPacketCountLimitReached()) {
+            throw new ClientCheckedException("REG_PKT_APPRVL_CNT_EXCEED");
         }
     }
 

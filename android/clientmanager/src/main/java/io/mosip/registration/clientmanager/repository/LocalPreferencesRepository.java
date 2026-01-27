@@ -56,6 +56,19 @@ public class LocalPreferencesRepository {
     }
 
     /**
+     * Find local preference by name and config type
+     * This prevents cross-contamination between JOB and CONFIGURATION preferences
+     */
+    public LocalPreferences findByIsDeletedFalseAndNameAndConfigType(String name, String configType) {
+        try {
+            return localPreferencesDao.findByIsDeletedFalseAndNameAndConfigType(name, configType);
+        } catch (Exception e) {
+            Log.e(TAG, "Error finding local preference by name and config type: " + name + ", " + configType, e);
+            return null;
+        }
+    }
+
+    /**
      * Save local preference
      */
     public void save(LocalPreferences localPreference) {

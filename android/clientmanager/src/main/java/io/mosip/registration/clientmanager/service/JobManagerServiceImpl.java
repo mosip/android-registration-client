@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.jobs.ConfigDataSyncJob;
 import io.mosip.registration.clientmanager.jobs.DeleteAuditLogsJob;
@@ -25,6 +26,7 @@ import io.mosip.registration.clientmanager.jobs.RegistrationDeletionJob;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.util.CronExpressionParser;
 import io.mosip.registration.clientmanager.util.DateUtil;
 
@@ -44,13 +46,15 @@ public class JobManagerServiceImpl implements JobManagerService {
     JobTransactionService jobTransactionService;
     SyncJobDefRepository syncJobDefRepository;
     DateUtil dateUtil;
+    LocalConfigService localConfigService;
 
-    public JobManagerServiceImpl(Context context, SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil) {
+    public JobManagerServiceImpl(Context context, SyncJobDefRepository syncJobDefRepository, JobTransactionService jobTransactionService, DateUtil dateUtil, LocalConfigService localConfigService) {
         this.context = context;
         this.jobScheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE);
         this.syncJobDefRepository = syncJobDefRepository;
         this.jobTransactionService = jobTransactionService;
         this.dateUtil = dateUtil;
+        this.localConfigService = localConfigService;
     }
 
     /**
@@ -81,8 +85,10 @@ public class JobManagerServiceImpl implements JobManagerService {
             return;
         }
 
+        // Use getSyncFrequency to check for custom cron expression first
+        String syncFreq = getSyncFrequency(jobDef);
         if (!isJobScheduled(jobId))
-            scheduleJob(jobId, jobDef.getApiName(), jobDef.getSyncFreq());
+            scheduleJob(jobId, jobDef.getApiName(), syncFreq);
     }
 
     /**
@@ -167,7 +173,7 @@ public class JobManagerServiceImpl implements JobManagerService {
             return "NA";
         }
 
-        String cronExpression = jobDef.getSyncFreq();
+        String cronExpression = getSyncFrequency(jobDef);
         // Try cron-based calculation first
         if (CronExpressionParser.isValidCronExpression(cronExpression)) {
             Instant nextExecution = CronExpressionParser.getNextExecutionTime(cronExpression);
@@ -183,6 +189,21 @@ public class JobManagerServiceImpl implements JobManagerService {
         }
 
         return "NA";
+    }
+
+    /**
+     * Get sync frequency for a job, checking custom cron expression first, then default
+     * @param syncJob Job definition
+     * @return Cron expression (custom if exists, otherwise default)
+     */
+    private String getSyncFrequency(SyncJobDef syncJob) {
+        if (localConfigService != null) {
+            String localPreference = localConfigService.getValue(syncJob.getId(), RegistrationConstants.PERMITTED_JOB_TYPE);
+            if (localPreference != null && !localPreference.trim().isEmpty()) {
+                return localPreference;
+            }
+        }
+        return syncJob.getSyncFreq();
     }
 
     @Override
