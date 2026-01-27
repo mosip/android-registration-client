@@ -69,7 +69,7 @@ import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.PacketService;
-import io.mosip.registration.clientmanager.spi.SyncStatusValidatorService;
+import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
 import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import javax.inject.Provider;
@@ -116,7 +116,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private LocationValidationService locationValidationService;
     private Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
     private PacketService packetService;
-    private SyncStatusValidatorService syncStatusValidatorService;
+    private PreCheckValidatorService preCheckValidatorService;
     public static final String BOOLEAN_FALSE = "false";
 
     private Biometrics095Service biometricService;
@@ -135,7 +135,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
                                    Biometrics095Service biometricService,
                                    PacketService packetService,
-                                   SyncStatusValidatorService syncStatusValidatorService) {
+                                   PreCheckValidatorService preCheckValidatorService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -151,7 +151,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.preRegistrationDataSyncServiceProvider = preRegistrationDataSyncServiceProvider;
         this.biometricService = biometricService;
         this.packetService = packetService;
-        this.syncStatusValidatorService = syncStatusValidatorService;
+        this.preCheckValidatorService = preCheckValidatorService;
     }
 
     @Override
@@ -198,18 +198,18 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds, rid);
 
-        // Set GPS location if provided and validate distance from registration center
+        // Set GPS location if provided
         if (latitude != null && longitude != null) {
             this.registrationDto.setGeoLocation(longitude, latitude);
-            
-            // Validate machine distance from registration center if location is available
-            if (syncStatusValidatorService != null) {
-                try {
-                    syncStatusValidatorService.validateCenterToMachineDistance(longitude, latitude);
-                } catch (ClientCheckedException e) {
-                    Log.e(TAG, "Location validation failed", e);
-                    throw e;
-                }
+        }
+
+        // Validate GPS location if flag is enabled (even if coordinates are null)
+        if (preCheckValidatorService != null) {
+            try {
+                preCheckValidatorService.validateCenterToMachineDistance(longitude, latitude);
+            } catch (ClientCheckedException e) {
+                Log.e(TAG, "Location validation failed", e);
+                throw e;
             }
         }
 
@@ -591,8 +591,8 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException(context, R.string.err_007);
 
         // validate sync status - checks if all sync jobs ran within configured time limits
-        if (syncStatusValidatorService != null) {
-            syncStatusValidatorService.validateSyncStatus();
+        if (preCheckValidatorService != null) {
+            preCheckValidatorService.validateSyncStatus();
         }
 
         // registered packet approval time breach check

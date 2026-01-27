@@ -25,17 +25,17 @@ import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
-import io.mosip.registration.clientmanager.spi.SyncStatusValidatorService;
+import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
 
 /**
- * Validates sync status before registration.
+ * Validates pre-check requirements (sync status and GPS location).
  * 
  * @author Sachin S P
  */
 @Singleton
-public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorService {
+public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
 
-    private static final String TAG = SyncStatusValidatorServiceImpl.class.getSimpleName();
+    private static final String TAG = PreCheckValidatorServiceImpl.class.getSimpleName();
 
     private Context context;
     private SyncJobDefRepository syncJobDefRepository;
@@ -47,7 +47,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
     private RegistrationCenterRepository registrationCenterRepository;
 
     @Inject
-    public SyncStatusValidatorServiceImpl(
+    public PreCheckValidatorServiceImpl(
             Context context,
             SyncJobDefRepository syncJobDefRepository,
             GlobalParamRepository globalParamRepository,
@@ -125,6 +125,7 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
                 long lastSyncTimeMillis = jobTransactionService.getLastSyncTime(serviceJobId);
 
                 if (lastSyncTimeMillis == 0) {
+                    // Job has never been synced - skip validation
                     continue;
                 }
 
@@ -140,8 +141,14 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
 
             } catch (NumberFormatException e) {
                 Log.e(TAG, "Invalid frequency value for job: " + jobId + " (" + apiName + "): " + configuredFrequencyStr, e);
+                syncFailureCount++;
+                errorDetails.append("- ").append(apiName)
+                    .append(": Invalid frequency configuration value: ").append(configuredFrequencyStr).append("\n");
             } catch (Exception e) {
                 Log.e(TAG, "Error validating job: " + jobId + " (" + apiName + ")", e);
+                syncFailureCount++;
+                errorDetails.append("- ").append(apiName)
+                    .append(": Validation error: ").append(e.getMessage()).append("\n");
             }
         }
         if (syncFailureCount > 0) {
@@ -225,16 +232,16 @@ public class SyncStatusValidatorServiceImpl implements SyncStatusValidatorServic
 
         CenterMachineDto centerMachineDto = masterDataService.getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
-            Log.w(TAG, "Center details not found, skipping distance validation");
-            return;
+            Log.e(TAG, "GPS validation enabled but center details not found");
+            throw new ClientCheckedException(context, R.string.err_004);
         }
 
         List<RegistrationCenter> centers = registrationCenterRepository.getRegistrationCenter(
             centerMachineDto.getCenterId());
 
         if (centers == null || centers.isEmpty()) {
-            Log.w(TAG, "Center not found, skipping distance validation");
-            return;
+            Log.e(TAG, "GPS validation enabled but center not found");
+            throw new ClientCheckedException(context, R.string.err_004);
         }
 
         RegistrationCenter center = centers.get(0);

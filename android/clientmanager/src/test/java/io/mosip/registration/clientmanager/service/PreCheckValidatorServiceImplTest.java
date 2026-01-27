@@ -35,12 +35,12 @@ import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 
 /**
- * Unit tests for SyncStatusValidatorServiceImpl.
+ * Unit tests for PreCheckValidatorServiceImpl.
  * 
  * @author Sachin S P
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SyncStatusValidatorServiceImplTest {
+public class PreCheckValidatorServiceImplTest {
 
     @Mock
     private Context mockContext;
@@ -73,7 +73,7 @@ public class SyncStatusValidatorServiceImplTest {
     private SharedPreferences.Editor mockEditor;
 
     @InjectMocks
-    private SyncStatusValidatorServiceImpl syncStatusValidatorService;
+    private PreCheckValidatorServiceImpl preCheckValidatorService;
 
     private static final String JOB_ID_1 = "MDS_J00001";
     private static final String JOB_ID_2 = "PDS_J00003";
@@ -117,7 +117,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockJobTransactionService.getLastSyncTime(SERVICE_JOB_ID_2)).thenReturn(oneDayAgo);
 
         // Execute
-        syncStatusValidatorService.validateSyncStatus();
+        preCheckValidatorService.validateSyncStatus();
 
         // Verify: No exception thrown
         verify(mockSyncJobDefRepository).getActiveSyncJobs();
@@ -140,7 +140,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockJobTransactionService.getLastSyncTime(SERVICE_JOB_ID_1)).thenReturn(twoDaysAgo);
 
         // Execute - should throw exception
-        syncStatusValidatorService.validateSyncStatus();
+        preCheckValidatorService.validateSyncStatus();
     }
 
     @Test
@@ -149,7 +149,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockSyncJobDefRepository.getActiveSyncJobs()).thenReturn(new ArrayList<>());
 
         // Execute
-        syncStatusValidatorService.validateSyncStatus();
+        preCheckValidatorService.validateSyncStatus();
 
         // Verify: No exception, validation skipped
         verify(mockSyncJobDefRepository).getActiveSyncJobs();
@@ -166,12 +166,12 @@ public class SyncStatusValidatorServiceImplTest {
             RegistrationConstants.MOSIP_REGISTRATION + API_NAME_1 + RegistrationConstants.DOT + RegistrationConstants.FREQUENCY))
             .thenReturn("190");
 
-        // Setup: No sync history (returns 0)
+        // Setup: No sync history (returns 0) - job should be skipped
         when(mockJobManagerService.generateJobServiceId(JOB_ID_1)).thenReturn(SERVICE_JOB_ID_1);
         when(mockJobTransactionService.getLastSyncTime(SERVICE_JOB_ID_1)).thenReturn(0L);
 
-        // Execute
-        syncStatusValidatorService.validateSyncStatus();
+        // Execute - should not throw exception, job without history is skipped
+        preCheckValidatorService.validateSyncStatus();
 
         // Verify: No exception - job without history is skipped
         verify(mockSyncJobDefRepository).getActiveSyncJobs();
@@ -187,7 +187,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(anyString())).thenReturn(null);
 
         // Execute
-        syncStatusValidatorService.validateSyncStatus();
+        preCheckValidatorService.validateSyncStatus();
 
         // Verify: No exception - job without frequency is skipped
         verify(mockSyncJobDefRepository).getActiveSyncJobs();
@@ -230,7 +230,7 @@ public class SyncStatusValidatorServiceImplTest {
 
         // Execute - should throw exception
         try {
-            syncStatusValidatorService.validateSyncStatus();
+            preCheckValidatorService.validateSyncStatus();
         } catch (ClientCheckedException e) {
             // Verify error code
             assertEquals(RegistrationConstants.OPT_TO_REG_TIME_SYNC_EXCEED, e.getErrorCode());
@@ -247,7 +247,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Execute
-        syncStatusValidatorService.validateCenterToMachineDistance(77.5946, 12.9716);
+        preCheckValidatorService.validateCenterToMachineDistance(77.5946, 12.9716);
 
         // Verify: Validation skipped
         verify(mockGlobalParamRepository).getCachedStringGpsDeviceEnableFlag();
@@ -260,7 +260,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
 
         // Execute with null location
-        syncStatusValidatorService.validateCenterToMachineDistance(null, null);
+        preCheckValidatorService.validateCenterToMachineDistance(null, null);
 
         // Verify: Validation skipped
         verify(mockLocationValidationService, never()).getDistance(anyDouble(), anyDouble(), anyDouble(), anyDouble());
@@ -293,7 +293,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockGlobalParamRepository.getCachedStringMachineToCenterDistance()).thenReturn("500");
 
         // Execute
-        syncStatusValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+        preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
 
         // Verify: No exception thrown
         verify(mockLocationValidationService).getDistance(78.5946, 13.9716, 77.5946, 12.9716);
@@ -327,7 +327,7 @@ public class SyncStatusValidatorServiceImplTest {
 
         // Execute - should throw exception
         try {
-            syncStatusValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+            preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
         } catch (ClientCheckedException e) {
             // Verify error code
             assertEquals(RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION, e.getErrorCode());
@@ -335,19 +335,46 @@ public class SyncStatusValidatorServiceImplTest {
         }
     }
 
-    @Test
-    public void testValidateCenterToMachineDistance_CenterDetailsNotFound_Skipped() throws Exception {
+    @Test(expected = ClientCheckedException.class)
+    public void testValidateCenterToMachineDistance_CenterDetailsNotFound_ThrowsException() throws Exception {
         // Setup: GPS enabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Setup: Center details not found
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(null);
 
-        // Execute
-        syncStatusValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+        // Execute - should throw exception
+        preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+    }
 
-        // Verify: Validation skipped
-        verify(mockLocationValidationService, never()).getDistance(anyDouble(), anyDouble(), anyDouble(), anyDouble());
+    @Test(expected = ClientCheckedException.class)
+    public void testValidateCenterToMachineDistance_CenterNotFound_ThrowsException() throws Exception {
+        // Setup: GPS enabled
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
+
+        // Setup: Center details found but center not found in repository
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId(CENTER_ID);
+        when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(mockRegistrationCenterRepository.getRegistrationCenter(CENTER_ID)).thenReturn(null);
+
+        // Execute - should throw exception
+        preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+    }
+
+    @Test(expected = ClientCheckedException.class)
+    public void testValidateCenterToMachineDistance_EmptyCentersList_ThrowsException() throws Exception {
+        // Setup: GPS enabled
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
+
+        // Setup: Center details found but empty centers list
+        CenterMachineDto centerMachineDto = new CenterMachineDto();
+        centerMachineDto.setCenterId(CENTER_ID);
+        when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
+        when(mockRegistrationCenterRepository.getRegistrationCenter(CENTER_ID)).thenReturn(new ArrayList<>());
+
+        // Execute - should throw exception
+        preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -368,7 +395,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockRegistrationCenterRepository.getRegistrationCenter(CENTER_ID)).thenReturn(centers);
 
         // Execute - should throw exception
-        syncStatusValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+        preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -398,7 +425,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockGlobalParamRepository.getCachedStringMachineToCenterDistance()).thenReturn(null);
 
         // Execute - should throw exception
-        syncStatusValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+        preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
     }
 
     @Test
@@ -422,7 +449,7 @@ public class SyncStatusValidatorServiceImplTest {
 
         // Execute - should throw exception
         try {
-            syncStatusValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+            preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
             fail("Expected ClientCheckedException for invalid coordinate format");
         } catch (ClientCheckedException e) {
             // Expected
@@ -442,7 +469,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockSyncJobDefRepository.getActiveSyncJobs()).thenReturn(activeJobs);
 
         // Execute
-        syncStatusValidatorService.validateSyncStatus();
+        preCheckValidatorService.validateSyncStatus();
 
         // Verify: No exception, job skipped
         verify(mockSyncJobDefRepository).getActiveSyncJobs();
@@ -461,14 +488,14 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockSyncJobDefRepository.getActiveSyncJobs()).thenReturn(activeJobs);
 
         // Execute
-        syncStatusValidatorService.validateSyncStatus();
+        preCheckValidatorService.validateSyncStatus();
 
         // Verify: No exception, job skipped
         verify(mockSyncJobDefRepository).getActiveSyncJobs();
     }
 
-    @Test
-    public void testValidateSyncStatus_InvalidFrequencyValue_ContinuesWithOtherJobs() throws Exception {
+    @Test(expected = ClientCheckedException.class)
+    public void testValidateSyncStatus_InvalidFrequencyValue_ThrowsException() throws Exception {
         // Setup: Create active jobs
         List<SyncJobDef> activeJobs = createActiveJobs();
         when(mockSyncJobDefRepository.getActiveSyncJobs()).thenReturn(activeJobs);
@@ -478,11 +505,8 @@ public class SyncStatusValidatorServiceImplTest {
             RegistrationConstants.MOSIP_REGISTRATION + API_NAME_1 + RegistrationConstants.DOT + RegistrationConstants.FREQUENCY))
             .thenReturn("invalid");
 
-        // Execute
-        syncStatusValidatorService.validateSyncStatus();
-
-        // Verify: No exception, continues with other jobs
-        verify(mockSyncJobDefRepository).getActiveSyncJobs();
+        // Execute - should throw exception due to invalid frequency value
+        preCheckValidatorService.validateSyncStatus();
     }
 
     @Test
@@ -512,7 +536,7 @@ public class SyncStatusValidatorServiceImplTest {
         when(mockGlobalParamRepository.getCachedStringMachineToCenterDistance()).thenReturn("500");
 
         // Execute - should pass (distance == limit, not > limit)
-        syncStatusValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
+        preCheckValidatorService.validateCenterToMachineDistance(78.5946, 13.9716);
 
         // Verify: No exception thrown
         verify(mockLocationValidationService).getDistance(78.5946, 13.9716, 77.5946, 12.9716);

@@ -20,7 +20,7 @@ import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.clientmanager.spi.SyncStatusValidatorService;
+import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
@@ -105,7 +105,7 @@ public class RegistrationServiceImplTest {
     @Mock
     private PacketService packetService;
     @Mock
-    private SyncStatusValidatorService syncStatusValidatorService;
+    private PreCheckValidatorService preCheckValidatorService;
 
     @Before
     public void setUp() {
@@ -117,7 +117,7 @@ public class RegistrationServiceImplTest {
         when(preRegistrationDataSyncServiceProvider.get()).thenReturn(preRegistrationDataSyncService);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService, syncStatusValidatorService);
+                keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService, preCheckValidatorService);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -1877,7 +1877,7 @@ public class RegistrationServiceImplTest {
         // Verify: Registration succeeds, no validation called
         assertNotNull(result);
         assertNull(result.getGeoLocationDto());
-        verify(syncStatusValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
     }
 
     @Test
@@ -1898,7 +1898,7 @@ public class RegistrationServiceImplTest {
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         // Setup: Validation passes (no exception thrown)
-        // Note: SyncStatusValidatorService.validateCenterToMachineDistance doesn't throw when validation passes
+        // Note: PreCheckValidatorService.validateCenterToMachineDistance doesn't throw when validation passes
 
         // Execute with GPS coordinates
         Double latitude = 12.9716;
@@ -1911,7 +1911,7 @@ public class RegistrationServiceImplTest {
         assertNotNull(result.getGeoLocationDto());
         assertEquals(latitude, result.getGeoLocationDto().getLatitude(), 0.0001);
         assertEquals(longitude, result.getGeoLocationDto().getLongitude(), 0.0001);
-        verify(syncStatusValidatorService).validateCenterToMachineDistance(longitude, latitude);
+        verify(preCheckValidatorService).validateCenterToMachineDistance(longitude, latitude);
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -1936,7 +1936,7 @@ public class RegistrationServiceImplTest {
         Double longitude = 78.5946;
         ClientCheckedException validationException = new ClientCheckedException(
                 mockApplicationContext, android.R.string.unknownName, "OPT_TO_REG_OUTSIDE_LOCATION");
-        Mockito.doThrow(validationException).when(syncStatusValidatorService)
+        Mockito.doThrow(validationException).when(preCheckValidatorService)
                 .validateCenterToMachineDistance(longitude, latitude);
 
         // Execute - should throw exception
@@ -1945,14 +1945,14 @@ public class RegistrationServiceImplTest {
                     Arrays.asList("eng"), "NEW", "NEW", latitude, longitude);
         } catch (ClientCheckedException e) {
             // Verify: Validation was called
-            verify(syncStatusValidatorService).validateCenterToMachineDistance(longitude, latitude);
+            verify(preCheckValidatorService).validateCenterToMachineDistance(longitude, latitude);
             throw e;
         }
     }
 
     @Test
     public void testStartRegistration_WithGPS_SyncValidatorNull_SkipsValidation() throws Exception {
-        // Setup: Create service without SyncStatusValidatorService (null)
+        // Setup: Create service without PreCheckValidatorService (null)
         RegistrationService serviceWithoutValidator = new RegistrationServiceImpl(
                 mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, 
@@ -1985,7 +1985,7 @@ public class RegistrationServiceImplTest {
         assertNotNull(result.getGeoLocationDto());
         assertEquals(latitude, result.getGeoLocationDto().getLatitude(), 0.0001);
         assertEquals(longitude, result.getGeoLocationDto().getLongitude(), 0.0001);
-        // SyncStatusValidatorService is null, so validation should be skipped
+        // PreCheckValidatorService is null, so validation should be skipped
     }
 
     @Test
@@ -2012,7 +2012,7 @@ public class RegistrationServiceImplTest {
         // Verify: Registration succeeds, no GPS set, no validation called
         assertNotNull(result);
         assertNull(result.getGeoLocationDto());
-        verify(syncStatusValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
     }
 
     @Test
@@ -2039,6 +2039,6 @@ public class RegistrationServiceImplTest {
         // Verify: Registration succeeds, no GPS set, no validation called
         assertNotNull(result);
         assertNull(result.getGeoLocationDto());
-        verify(syncStatusValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
+        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(anyDouble(), anyDouble());
     }
 }

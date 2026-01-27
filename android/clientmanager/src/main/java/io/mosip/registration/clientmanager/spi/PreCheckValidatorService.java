@@ -1,11 +1,11 @@
 package io.mosip.registration.clientmanager.spi;
 
 /**
- * Validates sync status before registration.
+ * Validates pre-check requirements (sync status and GPS location).
  * 
  * @author Sachin S P
  */
-public interface SyncStatusValidatorService {
+public interface PreCheckValidatorService {
 
     /**
      * Validates sync job frequencies.
