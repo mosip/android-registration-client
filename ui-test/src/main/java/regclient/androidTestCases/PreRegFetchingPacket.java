@@ -7,7 +7,6 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
-import regclient.api.AdminTestUtil;
 import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
 import regclient.api.KeycloakUserManager;
@@ -16,7 +15,6 @@ import regclient.page.ApplicantBiometricsPage;
 import regclient.page.AuthenticationPage;
 import regclient.page.BasePage;
 import regclient.page.BiometricDetailsPage;
-import regclient.page.CameraPage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
@@ -429,7 +427,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 //		previewPage.validatePreRegAndApplicationIdMatch("adult");
 
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -445,8 +442,18 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -524,9 +531,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
@@ -562,12 +570,19 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if manage Applications Page displayed");
 
 		manageApplicationsPage.selectLatestAidCheckBox();
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
 				break;
+			}
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
@@ -591,7 +606,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-	
+
 	}
 
 	@Test(priority = 1, description = "Verify minor pre-reg fetching registration")
@@ -681,7 +696,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(), "Verify if select language page  is loaded");
-		
+
 		selectLanguagePage.selectSecondLanguage();
 
 		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
@@ -985,8 +1000,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 //	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		
-		previewPage.clickOnContinueButton();
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1002,8 +1016,18 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -1081,9 +1105,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
@@ -1121,9 +1146,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		manageApplicationsPage.selectLatestAidCheckBox();
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
 				break;
+			}
 		}
 		manageApplicationsPage.clickOnBackButton();
 
@@ -1148,7 +1174,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-	
+
 	}
 
 	@Test(priority = 2, description = "Verify infant pre-reg fetching registration")
@@ -1476,7 +1502,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 //	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1492,8 +1518,19 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -1571,9 +1608,10 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
@@ -1609,12 +1647,19 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if manage Applications Page displayed");
 
 		manageApplicationsPage.selectLatestAidCheckBox();
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
 				break;
+			}
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");

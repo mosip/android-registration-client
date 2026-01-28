@@ -3,7 +3,7 @@
 <suite name="Suite">
 	<test name="Test" thread-count="5">
 		<classes>
-			<class name="regclient.androidTestCases.logintest">
+			<class name="regclient.androidTestCases.LoginTest">
 				<methods>
 					<include name="userloginTest" />
 					<include name="onboardingTest" />

@@ -385,7 +385,6 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -401,8 +400,18 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -480,9 +489,10 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
@@ -523,10 +533,19 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 				"Verify if  packet is approved after approve in pending approval");
 
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
 
-		// assertTrue(manageApplicationsPage.isPacketUploadDone(Aid), "Verify if packet
-		// upload is done");
+		for (int i = 0; i < 3; i++) {
+			manageApplicationsPage.clickOnUploadButton();
+
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
+				break;
+			}
+		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
@@ -547,8 +566,7 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
+
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");

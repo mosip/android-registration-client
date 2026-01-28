@@ -417,7 +417,6 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		}
 
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -433,6 +432,19 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+		assertTrue(isAuthenticationPageDisplayed,
+				"Authentication page not displayed after retries");
 
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -498,13 +510,14 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
-			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
-			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-				isPageDisplayed = true;
-				break;
-			}
+		    pendingApproval.clickOnAuthenticateButton();
+
+		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+		        isPageDisplayed = true;
+		        break;
+		    }
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
@@ -535,7 +548,18 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		manageApplicationsPage.enterAID(Aid);
 
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
+
+		for (int i = 0; i < 3; i++) {
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
+		        break;
+		    }
+		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
 		manageApplicationsPage.clickOnBackButton();
 

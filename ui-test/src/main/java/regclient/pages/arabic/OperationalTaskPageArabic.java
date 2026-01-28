@@ -18,11 +18,14 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"مزامنة البيانات\")")
 	private WebElement synchronizeDataButton;
 
-	@AndroidFindBy(accessibility = "تحميل التطبيق")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"تحميل التطبيق\")")
 	private WebElement applicationUploadTitle;
 
-	@AndroidFindBy(accessibility = "ما زال يحتاج بتصدير")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ما زال يحتاج بتصدير\")")
 	private WebElement pendingApprovalTitle;
+
+	@AndroidFindBy(accessibility = "المهام التشغيلية")
+	private WebElement operationalTaskPageTitle;
 
 	public OperationalTaskPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -34,7 +37,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
-		return isElementDisplayed(systemStorageUsageTitle);
+		return isElementDisplayed(operationalTaskPageTitle);
 	}
 
 	public void clickSynchronizeDataButton() {

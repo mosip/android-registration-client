@@ -160,6 +160,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		// Navigate to mocksbi page
 		MockSBIPage mockSBIPage = new MockSBIPage(driver);
 		mockSBIPage.switchToMockSBI();
+		mockSBIPage.clickOnMockSbiSettingsButton();
 		mockSBIPage.setAllModalityLowScore();
 		mockSBIPage.switchBackToArcApp();
 
@@ -437,6 +438,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
 //		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
 //				"Verify if application ID In PreviewPage is displayed");
+
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
@@ -993,6 +995,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		// Navigate to mocksbi page
 		MockSBIPage mockSBIPage = new MockSBIPage(driver);
 		mockSBIPage.switchToMockSBI();
+		mockSBIPage.clickOnMockSbiSettingsButton();
 		mockSBIPage.setAllModalityLowScore();
 		mockSBIPage.switchBackToArcApp();
 
@@ -1247,6 +1250,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 						"Verify if biometric details page is displayed");
 				// Return to mocksbi page
 				mockSBIPage.switchToMockSBI();
+				mockSBIPage.clickOnMockSbiSettingsButton();
 				mockSBIPage.setAllModalityHighScore();
 				mockSBIPage.switchBackToArcApp();
 
@@ -1504,7 +1508,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		// Biometric correction packet process
 		// Reset biometric capabilities back to individual biometrics for correction flow
-		FetchUiSpec.getBiometricDetails("individualBiometrics");
+
 		assertTrue(registrationTasksPage.isOperationalTaskDisplayed(), "Verify if operation tasks page is loaded");
 
 		registrationTasksPage.clickOnRegistrationTasksTab();
@@ -1838,6 +1842,26 @@ public class BiometricCorrection extends AndroidBaseTest {
 				break;
 		}
 		manageApplicationsPage.clickOnBackButton();
+		registrationTasksPage.clickProfileButton();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		profilePage.clickOnLogoutButton();
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
+	
 
 	}
 
