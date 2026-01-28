@@ -254,6 +254,10 @@ public class GlobalParamRepository {
     public int getCachedIntRegMaxCountApproveLimit(){
         return getCachedIntegerGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_APPRV_LIMIT);
     }
+    public String getCachedStringPacketStoreLocation() {
+        return globalParamMap.get(RegistrationConstants.PACKET_STORE_LOCATION);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */

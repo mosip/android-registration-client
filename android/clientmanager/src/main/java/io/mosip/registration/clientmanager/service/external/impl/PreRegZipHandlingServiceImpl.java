@@ -55,6 +55,7 @@ import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 import io.mosip.registration.packetmanager.util.ConfigService;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.util.PacketKeeper;
+import io.mosip.registration.packetmanager.util.StorageUtils;
 
 
 
@@ -486,22 +487,6 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
 
     private void initPreRegAdapter(Context context) {
         this.appContext = context;
-
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            String location = ConfigService.getProperty("objectstore.base.location", context);
-
-            File file = new File(Environment.getExternalStorageDirectory() + SEPARATOR + location);
-
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-
-            BASE_LOCATION = file.getAbsolutePath();
-        } else {
-            Log.e(TAG, "External Storage not mounted");
-        }
-        Log.i(TAG, "initLocalClientCryptoService: Initialization call successful");
     }
 
 }
