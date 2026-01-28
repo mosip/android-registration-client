@@ -1,5 +1,6 @@
 package regclient.pages.arabic;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -18,11 +19,11 @@ public class LoginPageArabic extends LoginPage {
 	@AndroidFindBy(accessibility = "مقبل")
 	private WebElement nextButton;
 
-	@AndroidFindBy(xpath = "//android.widget.EditText")
-	private WebElement passwordTextBox;
+	private By passwordTextBox =
+			By.xpath("//android.widget.EditText[@password='true']");
 
-	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"تسجيل الدخول\"])[2]")
-	private WebElement loginButton;
+	private By loginButton =
+	        By.xpath("(//android.view.View[@content-desc='تسجيل الدخول'])[2]");
 
 	@AndroidFindBy(accessibility = "يرجى تسجيل الدخول للوصول إلى الميزات.")
 	private WebElement loginMessage;
@@ -74,11 +75,11 @@ public class LoginPageArabic extends LoginPage {
 	}
 
 	public void enterPassword(String password) {
-		clickAndsendKeysToTextBox(passwordTextBox, password);
+		clickAndSendKeysToTextBox(passwordTextBox, password);
 	}
 
 	public RegistrationTasksPage clickOnloginButton() {
-		clickOnElement(loginButton);
+		hideKeyboardAndClick(loginButton);
 		return new RegistrationTasksPageArabic(driver);
 	}
 

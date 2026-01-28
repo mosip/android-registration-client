@@ -129,6 +129,7 @@ public class RegistrationConstants {
     public static final String PWORD_LENGTH = "mosip.registration.username_pwd_length";
     public static final String DOC_SIZE = "mosip.registration.document_size";
     public static final String MAX_AGE = "mosip.registration.max_age";
+    public static final String FIELDS_TO_RETAIN_ON_PRID_FETCH = "mosip.registration.fields.to.retain.post.prid.fetch";
     public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
     public static final String REG_PAK_MAX_TIME_APPRV_LIMIT = "mosip.registration.reg_pak_max_time_apprv_limit";
@@ -146,5 +147,6 @@ public class RegistrationConstants {
     public static final String APP_ID = "mosip.registration.audit_application_id";
     public static final String DEFAULT_HOST_IP = "mosip.registration.audit_default_host_ip";
     public static final String DEFAULT_HOST_NAME = "mosip.registration.audit_default_host_name";
+    public static final String REG_PAK_MAX_CNT_APPRV_LIMIT = "mosip.registration.reg_pak_max_cnt_apprv_limit";
     public static final String PACKET_STORE_LOCATION = "mosip.registration.registration_packet_store_location";
 }

@@ -45,6 +45,9 @@ public class MockSBIPage extends BasePage {
 	@AndroidFindBy(id = "io.mosip.mock.sbi:id/button12")
 	private WebElement mockSbiSaveButton;
 
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Device Config']")
+	private WebElement deviceConfigTitle;
+
 	public MockSBIPage(AppiumDriver driver) {
 		super(driver);
 		this.driver = driver;
@@ -58,7 +61,19 @@ public class MockSBIPage extends BasePage {
 
 		Activity mocksbi = new Activity(MOCKSBI_PACKAGE, MOCKSBI_ACTIVITY);
 		((AndroidDriver) driver).startActivity(mocksbi);
-		clickOnElement(mockSbiSettingsButton);
+	}
+
+	public void clickOnMockSbiSettingsButton() {
+
+		for (int i = 0; i < 3; i++) {
+			clickOnElement(mockSbiSettingsButton);
+
+			if (isElementDisplayed(deviceConfigTitle, 3)) {
+				return;
+			}
+		}
+
+		throw new RuntimeException("Device Config page not displayed after clicking Settings");
 	}
 
 	public void setAllToNotReadyAndSave() {

@@ -50,7 +50,7 @@ public abstract class PendingApproval extends BasePage {
 
 	public abstract boolean isInvalidUsernameMessageDisplayed();
 
-	public abstract boolean isSubmitButtonEnabledWithEmptyUsername();
+	public abstract boolean isSubmitButtonDisabledWithEmptyUsername();
 
 	public abstract boolean isNumberOfApplicationDisplayed();
 
@@ -63,8 +63,6 @@ public abstract class PendingApproval extends BasePage {
 	public abstract void selectLatestAIdCheckBox();
 
 	public abstract boolean isNoNetworkFoundDisplayed();
-
-	public abstract void clickOnPendingApprovalSubmitButton(int maxRetries);
 
 	public abstract boolean isAuthenticateButtonEnabled();
 

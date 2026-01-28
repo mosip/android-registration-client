@@ -15,7 +15,7 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement ApplicationIDTextBox;
 
-	@AndroidFindBy(accessibility = "تحميل")
+	@AndroidFindBy(accessibility = "رفع")
 	private WebElement uploadButton;
 
 	@AndroidFindBy(accessibility = "حالة العميل")
@@ -30,10 +30,10 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "تم الإنشاء")
 	private WebElement createdOption;
 
-	@AndroidFindBy(accessibility = "تمت الموافقة")
+	@AndroidFindBy(accessibility = "Approved")
 	private WebElement approvedOption;
 
-	@AndroidFindBy(accessibility = "مرفوض")
+	@AndroidFindBy(accessibility = "Rejected")
 	private WebElement rejectedOption;
 
 	@AndroidFindBy(accessibility = "تمت المزامنة")
@@ -48,7 +48,7 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "تجاهل")
 	private WebElement dismissButton;
 
-	@AndroidFindBy(accessibility = "عرض 0 من الطلبات")
+	@AndroidFindBy(accessibility = "عرض 0 تطبيقات")
 	private WebElement displayZeroApplication;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(0)")
