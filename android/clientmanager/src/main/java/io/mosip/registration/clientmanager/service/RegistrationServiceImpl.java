@@ -198,19 +198,14 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds, rid);
 
-        // Set GPS location if provided
-        if (latitude != null && longitude != null) {
-            this.registrationDto.setGeoLocation(longitude, latitude);
-        }
+        this.registrationDto.setGeoLocation(longitude, latitude);
 
         // Validate GPS location if flag is enabled (even if coordinates are null)
-        if (preCheckValidatorService != null) {
-            try {
+        try {
                 preCheckValidatorService.validateCenterToMachineDistance(longitude, latitude);
             } catch (ClientCheckedException e) {
                 Log.e(TAG, "Location validation failed", e);
                 throw e;
-            }
         }
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
@@ -591,9 +586,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException(context, R.string.err_007);
 
         // validate sync status - checks if all sync jobs ran within configured time limits
-        if (preCheckValidatorService != null) {
-            preCheckValidatorService.validateSyncStatus();
-        }
+        preCheckValidatorService.validateSyncStatus();
 
         // registered packet approval time breach check
         if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
