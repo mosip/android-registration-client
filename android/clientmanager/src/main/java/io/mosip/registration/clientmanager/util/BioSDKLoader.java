@@ -48,25 +48,67 @@ public class BioSDKLoader {
                 return null;
             }
 
-            DexClassLoader classLoader = new DexClassLoader(
-                    sdkFile.getAbsolutePath(),
-                    context.getCodeCacheDir().getAbsolutePath(),
-                    null,
-                    context.getClassLoader()
-            );
+            // Validate file exists and is readable
+            if (!sdkFile.exists() || !sdkFile.canRead()) {
+                Log.e(TAG, "SDK file is not accessible: " + sdkFile.getAbsolutePath());
+                return null;
+            }
+
+            // Check if file is a valid DEX/JAR
+            if (sdkFile.length() == 0) {
+                Log.e(TAG, "SDK file is empty: " + sdkFile.getAbsolutePath());
+                return null;
+            }
+
+            // Validate that the file is a DEX-compatible file
+            if (!isDexFile(sdkFile)) {
+                String fileName = sdkFile.getName();
+                String errorMsg = "SDK file is not a valid DEX file: " + sdkFile.getAbsolutePath() + 
+                    ". The file appears to be a regular JAR with .class files (Java bytecode). " +
+                    "Android runtime requires DEX format (classes.dex). ";
+                
+                if (fileName.contains("-classes.jar") || fileName.endsWith(".aar")) {
+                    errorMsg += "NOTE: AAR files and their extracted classes.jar are not suitable for runtime loading. " +
+                        "AARs are designed for compile-time inclusion. For runtime loading, the SDK must be provided " +
+                        "as a DEX-compatible JAR file (containing classes.dex) instead of an AAR.";
+                } else {
+                    errorMsg += "Please ensure the SDK is compiled for Android and contains DEX format.";
+                }
+                
+                Log.e(TAG, errorMsg);
+                return null;
+            }
 
             try {
-                Class<?> sdkClass = classLoader.loadClass(className);
-                Object sdkInstance = sdkClass.newInstance();
-                if (sdkInstance instanceof IBioApiV2) {
-                    Log.i(TAG, "Successfully loaded BioSDK: " + className + " for modality: " + modalityKey);
-                    return (IBioApiV2) sdkInstance;
+                DexClassLoader classLoader = new DexClassLoader(
+                        sdkFile.getAbsolutePath(),
+                        context.getCodeCacheDir().getAbsolutePath(),
+                        null,
+                        context.getClassLoader()
+                );
+
+                try {
+                    Class<?> sdkClass = classLoader.loadClass(className);
+                    Object sdkInstance = sdkClass.newInstance();
+                    if (sdkInstance instanceof IBioApiV2) {
+                        Log.i(TAG, "Successfully loaded BioSDK: " + className + " for modality: " + modalityKey);
+                        return (IBioApiV2) sdkInstance;
+                    }
+                    Log.w(TAG, "Loaded class does not implement IBioApiV2: " + className);
+                } catch (ClassNotFoundException e) {
+                    Log.e(TAG, "Class not found in SDK: " + className + ". File: " + sdkFile.getName() + 
+                        ". Make sure the SDK file contains the class and is a valid DEX file.", e);
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to load class from SDK: " + className + ". File: " + sdkFile.getName(), e);
                 }
-                Log.w(TAG, "Loaded class does not implement IBioApiV2: " + className);
-            } catch (ClassNotFoundException e) {
-                Log.e(TAG, "Class not found in SDK: " + className, e);
             } catch (Exception e) {
-                Log.e(TAG, "Failed to load class from SDK: " + className, e);
+                Log.e(TAG, "Failed to create DexClassLoader for file: " + sdkFile.getAbsolutePath() + 
+                    ". The file may not be a valid DEX file. Error: " + e.getMessage(), e);
+                // If it's a DEX loading error, suggest checking the file format
+                if (e.getMessage() != null && e.getMessage().contains("classes.dex")) {
+                    Log.e(TAG, "The SDK file appears to be a regular JAR (with .class files) rather than a DEX file. " +
+                        "Android requires DEX format. Please ensure the SDK is properly compiled for Android.");
+                }
             }
 
             return null;
@@ -109,19 +151,31 @@ public class BioSDKLoader {
                 return null;
             }
 
+            // Priority 1: Look for DEX-compatible JAR files first (these work for runtime loading)
             for (String name : files) {
                 String lower = name.toLowerCase(Locale.ROOT);
                 if (lower.endsWith(".jar")) {
-                    return copyFileFromAssets(context, name);
+                    File jarFile = copyFileFromAssets(context, name);
+                    if (jarFile != null) {
+                        Log.d(TAG, "Found JAR file in assets: " + name);
+                        return jarFile;
+                    }
                 }
             }
 
+            // Priority 2: Look for AAR files (extract classes.jar, but note: may not be DEX-compatible)
             for (String name : files) {
                 String lower = name.toLowerCase(Locale.ROOT);
                 if (lower.endsWith(".aar")) {
+                    Log.d(TAG, "Found AAR file in assets: " + name + ". Extracting classes.jar...");
                     File aarFile = copyFileFromAssets(context, name);
                     if (aarFile != null) {
-                        return extractClassesJarFromAar(context, aarFile);
+                        File extractedJar = extractClassesJarFromAar(context, aarFile);
+                        if (extractedJar != null) {
+                            Log.w(TAG, "Extracted classes.jar from AAR. WARNING: AAR files contain regular JARs " +
+                                "with .class files, not DEX format. For runtime loading, use DEX-compatible JAR files instead.");
+                            return extractedJar;
+                        }
                     }
                 }
             }
@@ -144,14 +198,45 @@ public class BioSDKLoader {
                 return null;
             }
 
+            zipFile = new ZipFile(aarFile);
+            
+            // First, check if AAR contains a pre-compiled DEX file (unlikely but possible)
+            ZipEntry dexEntry = zipFile.getEntry("classes.dex");
+            if (dexEntry != null) {
+                String extractedDexName = aarFile.getName().replace(".aar", ".dex");
+                File outputDexFile = new File(biosdkDir, extractedDexName);
+                if (outputDexFile.exists() && outputDexFile.length() > 0) {
+                    return outputDexFile;
+                }
+                
+                inputStream = zipFile.getInputStream(dexEntry);
+                outputStream = new FileOutputStream(outputDexFile);
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.flush();
+                outputStream.close();
+                inputStream.close();
+                Log.i(TAG, "Extracted DEX file from AAR: " + extractedDexName);
+                return outputDexFile;
+            }
+
+            // AAR files contain classes.jar with .class files (Java bytecode), not DEX format
+            // For runtime loading, Android requires DEX format. AARs are meant for compile-time inclusion.
+            // We'll extract it but it won't work with DexClassLoader - it needs to be converted to DEX.
             String extractedJarName = aarFile.getName().replace(".aar", "-classes.jar");
             outputJarFile = new File(biosdkDir, extractedJarName);
 
             if (outputJarFile.exists() && outputJarFile.length() > 0) {
+                // File already extracted, but it's still a regular JAR, not DEX
+                Log.w(TAG, "Using extracted classes.jar from AAR. Note: AAR files contain regular JARs " +
+                    "with .class files, not DEX format. For runtime loading, the SDK should be provided " +
+                    "as a DEX-compatible JAR file instead of an AAR.");
                 return outputJarFile;
             }
 
-            zipFile = new ZipFile(aarFile);
             ZipEntry classesJarEntry = zipFile.getEntry(AAR_CLASSES_JAR);
             if (classesJarEntry == null) {
                 Log.e(TAG, "classes.jar not found in AAR: " + aarFile.getName());
@@ -167,6 +252,11 @@ public class BioSDKLoader {
                 outputStream.write(buffer, 0, bytesRead);
             }
             outputStream.flush();
+
+            Log.w(TAG, "Extracted classes.jar from AAR. IMPORTANT: AAR files are not suitable for runtime loading. " +
+                "The extracted JAR contains .class files (Java bytecode), but Android runtime requires DEX format. " +
+                "For runtime loading, the SDK should be provided as a DEX-compatible JAR file (containing classes.dex) " +
+                "instead of an AAR file. AARs are designed for compile-time inclusion in Android projects.");
 
             return outputJarFile;
 
@@ -240,6 +330,44 @@ public class BioSDKLoader {
                 Log.e(TAG, "Error closing streams", e);
             }
         }
+    }
+
+    /**
+     * Checks if a file is a valid DEX file.
+     * A DEX file starts with "dex\n" magic number, or a JAR/ZIP containing classes.dex.
+     * 
+     * @param file The file to check
+     * @return true if the file appears to be a DEX file, false otherwise
+     */
+    private static boolean isDexFile(File file) {
+        if (file == null || !file.exists() || file.length() < 4) {
+            return false;
+        }
+
+        try {
+            // First check if it's a JAR/ZIP containing classes.dex
+            try (ZipFile zipFile = new ZipFile(file)) {
+                ZipEntry dexEntry = zipFile.getEntry("classes.dex");
+                if (dexEntry != null) {
+                    return true;
+                }
+                // It's a ZIP but doesn't contain classes.dex - not a valid DEX file
+                return false;
+            } catch (java.util.zip.ZipException e) {
+                // Not a ZIP file, check if it's a direct DEX file
+                try (java.io.FileInputStream fis = new java.io.FileInputStream(file)) {
+                    byte[] magic = new byte[4];
+                    if (fis.read(magic) == 4) {
+                        String magicString = new String(magic);
+                        return "dex\n".equals(magicString);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Error checking if file is DEX: " + file.getName(), e);
+        }
+
+        return false;
     }
 }
 
