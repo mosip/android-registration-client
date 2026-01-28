@@ -487,8 +487,6 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
 
     private void initPreRegAdapter(Context context) {
         this.appContext = context;
-        File baseDir = StorageUtils.getPacketStorageDir(context);
-        BASE_LOCATION = baseDir.getAbsolutePath();
     }
 
 }

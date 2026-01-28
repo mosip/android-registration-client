@@ -676,7 +676,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private boolean validatingDiskSpace() {
         int minSpaceRequiredMB = globalParamRepository.getCachedIntegerDiskSpaceSize();
-        if (minSpaceRequiredMB == 0) {
+        if (minSpaceRequiredMB <= 0) {
             minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;
         }
         long allowedDiskSpaceSizeInBytes = (long) minSpaceRequiredMB * 1024 * 1024;
@@ -685,6 +685,10 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         if (!actualDiskSpace.exists() && !actualDiskSpace.mkdirs()) {
             Log.e(TAG, "Packet store directory not available: " + actualDiskSpace.getAbsolutePath());
+            return true; // treat as low space/unavailable
+        }
+        if (!actualDiskSpace.isDirectory() || !actualDiskSpace.canWrite()) {
+            Log.e(TAG, "Packet store directory not writable: " + actualDiskSpace.getAbsolutePath());
             return true; // treat as low space/unavailable
         }
 
