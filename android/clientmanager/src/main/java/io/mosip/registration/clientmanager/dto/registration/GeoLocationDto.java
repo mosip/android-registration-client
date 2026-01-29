@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class GeoLocationDto {
-    private double longitude;
-    private double latitude;
+    private Double longitude;
+    private Double latitude;
 }
