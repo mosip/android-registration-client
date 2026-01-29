@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -185,7 +186,7 @@ public class Biometrics095Service extends BiometricsService {
 
                 Log.i(TAG, "BiometricsDtoList: started");
                 Log.i(TAG, "BiometricsDtoList: before inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
-               // if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
+               if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
                     Log.i(TAG, "BiometricsDtoList: inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
                     IBioApiV2 modalityBioSDK = BioSDKLoader.loadBioSDK(context, modality, globalParamRepository);
                     Log.i(TAG,"modalityBioSDK=======> "+modalityBioSDK);
@@ -206,7 +207,7 @@ public class Biometrics095Service extends BiometricsService {
                     } else {
                         Log.w(TAG, "BioSDK not found for " + modality + ", skipping deduplication check");
                     }
-              //  }
+               }
             }
         } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
@@ -309,17 +310,16 @@ public class Biometrics095Service extends BiometricsService {
     }
 
     private double getSDKScore(BiometricsDto biometricsDto, Modality modality) throws Exception {
-        // Get biometric type from bioAttribute (like desktop: Biometric.getSingleTypeByAttribute)
+        // Resolve biometric type; fall back to modality if attribute mapping fails
         BiometricType biometricType = null;
         try {
             String bioAttribute = biometricsDto.getBioSubType();
             if (bioAttribute != null && !bioAttribute.isEmpty()) {
-                // Try to get BiometricType from attribute using Biometric utility class (like desktop)
-                io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric biometric = 
-                    io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric.getBiometricByAttribute(bioAttribute);
+                io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric biometric =
+                        io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric.getBiometricByAttribute(bioAttribute);
                 if (biometric != null) {
-                    // Convert packetmanager BiometricType to kernel BiometricType
-                    io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType packetBiometricType = biometric.getBiometricType();
+                    io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType packetBiometricType =
+                            biometric.getBiometricType();
                     if (packetBiometricType != null) {
                         biometricType = BiometricType.fromValue(packetBiometricType.name());
                     }
@@ -328,86 +328,136 @@ public class Biometrics095Service extends BiometricsService {
         } catch (Exception e) {
             Log.d(TAG, "Error getting biometric type from attribute, using modality", e);
         }
-        
-        // Fallback to modality if attribute lookup failed
         if (biometricType == null) {
             biometricType = BiometricType.fromValue(biometricsDto.getModality());
         }
-        
+
+        // Build kernel BIR from captured ISO
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         BIR bir = MatchUtil.buildBir(
-            biometricsDto.getBioSubType(),
-            (long) biometricsDto.getQualityScore(),
-            iso,
-            biometricType,
-            ProcessedLevelType.RAW,
-            false
+                biometricsDto.getBioSubType(),
+                (long) biometricsDto.getQualityScore(),
+                iso,
+                biometricType,
+                ProcessedLevelType.RAW,
+                false
         );
-        
-        BIR[] birList = new BIR[] { bir };
-        
+
         IBioApiV2 bioProvider = BioSDKLoader.loadBioSDK(context, modality, globalParamRepository);
         if (bioProvider == null) {
-            throw new Exception("SDK provider not found for modality: " + modality);
+            Log.w(TAG, "SDK provider not found for modality: " + modality + ", using device quality score");
+            return biometricsDto.getQualityScore();
         }
-        
-        // Try to call getModalityQuality method directly on the SDK instance (like desktop)
-        // The SDK might have this method even if it doesn't implement iBioProviderApi interface
+
+        // Single, happy-path integration with SampleSDK: checkQuality(BiometricRecord, List<BiometricType>, Map<String, String>)
         try {
-            // Try getModalityQuality method (like desktop iBioProviderApi.getModalityQuality)
-            java.lang.reflect.Method qualityMethod = bioProvider.getClass().getMethod("getModalityQuality", BIR[].class, Map.class);
-            Object result = qualityMethod.invoke(bioProvider, birList, null);
-            if (result instanceof Map) {
-                Map<BiometricType, Float> scoreMap = (Map<BiometricType, Float>) result;
-                if (scoreMap != null && scoreMap.containsKey(biometricType)) {
-                    Float score = scoreMap.get(biometricType);
+            BiometricRecord sample = new BiometricRecord();
+            sample.getSegments().add(bir);
+            List<BiometricType> modalitiesToCheck = Collections.singletonList(biometricType);
+            Map<String, String> flags = new HashMap<>();
+
+            java.lang.reflect.Method checkQualityMethod = bioProvider.getClass()
+                    .getMethod("checkQuality", BiometricRecord.class, List.class, Map.class);
+            Object responseObj = checkQualityMethod.invoke(bioProvider, sample, modalitiesToCheck, flags);
+
+            if (responseObj instanceof Response) {
+                Response<?> qualityResponse = (Response<?>) responseObj;
+                Object qualityCheck = qualityResponse.getResponse();
+                Double score = extractScoreFromQualityCheck(qualityCheck, biometricType);
+                if (score != null && score > 0) {
+                    Log.i(TAG, "SDK quality score calculated using checkQuality(): " + score);
+                    return score;
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            Log.w(TAG, "checkQuality(BiometricRecord, List, Map) not available in SDK, using device quality score");
+        } catch (Exception e) {
+            Log.e(TAG, "Error calling SDK checkQuality, using device quality score", e);
+        }
+
+        // Fallback: use device-reported quality
+        return biometricsDto.getQualityScore();
+    }
+
+    /**
+     * Extracts quality score from QualityCheck object (from checkQuality response) via reflection.
+     * MOSIP kernel QualityCheck typically has getScores() -> Map&lt;BiometricType, QualityScore&gt;
+     * where QualityScore has getScore() returning the numeric value.
+     */
+    private Double extractScoreFromQualityCheck(Object qualityCheck, BiometricType biometricType) {
+        if (qualityCheck == null) return null;
+        // Try getScores() -> Map<BiometricType, ?> (value may be Number or QualityScore object with getScore())
+        try {
+            java.lang.reflect.Method getScores = qualityCheck.getClass().getMethod("getScores");
+            Object scoresObj = getScores.invoke(qualityCheck);
+            if (scoresObj instanceof Map) {
+                Map<?, ?> scoreMap = (Map<?, ?>) scoresObj;
+                for (Map.Entry<?, ?> entry : scoreMap.entrySet()) {
+                    Object key = entry.getKey();
+                    if (!keyMatchesBiometricType(key, biometricType)) continue;
+                    Object value = entry.getValue();
+                    Double score = numberFromQualityValue(value);
                     if (score != null && score > 0) {
-                        Log.i(TAG, "SDK quality score calculated using getModalityQuality(): " + score);
-                        return score.doubleValue();
+                        return score;
                     }
                 }
             }
         } catch (NoSuchMethodException e) {
-            Log.d(TAG, "getModalityQuality method not found in SDK, trying alternative methods");
+            Log.v(TAG, "QualityCheck.getScores() not found");
         } catch (Exception e) {
-            Log.d(TAG, "Error calling getModalityQuality method, trying alternative methods", e);
+            Log.d(TAG, "QualityCheck.getScores() failed", e);
         }
-        
-        // Try alternative method names that might exist
-        String[] qualityMethodNames = {
-            "quality",
-            "checkQuality",
-            "calculateQuality",
-            "getQuality"
-        };
-        
-        for (String methodName : qualityMethodNames) {
-            try {
-                java.lang.reflect.Method qualityMethod = bioProvider.getClass().getMethod(methodName, BIR[].class, Map.class);
-                Object result = qualityMethod.invoke(bioProvider, birList, null);
-                if (result instanceof Map) {
-                    Map<BiometricType, Float> scoreMap = (Map<BiometricType, Float>) result;
-                    if (scoreMap != null && scoreMap.containsKey(biometricType)) {
-                        Float score = scoreMap.get(biometricType);
-                        if (score != null && score > 0) {
-                            Log.i(TAG, "SDK quality score calculated using " + methodName + "(): " + score);
-                            return score.doubleValue();
-                        }
-                    }
-                }
-            } catch (NoSuchMethodException e) {
-                // Try next method name
-                continue;
-            } catch (Exception e) {
-                Log.d(TAG, "Error calling " + methodName + " method", e);
-                // Try next method name
-                continue;
-            }
+        // Try getQualityScore() -> single value (some SDKs)
+        try {
+            java.lang.reflect.Method getQualityScore = qualityCheck.getClass().getMethod("getQualityScore");
+            Object scoreObj = getQualityScore.invoke(qualityCheck);
+            if (scoreObj instanceof Number) return ((Number) scoreObj).doubleValue();
+        } catch (NoSuchMethodException e) {
+            Log.v(TAG, "QualityCheck.getQualityScore() not found");
+        } catch (Exception e) {
+            Log.d(TAG, "QualityCheck.getQualityScore() failed", e);
         }
-        
-        // If no quality method found, use device quality score as fallback
-        Log.d(TAG, "SDK quality method not found, using device quality score as SDK score");
-        return biometricsDto.getQualityScore();
+        // Try getScore(BiometricType)
+        try {
+            java.lang.reflect.Method getScore = qualityCheck.getClass().getMethod("getScore", BiometricType.class);
+            Object scoreObj = getScore.invoke(qualityCheck, biometricType);
+            if (scoreObj instanceof Number) return ((Number) scoreObj).doubleValue();
+        } catch (NoSuchMethodException e) {
+            Log.v(TAG, "QualityCheck.getScore(BiometricType) not found");
+        } catch (Exception e) {
+            Log.d(TAG, "QualityCheck.getScore(BiometricType) failed", e);
+        }
+        return null;
+    }
+
+    private boolean keyMatchesBiometricType(Object key, BiometricType biometricType) {
+        if (key == null) return false;
+        if (key.equals(biometricType)) return true;
+        if (key instanceof BiometricType) return key.equals(biometricType);
+        return key.toString().equalsIgnoreCase(biometricType.name());
+    }
+
+    /**
+     * Gets numeric score from Map value: may be Number or a QualityScore-like object with getScore()/getQualityScore().
+     */
+    private Double numberFromQualityValue(Object value) {
+        if (value == null) return null;
+        if (value instanceof Number) return ((Number) value).doubleValue();
+        try {
+            java.lang.reflect.Method getScore = value.getClass().getMethod("getScore");
+            Object scoreObj = getScore.invoke(value);
+            if (scoreObj instanceof Number) return ((Number) scoreObj).doubleValue();
+        } catch (Exception e) {
+            // ignore
+        }
+        try {
+            java.lang.reflect.Method getQualityScore = value.getClass().getMethod("getQualityScore");
+            Object scoreObj = getQualityScore.invoke(value);
+            if (scoreObj instanceof Number) return ((Number) scoreObj).doubleValue();
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
 
     public int getAttemptsCount(Modality modality) {

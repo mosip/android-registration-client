@@ -1077,23 +1077,29 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             } else {
                 currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId, currentModality);
 
-                if(!biometricsDtoList.isEmpty()){
+                if (!biometricsDtoList.isEmpty()) {
                     biometricsDtoList.forEach(dto -> {
                         try {
-                            this.registrationService.getRegistrationDto().addBiometric(fieldId,
+                            this.registrationService.getRegistrationDto().addBiometric(
+                                    fieldId,
                                     (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
                                             ? currentModality.getAttributes().get(0)
                                             : Modality.getBioAttribute(dto.getBioSubType()),
-                                    currentAttempt, dto);
-
-                            result1.success("Ok");
+                                    currentAttempt,
+                                    dto
+                            );
                         } catch (Exception ex) {
                             Log.e(TAG, ex.getMessage(), ex);
                         }
                     });
+                    // Send reply back to Flutter only once per capture
+                    result1.success("Ok");
                 } else {
-                    Toast.makeText(activity.getApplicationContext(),
-                            "Biometrics Matched With Operator Biometrics, Please Try Again",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            activity.getApplicationContext(),
+                            "Biometrics Matched With Operator Biometrics, Please Try Again",
+                            Toast.LENGTH_SHORT
+                    ).show();
                 }
             }
 
