@@ -24,6 +24,7 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.exception.ClientCheckedException;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
@@ -47,11 +48,14 @@ public class RegistrationApi implements RegistrationDataPigeon.RegistrationDataA
     }
 
     @Override
-    public void startRegistration(@NonNull List<String> languages, @NonNull String flowType, @NonNull String process, @NonNull RegistrationDataPigeon.Result<String> result) {
+    public void startRegistration(@NonNull List<String> languages, @NonNull String flowType, @NonNull String process, 
+                                  Double latitude, Double longitude, @NonNull RegistrationDataPigeon.Result<String> result) {
         auditManagerService.audit(AuditEvent.REGISTRATION_START, Components.REGISTRATION);
         String response = "";
         try {
-            this.registrationDto = registrationService.startRegistration(languages, flowType, process);
+            this.registrationDto = registrationService.startRegistration(languages, flowType, process, latitude, longitude);
+        } catch (ClientCheckedException e) {
+            response = e.getErrorCode();
         } catch (Exception e) {
             response = e.getMessage();
             Log.e(getClass().getSimpleName(), "Registration start failed", e);

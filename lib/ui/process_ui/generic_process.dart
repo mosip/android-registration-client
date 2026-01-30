@@ -100,23 +100,6 @@ class _GenericProcessState extends State<GenericProcess>
       },
     ));
     _registrationScreenLoadedAudit();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _fetchLocation();
-    });
-  }
-
-  bool _locationFetched = false;
-
-  Future<void> _fetchLocation() async {
-    if (_locationFetched) return;
-    _locationFetched = true;
-
-    Position? position = await globalProvider.fetchLocation();
-    if (position != null) {
-      registrationTaskProvider.setCurrentLocation(position.latitude, position.longitude);
-    } else {
-      debugPrint("Location unavailable — permission denied or service off.");
-    }
   }
 
   @override

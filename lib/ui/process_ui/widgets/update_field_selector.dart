@@ -36,7 +36,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, List<Field>> fieldsMap = {};
-  final RegExp inputValidation = RegExp(r'^[0-9]+$');
+  final RegExp idRegex = RegExp(r'^[0-9]+$');
   TextEditingController controller = TextEditingController();
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
   int? uinLength;
@@ -222,7 +222,7 @@ class _UpdateFieldSelectorState extends State<UpdateFieldSelector>
                         }
 
                         // Check if value contains only digits
-                        if (!inputValidation.hasMatch(value)) {
+                        if (!idRegex.hasMatch(value)) {
                           return appLocalizations.valid_uin;
                         }
 

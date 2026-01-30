@@ -50,7 +50,7 @@ public class PendingApprovalArabic extends PendingApproval {
 	@AndroidFindBy(xpath = "//*[contains(@content-desc,\"ما زال يحتاج بتصدير\")]//preceding-sibling::android.widget.Button")
 	private WebElement backButton;
 
-	@AndroidFindBy(accessibility = "رفض")
+	@AndroidFindBy(accessibility = "يرفض")
 	private WebElement rejectButton;
 
 	@AndroidFindBy(accessibility = "الرقم التسلسلي معرف التطبيق تاريخ التسجيل حالة العميل حالة المراجعة معرف المشغل")
@@ -71,7 +71,7 @@ public class PendingApprovalArabic extends PendingApproval {
 	@AndroidFindBy(accessibility = "يرجى تحديد قيمة")
 	private WebElement rejectReasonDropdown;
 
-	@AndroidFindBy(accessibility = "عرض 1 من الطلبات")
+	@AndroidFindBy(accessibility = "عرض 1 تطبيقات")
 	private WebElement displayApplication;
 
 	@AndroidFindBy(accessibility = "يرجى تحديد سبب لرفض الحزمة. يمكنك تغيير المراجعة إلى الموافقة أو إعادة تعيين حالة المراجعة لاحقًا.")
@@ -191,8 +191,8 @@ public class PendingApprovalArabic extends PendingApproval {
 		return isElementEnabled(submitButton);
 	}
 
-	public boolean isSubmitButtonEnabledWithEmptyUsername() {
-		return isElementEnabled(invalidUsernameMessageForempty);
+	public boolean isSubmitButtonDisabledWithEmptyUsername() {
+		return isElementDisabled(submitButton);
 	}
 
 	public boolean isNumberOfApplicationDisplayed() {
@@ -220,22 +220,6 @@ public class PendingApprovalArabic extends PendingApproval {
 
 	public boolean isNoNetworkFoundDisplayed() {
 		return isElementEnabled(noNetworkFound);
-	}
-
-	public void clickOnPendingApprovalSubmitButton(int maxRetries) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-
-		for (int i = 1; i <= maxRetries; i++) {
-			clickOnSubmitButton();
-			try {
-				boolean popupShown = wait.until(d -> isNoNetworkFoundDisplayed());
-				if (popupShown) {
-				}
-			} catch (TimeoutException e) {
-				break;
-			}
-		}
-		System.out.println("Still No Network Found Displayed");
 	}
 
 	public void clickOnAuthenticateButton() {

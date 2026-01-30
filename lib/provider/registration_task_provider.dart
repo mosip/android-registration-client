@@ -134,10 +134,10 @@ class RegistrationTaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  startRegistration(
-      List<String> languages, String flowType, String process) async {
+  startRegistration(List<String> languages, String flowType, String process,
+      {double? latitude, double? longitude}) async {
     _registrationStartError = await registrationService.startRegistration(
-        languages, flowType, process);
+        languages, flowType, process, latitude, longitude);
     notifyListeners();
   }
 

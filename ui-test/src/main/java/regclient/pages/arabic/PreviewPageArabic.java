@@ -20,16 +20,15 @@ public class PreviewPageArabic extends PreviewPage {
 			+ ".scrollIntoView(new UiSelector().text(\"المعلومات الديموغرافية\"))")
 	private WebElement demographicInformationInPreviewPage;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0))"
-			+ ".scrollIntoView(new UiSelector().textContains(\"معرف التطبيق\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Application ID\"))")
 	private WebElement applicationIDPreviewPage;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0))"
-			+ ".scrollIntoView(new UiSelector().text(\"المستندات\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true))"
+			+ ".scrollIntoView(new UiSelector().text(\"وثائق\"))")
 	private WebElement documentsInformationInPreviewPage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0))"
-			+ ".scrollIntoView(new UiSelector().text(\"البيانات البيومترية\"))")
+			+ ".scrollIntoView(new UiSelector().text(\"القياسات الحيوية\"))")
 	private WebElement biometricsInformationInPreviewPage;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Iris ( 1 )\"))")
@@ -138,5 +137,6 @@ public class PreviewPageArabic extends PreviewPage {
 	public boolean isBiometricCorrectionTitleDisplayed() {
 		return isElementDisplayed(biometricCorrectionTitle);
 	}
+
 
 }

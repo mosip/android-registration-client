@@ -523,10 +523,6 @@ public class LostUin extends AndroidBaseTest {
 		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
 				"Verify if Supervisor Authentication page displayed");
 
-		pendingApproval.clickOnSubmitButton();
-		assertTrue(pendingApproval.isSubmitButtonEnabledWithEmptyUsername(),
-				"Verify if error empty username submit button enabled");
-
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
 
 		assertTrue(pendingApproval.isInvalidUsernameMessageDisplayed(),

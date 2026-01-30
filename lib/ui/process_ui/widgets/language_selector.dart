@@ -82,13 +82,29 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     globalProvider.fieldDisplayValues = {};
     await globalProvider.fieldValues(widget.newProcess);
 
+    // Capture GPS location before starting registration to validate distance
+    double? latitude;
+    double? longitude;
+    try {
+      final position = await globalProvider.fetchLocation()
+          .timeout(const Duration(seconds: 10), onTimeout: () => null);
+      if (position != null) {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      }
+    } catch (e) {
+      debugPrint("GPS location capture failed: $e");
+    }
+
     List<String> langList = _getRegistrationLanguageList();
     await registrationTaskProvider.startRegistration(
         langList,
         widget.newProcess.flow! == "UPDATE"
             ? "Update"
             : widget.newProcess.flow!,
-        widget.newProcess.id!);
+        widget.newProcess.id!,
+        latitude: latitude,
+        longitude: longitude);
 
     registrationTaskProvider.addDemographicField("preferredLang",
         globalProvider.fieldInputValue["preferredLang"].toString());

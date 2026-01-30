@@ -159,7 +159,7 @@ public class Settings extends AndroidBaseTest {
 
 		MockSBIPage mockSBIPage = new MockSBIPage(driver);
 		mockSBIPage.switchToMockSBI();
-
+		mockSBIPage.clickOnMockSbiSettingsButton();
 		mockSBIPage.setAllToNotReadyAndSave();
 
 		mockSBIPage.switchBackToArcApp();
@@ -173,7 +173,7 @@ public class Settings extends AndroidBaseTest {
 		settingsPage.clickOnGlobalConfigSettingsTab();
 
 		mockSBIPage.switchToMockSBI();
-
+		mockSBIPage.clickOnMockSbiSettingsButton();
 		mockSBIPage.setAllToReadyAndSave();
 
 		mockSBIPage.switchBackToArcApp();

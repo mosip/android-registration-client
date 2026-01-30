@@ -193,10 +193,6 @@ public class PendingApprovalKannada extends PendingApproval {
 		return isElementEnabled(submitButton);
 	}
 
-	public boolean isSubmitButtonEnabledWithEmptyUsername() {
-		return isElementEnabled(invalidUsernameMessageForempty);
-	}
-
 	public boolean isNumberOfApplicationDisplayed() {
 		waitTime(2);
 		return isElementDisplayed(displayApplication);
@@ -224,27 +220,15 @@ public class PendingApprovalKannada extends PendingApproval {
 		return isElementEnabled(noNetworkFound);
 	}
 
-	public void clickOnPendingApprovalSubmitButton(int maxRetries) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-
-		for (int i = 1; i <= maxRetries; i++) {
-			clickOnSubmitButton();
-			try {
-				boolean popupShown = wait.until(d -> isNoNetworkFoundDisplayed());
-				if (popupShown) {
-				}
-			} catch (TimeoutException e) {
-				break;
-			}
-		}
-		System.out.println("Still No Network Found Displayed");
-	}
-
 	public void clickOnAuthenticateButton() {
 		clickOnElement(authenticateButton);
 	}
 
 	public boolean isAuthenticateButtonEnabled() {
 		return isElementEnabled(authenticateButton);
+	}
+	
+	public boolean isSubmitButtonDisabledWithEmptyUsername() {
+		return isElementDisabled(submitButton);
 	}
 }
