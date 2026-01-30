@@ -574,7 +574,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
         //free space validation
-        if (validatingDiskSpace()) {
+        if (isDiskSpaceAvailable()) {
             throw new ClientCheckedException("PAK_DISK_SPACE_LOW");
         }
 
@@ -606,7 +606,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
     }
 
-    private boolean validatingDiskSpace() {
+    private boolean isDiskSpaceAvailable() {
         int minSpaceRequiredMB = globalParamRepository.getCachedIntegerDiskSpaceSize();
         if (minSpaceRequiredMB <= 0) {
             minSpaceRequiredMB = DEFAULT_MIN_SPACE_REQUIRED_MB;

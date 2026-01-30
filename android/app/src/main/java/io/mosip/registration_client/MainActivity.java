@@ -24,8 +24,10 @@ import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +44,7 @@ import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
@@ -257,8 +260,15 @@ public class MainActivity extends FlutterActivity {
             try {
                 List<SyncJobDef> activeJobs = syncJobDefRepository.getAllSyncJobDefList();
                 int scheduledCount = 0;
-
+                Set<String> excludedJobIds = getExcludedJobIds();
                 for (SyncJobDef job : activeJobs) {
+                    if (job.getId() == null) {
+                        continue;
+                    }
+                    if (excludedJobIds.contains(job.getId())) {
+                        Log.d(getClass().getSimpleName(), "Skipping excluded job: " + job.getId());
+                        continue;
+                    }
                     if (job.getIsActive() != null && job.getIsActive() && job.getApiName() != null) {
                         Log.d(getClass().getSimpleName(), "Scheduling job: " + job.getApiName() +
                                 " (ID: " + job.getId() + ", Cron: " + job.getSyncFreq() + ")");
@@ -273,6 +283,25 @@ public class MainActivity extends FlutterActivity {
                 Log.e(getClass().getSimpleName(), "Error scheduling jobs", e);
             }
         }).start();
+    }
+
+    private Set<String> getExcludedJobIds() {
+        Set<String> excluded = new HashSet<>();
+        addJobIdsFromString(excluded, globalParamRepository.getCachedStringJobsOffline());
+        addJobIdsFromString(excluded, globalParamRepository.getCachedStringJobsUntagged());
+        return excluded;
+    }
+
+    private void addJobIdsFromString(Set<String> target, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return;
+        }
+        for (String jobId : value.split(RegistrationConstants.COMMA)) {
+            String trimmed = jobId.trim();
+            if (!trimmed.isEmpty()) {
+                target.add(trimmed);
+            }
+        }
     }
 
     @Override
