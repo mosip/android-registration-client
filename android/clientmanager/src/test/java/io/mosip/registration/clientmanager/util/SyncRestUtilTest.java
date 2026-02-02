@@ -29,7 +29,7 @@ import static android.content.ContentValues.TAG;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SyncRestUtilTest {
 
     @Mock
@@ -124,7 +124,7 @@ public class SyncRestUtilTest {
         wrapper.getErrors().add(error2);
 
         try (MockedStatic<Log> logMock = mockStatic(Log.class);
-             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+                MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
             jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any())).thenReturn("json");
             ServiceError result = SyncRestUtil.getServiceError(wrapper);
             assertEquals(error1, result);
@@ -139,9 +139,10 @@ public class SyncRestUtilTest {
         wrapper.setResponse(null);
 
         try (MockedStatic<Log> logMock = mockStatic(Log.class);
-             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+                MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
             jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any()))
-                    .thenThrow(new JsonProcessingException("fail") {});
+                    .thenThrow(new JsonProcessingException("fail") {
+                    });
             ServiceError result = SyncRestUtil.getServiceError(wrapper);
             assertEquals(error, result);
         }

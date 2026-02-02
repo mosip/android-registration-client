@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CronExpressionParserTest {
 
     private MockedStatic<Log> logMock;

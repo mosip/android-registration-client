@@ -1,6 +1,8 @@
 package io.mosip.registration.packetmanager.service;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
@@ -15,6 +17,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
@@ -33,6 +36,7 @@ import java.util.zip.ZipOutputStream;
 
 import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
 import io.mosip.registration.packetmanager.util.ConfigService;
+import io.mosip.registration.packetmanager.util.StorageUtils;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = Build.VERSION_CODES.P)
@@ -655,29 +659,27 @@ public class PosixAdapterServiceImplTest {
     }
 
     @Test
-    // Tests if initPosixAdapterService sets BASE_LOCATION correctly when storage is mounted
+    // Tests if initPosixAdapterService sets BASE_LOCATION to null when storage dir cannot be created
     public void testInitPosixAdapterService_withUnmountedStorage_shouldNotSetBaseLocation() throws Exception {
-        // Simulate unmounted storage
+        // Simulate unmounted storage: mock StorageUtils to return a dir that fails exists() and mkdirs()
         Context context = mock(Context.class);
         ObjectMapper objectMapper = new ObjectMapper();
         IPacketCryptoService cryptoService = mock(IPacketCryptoService.class);
 
-        // Patch Environment.getExternalStorageState() to return not mounted
-        String originalState = System.getProperty("EXTERNAL_STORAGE_STATE");
-        System.setProperty("EXTERNAL_STORAGE_STATE", "unmounted");
+        File failingDir = mock(File.class);
+        when(failingDir.exists()).thenReturn(false);
+        when(failingDir.mkdirs()).thenReturn(false);
+        when(failingDir.getAbsolutePath()).thenReturn("/unmounted/path");
 
-        PosixAdapterServiceImpl localService = new PosixAdapterServiceImpl(context, cryptoService, objectMapper);
+        try (MockedStatic<StorageUtils> storageUtilsMock = mockStatic(StorageUtils.class)) {
+            storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(any(Context.class))).thenReturn(failingDir);
 
-        // Use reflection to check BASE_LOCATION is null or not set
-        Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
-        baseLocationField.setAccessible(true);
-        String baseLocation = (String) baseLocationField.get(localService);
-        // Should be null or not set
-        assertNull(baseLocation);
+            PosixAdapterServiceImpl localService = new PosixAdapterServiceImpl(context, cryptoService, objectMapper);
 
-        // Restore property
-        if (originalState != null) {
-            System.setProperty("EXTERNAL_STORAGE_STATE", originalState);
+            Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
+            baseLocationField.setAccessible(true);
+            String baseLocation = (String) baseLocationField.get(localService);
+            assertNull(baseLocation);
         }
     }
 
@@ -1552,30 +1554,27 @@ public class PosixAdapterServiceImplTest {
     @Test
     // Tests if initPosixAdapterService sets BASE_LOCATION correctly when storage is mounted
     public void testInitPosixAdapterService_withMountedStorage_shouldSetBaseLocation() throws Exception {
-        // Arrange
+        // Arrange: mock StorageUtils to return a dir so BASE_LOCATION gets set
         File fakeExternalStorage = temporaryFolder.newFolder("external");
-        ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
-        ShadowEnvironment.setExternalStorageDirectory(fakeExternalStorage.toPath());
-
-        // Mock ConfigService to return a folder name
-        mockStatic(ConfigService.class);
-        when(ConfigService.getProperty(eq("objectstore.base.location"), any())).thenReturn("mosip-test");
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        IPacketCryptoService cryptoService = mock(IPacketCryptoService.class);
-        Context context = mock(Context.class);
-
-        // Act
-        PosixAdapterServiceImpl localService = new PosixAdapterServiceImpl(context, cryptoService, objectMapper);
-
-        // Assert
         File expectedDir = new File(fakeExternalStorage, "mosip-test");
-        assertTrue(expectedDir.exists());
+        expectedDir.mkdirs();
 
-        Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
-        baseLocationField.setAccessible(true);
-        String baseLocation = (String) baseLocationField.get(localService);
-        assertEquals(expectedDir.getAbsolutePath(), baseLocation);
+        try (MockedStatic<StorageUtils> storageUtilsMock = mockStatic(StorageUtils.class)) {
+            storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(any(Context.class))).thenReturn(expectedDir);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            IPacketCryptoService cryptoService = mock(IPacketCryptoService.class);
+            Context context = mock(Context.class);
+
+            PosixAdapterServiceImpl localService = new PosixAdapterServiceImpl(context, cryptoService, objectMapper);
+
+            assertTrue("Expected dir should exist after init", expectedDir.exists());
+
+            Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
+            baseLocationField.setAccessible(true);
+            String baseLocation = (String) baseLocationField.get(localService);
+            assertEquals(expectedDir.getAbsolutePath(), baseLocation);
+        }
     }
 
     @Test
@@ -1621,8 +1620,9 @@ public class PosixAdapterServiceImplTest {
     // Tests if createContainerZipWithSubPacket creates a new zip file when it does not exist
     @Config(manifest = Config.NONE)
     public void testCreateContainerZipWithSubPacket_whenZipDoesNotExist_shouldCreateNewZip() throws Exception {
-        // Set external storage to mounted
+        // Set external storage to mounted for baseDir so getExternalStorageState(baseDir) returns MEDIA_MOUNTED
         ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
+        ShadowEnvironment.setExternalStorageState(baseDir, Environment.MEDIA_MOUNTED);
 
         // Point to test base directory
         Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
@@ -1645,8 +1645,9 @@ public class PosixAdapterServiceImplTest {
     // Tests if createContainerZipWithSubPacket appends to existing zip file
     @Config(manifest = Config.NONE)
     public void testCreateContainerZipWithSubPacket_whenZipExists_shouldAppendEntry() throws Exception {
-        // Simulate mounted external storage
+        // Set external storage to mounted for baseDir so getExternalStorageState(baseDir) returns MEDIA_MOUNTED
         ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
+        ShadowEnvironment.setExternalStorageState(baseDir, Environment.MEDIA_MOUNTED);
 
         // Set base location manually
         Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");

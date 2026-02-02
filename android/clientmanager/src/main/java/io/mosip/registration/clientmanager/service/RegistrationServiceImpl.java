@@ -125,19 +125,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Inject
     public RegistrationServiceImpl(Context context, PacketWriterService packetWriterService,
-                                   RegistrationRepository registrationRepository,
-                                   MasterDataService masterDataService,
-                                   IdentitySchemaRepository identitySchemaRepository,
-                                   ClientCryptoManagerService clientCryptoManagerService,
-                                   KeyStoreRepository keyStoreRepository,
-                                   GlobalParamRepository globalParamRepository,
-                                   AuditManagerService auditManagerService,
-                                   RegistrationCenterRepository registrationCenterRepository,
-                                   LocationValidationService locationValidationService,
-                                   Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
-                                   Biometrics095Service biometricService,
-                                   PacketService packetService,
-                                   PreCheckValidatorService preCheckValidatorService) {
+            RegistrationRepository registrationRepository,
+            MasterDataService masterDataService,
+            IdentitySchemaRepository identitySchemaRepository,
+            ClientCryptoManagerService clientCryptoManagerService,
+            KeyStoreRepository keyStoreRepository,
+            GlobalParamRepository globalParamRepository,
+            AuditManagerService auditManagerService,
+            RegistrationCenterRepository registrationCenterRepository,
+            LocationValidationService locationValidationService,
+            Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
+            Biometrics095Service biometricService,
+            PacketService packetService,
+            PreCheckValidatorService preCheckValidatorService) {
         this.context = context;
         this.registrationDto = null;
         this.packetWriterService = packetWriterService;
@@ -158,16 +158,17 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public void approveRegistration(Registration registration) {
-        //TODO
+        // TODO
     }
 
     @Override
     public void rejectRegistration(Registration registration) {
-        //TODO
+        // TODO
     }
 
     @Override
-    public RegistrationDto startRegistration(@NonNull List<String> languages, String flowType, String process, Double latitude, Double longitude) throws Exception {
+    public RegistrationDto startRegistration(@NonNull List<String> languages, String flowType, String process,
+            Double latitude, Double longitude) throws Exception {
         if (registrationDto != null) {
             registrationDto.cleanup();
         }
@@ -192,10 +193,11 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         String timestamp = DateUtils.formatToISOStringWithoutMillis(LocalDateTime.now(ZoneOffset.UTC));
         timestamp = timestamp.replaceAll(":|T|Z|-", "");
-        String rid = String.format("%s%s10031%s", centerMachineDto.getCenterId(), centerMachineDto.getMachineId(), timestamp);
+        String rid = String.format("%s%s10031%s", centerMachineDto.getCenterId(), centerMachineDto.getMachineId(),
+                timestamp);
 
         Map<Modality, Integer> bioThresholds = new HashMap<>();
-        for(Modality modality : Modality.values()) {
+        for (Modality modality : Modality.values()) {
             bioThresholds.put(modality, getAttemptsCount(modality));
         }
         this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds, rid);
@@ -204,10 +206,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         // Validate GPS location if flag is enabled (even if coordinates are null)
         try {
+            if (preCheckValidatorService != null) {
                 preCheckValidatorService.validateCenterToMachineDistance(longitude, latitude);
-            } catch (ClientCheckedException e) {
-                Log.e(TAG, "Location validation failed", e);
-                throw e;
+            }
+        } catch (ClientCheckedException e) {
+            Log.e(TAG, "Location validation failed", e);
+            throw e;
         }
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
@@ -238,47 +242,54 @@ public class RegistrationServiceImpl implements RegistrationService {
             this.registrationDto.setRId(newAppId);
         }
         List<String> selectedHandles = this.globalParamRepository.getSelectedHandles();
-        if(selectedHandles != null) {
+        if (selectedHandles != null) {
             if (this.registrationDto.getFlowType().equals("NEW") ||
                     this.registrationDto.getFlowType().equals("Update")) {
                 this.registrationDto.getDemographics().put("selectedHandles", selectedHandles);
             }
         }
 
-//        try {
-        String individualBiometricsFieldId = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID);
-        String serverVersion = this.globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
+        // try {
+        String individualBiometricsFieldId = this.globalParamRepository
+                .getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID);
+        String serverVersion = this.globalParamRepository
+                .getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION);
 
         for (String fieldName : this.registrationDto.getDemographics().keySet()) {
             switch (this.registrationDto.getFlowType()) {
                 case "Update":
-                    if (this.registrationDto.getDemographics().get(fieldName) != null && (this.registrationDto.getUpdatableFields().contains(fieldName) ||
-                            fieldName.equals("UIN")))
-                        packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
+                    if (this.registrationDto.getDemographics().get(fieldName) != null
+                            && (this.registrationDto.getUpdatableFields().contains(fieldName) ||
+                                    fieldName.equals("UIN")))
+                        packetWriterService.setField(this.registrationDto.getRId(), fieldName,
+                                this.registrationDto.getDemographics().get(fieldName));
                     break;
                 case "Correction":
                 case "Lost":
                 case "NEW":
                     if (this.registrationDto.getDemographics().get(fieldName) != null)
-                        packetWriterService.setField(this.registrationDto.getRId(), fieldName, this.registrationDto.getDemographics().get(fieldName));
+                        packetWriterService.setField(this.registrationDto.getRId(), fieldName,
+                                this.registrationDto.getDemographics().get(fieldName));
                     break;
             }
         }
 
-            String format = globalParamRepository.getCachedStringDocType();
-            String formatToCheck = format != null ? format : "pdf";
-            this.registrationDto.getAllDocumentFields().forEach(entry -> {
-                Document document = new Document();
-                document.setType(entry.getValue().getType());
-                document.setFormat(entry.getValue().getFormat());
-                document.setRefNumber(entry.getValue().getRefNumber());
-                document.setDocument((formatToCheck.equalsIgnoreCase(entry.getValue().getFormat()))?combineByteArray(entry.getValue().getContent()):convertImageToPDF(entry.getValue().getContent()));
-                packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
-                packetWriterService.addMetaInfo(this.registrationDto.getRId(),"documents", document);
-            });
+        String format = globalParamRepository.getCachedStringDocType();
+        String formatToCheck = format != null ? format : "pdf";
+        this.registrationDto.getAllDocumentFields().forEach(entry -> {
+            Document document = new Document();
+            document.setType(entry.getValue().getType());
+            document.setFormat(entry.getValue().getFormat());
+            document.setRefNumber(entry.getValue().getRefNumber());
+            document.setDocument((formatToCheck.equalsIgnoreCase(entry.getValue().getFormat()))
+                    ? combineByteArray(entry.getValue().getContent())
+                    : convertImageToPDF(entry.getValue().getContent()));
+            packetWriterService.setDocument(this.registrationDto.getRId(), entry.getKey(), document);
+            packetWriterService.addMetaInfo(this.registrationDto.getRId(), "documents", document);
+        });
 
-        if (serverVersion!=null && serverVersion.startsWith("1.1.5")) {
-            this.registrationDto.getBestBiometrics(individualBiometricsFieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
+        if (serverVersion != null && serverVersion.startsWith("1.1.5")) {
+            this.registrationDto.getBestBiometrics(individualBiometricsFieldId, Modality.EXCEPTION_PHOTO).forEach(b -> {
                 Document document = new Document();
                 document.setType("EOP");
                 document.setFormat("jpg");
@@ -289,7 +300,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         // Process biometrics and add metadata to packet
-            setBiometrics(this.registrationDto);
+        setBiometrics(this.registrationDto);
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
 
@@ -303,20 +314,18 @@ public class RegistrationServiceImpl implements RegistrationService {
                 this.registrationDto.getProcess(),
                 true, centerMachineDto.getMachineRefId());
 
-
-
         if (containerPath != null || !containerPath.trim().isEmpty()) {
             String packetId = containerPath.substring(containerPath.lastIndexOf("/") + 1);
-               packetId = packetId.replace(".zip", "");
-               this.registrationDto.setPacketId(packetId);
+            packetId = packetId.replace(".zip", "");
+            this.registrationDto.setPacketId(packetId);
         }
 
         JSONObject additionalInfo = new JSONObject();
         additionalInfo.put("langCode", this.registrationDto.getSelectedLanguages().get(0));
-        //TODO add name, phone and email in additional info
+        // TODO add name, phone and email in additional info
         List<String> fullName = new ArrayList<>();
         String fullNameKey = getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_FULL_NAME);
-        if(fullNameKey != null) {
+        if (fullNameKey != null) {
             List<String> fullNameKeys = Arrays.asList(fullNameKey.split(RegistrationConstants.COMMA));
             for (String key : fullNameKeys) {
                 Object fullNameObj = this.registrationDto.getDemographics().get(key);
@@ -324,20 +333,25 @@ public class RegistrationServiceImpl implements RegistrationService {
             }
         }
 
-        Object emailObj = this.registrationDto.getDemographics().get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_EMAIL));
-        Object phoneObj = this.registrationDto.getDemographics().get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_PHONE));
+        Object emailObj = this.registrationDto.getDemographics()
+                .get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_EMAIL));
+        Object phoneObj = this.registrationDto.getDemographics()
+                .get(getKey(this.registrationDto, RegistrationConstants.UI_SCHEMA_SUBTYPE_PHONE));
 
         additionalInfo.put("name", String.join(" ", fullName));
         additionalInfo.put("email", getAdditionalInfo(emailObj));
         additionalInfo.put("phone", getAdditionalInfo(phoneObj));
 
         registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
-                centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(), this.registrationDto.getApplicationId());
+                centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo,
+                this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(),
+                this.registrationDto.getApplicationId());
 
         // Auto-approve when supervisor approval is disabled (flag not "Y")
         String supervisorApprovalFlag = globalParamRepository.getCachedStringGlobalParam(
                 RegistrationConstants.SUPERVISOR_APPROVAL_CONFIG_FLAG);
-        if (supervisorApprovalFlag != null && !RegistrationConstants.ENABLE.equalsIgnoreCase(supervisorApprovalFlag.trim())) {
+        if (supervisorApprovalFlag != null
+                && !RegistrationConstants.ENABLE.equalsIgnoreCase(supervisorApprovalFlag.trim())) {
             registrationRepository.updateStatus(this.registrationDto.getPacketId(), null,
                     PacketClientStatus.APPROVED.name());
         }
@@ -355,14 +369,15 @@ public class RegistrationServiceImpl implements RegistrationService {
             preRegistrationDataSyncServiceProvider.get().deletePreRegRecords(responseDTO, preRegistrationLists);
         }
 
-//        } finally {
+        // } finally {
         clearRegistration();
-//        }
+        // }
     }
 
     private String getKey(RegistrationDto registrationDTO, String subType) throws Exception {
         List<String> key = new ArrayList<>();
-        List<FieldSpecDto> schemaFields = identitySchemaRepository.getProcessSpecFields(context, registrationDTO.getProcess());
+        List<FieldSpecDto> schemaFields = identitySchemaRepository.getProcessSpecFields(context,
+                registrationDTO.getProcess());
         for (FieldSpecDto schemaField : schemaFields) {
             if (schemaField.getSubType() != null && schemaField.getSubType().equalsIgnoreCase(subType)) {
                 if (subType.equalsIgnoreCase(RegistrationConstants.UI_SCHEMA_SUBTYPE_FULL_NAME)) {
@@ -388,11 +403,15 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     private String getAdditionalInfo(Object fieldValue) {
-        if(fieldValue == null) { return null; }
+        if (fieldValue == null) {
+            return null;
+        }
 
         if (fieldValue instanceof List<?>) {
             Optional<SimpleType> demoValueInRequiredLang = ((List<SimpleType>) fieldValue).stream()
-                    .filter(valueDTO -> valueDTO.getLanguage().equals(this.registrationDto.getSelectedLanguages().get(0))).findFirst();
+                    .filter(valueDTO -> valueDTO.getLanguage()
+                            .equals(this.registrationDto.getSelectedLanguages().get(0)))
+                    .findFirst();
 
             if (demoValueInRequiredLang.isPresent()) {
                 return demoValueInRequiredLang.get().getValue();
@@ -431,23 +450,23 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private BiometricRecord getBiometricRecord(String fieldId, String serverVersion) {
         BiometricRecord biometricRecord = new BiometricRecord();
-        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_LEFT).forEach( b -> {
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_LEFT).forEach(b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
-        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_RIGHT).forEach( b -> {
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_RIGHT).forEach(b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
-        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_THUMBS).forEach( b -> {
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FINGERPRINT_SLAB_THUMBS).forEach(b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
-        this.registrationDto.getBestBiometrics(fieldId, Modality.IRIS_DOUBLE).forEach( b -> {
+        this.registrationDto.getBestBiometrics(fieldId, Modality.IRIS_DOUBLE).forEach(b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
-        this.registrationDto.getBestBiometrics(fieldId, Modality.FACE).forEach( b -> {
+        this.registrationDto.getBestBiometrics(fieldId, Modality.FACE).forEach(b -> {
             biometricRecord.getSegments().add(buildBIR(b));
         });
         if (!serverVersion.startsWith("1.1.5")) {
-            this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach( b -> {
+            this.registrationDto.getBestBiometrics(fieldId, Modality.EXCEPTION_PHOTO).forEach(b -> {
                 biometricRecord.getSegments().add(buildBIR(b));
             });
             this.registrationDto.EXCEPTIONS.forEach((key, value) -> {
@@ -463,8 +482,9 @@ public class RegistrationServiceImpl implements RegistrationService {
                     int numOfRetries = 0;
                     double sdkScore = 0;
                     float qualityScore = 0;
-                    BiometricsDto exceptionBiometricDto =
-                            new BiometricsDto(modality.getSingleType().value(), bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature, isForceCaptured, numOfRetries, sdkScore, qualityScore);
+                    BiometricsDto exceptionBiometricDto = new BiometricsDto(modality.getSingleType().value(),
+                            bioSubtype, bioValue, specVersion, isException, decodedBioResponse, signature,
+                            isForceCaptured, numOfRetries, sdkScore, qualityScore);
                     biometricRecord.getSegments().add(buildBIR(exceptionBiometricDto));
                 });
             });
@@ -474,24 +494,27 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void addMetaInfoMap(String centerId, String machineId, String makerId) throws Exception {
         String rid = this.registrationDto.getRId();
-        //machine metaInfo
+        // machine metaInfo
         Map<String, String> metaData = new LinkedHashMap<>();
         metaData.put(PacketManagerConstant.META_MACHINE_ID, machineId);
         metaData.put(PacketManagerConstant.META_CENTER_ID, centerId);
         metaData.put(PacketManagerConstant.META_KEYINDEX, this.clientCryptoManagerService.getClientKeyIndex());
         metaData.put(PacketManagerConstant.META_REGISTRATION_ID, rid);
-        String appIdForMeta = this.registrationDto.getApplicationId() == null || this.registrationDto.getApplicationId().trim().isEmpty()
-                ? rid : this.registrationDto.getApplicationId();
+        String appIdForMeta = this.registrationDto.getApplicationId() == null
+                || this.registrationDto.getApplicationId().trim().isEmpty()
+                        ? rid
+                        : this.registrationDto.getApplicationId();
         metaData.put(PacketManagerConstant.META_APPLICATION_ID, appIdForMeta);
         metaData.put(PacketManagerConstant.META_CREATION_DATE,
                 DateUtils.formatToISOString(LocalDateTime.now(ZoneOffset.UTC)));
         metaData.put(PacketManagerConstant.META_CLIENT_VERSION, BuildConfig.CLIENT_VERSION);
         metaData.put(PacketManagerConstant.META_REGISTRATION_TYPE, this.registrationDto.getProcess().toUpperCase());
         metaData.put(PacketManagerConstant.META_PRE_REGISTRATION_ID, null);
-        metaData.put("langCodes", String.join(RegistrationConstants.COMMA, this.registrationDto.getSelectedLanguages()));
+        metaData.put("langCodes",
+                String.join(RegistrationConstants.COMMA, this.registrationDto.getSelectedLanguages()));
         packetWriterService.addMetaInfo(rid, "metaData", getLabelValueDTOListString(metaData));
 
-        //Operators metaInfo
+        // Operators metaInfo
         metaData = new LinkedHashMap<>();
         metaData.put(PacketManagerConstant.META_OFFICER_ID, makerId);
         metaData.put(PacketManagerConstant.META_OFFICER_BIOMETRIC_FILE, null);
@@ -503,20 +526,21 @@ public class RegistrationServiceImpl implements RegistrationService {
         metaData.put(PacketManagerConstant.META_OFFICER_PIN, BOOLEAN_FALSE);
         metaData.put(PacketManagerConstant.META_SUPERVISOR_OTP, BOOLEAN_FALSE);
         metaData.put(PacketManagerConstant.META_OFFICER_OTP, BOOLEAN_FALSE);
-        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_INFO_OPERATIONS_DATA, getLabelValueDTOListString(metaData));
+        packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_INFO_OPERATIONS_DATA,
+                getLabelValueDTOListString(metaData));
 
-        //other metaInfo
+        // other metaInfo
         GeoLocationDto geoLocation = this.registrationDto.getGeoLocationDto();
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LATITUDE,
-            geoLocation != null ? String.valueOf(geoLocation.getLatitude()) : "null");
+                geoLocation != null ? String.valueOf(geoLocation.getLatitude()) : "null");
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.META_LONGITUDE,
-            geoLocation != null ? String.valueOf(geoLocation.getLongitude()) : "null");
+                geoLocation != null ? String.valueOf(geoLocation.getLongitude()) : "null");
         packetWriterService.addMetaInfo(rid, "checkSum", "{}");
         packetWriterService.addMetaInfo(rid, PacketManagerConstant.REGISTRATIONID, rid);
 
-        //biometric device details
+        // biometric device details
         List<Map<String, Object>> capturedRegisteredDevices = new ArrayList<>();
-        for(Modality modality : this.biometricService.BIO_DEVICES.keySet()) {
+        for (Modality modality : this.biometricService.BIO_DEVICES.keySet()) {
             Map<String, Object> deviceInfo = (Map<String, Object>) this.biometricService.BIO_DEVICES.get(modality);
             if (deviceInfo != null) {
                 capturedRegisteredDevices.add(deviceInfo);
@@ -524,7 +548,6 @@ public class RegistrationServiceImpl implements RegistrationService {
                 Log.w(TAG, "Device info is null for modality: " + modality);
             }
         }
-
 
         packetWriterService.addMetaInfo(rid, "capturedRegisteredDevices", capturedRegisteredDevices);
     }
@@ -540,12 +563,11 @@ public class RegistrationServiceImpl implements RegistrationService {
         return labelValueMap;
     }
 
-
     public List<Map<String, String>> getAudits() {
         List<Map<String, String>> audits = new ArrayList<>();
         String savedPoint = globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL);
-        List<Audit> list = auditManagerService.getAuditLogs(savedPoint==null ? 0 : Long.parseLong(savedPoint));
-        for(Audit audit : list) {
+        List<Audit> list = auditManagerService.getAuditLogs(savedPoint == null ? 0 : Long.parseLong(savedPoint));
+        for (Audit audit : list) {
             Map<String, String> auditMap = new HashMap<>();
             auditMap.put("uuid", String.valueOf(audit.getUuid()));
             auditMap.put("createdAt", DateUtils.parseEpochToISOString(audit.getCreatedAt()));
@@ -568,22 +590,25 @@ public class RegistrationServiceImpl implements RegistrationService {
             audits.add(auditMap);
         }
         globalParamRepository.saveGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL,
-                list.isEmpty() ? null : String.valueOf(list.get(list.size()-1).getActionTimeStamp()));
+                list.isEmpty() ? null : String.valueOf(list.get(list.size() - 1).getActionTimeStamp()));
         return audits;
     }
 
     private void doPreChecksBeforeRegistration(CenterMachineDto centerMachineDto) throws Exception {
-        //free space validation
+        // free space validation
         if (validatingDiskSpace()) {
             throw new ClientCheckedException("PAK_DISK_SPACE_LOW");
         }
 
-        //is machine and center active
+        // is machine and center active
         if (centerMachineDto == null || !centerMachineDto.getCenterStatus() || !centerMachineDto.getMachineStatus())
             throw new ClientCheckedException(context, R.string.err_007);
 
-        // validate sync status - checks if all sync jobs ran within configured time limits
-        preCheckValidatorService.validateSyncStatus();
+        // validate sync status - checks if all sync jobs ran within configured time
+        // limits
+        if (preCheckValidatorService != null) {
+            preCheckValidatorService.validateSyncStatus();
+        }
 
         // registered packet approval time breach check
         if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
@@ -633,11 +658,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         return usableSpace < allowedDiskSpaceSizeInBytes;
     }
 
-
-
     private byte[] convertImageToPDF(List<byte[]> images) {
         try (PDDocument pdDocument = new PDDocument();
-             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             for (byte[] image : images) {
                 PDPage pdPage = new PDPage();
                 Log.i(TAG, "image size after compression :" + image.length);
@@ -660,39 +683,40 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     private byte[] getCompressedImage(byte[] image, Float compressionQuality) {
-        //TODO compress image
+        // TODO compress image
         return image;
     }
 
     private static int[] getScaledDimension(int originalWidth, int originalHeight, int boundWidth,
-                                            int boundHeight) {
+            int boundHeight) {
         int new_width = originalWidth;
         int new_height = originalHeight;
 
         // first check if we need to scale width
         if (originalWidth > boundWidth) {
-            //scale width to fit
+            // scale width to fit
             new_width = boundWidth;
-            //scale height to maintain aspect ratio
+            // scale height to maintain aspect ratio
             new_height = (new_width * originalHeight) / originalWidth;
         }
 
         // then check if we need to scale even with the new height
         if (new_height > boundHeight) {
-            //scale height to fit instead
+            // scale height to fit instead
             new_height = boundHeight;
-            //scale width to maintain aspect ratio
+            // scale width to maintain aspect ratio
             new_width = (new_height * originalWidth) / originalHeight;
         }
 
-        return new int[]{new_width, new_height};
+        return new int[] { new_width, new_height };
     }
 
     public BIR buildBIR(BiometricsDto biometricsDto) {
-        if(biometricsDto == null)
+        if (biometricsDto == null)
             return null;
         SingleType singleType = SingleType.fromValue(biometricsDto.getModality());
-        byte[] iso = biometricsDto.getBioValue() == null ? null : CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
+        byte[] iso = biometricsDto.getBioValue() == null ? null
+                : CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         // Format
         RegistryIDType birFormat = new RegistryIDType();
         birFormat.setOrganization(PacketManagerConstant.CBEFF_DEFAULT_FORMAT_ORG);
@@ -710,17 +734,19 @@ public class RegistrationServiceImpl implements RegistrationService {
         qualityType.setScore((long) biometricsDto.getQualityScore());
         VersionType versionType = new VersionType(1, 1);
 
-
         String payLoad = null;
         if (iso != null) {
-            int bioValueKeyIndex = biometricsDto.getDecodedBioResponse().indexOf(PacketManagerConstant.BIOVALUE_KEY) + (PacketManagerConstant.BIOVALUE_KEY.length() + 1);
+            int bioValueKeyIndex = biometricsDto.getDecodedBioResponse().indexOf(PacketManagerConstant.BIOVALUE_KEY)
+                    + (PacketManagerConstant.BIOVALUE_KEY.length() + 1);
             int bioValueStartIndex = biometricsDto.getDecodedBioResponse().indexOf('"', bioValueKeyIndex);
             int bioValueEndIndex = biometricsDto.getDecodedBioResponse().indexOf('"', (bioValueStartIndex + 1));
-            String bioValue = biometricsDto.getDecodedBioResponse().substring(bioValueStartIndex, (bioValueEndIndex + 1));
-            payLoad = biometricsDto.getDecodedBioResponse().replace(bioValue, PacketManagerConstant.BIOVALUE_PLACEHOLDER);
+            String bioValue = biometricsDto.getDecodedBioResponse().substring(bioValueStartIndex,
+                    (bioValueEndIndex + 1));
+            payLoad = biometricsDto.getDecodedBioResponse().replace(bioValue,
+                    PacketManagerConstant.BIOVALUE_PLACEHOLDER);
         }
 
-        if(singleType == SingleType.FACE || singleType == SingleType.EXCEPTION_PHOTO)
+        if (singleType == SingleType.FACE || singleType == SingleType.EXCEPTION_PHOTO)
             biometricsDto.setBioSubType(EMPTY);
 
         return new BIR.BIRBuilder().withBdb(iso == null ? new byte[0] : iso)
@@ -732,13 +758,15 @@ public class RegistrationServiceImpl implements RegistrationService {
                         .withPurpose(PurposeType.ENROLL).withLevel(ProcessedLevelType.RAW)
                         .withCreationDate(LocalDateTime.now(ZoneId.of("UTC"))).withIndex(UUID.randomUUID().toString())
                         .build())
-                .withSb(biometricsDto.getSignature() == null ? new byte[0] : biometricsDto.getSignature().getBytes(StandardCharsets.UTF_8))
+                .withSb(biometricsDto.getSignature() == null ? new byte[0]
+                        : biometricsDto.getSignature().getBytes(StandardCharsets.UTF_8))
                 .withOthers(OTHER_KEY_EXCEPTION, iso == null ? "true" : BOOLEAN_FALSE)
                 .withOthers(OTHER_KEY_RETRIES, biometricsDto.getNumOfRetries() + EMPTY)
                 .withOthers(OTHER_KEY_SDK_SCORE, biometricsDto.getSdkScore() + EMPTY)
                 .withOthers(OTHER_KEY_FORCE_CAPTURED, biometricsDto.isForceCaptured() + EMPTY)
                 .withOthers(OTHER_KEY_PAYLOAD, payLoad == null ? EMPTY : payLoad)
-                .withOthers(OTHER_KEY_SPEC_VERSION, biometricsDto.getSpecVersion() == null ? EMPTY : biometricsDto.getSpecVersion())
+                .withOthers(OTHER_KEY_SPEC_VERSION,
+                        biometricsDto.getSpecVersion() == null ? EMPTY : biometricsDto.getSpecVersion())
                 .build();
     }
 
@@ -763,7 +791,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         Map<String, Map<String, Object>> capturedMetaInfo = new LinkedHashMap<>();
         Map<String, Map<String, Object>> exceptionMetaInfo = new LinkedHashMap<>();
 
-        for(String key : registrationDto.getBiometrics().keySet()) {
+        for (String key : registrationDto.getBiometrics().keySet()) {
             String fieldId = key.split("_")[0];
             String bioAttribute = key.split("_")[1];
             BIR bir = buildBIR(registrationDto.getBiometrics().get(key));
@@ -781,7 +809,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             capturedMetaInfo.get(fieldId).put(bioAttribute, metaInfo);
         }
 
-        for(String key : registrationDto.EXCEPTIONS.keySet()) {
+        for (String key : registrationDto.EXCEPTIONS.keySet()) {
             String fieldId = key.split("_")[0];
             String bioAttribute = key.split("_")[1];
             registrationDto.EXCEPTIONS.get(key).forEach((v) -> {
@@ -801,7 +829,8 @@ public class RegistrationServiceImpl implements RegistrationService {
             BiometricRecord biometricRecord = new BiometricRecord();
             biometricRecord.setOthers(new HashMap<>());
             biometricRecord.getOthers().put(OTHER_KEY_CONFIGURED, String.join(",",
-                    registrationDto.CAPTURED_BIO_FIELDS.contains(fieldId) ? Collections.singletonList(fieldId) : Collections.EMPTY_LIST));
+                    registrationDto.CAPTURED_BIO_FIELDS.contains(fieldId) ? Collections.singletonList(fieldId)
+                            : Collections.EMPTY_LIST));
             biometricRecord.setSegments(capturedBiometrics.get(fieldId));
             Log.d(TAG, "Adding biometric to packet manager for field : " + fieldId);
             packetWriterService.setBiometric(registrationDto.getRId(), fieldId, biometricRecord);

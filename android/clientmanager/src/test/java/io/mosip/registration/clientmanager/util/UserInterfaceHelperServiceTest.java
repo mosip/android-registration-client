@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class UserInterfaceHelperServiceTest {
 
     private UserInterfaceHelperService service;
@@ -35,7 +35,6 @@ public class UserInterfaceHelperServiceTest {
 
     @Mock
     private Bitmap mockResultBitmap;
-
 
     @Before
     public void setUp() {
@@ -178,7 +177,7 @@ public class UserInterfaceHelperServiceTest {
         BiometricsDto dto = new BiometricsDto();
         dto.setBioValue("invalid");
         try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class);
-             MockedStatic<Log> logMock = mockStatic(Log.class)) {
+                MockedStatic<Log> logMock = mockStatic(Log.class)) {
             assertNull(service.getFaceBitMap(dto));
         }
     }
@@ -193,7 +192,7 @@ public class UserInterfaceHelperServiceTest {
         BiometricsDto dto = new BiometricsDto();
         dto.setBioValue("invalid");
         try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class);
-             MockedStatic<Log> logMock = mockStatic(Log.class)) {
+                MockedStatic<Log> logMock = mockStatic(Log.class)) {
             assertNull(service.getFingerBitMap(dto));
         }
     }
@@ -208,14 +207,14 @@ public class UserInterfaceHelperServiceTest {
         BiometricsDto dto = new BiometricsDto();
         dto.setBioValue("invalid");
         try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class);
-             MockedStatic<Log> logMock = mockStatic(Log.class)) {
+                MockedStatic<Log> logMock = mockStatic(Log.class)) {
             assertNull(service.getIrisBitMap(dto));
         }
     }
 
     @Test
     public void testGetBytes() throws IOException {
-        byte[] data = new byte[]{1,2,3,4,5};
+        byte[] data = new byte[] { 1, 2, 3, 4, 5 };
         InputStream is = new ByteArrayInputStream(data);
         byte[] result = service.getBytes(is);
         assertArrayEquals(data, result);

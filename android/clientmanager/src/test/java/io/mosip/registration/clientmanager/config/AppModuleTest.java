@@ -50,67 +50,118 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 
-
 public class AppModuleTest {
 
-    @Mock Application mockApplication;
-    @Mock Context mockContext;
-    @Mock CertificateManagerService certificateManagerService;
-    @Mock ClientCryptoManagerService clientCryptoManagerService;
-    @Mock CryptoManagerService cryptoManagerService;
-    @Mock IPacketCryptoService iPacketCryptoService;
-    @Mock ObjectMapper objectMapper;
-    @Mock ObjectAdapterService objectAdapterService;
-    @Mock PacketKeeper packetKeeper;
-    @Mock PacketManagerHelper packetManagerHelper;
-    @Mock PacketWriterService packetWriterService;
-    @Mock SyncRestService syncRestService;
-    @Mock MachineRepository machineRepository;
-    @Mock ReasonListRepository reasonListRepository;
-    @Mock RegistrationCenterRepository registrationCenterRepository;
-    @Mock DocumentTypeRepository documentTypeRepository;
-    @Mock ApplicantValidDocRepository applicantValidDocRepository;
-    @Mock TemplateRepository templateRepository;
-    @Mock DynamicFieldRepository dynamicFieldRepository;
-    @Mock LocationRepository locationRepository;
-    @Mock GlobalParamRepository globalParamRepository;
-    @Mock IdentitySchemaRepository identitySchemaRepository;
-    @Mock BlocklistedWordRepository blocklistedWordRepository;
-    @Mock SyncJobDefRepository syncJobDefRepository;
-    @Mock UserDetailRepository userDetailRepository;
-    @Mock LanguageRepository languageRepository;
-    @Mock UserRoleRepository userRoleRepository;
-    @Mock JobManagerService jobManagerService;
-    @Mock FileSignatureDao fileSignatureDao;
-    @Mock UserBiometricRepository userBiometricRepository;
-    @Mock RegistrationRepository registrationRepository;
-    @Mock KeyStoreRepository keyStoreRepository;
-    @Mock AuditManagerService auditManagerService;
-    @Mock AuditRepository auditRepository;
-    @Mock JobTransactionRepository jobTransactionRepository;
-    @Mock CertificateDBHelper certificateDBHelper;
-    @Mock CACertificateStoreRepository caCertificateStoreRepository;
-    @Mock DateUtil dateUtil;
-    @Mock PreRegistrationDataSyncDao preRegistrationDataSyncDao;
-    @Mock PreRegistrationDataSyncRepositoryDao preRegistrationDataSyncRepositoryDao;
-    @Mock PreRegZipHandlingService preRegZipHandlingService;
-    @Mock PreRegistrationList preRegistrationList;
+    @Mock
+    Application mockApplication;
+    @Mock
+    Context mockContext;
+    @Mock
+    CertificateManagerService certificateManagerService;
+    @Mock
+    ClientCryptoManagerService clientCryptoManagerService;
+    @Mock
+    CryptoManagerService cryptoManagerService;
+    @Mock
+    IPacketCryptoService iPacketCryptoService;
+    @Mock
+    ObjectMapper objectMapper;
+    @Mock
+    ObjectAdapterService objectAdapterService;
+    @Mock
+    PacketKeeper packetKeeper;
+    @Mock
+    PacketManagerHelper packetManagerHelper;
+    @Mock
+    PacketWriterService packetWriterService;
+    @Mock
+    SyncRestService syncRestService;
+    @Mock
+    MachineRepository machineRepository;
+    @Mock
+    ReasonListRepository reasonListRepository;
+    @Mock
+    RegistrationCenterRepository registrationCenterRepository;
+    @Mock
+    DocumentTypeRepository documentTypeRepository;
+    @Mock
+    ApplicantValidDocRepository applicantValidDocRepository;
+    @Mock
+    TemplateRepository templateRepository;
+    @Mock
+    DynamicFieldRepository dynamicFieldRepository;
+    @Mock
+    LocationRepository locationRepository;
+    @Mock
+    GlobalParamRepository globalParamRepository;
+    @Mock
+    IdentitySchemaRepository identitySchemaRepository;
+    @Mock
+    BlocklistedWordRepository blocklistedWordRepository;
+    @Mock
+    SyncJobDefRepository syncJobDefRepository;
+    @Mock
+    UserDetailRepository userDetailRepository;
+    @Mock
+    LanguageRepository languageRepository;
+    @Mock
+    UserRoleRepository userRoleRepository;
+    @Mock
+    JobManagerService jobManagerService;
+    @Mock
+    FileSignatureDao fileSignatureDao;
+    @Mock
+    UserBiometricRepository userBiometricRepository;
+    @Mock
+    RegistrationRepository registrationRepository;
+    @Mock
+    KeyStoreRepository keyStoreRepository;
+    @Mock
+    AuditManagerService auditManagerService;
+    @Mock
+    AuditRepository auditRepository;
+    @Mock
+    JobTransactionRepository jobTransactionRepository;
+    @Mock
+    CertificateDBHelper certificateDBHelper;
+    @Mock
+    CACertificateStoreRepository caCertificateStoreRepository;
+    @Mock
+    DateUtil dateUtil;
+    @Mock
+    PreRegistrationDataSyncDao preRegistrationDataSyncDao;
+    @Mock
+    PreRegistrationDataSyncRepositoryDao preRegistrationDataSyncRepositoryDao;
+    @Mock
+    PreRegZipHandlingService preRegZipHandlingService;
+    @Mock
+    PreRegistrationList preRegistrationList;
     @Mock
     Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider;
 
-    @Mock Biometrics095Service biometricService;
+    @Mock
+    Biometrics095Service biometricService;
 
-    @Mock JobTransactionService jobTransactionService;
+    @Mock
+    JobTransactionService jobTransactionService;
 
-    @Mock PermittedLocalConfigRepository permittedLocalConfigRepository;
+    @Mock
+    PermittedLocalConfigRepository permittedLocalConfigRepository;
 
-    @Mock LocalConfigDAO localConfigDAO;
+    @Mock
+    LocalConfigDAO localConfigDAO;
 
-    @Mock LocalConfigService localConfigService;
+    @Mock
+    LocalConfigService localConfigService;
 
-    @Mock LocationValidationService locationValidationService;
+    @Mock
+    LocationValidationService locationValidationService;
 
-    @Mock PacketService packetService;
+    @Mock
+    PacketService packetService;
+
+    @Mock
+    PreCheckValidatorService preCheckValidatorService;
 
     private AppModule appModule;
     private MockedStatic<ConfigService> configServiceMock;
@@ -157,7 +208,8 @@ public class AppModuleTest {
 
     @Test
     public void testProvideIPacketCryptoService() {
-        IPacketCryptoService service = appModule.provideIPacketCryptoService(clientCryptoManagerService, cryptoManagerService);
+        IPacketCryptoService service = appModule.provideIPacketCryptoService(clientCryptoManagerService,
+                cryptoManagerService);
         assertNotNull(service);
         assertTrue(service instanceof PacketCryptoServiceImpl);
     }
@@ -183,8 +235,8 @@ public class AppModuleTest {
                 registrationCenterRepository, documentTypeRepository, applicantValidDocRepository, templateRepository,
                 dynamicFieldRepository, locationRepository, globalParamRepository, identitySchemaRepository,
                 blocklistedWordRepository, syncJobDefRepository, userDetailRepository, certificateManagerService,
-                languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO
-        );
+                languageRepository, jobManagerService, fileSignatureDao, jobTransactionService,
+                permittedLocalConfigRepository, localConfigDAO);
         assertNotNull(service);
         assertTrue(service instanceof MasterDataServiceImpl);
     }
@@ -197,7 +249,8 @@ public class AppModuleTest {
 
     @Test
     public void testProvideLoginService() {
-        LoginService service = appModule.provideLoginService(clientCryptoManagerService, userDetailRepository,userRoleRepository);
+        LoginService service = appModule.provideLoginService(clientCryptoManagerService, userDetailRepository,
+                userRoleRepository);
         assertNotNull(service);
     }
 
@@ -205,8 +258,9 @@ public class AppModuleTest {
     public void testProvideRegistrationService() {
         RegistrationService service = appModule.provideRegistrationService(
                 packetWriterService, registrationRepository, mock(MasterDataService.class), identitySchemaRepository,
-                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider,biometricService, packetService
-        );
+                clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,
+                registrationCenterRepository, locationValidationService, preRegistrationDataSyncServiceProvider,
+                biometricService, packetService, preCheckValidatorService);
         assertNotNull(service);
         assertTrue(service instanceof RegistrationServiceImpl);
     }
@@ -220,8 +274,8 @@ public class AppModuleTest {
     @Test
     public void testProvidePacketService() {
         PacketService service = appModule.providePacketService(
-                registrationRepository, iPacketCryptoService, syncRestService, mock(MasterDataService.class), globalParamRepository
-        );
+                registrationRepository, iPacketCryptoService, syncRestService, mock(MasterDataService.class),
+                globalParamRepository);
         assertNotNull(service);
         assertTrue(service instanceof PacketServiceImpl);
     }
@@ -248,7 +302,8 @@ public class AppModuleTest {
 
     @Test
     public void testProvideJobManagerService() {
-        JobManagerService service = appModule.provideJobManagerService(syncJobDefRepository, mock(JobTransactionService.class), dateUtil, localConfigService);
+        JobManagerService service = appModule.provideJobManagerService(syncJobDefRepository,
+                mock(JobTransactionService.class), dateUtil, localConfigService);
         assertNotNull(service);
         assertTrue(service instanceof JobManagerServiceImpl);
     }
@@ -256,8 +311,8 @@ public class AppModuleTest {
     @Test
     public void testProvideBiometrics095Service() {
         Biometrics095Service service = appModule.provideBiometrics095Service(
-                objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository
-        );
+                objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService,
+                userBiometricRepository);
         assertNotNull(service);
         assertTrue(service instanceof Biometrics095Service);
     }
@@ -266,8 +321,8 @@ public class AppModuleTest {
     public void testProvideUserOnboardService() {
         UserOnboardService service = appModule.provideUserOnboardService(
                 objectMapper, auditManagerService, certificateManagerService, syncRestService, cryptoManagerService,
-                mock(RegistrationService.class), userBiometricRepository, clientCryptoManagerService, userDetailRepository, globalParamRepository
-        );
+                mock(RegistrationService.class), userBiometricRepository, clientCryptoManagerService,
+                userDetailRepository, globalParamRepository);
         assertNotNull(service);
         assertTrue(service instanceof UserOnboardService);
     }
@@ -275,8 +330,7 @@ public class AppModuleTest {
     @Test
     public void testTemplateService() {
         TemplateService service = appModule.TemplateService(
-                mock(MasterDataService.class), identitySchemaRepository, globalParamRepository
-        );
+                mock(MasterDataService.class), identitySchemaRepository, globalParamRepository);
         assertNotNull(service);
     }
 
@@ -284,8 +338,7 @@ public class AppModuleTest {
     public void testPreRegistrationDataSyncService() {
         PreRegistrationDataSyncService service = appModule.PreRegistrationDataSyncService(
                 preRegistrationDataSyncDao, mock(MasterDataService.class), syncRestService, preRegZipHandlingService,
-                preRegistrationList, globalParamRepository, mock(RegistrationService.class)
-        );
+                preRegistrationList, globalParamRepository, mock(RegistrationService.class));
         assertNotNull(service);
     }
 
@@ -300,8 +353,7 @@ public class AppModuleTest {
         PreRegZipHandlingService service = appModule.PreRegZipHandlingService(
                 mock(ApplicantValidDocumentDao.class), identitySchemaRepository, clientCryptoManagerService,
                 mock(RegistrationService.class), cryptoManagerService, packetKeeper, iPacketCryptoService,
-                mock(MasterDataService.class), globalParamRepository
-        );
+                mock(MasterDataService.class), globalParamRepository);
         assertNotNull(service);
     }
 
@@ -341,6 +393,5 @@ public class AppModuleTest {
             appModule.providePacketManagerHelper();
         });
     }
-
 
 }

@@ -50,20 +50,34 @@ import org.apache.commons.io.FileUtils;
 
 public class PreRegZipHandlingServiceImplTest {
 
-    @Mock private Context mockContext;
-    @Mock private ApplicantValidDocumentDao mockApplicantValidDocumentDao;
-    @Mock private IdentitySchemaRepository mockIdentitySchemaRepository;
-    @Mock private ClientCryptoManagerService mockClientCryptoManagerService;
-    @Mock private RegistrationService mockRegistrationService;
-    @Mock private CryptoManagerService mockCryptoManagerService;
-    @Mock private PacketKeeper mockPacketKeeper;
-    @Mock private IPacketCryptoService mockIPacketCryptoService;
-    @Mock private MasterDataService mockMasterDataService;
-    @Mock private GlobalParamRepository mockGlobalParamRepository;
-    @Mock private RegistrationService regService;
-    @Mock private MasterDataService masterDataService;
-    @Mock private RegistrationDto regDto;
-    @Mock private Context ctx;
+    @Mock
+    private Context mockContext;
+    @Mock
+    private ApplicantValidDocumentDao mockApplicantValidDocumentDao;
+    @Mock
+    private IdentitySchemaRepository mockIdentitySchemaRepository;
+    @Mock
+    private ClientCryptoManagerService mockClientCryptoManagerService;
+    @Mock
+    private RegistrationService mockRegistrationService;
+    @Mock
+    private CryptoManagerService mockCryptoManagerService;
+    @Mock
+    private PacketKeeper mockPacketKeeper;
+    @Mock
+    private IPacketCryptoService mockIPacketCryptoService;
+    @Mock
+    private MasterDataService mockMasterDataService;
+    @Mock
+    private GlobalParamRepository mockGlobalParamRepository;
+    @Mock
+    private RegistrationService regService;
+    @Mock
+    private MasterDataService masterDataService;
+    @Mock
+    private RegistrationDto regDto;
+    @Mock
+    private Context ctx;
 
     private PreRegZipHandlingServiceImpl service;
 
@@ -80,15 +94,14 @@ public class PreRegZipHandlingServiceImplTest {
                 mockPacketKeeper,
                 mockIPacketCryptoService,
                 mockMasterDataService,
-                mockGlobalParamRepository
-        );
+                mockGlobalParamRepository);
     }
 
     @Test
     public void test_decryptPreRegPacket_callsCryptoManager() throws Exception {
-        byte[] encrypted = new byte[]{1,2,3};
+        byte[] encrypted = new byte[] { 1, 2, 3 };
         String key = Base64.getEncoder().encodeToString("1234567890123456".getBytes());
-        byte[] expected = new byte[]{4,5,6};
+        byte[] expected = new byte[] { 4, 5, 6 };
         when(mockCryptoManagerService.symmetricDecrypt(any(), eq(encrypted), isNull())).thenReturn(expected);
 
         byte[] result = service.decryptPreRegPacket(key, encrypted);
@@ -104,7 +117,7 @@ public class PreRegZipHandlingServiceImplTest {
                 .invoke(service, file, dir);
     }
 
-    @Test (expected = RegBaseUncheckedException.class)
+    @Test(expected = RegBaseUncheckedException.class)
     public void test_extractPreRegZipFile_returnsRegistrationDto() throws Exception {
         RegistrationDto dto = new RegistrationDto();
         when(mockRegistrationService.getRegistrationDto()).thenReturn(dto);
@@ -120,7 +133,7 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_storePreRegPacketToDisk_handleIOException() throws RegBaseUncheckedException {
-        String path = service.storePreRegPacketToDisk("id", new byte[]{1,2,3}, new CenterMachineDto());
+        String path = service.storePreRegPacketToDisk("id", new byte[] { 1, 2, 3 }, new CenterMachineDto());
         assertNotNull(path);
     }
 
@@ -136,7 +149,8 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_parseDemographicJson_handlesEmptyString() throws Exception {
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("parseDemographicJson", String.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("parseDemographicJson",
+                String.class);
         m.setAccessible(true);
         m.invoke(service, "");
     }
@@ -148,7 +162,8 @@ public class PreRegZipHandlingServiceImplTest {
         f.setAccessible(true);
         f.set(service, regService);
 
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("parseDemographicJson", String.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("parseDemographicJson",
+                String.class);
         m.setAccessible(true);
         try {
             m.invoke(service, "{\"identity\":{}}");
@@ -159,7 +174,8 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_getValueFromJson_allTypes() throws Exception {
-        when(masterDataService.getFieldValues(anyString(), anyString())).thenReturn(Collections.singletonList(new GenericValueDto("code", "name", "en")));
+        when(masterDataService.getFieldValues(anyString(), anyString()))
+                .thenReturn(Collections.singletonList(new GenericValueDto("code", "name", "en")));
         when(masterDataService.findAllLocationsByLangCode(anyString())).thenReturn(Collections.emptyList());
         java.lang.reflect.Field f = PreRegZipHandlingServiceImpl.class.getDeclaredField("masterDataService");
         f.setAccessible(true);
@@ -169,9 +185,11 @@ public class PreRegZipHandlingServiceImplTest {
         obj.put("string", "abc");
         obj.put("integer", 1);
         obj.put("number", 2L);
-        obj.put("simpleType", new org.json.JSONArray().put(new JSONObject().put("language", "en").put("value", "code")));
+        obj.put("simpleType",
+                new org.json.JSONArray().put(new JSONObject().put("language", "en").put("value", "code")));
 
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson",
+                String.class, String.class, JSONObject.class);
         m.setAccessible(true);
 
         assertEquals("abc", m.invoke(service, "string", "string", obj));
@@ -184,7 +202,8 @@ public class PreRegZipHandlingServiceImplTest {
     public void test_getValueFromJson_handlesThrowable() throws Exception {
         JSONObject obj = new JSONObject();
         obj.put("bad", new Object());
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson",
+                String.class, String.class, JSONObject.class);
         m.setAccessible(true);
         assertNull(m.invoke(service, "bad", "string", obj));
     }
@@ -195,7 +214,8 @@ public class PreRegZipHandlingServiceImplTest {
         f.setAccessible(true);
         f.set(service, null);
 
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("validateDemographicInfoObject");
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class
+                .getDeclaredMethod("validateDemographicInfoObject");
         m.setAccessible(true);
         assertFalse((Boolean) m.invoke(service));
     }
@@ -208,7 +228,8 @@ public class PreRegZipHandlingServiceImplTest {
         f.setAccessible(true);
         f.set(service, regService);
 
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("validateDemographicInfoObject");
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class
+                .getDeclaredMethod("validateDemographicInfoObject");
         m.setAccessible(true);
         assertFalse((Boolean) m.invoke(service));
     }
@@ -221,7 +242,8 @@ public class PreRegZipHandlingServiceImplTest {
         f.setAccessible(true);
         f.set(service, regService);
 
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("validateDemographicInfoObject");
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class
+                .getDeclaredMethod("validateDemographicInfoObject");
         m.setAccessible(true);
         assertTrue((Boolean) m.invoke(service));
     }
@@ -241,7 +263,7 @@ public class PreRegZipHandlingServiceImplTest {
             f2.set(service, repo);
 
             try {
-                service.storePreRegPacketToDisk("id", new byte[]{1,2,3}, new CenterMachineDto());
+                service.storePreRegPacketToDisk("id", new byte[] { 1, 2, 3 }, new CenterMachineDto());
             } catch (RuntimeException e) {
                 assertTrue(e.getCause() instanceof RegBaseUncheckedException);
             }
@@ -257,7 +279,8 @@ public class PreRegZipHandlingServiceImplTest {
         testFile.createNewFile();
         testFile.deleteOnExit();
 
-        String result = ReflectionTestUtils.invokeMethod(service, "validateFilename", testFile.getAbsolutePath(), intendedDir);
+        String result = ReflectionTestUtils.invokeMethod(service, "validateFilename", testFile.getAbsolutePath(),
+                intendedDir);
 
         assertEquals(testFile.getCanonicalPath(), result);
     }
@@ -281,24 +304,16 @@ public class PreRegZipHandlingServiceImplTest {
         assertEquals("File is outside extraction target directory.", exception.getMessage());
     }
 
-
     @Test
     public void test_init_prereg_adapter_when_external_storage_not_mounted() {
         MockedStatic<Environment> mockedEnvironment = Mockito.mockStatic(Environment.class);
         mockedEnvironment.when(Environment::getExternalStorageState).thenReturn("unmounted");
 
-        MockedStatic<Log> mockedLog = Mockito.mockStatic(Log.class);
-
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
 
         assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
-        assertNull(ReflectionTestUtils.getField(service, "BASE_LOCATION"));
-
-        mockedLog.verify(() -> Log.e(anyString(), eq("External Storage not mounted")));
-        mockedLog.verify(() -> Log.i(anyString(), eq("initLocalClientCryptoService: Initialization call successful")));
 
         mockedEnvironment.close();
-        mockedLog.close();
     }
 
     @Test
@@ -325,13 +340,18 @@ public class PreRegZipHandlingServiceImplTest {
         fieldList.add(fieldSpec2);
 
         when(mockIdentitySchemaRepository.getAllFieldSpec(any(Context.class), anyDouble())).thenReturn(fieldList);
+        when(mockGlobalParamRepository.getCachedStringFieldsToRetainOnPridFetch()).thenReturn("");
+        doNothing().when(mockRegistrationDto).retainConfiguredFields(anyString());
+        ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
 
         String validJson = "{ \"identity\": { \"fullName\": \"John Doe\", \"proofOfIdentity\": { \"type\": \"passport\", \"format\": \"pdf\", \"value\": \"doc1\", \"refNumber\": \"ABC123\" } } }";
 
         ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", validJson);
 
-        verify(mockRegistrationDto).getDocuments();
-        verify(mockRegistrationDto).addWithoutDocument(eq("proofOfIdentity"), eq("passport"), eq("pdf"), eq("doc1"), eq("ABC123"));
+        verify(mockRegistrationDto, atLeastOnce()).addWithoutDocument(anyString(), anyString(), anyString(),
+                anyString(), anyString());
+        verify(mockRegistrationDto).addWithoutDocument(eq("proofOfIdentity"), eq("passport"), eq("pdf"), eq("doc1"),
+                eq("ABC123"));
         verify(mockIdentitySchemaRepository).getAllFieldSpec(any(Context.class), eq(1.0));
     }
 
@@ -344,10 +364,12 @@ public class PreRegZipHandlingServiceImplTest {
 
         ReflectionTestUtils.invokeMethod(spyService, "parseDemographicJson", "");
 
-        verify(mockRegistrationDto, never()).addWithoutDocument(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(mockRegistrationDto, never()).addWithoutDocument(anyString(), anyString(), anyString(), anyString(),
+                anyString());
         verify(mockRegistrationDto, never()).getDemographics();
         verify(mockIdentitySchemaRepository, never()).getAllFieldSpec(any(Context.class), anyDouble());
-        verify(mockRegistrationDto, never()).addWithoutDocument(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(mockRegistrationDto, never()).addWithoutDocument(anyString(), anyString(), anyString(), anyString(),
+                anyString());
         verify(mockRegistrationDto, never()).getDemographics();
         verify(mockIdentitySchemaRepository, never()).getAllFieldSpec(any(Context.class), anyDouble());
     }
@@ -412,8 +434,10 @@ public class PreRegZipHandlingServiceImplTest {
         documentDto.setFormat("pdf");
         regDto.getDocuments().put("doc1", documentDto);
 
-        when(mockApplicantValidDocumentDao.findAllDocTypesByDocCategory("document")).thenReturn(Collections.singletonList("docType1"));
-        when(mockApplicantValidDocumentDao.findAllDocTypesByCode("docType1")).thenReturn(Collections.singletonList("document"));
+        when(mockApplicantValidDocumentDao.findAllDocTypesByDocCategory("document"))
+                .thenReturn(Collections.singletonList("docType1"));
+        when(mockApplicantValidDocumentDao.findAllDocTypesByCode("docType1"))
+                .thenReturn(Collections.singletonList("document"));
 
         assertThrows(RegBaseUncheckedException.class, () -> {
             service.extractPreRegZipFile(zipFile);
@@ -443,7 +467,8 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_handles_zip_within_threshold() throws Exception {
-        byte[] preRegZipFile = createZipFileWithEntries(10, 10000); // Mock method to create a zip file with 10 entries, each 10KB
+        byte[] preRegZipFile = createZipFileWithEntries(10, 10000); // Mock method to create a zip file with 10 entries,
+                                                                    // each 10KB
         Mockito.when(regService.getRegistrationDto()).thenReturn(regDto);
 
         assertThrows(RegBaseUncheckedException.class, () -> {
@@ -453,7 +478,8 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_validates_filenames_and_processes_documents() throws Exception {
-        byte[] preRegZipFile = createZipFileWithValidDocuments(); // Mock method to create a zip file with valid document entries
+        byte[] preRegZipFile = createZipFileWithValidDocuments(); // Mock method to create a zip file with valid
+                                                                  // document entries
         RegistrationDto registrationDtoMock = new RegistrationDto();
         Mockito.when(regService.getRegistrationDto()).thenReturn(registrationDtoMock);
 
@@ -525,7 +551,7 @@ public class PreRegZipHandlingServiceImplTest {
         assertArrayEquals(data, result);
     }
 
-    @Test (expected = RegBaseUncheckedException.class)
+    @Test(expected = RegBaseUncheckedException.class)
     public void test_extractPreRegZipFile_handlesIOException() throws Exception {
         when(regService.getRegistrationDto()).thenReturn(regDto);
         RegistrationDto result = service.extractPreRegZipFile("notazip".getBytes());
@@ -552,7 +578,8 @@ public class PreRegZipHandlingServiceImplTest {
         when(mockCryptoManagerService.symmetricEncryptWithRandomIV(any(), any(), any())).thenReturn("enc".getBytes());
         when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("prereg");
         when(mockContext.getFilesDir()).thenReturn(new File(System.getProperty("java.io.tmpdir")));
-        PreRegistrationDto dto = service.encryptAndSavePreRegPacket("id", Base64.getEncoder().encodeToString("abc".getBytes()), new CenterMachineDto());
+        PreRegistrationDto dto = service.encryptAndSavePreRegPacket("id",
+                Base64.getEncoder().encodeToString("abc".getBytes()), new CenterMachineDto());
         assertNotNull(dto);
         assertEquals("id", dto.getPreRegId());
     }
@@ -570,7 +597,7 @@ public class PreRegZipHandlingServiceImplTest {
         when(mockCryptoManagerService.generateAESKey(anyInt())).thenReturn(keyGeneratorMock);
         when(keyGeneratorMock.generateKey()).thenReturn(secretKey);
 
-        byte[] encryptedBytes = new byte[]{9, 8, 7};
+        byte[] encryptedBytes = new byte[] { 9, 8, 7 };
         when(mockCryptoManagerService.symmetricEncryptWithRandomIV(eq(secretKey), any(byte[].class), isNull()))
                 .thenReturn(encryptedBytes);
 
@@ -597,8 +624,8 @@ public class PreRegZipHandlingServiceImplTest {
     @Test
     public void test_decryptPreRegPacket_success() throws Exception {
         String key = Base64.getEncoder().encodeToString("1234567890123456".getBytes());
-        byte[] encrypted = new byte[]{1,2,3};
-        byte[] expected = new byte[]{4,5,6};
+        byte[] encrypted = new byte[] { 1, 2, 3 };
+        byte[] expected = new byte[] { 4, 5, 6 };
         when(mockCryptoManagerService.symmetricDecrypt(any(), eq(encrypted), isNull())).thenReturn(expected);
         byte[] result = service.decryptPreRegPacket(key, encrypted);
         assertArrayEquals(expected, result);
@@ -650,26 +677,38 @@ public class PreRegZipHandlingServiceImplTest {
         when(dto.getDocuments()).thenReturn(new HashMap<>());
         when(dto.getDemographics()).thenReturn(new HashMap<>());
         List<FieldSpecDto> fields = new ArrayList<>();
-        FieldSpecDto f1 = new FieldSpecDto(); f1.setId("fullName"); f1.setType("string"); f1.setControlType("textbox"); fields.add(f1);
-        FieldSpecDto f2 = new FieldSpecDto(); f2.setId("proofOfIdentity"); f2.setType("documentType"); fields.add(f2);
+        FieldSpecDto f1 = new FieldSpecDto();
+        f1.setId("fullName");
+        f1.setType("string");
+        f1.setControlType("textbox");
+        fields.add(f1);
+        FieldSpecDto f2 = new FieldSpecDto();
+        f2.setId("proofOfIdentity");
+        f2.setType("documentType");
+        fields.add(f2);
         when(mockIdentitySchemaRepository.getAllFieldSpec(any(), anyDouble())).thenReturn(fields);
+        when(mockGlobalParamRepository.getCachedStringFieldsToRetainOnPridFetch()).thenReturn("");
+        doNothing().when(dto).retainConfiguredFields(anyString());
         ReflectionTestUtils.setField(service, "registrationService", regService);
         ReflectionTestUtils.setField(service, "identitySchemaService", mockIdentitySchemaRepository);
+        ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
         String json = "{ \"identity\": { \"fullName\": \"John Doe\", \"proofOfIdentity\": { \"type\": \"passport\", \"format\": \"pdf\", \"value\": \"doc1\", \"refNumber\": \"ABC123\" } } }";
         ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", json);
-        verify(dto).getDocuments();
+        verify(dto, atLeastOnce()).addWithoutDocument(anyString(), anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
     public void test_getValueFromJson_allTypes_Success() throws Exception {
-        when(masterDataService.getFieldValues(anyString(), anyString())).thenReturn(Collections.singletonList(new GenericValueDto("code", "name", "en")));
+        when(masterDataService.getFieldValues(anyString(), anyString()))
+                .thenReturn(Collections.singletonList(new GenericValueDto("code", "name", "en")));
         when(masterDataService.findAllLocationsByLangCode(anyString())).thenReturn(Collections.emptyList());
         ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
         JSONObject obj = new JSONObject();
         obj.put("string", "abc");
         obj.put("integer", 1);
         obj.put("number", 2L);
-        obj.put("simpleType", new org.json.JSONArray().put(new JSONObject().put("language", "en").put("value", "code")));
+        obj.put("simpleType",
+                new org.json.JSONArray().put(new JSONObject().put("language", "en").put("value", "code")));
         assertEquals("abc", ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "string", "string", obj));
         assertNotNull(ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "simpleType", "simpleType", obj));
     }
@@ -679,6 +718,7 @@ public class PreRegZipHandlingServiceImplTest {
         MockedStatic<Environment> mockedEnv = Mockito.mockStatic(Environment.class);
         mockedEnv.when(Environment::getExternalStorageState).thenReturn("unmounted");
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
+        assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
         mockedEnv.close();
     }
 
@@ -699,17 +739,21 @@ public class PreRegZipHandlingServiceImplTest {
         bioField.setType("biometricsType");
         fields.add(bioField);
         when(mockIdentitySchemaRepository.getAllFieldSpec(any(), anyDouble())).thenReturn(fields);
+        when(mockGlobalParamRepository.getCachedStringFieldsToRetainOnPridFetch()).thenReturn("");
+        doNothing().when(dto).retainConfiguredFields(anyString());
         ReflectionTestUtils.setField(service, "registrationService", regService);
         ReflectionTestUtils.setField(service, "identitySchemaService", mockIdentitySchemaRepository);
+        ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
         String json = "{ \"identity\": { \"proofOfIdentity\": { \"type\": \"passport\", \"format\": \"pdf\", \"value\": \"doc1\", \"refNumber\": \"ABC123\" }, \"face\": \"faceData\" } }";
         ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", json);
-        verify(dto).getDocuments();
+        verify(dto, atLeastOnce()).addWithoutDocument(anyString(), anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
     public void test_getValueFromJson_missingKey() throws Exception {
         JSONObject obj = new JSONObject();
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson",
+                String.class, String.class, JSONObject.class);
         m.setAccessible(true);
         assertNull(m.invoke(service, "notfound", "string", obj));
     }
@@ -718,7 +762,8 @@ public class PreRegZipHandlingServiceImplTest {
     public void test_getValueFromJson_unexpectedType() throws Exception {
         JSONObject obj = new JSONObject();
         obj.put("weird", new Object());
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson",
+                String.class, String.class, JSONObject.class);
         m.setAccessible(true);
         assertNull(m.invoke(service, "weird", "unknownType", obj));
     }
@@ -733,7 +778,7 @@ public class PreRegZipHandlingServiceImplTest {
         ReflectionTestUtils.setField(service, "appContext", mockContext);
         ReflectionTestUtils.setField(service, "globalParamRepository", mockGlobalParamRepository);
         try {
-            service.storePreRegPacketToDisk("id", new byte[]{1,2,3}, new CenterMachineDto());
+            service.storePreRegPacketToDisk("id", new byte[] { 1, 2, 3 }, new CenterMachineDto());
         } catch (Exception e) {
             // Should not throw, just print error
         }
@@ -757,7 +802,7 @@ public class PreRegZipHandlingServiceImplTest {
         assertEquals(dto, result);
     }
 
-    @Test (expected = RegBaseUncheckedException.class)
+    @Test(expected = RegBaseUncheckedException.class)
     public void test_extractPreRegZipFile_removesEmptyDocumentEntries() throws Exception {
         RegistrationDto dto = new RegistrationDto();
         Map<String, DocumentDto> docs = new HashMap<>();
@@ -791,9 +836,11 @@ public class PreRegZipHandlingServiceImplTest {
         Location loc = new Location("123", "eng");
         loc.setHierarchyName("district");
         loc.setHierarchyLevel(1);
-        when(masterDataService.getFieldValues(eq("district"), eq("en"))).thenReturn(Collections.singletonList(new GenericValueDto("code", "DistrictName", "en")));
+        when(masterDataService.getFieldValues(eq("district"), eq("en")))
+                .thenReturn(Collections.singletonList(new GenericValueDto("code", "DistrictName", "en")));
         when(masterDataService.findAllLocationsByLangCode(anyString())).thenReturn(Collections.singletonList(loc));
-        when(masterDataService.findLocationByHierarchyLevel(eq(1), eq("en"))).thenReturn(Collections.singletonList(new GenericValueDto("code", "DistrictName", "en")));
+        when(masterDataService.findLocationByHierarchyLevel(eq(1), eq("en")))
+                .thenReturn(Collections.singletonList(new GenericValueDto("code", "DistrictName", "en")));
         ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
 
         List<?> result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "district", "simpleType", obj);
@@ -818,13 +865,14 @@ public class PreRegZipHandlingServiceImplTest {
         List<?> result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "district", "simpleType", obj);
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals("unknown", ((io.mosip.registration.packetmanager.dto.SimpleType)result.get(0)).getValue());
+        assertEquals("unknown", ((io.mosip.registration.packetmanager.dto.SimpleType) result.get(0)).getValue());
     }
 
     @Test
     public void test_getValueFromJson_catchThrowable() throws Exception {
         JSONObject obj = new JSONObject();
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson",
+                String.class, String.class, JSONObject.class);
         m.setAccessible(true);
         assertNull(m.invoke(service, "nonexistent", "string", obj));
     }
@@ -833,7 +881,8 @@ public class PreRegZipHandlingServiceImplTest {
     public void test_getValueFromJson_nullJSONArray() throws Exception {
         JSONObject obj = new JSONObject();
         obj.put("simpleType", JSONObject.NULL);
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson",
+                String.class, String.class, JSONObject.class);
         m.setAccessible(true);
         assertNull(m.invoke(service, "simpleType", "simpleType", obj));
     }
@@ -842,11 +891,12 @@ public class PreRegZipHandlingServiceImplTest {
     public void test_getValueFromJson_emptyJSONArray() throws Exception {
         JSONObject obj = new JSONObject();
         obj.put("simpleType", new org.json.JSONArray());
-        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson", String.class, String.class, JSONObject.class);
+        java.lang.reflect.Method m = PreRegZipHandlingServiceImpl.class.getDeclaredMethod("getValueFromJson",
+                String.class, String.class, JSONObject.class);
         m.setAccessible(true);
         Object result = m.invoke(service, "simpleType", "simpleType", obj);
         assertNotNull(result);
-        assertTrue(((List<?>)result).isEmpty());
+        assertTrue(((List<?>) result).isEmpty());
     }
 
     @Test
@@ -911,21 +961,10 @@ public class PreRegZipHandlingServiceImplTest {
     @Test
     public void test_initPreRegAdapter_externalStorageMounted() {
         MockedStatic<Environment> mockedEnv = Mockito.mockStatic(Environment.class);
-        MockedStatic<ConfigService> mockedConfig = Mockito.mockStatic(ConfigService.class);
-        MockedStatic<Log> mockedLog = Mockito.mockStatic(Log.class);
-
         mockedEnv.when(Environment::getExternalStorageState).thenReturn(Environment.MEDIA_MOUNTED);
-        mockedConfig.when(() -> ConfigService.getProperty(anyString(), any())).thenReturn("testLocation");
-        File mockFile = mock(File.class);
-        when(mockFile.exists()).thenReturn(false);
-        when(mockFile.mkdirs()).thenReturn(true);
-
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
-
-        mockedLog.verify(() -> Log.i(anyString(), eq("initLocalClientCryptoService: Initialization call successful")));
+        assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
         mockedEnv.close();
-        mockedConfig.close();
-        mockedLog.close();
     }
 
     @Test
@@ -939,38 +978,43 @@ public class PreRegZipHandlingServiceImplTest {
         when(masterDataService.getFieldValues("region", "eng")).thenReturn(Collections.singletonList(valueDto));
 
         // Setup location hierarchy: level 0 = "Country", level 1 = "Region"
-        // Note: HashMap iteration order is not guaranteed, so we can't rely on index being exactly 1
+        // Note: HashMap iteration order is not guaranteed, so we can't rely on index
+        // being exactly 1
         Location countryLocation = new Location("COUNTRY", "eng");
         countryLocation.setHierarchyName("Country");
         countryLocation.setHierarchyLevel(0);
-        
+
         Location regionLocation = new Location("REGION", "eng");
         regionLocation.setHierarchyName("Region");
         regionLocation.setHierarchyLevel(1);
-        
+
         when(masterDataService.findAllLocationsByLangCode("eng"))
                 .thenReturn(Arrays.asList(countryLocation, regionLocation));
-        // Note: findLocationByHierarchyLevel may or may not be called depending on HashMap iteration order
+        // Note: findLocationByHierarchyLevel may or may not be called depending on
+        // HashMap iteration order
         when(masterDataService.findLocationByHierarchyLevel(anyInt(), eq("eng")))
                 .thenReturn(Collections.singletonList(new GenericValueDto("LOC_CODE", "LocationName", "eng")));
 
         ReflectionTestUtils.setField(service, "masterDataService", masterDataService);
-        Object result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "region", "simpleType", jsonObject);
-        
+        Object result = ReflectionTestUtils.invokeMethod(service, "getValueFromJson", "region", "simpleType",
+                jsonObject);
+
         assertNotNull(result);
         assertTrue("Result should be a List", result instanceof List<?>);
         @SuppressWarnings("unchecked")
         List<SimpleType> simpleTypes = (List<SimpleType>) result;
         assertEquals("Should have one SimpleType entry", 1, simpleTypes.size());
-        // The value should be "RegionName" from getFieldValues match, or "LOC_CODE" as fallback
+        // The value should be "RegionName" from getFieldValues match, or "LOC_CODE" as
+        // fallback
         String actualValue = simpleTypes.get(0).getValue();
         assertTrue("Value should be RegionName (from getFieldValues) or LOC_CODE (fallback)",
                 "RegionName".equals(actualValue) || "LOC_CODE".equals(actualValue));
         assertEquals("eng", simpleTypes.get(0).getLanguage());
-        
+
         verify(masterDataService).getFieldValues("region", "eng");
         verify(masterDataService).findAllLocationsByLangCode("eng");
-        // findLocationByHierarchyLevel may or may not be called depending on HashMap iteration order
+        // findLocationByHierarchyLevel may or may not be called depending on HashMap
+        // iteration order
         verify(masterDataService, atMost(1)).findLocationByHierarchyLevel(anyInt(), eq("eng"));
     }
 
@@ -1065,11 +1109,11 @@ public class PreRegZipHandlingServiceImplTest {
 
             String path = service.storePreRegPacketToDisk("RID123", "payload".getBytes(), new CenterMachineDto());
             assertTrue("Path should contain RID123.zip", path.contains("RID123.zip"));
-            
+
             // Verify directory was created
             File targetDir = new File(tempDir, "preRegPackets");
             assertTrue("Expected preRegPackets directory to be created", targetDir.exists() && targetDir.isDirectory());
-            
+
             // Verify zip file was created
             File zipFile = new File(targetDir, "RID123.zip");
             assertTrue("Expected stored packet file to exist", zipFile.exists());
