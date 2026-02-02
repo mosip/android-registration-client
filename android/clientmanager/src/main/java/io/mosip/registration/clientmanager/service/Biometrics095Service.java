@@ -68,7 +68,6 @@ public class Biometrics095Service extends BiometricsService {
 
     private String rCaptureTrustDomain = TRUST_DOMAIN_DEVICE;
     private String deviceInfoTrustDomain = TRUST_DOMAIN_DEVICE;
-    private String digitalIdTrustDomain = TRUST_DOMAIN_DEVICE;
 
     private Context context;
     private ObjectMapper objectMapper;
@@ -186,7 +185,7 @@ public class Biometrics095Service extends BiometricsService {
 
                 Log.i(TAG, "BiometricsDtoList: started");
                 Log.i(TAG, "BiometricsDtoList: before inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
-               if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
+              // if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
                     Log.i(TAG, "BiometricsDtoList: inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
                     IBioApiV2 modalityBioSDK = BioSDKLoader.loadBioSDK(context, modality, globalParamRepository);
                     Log.i(TAG,"modalityBioSDK=======> "+modalityBioSDK);
@@ -207,7 +206,7 @@ public class Biometrics095Service extends BiometricsService {
                     } else {
                         Log.w(TAG, "BioSDK not found for " + modality + ", skipping deduplication check");
                     }
-               }
+              // }
             }
         } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
