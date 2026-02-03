@@ -10,6 +10,7 @@ package io.mosip.registration_client.api_services;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -32,22 +33,28 @@ public class AuditDetailsApi implements AuditResponsePigeon.AuditResponseApi {
     }
 
     @Override
-    public void audit(@NonNull String id, @NonNull String componentId, @NonNull AuditResponsePigeon.Result<Void> result) {
+    public void audit(@NonNull String id, @NonNull String componentId, @Nullable String description, @NonNull AuditResponsePigeon.Result<Void> result) {
         try {
-            Arrays.stream(AuditEvent.values()).forEach((event) -> {
-                if(Objects.equals(event.getId(), id)) {
-                    auditEvent(event, componentId);
-                }
-            });
+            AuditEvent matchedEvent = Arrays.stream(AuditEvent.values())
+                    .filter((event) -> Objects.equals(event.getId(), id) || Objects.equals(event.getName(), id))
+                    .findFirst()
+                    .orElse(null);
+            if (matchedEvent != null) {
+                auditEvent(matchedEvent, componentId, description);
+            }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Exception in system audit event!", e);
         }
     }
 
-    private void auditEvent(AuditEvent auditEvent, String componentId) {
+    private void auditEvent(AuditEvent auditEvent, String componentId, String description) {
         Arrays.stream(Components.values()).forEach((component) -> {
-            if(Objects.equals(component.getId(), componentId)) {
-                auditManagerService.audit(auditEvent, component);
+            if (Objects.equals(component.getId(), componentId)) {
+                if (description != null && !description.isEmpty()) {
+                    auditManagerService.auditWithDescriptionOverride(auditEvent, component.getId(), component.getName(), description);
+                } else {
+                    auditManagerService.audit(auditEvent, component);
+                }
             }
         });
     }

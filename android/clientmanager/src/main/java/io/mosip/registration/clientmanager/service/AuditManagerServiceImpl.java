@@ -84,12 +84,32 @@ public class AuditManagerServiceImpl implements AuditManagerService {
             refIdType = AuditReferenceIdTypes.APPLICATION_ID.name();
         }
 
-        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null);
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, errorMsg, null);
     }
 
     @Override
     public void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType) {
-        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null);
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null, null);
+    }
+
+    @Override
+    public void auditWithDescriptionOverride(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String descriptionOverride) {
+        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                Context.MODE_PRIVATE);
+        String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
+        String rId = sharedPreferences.getString(SessionManager.RID, null);
+        String refId, refIdType;
+        if (auditEventEnum.getId().contains(REGISTRATION_EVENTS) && rId != null) {
+            refId = rId;
+            refIdType = AuditReferenceIdTypes.REGISTRATION_ID.getReferenceTypeId();
+        } else if (sessionUserId != null) {
+            refId = sessionUserId;
+            refIdType = AuditReferenceIdTypes.USER_ID.name();
+        } else {
+            refId = this.context.getString(R.string.app_name);
+            refIdType = AuditReferenceIdTypes.APPLICATION_ID.name();
+        }
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null, descriptionOverride);
     }
 
     @Override
@@ -114,7 +134,7 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         return auditRepository.getAuditsFromDate(fromDateTime);
     }
 
-    private void addAudit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType, String errorMsg) {
+    private void addAudit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType, String errorMsg, String descriptionOverride) {
         SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
 
@@ -129,8 +149,14 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
         String applicationId = globalParamRepository.getCachedStringAppId();
         String applicationName = globalParamRepository.getCachedStringAppName();
-        String description = errorMsg == null ? auditEventEnum.getDescription()
-                : String.format(COLON_SEPARATED_DESCRIPTION, auditEventEnum.getDescription(), errorMsg);
+        String description;
+        if (descriptionOverride != null) {
+            description = String.format(auditEventEnum.getDescription(), descriptionOverride);
+        } else if (errorMsg == null) {
+            description = auditEventEnum.getDescription();
+        } else {
+            description = String.format(COLON_SEPARATED_DESCRIPTION, auditEventEnum.getDescription(), errorMsg);
+        }
 
         Audit audit = new Audit(
                 System.currentTimeMillis(),

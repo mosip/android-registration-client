@@ -44,6 +44,16 @@ public interface AuditManagerService {
 
     void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String errorMsg);
 
+    /**
+     * Audits the events with a custom description override.
+     * When descriptionOverride is not null, it is used as the full description instead of the event's default.
+     *
+     * @param auditEventEnum      the audit event
+     * @param appModuleId         the application module id
+     * @param appModuleName       the application module name
+     * @param descriptionOverride when non-null, used as the full audit description
+     */
+    void auditWithDescriptionOverride(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String descriptionOverride);
 
     /**
      * Delete Audit Logs

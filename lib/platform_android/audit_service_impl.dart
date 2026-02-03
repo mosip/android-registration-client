@@ -12,9 +12,9 @@ import 'package:registration_client/platform_spi/audit_service.dart';
 
 class AuditImpl implements Audit {
   @override
-  Future<void> performAudit(String id, String componentId) async {
+  Future<void> performAudit(String id, String componentId, [String? description]) async {
     try {
-      await AuditResponseApi().audit(id, componentId);
+      await AuditResponseApi().audit(id, componentId, description);
     } on PlatformException {
       debugPrint('AuditResponseApi call failed');
     } catch (e) {

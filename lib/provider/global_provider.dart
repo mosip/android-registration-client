@@ -812,8 +812,8 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAudit(String id, String componentId) async {
-    await audit.performAudit(id, componentId);
+  getAudit(String id, String componentId, [String? description]) async {
+    await audit.performAudit(id, componentId, description);
   }
 
   Map<String?, String?> _locationHierarchyMap = {};
