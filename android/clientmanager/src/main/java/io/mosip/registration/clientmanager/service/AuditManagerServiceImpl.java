@@ -151,7 +151,12 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         String applicationName = globalParamRepository.getCachedStringAppName();
         String description;
         if (descriptionOverride != null) {
-            description = String.format(auditEventEnum.getDescription(), descriptionOverride);
+            String eventDescription = auditEventEnum.getDescription();
+            if (eventDescription != null && eventDescription.contains("%s")) {
+                description = String.format(eventDescription, descriptionOverride);
+            } else {
+                description = descriptionOverride;
+            }
         } else if (errorMsg == null) {
             description = auditEventEnum.getDescription();
         } else {
