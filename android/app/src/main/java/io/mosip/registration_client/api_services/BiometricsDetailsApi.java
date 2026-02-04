@@ -1092,7 +1092,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                             Log.e(TAG, ex.getMessage(), ex);
                         }
                     });
-                    // Send reply back to Flutter only once per capture
                     result1.success("Ok");
                 } else {
                     Toast.makeText(

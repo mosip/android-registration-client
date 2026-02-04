@@ -59,7 +59,6 @@ tasks.register('dexifyBiosdkAars') {
             }
             project.copy { from srcJar; into workDir; rename { "${baseName}-classes.jar" } }
 
-            // Run D8 via JavaExec (avoids d8.bat JVM compatibility on Java 9+)
             def dexOutDir = new File(workDir, "${baseName}-dex")
             dexOutDir.mkdirs()
             javaexec {
@@ -142,7 +141,7 @@ android {
     }
 }
 
-// Run dexify before clientmanager merges assets (modern approach: tasks.named instead of scanning all tasks)
+// Run dexify before clientmanager merges assets
 afterEvaluate {
     ['mergeDebugAssets', 'mergeReleaseAssets'].each { taskName ->
         tasks.findByName(taskName)?.dependsOn(dexifyBiosdkAars)
@@ -152,7 +151,7 @@ afterEvaluate {
 dependencies {
     def work_version = "2.7.1"
 
-    // R8/D8 for dexifyBiosdkAars task (JAR->DEX conversion)
+    // R8/D8 for dexifyBiosdkAars task (DEX conversion)
     dexify 'com.android.tools:r8:3.0.73'
 
     implementation 'com.google.dagger:dagger:2.41'

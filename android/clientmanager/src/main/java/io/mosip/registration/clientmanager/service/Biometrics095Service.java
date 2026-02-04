@@ -92,7 +92,7 @@ public class Biometrics095Service extends BiometricsService {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userBiometricRepository = userBiometricRepository;
         
-        // Load BioSDK from assets (AAR file) - default to FACE modality for initialization
+        // Load BioSDK from assets - default to FACE modality for initialization
         this.iBioApiV2 = BioSDKLoader.loadBioSDK(context, Modality.FACE, globalParamRepository);
         
         this.BIO_DEVICES = new HashMap<>();
@@ -344,7 +344,6 @@ public class Biometrics095Service extends BiometricsService {
             return biometricsDto.getQualityScore();
         }
 
-        // Single, happy-path integration with SampleSDK: checkQuality(BiometricRecord, List<BiometricType>, Map<String, String>)
         try {
             BiometricRecord sample = new BiometricRecord();
             sample.getSegments().add(bir);
@@ -381,7 +380,7 @@ public class Biometrics095Service extends BiometricsService {
      */
     private Double extractScoreFromQualityCheck(Object qualityCheck, BiometricType biometricType) {
         if (qualityCheck == null) return null;
-        // Try getScores() -> Map<BiometricType, ?> (value may be Number or QualityScore object with getScore())
+
         try {
             java.lang.reflect.Method getScores = qualityCheck.getClass().getMethod("getScores");
             Object scoresObj = getScores.invoke(qualityCheck);
