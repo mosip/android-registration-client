@@ -36,7 +36,6 @@ import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.constant.SBIError;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.sbi.CaptureBioDetail;
 import io.mosip.registration.clientmanager.dto.sbi.CaptureDto;

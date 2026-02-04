@@ -56,6 +56,7 @@ tasks.register('dexifyBiosdkAars') {
             // Extract classes.jar from AAR (AAR has classes.jar at root or in jars/)
             def classesJar = new File(workDir, "${baseName}-classes.jar")
             def extractDir = new File(workDir, "extract-${baseName}")
+            project.delete(extractDir)
             extractDir.mkdirs()
             project.copy {
                 from project.zipTree(aarFile)
@@ -70,6 +71,7 @@ tasks.register('dexifyBiosdkAars') {
             project.copy { from srcJar; into workDir; rename { "${baseName}-classes.jar" } }
 
             def dexOutDir = new File(workDir, "${baseName}-dex")
+            project.delete(dexOutDir)
             dexOutDir.mkdirs()
             javaexec {
                 classpath = configurations.dexify
