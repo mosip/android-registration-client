@@ -84,12 +84,12 @@ public class AuditManagerServiceImpl implements AuditManagerService {
             refIdType = AuditReferenceIdTypes.APPLICATION_ID.name();
         }
 
-        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, errorMsg, null);
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, errorMsg);
     }
 
     @Override
     public void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType) {
-        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null, null);
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         return auditRepository.getAuditsFromDate(fromDateTime);
     }
 
-    private void addAudit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType, String errorMsg, String descriptionOverride) {
+    private void addAudit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType, String errorMsg, String... arguments) {
         SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
 
@@ -150,12 +150,12 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         String applicationId = globalParamRepository.getCachedStringAppId();
         String applicationName = globalParamRepository.getCachedStringAppName();
         String description;
-        if (descriptionOverride != null) {
+        if (arguments != null && arguments.length > 0) {
             String eventDescription = auditEventEnum.getDescription();
             if (eventDescription != null && eventDescription.contains("%s")) {
-                description = String.format(eventDescription, descriptionOverride);
+                description = String.format(eventDescription, (Object[]) arguments);
             } else {
-                description = descriptionOverride;
+                description = arguments[0];
             }
         } else if (errorMsg == null) {
             description = auditEventEnum.getDescription();
