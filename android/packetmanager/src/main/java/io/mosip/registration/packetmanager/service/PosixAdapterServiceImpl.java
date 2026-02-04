@@ -35,8 +35,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.packetmanager.spi.ObjectAdapterService;
-import io.mosip.registration.packetmanager.util.ConfigService;
 import io.mosip.registration.packetmanager.util.ObjectStoreUtil;
+import io.mosip.registration.packetmanager.util.StorageUtils;
 
 /**
  * @Author Anshul Vanawat
@@ -72,22 +72,13 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
 
     private void initPosixAdapterService(Context context) {
         this.appContext = context;
-
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            String location = ConfigService.getProperty("objectstore.base.location", context);
-
-            File file = new File(Environment.getExternalStorageDirectory() + SEPARATOR + location);
-
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-
-            BASE_LOCATION = file.getAbsolutePath();
+        File baseDir = StorageUtils.getPacketStorageDir(context);
+        if (baseDir.exists() || baseDir.mkdirs()) {
+            BASE_LOCATION = baseDir.getAbsolutePath();
         } else {
-            Log.e(TAG, "External Storage not mounted");
+            Log.e(TAG, "Failed to initialize packet storage directory: " + baseDir.getAbsolutePath());
+            BASE_LOCATION = null;
         }
-        Log.i(TAG, "initLocalClientCryptoService: Initialization call successful");
     }
 
     @Override
@@ -218,9 +209,16 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
     private void createContainerZipWithSubPacket(String account, String container, String source, String process, String objectName, InputStream data)
             throws IOException {
 
-        String state = Environment.getExternalStorageState();
-        //external storage availability check
+        if (BASE_LOCATION == null) {
+            Log.e(TAG, "BASE_LOCATION is not initialized");
+            return;
+        }
+
+        File baseDir = new File(BASE_LOCATION);
+        String state = Environment.getExternalStorageState(baseDir);
+        //storage availability check
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            Log.e(TAG, "External storage not mounted. State: " + state + ", Path: " + baseDir.getAbsolutePath());
             return;
         }
 

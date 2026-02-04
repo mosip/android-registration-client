@@ -5,6 +5,7 @@
  *
 */
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
@@ -941,8 +942,14 @@ class GlobalProvider with ChangeNotifier {
     }
 
     // Fetch location if permission is granted
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    // Add timeout to prevent indefinite hanging
+    try {
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+    } on TimeoutException {
+      return null;
+    }
   }
 }

@@ -449,6 +449,24 @@ public class PacketServiceImpl implements PacketService {
     }
 
     @Override
+    public boolean isMaxNotApprovedPacketCountLimitReached() {
+        try {
+            int maxCount = globalParamRepository.getCachedIntRegMaxCountApproveLimit();
+            if (maxCount <= 0) {
+                return false;
+            }
+
+            int registeredPacketCount = registrationRepository.getAllRegistrationByStatus(PacketClientStatus.CREATED.name());
+
+            return registeredPacketCount >= maxCount;
+
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to validate registered packet count", ex);
+            return false;
+        }
+    }
+
+    @Override
     public void deleteRegistrationPackets() {
         Log.i(TAG, "Starting registration packet deletion job");
         try {

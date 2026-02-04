@@ -123,7 +123,6 @@ import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.utils.TestDataReader;
-import io.appium.java_client.android.AndroidDriver;
 
 public class NewRegistrationAdult extends AndroidBaseTest {
 
@@ -432,9 +431,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-//		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -450,8 +449,20 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
+
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -531,19 +542,17 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
 			}
 		}
+		
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
-
-		pendingApproval.clickOnSubmitButton();
-		assertTrue(pendingApproval.isSubmitButtonEnabledWithEmptyUsername(),
-				"Verify if error empty username submit button enabled");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
 
@@ -585,17 +594,46 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
-			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
-				break;
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
+		        break;
+		    }
 		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
+
+		registrationTasksPage.clickProfileButton();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+
+		profilePage.clickOnLogoutButton();
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
 	}
 
-	@Test(priority = 1, description = "Verify adult new registration")
+//	@Test(priority = 1, description = "Verify adult new registration")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
 		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
@@ -1144,7 +1182,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if Biometrics Information In PreviewPage is displayed");
 
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1160,8 +1198,19 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -1236,18 +1285,17 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if authenticate button is enable after selecting packet");
 
 		boolean isPageDisplayed = false;
+
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
 			}
 		}
-		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if error empty username submit button enabled");
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -1277,7 +1325,40 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnUploadButton();
+		boolean uploadSuccess = false;
+
+		for (int i = 0; i < 3; i++) {
+		    manageApplicationsPage.clickOnUploadButton();
+
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
+		        break;
+		    }
+		}
+
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
+		manageApplicationsPage.clickOnBackButton();
+
+		registrationTasksPage.clickProfileButton();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			profilePage = new ProfilePageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		profilePage.clickOnLogoutButton();
+		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
 	}
 

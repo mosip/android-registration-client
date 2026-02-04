@@ -44,7 +44,7 @@ public class TestRunner {
 
 			XmlClass addMachineDetails = new XmlClass("regclient.androidTestCases.AddMachineDetails");
 			XmlClass initialLaunch = new XmlClass("regclient.androidTestCases.InitialLaunch");
-			XmlClass logintest = new XmlClass("regclient.androidTestCases.Logintest");
+			XmlClass loginTest = new XmlClass("regclient.androidTestCases.LoginTest");
 			XmlClass newRegistrationAdult = new XmlClass("regclient.androidTestCases.NewRegistrationAdult");
 			XmlClass newRegistrationAdultException = new XmlClass(
 					"regclient.androidTestCases.NewRegistrationAdultException");
@@ -77,8 +77,8 @@ public class TestRunner {
 				if (Scenarioname.equalsIgnoreCase("initialLaunch"))
 					classes.add(initialLaunch);
 
-				if (Scenarioname.equalsIgnoreCase("logintest"))
-					classes.add(logintest);
+				if (Scenarioname.equalsIgnoreCase("loginTest"))
+					classes.add(loginTest);
 
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdult"))
 					classes.add(newRegistrationAdult);

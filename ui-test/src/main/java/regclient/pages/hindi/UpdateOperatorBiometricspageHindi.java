@@ -400,25 +400,13 @@ public class UpdateOperatorBiometricspageHindi extends UpdateOperatorBiometricsp
 	}
 
 	public boolean validateThreshold(int expected) {
-	    WebElement el = driver.findElement(MobileBy.AndroidUIAutomator(
-	            "new UiScrollable(new UiSelector().scrollable(true))" +
-	            ".scrollIntoView(new UiSelector().descriptionContains(\"Threshold\"));"));
-	    String text = el.getAttribute("content-desc");       // "Threshold 75%"
-	    int actual = Integer.parseInt(text.replaceAll("[^0-9]", "")); // extract 75
+		WebElement el = driver
+				.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+						+ ".scrollIntoView(new UiSelector().descriptionContains(\"Threshold\"));"));
+		String text = el.getAttribute("content-desc"); // "Threshold 75%"
+		int actual = Integer.parseInt(text.replaceAll("[^0-9]", "")); // extract 75
 
-	    return actual == expected;
+		return actual == expected;
 	}
-	
-	public void updateBiometricsAndWaitPopup() {
-	    for (int i = 1; i <= 5; i++) {
-	        clickOnVerifyAndSaveButton();
-	        try {
-	            new WebDriverWait(driver, Duration.ofSeconds(60))
-	                    .until(ExpectedConditions.visibilityOf(successPopup));
-	            return;   // success
-	        } catch (Exception ignored) {}
-	        try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
-	    }
-	    throw new AssertionError("Biometrics update success popup not displayed after 5 retries.");
-	}
+
 }
