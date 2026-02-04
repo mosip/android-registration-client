@@ -58,6 +58,10 @@ public class MatchUtil {
      */
     public static boolean validateBiometricData(Modality modality, CaptureDto captureDto, List<BiometricsDto>
             biometricsDtoList, UserBiometricRepository userBiometricRepository, IBioApiV2 iBioApiV2, String currentUserId) {
+        if (currentUserId == null || currentUserId.trim().isEmpty()) {
+            Log.w("MatchUtil", "currentUserId missing; skipping operator dedupe");
+            return false;
+        }
         BiometricType biometricType = BiometricType.fromValue(modality == Modality.EXCEPTION_PHOTO ?
                 modality.getSingleType().value() : captureDto.getBioType());
         String lowerCase = biometricType.toString().toLowerCase();

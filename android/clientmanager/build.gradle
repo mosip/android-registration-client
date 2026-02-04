@@ -16,7 +16,6 @@ tasks.register('dexifyBiosdkAars') {
     doLast {
         if (!biosdkAssetsDir.exists()) return
         def aarFiles = fileTree(biosdkAssetsDir).filter { it.name.endsWith('.aar') }.files
-        if (aarFiles.isEmpty()) return
 
         def sdkDir = android.sdkDirectory
         def androidJar = new File(sdkDir, "platforms/${android.compileSdkVersion}/android.jar")
@@ -25,6 +24,17 @@ tasks.register('dexifyBiosdkAars') {
         }
 
         biosdkDexOutputDir.mkdirs()
+        // Purge stale dex outputs when AARs are removed
+        def aarBaseNames = aarFiles.collect { it.name.replaceAll('\\.aar$', '') } as Set
+        biosdkDexOutputDir.listFiles()?.findAll { it.name.endsWith('.jar') }?.each { f ->
+            def jarBase = f.name.replaceAll('\\.jar$', '')
+            if (!aarBaseNames.contains(jarBase)) {
+                println "dexifyBiosdkAars: Removing stale output (no AAR): ${f.name}"
+                f.delete()
+            }
+        }
+        if (aarFiles.isEmpty()) return
+
         def workDir = file("${buildDir}/biosdk-dex/work")
         workDir.mkdirs()
 
@@ -126,7 +136,7 @@ android {
         main {
             assets {
                 // Prepend dexified output so DEX-JAR takes precedence over raw AAR
-                srcDirs "${buildDir}/biosdk-dex", 'src/main/assets', 'src/androidTest/assets'
+                srcDirs "${buildDir}/biosdk-dex/biosdk", 'src/main/assets'
             }
         }
     }
@@ -152,7 +162,7 @@ dependencies {
     def work_version = "2.7.1"
 
     // R8/D8 for dexifyBiosdkAars task (DEX conversion)
-    dexify 'com.android.tools:r8:3.0.73'
+    dexify 'com.android.tools:r8:3.0.76'
 
     implementation 'com.google.dagger:dagger:2.41'
     implementation 'com.google.dagger:dagger-android-support:2.41'

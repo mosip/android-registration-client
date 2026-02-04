@@ -45,7 +45,7 @@ public class BioSDKLoader {
 
             File sdkFile = findAnySdkFromAssets(context);
             if (sdkFile == null) {
-                Log.w(TAG, "No runtime-loadable SDK (.dex or DEX-jar) found in assets for modality: " + modalityKey);
+                Log.w(TAG, "No runtime-loadable SDK (.dex or DEX-jar) found in assets (requested for modality: " + modalityKey + ")");
                 return null;
             }
 

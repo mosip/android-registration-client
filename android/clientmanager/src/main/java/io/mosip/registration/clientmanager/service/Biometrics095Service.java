@@ -179,7 +179,7 @@ public class Biometrics095Service extends BiometricsService {
                         Log.i(TAG, "SDK quality score calculated: " + sdkScore + " for " + modality);
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to fetch SDK Score", e);
-                        biometricsDto.setSdkScore(0.0);
+                        biometricsDto.setSdkScore(biometricsDto.getQualityScore());
                     }
                 }
 
