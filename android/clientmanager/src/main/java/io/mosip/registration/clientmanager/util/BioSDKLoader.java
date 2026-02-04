@@ -138,46 +138,30 @@ public class BioSDKLoader {
     private static File findSdkInFolder(Context context, AssetManager assetManager, String folder) {
         try {
             String[] files = assetManager.list(folder);
-            if (files == null || files.length == 0) {
+            if (files == null) {
+                Log.d(TAG, "Assets folder missing: '" + (folder.isEmpty() ? "(root)" : folder) + "'");
                 return null;
             }
-
-            // Priority 1: raw .dex files (directly loadable)
-            for (String name : files) {
-                String lower = name.toLowerCase(Locale.ROOT);
-                if (lower.endsWith(".dex")) {
-                    File dexFile = copyFileFromAssets(context, folder, name);
-                    if (dexFile != null && isDexFile(dexFile)) {
-                        Log.d(TAG, "Found DEX file in assets: " + name);
-                        return dexFile;
-                    }
-                }
+            if (files.length > 0) {
+                Log.d(TAG, "Assets in '" + (folder.isEmpty() ? "(root)" : folder) + "': " + java.util.Arrays.toString(files));
             }
 
-            // Priority 2: JAR/APK/ZIP that already contains classes.dex (DEX-jar)
             for (String name : files) {
                 String lower = name.toLowerCase(Locale.ROOT);
-                if (lower.endsWith(".jar") || lower.endsWith(".apk") || lower.endsWith(".zip")) {
-                    File container = copyFileFromAssets(context, folder, name);
-                    if (container != null && isDexFile(container)) {
-                        Log.d(TAG, "Found DEX container in assets: " + name);
-                        return container;
-                    }
+                if (!lower.endsWith(".dex") && !lower.endsWith(".jar")
+                        && !lower.endsWith(".apk") && !lower.endsWith(".zip")) {
+                    continue;
                 }
-            }
 
-            // Priority 3: AAR only if it already contains classes.dex (rare)
-            for (String name : files) {
-                String lower = name.toLowerCase(Locale.ROOT);
-                if (lower.endsWith(".aar")) {
-                    File aarFile = copyFileFromAssets(context, folder, name);
-                    if (aarFile != null) {
-                        File extractedDex = extractDexFromAarIfPresent(context, aarFile);
-                        if (extractedDex != null && isDexFile(extractedDex)) {
-                            Log.d(TAG, "Extracted classes.dex from AAR: " + name);
-                            return extractedDex;
-                        }
+                String assetPath = folder.isEmpty() ? name : folder + "/" + name;
+                if (isValidDexAsset(context, assetPath)) {
+                    File copiedFile = copyFileFromAssets(context, folder, name);
+                    if (copiedFile != null) {
+                        Log.d(TAG, "Successfully validated DEX source: " + name);
+                        return copiedFile;
                     }
+                } else {
+                    Log.w(TAG, "Asset " + name + " is not a valid DEX container; skipping copy.");
                 }
             }
         } catch (IOException e) {
@@ -186,52 +170,47 @@ public class BioSDKLoader {
         return null;
     }
 
-    private static File extractDexFromAarIfPresent(Context context, File aarFile) {
-        ZipFile zipFile = null;
-        InputStream inputStream = null;
-        FileOutputStream outputStream = null;
-
-        try {
-            File biosdkDir = new File(context.getFilesDir(), ASSETS_FOLDER);
-            if (!biosdkDir.exists() && !biosdkDir.mkdirs()) {
-                Log.e(TAG, "Failed to create bioSdk directory");
-                return null;
+    /**
+     * Checks the asset's magic number (DEX or ZIP) without copying the full file.
+     * For .dex: validates "dex\n". For .jar/.apk/.zip: scans ZIP for classes.dex entry.
+     */
+    private static boolean isValidDexAsset(Context context, String assetPath) {
+        try (InputStream is = context.getAssets().open(assetPath)) {
+            byte[] header = new byte[4];
+            if (is.read(header) == 4) {
+                String magic = new String(header, StandardCharsets.US_ASCII);
+                if ("dex\n".equals(magic)) {
+                    return true;
+                }
+                if (header[0] == 0x50 && header[1] == 0x4B && header[2] == 0x03 && header[3] == 0x04) {
+                    return hasClassesDexInZip(context, assetPath);
+                }
             }
-
-            zipFile = new ZipFile(aarFile);
-            ZipEntry dexEntry = zipFile.getEntry(DEX_ENTRY_NAME);
-            if (dexEntry == null) {
-                return null;
-            }
-
-            String extractedDexName = aarFile.getName().replace(".aar", ".dex");
-            File outputDexFile = new File(biosdkDir, extractedDexName);
-            if (outputDexFile.exists() && outputDexFile.length() > 0) {
-                return outputDexFile;
-            }
-
-            inputStream = zipFile.getInputStream(dexEntry);
-            outputStream = new FileOutputStream(outputDexFile);
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            outputStream.flush();
-            return outputDexFile;
-
         } catch (IOException e) {
-            Log.e(TAG, "Failed to extract classes.dex from AAR: " + aarFile.getName(), e);
-            return null;
-        } finally {
-            try {
-                if (inputStream != null) inputStream.close();
-                if (outputStream != null) outputStream.close();
-                if (zipFile != null) zipFile.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Error closing streams", e);
-            }
+            Log.e(TAG, "Quick check failed for " + assetPath, e);
         }
+        return false;
+    }
+
+    /**
+     * Scans ZIP asset for classes.dex entry without copying the full file to disk.
+     */
+    private static boolean hasClassesDexInZip(Context context, String assetPath) {
+        try (java.util.zip.ZipInputStream zis = new java.util.zip.ZipInputStream(context.getAssets().open(assetPath))) {
+            java.util.zip.ZipEntry entry;
+            byte[] buffer = new byte[8192];
+            while ((entry = zis.getNextEntry()) != null) {
+                if (DEX_ENTRY_NAME.equals(entry.getName())) {
+                    return true;
+                }
+                while (zis.read(buffer) != -1) {
+                    // Skip entry data to advance to next entry
+                }
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "ZIP scan failed for " + assetPath, e);
+        }
+        return false;
     }
 
     private static File copyFileFromAssets(Context context, String folder, String fileName) {
@@ -247,15 +226,16 @@ public class BioSDKLoader {
             }
 
             outputFile = new File(biosdkDir, fileName);
-            if (outputFile.exists() && outputFile.length() > 0) {
-                return outputFile;
+            // Delete if exists (may be read-only from previous run) so we can overwrite
+            if (outputFile.exists()) {
+                outputFile.setWritable(true, false);
+                outputFile.delete();
             }
 
             String assetPath = folder == null || folder.isEmpty() ? fileName : (folder + "/" + fileName);
             try {
                 inputStream = context.getAssets().open(assetPath);
             } catch (IOException e) {
-                // Backward compatible fallback: some callers may still pass only fileName.
                 try {
                     inputStream = context.getAssets().open(fileName);
                 } catch (IOException e2) {
@@ -271,6 +251,10 @@ public class BioSDKLoader {
                 outputStream.write(buffer, 0, bytesRead);
             }
             outputStream.flush();
+            outputStream.close();
+            outputStream = null;
+            outputFile.setWritable(false, false);
+            outputFile.setReadable(true, false);
 
             return outputFile;
 

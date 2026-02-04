@@ -169,10 +169,10 @@ public class Biometrics095Service extends BiometricsService {
                 biometricsDtoList.add(biometricsDto);
 
                 // SDK Quality Check (if enabled)
-//                if (RegistrationConstants.ENABLE.equalsIgnoreCase(
-//                        globalParamRepository != null ?
-//                            globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.QUALITY_CHECK_WITH_SDK) :
-//                            RegistrationConstants.DISABLE)) {
+                if (RegistrationConstants.ENABLE.equalsIgnoreCase(
+                        globalParamRepository != null ?
+                            globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.QUALITY_CHECK_WITH_SDK) :
+                            RegistrationConstants.DISABLE)) {
                     try {
                         double sdkScore = getSDKScore(biometricsDto, modality);
                         biometricsDto.setSdkScore(sdkScore);
@@ -181,14 +181,11 @@ public class Biometrics095Service extends BiometricsService {
                         Log.e(TAG, "Unable to fetch SDK Score", e);
                         biometricsDto.setSdkScore(0.0);
                     }
-               // }
+                }
 
-                Log.i(TAG, "BiometricsDtoList: started");
-                Log.i(TAG, "BiometricsDtoList: before inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
-              // if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
-                    Log.i(TAG, "BiometricsDtoList: inside" + sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""));
+               if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
                     IBioApiV2 modalityBioSDK = BioSDKLoader.loadBioSDK(context, modality, globalParamRepository);
-                    Log.i(TAG,"modalityBioSDK=======> "+modalityBioSDK);
+
                     if (modalityBioSDK != null) {
                         boolean isMatched;
                         if (isOperatorOnboarding) {
@@ -206,14 +203,13 @@ public class Biometrics095Service extends BiometricsService {
                     } else {
                         Log.w(TAG, "BioSDK not found for " + modality + ", skipping deduplication check");
                     }
-              // }
+               }
             }
         } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             throw e;
         } catch (Exception e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
-            Log.e(TAG, "Failed to parse 095 RCapture response", e);
             throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
                     SBIError.SBI_RCAPTURE_ERROR.getErrorMessage());
         }
