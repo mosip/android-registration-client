@@ -329,6 +329,10 @@ public class Biometrics095Service extends BiometricsService {
 
         // Build kernel BIR from captured ISO
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
+        if (iso == null || iso.length == 0) {
+            Log.w(TAG, "Invalid biometric payload; using device quality score");
+            return biometricsDto.getQualityScore();
+        }
         BIR bir = MatchUtil.buildBir(
                 biometricsDto.getBioSubType(),
                 (long) biometricsDto.getQualityScore(),
