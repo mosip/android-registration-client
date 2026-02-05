@@ -152,11 +152,9 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         String description;
         if (arguments != null && arguments.length > 0) {
             String eventDescription = auditEventEnum.getDescription();
-            if (eventDescription != null && eventDescription.contains("%s")) {
-                description = String.format(eventDescription, (Object[]) arguments);
-            } else {
-                description = arguments[0];
-            }
+            description = (eventDescription != null && eventDescription.contains("%s"))
+                    ? String.format(eventDescription, (Object[]) arguments)
+                    : arguments[0];
         } else if (errorMsg == null) {
             description = auditEventEnum.getDescription();
         } else {
