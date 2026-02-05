@@ -93,7 +93,7 @@ public class AuditManagerServiceImpl implements AuditManagerService {
     }
 
     @Override
-    public void auditWithDescriptionOverride(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String descriptionOverride) {
+    public void auditWithDescriptionArguments(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String... arguments) {
         SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
         String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
@@ -109,7 +109,7 @@ public class AuditManagerServiceImpl implements AuditManagerService {
             refId = this.context.getString(R.string.app_name);
             refIdType = AuditReferenceIdTypes.APPLICATION_ID.name();
         }
-        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null, descriptionOverride);
+        addAudit(auditEventEnum, appModuleId, appModuleName, refId, refIdType, null, arguments);
     }
 
     @Override
