@@ -149,17 +149,21 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
         String applicationId = globalParamRepository.getCachedStringAppId();
         String applicationName = globalParamRepository.getCachedStringAppName();
-        String description;
-        if (arguments != null && arguments.length > 0) {
-            String eventDescription = auditEventEnum.getDescription();
-            description = (eventDescription != null && eventDescription.contains("%s"))
-                    ? String.format(eventDescription, (Object[]) arguments)
-                    : arguments[0];
-        } else if (errorMsg == null) {
-            description = auditEventEnum.getDescription();
-        } else {
-            description = String.format(COLON_SEPARATED_DESCRIPTION, auditEventEnum.getDescription(), errorMsg);
+        String description = auditEventEnum.getDescription() == null? "NA" : auditEventEnum.getDescription();
+
+        if (description.contains("%s") && arguments != null && arguments.length > 0) {
+            try {
+                description = String.format(description, (Object[]) arguments);
+            } catch (IllegalArgumentException ex) {
+                Log.e(TAG, "Invalid audit description format: " + description
+                        + ", arguments=" + ex);
+            }
+
+            if (errorMsg != null) {
+                description = String.format(COLON_SEPARATED_DESCRIPTION, description, errorMsg);
+            }
         }
+
 
         Audit audit = new Audit(
                 System.currentTimeMillis(),
