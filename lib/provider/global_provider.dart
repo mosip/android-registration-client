@@ -812,8 +812,18 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAudit(String id, String componentId, [String? description]) async {
-    await audit.performAudit(id, componentId, description);
+  getAudit(String id, String componentId, [dynamic arguments]) async {
+    // Convert single String or List<String> to List<String?> for Pigeon API
+    List<String?>? convertedArguments;
+    if (arguments is String) {
+      convertedArguments = [arguments];
+    } else if (arguments is List<String>) {
+      convertedArguments = arguments.map((e) => e as String?).toList();
+    } else if (arguments is List) {
+      convertedArguments = arguments.cast<String?>();
+    }
+    // If no arguments provided, convertedArguments will be null
+    await audit.performAudit(id, componentId, convertedArguments);
   }
 
   Map<String?, String?> _locationHierarchyMap = {};

@@ -93,7 +93,7 @@ public class AuditManagerServiceImpl implements AuditManagerService {
     }
 
     @Override
-    public void auditWithDescriptionArguments(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String... arguments) {
+    public void auditWithArguments(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String... arguments) {
         SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
         String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);

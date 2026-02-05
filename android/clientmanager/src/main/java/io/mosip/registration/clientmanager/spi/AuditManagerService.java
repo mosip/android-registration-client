@@ -58,7 +58,7 @@ public interface AuditManagerService {
      * @param appModuleName  the application module name
      * @param arguments      optional description arguments to be applied to the event description
      */
-    void auditWithDescriptionArguments(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String... arguments);
+    void auditWithArguments(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String... arguments);
 
     /**
      * Delete Audit Logs

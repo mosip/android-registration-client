@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -33,25 +34,27 @@ public class AuditDetailsApi implements AuditResponsePigeon.AuditResponseApi {
     }
 
     @Override
-    public void audit(@NonNull String id, @NonNull String componentId, @Nullable String description, @NonNull AuditResponsePigeon.Result<Void> result) {
+    public void audit(@NonNull String id, @NonNull String componentId, @Nullable List<String> arguments, @NonNull AuditResponsePigeon.Result<Void> result) {
         try {
             AuditEvent matchedEvent = Arrays.stream(AuditEvent.values())
                     .filter((event) -> Objects.equals(event.getId(), id) || Objects.equals(event.getName(), id))
                     .findFirst()
                     .orElse(null);
             if (matchedEvent != null) {
-                auditEvent(matchedEvent, componentId, description);
+                auditEvent(matchedEvent, componentId, arguments);
             }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Exception in system audit event!", e);
         }
     }
 
-    private void auditEvent(AuditEvent auditEvent, String componentId, String description) {
+    private void auditEvent(AuditEvent auditEvent, String componentId, List<String> arguments) {
         Arrays.stream(Components.values()).forEach((component) -> {
             if (Objects.equals(component.getId(), componentId)) {
-                if (description != null && !description.isEmpty()) {
-                    auditManagerService.auditWithDescriptionArguments(auditEvent, component.getId(), component.getName(), description);
+                if (arguments != null && !arguments.isEmpty()) {
+                    // Convert List to array for varargs
+                    String[] argsArray = arguments.toArray(new String[0]);
+                    auditManagerService.auditWithArguments(auditEvent, component.getId(), component.getName(), argsArray);
                 } else {
                     auditManagerService.audit(auditEvent, component);
                 }
