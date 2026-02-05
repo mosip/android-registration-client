@@ -158,7 +158,6 @@ public class AuditManagerServiceImpl implements AuditManagerService {
             } catch (IllegalArgumentException ex) {
                 Log.e(TAG, "Invalid audit description format: " + description
                         + ", arguments=" + Arrays.toString(arguments), ex);
-                description = arguments[0];
             }
         }
 
