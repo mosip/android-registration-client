@@ -820,7 +820,7 @@ class GlobalProvider with ChangeNotifier {
     } else if (arguments is List<String>) {
       convertedArguments = arguments.map((e) => e as String?).toList();
     } else if (arguments is List) {
-      convertedArguments = arguments.cast<String?>();
+      convertedArguments = arguments.map((e) => e?.toString()).toList();
     }
     // If no arguments provided, convertedArguments will be null
     await audit.performAudit(id, componentId, convertedArguments);
