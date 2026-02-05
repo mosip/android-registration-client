@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -156,14 +157,14 @@ public class AuditManagerServiceImpl implements AuditManagerService {
                 description = String.format(description, (Object[]) arguments);
             } catch (IllegalArgumentException ex) {
                 Log.e(TAG, "Invalid audit description format: " + description
-                        + ", arguments=" + ex);
-            }
-
-            if (errorMsg != null) {
-                description = String.format(COLON_SEPARATED_DESCRIPTION, description, errorMsg);
+                        + ", arguments=" + Arrays.toString(arguments), ex);
+                description = arguments[0];
             }
         }
 
+        if (errorMsg != null) {
+            description = String.format(COLON_SEPARATED_DESCRIPTION, description, errorMsg);
+        }
 
         Audit audit = new Audit(
                 System.currentTimeMillis(),
