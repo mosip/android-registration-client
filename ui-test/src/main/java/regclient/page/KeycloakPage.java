@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
 
@@ -59,7 +60,7 @@ public class KeycloakPage extends BasePage {
 	@FindBy(xpath = "//android.widget.TextView[@text='Sign Out']")
 	private WebElement signoutButton;
 
-	@AndroidFindBy(accessibility = "LOGOUT")
+	@AndroidFindBy(accessibility = "الخروج")
 	private WebElement logoutButton;
 
 	public boolean openKeycloakWebView() {
@@ -122,15 +123,16 @@ public class KeycloakPage extends BasePage {
 		clickOnElement(englishLanguage);
 	}
 
+	By usernameTextBox1 = By.id("username");
 	public void enterUserName(String username) {
-		switchContext("WEBVIEW_chrome");
-		sendKeysToTextBox(usernameTextBox, username);
+	    sendKeys(usernameTextBox1, username);
 	}
 
+	By passwordTextBox1 = By.id("password");
 	public void enterPassword(String password) {
-		retryFindElement(passwordTextBox, Duration.ofSeconds(10));
-		clickAndsendKeysToTextBox(passwordTextBox, password);
+	    sendKeys(passwordTextBox1, password);
 	}
+
 
 	public void clickOnLoginButton() {
 		clickOnElement(loginButton);
@@ -166,7 +168,28 @@ public class KeycloakPage extends BasePage {
 	}
 
 	public boolean resumeArcApplication() {
-		openArcApplication("NATIVE_APP");
+		openArcApplication();
 		return isElementDisplayed(logoutButton);
 	}
+	
+	public void openKeycloakPage() {
+	    switchToWebContext();
+	    waitForLoginPage();
+	}
+
+	public void waitForLoginPage() {
+	    for (int i = 0; i < 15; i++) {
+	        try {
+	            driver.findElement(By.id("username"));
+	            return;
+	        } catch (Exception e) {
+	            try {
+	                Thread.sleep(1000);
+	            } catch (InterruptedException ignored) {}
+	        }
+	    }
+	    throw new RuntimeException("Login page not loaded");
+	}
+
+
 }

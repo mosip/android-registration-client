@@ -1,5 +1,6 @@
 package regclient.pages.arabic;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -81,7 +82,7 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception')]")
 	private WebElement exceptionCapturerHeader;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[2]")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"التعليقات\")]/following-sibling::android.widget.EditText")
@@ -162,7 +163,8 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnZoomButton() {
-		clickOnElement(zoomButton);
+		waitTime(1);
+		clickAtCoordinates(1035, 1077);
 	}
 
 	public void clickOnIrisScanTitle() {

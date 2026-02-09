@@ -2,10 +2,14 @@ package regclient.pages.arabic;
 
 import static org.testng.Assert.assertTrue;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -40,6 +44,9 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.view.View\").instance(8)")
 	private WebElement imageleftCorner;
+
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text=\"OK\"]")
+	private WebElement okButton;
 
 	public DocumentUploadPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -119,6 +126,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
 					}
+					waitTime(1);
 					clickOnElement(PopUpCloseButton);
 					waitTime(1);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
@@ -131,7 +139,9 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 					CameraPage cameraPage = new CameraPage(driver);
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
+					waitTime(1);
 					cameraPage.clickOkButton();
+					waitTime(1);
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -151,6 +161,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
 					}
+					waitTime(1);
 					clickOnElement(PopUpCloseButton);
 					waitTime(1);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
@@ -163,6 +174,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 					CameraPage cameraPage = new CameraPage(driver);
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
+					waitTime(1);
 					cameraPage.clickOkButton();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();

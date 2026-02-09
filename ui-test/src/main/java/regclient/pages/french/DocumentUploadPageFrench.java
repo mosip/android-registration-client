@@ -54,8 +54,9 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 
 	@SuppressWarnings("deprecation")
 	public boolean isDoccumentUploadPageDisplayed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+		return isElementDisplayed(
+				findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+						+ ".setAsHorizontalList()" + ".scrollIntoView(" + "new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getScreenTitle("Documents") + "\"))")));
 	}
 

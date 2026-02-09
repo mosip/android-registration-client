@@ -543,8 +543,9 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		manageApplicationsPage.clickServerStatusDropdown();
+		
+		manageApplicationsPage.clickServerStatusDropdown();
 
-		manageApplicationsPage.clickDismissButton();
 		manageApplicationsPage.enterAID(Aid);
 
 		manageApplicationsPage.clickOnSearchCheckBox();

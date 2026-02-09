@@ -23,6 +23,9 @@ public class CameraPage extends BasePage {
 
 	@AndroidFindBy(accessibility = "RETAKE")
 	private WebElement retakeButton;
+	
+	@AndroidFindBy(id = "com.hihonor.camera:id/done_button")
+	private WebElement okBtn;
 
 	public CameraPage(AppiumDriver driver) {
 		super(driver);
@@ -39,22 +42,8 @@ public class CameraPage extends BasePage {
 	}
 
 	public void clickOkButton() {
-
-		boolean coordinateClicked = false;
-
-		for (int i = 0; i < 3; i++) {
-
-			if (!coordinateClicked) {
-				clickAtCoordinates(43, 78);
-				coordinateClicked = true;
-			} else if (isElementDisplayed(okButton)) {
-				clickOnElement(okButton);
-			}
-
-			if (isElementDisplayed(retakeButton, 2)) {
-				break;
-			}
-		}
+		waitTime(1);
+		clickOnElement2(okBtn);
 	}
 
 	public void clickCancelButtonOfQrScanner() {

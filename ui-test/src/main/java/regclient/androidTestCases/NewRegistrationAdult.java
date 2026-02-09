@@ -291,6 +291,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
+				
 				documentuploadPage.uploadDoccuments("adult", "ReferenceNumber");
 				documentuploadPage.clickOnContinueButton();
 
@@ -484,13 +485,13 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
 
-		// assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code
-		// image is displayed");
 		acknowledgementPage.clickOnGoToHomeButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
+		
 		registrationTasksPage.clickOnOperationalTasksTitle();
+		
 		if ("eng".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -633,7 +634,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 	}
 
-//	@Test(priority = 1, description = "Verify adult new registration")
+	@Test(priority = 1, description = "Verify adult new registration")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
 		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");

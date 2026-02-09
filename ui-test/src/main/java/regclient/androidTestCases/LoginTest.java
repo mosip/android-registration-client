@@ -109,8 +109,6 @@ public class LoginTest extends AndroidBaseTest {
 		assertTrue(loginPage.isMosipLogoDisplayed(), "verify if mosip logo is displayeded");
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),
 				"Verify if welcome note \"welcome to community registration client!\" message should be displayeded.");
-		// assertTrue(loginPage.isHelpButtonDisplayed(),"Verify if check help button on
-		// the top right of the page");
 
 		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
@@ -227,8 +225,7 @@ public class LoginTest extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		// assertTrue(profilePage.isProfileTitleDisplayed(),"Verify if profile title
-		// display on Profilepage");
+
 		profilePage.clickOnLogoutButton();
 
 		profilePage.clickOnLogoutButton();
@@ -314,8 +311,8 @@ public class LoginTest extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 
-		assertTrue(supervisorBiometricVerificationpage.isSupervisorBiometricVerificationPageLoaded(),
-				"Verify if operational tasks page is loaded");
+		assertTrue(supervisorBiometricVerificationpage.isOperatorBiometricVerificationPageLoaded(),
+				"Verify if operator biometric verification page is loaded");
 
 		if (FetchUiSpec.eye.equals("yes")) {
 			supervisorBiometricVerificationpage.clickOnIrisScan();
@@ -336,11 +333,10 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(supervisorBiometricVerificationpage.checkThresholdValueIris(),
 					"Verify if  biometric score exceeds/meets the threshold for iris");
 
-			supervisorBiometricVerificationpage.clickOnBackButton();
+			supervisorBiometricVerificationpage.clickOnNextButton();
 		}
 
 		if (FetchUiSpec.rightHand.equals("yes")) {
-			supervisorBiometricVerificationpage.clickOnRightHandScanIcon();
 
 			assertTrue(supervisorBiometricVerificationpage.isRightHandScanTitleDisplayed(),
 					"Verify if applicant right hand scan is displayed");
@@ -359,11 +355,10 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(supervisorBiometricVerificationpage.checkThresholdValueRightHand(),
 					"Verify if  biometric score exceeds/meets the threshold for right hand");
 
-			supervisorBiometricVerificationpage.clickOnBackButton();
+			supervisorBiometricVerificationpage.clickOnNextButton();
 		}
 
 		if (FetchUiSpec.leftHand.equals("yes")) {
-			supervisorBiometricVerificationpage.clickOnLeftHandScanIcon();
 			assertTrue(supervisorBiometricVerificationpage.isLeftHandScanTitleDisplayed(),
 					"Verify if applicant right hand scan is displayed");
 			supervisorBiometricVerificationpage.clickOnMarkExceptionButton();
@@ -381,11 +376,10 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(supervisorBiometricVerificationpage.checkThresholdValueLeftHand(),
 					"Verify if  biometric score exceeds/meets the threshold for left hand");
 
-			supervisorBiometricVerificationpage.clickOnBackButton();
+			supervisorBiometricVerificationpage.clickOnNextButton();
 		}
 
 		if (FetchUiSpec.thumb.equals("yes")) {
-			supervisorBiometricVerificationpage.clickOnThumbsScanIcon();
 			assertTrue(supervisorBiometricVerificationpage.isThumbsScanTitleDisplayed(),
 					"Verify if thumbs scan page is displayed");
 			supervisorBiometricVerificationpage.clickOnMarkExceptionButton();
@@ -405,12 +399,10 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(supervisorBiometricVerificationpage.checkThresholdValueThumbs(),
 					"Verify if  biometric score exceeds/meets the threshold for thumbs");
 
-			supervisorBiometricVerificationpage.clickOnBackButton();
+			supervisorBiometricVerificationpage.clickOnNextButton();
 		}
 
 		if (FetchUiSpec.face.equals("yes")) {
-			supervisorBiometricVerificationpage.clickOnFaceScanIcon();
-
 			assertTrue(supervisorBiometricVerificationpage.isFaceScanTitleDisplayed(),
 					"Verify if face scan page is displayed");
 			supervisorBiometricVerificationpage.clickOnMarkExceptionButton();
@@ -425,10 +417,10 @@ public class LoginTest extends AndroidBaseTest {
 					"Verify if face scan threshold , Quality displayed");
 			assertTrue(supervisorBiometricVerificationpage.checkThresholdValueFace(),
 					"Verify if  biometric score exceeds/meets the threshold for face");
-			supervisorBiometricVerificationpage.clickOnBackButton();
+			supervisorBiometricVerificationpage.clickOnNextButton();
 		}
 
-		assertTrue(supervisorBiometricVerificationpage.isSupervisorBiometricVerificationPageLoaded(),
+		assertTrue(supervisorBiometricVerificationpage.isOperatorBiometricVerificationPageLoaded(),
 				"Verify if operational tasks page is loaded");
 		assertTrue(supervisorBiometricVerificationpage.isVerifyAndSaveButtonEnabled(),
 				"Verify if verify and save button is display and enable");
@@ -560,8 +552,6 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(UpdateOperatorBiometricspage.isExceptionTypeTitleDisplayed(),
 					"Verify if  mark exception is displayed");
 			UpdateOperatorBiometricspage.markOneEyeException();
-//		    UpdateOperatorBiometricspage.clickOnExceptionTypeTemporaryButton();
-//		    assertTrue(UpdateOperatorBiometricspage.isCommentHeaderDisplyed(),"Verify if Comments header is displayed");
 
 			UpdateOperatorBiometricspage.clickOnIrisScanTitle();
 			UpdateOperatorBiometricspage.clickOnScanButton();
@@ -574,17 +564,14 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(UpdateOperatorBiometricspage.checkThresholdValueIris(),
 					"Verify if  biometric score exceeds/meets the threshold for iris");
 
-			UpdateOperatorBiometricspage.clickOnBackButton();
+			UpdateOperatorBiometricspage.clickOnNextButton();
 		}
 		if (FetchUiSpec.rightHand.equals("yes")) {
-			UpdateOperatorBiometricspage.clickOnRightHandScanIcon();
-
-			// righthand
 			assertTrue(UpdateOperatorBiometricspage.isRightHandScanTitleDisplayed(),
 					"Verify if applicant right hand scan is displayed");
 			UpdateOperatorBiometricspage.clickOnMarkExceptionButton();
 
-//			assertTrue(UpdateOperatorBiometricspage.isZoomButtonDisplyed(),"Verify if zoom button  is displayed");
+			assertTrue(UpdateOperatorBiometricspage.isZoomButtonDisplayed(), "Verify if zoom button  is displayed");
 			UpdateOperatorBiometricspage.clickOnRightHandScanTitle();
 			UpdateOperatorBiometricspage.clickOnScanButton();
 
@@ -596,12 +583,10 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(UpdateOperatorBiometricspage.checkThresholdValueRightHand(),
 					"Verify if  biometric score exceeds/meets the threshold for right hand");
 
-			UpdateOperatorBiometricspage.clickOnBackButton();
+			UpdateOperatorBiometricspage.clickOnNextButton();
 		}
 		// lefthand
 		if (FetchUiSpec.leftHand.equals("yes")) {
-			UpdateOperatorBiometricspage.clickOnLeftHandScanIcon();
-
 			assertTrue(UpdateOperatorBiometricspage.isLeftHandScanTitleDisplayed(),
 					"Verify if applicant right hand scan is displayed");
 			UpdateOperatorBiometricspage.clickOnMarkExceptionButton();
@@ -618,12 +603,10 @@ public class LoginTest extends AndroidBaseTest {
 			assertTrue(UpdateOperatorBiometricspage.checkThresholdValueLeftHand(),
 					"Verify if  biometric score exceeds/meets the threshold for left hand");
 
-			UpdateOperatorBiometricspage.clickOnBackButton();
+			UpdateOperatorBiometricspage.clickOnNextButton();
 		}
 		// thumbs
 		if (FetchUiSpec.thumb.equals("yes")) {
-			UpdateOperatorBiometricspage.clickOnThumbsScanIcon();
-
 			assertTrue(UpdateOperatorBiometricspage.isThumbsScanTitleDisplayed(),
 					"Verify if thumbs scan page is displayed");
 			UpdateOperatorBiometricspage.clickOnMarkExceptionButton();
@@ -646,12 +629,10 @@ public class LoginTest extends AndroidBaseTest {
 					"Verify if thumbs scan threshold , Quality displayed");
 			assertTrue(UpdateOperatorBiometricspage.checkThresholdValueThumbs(),
 					"Verify if  biometric score exceeds/meets the threshold for thumbs");
-			UpdateOperatorBiometricspage.clickOnBackButton();
+			UpdateOperatorBiometricspage.clickOnNextButton();
 		}
 		// face
 		if (FetchUiSpec.face.equals("yes")) {
-			UpdateOperatorBiometricspage.clickOnFaceScanIcon();
-
 			assertTrue(UpdateOperatorBiometricspage.isFaceScanTitleDisplayed(),
 					"Verify if face scan page is displayed");
 			UpdateOperatorBiometricspage.clickOnMarkExceptionButton();
@@ -683,10 +664,10 @@ public class LoginTest extends AndroidBaseTest {
 
 			if (UpdateOperatorBiometricspage.isOperatorBiometricsUpdatedPopupLoaded()) {
 				updateBiometricsAndWaitPopup = true;
-				break; // success
+				break;
 			}
 
-			BasePage.waitTime(10);
+			BasePage.waitTime(20);
 		}
 
 		assertTrue(updateBiometricsAndWaitPopup, "Biometrics update success popup not displayed after 5 retries.");

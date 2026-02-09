@@ -10,7 +10,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiometricVerificationpage {
 
 	@AndroidFindBy(accessibility = "Onboard Operator Biometrics")
-	private WebElement supervisorBiometricVerificationPageTitle;
+	private WebElement operatorBiometricVerificationPageTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
@@ -140,8 +140,8 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 		clickOnElement(irisScanIcon);
 	}
 
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		return isElementDisplayed(supervisorBiometricVerificationPageTitle);
+	public boolean isOperatorBiometricVerificationPageLoaded() {
+		return isElementDisplayed(operatorBiometricVerificationPageTitle);
 	}
 
 	public void clickOnRightHandScanIcon() {
