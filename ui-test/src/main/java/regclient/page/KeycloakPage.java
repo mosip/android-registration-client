@@ -60,9 +60,6 @@ public class KeycloakPage extends BasePage {
 	@FindBy(xpath = "//android.widget.TextView[@text='Sign Out']")
 	private WebElement signoutButton;
 
-	@AndroidFindBy(accessibility = "الخروج")
-	private WebElement logoutButton;
-
 	public boolean openKeycloakWebView() {
 		String webCtx = findWebViewContext(Duration.ofSeconds(5));
 		if (webCtx != null) {
@@ -167,9 +164,8 @@ public class KeycloakPage extends BasePage {
 		clickOnElement(signoutButton);
 	}
 
-	public boolean resumeArcApplication() {
+	public void resumeArcApplication() {
 		openArcApplication();
-		return isElementDisplayed(logoutButton);
 	}
 	
 	public void openKeycloakPage() {

@@ -155,7 +155,8 @@ public class ResetPassword extends AndroidBaseTest {
 
 		keycloakPage.clickOnSignoutButton();
 
-		assertTrue(keycloakPage.resumeArcApplication(), "Verify if logout displayed in profile page");
+		keycloakPage.resumeArcApplication();
+		assertTrue(profilePage.isLogoutPopUpMessageDisplayed(), "Verify if logout displayed in profile page");
 
 		profilePage.clickOnLogoutButton();
 
@@ -334,7 +335,9 @@ public class ResetPassword extends AndroidBaseTest {
 				"Verify if password updated message displayed in keycloak page");
 
 		keycloakPage.clickOnSignoutButton();
-		assertTrue(keycloakPage.resumeArcApplication(), "Verify if logout displayed in profile page");
+		keycloakPage.resumeArcApplication();
+		assertTrue(profilePage.isLogoutPopUpMessageDisplayed(), "Verify if logout displayed in profile page");
+		
 		profilePage.clickOnLogoutButton();
 	}
 }
