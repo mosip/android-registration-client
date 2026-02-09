@@ -313,14 +313,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             return;
         }
         onSyncJobStart();
-        masterDataService.syncCACertificates(() -> {
-            Log.i(TAG, "CA Certificate Sync Completed");
-            resetAlarm("registrationPacketUploadJob");
-            String errorCode = masterDataService.onResponseComplete();
-            boolean success = errorCode == null || errorCode.isEmpty();
-            onSyncJobComplete(jobId, success, isManualSync);
-            result.success(syncResult("CACertificatesSync", 6, errorCode));
-        }, isManualSync, jobId);
+        try {
+            masterDataService.syncCACertificates(() -> {
+                Log.i(TAG, "CA Certificate Sync Completed");
+                resetAlarm("registrationPacketUploadJob");
+                String errorCode = masterDataService.onResponseComplete();
+                boolean success = errorCode == null || errorCode.isEmpty();
+                onSyncJobComplete(jobId, success, isManualSync);
+                result.success(syncResult("CACertificatesSync", 6, errorCode));
+            }, isManualSync, jobId);
+        } catch (Exception e) {
+            Log.e(TAG, "CA Certificate Sync Failed.", e);
+            e.printStackTrace();
+            onSyncJobComplete(jobId, false, isManualSync);
+            result.error(e);
+        }
     }
 
     @Override

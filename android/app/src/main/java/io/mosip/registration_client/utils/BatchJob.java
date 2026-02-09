@@ -130,14 +130,18 @@ public class BatchJob {
                     }
                 });
             } catch (Exception e) {
-                syncAndUploadInProgressStatus = false;
                 Log.e(getClass().getSimpleName(), e.getMessage());
-                // If exception occurs and no more packets remain, call completion callback
+                // If exception occurs, decrement counter and check if all packets are done
                 remainingPack[0] -= 1;
-                if (remainingPack[0] == 0 && onComplete != null) {
-                    uploadRegistrationPackets(context, onComplete);
-                } else if (remainingPack[0] == 0) {
-                    uploadRegistrationPackets(context, null);
+                if (remainingPack[0] == 0) {
+                    // All packets processed (either completed or failed)
+                    syncAndUploadInProgressStatus = false;
+                    Log.d(getClass().getSimpleName(), "Last Packet (exception)");
+                    if (onComplete != null) {
+                        uploadRegistrationPackets(context, onComplete);
+                    } else {
+                        uploadRegistrationPackets(context, null);
+                    }
                 }
             }
         }
@@ -210,9 +214,27 @@ public class BatchJob {
             } catch (Exception e) {
                 syncAndUploadInProgressStatus = false;
                 Log.e(getClass().getSimpleName(), e.getMessage());
-                // Call completion callback even on error to prevent hanging
-                if (onComplete != null) {
-                    onComplete.run();
+                // If exception occurs, decrement counter and check if all packets are done
+                remainingPack[0] -= 1;
+                if (remainingPack[0] == 0) {
+                    // All packets processed (either completed or failed)
+                    syncAndUploadInProgressStatus = false;
+                    Integer failed = packetSize - remainingPack[1];
+                    newToast.setIcon(R.drawable.done);
+                    String message = "Upload Packet Status :";
+                    if (remainingPack[1] != 0) {
+                        message = message + String.format(" %s/%s Success", remainingPack[1], packetSize);
+                    }
+                    if (failed != 0) {
+                        message = message + String.format(" %s/%s Failed", failed, packetSize);
+                    }
+                    newToast.setText(message);
+                    newToast.showToast();
+
+                    // Call completion callback when all uploads finish
+                    if (onComplete != null) {
+                        onComplete.run();
+                    }
                 }
             }
         }
