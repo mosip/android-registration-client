@@ -13,8 +13,8 @@ class RegistrationSubmitResponse {
 @HostApi()
 abstract class RegistrationDataApi {
   @async
-  String startRegistration(
-      List<String> languages, String flowType, String process);
+  String startRegistration(List<String> languages, String flowType,
+      String process, double? latitude, double? longitude);
 
   @async
   bool evaluateMVELVisible(String fieldData);

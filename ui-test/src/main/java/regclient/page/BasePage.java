@@ -269,12 +269,10 @@ public class BasePage {
 
 	public static void waitTime(int sec) {
 		try {
-			Thread.sleep(sec * 1000);
+			Thread.sleep(sec * 1000L);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public WebElement retryFindElement(WebElement element, Duration timeout) {

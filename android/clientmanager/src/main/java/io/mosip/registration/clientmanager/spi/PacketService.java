@@ -92,5 +92,11 @@ public interface PacketService {
      */
     boolean isMaxPacketCountLimitReached();
 
+    /**
+     * Validate if the count of registered packets pending approval has reached the configured maximum limit.
+     * @return true if maximum registered packet count limit is reached, otherwise false.
+     */
+    boolean isMaxNotApprovedPacketCountLimitReached();
+
     void deleteRegistrationPackets();
 }

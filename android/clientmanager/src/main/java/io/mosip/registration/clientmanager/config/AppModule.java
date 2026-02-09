@@ -48,6 +48,7 @@ import io.mosip.registration.clientmanager.service.PacketServiceImpl;
 import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncDaoImpl;
 import io.mosip.registration.clientmanager.service.PreRegistrationDataSyncServiceImpl;
 import io.mosip.registration.clientmanager.service.RegistrationServiceImpl;
+import io.mosip.registration.clientmanager.service.PreCheckValidatorServiceImpl;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
@@ -62,6 +63,7 @@ import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -207,10 +209,11 @@ public class AppModule {
                                                    LocationValidationService locationValidationService,
                                                    Provider<PreRegistrationDataSyncService> preRegistrationDataSyncServiceProvider,
                                                    Biometrics095Service biometricService,
-                                                   PacketService packetService) {
+                                                   PacketService packetService,
+                                                   PreCheckValidatorService preCheckValidatorService) {
         return new RegistrationServiceImpl(appContext, packetWriterService, registrationRepository,
                 masterDataService, identitySchemaRepository, clientCryptoManagerService,
-                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService);
+                keyStoreRepository, globalParamRepository, auditManagerService, registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService, preCheckValidatorService);
     }
 
     @Provides
@@ -309,5 +312,19 @@ public class AppModule {
     @Singleton
     PreRegistrationList PreRegistrationList() {
         return new PreRegistrationList();
+    }
+
+    @Provides
+    @Singleton
+    PreCheckValidatorService providePreCheckValidatorService(SyncJobDefRepository syncJobDefRepository,
+                                                                 GlobalParamRepository globalParamRepository,
+                                                                 JobManagerService jobManagerService,
+                                                                 JobTransactionService jobTransactionService,
+                                                                 LocationValidationService locationValidationService,
+                                                                 MasterDataService masterDataService,
+                                                                 RegistrationCenterRepository registrationCenterRepository) {
+        return new PreCheckValidatorServiceImpl(appContext, syncJobDefRepository, globalParamRepository,
+                jobManagerService, jobTransactionService, locationValidationService, masterDataService,
+                registrationCenterRepository);
     }
 }

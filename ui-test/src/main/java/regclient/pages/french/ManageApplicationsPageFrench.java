@@ -233,7 +233,7 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 	}
 
 	public void clickOnBackButton() {
-		driver.navigate().back();
+		clickOnElement(backButton);
 	}
 
 	public void clickOnExportButton() {

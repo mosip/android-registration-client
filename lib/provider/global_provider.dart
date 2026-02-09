@@ -5,6 +5,7 @@
  *
 */
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
@@ -811,8 +812,15 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAudit(String id, String componentId) async {
-    await audit.performAudit(id, componentId);
+  getAudit(String id, String componentId, [dynamic arguments]) async {
+    // Arguments are always String or List<String>. Convert to List<String?> for Pigeon API.
+    List<String?>? convertedArguments;
+    if (arguments is String) {
+      convertedArguments = [arguments];
+    } else if (arguments is List<String>) {
+      convertedArguments = arguments.map((e) => e as String?).toList();
+    }
+    await audit.performAudit(id, componentId, convertedArguments);
   }
 
   Map<String?, String?> _locationHierarchyMap = {};
@@ -929,6 +937,10 @@ class GlobalProvider with ChangeNotifier {
     // Check and request permission
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
+      audit.performAudit(
+        "REG-NAV-005",
+        "REG-MOD-102",
+      );
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         // Permissions still denied
@@ -941,8 +953,14 @@ class GlobalProvider with ChangeNotifier {
     }
 
     // Fetch location if permission is granted
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    // Add timeout to prevent indefinite hanging
+    try {
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+    } on TimeoutException {
+      return null;
+    }
   }
 }

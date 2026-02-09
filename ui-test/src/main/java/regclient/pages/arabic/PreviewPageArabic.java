@@ -163,4 +163,5 @@ public class PreviewPageArabic extends PreviewPage {
 						+ ".scrollIntoView(new UiSelector().text(\"" + text + "\"))"));
 	}
 
+
 }

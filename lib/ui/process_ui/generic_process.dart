@@ -113,9 +113,11 @@ class _GenericProcessState extends State<GenericProcess>
 
     Position? position = await globalProvider.fetchLocation();
     if (position != null) {
+      globalProvider.getAudit("REG-GEO-LOC-001", "REG-MOD-103");
       registrationTaskProvider.setCurrentLocation(position.latitude, position.longitude);
     } else {
       debugPrint("Location unavailable — permission denied or service off.");
+      globalProvider.getAudit("REG-GEO-LOC-002", "REG-MOD-103");
     }
   }
 
@@ -224,8 +226,11 @@ class _GenericProcessState extends State<GenericProcess>
     await globalProvider.getAudit("REG-EVT-002", "REG-MOD-103");
   }
 
-  _nextButtonClickedAudit() async {
-    await globalProvider.getAudit("REG-EVT-003", "REG-MOD-103");
+  _nextButtonClickedAudit(Process process, int size) async {
+    final nextPageName = globalProvider.newProcessTabIndex < size
+        ? (process.screens![globalProvider.newProcessTabIndex]!.label?[globalProvider.selectedLanguage] ?? '')
+        : postRegistrationTabs[globalProvider.newProcessTabIndex - size];
+    await globalProvider.getAudit("NEXT_BUTTON_CLICKED", "REG-MOD-103", nextPageName);
   }
 
   setScrollToTop() {
@@ -650,9 +655,11 @@ class _GenericProcessState extends State<GenericProcess>
       }
 
       if (globalProvider.newProcessTabIndex < size) {
-        await ageDateChangeValidation(globalProvider.newProcessTabIndex, process, size);
+        await ageDateChangeValidation(
+            globalProvider.newProcessTabIndex, process, size);
         bool customValidator =
-            await customValidation(globalProvider.newProcessTabIndex, process, size);
+        await customValidation(
+            globalProvider.newProcessTabIndex, process, size);
         if (customValidator) {
           if (globalProvider.formKey.currentState!.validate()) {
             // Additional info validation - prevent navigation if required but not filled
@@ -686,7 +693,7 @@ class _GenericProcessState extends State<GenericProcess>
           }
         }
 
-        _nextButtonClickedAudit();
+        _nextButtonClickedAudit(process, size);
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {
           bool isPacketAuthenticated = await _authenticatePacket(context);

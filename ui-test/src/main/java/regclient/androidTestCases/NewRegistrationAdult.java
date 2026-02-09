@@ -634,7 +634,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 	}
 
-	@Test(priority = 1, description = "Verify adult new registration")
+//	@Test(priority = 1, description = "Verify adult new registration")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
 		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");

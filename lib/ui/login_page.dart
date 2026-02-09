@@ -247,7 +247,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       _showInSnackBar(appLocalizations.username_incorrect);
       return;
     }
-
+    globalProvider.getAudit("REG-AUTH-001","REG-MOD-101");
     final User user = authProvider.currentUser;
     globalProvider.setCenterId(user.centerId!);
     globalProvider.setName(user.name!);

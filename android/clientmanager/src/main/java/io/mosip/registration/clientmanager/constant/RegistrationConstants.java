@@ -118,6 +118,9 @@ public class RegistrationConstants {
     public static final String JOB_TRIGGER_POINT_USER = "User";
     public static final String GPS_DEVICE_ENABLE_FLAG = "mosip.registration.gps_device_enable_flag";
     public static final String DIST_FRM_MACHINE_TO_CENTER = "mosip.registration.distance.from.machine.to.center";
+    public static final String GEO_CAP_FREQ = "mosip.registration.geo.capture.frequency";
+    public static final String OPT_TO_REG_OUTSIDE_LOCATION = "OPT_TO_REG_OUTSIDE_LOCATION";
+    public static final String OPT_TO_REG_LAST_CAPTURED_TIME = "OPT_TO_REG_LAST_CAPTURED_TIME";
     public static final String OPERATOR_ONBOARDING_BIO_ATTRIBUTES = "mosip.registration.operator.onboarding.bioattributes";
     public static final String SERVER_ACTIVE_PROFILE = "mosip.registration.server_profile";
     public static final String ONBOARD_YOURSELF_URL = "mosip.registration.onboard_yourself_url";
@@ -129,6 +132,7 @@ public class RegistrationConstants {
     public static final String PWORD_LENGTH = "mosip.registration.username_pwd_length";
     public static final String DOC_SIZE = "mosip.registration.document_size";
     public static final String MAX_AGE = "mosip.registration.max_age";
+    public static final String FIELDS_TO_RETAIN_ON_PRID_FETCH = "mosip.registration.fields.to.retain.post.prid.fetch";
     public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
     public static final String REG_PAK_MAX_TIME_APPRV_LIMIT = "mosip.registration.reg_pak_max_time_apprv_limit";
@@ -146,4 +150,12 @@ public class RegistrationConstants {
     public static final String APP_ID = "mosip.registration.audit_application_id";
     public static final String DEFAULT_HOST_IP = "mosip.registration.audit_default_host_ip";
     public static final String DEFAULT_HOST_NAME = "mosip.registration.audit_default_host_name";
+    public static final String REG_PAK_MAX_CNT_APPRV_LIMIT = "mosip.registration.reg_pak_max_cnt_apprv_limit";
+    public static final String PACKET_STORE_LOCATION = "mosip.registration.registration_packet_store_location";
+
+    // Sync status validation constants
+    public static final String MOSIP_REGISTRATION = "mosip.registration.";
+    public static final String DOT = ".";
+    public static final String FREQUENCY = "frequency";
+    public static final String OPT_TO_REG_TIME_SYNC_EXCEED = "OPT_TO_REG_TIME_SYNC_EXCEED";
 }

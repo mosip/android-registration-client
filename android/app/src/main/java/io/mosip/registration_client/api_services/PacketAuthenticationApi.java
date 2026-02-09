@@ -37,7 +37,6 @@ import io.mosip.registration_client.utils.CustomToast;
 import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.R;
 import io.mosip.registration_client.model.PacketAuthPigeon;
-
 @Singleton
 public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     SyncRestService syncRestService;
@@ -48,7 +47,6 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     RegistrationRepository registrationRepository;
 
     private Activity activity;
-
     public void setCallbackActivity(MainActivity mainActivity) {
         this.activity = mainActivity;
     }
@@ -95,6 +93,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void syncPacketAll(@NonNull List<String> packetIds, @NonNull PacketAuthPigeon.Result<Void> result) {
+        auditManagerService.audit(AuditEvent.SYNC_REGISTRATION_PACKET_STATUS,Components.REGISTRATION);
         Integer packetSize = packetIds.size();
         final Integer[] remainingPack = {packetSize, 0};
 
@@ -168,6 +167,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                     public void onComplete(String RID, PacketTaskStatus status) {
                         if (status.equals(PacketTaskStatus.UPLOAD_COMPLETED) || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
+                            auditManagerService.audit(AuditEvent.PACKET_UPLOAD, Components.REGISTRATION);
                         }
                         remainingPack[0] -= 1;
 
