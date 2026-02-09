@@ -1,15 +1,9 @@
 package regclient.pages.arabic;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -161,7 +155,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	
 	public RegistrationTasksPage clickOnStayLoggedInButton() {
 		clickOnElement(stayLoggedInButton);
-		return new RegistrationTasksPageEnglish(driver);
+		return new RegistrationTasksPageArabic(driver);
 	}
 
 	public boolean isAdditionalInfoRequestIdTextboxDisplayed() {
@@ -171,7 +165,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	}
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
-		final int totalTimeoutMinutes = 10; // stop after this many minutes
+		final int totalTimeoutMinutes = 15; // stop after this many minutes
 		final int pollIntervalSeconds = 10; // poll every N seconds
 		final String SUFFIX = "-BIOMETRIC_CORRECTION-1";
 
