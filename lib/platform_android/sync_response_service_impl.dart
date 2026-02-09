@@ -52,10 +52,10 @@ class SyncResponseServiceImpl implements SyncResponseService {
   }
 
   @override
-  Future<Sync> getIDSchemaSync(bool isManualSync) async {
+  Future<Sync> getIDSchemaSync(bool isManualSync, String jobId) async {
     late Sync syncResponse;
     try {
-      syncResponse = await SyncApi().getIDSchemaSync(isManualSync);
+      syncResponse = await SyncApi().getIDSchemaSync(isManualSync, jobId);
     } on PlatformException {
       debugPrint('IDSchemaSync Api call failed, PlatformException');
     } catch (e) {

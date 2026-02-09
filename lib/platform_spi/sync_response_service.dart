@@ -13,7 +13,7 @@ abstract class SyncResponseService {
   Future<Sync> getPolicyKeySync(bool isManualSync, String jobId);
   Future<Sync> getGlobalParamsSync(bool isManualSync, String jobId);
   Future<Sync> getUserDetailsSync(bool isManualSync, String jobId);
-  Future<Sync> getIDSchemaSync(bool isManualSync);
+  Future<Sync> getIDSchemaSync(bool isManualSync, String jobId);
   Future<Sync> getMasterDataSync(bool isManualSync, String jobId);
   Future<Sync> getCaCertsSync(bool isManualSync, String jobId);
   Future<String> batchJob();

@@ -253,20 +253,25 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     @Override
-    public void getIDSchemaSync(@NonNull Boolean isManualSync, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+    public void getIDSchemaSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        if (isManualSync && isExcludedJob(jobId)) {
+            result.success(syncResult("LatestIDSchemaSync", 4, ""));
+            return;
+        }
         onSyncJobStart();
         try {
             masterDataService.syncLatestIdSchema(() -> {
                 Log.i(TAG, "ID Schema Sync Completed");
                 String errorCode = masterDataService.onResponseComplete();
                 boolean success = errorCode == null || errorCode.isEmpty();
-                onSyncJobComplete("", success, isManualSync);
+                onSyncJobComplete(jobId, success, isManualSync);
                 result.success(syncResult("LatestIDSchemaSync", 4, errorCode));
             }, isManualSync);
         } catch (Exception e) {
             Log.e(TAG, "ID Schema Sync Failed.", e);
             e.printStackTrace();
-            onSyncJobComplete("", false, isManualSync);
+            onSyncJobComplete(jobId, false, isManualSync);
+            result.error(e);
         }
     }
 
@@ -320,7 +325,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void batchJob(@NonNull MasterDataSyncPigeon.Result<String> result) {
-        batchJob.syncRegistrationPackets(this.context);
+        batchJob.syncRegistrationPackets(this.context, null);
         result.success("Registration Packet Sync Completed.");
     }
 
@@ -602,8 +607,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 // Execute appropriate sync job
                 switch (jobApiName) {
                     case "registrationPacketUploadJob":
-                        batchJob.syncRegistrationPackets(context);
-                        onSyncJobComplete(jobId, false, false);
+                        batchJob.syncRegistrationPackets(context, () -> {
+                            Log.d(getClass().getSimpleName(), "Registration packet upload job completed");
+                            onSyncJobComplete(jobId, true, false);
+                        });
                         break;
                     case "packetSyncStatusJob":
                         packetService.syncAllPacketStatus();

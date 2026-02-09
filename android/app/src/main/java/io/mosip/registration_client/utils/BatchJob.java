@@ -71,7 +71,7 @@ public class BatchJob {
         return registrationList;
     }
 
-    public void syncRegistrationPackets(Context context) {
+    public void syncRegistrationPackets(Context context, Runnable onComplete) {
         Log.d(getClass().getSimpleName(), "Sync Packets in Batch Job");
         List<Registration> registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.APPROVED.name(), PacketClientStatus.REJECTED.name()));
         final Integer[] remainingPack = {registrationList.size(), 0};
@@ -80,7 +80,7 @@ public class BatchJob {
         CustomToast newToast = new CustomToast(activity);
 
         if (registrationList.isEmpty()) {
-            uploadRegistrationPackets(context);
+            uploadRegistrationPackets(context, onComplete);
             return;
         }
         for (Registration value : registrationList) {
@@ -125,24 +125,39 @@ public class BatchJob {
                             newToast.showToast();
 
                             Log.d(getClass().getSimpleName(), "Last Packet" + RID);
-                            uploadRegistrationPackets(context);
+                            uploadRegistrationPackets(context, onComplete);
                         }
                     }
                 });
             } catch (Exception e) {
                 syncAndUploadInProgressStatus = false;
                 Log.e(getClass().getSimpleName(), e.getMessage());
+                // If exception occurs and no more packets remain, call completion callback
+                remainingPack[0] -= 1;
+                if (remainingPack[0] == 0 && onComplete != null) {
+                    uploadRegistrationPackets(context, onComplete);
+                } else if (remainingPack[0] == 0) {
+                    uploadRegistrationPackets(context, null);
+                }
             }
         }
     }
 
-    public void uploadRegistrationPackets(Context context) {
+    public void uploadRegistrationPackets(Context context, Runnable onComplete) {
         Log.d(getClass().getSimpleName(), "Upload Packets in Batch Job");
         List<Registration> registrationList = getRegistrationList(Arrays.asList(PacketClientStatus.SYNCED.name(), PacketClientStatus.EXPORTED.name()));
 
         Integer packetSize = registrationList.size();
         final Integer[] remainingPack = {packetSize, 0};
         CustomToast newToast = new CustomToast(activity);
+
+        if (registrationList.isEmpty()) {
+            // If no packets to upload, call completion callback if provided
+            if (onComplete != null) {
+                onComplete.run();
+            }
+            return;
+        }
 
         for (Registration value : registrationList) {
             try {
@@ -184,12 +199,21 @@ public class BatchJob {
                             }
                             newToast.setText(message);
                             newToast.showToast();
+
+                            // Call completion callback when all uploads finish
+                            if (onComplete != null) {
+                                onComplete.run();
+                            }
                         }
                     }
                 });
             } catch (Exception e) {
                 syncAndUploadInProgressStatus = false;
                 Log.e(getClass().getSimpleName(), e.getMessage());
+                // Call completion callback even on error to prevent hanging
+                if (onComplete != null) {
+                    onComplete.run();
+                }
             }
         }
     }
