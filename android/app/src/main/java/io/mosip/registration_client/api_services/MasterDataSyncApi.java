@@ -796,24 +796,36 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     private void scheduleRestartPrompt() {
-        cancelPendingRestartPrompt();
-        pendingRestartPrompt = () -> {
-            boolean showPrompt = false;
-            synchronized (restartLock) {
-                if (runningSyncJobs == 0 && restartRequested) {
-                    restartRequested = false;
-                    showPrompt = true;
+        synchronized (restartLock) {
+            // Ensure any previously scheduled prompt is cancelled before scheduling a new one
+            cancelPendingRestartPromptLocked();
+            pendingRestartPrompt = () -> {
+                boolean showPrompt = false;
+                synchronized (restartLock) {
+                    if (runningSyncJobs == 0 && restartRequested) {
+                        restartRequested = false;
+                        showPrompt = true;
+                    }
                 }
-            }
-            if (showPrompt) {
-                showRestartDialog();
-            }
-        };
-        // Delay to allow any queued syncs to start
-        restartHandler.postDelayed(pendingRestartPrompt, 2000);
+                if (showPrompt) {
+                    showRestartDialog();
+                }
+            };
+            // Delay to allow any queued syncs to start
+            restartHandler.postDelayed(pendingRestartPrompt, 2000);
+        }
     }
 
     private void cancelPendingRestartPrompt() {
+        synchronized (restartLock) {
+            cancelPendingRestartPromptLocked();
+        }
+    }
+
+    /**
+     * Internal helper that assumes the caller already holds restartLock.
+     */
+    private void cancelPendingRestartPromptLocked() {
         if (pendingRestartPrompt != null) {
             restartHandler.removeCallbacks(pendingRestartPrompt);
             pendingRestartPrompt = null;
