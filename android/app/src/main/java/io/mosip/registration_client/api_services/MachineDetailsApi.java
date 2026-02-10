@@ -24,6 +24,8 @@ import io.mosip.registration.clientmanager.repository.RegistrationCenterReposito
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.model.MachinePigeon;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 
 
 @Singleton
@@ -43,6 +45,7 @@ public class MachineDetailsApi  implements MachinePigeon.MachineApi {
 
     @Override
     public void getMachineDetails(@NonNull MachinePigeon.Result<MachinePigeon.Machine> result) {
+        auditManagerService.audit(AuditEvent.SYNC_MACHINE_DETAILS,Components.REGISTRATION);
         Map<String, String> machineDetails = new HashMap<>();
         Map<String, String> details =
                 clientCryptoManagerService.getMachineDetails();

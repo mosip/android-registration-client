@@ -5,6 +5,7 @@ import org.testng.Assert;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.AdminTestUtil;
 import regclient.api.FetchUiSpec;
@@ -48,8 +49,8 @@ public class PreviewPageArabic extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "فقدت UIN")
 	private WebElement lostUinTitle;
-	
-	@AndroidFindBy(accessibility = "تصحيح البيانات البيومترية")
+
+	@AndroidFindBy(accessibility = "التصحيح البيومتري")
 	private WebElement biometricCorrectionTitle;
 
 	public PreviewPageArabic(AppiumDriver driver) {
@@ -62,15 +63,32 @@ public class PreviewPageArabic extends PreviewPage {
 	}
 
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
-		return isElementDisplayed(demographicInformationInPreviewPage);
+		try {
+			scrollToText("المعلومات الديموغرافية");
+			WebElement demographicInformationInPreviewPage = driver
+					.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"المعلومات الديموغرافية\")"));
+			return isElementDisplayed(demographicInformationInPreviewPage);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public boolean isDocumentsInformationInPreviewPageDisplayed() {
-		return isElementDisplayed(documentsInformationInPreviewPage);
+		try {
+			scrollToText("وثائق");
+			return documentsInformationInPreviewPage.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
-		return isElementDisplayed(biometricsInformationInPreviewPage);
+		try {
+			scrollToText("القياسات الحيوية");
+			return biometricsInformationInPreviewPage.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -133,9 +151,16 @@ public class PreviewPageArabic extends PreviewPage {
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	public boolean isBiometricCorrectionTitleDisplayed() {
 		return isElementDisplayed(biometricCorrectionTitle);
+	}
+
+	public void scrollToText(String text) {
+		((AndroidDriver) driver)
+				.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+						+ ".scrollIntoView(new UiSelector().text(\"" + text + "\"))"));
 	}
 
 

@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import regclient.page.SettingsPage;
@@ -231,6 +232,22 @@ public class SettingsPageTamil extends SettingsPage {
 		String cd = card.getAttribute("content-desc");
 		return cd.contains(jobName) && cd.contains("Next Run") && cd.contains("Last Sync")
 				&& cd.contains("Cron Expression");
+	}
+	
+	public boolean isJobDisplayed(String jobName) {
+
+		// Scroll to jobs list (safe for long lists)
+		driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+				+ ".scrollIntoView(new UiSelector().className(\"android.widget.EditText\"))"));
+
+		By job = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
+
+		return isElementDisplayed(job);
+	}
+	
+	public void clickOnSyncButton(String jobName) {
+		By syncButton = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
+		click(syncButton);
 	}
 
 }

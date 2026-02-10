@@ -8,7 +8,7 @@ public abstract class SupervisorBiometricVerificationpage extends BasePage {
 		super(driver);
 	}
 
-	public abstract boolean isSupervisorBiometricVerificationPageLoaded();
+	public abstract boolean isOperatorBiometricVerificationPageLoaded();
 
 	public abstract void clickOnIrisScan();
 

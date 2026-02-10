@@ -45,22 +45,22 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"مسح\"))")
 	private WebElement scanButton;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'قزحية العين')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris')]")
 	private WebElement irisCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'اليد اليمنى')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'RightHand')]")
 	private WebElement rightHandCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'اليد اليسرى')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'LeftHand')]")
 	private WebElement leftHandCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'الإبهامان')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Thumbs')]")
 	private WebElement thumbsCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'الوجه')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Face')]")
 	private WebElement faceCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'الاستثناء')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception')]")
 	private WebElement exceptionCapturerHeader;
 
 	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")

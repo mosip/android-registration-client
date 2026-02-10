@@ -273,6 +273,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
             ),
           ),
                       onPressed: () async {
+                        globalProvider.getAudit("REG-SYNC-007", "REG-MOD-102");
                         widget.onFetched();
                         // Validate form field first
                         if (!_formFieldKey.currentState!.validate()) {
@@ -348,6 +349,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
             ),
           ),
                     onPressed: () async {
+                      globalProvider.getAudit("REG-SYNC-007", "REG-MOD-102");
                       widget.onFetched();
                       var data = await Navigator.push(
                         context,

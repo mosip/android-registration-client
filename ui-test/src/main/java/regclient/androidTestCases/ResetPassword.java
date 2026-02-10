@@ -136,9 +136,9 @@ public class ResetPassword extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		
-		keycloakPage = new KeycloakPage(driver);
 
+		keycloakPage = new KeycloakPage(driver);
+		keycloakPage.openKeycloakPage();
 		keycloakPage.enterUserName(KeycloakUserManager.onlyOperatorRoleUser);
 		keycloakPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		keycloakPage.clickOnLoginButton();
@@ -155,7 +155,8 @@ public class ResetPassword extends AndroidBaseTest {
 
 		keycloakPage.clickOnSignoutButton();
 
-		assertTrue(keycloakPage.resumeArcApplication(), "Verify if logout displayed in profile page");
+		keycloakPage.resumeArcApplication();
+		assertTrue(profilePage.isLogoutPopUpMessageDisplayed(), "Verify if logout displayed in profile page");
 
 		profilePage.clickOnLogoutButton();
 
@@ -213,11 +214,11 @@ public class ResetPassword extends AndroidBaseTest {
 		loginPage.clickOnloginButton();
 		assertTrue(loginPage.isPasswordIncorrectErrorMessageDisplayed(),
 				"verify if error message should be displayeded as password incorrect!");
-		
+
 		BasePage.enableWifiAndData();
 
 	}
-	
+
 	@Test(priority = 1, description = "Reset to default password", dependsOnMethods = "resetPassword")
 	public void resetToDefaultPassword() throws IOException {
 		BasePage.disableAutoRotation();
@@ -316,9 +317,9 @@ public class ResetPassword extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		
+
 		keycloakPage = new KeycloakPage(driver);
-		assertTrue(keycloakPage.openKeycloakWebView(), "Verify if keycloak login page displayed");
+		keycloakPage.openKeycloakPage();
 		keycloakPage.enterUserName(KeycloakUserManager.onlyOperatorRoleUser);
 		keycloakPage.enterPassword(ArcConfigManager.getIAMUsersPassword() + "121");
 		keycloakPage.clickOnLoginButton();
@@ -334,7 +335,9 @@ public class ResetPassword extends AndroidBaseTest {
 				"Verify if password updated message displayed in keycloak page");
 
 		keycloakPage.clickOnSignoutButton();
-		assertTrue(keycloakPage.resumeArcApplication(), "Verify if logout displayed in profile page");
+		keycloakPage.resumeArcApplication();
+		assertTrue(profilePage.isLogoutPopUpMessageDisplayed(), "Verify if logout displayed in profile page");
+		
 		profilePage.clickOnLogoutButton();
 	}
 }

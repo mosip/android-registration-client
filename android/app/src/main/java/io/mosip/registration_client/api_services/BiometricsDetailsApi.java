@@ -518,6 +518,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
 
     @Override
     public void startOperatorOnboarding(@NonNull BiometricsPigeon.Result<String> result) {
+        auditManagerService.audit(AuditEvent.NAV_ON_BOARD_USER, Components.REGISTRATION);
         try {
             OPERATOR_EXCEPTIONS.clear();
             userOnboardService.getOperatorBiometrics().clear();

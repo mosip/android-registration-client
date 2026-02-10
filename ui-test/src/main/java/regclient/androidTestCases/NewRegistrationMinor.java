@@ -309,63 +309,47 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
+					applicantBiometricsPage.clickOnNextButton();
 				}
 				// righthand
 				if (FetchUiSpec.rightHand.equals("yes")) {
-					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
-							"Verify if biometric details page is displayed");
-					applicantBiometricsPage = biometricDetailsPage.clickOnRightHandScanIcon();
-
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
-							"Verify if applicant biometric page is displayed");
+					assertTrue(applicantBiometricsPage.isRightHandScanTitleDisplayed(),
+							"Verify if applicant right hand scan title is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
+					applicantBiometricsPage.clickOnNextButton();
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
-					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
-							"Verify if biometric details page is displayed");
-					applicantBiometricsPage = biometricDetailsPage.clickOnLeftHandScanIcon();
-
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
-							"Verify if applicant biometric page is displayed");
+					assertTrue(applicantBiometricsPage.isLeftHandScanTitleDisplayed(),
+							"Verify if applicant left hand scan title is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
 					assertTrue(applicantBiometricsPage.isLeftHandScan(), "Verify if Left hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
+					applicantBiometricsPage.clickOnNextButton();
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
-					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
-							"Verify if biometric details page is displayed");
-					applicantBiometricsPage = biometricDetailsPage.clickOnThumbsScanIcon();
-
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
-							"Verify if applicant biometric page is displayed");
+					assertTrue(applicantBiometricsPage.isThumbsScanTitleDisplayed(),
+							"Verify if applicant thumb scan title is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
 					assertTrue(applicantBiometricsPage.isThumbsScan(), "Verify if thumbs scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
+					applicantBiometricsPage.clickOnNextButton();
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
-					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
-							"Verify if biometric details page is displayed");
-					biometricDetailsPage.clickOnFaceScanIcon();
-
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
-							"Verify if applicant biometric page is displayed");
+					assertTrue(applicantBiometricsPage.isFaceScanTitleDisplayed(),
+							"Verify if applicant face scan title is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
 					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					applicantBiometricsPage.clickOnBackButton();
+					applicantBiometricsPage.clickOnNextButton();
 				}
 
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
@@ -459,6 +443,8 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
+		
 		String Aid = previewPage.getAID();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
@@ -549,6 +535,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		pendingApproval.selectRejectionReasonDropdown();
 
 		pendingApproval.clickOnRejectButton();
+		
 		pendingApproval.clickOnClosePopUpButton();
 
 		pendingApproval.clickOnCheckBox();

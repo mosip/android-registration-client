@@ -18,8 +18,6 @@ import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.mosip.registration.clientmanager.constant.AuditEvent;
-import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.UserDetail;

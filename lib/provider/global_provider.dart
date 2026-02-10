@@ -813,8 +813,15 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getAudit(String id, String componentId) async {
-    await audit.performAudit(id, componentId);
+  getAudit(String id, String componentId, [dynamic arguments]) async {
+    // Arguments are always String or List<String>. Convert to List<String?> for Pigeon API.
+    List<String?>? convertedArguments;
+    if (arguments is String) {
+      convertedArguments = [arguments];
+    } else if (arguments is List<String>) {
+      convertedArguments = arguments.map((e) => e as String?).toList();
+    }
+    await audit.performAudit(id, componentId, convertedArguments);
   }
 
   Map<String?, String?> _locationHierarchyMap = {};
@@ -918,9 +925,9 @@ class GlobalProvider with ChangeNotifier {
     // Check if GPS is enabled in configuration
     String gpsFlag = await globalConfigService.getGpsEnableFlag();
 
-    // if (gpsFlag.isEmpty || gpsFlag != "Y") {
-    //   return null;
-    // }
+    if (gpsFlag.isEmpty || gpsFlag != "Y") {
+      return null;
+    }
 
     // Check if location service is enabled on device
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -931,6 +938,10 @@ class GlobalProvider with ChangeNotifier {
     // Session-aware permission: re-request if user had chosen "Only this time" in a previous session
     bool hasPermission =
         await LocationService.instance.checkLocationPermissionForSession();
+    audit.performAudit(
+      "REG-NAV-005",
+      "REG-MOD-102",
+    );
     if (!hasPermission) {
       return null;
     }

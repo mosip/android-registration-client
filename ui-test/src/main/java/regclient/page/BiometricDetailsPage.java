@@ -39,4 +39,6 @@ public abstract class BiometricDetailsPage extends BasePage {
 	public abstract boolean isAdditionalInfoRequestIdTextboxDisplayed();
 
 	public abstract void enterAdditionalInfoUsingEmail(String emailId);
+	
+//	public abstract void handleBiometricDetails();
 }

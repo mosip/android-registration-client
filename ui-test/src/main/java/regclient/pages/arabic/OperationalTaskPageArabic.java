@@ -1,8 +1,10 @@
 package regclient.pages.arabic;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
@@ -32,7 +34,9 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 	}
 
 	public SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
-		clickOnElement(updateOperatorBiometricsButton);
+		By updateOperatorBiometricsButton = MobileBy
+				.AndroidUIAutomator("new UiSelector().descriptionStartsWith(\"تحديث القياسات الحيوية للمشغل\")");
+		click(updateOperatorBiometricsButton);
 		return new SupervisorBiometricVerificationpageArabic(driver);
 	}
 

@@ -33,6 +33,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
     context
         .read<ApprovePacketsProvider>()
         .getAllReasonList(globalProvider.selectedLanguage);
+    globalProvider.getAudit("NAV_APPROVE_REG", "REG-MOD-102");
     super.initState();
   }
 

@@ -48,6 +48,8 @@ import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.packetmanager.dto.PacketWriter.DocumentType;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 
 @Singleton
 public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseApi {
@@ -231,6 +233,7 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
 
     @Override
     public void fetchPreRegistrationDetails(@NonNull String preRegId, @NonNull DynamicResponsePigeon.Result<Map<String, Object>> result) {
+        auditManagerService.audit(AuditEvent.REG_DEMO_PRE_REG_DATA_FETCH, Components.REGISTRATION);
         Map<String, Object> preRegistrationData = new HashMap<>();
         try {
             this.preRegistrationData.getPreRegistration(preRegId,false);
