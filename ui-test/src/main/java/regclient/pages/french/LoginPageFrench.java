@@ -2,18 +2,31 @@ package regclient.pages.french;
 
 import java.time.Duration;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
+import regclient.pages.english.DashboardPageEnglish;
 
 public class LoginPageFrench extends LoginPage {
+	private static final Logger logger = Logger.getLogger(DashboardPageEnglish.class);
+
 
 	public LoginPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
+	
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[3]")
+	private WebElement packetUploadedNumber;
+
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[2]")
+	private WebElement packetSyncedNumber;
+	
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[1]")
+	private WebElement packetCreatedNumber;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement mosipLogo;
@@ -143,5 +156,26 @@ public class LoginPageFrench extends LoginPage {
 
 	public void clickOnSkipToHomeButton() {
 		clickOnElement(skipToHomeButton);
+	}
+	
+	public String getPacketsCreatedCount() {
+	    return getVisibleValue(packetCreatedNumber);
+	}
+
+	public String getPacketsSyncedCount() {
+	    return getVisibleValue(packetSyncedNumber);
+	}
+
+	public String getPacketsUploadedCount() {
+	    return getVisibleValue(packetUploadedNumber);
+	}
+	
+	public void logPacketCounts() {
+	    String created = getPacketsCreatedCount();
+	    String synced = getPacketsSyncedCount();
+	    String uploaded = getPacketsUploadedCount();
+	    logger.info("No. of Packets Created  : " + created);
+	    logger.info("No. of Packets Synced   : " + synced);
+	    logger.info("No. of Packets Uploaded : " + uploaded);
 	}
 }

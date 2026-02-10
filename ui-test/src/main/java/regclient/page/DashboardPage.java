@@ -19,4 +19,8 @@ public abstract class DashboardPage extends BasePage {
 	public abstract boolean isUserNameDisplayed();
 
 	public abstract boolean isStatusTitleDisplayed();
+
+	public abstract void logPacketCounts();
+	
+	public abstract boolean isLoginUserActive();
 }

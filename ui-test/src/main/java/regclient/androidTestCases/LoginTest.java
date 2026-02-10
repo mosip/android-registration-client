@@ -208,6 +208,8 @@ public class LoginTest extends AndroidBaseTest {
 		assertTrue(dashboardPage.isUserIDDisplayed(), "Verify if user ID displayed");
 		assertTrue(dashboardPage.isUserNameDisplayed(), "Verify if user name displayed");
 		assertTrue(dashboardPage.isStatusTitleDisplayed(), "Verify if status displayed");
+		dashboardPage.logPacketCounts();
+		assertTrue(dashboardPage.isLoginUserActive(), "Verify if dashboard  page is loaded");
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
 		registrationTasksPage.clickProfileButton();
