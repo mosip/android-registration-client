@@ -425,7 +425,6 @@ public class PacketServiceImpl implements PacketService {
     @Override
     public boolean isMaxPacketCountLimitReached() {
         try {
-            auditManagerService.audit(AuditEvent.SYNC_PKT_COUNT_VALIDATE, Components.REGISTRATION);
             String maxCountStr = globalParamRepository.getCachedStringGlobalParam(
                     RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ);
 
@@ -440,11 +439,16 @@ public class PacketServiceImpl implements PacketService {
 
             int yetToExportCount = registrationRepository.getYetToExportCount();
 
-            if (yetToExportCount >= maxCount) {
-                return true;
+            boolean limitReached = yetToExportCount >= maxCount;
+
+            // Audit after successful validation; don't let audit failures skip validation result.
+            try {
+                auditManagerService.audit(AuditEvent.SYNC_PKT_COUNT_VALIDATE, Components.REGISTRATION);
+            } catch (Exception auditEx) {
+                Log.e(TAG, "Failed to audit SYNC_PKT_COUNT_VALIDATE", auditEx);
             }
 
-            return false;
+            return limitReached;
 
         } catch (NumberFormatException ex) {
             Log.e(TAG, "Invalid REG_PAK_MAX_CNT_OFFLINE_FREQ configuration", ex);

@@ -241,7 +241,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         try {
             masterDataService.syncMasterData(() -> {
                 auditManagerService.audit(AuditEvent.SYNC_MASTER_DATA,Components.REGISTRATION);
-                auditManagerService.audit(AuditEvent.SYNC_DEVICE_DETAILS, Components.REGISTRATION);
                 Log.i(TAG, "Master Data Sync Completed.");
                 result.success(syncResult("MasterDataSync", 2, masterDataService.onResponseComplete()));
             }, 0, isManualSync, jobId);

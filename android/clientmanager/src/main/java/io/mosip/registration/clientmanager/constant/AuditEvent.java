@@ -29,7 +29,7 @@ public enum AuditEvent {
     ABOUT_CLIENT("REG-AUTH-003", USER_EVENT.getCode(), "ABOUT_CLIENT", "Press and hold on logo to navigate: About activity"),
     LOGOUT_USER("REG-AUTH-009", USER_EVENT.getCode(), "LOGOUT_USER", "Logout"),
     USER_STATUS_FETCH("REG-AUTH-011", USER_EVENT.getCode(), "USER_STATUS_FETCH", "Fetching User Status"),
-    VALIDATE_USER_CRED("REG-AUTH-012", USER_EVENT.getCode(), "VALIDATE_USER_CREDENTIALS", "Validating User credentials"),
+    VALIDATE_USER_ID("REG-AUTH-012", USER_EVENT.getCode(), "VALIDATE_USER_ID", "Validating User identifier"),
     FETCH_USR_DET("REG-AUTH-013", USER_EVENT.getCode(), "FETCH_USER_DETAILS", "Fetching User Details"),
     FETCH_CNTR_NAME("REG-AUTH-014", USER_EVENT.getCode(), "FETCH_CENTER_NAME", "Fetching Center Name"),
     FETCH_CNTR_DET("REG-AUTH-015", USER_EVENT.getCode(), "FETCH_CENTER_DETAILS", "Fetching Center Details"),
@@ -66,7 +66,7 @@ public enum AuditEvent {
     PACKET_UPDATE("REG-PKT-002", USER_EVENT.getCode(), "PACKET_UPDATE", "Packets which are in created state are updated"),
     UPLOAD_PACKET("REG-UPL-PKT-001", USER_EVENT.getCode(), "UPLOAD_PACKET", "Upload packet clicked"),
     SYNC_AND_UPLOAD_PACKET("REG-PKT-003", USER_EVENT.getCode(), "SYNC_AND_UPLOAD_PACKET", "sync and upload started"),
-    PACKET_RETRIVE("REG-PKT-004", USER_EVENT.getCode(), "PACKET_RETRIVE", "Packets which are in created state for approval are retrived"),
+    PACKET_RETRIEVE("REG-PKT-004", USER_EVENT.getCode(), "PACKET_RETRIEVE", "Packets which are in created state for approval are retrieved"),
 
     //JOB_SERVICE
     TRIGGER_JOB("REG-JOB-001", USER_EVENT.getCode(), "TRIGGER_JOB", "Trigger job service clicked"),
@@ -173,10 +173,10 @@ public enum AuditEvent {
     REG_ACK_PRINT("REG-EVT-056", USER_EVENT.getCode(), "REG_ACK_PRINT", "Print receipt"),
 
     // Registration Packet Creation
-    PACKET_CREATION_SUCCESS("REG-EVT-066", USER_EVENT.getCode(), "PACKET_CREATION_SUCCESS","Packet Succesfully Created"),
-    PACKET_ENCRYPTED("REG-EVT-067", USER_EVENT.getCode(), "PACKET_ENCRYPTED", "Packet Encrypted Sucessfully"),
-    PACKET_UPLOADED("REG-EVT-068", USER_EVENT.getCode(), "PACKET_UPLOADED", "Packet Uploaded Successfully"),
-    PACKET_SYNCED_TO_SERVER("REG-EVT-069", USER_EVENT.getCode(), "PACKET_SYNCED_TO_SERVER", "Packet Synced to Server Sucesfully"),
+    PACKET_CREATION_SUCCESS("REG-EVT-078", USER_EVENT.getCode(), "PACKET_CREATION_SUCCESS","Packet Succesfully Created"),
+    PACKET_ENCRYPTED("REG-EVT-079", USER_EVENT.getCode(), "PACKET_ENCRYPTED", "Packet Encrypted Sucessfully"),
+    PACKET_UPLOADED("REG-EVT-080", USER_EVENT.getCode(), "PACKET_UPLOADED", "Packet Uploaded Successfully"),
+    PACKET_SYNCED_TO_SERVER("REG-EVT-081", USER_EVENT.getCode(), "PACKET_SYNCED_TO_SERVER", "Packet Synced to Server Sucesfully"),
     PACKET_APPROVED("REG-EVT-071", USER_EVENT.getCode(), "PACKET_APPROVED", "Packet Approved Successfully"),
     PACKET_REJECTED("REG-EVT-072", USER_EVENT.getCode(), "PACKET_REJECTED", "Packet Rejected Successfully"),
     PACKET_INTERNAL_ERROR("REG-EVT-074", USER_EVENT.getCode(), "PACKET_INTERNAL_ERROR", "Packet Creation Error"),
@@ -189,7 +189,7 @@ public enum AuditEvent {
     REG_BIO_NEXT("REG-EVT-037", USER_EVENT.getCode(), "REG_BIO_NEXT", "Click Next to capture the next biometric"),
     REG_BIO_EXCEPTION_REMOVING("REG-EVT-065", USER_EVENT.getCode(), "REG_BIO_EXCEPTION_REMOVING", "Biometric Exceptions: Removing"),
     REG_BIO_LEFT_SLAP_SCAN("REG-EVT-030", USER_EVENT.getCode(), "REG_BIO_LEFT_SLAP_SCAN", 	"Fingerprints: Scan of left slap"),
-    REG_BIO_SCAN("REG-EVT-030", USER_EVENT.getCode(), "REG_BIO_SCAN", 	"Fingerprints: Scan of %s"),
+    REG_BIO_SCAN("REG-EVT-092", USER_EVENT.getCode(), "REG_BIO_SCAN", 	"Fingerprints: Scan of %s"),
     REG_BIO_CAPTURE_NEXT("REG-EVT-041", USER_EVENT.getCode(), "REG_BIO_CAPTURE_NEXT",	"Click of Next after capturing Biometrics");
 
     AuditEvent(String id, String type, String name, String description) {

@@ -305,12 +305,12 @@ public class RegistrationServiceImpl implements RegistrationService {
                 this.registrationDto.getProcess(),
                 true, centerMachineDto.getMachineRefId());
 
-        // Log packet encryption success
-        auditManagerService.audit(AuditEvent.PACKET_ENCRYPTED, Components.REGISTRATION);
-        // Log packet zipped successfully
-        auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ZIP, Components.REGISTRATION);
+        if (containerPath != null && !containerPath.trim().isEmpty()) {
+            // Log packet encryption success
+            auditManagerService.audit(AuditEvent.PACKET_ENCRYPTED, Components.REGISTRATION);
+            // Log packet zipped successfully
+            auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ZIP, Components.REGISTRATION);
 
-        if (containerPath != null || !containerPath.trim().isEmpty()) {
             String packetId = containerPath.substring(containerPath.lastIndexOf("/") + 1);
                packetId = packetId.replace(".zip", "");
                this.registrationDto.setPacketId(packetId);

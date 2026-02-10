@@ -81,7 +81,11 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
     public void validateSyncStatus() throws Exception {
         try {
             validatingSyncJobsConfig();
-            auditManagerService.audit(AuditEvent.SYNC_INFO_VALIDATE, Components.JOB_SERVICE);
+            try {
+                auditManagerService.audit(AuditEvent.SYNC_INFO_VALIDATE, Components.JOB_SERVICE);
+            } catch (Exception auditEx) {
+                Log.e(TAG, "Audit logging failed for SYNC_INFO_VALIDATE", auditEx);
+            }
         } catch (ClientCheckedException e) {
             Log.e(TAG, "Sync status validation failed", e);
             throw e;

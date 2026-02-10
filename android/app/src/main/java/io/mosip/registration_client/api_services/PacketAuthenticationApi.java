@@ -116,7 +116,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                     public void onComplete(String RID, PacketTaskStatus status) {
                         if (status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
-                            auditManagerService.audit(AuditEvent.PACKET_SYNCED_TO_SERVER, Components.REGISTRATION);
+                            auditManagerService.audit(AuditEvent.PACKET_SYNCED_TO_SERVER, Components.REG_PACKET_LIST);
                         }
                         remainingPack[0] -= 1;
 
@@ -168,7 +168,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                     public void onComplete(String RID, PacketTaskStatus status) {
                         if (status.equals(PacketTaskStatus.UPLOAD_COMPLETED) || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
-                            auditManagerService.audit(AuditEvent.PACKET_UPLOADED, Components.REGISTRATION);
+                            auditManagerService.audit(AuditEvent.PACKET_UPLOADED, Components.REG_PACKET_LIST);
                         }
                         remainingPack[0] -= 1;
 
@@ -216,7 +216,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void getAllCreatedRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
-        auditManagerService.audit(AuditEvent.PACKET_RETRIVE, Components.REGISTRATION);
+        auditManagerService.audit(AuditEvent.PACKET_RETRIEVE, Components.REGISTRATION);
         List<String> packets = new ArrayList();
         try {
             List<Registration> allRegistration = packetService.getRegistrationsByStatus(PacketClientStatus.CREATED.name(), 40);

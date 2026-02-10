@@ -69,7 +69,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
             result.success(user);
             return;
         }
-        auditManagerService.audit(AuditEvent.VALIDATE_USER_CRED, Components.LOGIN);
+        auditManagerService.audit(AuditEvent.VALIDATE_USER_ID, Components.LOGIN);
         UserDetail userDetail = loginService.getUserDetailsByUserId(username);
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         boolean centerStatus = true;
