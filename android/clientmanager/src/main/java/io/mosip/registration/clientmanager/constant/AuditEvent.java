@@ -173,10 +173,10 @@ public enum AuditEvent {
     REG_ACK_PRINT("REG-EVT-056", USER_EVENT.getCode(), "REG_ACK_PRINT", "Print receipt"),
 
     // Registration Packet Creation
-    PACKET_CREATION_SUCCESS("REG-EVT-078", USER_EVENT.getCode(), "PACKET_CREATION_SUCCESS","Packet Succesfully Created"),
-    PACKET_ENCRYPTED("REG-EVT-079", USER_EVENT.getCode(), "PACKET_ENCRYPTED", "Packet Encrypted Sucessfully"),
+    PACKET_CREATION_SUCCESS("REG-EVT-078", USER_EVENT.getCode(), "PACKET_CREATION_SUCCESS","Packet Successfully Created"),
+    PACKET_ENCRYPTED("REG-EVT-079", USER_EVENT.getCode(), "PACKET_ENCRYPTED", "Packet Encrypted Successfully"),
     PACKET_UPLOADED("REG-EVT-080", USER_EVENT.getCode(), "PACKET_UPLOADED", "Packet Uploaded Successfully"),
-    PACKET_SYNCED_TO_SERVER("REG-EVT-081", USER_EVENT.getCode(), "PACKET_SYNCED_TO_SERVER", "Packet Synced to Server Sucesfully"),
+    PACKET_SYNCED_TO_SERVER("REG-EVT-081", USER_EVENT.getCode(), "PACKET_SYNCED_TO_SERVER", "Packet Synced to Server Successfully"),
     PACKET_APPROVED("REG-EVT-071", USER_EVENT.getCode(), "PACKET_APPROVED", "Packet Approved Successfully"),
     PACKET_REJECTED("REG-EVT-072", USER_EVENT.getCode(), "PACKET_REJECTED", "Packet Rejected Successfully"),
     PACKET_INTERNAL_ERROR("REG-EVT-074", USER_EVENT.getCode(), "PACKET_INTERNAL_ERROR", "Packet Creation Error"),

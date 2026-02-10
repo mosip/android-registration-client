@@ -293,7 +293,11 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
                     context.getString(R.string.err_003));
             }
 
-            auditManagerService.audit(AuditEvent.SYNC_GEO_VALIDATE, Components.REGISTRATION);
+            try {
+                auditManagerService.audit(AuditEvent.SYNC_GEO_VALIDATE, Components.REGISTRATION);
+            } catch (Exception auditEx) {
+                Log.e(TAG, "Audit logging failed for SYNC_GEO_VALIDATE", auditEx);
+            }
 
         } catch (NumberFormatException e) {
             Log.e(TAG, "Invalid number format in center coordinates or max distance configuration", e);

@@ -435,7 +435,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getActiveSyncJobs(@NonNull MasterDataSyncPigeon.Result<List<String>> result) {
-        auditManagerService.audit(AuditEvent.SYNCJOB_INFO_FETCH, Components.JOB_SERVICE);
+        try {
+            auditManagerService.audit(AuditEvent.SYNCJOB_INFO_FETCH, Components.JOB_SERVICE);
+        } catch (Exception e) {
+            Log.e(TAG, "Audit logging failed for SYNCJOB_INFO_FETCH", e);
+        }
         List<SyncJobDef> list = syncJobDefRepository.getActiveSyncJobs();
         List<String> value = new ArrayList<>();
         try {
