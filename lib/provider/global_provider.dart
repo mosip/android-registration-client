@@ -25,6 +25,7 @@ import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/utils/constants.dart';
+import 'package:registration_client/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
@@ -917,9 +918,9 @@ class GlobalProvider with ChangeNotifier {
     // Check if GPS is enabled in configuration
     String gpsFlag = await globalConfigService.getGpsEnableFlag();
 
-    if (gpsFlag.isEmpty || gpsFlag != "Y") {
-      return null;
-    }
+    // if (gpsFlag.isEmpty || gpsFlag != "Y") {
+    //   return null;
+    // }
 
     // Check if location service is enabled on device
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -927,17 +928,10 @@ class GlobalProvider with ChangeNotifier {
       return null;
     }
 
-    // Check and request permission
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions still denied
-        return null;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
+    // Session-aware permission: re-request if user had chosen "Only this time" in a previous session
+    bool hasPermission =
+        await LocationService.instance.checkLocationPermissionForSession();
+    if (!hasPermission) {
       return null;
     }
 

@@ -36,6 +36,7 @@ import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/life_cycle_event_handler.dart';
+import '../utils/location_service.dart';
 
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";
@@ -342,7 +343,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       await _autoSyncHandler();
     } else {
       authProvider.setIsSyncing(false);
-      _navigateToHomePage();
+      await _navigateToHomePage();
     }
     setState(() {
       isLoggingIn = false;
@@ -362,8 +363,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     _showInSnackBar(snackbarText);
   }
 
-  _navigateToHomePage() {
+  _navigateToHomePage() async {
     if (authProvider.isLoggedIn == true) {
+      // Start new location session so permission is re-requested if user chose "Only this time" previously
+      await LocationService.instance.startNewSession();
+
+      if (!context.mounted) return;
       Navigator.popUntil(context, ModalRoute.withName('/login-page'));
 
       if (authProvider.isOnboarded || authProvider.isDefault) {
@@ -372,6 +377,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         globalProvider.setCurrentIndex(0);
       }
 
+      if (!context.mounted) return;
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => Responsive(

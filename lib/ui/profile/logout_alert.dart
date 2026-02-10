@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../provider/auth_provider.dart';
 import '../../provider/global_provider.dart';
 import '../../utils/app_config.dart';
+import '../../utils/location_service.dart';
 
 class LogoutAlert extends StatefulWidget {
   const LogoutAlert({super.key});
@@ -125,6 +126,8 @@ class _LogoutAlertState extends State<LogoutAlert> {
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5.0)))),
                 onPressed: () async {
+                  // End location session so permission will be re-requested on next login
+                  await LocationService.instance.endSession();
                   String result = await authProvider.logoutUser();
                   if (result.contains("Logout Success")) {
                     _showInSnackBar(appLocalizations.logout_success);
