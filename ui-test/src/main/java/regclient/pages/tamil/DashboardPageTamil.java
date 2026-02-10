@@ -1,16 +1,19 @@
 package regclient.pages.tamil;
 
-import org.apache.log4j.Logger;
-import org.openqa.selenium.WebElement;
 
+import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.KeycloakUserManager;
 import regclient.page.DashboardPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 public class DashboardPageTamil extends DashboardPage{
 
-	private static final Logger logger = Logger.getLogger(DashboardPageTamil.class);
+	private static final Logger logger = LoggerFactory.getLogger(DashboardPageTamil.class);
 
 	
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Dashboard\"]/following-sibling::android.view.View[3]")

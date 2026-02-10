@@ -1,18 +1,14 @@
 package regclient.pages.french;
 
 import java.time.Duration;
-
-import org.apache.log4j.Logger;
 import org.openqa.selenium.WebElement;
-
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
 
-public class LoginPageFrench extends LoginPage {
-	private static final Logger logger = Logger.getLogger(LoginPageFrench.class);
 
+public class LoginPageFrench extends LoginPage {
 
 	public LoginPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -156,25 +152,5 @@ public class LoginPageFrench extends LoginPage {
 	public void clickOnSkipToHomeButton() {
 		clickOnElement(skipToHomeButton);
 	}
-	
-	public String getPacketsCreatedCount() {
-	    return getVisibleValue(packetCreatedNumber);
-	}
 
-	public String getPacketsSyncedCount() {
-	    return getVisibleValue(packetSyncedNumber);
-	}
-
-	public String getPacketsUploadedCount() {
-	    return getVisibleValue(packetUploadedNumber);
-	}
-	
-	public void logPacketCounts() {
-	    String created = getPacketsCreatedCount();
-	    String synced = getPacketsSyncedCount();
-	    String uploaded = getPacketsUploadedCount();
-	    logger.info("No. of Packets Created  : " + created);
-	    logger.info("No. of Packets Synced   : " + synced);
-	    logger.info("No. of Packets Uploaded : " + uploaded);
-	}
 }

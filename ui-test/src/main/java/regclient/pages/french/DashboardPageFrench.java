@@ -1,17 +1,21 @@
 package regclient.pages.french;
 
-import org.apache.log4j.Logger;
-import org.openqa.selenium.WebElement;
 
+import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.KeycloakUserManager;
 import regclient.page.DashboardPage;
+import regclient.pages.english.DashboardPageEnglish;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class DashboardPageFrench extends DashboardPage {
 	
 	
-	private static final Logger logger = Logger.getLogger(DashboardPageFrench.class);
+	private static final Logger logger = LoggerFactory.getLogger(DashboardPageFrench.class);
+
 	
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[3]")
 	private WebElement packetUploadedNumber;
