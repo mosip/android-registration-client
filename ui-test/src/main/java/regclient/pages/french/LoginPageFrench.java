@@ -9,10 +9,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
-import regclient.pages.english.DashboardPageEnglish;
 
 public class LoginPageFrench extends LoginPage {
-	private static final Logger logger = Logger.getLogger(DashboardPageEnglish.class);
+	private static final Logger logger = Logger.getLogger(LoginPageFrench.class);
 
 
 	public LoginPageFrench(AppiumDriver driver) {

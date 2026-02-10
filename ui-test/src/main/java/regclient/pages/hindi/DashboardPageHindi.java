@@ -7,7 +7,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.KeycloakUserManager;
 import regclient.page.DashboardPage;
-import regclient.pages.english.DashboardPageEnglish;
 
 public class DashboardPageHindi extends DashboardPage {
 	
