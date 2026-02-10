@@ -13,15 +13,6 @@ public class LoginPageFrench extends LoginPage {
 	public LoginPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
-	
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[3]")
-	private WebElement packetUploadedNumber;
-
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[2]")
-	private WebElement packetSyncedNumber;
-	
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[1]")
-	private WebElement packetCreatedNumber;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement mosipLogo;
