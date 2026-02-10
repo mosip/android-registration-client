@@ -561,6 +561,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void addBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute,
             @NonNull BiometricsPigeon.Result<String> result) {
         try {
+            auditManagerService.audit(AuditEvent.REG_BIO_EXCEPTION_MARKING, Components.REGISTRATION);
             if(fieldId.equals(OPERATOR_BIOMETRICS)){
 
 
@@ -589,6 +590,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     public void removeBioException(@NonNull String fieldId, @NonNull String modality, @NonNull String attribute,
             @NonNull BiometricsPigeon.Result<String> result) {
         try {
+            auditManagerService.audit(AuditEvent.REG_BIO_EXCEPTION_REMOVING, Components.REGISTRATION);
             if(fieldId.equals(OPERATOR_BIOMETRICS)){
                 OPERATOR_EXCEPTIONS.remove(attribute);
              
@@ -940,6 +942,12 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         }
 
         try {
+            auditManagerService.auditWithArguments(
+                    AuditEvent.REG_BIO_SCAN,
+                    Components.REGISTRATION.getId(),
+                    Components.REGISTRATION.getName(),
+                    String.valueOf(currentModality)
+            );
             Intent intent = new Intent();
             // callbackId = callbackId.replace("\\.info","");
             intent.setAction(callbackId + RegistrationConstants.R_CAPTURE_INTENT_ACTION);

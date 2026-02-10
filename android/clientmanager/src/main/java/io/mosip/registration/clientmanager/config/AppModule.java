@@ -226,9 +226,10 @@ public class AppModule {
     @Singleton
     PacketService providePacketService(RegistrationRepository registrationRepository,
                                        IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
-                                       MasterDataService masterDataService, GlobalParamRepository globalParamRepository) {
+                                       MasterDataService masterDataService, GlobalParamRepository globalParamRepository,
+                                       AuditManagerService auditManagerService) {
         return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService,
-                masterDataService, globalParamRepository);
+                masterDataService, globalParamRepository, auditManagerService);
     }
 
     @Provides
@@ -322,9 +323,10 @@ public class AppModule {
                                                                  JobTransactionService jobTransactionService,
                                                                  LocationValidationService locationValidationService,
                                                                  MasterDataService masterDataService,
-                                                                 RegistrationCenterRepository registrationCenterRepository) {
+                                                                 RegistrationCenterRepository registrationCenterRepository,
+                                                                 AuditManagerService auditManagerService) {
         return new PreCheckValidatorServiceImpl(appContext, syncJobDefRepository, globalParamRepository,
                 jobManagerService, jobTransactionService, locationValidationService, masterDataService,
-                registrationCenterRepository);
+                registrationCenterRepository, auditManagerService);
     }
 }

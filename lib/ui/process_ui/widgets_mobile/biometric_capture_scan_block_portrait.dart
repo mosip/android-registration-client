@@ -2985,7 +2985,12 @@ class _BiometricCaptureScanBlockPortraitState
                   MaterialStateProperty.all<Size>(const Size(200, 68)),
                 ),
                 onPressed: canProceedToNext()
-                    ? () {
+                    ? () async {
+                        
+                        // Log audit event for moving to next biometric after exceptions
+                        context.read<GlobalProvider>().getAudit(
+                            "REG_BIO_NEXT", "REG-MOD-103");
+                        
                         List<String> bioAttributes = (widget
                                     .field.conditionalBioAttributes!.first!.ageGroup!
                                     .compareTo(

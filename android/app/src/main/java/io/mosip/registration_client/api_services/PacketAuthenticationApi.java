@@ -116,6 +116,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                     public void onComplete(String RID, PacketTaskStatus status) {
                         if (status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
+                            auditManagerService.audit(AuditEvent.PACKET_SYNCED_TO_SERVER, Components.REGISTRATION);
                         }
                         remainingPack[0] -= 1;
 
@@ -151,7 +152,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
         CustomToast newToast = new CustomToast(activity);
         for (String value : packetIds) {
             try {
-                auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
+                auditManagerService.audit(AuditEvent.PACKET_UPLOAD, Components.REG_PACKET_LIST);
                 Integer remaining = packetSize - remainingPack[0];
                 newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
                 newToast.showToast();
@@ -167,7 +168,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                     public void onComplete(String RID, PacketTaskStatus status) {
                         if (status.equals(PacketTaskStatus.UPLOAD_COMPLETED) || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
-                            auditManagerService.audit(AuditEvent.PACKET_UPLOAD, Components.REGISTRATION);
+                            auditManagerService.audit(AuditEvent.PACKET_UPLOADED, Components.REGISTRATION);
                         }
                         remainingPack[0] -= 1;
 
@@ -192,6 +193,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                 });
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
+                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REGISTRATION);
             }
         }
     }
@@ -214,6 +216,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void getAllCreatedRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
+        auditManagerService.audit(AuditEvent.PACKET_RETRIVE, Components.REGISTRATION);
         List<String> packets = new ArrayList();
         try {
             List<Registration> allRegistration = packetService.getRegistrationsByStatus(PacketClientStatus.CREATED.name(), 40);
@@ -231,12 +234,23 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     @Override
     public void updatePacketStatus(@NonNull String packetId, @Nullable String serverStatus, @NonNull String clientStatus, @NonNull PacketAuthPigeon.Result<Void> result) {
         registrationRepository.updateStatus(packetId, serverStatus, clientStatus);
+        if (PacketClientStatus.APPROVED.name().equals(clientStatus)) {
+            auditManagerService.audit(AuditEvent.PACKET_APPROVED, Components.REGISTRATION);
+        } else if (PacketClientStatus.REJECTED.name().equals(clientStatus)) {
+            auditManagerService.audit(AuditEvent.PACKET_REJECTED, Components.REGISTRATION);
+        }
         result.success(null);
     }
 
     @Override
     public void supervisorReview(@NonNull String packetId, @NonNull String supervisorStatus, @NonNull String supervisorComment, @NonNull PacketAuthPigeon.Result<Void> result) {
+        auditManagerService.audit(AuditEvent.PACKET_UPDATE, Components.REGISTRATION);
         registrationRepository.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
+        if (PacketClientStatus.APPROVED.name().equals(supervisorStatus)) {
+            auditManagerService.audit(AuditEvent.PACKET_APPROVED, Components.REGISTRATION);
+        } else if (PacketClientStatus.REJECTED.name().equals(supervisorStatus)) {
+            auditManagerService.audit(AuditEvent.PACKET_REJECTED, Components.REGISTRATION);
+        }
         result.success(null);
     }
 }

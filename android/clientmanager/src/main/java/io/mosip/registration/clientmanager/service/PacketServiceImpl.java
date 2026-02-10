@@ -41,9 +41,12 @@ import io.mosip.registration.clientmanager.entity.Registration;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.packetmanager.spi.IPacketCryptoService;
@@ -79,17 +82,20 @@ public class PacketServiceImpl implements PacketService {
     private SyncRestService syncRestService;
     private MasterDataService masterDataService;
     private GlobalParamRepository globalParamRepository;
+    private AuditManagerService auditManagerService;
 
     @Inject
     public PacketServiceImpl(Context context, RegistrationRepository registrationRepository,
                              IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
-                             MasterDataService masterDataService, GlobalParamRepository globalParamRepository) {
+                             MasterDataService masterDataService, GlobalParamRepository globalParamRepository,
+                             AuditManagerService auditManagerService) {
         this.context = context;
         this.registrationRepository = registrationRepository;
         this.packetCryptoService = packetCryptoService;
         this.syncRestService = syncRestService;
         this.masterDataService = masterDataService;
         this.globalParamRepository = globalParamRepository;
+        this.auditManagerService = auditManagerService;
     }
 
     @Override
@@ -419,6 +425,7 @@ public class PacketServiceImpl implements PacketService {
     @Override
     public boolean isMaxPacketCountLimitReached() {
         try {
+            auditManagerService.audit(AuditEvent.SYNC_PKT_COUNT_VALIDATE, Components.REGISTRATION);
             String maxCountStr = globalParamRepository.getCachedStringGlobalParam(
                     RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ);
 

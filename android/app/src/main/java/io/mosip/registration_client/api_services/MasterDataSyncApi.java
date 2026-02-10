@@ -211,7 +211,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         try {
             masterDataService.syncUserDetails(() -> {
                 auditManagerService.audit(
-                        AuditEvent.SYNC_USER_MAPPING,
+                        AuditEvent.SYNC_USER_DETAILS,
                         Components.REGISTRATION
                 );
                 Log.i(TAG, "User details sync Completed.");
@@ -241,6 +241,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         try {
             masterDataService.syncMasterData(() -> {
                 auditManagerService.audit(AuditEvent.SYNC_MASTER_DATA,Components.REGISTRATION);
+                auditManagerService.audit(AuditEvent.SYNC_DEVICE_DETAILS, Components.REGISTRATION);
                 Log.i(TAG, "Master Data Sync Completed.");
                 result.success(syncResult("MasterDataSync", 2, masterDataService.onResponseComplete()));
             }, 0, isManualSync, jobId);
@@ -435,6 +436,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getActiveSyncJobs(@NonNull MasterDataSyncPigeon.Result<List<String>> result) {
+        auditManagerService.audit(AuditEvent.SYNCJOB_INFO_FETCH, Components.JOB_SERVICE);
         List<SyncJobDef> list = syncJobDefRepository.getActiveSyncJobs();
         List<String> value = new ArrayList<>();
         try {

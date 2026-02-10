@@ -17,6 +17,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
@@ -44,6 +46,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void addDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull DemographicsDataPigeon.Result<String> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().addDemographicField(fieldId, value);
             result.success("Ok");
         } catch (Exception e) {
@@ -81,6 +84,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void addSimpleTypeDemographicField(@NonNull String fieldId, @NonNull String value, @NonNull String language, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().addDemographicField(fieldId, value, language);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add simple type field failed!" + Arrays.toString(e.getStackTrace()));
@@ -116,6 +120,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void setDateField(@NonNull String fieldId, @NonNull String subType, @NonNull String day, @NonNull String month, @NonNull String year, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().setDateField(fieldId, subType, day, month, year);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add date field failed!" + Arrays.toString(e.getStackTrace()));
@@ -134,6 +139,7 @@ public class DemographicsDetailsApi implements DemographicsDataPigeon.Demographi
     @Override
     public void setConsentField(@NonNull String consentData, @NonNull DemographicsDataPigeon.Result<Void> result) {
         try {
+            auditManagerService.audit(AuditEvent.SAVE_DETAIL_TO_DTO, Components.REGISTRATION);
             this.registrationService.getRegistrationDto().setConsent(consentData);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add consent dto failed!" + Arrays.toString(e.getStackTrace()));
