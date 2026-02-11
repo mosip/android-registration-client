@@ -1,13 +1,12 @@
 package regclient.pages.french;
 
 import java.time.Duration;
-
 import org.openqa.selenium.WebElement;
-
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
+
 
 public class LoginPageFrench extends LoginPage {
 
@@ -144,4 +143,5 @@ public class LoginPageFrench extends LoginPage {
 	public void clickOnSkipToHomeButton() {
 		clickOnElement(skipToHomeButton);
 	}
+
 }

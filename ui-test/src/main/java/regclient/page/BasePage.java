@@ -909,4 +909,22 @@ public class BasePage {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(waitTime));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
+
+	protected boolean isValuePresentInTable(WebElement tableElement,String rowIdentifier,int valueLineOffset,String expectedValue) {
+	    String tableData = getVisibleValue(tableElement);
+	    if (tableData == null || tableData.isEmpty()) {
+	        return false;
+	    }
+	    String[] lines = tableData.split("\\R");
+	    for (int i = 0; i < lines.length; i++) {
+	        if (lines[i].trim().equals(rowIdentifier)) {
+	            int valueIndex = i + valueLineOffset;
+	            if (valueIndex < lines.length) {
+	                String actualValue = lines[valueIndex].trim();
+	                return actualValue.toLowerCase().contains(expectedValue);
+	            }
+	        }
+	    }
+	    return false;
+	}
 }

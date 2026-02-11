@@ -1,18 +1,26 @@
 package regclient.pages.arabic;
 
-import org.openqa.selenium.WebElement;
 
+import org.openqa.selenium.WebElement;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.KeycloakUserManager;
 import regclient.page.DashboardPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DashboardPageArabic extends DashboardPage {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DashboardPageArabic.class);
 
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"لوحة القيادة\"]/following-sibling::android.view.View[3]")
 	private WebElement packetUploadedNumber;
 
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"لوحة القيادة\"]/following-sibling::android.view.View[2]")
 	private WebElement packetSyncedNumber;
+	
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"لوحة القيادة\"]/following-sibling::android.view.View[1]")
+	private WebElement packetCreatedNumber;
 
 	@AndroidFindBy(accessibility = "لوحة القيادة")
 	private WebElement dashboardPageTitle;
@@ -25,6 +33,9 @@ public class DashboardPageArabic extends DashboardPage {
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, 'حالة')]")
 	private WebElement statusTitle;
+	
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'المستخدمين')]")
+	private WebElement userTable;
 
 	public DashboardPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -52,6 +63,31 @@ public class DashboardPageArabic extends DashboardPage {
 
 	public boolean isStatusTitleDisplayed() {
 		return isElementDisplayed(statusTitle);
+	}
+
+	public String getPacketsCreatedCount() {
+	    return getVisibleValue(packetCreatedNumber);
+	}
+
+	public String getPacketsSyncedCount() {
+	    return getVisibleValue(packetSyncedNumber);
+	}
+
+	public String getPacketsUploadedCount() {
+	    return getVisibleValue(packetUploadedNumber);
+	}
+	
+	public void logPacketCounts() {
+	    String created = getPacketsCreatedCount();
+	    String synced = getPacketsSyncedCount();
+	    String uploaded = getPacketsUploadedCount();
+	    logger.info("No. of Packets Created  : " + created);
+	    logger.info("No. of Packets Synced   : " + synced);
+	    logger.info("No. of Packets Uploaded : " + uploaded);
+	}
+	
+	public boolean isLoginUserActive() {
+	    return isValuePresentInTable(userTable, KeycloakUserManager.moduleSpecificUser,2,"active");
 	}
 
 }
