@@ -9,13 +9,13 @@ import regclient.page.ManageApplicationsPage;
 
 public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 
-	@AndroidFindBy(accessibility = "Manage Applications")
+	@AndroidFindBy(accessibility = "Gérer des applications")
 	private WebElement manageApplicationsTitle;
 
 	@AndroidFindBy(xpath = "//android.widget.EditText")
 	private WebElement ApplicationIDTextBox;
 
-	@AndroidFindBy(accessibility = "TÉLÉVERSER")
+	@AndroidFindBy(accessibility = "TÉLÉCHARGER")
 	private WebElement uploadButton;
 
 	@AndroidFindBy(accessibility = "Statut du client")
@@ -48,7 +48,7 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "Ignorer")
 	private WebElement dismissButton;
 
-	@AndroidFindBy(accessibility = "Affichage de 0 application")
+	@AndroidFindBy(accessibility = "Affichage de 0 applications")
 	private WebElement displayZeroApplication;
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(0)")

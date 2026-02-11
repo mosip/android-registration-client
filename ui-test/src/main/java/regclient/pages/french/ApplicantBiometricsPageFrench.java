@@ -162,7 +162,8 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnZoomButton() {
-		clickOnElement(zoomButton);
+		waitTime(1);
+		clickAtCoordinates(1035, 1077);
 	}
 
 	public void clickOnIrisScanTitle() {

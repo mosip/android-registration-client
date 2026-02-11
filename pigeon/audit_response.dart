@@ -3,5 +3,5 @@ import 'package:pigeon/pigeon.dart';
 @HostApi()
 abstract class AuditResponseApi {
   @async
-  void audit(String id, String componentId);
+  void audit(String id, String componentId, List<String?>? arguments);
 }

@@ -226,8 +226,11 @@ class _GenericProcessState extends State<GenericProcess>
     await globalProvider.getAudit("REG-EVT-002", "REG-MOD-103");
   }
 
-  _nextButtonClickedAudit() async {
-    await globalProvider.getAudit("REG-EVT-069", "REG-MOD-103");
+  _nextButtonClickedAudit(Process process, int size) async {
+    final nextPageName = globalProvider.newProcessTabIndex < size
+        ? (process.screens![globalProvider.newProcessTabIndex]!.label?[globalProvider.selectedLanguage] ?? '')
+        : postRegistrationTabs[globalProvider.newProcessTabIndex - size];
+    await globalProvider.getAudit("NEXT_BUTTON_CLICKED", "REG-MOD-103", nextPageName);
   }
 
   setScrollToTop() {
@@ -690,7 +693,7 @@ class _GenericProcessState extends State<GenericProcess>
           }
         }
 
-        _nextButtonClickedAudit();
+        _nextButtonClickedAudit(process, size);
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {
           bool isPacketAuthenticated = await _authenticatePacket(context);

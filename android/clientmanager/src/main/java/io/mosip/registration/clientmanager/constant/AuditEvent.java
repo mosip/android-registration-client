@@ -46,6 +46,9 @@ public enum AuditEvent {
     NAV_REDIRECT_HOME("REG-NAV-008", SYSTEM_EVENT.getCode(), "NAV_REDIRECT_HOME", "Navigation link: Redirect to Home"),
     NAV_ON_BOARD_DEVICES("REG-NAV-009", USER_EVENT.getCode(), "NAV_ON_BOARD_DEVICES",
             "Navigation link: On-board Devices"),
+    NAV_DASHBOARD("REG-NAV-010", SYSTEM_EVENT.getCode(), "NAV_DASHBOARD","Navigation link: Dashboard"),
+    NAV_OPERATIONAL_TASKS("REG-NAV-012", SYSTEM_EVENT.getCode(), "NAV_OPERATIONAL_TASKS", "Navigation link: Operational Tasks"),
+
     //Home
     MASTER_DATA_SYNC("REG-HOME-001", USER_EVENT.getCode(), "MASTER_DATA_SYNC", "Master data sync clicked"),
     NEW_REGISTRATION("REG-HOME-002", USER_EVENT.getCode(), "NEW_REGISTRATION", "New registration clicked"),
@@ -65,7 +68,7 @@ public enum AuditEvent {
     //REGISTRATION USER EVENT
     REGISTRATION_START("REG-EVT-104", USER_EVENT.getCode(), "REGISTRATION_START", "Registration start event initiated"),
     LOADED_REGISTRATION_SCREEN("REG-EVT-111", USER_EVENT.getCode(), "LOADED_REGISTRATION_SCREEN", "Registration screen activity loaded"),
-    NEXT_BUTTON_CLICKED("REG-EVT-069", USER_EVENT.getCode(), "NEXT_BUTTON_CLICKED", "Next button clicked"),
+    NEXT_BUTTON_CLICKED("REG-EVT-069", USER_EVENT.getCode(), "NEXT_BUTTON_CLICKED", "Next button clicked to %s"),
     DOCUMENT_SCAN("REG-EVT-106", USER_EVENT.getCode(), "DOCUMENT_SCAN", "Scan document button clicked"),
     DOCUMENT_SCAN_FAILED("REG-EVT-050", USER_EVENT.getCode(), "DOCUMENT_SCAN_FAILED", "Document scan failed"),
     DOCUMENT_PREVIEW("REG-EVT-006", USER_EVENT.getCode(), "DOCUMENT_PREVIEW", "Document preview button clicked"),

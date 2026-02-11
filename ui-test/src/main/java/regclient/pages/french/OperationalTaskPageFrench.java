@@ -12,16 +12,16 @@ public class OperationalTaskPageFrench extends OperationalTaskPage {
 	@AndroidFindBy(accessibility = "Mettre à jour les données biométriques de l'opérateur")
 	private WebElement updateOperatorBiometricsButton;
 
-	@AndroidFindBy(accessibility = "System Storage Usage")
-	private WebElement systemStorageUsageTitle;
+	@AndroidFindBy(accessibility = "Tâches opérationnelles")
+	private WebElement operationalTaskTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchroniser les données\")")
 	private WebElement synchronizeDataButton;
 
-	@AndroidFindBy(accessibility = "Téléchargement d'application")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Téléchargement d'application\")")
 	private WebElement applicationUploadTitle;
 
-	@AndroidFindBy(accessibility = "En attente de validation")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"En attente de validation\")")
 	private WebElement pendingApprovalTitle;
 
 	public OperationalTaskPageFrench(AppiumDriver driver) {
@@ -35,7 +35,7 @@ public class OperationalTaskPageFrench extends OperationalTaskPage {
 	}
 
 	public boolean isOperationalTaskPageLoaded() {
-		return isElementDisplayed(systemStorageUsageTitle);
+		return isElementDisplayed(operationalTaskTitle);
 	}
 
 	public void clickSynchronizeDataButton() {

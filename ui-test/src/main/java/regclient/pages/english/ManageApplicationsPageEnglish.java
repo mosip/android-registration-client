@@ -45,9 +45,6 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "Exported")
 	private WebElement exportedsOption;
 
-	@AndroidFindBy(accessibility = "Dismiss")
-	private WebElement dismissButton;
-
 	@AndroidFindBy(accessibility = "Displaying 0 Applications")
 	private WebElement displayZeroApplication;
 
@@ -87,8 +84,10 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "Displaying 1 Applications")
 	private WebElement displayOneApplication;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.Button\").instance(0)")
-	private WebElement backButton;
+	@AndroidFindBy(xpath =
+			  "(//android.widget.TextView[@content-desc='Manage Applications']" +
+			  "/ancestor::android.view.View)[1]//android.widget.Button")
+			private WebElement backButton;
 
 	public ManageApplicationsPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -195,10 +194,6 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 		return isElementDisplayed(exportedsOption);
 	}
 
-	public void clickDismissButton() {
-		clickOnElement(dismissButton);
-	}
-
 	public void clickOnSearchCheckBox() {
 		clickOnElement(searchCheckBoxButton);
 	}
@@ -234,11 +229,11 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	public boolean isDeletionDropdownOptionDisplayed() {
 		return isElementDisplayed(deletionValueDropdown);
 	}
-	
-	public void clickOnBackButton() {
-		clickOnElement(backButton);
-	}
 
+	public void clickOnBackButton() {
+		driver.navigate().back();
+	}
+	
 	public void clickOnExportButton() {
 		clickOnElement(exportButton);
 		waitTime(10);

@@ -86,6 +86,13 @@ public class PreviewPageEnglish extends PreviewPage {
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
+	
+	@SuppressWarnings("deprecation")
+	public boolean isBiometricCorrectionTitleDisplayed() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getTitleUsingId("BIO") + "\"))")));
+	}
 
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
 		waitTime(1);
@@ -134,10 +141,6 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
-	}
-	
-	public boolean isBiometricCorrectionTitleDisplayed() {
-		return isElementDisplayed(biometricCorrectionTitle);
 	}
 
 }

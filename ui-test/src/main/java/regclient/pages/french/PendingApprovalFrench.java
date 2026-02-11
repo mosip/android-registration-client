@@ -66,13 +66,13 @@ public class PendingApprovalFrench extends PendingApproval {
 	@AndroidFindBy(accessibility = "Veuillez sélectionner une valeur")
 	private WebElement rejectReasonDropdown;
 
-	@AndroidFindBy(accessibility = "Nom d’utilisateur invalide !")
+	@AndroidFindBy(accessibility = "Nom d’utilisateur non valide!")
 	private WebElement invalidUsernameMessage;
 
 	@AndroidFindBy(accessibility = "SOUMETTRE")
 	private WebElement invalidUsernameMessageForempty;
 
-	@AndroidFindBy(accessibility = "Affichage de 1 application")
+	@AndroidFindBy(accessibility = "Affichage de 1 applications")
 	private WebElement displayApplication;
 
 	@AndroidFindBy(accessibility = "Veuillez sélectionner une raison pour le rejet du paquet. Vous pouvez modifier votre avis pour approuver ou réinitialiser le statut de l’examen plus tard.")
@@ -127,11 +127,11 @@ public class PendingApprovalFrench extends PendingApproval {
 	}
 
 	public void enterUserName(String username) {
-		sendKeysToTextBox(userNameTextBox, username);
+		clickAndsendKeysToTextBox2(userNameTextBox, username);
 	}
 
 	public void enterPassword(String password) {
-		sendKeysToTextBox(passwordTextBox, password);
+		clickAndsendKeysToTextBox2(passwordTextBox, password);
 	}
 
 	public void clickOnBackButton() {

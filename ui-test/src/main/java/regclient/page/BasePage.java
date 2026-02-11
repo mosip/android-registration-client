@@ -1,6 +1,7 @@
 package regclient.page;
 
 import io.appium.java_client.AppiumDriver;
+
 import io.appium.java_client.HidesKeyboard;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.TouchAction;
@@ -61,6 +62,7 @@ public class BasePage {
 	public BasePage(AppiumDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
+
 	}
 
 	protected boolean isElementDisplayed(WebElement element) {
@@ -74,7 +76,7 @@ public class BasePage {
 
 	protected boolean isElementDisplayed(By locator) {
 		try {
-			waitForElementToBeVisible(locator, 10);
+			waitForElementToBeVisible(locator, 20);
 			return driver.findElement(locator).isDisplayed();
 		} catch (Exception e) {
 			return false;
@@ -86,20 +88,25 @@ public class BasePage {
 		element.click();
 	}
 
+	protected void clickOnElement2(WebElement element) {
+		waitForElementToBeClickable(element);
+		element.click();
+	}
+
 	public void click(By locator) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.ignoring(StaleElementReferenceException.class);
 		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 		element.click();
 	}
 
 	private void waitForElementToBeVisible(WebElement element) {
-		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(10));
+		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(20));
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
 
 	protected void waitForElementToBeClickable(WebElement element) {
-		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(10));
+		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(20));
 		wait.until(ExpectedConditions.refreshed(ExpectedConditions.elementToBeClickable(element)));
 	}
 
@@ -161,6 +168,17 @@ public class BasePage {
 		waitTime(1);
 		driver.navigate().back();
 	}
+
+	protected void sendKeys(By locator, String text) {
+	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+	    WebElement el = wait.until(
+	        ExpectedConditions.elementToBeClickable(locator)
+	    );
+	    el.click();
+	    el.clear();
+	    el.sendKeys(text);
+	}
+
 
 	protected String getTextFromLocator(WebElement element) {
 		this.waitForElementToBeVisible(element);
@@ -251,9 +269,9 @@ public class BasePage {
 
 	public static void waitTime(int sec) {
 		try {
-			Thread.sleep(sec * 1000L); // true seconds
+			Thread.sleep(sec * 1000L);
 		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+			e.printStackTrace();
 		}
 	}
 
@@ -324,23 +342,29 @@ public class BasePage {
 		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
 				element = driver.findElement(by);
-				break;
-			} catch (NoSuchElementException e) {
+
+				// 🔑 force staleness check
+				element.isDisplayed();
+
+				return element;
+
+			} catch (NoSuchElementException | StaleElementReferenceException e) {
+
 				if (i < MAX_RETRIES - 1) {
 					try {
 						Thread.sleep(RETRY_DELAY_MS);
 					} catch (InterruptedException ie) {
 						Thread.currentThread().interrupt();
 					}
+
+					// scroll and retry
 					swipeOrScroll();
+
 				} else {
-					System.out.println("Element not found after " + MAX_RETRIES + " attempts.");
+					throw new NoSuchElementException(
+							"Element not found or stale after " + MAX_RETRIES + " attempts: " + by);
 				}
 			}
-		}
-
-		if (element == null) {
-			throw new NoSuchElementException("Element not found after " + MAX_RETRIES + " attempts: " + by);
 		}
 		return element;
 	}
@@ -375,7 +399,7 @@ public class BasePage {
 		Sequence clickSequence = new Sequence(finger, 1)
 				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
 				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-				.addAction(new Pause(finger, Duration.ofMillis(200))) // Pause for 200ms
+				.addAction(new Pause(finger, Duration.ofMillis(600))) // Pause for 200ms
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())); // Release at x, y
 																							// coordinates
 		driver.perform(Collections.singletonList(clickSequence));
@@ -470,29 +494,6 @@ public class BasePage {
 			}
 		}
 		return false; // no webview
-	}
-
-	protected void openArcApplication() {
-		AndroidDriver driver = (AndroidDriver) this.driver;
-
-		if (driver.isAppInstalled("com.android.chrome")) {
-			driver.terminateApp("com.android.chrome");
-		}
-
-		driver.activateApp("io.mosip.registration_client");
-
-		// ensure we are in native context (no WEBVIEW)
-		try {
-			driver.context("NATIVE_APP");
-		} catch (Exception ignored) {
-			// fallback: iterate and pick any context that contains NATIVE
-			for (String ctx : ((SupportsContextSwitching) driver).getContextHandles()) {
-				if (ctx.toUpperCase().contains("NATIVE")) {
-					driver.context(ctx);
-					break;
-				}
-			}
-		}
 	}
 
 	public static void enableWifiAndData() throws IOException {
@@ -694,33 +695,32 @@ public class BasePage {
 		return null;
 	}
 
-	protected void openArcApplication(String targetContext) {
+	protected void openArcApplication() {
 		AndroidDriver driver = (AndroidDriver) this.driver;
-
-		if (driver.isAppInstalled("com.android.chrome")) {
-			driver.terminateApp("com.android.chrome");
-		}
-
 		driver.activateApp("io.mosip.registration_client");
+		switchToNativeContext();
+	}
 
-		try {
-			switchContext(targetContext);
-		} catch (RuntimeException ex) {
-			System.out.println("Target context not available: " + targetContext);
-			throw ex;
+	public void switchToNativeContext() {
+		SupportsContextSwitching ctx = (SupportsContextSwitching) driver;
+		if (!"NATIVE_APP".equals(ctx.getContext())) {
+			ctx.context("NATIVE_APP");
 		}
 	}
 
-	public void switchContext(String target) {
+	public void switchToWebContext() {
 		SupportsContextSwitching ctx = (SupportsContextSwitching) driver;
 
-		for (String c : ctx.getContextHandles()) {
-			if (c.equalsIgnoreCase(target) || c.contains(target)) {
-				ctx.context(c);
-				return;
+		if (!ctx.getContext().contains("WEBVIEW") && !ctx.getContext().contains("CHROMIUM")) {
+
+			for (String context : ctx.getContextHandles()) {
+				if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+					ctx.context(context);
+					return;
+				}
 			}
+			throw new RuntimeException("No web context found");
 		}
-		throw new RuntimeException("Context not found: " + target);
 	}
 
 	public void scrollToTopSafe() {
