@@ -146,8 +146,8 @@ public class AuditManagerServiceImpl implements AuditManagerService {
         String hostName = (androidVersion != null && model != null) ? model + "|" + androidVersion :
                 globalParamRepository.getCachedStringDefaultHostName();
         String hostIP = globalParamRepository.getCachedStringDefaultHostIp();
-        String sessionUserId = sharedPreferences.getString(SessionManager.USER_NAME, null);
-        String sessionUserName = sharedPreferences.getString(SessionManager.USER_NAME, null);
+        String sessionUserId = sharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null);
+        String sessionUserName = sharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null);
         String applicationId = globalParamRepository.getCachedStringAppId();
         String applicationName = globalParamRepository.getCachedStringAppName();
         String description = auditEventEnum.getDescription() == null? "NA" : auditEventEnum.getDescription();

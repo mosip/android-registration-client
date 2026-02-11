@@ -49,26 +49,30 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   int maxFileSize = 2 * 1024 * 1024; // Default 2MB
+
   Future<void> _documentAudit(String action) async {
-    String event="";
+    String event = "";
 
     switch (action) {
       case "SCAN":
-        event = "REG-EVT-089";
+        event = "REG_DOC_SCAN";
         break;
       case "VIEW":
-        event = "REG-EVT-090";
+        event = "REG_DOC_VIEW";
         break;
       case "DELETE":
-        event = "REG-EVT-091";
+        event = "REG_DOC_DELETE";
         break;
       default:
-        event ="";
+        event = "";
     }
 
     if (event.isNotEmpty) {
-      await context.read<GlobalProvider>()
-          .getAudit(event, "REG-MOD-103");
+      // Use the document category code (e.g. POA / POI) as the placeholder argument
+      final String docType = widget.field.subType ?? "";
+      await context
+          .read<GlobalProvider>()
+          .getAudit(event, "REG-MOD-103", docType);
     }
   }
 
