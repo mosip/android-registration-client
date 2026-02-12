@@ -70,6 +70,13 @@ class LocationService {
       return false;
     }
 
-    return true;
+    // Only return true for explicitly granted permissions
+    if (permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse) {
+      return true;
+    }
+
+    // Covers unableToDetermine or any unexpected value
+    return false;
   }
 }
