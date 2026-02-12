@@ -46,17 +46,27 @@ class LocationService {
     if (!askedInThisSession) {
       // Only request when not already granted - avoids redundant system dialog
       // for "Always allow" users; "Only this time" users get re-prompted after
-      // app restart when permission is revoked
       if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever ||
           permission == LocationPermission.unableToDetermine) {
         permission = await Geolocator.requestPermission();
+        
+        // If user just denied permanently (e.g., clicked "Don't ask again"),
+        // user can manually go to settings to change permission
+        if (permission == LocationPermission.deniedForever) {
+          await prefs.setBool(_locationAskedKey, true);
+          return false;
+        }
       }
       await prefs.setBool(_locationAskedKey, true);
     }
 
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
+    // If permanently denied (from previous session), return false without
+    // opening settings automatically - let the UI handle it if needed
+    if (permission == LocationPermission.deniedForever) {
+      return false;
+    }
+
+    if (permission == LocationPermission.denied) {
       return false;
     }
 
