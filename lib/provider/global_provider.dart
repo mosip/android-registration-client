@@ -938,7 +938,7 @@ class GlobalProvider with ChangeNotifier {
     // Session-aware permission: re-request if user had chosen "Only this time" in a previous session
     bool hasPermission =
         await LocationService.instance.checkLocationPermissionForSession();
-    audit.performAudit(
+    await audit.performAudit(
       "REG-NAV-005",
       "REG-MOD-102",
     );

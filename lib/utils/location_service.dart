@@ -32,6 +32,10 @@ class LocationService {
 
   /// Checks and optionally requests location permission.
   /// Only requests permission if not already asked in this session.
+  /// Short-circuits when permission is already granted (always/whileInUse) to
+  /// avoid redundant requestPermission() calls that may behave unexpectedly on
+  /// some Android versions. "Only this time" still works: after app restart,
+  /// permission is revoked, so we request again and show the dialog.
   /// Returns true if permission is granted, false otherwise.
   Future<bool> checkLocationPermissionForSession() async {
     final prefs = await SharedPreferences.getInstance();
@@ -40,7 +44,14 @@ class LocationService {
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (!askedInThisSession) {
-      permission = await Geolocator.requestPermission();
+      // Only request when not already granted - avoids redundant system dialog
+      // for "Always allow" users; "Only this time" users get re-prompted after
+      // app restart when permission is revoked
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever ||
+          permission == LocationPermission.unableToDetermine) {
+        permission = await Geolocator.requestPermission();
+      }
       await prefs.setBool(_locationAskedKey, true);
     }
 
