@@ -96,8 +96,6 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                   builder: (context, constraints) {
                     // Responsive grid: 1 column for mobile (<600), 2 for tablet (<800), 3 for desktop
                     final crossAxisCount = constraints.maxWidth < 600 ? 1 : constraints.maxWidth < 800 ? 2 : 3;
-
-                    print("Screen width: ${constraints.maxWidth}, CrossAxisCount: $crossAxisCount");
                     // Adjust aspect ratio based on screen size - allow more height on mobile
                     final childAspectRatio = constraints.maxWidth < 600 ? 4.0 : 3.5;
                     
