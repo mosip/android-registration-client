@@ -30,7 +30,7 @@ public interface UserBiometricDao {
      * @return {@link List<UserBiometric>}
      */
     @Query("select * from user_biometric where bmtyp_code=:biometricType and usr_id != :userId")
-    List<UserBiometric> findAllExceptCurrent(String biometricType, String userId);
+    List<UserBiometric> findAllOtherUsersByBiometricType(String biometricType, String userId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(UserBiometric userBiometric);

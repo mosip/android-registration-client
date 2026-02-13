@@ -66,7 +66,7 @@ public class UserBiometricRepository {
      * @return {@link List<UserBiometric>}
      */
     public List<UserBiometric> findAllOperatorBiometricsExceptCurrent(String biometricType, String userId){
-        return userBiometricDao.findAllExceptCurrent(biometricType, userId);
+        return userBiometricDao.findAllOtherUsersByBiometricType(biometricType, userId);
     }
 
     public String saveOnboardStatus(String userId) {
