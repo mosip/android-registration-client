@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -168,10 +169,10 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 
 	public boolean isAutoLogoutPopupDisplayed() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofMinutes(10));
-			wait.until(ExpectedConditions.visibilityOf(autoLogoutPopup));
+			WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+			shortWait.until(ExpectedConditions.visibilityOf(autoLogoutPopup));
 			return true;
-		} catch (Exception e) {
+		} catch (TimeoutException e) {
 			return false;
 		}
 	}
@@ -182,108 +183,120 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	}
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
-	    final int totalTimeoutMinutes = 15;   // stop after this many minutes
-	    final int pollIntervalSeconds = 20;   // poll every N seconds
-	    final String SUFFIX = "-BIOMETRIC_CORRECTION-1";
+		final int totalTimeoutMinutes = 15; // stop after this many minutes
+		final int pollIntervalSeconds = 20; // poll every N seconds
+		final String SUFFIX = "-BIOMETRIC_CORRECTION-1";
 
-	    long startMs = System.currentTimeMillis();
-	    long timeoutMs = TimeUnit.MINUTES.toMillis(totalTimeoutMinutes);
-	    
-	    try {
-	        System.out.println("Waiting 30 seconds for email delivery...");
-	        Thread.sleep(30000);
-	    } catch (InterruptedException e) {
-	        Thread.currentThread().interrupt();
-	    }
+		long startMs = System.currentTimeMillis();
+		long timeoutMs = TimeUnit.MINUTES.toMillis(totalTimeoutMinutes);
 
-	    while (System.currentTimeMillis() - startMs < timeoutMs) {
-	        String id = null;
-	        try {
-	            id = OTPListener.getAdditionalReqId(emailId);
-	        } catch (Exception e) {
-	            // If getAdditionalReqId can throw, log and continue polling
-	        	logger.info("OTPListener.getAdditionalReqId threw: " + e.getMessage());
-	        }
+		try {
+			System.out.println("Waiting 30 seconds for email delivery...");
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 
-	        if (id != null && !id.isEmpty() && !"{Failed}".equals(id)) {
-	            String finalId = id.trim() + (id.endsWith(SUFFIX) ? "" : SUFFIX);
-	            logger.info("Found id: " + id + " -> finalId: " + finalId);
+		while (System.currentTimeMillis() - startMs < timeoutMs) {
+			String id = null;
+			try {
+				id = OTPListener.getAdditionalReqId(emailId);
+			} catch (Exception e) {
+				// If getAdditionalReqId can throw, log and continue polling
+				logger.info("OTPListener.getAdditionalReqId threw: " + e.getMessage());
+			}
 
-	            // typeAndVerify should return true on success; handle its failure/exception
-	            try {
-	                if (typeAndVerify(additionalInfoRequestIdTextbox, finalId)) {
-	                	logger.info("typeAndVerify succeeded.");
-	                    return; // success
-	                } else {
-	                    throw new AssertionError("Textbox did not accept the id: " + finalId);
-	                }
-	            } catch (Exception e) {
-	                // Fail fast if typing fails unexpectedly
-	                throw new AssertionError("Failed while typing/verifying finalId: " + finalId + " : " + e.getMessage());
-	            }
-	        }
+			if (id != null && !id.isEmpty() && !"{Failed}".equals(id)) {
+				String finalId = id.trim() + (id.endsWith(SUFFIX) ? "" : SUFFIX);
+				logger.info("Found id: " + id + " -> finalId: " + finalId);
 
-	        // handle auto logout popup
-	        try {
-	            if (isAutoLogoutPopupDisplayed()) {
-	            	logger.info("Auto-logout popup displayed — staying logged in.");
-	                clickOnStayLoggedInButton();
-	            }
-	        } catch (Exception ignored) {}
+				// typeAndVerify should return true on success; handle its failure/exception
+				try {
+					if (typeAndVerify(additionalInfoRequestIdTextbox, finalId)) {
+						logger.info("typeAndVerify succeeded.");
+						return; // success
+					} else {
+						throw new AssertionError("Textbox did not accept the id: " + finalId);
+					}
+				} catch (Exception e) {
+					// Fail fast if typing fails unexpectedly
+					throw new AssertionError(
+							"Failed while typing/verifying finalId: " + finalId + " : " + e.getMessage());
+				}
+			}
 
-	        // log remaining time
-	        long elapsed = System.currentTimeMillis() - startMs;
-	        long remainingMs = Math.max(0, timeoutMs - elapsed);
-	        logger.info("ID not found yet. Elapsed " + (elapsed/1000) + "s, remaining " + (remainingMs/1000) + "s. Sleeping " + pollIntervalSeconds + "s.");
+			// handle auto logout popup
+			try {
+				if (isAutoLogoutPopupDisplayed()) {
+					logger.info("Auto-logout popup displayed — staying logged in.");
+					clickOnStayLoggedInButton();
+				}
+			} catch (Exception ignored) {
+			}
 
-	        try {
-	            Thread.sleep(TimeUnit.SECONDS.toMillis(pollIntervalSeconds));
-	        } catch (InterruptedException ie) {
-	            Thread.currentThread().interrupt();
-	            throw new AssertionError("Interrupted while waiting for AdditionalInfoReqId", ie);
-	        }
-	    }
+			// log remaining time
+			long elapsed = System.currentTimeMillis() - startMs;
+			long remainingMs = Math.max(0, timeoutMs - elapsed);
+			logger.info("ID not found yet. Elapsed " + (elapsed / 1000) + "s, remaining " + (remainingMs / 1000)
+					+ "s. Sleeping " + pollIntervalSeconds + "s.");
 
-	    // If we reach here, timeout expired
-	    throw new AssertionError("AdditionalInfoReqId not found within " + totalTimeoutMinutes + " minutes for " + emailId);
+			try {
+				Thread.sleep(TimeUnit.SECONDS.toMillis(pollIntervalSeconds));
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
+				throw new AssertionError("Interrupted while waiting for AdditionalInfoReqId", ie);
+			}
+		}
+
+		// If we reach here, timeout expired
+		throw new AssertionError(
+				"AdditionalInfoReqId not found within " + totalTimeoutMinutes + " minutes for " + emailId);
 	}
 
 	private boolean typeAndVerify(WebElement el, String value) {
-	    el.click();
-	    el.clear();
-	    el.sendKeys(value);
+		el.click();
+		el.clear();
+		el.sendKeys(value);
 
-	    // read the visible/real value in a safe way
-	    String curr = readElementValue(el);
+		// read the visible/real value in a safe way
+		String curr = readElementValue(el);
 
-	    // exact match (keeps your previous behavior)
-	    return value.equals(curr);
+		// exact match (keeps your previous behavior)
+		return value.equals(curr);
 	}
 
 	private String readElementValue(WebElement el) {
-	    try {
-	        String ctx = "";
-	        try { ctx = ((SupportsContextSwitching) driver).getContext(); } catch (Exception ignored) {}
+		try {
+			String ctx = "";
+			try {
+				ctx = ((SupportsContextSwitching) driver).getContext();
+			} catch (Exception ignored) {
+			}
 
-	        if (ctx != null && ctx.toUpperCase().contains("WEBVIEW")) {
-	            String v = el.getAttribute("value");
-	            return v == null ? "" : v;
-	        }
-	    } catch (Exception ignored) {}
+			if (ctx != null && ctx.toUpperCase().contains("WEBVIEW")) {
+				String v = el.getAttribute("value");
+				return v == null ? "" : v;
+			}
+		} catch (Exception ignored) {
+		}
 
-	       try {
-	        String t = el.getText();
-	        if (t != null && !t.isEmpty()) return t;
-	    } catch (Exception ignored) {}
+		try {
+			String t = el.getText();
+			if (t != null && !t.isEmpty())
+				return t;
+		} catch (Exception ignored) {
+		}
 
-	    for (String attr : new String[] {"text", "hint", "content-desc", "name"}) {
-	        try {
-	            String v = el.getAttribute(attr);
-	            if (v != null && !v.isEmpty()) return v;
-	        } catch (Exception ignored) {}
-	    }
+		for (String attr : new String[] { "text", "hint", "content-desc", "name" }) {
+			try {
+				String v = el.getAttribute(attr);
+				if (v != null && !v.isEmpty())
+					return v;
+			} catch (Exception ignored) {
+			}
+		}
 
-	    return "";
+		return "";
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageEnglish.class);

@@ -13,6 +13,7 @@ import io.appium.java_client.remote.SupportsContextSwitching;
 import io.appium.java_client.remote.SupportsRotation;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.utils.TestDataReader;
 
 import org.openqa.selenium.By;
@@ -31,6 +32,8 @@ import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +45,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,6 +73,8 @@ public class BasePage {
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
 
 	}
+
+	private static final Logger logger = LoggerFactory.getLogger(BasePage.class);
 
 	protected boolean isElementDisplayed(WebElement element) {
 		try {
@@ -190,7 +197,7 @@ public class BasePage {
 		el.click();
 		el.clear();
 		el.sendKeys(text);
-		((HidesKeyboard) driver).hideKeyboard(); 
+		((HidesKeyboard) driver).hideKeyboard();
 	}
 
 	protected String getTextFromLocator(WebElement element) {
@@ -279,10 +286,10 @@ public class BasePage {
 				wait.until(ExpectedConditions.visibilityOf(element));
 				return element;
 			} catch (StaleElementReferenceException e) {
-				System.out.println("StaleElementReferenceException caught. Retrying... " + attempts);
+				logger.info("StaleElementReferenceException caught. Retrying... " + attempts);
 				attempts++;
 			} catch (TimeoutException e) {
-				System.out.println("TimeoutException caught. Retrying... " + attempts);
+				logger.info("TimeoutException caught. Retrying... " + attempts);
 				attempts++;
 			}
 		}
@@ -337,7 +344,6 @@ public class BasePage {
 			try {
 				element = driver.findElement(by);
 
-				// 🔑 force staleness check
 				element.isDisplayed();
 
 				return element;
@@ -522,7 +528,7 @@ public class BasePage {
 			return findElementWithRetry(locator); // reuse your existing retry logic
 		} catch (Exception e) {
 			// Optional: log for debugging
-			System.out.println("Element not found after retries: " + locator);
+			logger.info("Element not found after retries: " + locator);
 			return null; // prevents NoSuchElementException / NPE
 		}
 	}
@@ -710,7 +716,7 @@ public class BasePage {
 			driver.manage().window().getSize(); // safe now
 			scrollToTop();
 		} catch (Exception e) {
-			System.out.println("scrollToTop skipped — not in a native window");
+			logger.info("scrollToTop skipped — not in a native window");
 		}
 	}
 
@@ -885,34 +891,58 @@ public class BasePage {
 	private ScreenOrientation desiredOrientation;
 
 	public void applyOrientation() {
-
 		String orientation = TestDataReader.readData("orientation");
+		ScreenOrientation finalOrientation = ScreenOrientation.PORTRAIT; // default fallback
+		if (orientation != null && !orientation.isBlank()) {
+			try {
+				finalOrientation = ScreenOrientation.valueOf(orientation.trim().toUpperCase());
+			} catch (IllegalArgumentException e) {
+				logger.info(
+						"Invalid orientation value in testdata.json: " + orientation + ". Falling back to PORTRAIT.");
+			}
 
-		if (orientation != null) {
-
-			desiredOrientation = ScreenOrientation.valueOf(orientation.toUpperCase());
-
-			lockSystemRotation(desiredOrientation);
-
-			((SupportsRotation) driver).rotate(desiredOrientation);
-
-			System.out.println("Orientation applied: " + desiredOrientation);
+		} else {
+			logger.info("Orientation not provided or empty. Using default PORTRAIT.");
 		}
+
+		lockSystemRotation(finalOrientation);
+		((SupportsRotation) driver).rotate(finalOrientation);
+
+		logger.info("Orientation applied: " + finalOrientation);
 	}
 
 	private void lockSystemRotation(ScreenOrientation orientation) {
-		try {
-			String rotationValue = "0"; // Portrait default
 
-			if (orientation == ScreenOrientation.LANDSCAPE) {
-				rotationValue = "1";
+		String rotationValue = "0"; // Portrait default
+
+		if (orientation == ScreenOrientation.LANDSCAPE) {
+			rotationValue = "1";
+		}
+
+		executeAdbCommand(new String[] { "adb", "shell", "settings", "put", "system", "accelerometer_rotation", "0" });
+
+		executeAdbCommand(new String[] { "adb", "shell", "settings", "put", "system", "user_rotation", rotationValue });
+	}
+
+	private void executeAdbCommand(String[] command) {
+		try {
+			ProcessBuilder processBuilder = new ProcessBuilder(command);
+			processBuilder.redirectErrorStream(true);
+
+			Process process = processBuilder.start();
+
+			// Read output (important to prevent stream blocking)
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				while (reader.readLine() != null) {
+					// optionally log output
+				}
 			}
 
-			Runtime.getRuntime().exec("adb shell settings put system accelerometer_rotation 0");
+			int exitCode = process.waitFor();
 
-			Runtime.getRuntime().exec("adb shell settings put system user_rotation " + rotationValue);
-
-			Thread.sleep(500);
+			if (exitCode != 0) {
+				System.out.println("ADB command failed with exit code: " + exitCode);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
