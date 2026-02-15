@@ -60,7 +60,6 @@ public class Settings extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify machine settings functionality")
 	public void settings() throws InterruptedException {
 
-	
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SettingsPage settingsPage = null;
@@ -195,6 +194,5 @@ public class Settings extends AndroidBaseTest {
 
 //		assertTrue(settingsPage.isToastVisible("Master Data Sync Completed"), "Toast not found!");
 
-	
-}
+	}
 }

@@ -51,10 +51,10 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
 	@AndroidFindBy(xpath = "//android.widget.EditText[contains(@hint, 'أدخل معرف طلب المعلومات الإضافية')]")
 	private WebElement additionalInfoRequestIdTextbox;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"لقد كنت خاملاً\")")
 	private WebElement autoLogoutPopup;
-	
+
 	@AndroidFindBy(accessibility = "البقاء مسجلاً الدخول")
 	private WebElement stayLoggedInButton;
 
@@ -152,7 +152,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		clickOnElement(continueButton);
 		return new PreviewPageArabic(driver);
 	}
-	
+
 	public RegistrationTasksPage clickOnStayLoggedInButton() {
 		clickOnElement(stayLoggedInButton);
 		return new RegistrationTasksPageArabic(driver);
@@ -187,12 +187,11 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
 				// typeAndVerify should return true on success; handle its failure/exception
 				try {
-				    typeAndVerify(additionalInfoRequestIdTextbox, finalId);
-				    logger.info("Entered finalId: " + finalId);
-				    return; // success
+					typeAndVerify(additionalInfoRequestIdTextbox, finalId);
+					logger.info("Entered finalId: " + finalId);
+					return; // success
 				} catch (Exception e) {
-				    throw new AssertionError(
-				        "Failed while typing finalId: " + finalId + " : " + e.getMessage(), e);
+					throw new AssertionError("Failed while typing finalId: " + finalId + " : " + e.getMessage(), e);
 				}
 
 			}
@@ -226,10 +225,11 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	}
 
 	private void typeAndVerify(WebElement el, String value) {
-	    el.click();
-	    el.clear();
-	    el.sendKeys(value);
+		el.click();
+		el.clear();
+		el.sendKeys(value);
 	}
+
 	public boolean isAutoLogoutPopupDisplayed() {
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofMinutes(10));

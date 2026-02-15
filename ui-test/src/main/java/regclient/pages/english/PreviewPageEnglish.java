@@ -164,7 +164,7 @@ public class PreviewPageEnglish extends PreviewPage {
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
 	}
-	
+
 	public void scrollToText(String text) {
 		((AndroidDriver) driver)
 				.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"

@@ -156,7 +156,7 @@ public class ResetPassword extends AndroidBaseTest {
 		keycloakPage.clickOnSignoutButton();
 
 		keycloakPage.resumeArcApplication();
-		
+
 		profilePage.clickOnLogoutButton();
 
 		BasePage.disableWifiAndData();

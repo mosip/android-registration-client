@@ -435,6 +435,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
+
 //		Below commentout method may be required in future
 //		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
 //				"Verify if application ID In PreviewPage is displayed");

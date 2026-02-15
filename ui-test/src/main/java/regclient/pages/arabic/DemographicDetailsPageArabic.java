@@ -428,7 +428,6 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 		By appIdTextbox = MobileBy.AndroidUIAutomator(
 			    "new UiSelector().className(\"android.widget.EditText\").instance(0)");
 
-
 		// Verify label is displayed
 		boolean isDisplayed = isElementDisplayed(appIdLabel);
 		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
