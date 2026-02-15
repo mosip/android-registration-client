@@ -191,7 +191,7 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 		long timeoutMs = TimeUnit.MINUTES.toMillis(totalTimeoutMinutes);
 
 		try {
-			System.out.println("Waiting 30 seconds for email delivery...");
+			logger.info("Waiting 30 seconds for email delivery...");
 			Thread.sleep(30000);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
