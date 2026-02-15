@@ -2,6 +2,7 @@ package regclient.BaseTest;
 
 import io.appium.java_client.AppiumDriver;
 import regclient.driver.DriverManager;
+import regclient.page.BasePage;
 
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;

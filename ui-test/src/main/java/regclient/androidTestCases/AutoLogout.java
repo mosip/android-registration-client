@@ -37,7 +37,6 @@ public class AutoLogout extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify auto-logout when the machine is online")
 	public void onlineAutoLogout() throws InterruptedException {
-		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		AutoLogoutPage autoLogoutPage = null;
@@ -172,7 +171,6 @@ public class AutoLogout extends AndroidBaseTest {
 	@Test(priority = 1, description = "Verify auto-logout when the machine is offline")
 	public void offlineAutoLogout() throws InterruptedException, IOException {
 		try {
-			BasePage.disableAutoRotation();
 			LoginPage loginPage = null;
 			RegistrationTasksPage registrationTasksPage = null;
 			AutoLogoutPage autoLogoutPage = null;

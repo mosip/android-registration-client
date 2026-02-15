@@ -98,7 +98,7 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 	@AndroidFindBy(accessibility = "Marquage des exceptions sur Visage n'est pas autorisé")
 	private WebElement markingExceptionsOnFaceIsNotAllowedText;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.View\").clickable(true)")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(accessibility = "Permanent")

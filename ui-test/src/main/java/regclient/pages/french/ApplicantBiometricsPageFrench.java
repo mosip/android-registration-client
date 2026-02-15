@@ -158,7 +158,7 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageFrench(driver);
 	}
 
 	public void clickOnZoomButton() {

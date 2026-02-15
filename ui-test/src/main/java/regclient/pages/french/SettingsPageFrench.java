@@ -23,13 +23,13 @@ public class SettingsPageFrench extends SettingsPage {
 
 	private final AppiumDriver driver;
 
-	@AndroidFindBy(accessibility = "Scheduled Jobs Settings\nTab 1 of 3")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Paramètres des travaux planifiés\")")
 	private WebElement scheduledJobsSettingsTab;
 
-	@AndroidFindBy(accessibility = "Global Config Settings\nTab 2 of 3")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Paramètres de configuration globale\")")
 	private WebElement globalConfigSettingsTab;
 
-	@AndroidFindBy(accessibility = "Device Settings\nTab 3 of 3")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Réglages de l'appareil\")")
 	private WebElement deviceSettingsTab;
 
 	@AndroidFindBy(accessibility = "Key\nServer Value\nLocal Value")
@@ -41,10 +41,10 @@ public class SettingsPageFrench extends SettingsPage {
 	@AndroidFindBy(accessibility = "No changes to save")
 	private WebElement noChangesToSave;
 
-	@AndroidFindBy(accessibility = "Device Settings")
+	@AndroidFindBy(accessibility = "Réglages de l'appareil")
 	private WebElement deviceSettingsPage;
 
-	@AndroidFindBy(accessibility = "Scan Now")
+	@AndroidFindBy(accessibility = "ANALYSE")
 	private WebElement scanNowButton;
 
 	@AndroidFindBy(accessibility = "ID: e88198714e67562c\nName: io.mosip.mock.sbi.face\nStatus: Ready")
@@ -68,7 +68,7 @@ public class SettingsPageFrench extends SettingsPage {
 	@AndroidFindBy(accessibility = "CANCEL")
 	private WebElement changesCancelButton;
 	
-	@AndroidFindBy(accessibility = "Scheduled Job Settings")
+	@AndroidFindBy(accessibility = "Paramètres des tâches planifiées")
 	private WebElement scheduledJobSettingsPageHeader;
 
 	@AndroidFindBy(xpath = "//*[@content-desc[contains(.,'Master Data Sync')]]")

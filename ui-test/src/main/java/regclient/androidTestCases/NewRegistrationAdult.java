@@ -129,7 +129,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify adult new registration")
 	public void newRegistrationAdult() throws InterruptedException {
 
-		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -148,6 +147,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		PendingApproval pendingApproval = null;
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
+		BasePage basePage = null;
 
 		final String language = TestDataReader.readData("language");
 
@@ -598,16 +598,18 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		boolean uploadSuccess = false;
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3 && !uploadSuccess; i++) {
+
 		    manageApplicationsPage.clickOnUploadButton();
 
-		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-		        uploadSuccess = true;
-		        break;
+		    uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+
+		    if (!uploadSuccess) {
+		        
 		    }
 		}
 
-		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
 
 		manageApplicationsPage.clickOnBackButton();
 
@@ -634,9 +636,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 	}
 
-//	@Test(priority = 1, description = "Verify adult new registration")
+	@Test(priority = 1, description = "Verify adult new registration")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
-		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

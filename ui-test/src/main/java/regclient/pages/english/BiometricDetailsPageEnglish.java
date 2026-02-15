@@ -182,12 +182,19 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	}
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
-	    final int totalTimeoutMinutes = 10;   // stop after this many minutes
-	    final int pollIntervalSeconds = 10;   // poll every N seconds
+	    final int totalTimeoutMinutes = 15;   // stop after this many minutes
+	    final int pollIntervalSeconds = 20;   // poll every N seconds
 	    final String SUFFIX = "-BIOMETRIC_CORRECTION-1";
 
 	    long startMs = System.currentTimeMillis();
 	    long timeoutMs = TimeUnit.MINUTES.toMillis(totalTimeoutMinutes);
+	    
+	    try {
+	        System.out.println("Waiting 30 seconds for email delivery...");
+	        Thread.sleep(30000);
+	    } catch (InterruptedException e) {
+	        Thread.currentThread().interrupt();
+	    }
 
 	    while (System.currentTimeMillis() - startMs < timeoutMs) {
 	        String id = null;
@@ -195,17 +202,17 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	            id = OTPListener.getAdditionalReqId(emailId);
 	        } catch (Exception e) {
 	            // If getAdditionalReqId can throw, log and continue polling
-	            System.out.println("OTPListener.getAdditionalReqId threw: " + e.getMessage());
+	        	logger.info("OTPListener.getAdditionalReqId threw: " + e.getMessage());
 	        }
 
 	        if (id != null && !id.isEmpty() && !"{Failed}".equals(id)) {
 	            String finalId = id.trim() + (id.endsWith(SUFFIX) ? "" : SUFFIX);
-	            System.out.println("Found id: " + id + " -> finalId: " + finalId);
+	            logger.info("Found id: " + id + " -> finalId: " + finalId);
 
 	            // typeAndVerify should return true on success; handle its failure/exception
 	            try {
 	                if (typeAndVerify(additionalInfoRequestIdTextbox, finalId)) {
-	                    System.out.println("typeAndVerify succeeded.");
+	                	logger.info("typeAndVerify succeeded.");
 	                    return; // success
 	                } else {
 	                    throw new AssertionError("Textbox did not accept the id: " + finalId);
@@ -219,7 +226,7 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	        // handle auto logout popup
 	        try {
 	            if (isAutoLogoutPopupDisplayed()) {
-	                System.out.println("Auto-logout popup displayed — staying logged in.");
+	            	logger.info("Auto-logout popup displayed — staying logged in.");
 	                clickOnStayLoggedInButton();
 	            }
 	        } catch (Exception ignored) {}
@@ -227,7 +234,7 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	        // log remaining time
 	        long elapsed = System.currentTimeMillis() - startMs;
 	        long remainingMs = Math.max(0, timeoutMs - elapsed);
-	        System.out.println("ID not found yet. Elapsed " + (elapsed/1000) + "s, remaining " + (remainingMs/1000) + "s. Sleeping " + pollIntervalSeconds + "s.");
+	        logger.info("ID not found yet. Elapsed " + (elapsed/1000) + "s, remaining " + (remainingMs/1000) + "s. Sleeping " + pollIntervalSeconds + "s.");
 
 	        try {
 	            Thread.sleep(TimeUnit.SECONDS.toMillis(pollIntervalSeconds));
@@ -277,12 +284,6 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	    }
 
 	    return "";
-	}
-
-
-	private void sleepSeconds(int s) {
-	    try { Thread.sleep(s * 1000L); }
-	    catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageEnglish.class);

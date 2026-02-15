@@ -122,7 +122,7 @@ public class LostUin extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify lost UIN")
 	public void lostUinAdult() {
-		BasePage.disableAutoRotation();
+		
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

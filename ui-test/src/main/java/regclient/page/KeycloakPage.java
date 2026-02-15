@@ -169,7 +169,7 @@ public class KeycloakPage extends BasePage {
 	}
 	
 	public void openKeycloakPage() {
-	    switchToWebContext();
+		openKeycloakWebView();
 	    waitForLoginPage();
 	}
 

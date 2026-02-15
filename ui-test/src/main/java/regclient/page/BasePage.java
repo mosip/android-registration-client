@@ -10,14 +10,18 @@ import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.remote.SupportsContextSwitching;
+import io.appium.java_client.remote.SupportsRotation;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import regclient.utils.TestDataReader;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -105,9 +109,9 @@ public class BasePage {
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
 
-	protected void waitForElementToBeClickable(WebElement element) {
-		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(20));
-		wait.until(ExpectedConditions.refreshed(ExpectedConditions.elementToBeClickable(element)));
+	protected WebElement waitForElementToBeClickable(WebElement element) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
 	protected boolean isElementDisplayed(WebElement element, int waitTime) {
@@ -148,6 +152,17 @@ public class BasePage {
 		((HidesKeyboard) driver).hideKeyboard();
 	}
 
+	protected void clickAndsendKeysToTextBox3(WebElement element, String text) {
+		this.waitForElementToBeClickable(element);
+		element.click();
+		waitTime(1);
+		element.clear();
+		waitTime(1);
+		element.sendKeys(text);
+		waitTime(1);
+		((HidesKeyboard) driver).hideKeyboard();
+	}
+
 	protected void clickAndsendKeysToTextBox2(WebElement element, String text) {
 		this.waitForElementToBeVisible(element);
 		element.click();
@@ -170,15 +185,12 @@ public class BasePage {
 	}
 
 	protected void sendKeys(By locator, String text) {
-	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-	    WebElement el = wait.until(
-	        ExpectedConditions.elementToBeClickable(locator)
-	    );
-	    el.click();
-	    el.clear();
-	    el.sendKeys(text);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
+		el.click();
+		el.clear();
+		el.sendKeys(text);
 	}
-
 
 	protected String getTextFromLocator(WebElement element) {
 		this.waitForElementToBeVisible(element);
@@ -232,25 +244,6 @@ public class BasePage {
 			return true;
 		} catch (Exception e) {
 			return false;
-		}
-	}
-
-	public static void disableAutoRotation() {
-		try {
-			ProcessBuilder processBuilder;
-			String osName = System.getProperty("os.name");
-			if (osName.contains("Windows")) {
-				processBuilder = new ProcessBuilder("cmd.exe", "/c",
-						"adb shell settings put system accelerometer_rotation 0");
-
-			} else {
-				processBuilder = new ProcessBuilder("/bin/bash", "-c",
-						"adb shell settings put system accelerometer_rotation 0");
-			}
-			processBuilder.redirectErrorStream(true);
-			processBuilder.start();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
 		}
 	}
 
@@ -708,21 +701,6 @@ public class BasePage {
 		}
 	}
 
-	public void switchToWebContext() {
-		SupportsContextSwitching ctx = (SupportsContextSwitching) driver;
-
-		if (!ctx.getContext().contains("WEBVIEW") && !ctx.getContext().contains("CHROMIUM")) {
-
-			for (String context : ctx.getContextHandles()) {
-				if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
-					ctx.context(context);
-					return;
-				}
-			}
-			throw new RuntimeException("No web context found");
-		}
-	}
-
 	public void scrollToTopSafe() {
 		try {
 			if (!((SupportsContextSwitching) driver).getContext().equals("NATIVE_APP")) {
@@ -829,19 +807,6 @@ public class BasePage {
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
 	}
 
-	public void clickAndsendKeysToTextBoxByLocator(By locator, String value) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-		wait.ignoring(StaleElementReferenceException.class);
-
-		wait.until(Webdriver -> {
-			WebElement element = Webdriver.findElement(locator);
-			element.click();
-			element.clear();
-			element.sendKeys(value);
-			return true;
-		});
-	}
-
 	public boolean isElementEnabled(By locator) {
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -889,24 +854,68 @@ public class BasePage {
 	}
 
 	protected void clickAndSendKeysToTextBox(By locator, String text) {
-		this.waitForElementToBeVisible(locator, 10);
 
-		WebElement element = driver.findElement(locator);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-		element.click();
-		waitTime(1);
+		for (int i = 0; i < 2; i++) {
+			try {
+				WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 
-		element.clear();
-		waitTime(1);
+				element.click();
+				element.clear();
+				element.sendKeys(text);
 
-		element.sendKeys(text);
-		waitTime(1);
+				hideKeyboardIfVisible();
+				return;
 
-		hideKeyboardIfVisible();
+			} catch (StaleElementReferenceException e) {
+
+			}
+		}
+
+		throw new RuntimeException("Unable to interact with textbox");
 	}
 
 	protected void waitForElementToBeVisible(By locator, int waitTime) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(waitTime));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
+
+	private ScreenOrientation desiredOrientation;
+
+	public void applyOrientation() {
+
+		String orientation = TestDataReader.readData("orientation");
+
+		if (orientation != null) {
+
+			desiredOrientation = ScreenOrientation.valueOf(orientation.toUpperCase());
+
+			lockSystemRotation(desiredOrientation);
+
+			((SupportsRotation) driver).rotate(desiredOrientation);
+
+			System.out.println("Orientation applied: " + desiredOrientation);
+		}
+	}
+
+	private void lockSystemRotation(ScreenOrientation orientation) {
+		try {
+			String rotationValue = "0"; // Portrait default
+
+			if (orientation == ScreenOrientation.LANDSCAPE) {
+				rotationValue = "1";
+			}
+
+			Runtime.getRuntime().exec("adb shell settings put system accelerometer_rotation 0");
+
+			Runtime.getRuntime().exec("adb shell settings put system user_rotation " + rotationValue);
+
+			Thread.sleep(500);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
