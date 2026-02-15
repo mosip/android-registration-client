@@ -292,7 +292,7 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 		} catch (Exception ignored) {
 		}
 
-		for (String attr : new String[] { "text", "hint", "content-desc", "name" }) {
+		for (String attr : new String[] { "text", "content-desc", "name" }) {
 			try {
 				String v = el.getAttribute(attr);
 				if (v != null && !v.isEmpty())
