@@ -190,6 +190,7 @@ public class BasePage {
 		el.click();
 		el.clear();
 		el.sendKeys(text);
+		((HidesKeyboard) driver).hideKeyboard(); 
 	}
 
 	protected String getTextFromLocator(WebElement element) {
@@ -392,7 +393,7 @@ public class BasePage {
 		Sequence clickSequence = new Sequence(finger, 1)
 				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
 				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-				.addAction(new Pause(finger, Duration.ofMillis(600))) // Pause for 200ms
+				.addAction(new Pause(finger, Duration.ofMillis(600))) // Pause for 600ms
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())); // Release at x, y
 																							// coordinates
 		driver.perform(Collections.singletonList(clickSequence));
