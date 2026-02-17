@@ -598,7 +598,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		boolean uploadSuccess = false;
 
-		for (int i = 0; i < 3 && !uploadSuccess; i++) {
+		for (int i = 0; i < 3; i++) {
 
 		    manageApplicationsPage.clickOnUploadButton();
 
