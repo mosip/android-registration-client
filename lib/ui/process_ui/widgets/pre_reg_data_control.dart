@@ -231,6 +231,7 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                 container: true,
                 excludeSemantics: true,
                 child: TextFormField(
+                  key: _formFieldKey,
                   controller: preRegIdController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   textCapitalization: TextCapitalization.words,
