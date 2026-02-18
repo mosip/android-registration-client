@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -93,19 +94,20 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
             if (languages.size() <= 1) {
                 documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
             } else {
-                List<String>[] resultList = new ArrayList[languages.size()];
+                List<List<String>> resultList = new ArrayList<>();
                 for (int i = 0; i < languages.size(); i++) {
-                    resultList[i] = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode,
+                    List<String> langDocs = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode,
                             languages.get(i));
+                    resultList.add(langDocs != null ? langDocs : Collections.emptyList());
                 }
-                int maxSize = Arrays.stream(resultList).mapToInt(List::size).max().orElse(0);
+                int maxSize = resultList.stream().mapToInt(List::size).max().orElse(0);
                 for (int k = 0; k < maxSize; k++) {
                     StringBuilder concatenated = new StringBuilder();
-                    for (int j = 0; j < resultList.length; j++) {
-                        List<String> langList = resultList[j];
+                    for (int j = 0; j < resultList.size(); j++) {
+                        List<String> langList = resultList.get(j);
                         if (k < langList.size()) {
                             concatenated.append(langList.get(k));
-                            if (j < resultList.length - 1) {
+                            if (j < resultList.size() - 1) {
                                 concatenated.append(" / ");
                             }
                         }
