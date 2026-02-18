@@ -939,7 +939,7 @@ class GlobalProvider with ChangeNotifier {
     bool hasPermission =
         await LocationService.instance.checkLocationPermissionForSession();
     await audit.performAudit(
-      "REG-NAV-005",
+      "NAV_GEO_LOCATION",
       "REG-MOD-102",
     );
     if (!hasPermission) {
