@@ -80,13 +80,15 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
         this.cryptoManagerServiceImpl = cryptoManagerServiceImpl;
         this.clientCryptoManagerService = clientCryptoManagerService;
     }
+
     @Override
     public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode,
             @NonNull List<String> languages, @NonNull DocumentCategoryPigeon.Result<List<String>> result) {
         List<String> documentCategory = new ArrayList<>();
         try {
             Map<String, Object> dataContext = this.registrationService.getRegistrationDto().getMVELDataContext();
-            String applicantTypeCode = this.evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
+            String applicantTypeCode = this
+                    .evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
             Log.i(getClass().getSimpleName(), "applicantType: " + applicantTypeCode);
             if (languages.size() <= 1) {
                 documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
@@ -96,9 +98,8 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
                     resultList[i] = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode,
                             languages.get(i));
                 }
-                List<String> primaryList = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode,
-                        langCode);
-                for (int k = 0; k < primaryList.size(); k++) {
+                int maxSize = Arrays.stream(resultList).mapToInt(List::size).max().orElse(0);
+                for (int k = 0; k < maxSize; k++) {
                     StringBuilder concatenated = new StringBuilder();
                     for (int j = 0; j < resultList.length; j++) {
                         List<String> langList = resultList[j];
@@ -109,7 +110,10 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
                             }
                         }
                     }
-                    documentCategory.add(concatenated.toString().replaceAll("\\s/\\s$", ""));
+                    String entry = concatenated.toString().replaceAll("\\s/\\s$", "").trim();
+                    if (!entry.isEmpty()) {
+                        documentCategory.add(entry);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -131,9 +135,9 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
     public String evaluateMvelScript(String scriptName, Map<String, Object> dataContext) {
         try {
-            Map<String, String>  ageGroups = new HashMap<String, String>();
+            Map<String, String> ageGroups = new HashMap<String, String>();
             JSONObject ageGroupConfig = new JSONObject((String) this.globalParamRepository.getCachedStringAgeGroup());
-            for (Iterator<String> it = ageGroupConfig.keys(); it.hasNext(); ) {
+            for (Iterator<String> it = ageGroupConfig.keys(); it.hasNext();) {
                 String key = it.next();
                 ageGroups.put(key, ageGroupConfig.getString(key));
             }
@@ -144,25 +148,25 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
             context.put("ageGroups", ageGroups);
             return MVEL.eval("return getApplicantType();", context, String.class);
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(),"Failed to evaluate mvel script", e);
+            Log.e(getClass().getSimpleName(), "Failed to evaluate mvel script", e);
         }
         return null;
     }
 
     private String getScript(String scriptName) {
-        if(SCRIPT_CACHE.containsKey(scriptName) && SCRIPT_CACHE.get(scriptName) != null)
+        if (SCRIPT_CACHE.containsKey(scriptName) && SCRIPT_CACHE.get(scriptName) != null)
             return SCRIPT_CACHE.get(scriptName);
 
         try {
             Optional<FileSignature> fileSignature = this.fileSignatureRepository.findByFileName(scriptName);
-            if(!fileSignature.isPresent()) {
+            if (!fileSignature.isPresent()) {
                 Log.e("File signature not found : {}", scriptName);
                 return null;
             }
 
             Path path = Paths.get(context.getFilesDir().getAbsolutePath(), scriptName);
             byte[] bytes;
-            if(fileSignature.get().getEncrypted()) {
+            if (fileSignature.get().getEncrypted()) {
                 CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
                 cryptoRequestDto.setValue(FileUtils.readFileToString(path.toFile(), StandardCharsets.UTF_8));
                 CryptoResponseDto cryptoResponseDto = clientCryptoFacade.decrypt(cryptoRequestDto);
@@ -171,18 +175,17 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
                 bytes = FileUtils.readFileToByteArray(path.toFile());
             }
             String actualData = String.format("{\"hash\":\"%s\"}", HMACUtils2.digestAsPlainText(bytes));
-            if(!validateScriptSignature(fileSignature.get().getSignature(), actualData)) {
+            if (!validateScriptSignature(fileSignature.get().getSignature(), actualData)) {
                 Log.e("File signature validation failed : {}", scriptName);
                 return null;
             }
             SCRIPT_CACHE.put(scriptName, new String(bytes));
 
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(),"Failed to get mvel script", e);
+            Log.e(getClass().getSimpleName(), "Failed to get mvel script", e);
         }
         return SCRIPT_CACHE.get(scriptName);
     }
-
 
     private boolean validateScriptSignature(String signature, String actualData) throws Exception {
 
@@ -190,10 +193,12 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
         JWTSignatureVerifyRequestDto jwtSignatureVerifyRequestDto = new JWTSignatureVerifyRequestDto();
         jwtSignatureVerifyRequestDto.setJwtSignatureData(signature);
-        jwtSignatureVerifyRequestDto.setActualData(CryptoUtil.encodeToURLSafeBase64(actualData.getBytes(StandardCharsets.UTF_8)));
+        jwtSignatureVerifyRequestDto
+                .setActualData(CryptoUtil.encodeToURLSafeBase64(actualData.getBytes(StandardCharsets.UTF_8)));
         jwtSignatureVerifyRequestDto.setCertificateData(certificateData);
 
-        JWTSignatureVerifyResponseDto verifyResponseDto =  this.clientCryptoManagerService.jwtVerify(jwtSignatureVerifyRequestDto);
+        JWTSignatureVerifyResponseDto verifyResponseDto = this.clientCryptoManagerService
+                .jwtVerify(jwtSignatureVerifyRequestDto);
 
         return verifyResponseDto.isSignatureValid();
     }

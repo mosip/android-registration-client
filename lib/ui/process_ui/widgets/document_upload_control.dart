@@ -106,7 +106,11 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       _removeExceptionData(widget.field);
       getScannedDocuments(widget.field);
       myGetDocumentCategoryFuture =
-          _getDocumentType(widget.field.subType!, "eng",
+          _getDocumentType(
+              widget.field.subType!,
+              globalProvider.chosenLang.isNotEmpty
+                  ? globalProvider.langToCode(globalProvider.chosenLang.first)
+                  : "eng",
               globalProvider.chosenLang
                   .map<String>((value) => globalProvider.langToCode(value))
                   .toList());
