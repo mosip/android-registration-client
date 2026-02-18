@@ -15,7 +15,7 @@ import 'package:registration_client/utils/app_style.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:registration_client/utils/secure_screen_service.dart';
 
 
 class AcknowledgementPage extends StatefulWidget {
@@ -33,12 +33,12 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   @override
   void initState() {
     super.initState();
-    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    SecureScreenService.acquire();
   }
 
   @override
   void dispose() {
-    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+    SecureScreenService.release();
     super.dispose();
   }
 

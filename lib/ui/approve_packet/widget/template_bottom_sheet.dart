@@ -13,7 +13,7 @@ import '../../../provider/approve_packets_provider.dart';
 import '../../../provider/global_provider.dart';
 import 'reject_dialogbox.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:registration_client/utils/secure_screen_service.dart';
 
 class TemplateBottomSheet {
   void loadHtmlData(WebViewPlusController? controller, String packetId) async {
@@ -553,12 +553,12 @@ class _SecureBottomSheetWrapperState
   @override
   void initState() {
     super.initState();
-    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    SecureScreenService.acquire();
   }
 
   @override
   void dispose() {
-    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+    SecureScreenService.release();
     super.dispose();
   }
 
