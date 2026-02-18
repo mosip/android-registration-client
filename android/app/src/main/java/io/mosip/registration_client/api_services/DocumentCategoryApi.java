@@ -65,10 +65,11 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
     ClientCryptoManagerService clientCryptoManagerService;
 
-
-
     @Inject
-    public DocumentCategoryApi(RegistrationService registrationService,FileSignatureDao fileSignatureRepository,GlobalParamRepository globalParamRepository,MasterDataService masterDataService,CertificateManagerService certificateManagerService,CryptoManagerService cryptoManagerServiceImpl,ClientCryptoManagerService clientCryptoManagerService,Context context) {
+    public DocumentCategoryApi(RegistrationService registrationService, FileSignatureDao fileSignatureRepository,
+            GlobalParamRepository globalParamRepository, MasterDataService masterDataService,
+            CertificateManagerService certificateManagerService, CryptoManagerService cryptoManagerServiceImpl,
+            ClientCryptoManagerService clientCryptoManagerService, Context context) {
         this.registrationService = registrationService;
         this.context = context;
         this.fileSignatureRepository = fileSignatureRepository;
@@ -80,13 +81,37 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
         this.clientCryptoManagerService = clientCryptoManagerService;
     }
     @Override
-    public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode, @NonNull DocumentCategoryPigeon.Result<List<String>> result) {
+    public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode,
+            @NonNull List<String> languages, @NonNull DocumentCategoryPigeon.Result<List<String>> result) {
         List<String> documentCategory = new ArrayList<>();
         try {
             Map<String, Object> dataContext = this.registrationService.getRegistrationDto().getMVELDataContext();
             String applicantTypeCode = this.evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
             Log.i(getClass().getSimpleName(), "applicantType: " + applicantTypeCode);
-            documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
+            if (languages.size() <= 1) {
+                documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
+            } else {
+                List<String>[] resultList = new ArrayList[languages.size()];
+                for (int i = 0; i < languages.size(); i++) {
+                    resultList[i] = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode,
+                            languages.get(i));
+                }
+                List<String> primaryList = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode,
+                        langCode);
+                for (int k = 0; k < primaryList.size(); k++) {
+                    StringBuilder concatenated = new StringBuilder();
+                    for (int j = 0; j < resultList.length; j++) {
+                        List<String> langList = resultList[j];
+                        if (k < langList.size()) {
+                            concatenated.append(langList.get(k));
+                            if (j < resultList.length - 1) {
+                                concatenated.append(" / ");
+                            }
+                        }
+                    }
+                    documentCategory.add(concatenated.toString().replaceAll("\\s/\\s$", ""));
+                }
+            }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
         }
