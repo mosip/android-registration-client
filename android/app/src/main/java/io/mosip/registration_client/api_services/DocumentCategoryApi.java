@@ -92,7 +92,8 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
                     .evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
             Log.i(getClass().getSimpleName(), "applicantType: " + applicantTypeCode);
             if (languages.size() <= 1) {
-                documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
+                List<String> docs = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
+                documentCategory = docs != null ? docs : Collections.emptyList();
             } else {
                 List<List<String>> resultList = new ArrayList<>();
                 for (int i = 0; i < languages.size(); i++) {
