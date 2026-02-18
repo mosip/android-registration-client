@@ -13,6 +13,7 @@ import '../../../provider/approve_packets_provider.dart';
 import '../../../provider/global_provider.dart';
 import 'reject_dialogbox.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
 class TemplateBottomSheet {
   void loadHtmlData(WebViewPlusController? controller, String packetId) async {
@@ -29,8 +30,8 @@ class TemplateBottomSheet {
   }
 
   Widget bottomSheet(BuildContext context) {
-
-    return ChangeNotifierProvider<ApprovePacketsProvider>.value(
+    return _SecureBottomSheetWrapper(
+      child: ChangeNotifierProvider<ApprovePacketsProvider>.value(
       value: context.watch<ApprovePacketsProvider>(),
       builder: (context, _) {
         final globalProvider = context.read<GlobalProvider>();
@@ -533,6 +534,34 @@ class TemplateBottomSheet {
           ),
         );
       },
+    ),
     );
   }
+}
+
+class _SecureBottomSheetWrapper extends StatefulWidget {
+  final Widget child;
+  const _SecureBottomSheetWrapper({required this.child});
+
+  @override
+  State<_SecureBottomSheetWrapper> createState() =>
+      _SecureBottomSheetWrapperState();
+}
+
+class _SecureBottomSheetWrapperState
+    extends State<_SecureBottomSheetWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+  }
+
+  @override
+  void dispose() {
+    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

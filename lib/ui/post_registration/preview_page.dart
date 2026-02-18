@@ -12,6 +12,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 import '../../provider/registration_task_provider.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
 class PreviewPage extends StatefulWidget {
   const PreviewPage({super.key});
@@ -24,6 +25,18 @@ class _PreviewPageState extends State<PreviewPage> {
   bool isLoading = true;
   WebViewPlusController? _controller;
   double _height = ScreenUtil().screenHeight;
+
+  @override
+  void initState() {
+    super.initState();
+    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+  }
+
+  @override
+  void dispose() {
+    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+    super.dispose();
+  }
 
   _registrationPreviewPageLoadedAudit() async {
     await context.read<GlobalProvider>().getAudit("REG-EVT-008", "REG-MOD-103");
