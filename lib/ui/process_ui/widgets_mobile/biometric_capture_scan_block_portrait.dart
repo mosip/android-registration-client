@@ -2977,8 +2977,9 @@ class _BiometricCaptureScanBlockPortraitState
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Spacer(),
-              // Don't show next button when on Mark Exception tab (tab index 2)
-              if (context.read<BiometricCaptureControlProvider>().biometricCaptureScanBlockTabIndex != 2)
+              // Don't show next button when on Mark Exception tab or Exception step
+              if (context.read<BiometricCaptureControlProvider>().biometricCaptureScanBlockTabIndex != 2 &&
+                  context.read<BiometricCaptureControlProvider>().biometricAttribute != "Exception")
                 ElevatedButton(
                   style: ButtonStyle(
                     maximumSize:
