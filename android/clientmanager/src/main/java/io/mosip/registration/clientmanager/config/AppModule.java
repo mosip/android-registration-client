@@ -172,13 +172,13 @@ public class AppModule {
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
                                                       FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService, PermittedLocalConfigRepository permittedLocalConfigRepository,
-                                                      LocalConfigDAO localConfigDAO) {
+                                                      LocalConfigDAO localConfigDAO, AuditManagerService auditManagerService) {
 
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO, auditManagerService);
 
     }
 

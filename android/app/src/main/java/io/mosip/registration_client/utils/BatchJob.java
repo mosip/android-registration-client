@@ -192,7 +192,7 @@ public class BatchJob {
             } catch (Exception e) {
                 syncAndUploadInProgressStatus = false;
                 Log.e(getClass().getSimpleName(), e.getMessage());
-                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REG_PACKET_LIST);
+                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REG_PACKET_LIST, e.getMessage());
             }
         }
     }

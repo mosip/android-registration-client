@@ -193,7 +193,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                 });
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
-                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REGISTRATION);
+                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REGISTRATION, e.getMessage());
             }
         }
     }
@@ -234,11 +234,8 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     @Override
     public void updatePacketStatus(@NonNull String packetId, @Nullable String serverStatus, @NonNull String clientStatus, @NonNull PacketAuthPigeon.Result<Void> result) {
         registrationRepository.updateStatus(packetId, serverStatus, clientStatus);
-        if (PacketClientStatus.APPROVED.name().equals(clientStatus)) {
-            auditManagerService.audit(AuditEvent.PACKET_APPROVED, Components.REGISTRATION);
-        } else if (PacketClientStatus.REJECTED.name().equals(clientStatus)) {
-            auditManagerService.audit(AuditEvent.PACKET_REJECTED, Components.REGISTRATION);
-        }
+        auditManagerService.auditWithArguments(AuditEvent.PACKET_STATUS_UPDATE,
+                Components.REGISTRATION.getId(), Components.REGISTRATION.getName(), clientStatus);
         result.success(null);
     }
 
@@ -246,11 +243,8 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     public void supervisorReview(@NonNull String packetId, @NonNull String supervisorStatus, @NonNull String supervisorComment, @NonNull PacketAuthPigeon.Result<Void> result) {
         auditManagerService.audit(AuditEvent.PACKET_UPDATE, Components.REGISTRATION);
         registrationRepository.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
-        if (PacketClientStatus.APPROVED.name().equals(supervisorStatus)) {
-            auditManagerService.audit(AuditEvent.PACKET_APPROVED, Components.REGISTRATION);
-        } else if (PacketClientStatus.REJECTED.name().equals(supervisorStatus)) {
-            auditManagerService.audit(AuditEvent.PACKET_REJECTED, Components.REGISTRATION);
-        }
+        auditManagerService.auditWithArguments(AuditEvent.PACKET_STATUS_UPDATE,
+                Components.REGISTRATION.getId(), Components.REGISTRATION.getName(), supervisorStatus);
         result.success(null);
     }
 }

@@ -49,7 +49,6 @@ public class UserDetailsApi implements UserPigeon.UserApi {
     @Override
     public void validateUser(@NonNull String username, @NonNull String langCode, @NonNull UserPigeon.Result<UserPigeon.User> result) {
         auditManagerService.audit(AuditEvent.USER_STATUS_FETCH, Components.LOGIN);
-        auditManagerService.audit(AuditEvent.FETCH_USR_DET, Components.LOGIN);
         if (username == null || username.trim().length() == 0) {
             UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)

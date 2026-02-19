@@ -441,12 +441,8 @@ public class PacketServiceImpl implements PacketService {
 
             boolean limitReached = yetToExportCount >= maxCount;
 
-            // Audit after successful validation; don't let audit failures skip validation result.
-            try {
-                auditManagerService.audit(AuditEvent.SYNC_PKT_COUNT_VALIDATE, Components.REGISTRATION);
-            } catch (Exception auditEx) {
-                Log.e(TAG, "Failed to audit SYNC_PKT_COUNT_VALIDATE", auditEx);
-            }
+            // Audit after successful validation;
+            auditManagerService.audit(AuditEvent.SYNC_PKT_COUNT_VALIDATE, Components.REGISTRATION);
 
             return limitReached;
 

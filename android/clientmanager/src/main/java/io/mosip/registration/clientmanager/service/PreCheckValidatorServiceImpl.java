@@ -81,11 +81,7 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
     public void validateSyncStatus() throws Exception {
         try {
             validatingSyncJobsConfig();
-            try {
-                auditManagerService.audit(AuditEvent.SYNC_INFO_VALIDATE, Components.JOB_SERVICE);
-            } catch (Exception auditEx) {
-                Log.e(TAG, "Audit logging failed for SYNC_INFO_VALIDATE", auditEx);
-            }
+            auditManagerService.audit(AuditEvent.SYNC_INFO_VALIDATE, Components.JOB_SERVICE);
         } catch (ClientCheckedException e) {
             Log.e(TAG, "Sync status validation failed", e);
             throw e;
@@ -293,11 +289,7 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
                     context.getString(R.string.err_003));
             }
 
-            try {
-                auditManagerService.audit(AuditEvent.SYNC_GEO_VALIDATE, Components.REGISTRATION);
-            } catch (Exception auditEx) {
-                Log.e(TAG, "Audit logging failed for SYNC_GEO_VALIDATE", auditEx);
-            }
+            auditManagerService.audit(AuditEvent.SYNC_GEO_VALIDATE, Components.REGISTRATION);
 
         } catch (NumberFormatException e) {
             Log.e(TAG, "Invalid number format in center coordinates or max distance configuration", e);
