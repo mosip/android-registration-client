@@ -193,7 +193,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                 });
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
-                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REGISTRATION, e.getMessage());
+                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REG_PACKET_LIST, e.getMessage());
             }
         }
     }
