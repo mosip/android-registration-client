@@ -2977,26 +2977,28 @@ class _BiometricCaptureScanBlockPortraitState
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Spacer(),
-              ElevatedButton(
-                style: ButtonStyle(
-                  maximumSize:
-                  MaterialStateProperty.all<Size>(const Size(200, 68)),
-                  minimumSize:
-                  MaterialStateProperty.all<Size>(const Size(200, 68)),
-                ),
-                onPressed: canProceedToNext()
-                    ? () {
-                        List<String> bioAttributes = (widget
-                                    .field.conditionalBioAttributes!.first!.ageGroup!
-                                    .compareTo(
-                                        context.read<GlobalProvider>().ageGroup) ==
-                                0)
-                            ? _returnBiometricList(
-                                widget.field.conditionalBioAttributes!.first!
-                                    .bioAttributes!,
-                                widget.field.id!)
-                            : _returnBiometricList(
-                                widget.field.bioAttributes!, widget.field.id!);
+              // Don't show next button when on Mark Exception tab (tab index 2)
+              if (context.read<BiometricCaptureControlProvider>().biometricCaptureScanBlockTabIndex != 2)
+                ElevatedButton(
+                  style: ButtonStyle(
+                    maximumSize:
+                    MaterialStateProperty.all<Size>(const Size(200, 68)),
+                    minimumSize:
+                    MaterialStateProperty.all<Size>(const Size(200, 68)),
+                  ),
+                  onPressed: canProceedToNext()
+                      ? () {
+                          List<String> bioAttributes = (widget
+                                      .field.conditionalBioAttributes!.first!.ageGroup!
+                                      .compareTo(
+                                          context.read<GlobalProvider>().ageGroup) ==
+                                  0)
+                              ? _returnBiometricList(
+                                  widget.field.conditionalBioAttributes!.first!
+                                      .bioAttributes!,
+                                  widget.field.id!)
+                              : _returnBiometricList(
+                                  widget.field.bioAttributes!, widget.field.id!);
 
                         var nextElement = _getNextElement(
                             bioAttributes,
