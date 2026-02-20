@@ -151,7 +151,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                       Text("ID: ${device.deviceId ?? ''}",
                                           style: const TextStyle(fontSize: 12)),
                                       Text(
-                                          "Name: ${device.deviceName?? ''}",
+                                          "Name: ${device.deviceName ?? ''}",
                                           style: const TextStyle(fontSize: 12)),
                                       Text(
                                           "Status: ${device.connectionStatus ?? ''}",
