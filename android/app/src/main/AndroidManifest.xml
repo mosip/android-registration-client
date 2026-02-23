@@ -17,6 +17,7 @@
         android:icon="@mipmap/launcher_icon"
         android:allowBackup="false"
         android:fullBackupOnly="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:usesCleartextTraffic="false">
        <service android:name=".UploadBackgroundService" />
         <activity
