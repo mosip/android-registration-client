@@ -20,7 +20,9 @@ class SecureScreenService {
 
   static Future<void> acquire() async {
     if (defaultTargetPlatform != TargetPlatform.android) return;
-    _operationQueue = _operationQueue.then((_) async {
+    _operationQueue = _operationQueue
+        .then<void>((_) {}, onError: (_) {}) // recover from any prior failure
+        .then((_) async {
       _refCount++;
       if (_refCount == 1) {
         try {
@@ -37,7 +39,9 @@ class SecureScreenService {
 
   static Future<void> release() async {
     if (defaultTargetPlatform != TargetPlatform.android) return;
-    _operationQueue = _operationQueue.then((_) async {
+    _operationQueue = _operationQueue
+        .then<void>((_) {}, onError: (_) {}) // recover from any prior failure
+        .then((_) async {
       if (_refCount <= 0) {
         log('SecureScreenService: release() called with refCount=$_refCount; ignoring.');
         return;

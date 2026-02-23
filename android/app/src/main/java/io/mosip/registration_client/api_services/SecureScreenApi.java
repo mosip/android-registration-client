@@ -33,7 +33,7 @@ public class SecureScreenApi implements SecureScreenPigeon.SecureScreenApi {
     @Override
     public void addFlagSecure(@NonNull SecureScreenPigeon.Result<Boolean> result) {
         if (activity == null) {
-            result.success(false);
+            result.error(new IllegalStateException("Activity not set"));
             return;
         }
         activity.runOnUiThread(() -> {
@@ -49,7 +49,7 @@ public class SecureScreenApi implements SecureScreenPigeon.SecureScreenApi {
     @Override
     public void clearFlagSecure(@NonNull SecureScreenPigeon.Result<Boolean> result) {
         if (activity == null) {
-            result.success(false);
+            result.error(new IllegalStateException("Activity not set"));
             return;
         }
         activity.runOnUiThread(() -> {
