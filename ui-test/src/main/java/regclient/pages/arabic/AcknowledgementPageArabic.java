@@ -1,5 +1,6 @@
 package regclient.pages.arabic;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -43,9 +44,9 @@ public class AcknowledgementPageArabic extends AcknowledgementPage {
 	}
 
 	public RegistrationTasksPage clickOnGoToHomeButton() {
-		clickOnElement(goToHomeButton);
-		return new RegistrationTasksPageArabic(driver);
-
+	    By goToHomeButton = MobileBy.AccessibilityId("اذهب إلى المنزل");
+	    click(goToHomeButton);
+	    return new RegistrationTasksPageArabic(driver);
 	}
 
 	public boolean isAcknowledgementPageDisplayed() {

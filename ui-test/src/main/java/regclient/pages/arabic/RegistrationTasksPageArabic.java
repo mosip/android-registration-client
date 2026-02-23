@@ -34,10 +34,13 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"اكتملت مزامنة البرنامج النصي\"]")
 	private WebElement scriptSyncCompletedMessage;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
+//	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionEndsWith(\"لوحة القيادة\")")
+//	private WebElement dashboardButton;
+
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionMatches(\".*لوحة القيادة.*\")")
 	private WebElement dashboardButton;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"حساب تعريفي\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionMatches(\".*حساب تعريفي.*\")")
 	private WebElement profileButton;
 
 	@AndroidFindBy(accessibility = "تحديث UIN")
@@ -49,7 +52,7 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 	@AndroidFindBy(accessibility = "التصحيح البيومتري")
 	private WebElement biometricCorrectionButton;
 
-	@AndroidFindBy(accessibility = "إعدادات\nعلامة التبويب 2 من 4")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionMatches(\".*إعدادات.*\")")
 	private WebElement settingsButton;
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_message")
@@ -140,7 +143,10 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 
 	public boolean checkLastSyncDate() {
 		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
-		if (contentDesc.contains("Synchronize Data\n" + getCurrentDateWord() + ","))
+		if (contentDesc == null) {
+			return false;
+		}
+		if (contentDesc.contains("مزامنة") && contentDesc.contains(getCurrentDateWord()))
 			return true;
 		else
 			return false;

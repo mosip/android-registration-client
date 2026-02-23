@@ -23,7 +23,7 @@ public class DashboardPageArabic extends DashboardPage {
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, 'اسم المستخدم')]")
 	private WebElement userNameTitle;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, 'الحالة')]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, 'حالة')]")
 	private WebElement statusTitle;
 
 	public DashboardPageArabic(AppiumDriver driver) {

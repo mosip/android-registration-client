@@ -32,6 +32,14 @@ class TasksPage extends StatefulWidget {
 
 class _TasksPageState extends State<TasksPage> {
   int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<GlobalProvider>(context, listen: false)
+        .getAudit("NAV_DASHBOARD", "REG-MOD-102");
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -80,6 +88,8 @@ class _TasksPageState extends State<TasksPage> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
+                      Provider.of<GlobalProvider>(context, listen: false)
+                          .getAudit("NAV_OPERATIONAL_TASKS", "REG-MOD-102");
                       setState(() {
                         currentIndex = 1;
                       });

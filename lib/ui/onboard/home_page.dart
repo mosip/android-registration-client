@@ -64,6 +64,9 @@ class _HomePageState extends State<HomePage> {
         Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Check GPS status to update the indicator in profile
+      await connectivityProvider.checkGPSStatus();
+      // Fetch location if GPS is enabled
       await globalProvider.fetchLocation();
     });
     super.initState();
@@ -92,6 +95,7 @@ class _HomePageState extends State<HomePage> {
     await registrationTaskProvider.getListOfProcesses();
     await globalProvider.getRegCenterName(
         globalProvider.centerId, globalProvider.selectedLanguage);
+    await globalProvider.getAudit("REG-SYNC-002", "REG-MOD-102");
     await globalProvider.initializeLanguageDataList(true);
     await globalProvider.initializeLocationHierarchyMap();
   }
@@ -132,7 +136,23 @@ class _HomePageState extends State<HomePage> {
         }
       }
       globalProvider.createRegistrationLanguageMap();
-      globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
+      //globalProvider.getAudit("REG-HOME-002", "REG-MOD-102");
+      String auditeventid="REG-EVT-002";
+      switch(process.flow){
+        case "NEW":
+          auditeventid="REG-EVT-002";
+        break;
+        case "UPDATE":
+          auditeventid="REG-EVT-003";
+        break;
+        case "LOST":
+          auditeventid="REG-EVT-001";
+        break;
+        case "CORRECTION":
+          auditeventid="REG-EVT-007";
+        break;
+      }
+      globalProvider.getAudit(auditeventid, "REG-MOD-102");
       showDialog(
         context: context,
         builder: (BuildContext context) => LanguageSelector(
@@ -236,7 +256,8 @@ class _HomePageState extends State<HomePage> {
           "assets/svg/Uploading Local - Registration Data.svg",
         ),
         "title": appLocalizations.appliction_upload,
-        "onTap": (context) {
+        "onTap": (context){
+          Provider.of<GlobalProvider>(context, listen: false).getAudit("REG-EVT-005", "REG-MOD-102");
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -289,7 +310,7 @@ class _HomePageState extends State<HomePage> {
     return MobileHomePage(
       operationalTasks: operationalTasks,
       getProcessUI: (BuildContext context, Process process) {
-        getProcessUI(context, process);
+        return getProcessUI(context, process);
       },
       syncData: (BuildContext context) {
         syncData(context);

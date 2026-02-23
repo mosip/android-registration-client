@@ -5,6 +5,7 @@ import '../../../provider/connectivity_provider.dart';
 import '../../../provider/export_packet_provider.dart';
 import '../../../utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../provider/global_provider.dart';
 
 class UploadButton extends StatefulWidget {
   const UploadButton({super.key});
@@ -38,6 +39,8 @@ class _UploadButtonState extends State<UploadButton> {
 
     return OutlinedButton(
       onPressed:(context.watch<ExportPacketsProvider>().countSelected==0)?null: () async {
+        Provider.of<GlobalProvider>(context, listen: false).getAudit("REG-SYNC-014", "REG-MOD-102");
+
         await connectivityProvider.checkNetworkConnection();
         if (!connectivityProvider.isConnected) {
           _showInSnackBar(appLocalizations.network_error);

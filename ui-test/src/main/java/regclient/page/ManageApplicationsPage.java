@@ -42,8 +42,6 @@ public abstract class ManageApplicationsPage extends BasePage {
 
 	public abstract boolean isExportedsDropdownOptionDisplayed();
 
-	public abstract void clickDismissButton();
-
 	public abstract void clickOnSearchCheckBox();
 
 	public abstract void selectApprovedValueDropdown();

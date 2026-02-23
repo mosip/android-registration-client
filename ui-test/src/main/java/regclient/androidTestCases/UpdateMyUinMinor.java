@@ -139,7 +139,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 		FetchUiSpec.getUiSpec("updateProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-		BasePage.disableAutoRotation();
+	
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;
@@ -524,7 +524,7 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-//		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);

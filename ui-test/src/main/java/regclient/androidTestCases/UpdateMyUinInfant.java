@@ -137,7 +137,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify infant UIN update")
 	public void updateMyUinInfant() throws InterruptedException {
 		FetchUiSpec.getUiSpec("updateProcess");
-		BasePage.disableAutoRotation();
+	
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;

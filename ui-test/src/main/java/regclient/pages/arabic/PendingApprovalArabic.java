@@ -68,7 +68,7 @@ public class PendingApprovalArabic extends PendingApproval {
 	@AndroidFindBy(accessibility = "رفض الحزمة؟")
 	private WebElement rejectPacketTitle;
 
-	@AndroidFindBy(accessibility = "يرجى تحديد قيمة")
+	@AndroidFindBy(accessibility = "رجاءا اختر قيمة")
 	private WebElement rejectReasonDropdown;
 
 	@AndroidFindBy(accessibility = "عرض 1 تطبيقات")
@@ -126,11 +126,11 @@ public class PendingApprovalArabic extends PendingApproval {
 	}
 
 	public void enterUserName(String username) {
-		sendKeysToTextBox(userNameTextBox, username);
+		clickAndsendKeysToTextBox2(userNameTextBox, username);
 	}
 
 	public void enterPassword(String password) {
-		sendKeysToTextBox(passwordTextBox, password);
+		clickAndsendKeysToTextBox2(passwordTextBox, password);
 	}
 
 	public void clickOnBackButton() {
@@ -229,6 +229,5 @@ public class PendingApprovalArabic extends PendingApproval {
 	public boolean isAuthenticateButtonEnabled() {
 		return isElementEnabled(authenticateButton);
 	}
-
 
 }

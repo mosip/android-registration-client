@@ -8,8 +8,8 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometricVerificationpage {
 
-	@AndroidFindBy(accessibility = "التحقق البيومتري للمشرف")
-	private WebElement supervisorBiometricVerificationPageTitle;
+	@AndroidFindBy(accessibility = "تسجيل القياسات الحيوية للمشغل")
+	private WebElement operatorBiometricVerificationPageTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"القزحية مسح\"))")
 	private WebElement irisScanIcon;
@@ -50,19 +50,19 @@ public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometr
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"مسح\"))")
 	private WebElement scanButton;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'قزحية العين')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris')]")
 	private WebElement irisCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'اليد اليمنى')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'RightHand')]")
 	private WebElement rightHandCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'اليد اليسرى')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'LeftHand')]")
 	private WebElement leftHandCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'الإبهامان')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Thumbs')]")
 	private WebElement thumbsCapturerHeader;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'الوجه')]")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Face')]")
 	private WebElement faceCapturerHeader;
 
 	@AndroidFindBy(className = "android.widget.Button")
@@ -113,7 +113,7 @@ public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometr
 	@AndroidFindBy(accessibility = "وضع علامة على الاستثناءات على الوجه غير مسموح")
 	private WebElement markingExceptionsOnFaceIsNotAllowedText;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.View\").clickable(true)")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"الحد \")]/following-sibling::android.view.View")
@@ -139,8 +139,8 @@ public class SupervisorBiometricVerificationpageArabic extends SupervisorBiometr
 		clickOnElement(irisScanIcon);
 	}
 
-	public boolean isSupervisorBiometricVerificationPageLoaded() {
-		return isElementDisplayed(supervisorBiometricVerificationPageTitle);
+	public boolean isOperatorBiometricVerificationPageLoaded() {
+		return isElementDisplayed(operatorBiometricVerificationPageTitle);
 	}
 
 	public void clickOnRightHandScanIcon() {

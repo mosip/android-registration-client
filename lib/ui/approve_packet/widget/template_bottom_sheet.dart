@@ -10,6 +10,7 @@ import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 import '../../../model/registration.dart';
 import '../../../provider/approve_packets_provider.dart';
+import '../../../provider/global_provider.dart';
 import 'reject_dialogbox.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -32,6 +33,7 @@ class TemplateBottomSheet {
     return ChangeNotifierProvider<ApprovePacketsProvider>.value(
       value: context.watch<ApprovePacketsProvider>(),
       builder: (context, _) {
+        final globalProvider = context.read<GlobalProvider>();
         int currentInd = context.watch<ApprovePacketsProvider>().currentInd;
         Registration regCurrent = context
             .read<ApprovePacketsProvider>()
@@ -67,6 +69,8 @@ class TemplateBottomSheet {
                         context
                             .read<ApprovePacketsProvider>()
                             .setWebViewPlusController(controller);
+                        context.read<GlobalProvider>()
+                            .getAudit("REG-EVT-066", "REG-MOD-103");
                         loadHtmlData(controller, regCurrent.id!);
                       },
                       javascriptMode: JavascriptMode.unrestricted,
@@ -140,6 +144,7 @@ class TemplateBottomSheet {
                                   onPressed: reviewStatus == ReviewStatus.APPROVED.name
                                       ? null
                                       : () {
+                                    globalProvider.getAudit("REG-EVT-067", "REG-MOD-103");
                                     context
                                         .read<ApprovePacketsProvider>()
                                         .approvePacket(regCurrent.packetId);
@@ -177,6 +182,7 @@ class TemplateBottomSheet {
                                   onPressed: reviewStatus == ReviewStatus.REJECTED.name
                                       ? null
                                       : () {
+                                    globalProvider.getAudit("REG-EVT-068", "REG-MOD-103");
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {

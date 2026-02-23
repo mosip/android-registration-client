@@ -72,7 +72,6 @@ import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
-
 @Module
 public class HostApiModule {
 

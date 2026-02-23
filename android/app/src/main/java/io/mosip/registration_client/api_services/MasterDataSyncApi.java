@@ -77,6 +77,8 @@ import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.UploadBackgroundService;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.utils.NetworkUtils;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 
 @Singleton
 public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
@@ -219,6 +221,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         onSyncJobStart();
         try {
             masterDataService.syncGlobalParamsData(() -> {
+                auditManagerService.audit(
+                        AuditEvent.SYNC_CLIENT_STATE,
+                        Components.REGISTRATION
+                );
                 Log.i(TAG, "Sync Global Params Completed.");
                 String errorCode = masterDataService.onResponseComplete();
                 boolean success = errorCode == null || errorCode.isEmpty();
@@ -240,6 +246,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         onSyncJobStart();
         try {
             masterDataService.syncUserDetails(() -> {
+                auditManagerService.audit(
+                        AuditEvent.SYNC_USER_MAPPING,
+                        Components.REGISTRATION
+                );
                 Log.i(TAG, "User details sync Completed.");
                 String errorCode = masterDataService.onResponseComplete();
                 boolean success = errorCode == null || errorCode.isEmpty();
@@ -277,6 +287,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getMasterDataSync(@NonNull Boolean isManualSync, @NonNull String jobId, @NonNull MasterDataSyncPigeon.Result<MasterDataSyncPigeon.Sync> result) {
+        auditManagerService.audit(AuditEvent.NAV_SYNC_DATA, Components.REGISTRATION);
         if (isManualSync && isExcludedJob(jobId)) {
             result.success(syncResult("MasterDataSync", 2, ""));
             return;
@@ -284,6 +295,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         onSyncJobStart();
         try {
             masterDataService.syncMasterData(() -> {
+                auditManagerService.audit(AuditEvent.SYNC_MASTER_DATA,Components.REGISTRATION);
                 Log.i(TAG, "Master Data Sync Completed.");
                 String errorCode = masterDataService.onResponseComplete();
                 boolean success = errorCode == null || errorCode.isEmpty();

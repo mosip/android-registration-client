@@ -14,18 +14,17 @@ import regclient.page.RegistrationTasksPage;
 
 public class AutoLogoutPageFrench extends AutoLogoutPage {
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"You have been idle\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Tu as été inactif\")")
 	private WebElement autoLogoutPopup;
 
 	@AndroidFindBy(accessibility = "LOG OUT")
 	private WebElement logoutButton;
 
-	@AndroidFindBy(accessibility = "STAY LOGGED IN")
+	@AndroidFindBy(accessibility = "DÉCONNEXION")
 	private WebElement stayLoggedInButton;
 
 	public AutoLogoutPageFrench(AppiumDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean isAutoLogoutPopupDisplayed() {

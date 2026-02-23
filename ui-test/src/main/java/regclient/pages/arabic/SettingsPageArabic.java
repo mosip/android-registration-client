@@ -14,21 +14,22 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import regclient.page.SettingsPage;
 
-public class SettingsPageArabic extends SettingsPage{
+public class SettingsPageArabic extends SettingsPage {
 
 	private final AppiumDriver driver;
 
-	@AndroidFindBy(accessibility = "Scheduled Jobs Settings\nTab 1 of 3")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"إعدادات الوظائف المجدولة\")")
 	private WebElement scheduledJobsSettingsTab;
 
-	@AndroidFindBy(accessibility = "Global Config Settings\nTab 2 of 3")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"إعدادات التكوين العامة\")")
 	private WebElement globalConfigSettingsTab;
 
-	@AndroidFindBy(accessibility = "Device Settings\nTab 3 of 3")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"إعدادات الجهاز\")")
 	private WebElement deviceSettingsTab;
 
 	@AndroidFindBy(accessibility = "Key\nServer Value\nLocal Value")
@@ -40,10 +41,10 @@ public class SettingsPageArabic extends SettingsPage{
 	@AndroidFindBy(accessibility = "No changes to save")
 	private WebElement noChangesToSave;
 
-	@AndroidFindBy(accessibility = "Device Settings")
+	@AndroidFindBy(accessibility = "إعدادات الجهاز")
 	private WebElement deviceSettingsPage;
 
-	@AndroidFindBy(accessibility = "Scan Now")
+	@AndroidFindBy(accessibility = "مسح")
 	private WebElement scanNowButton;
 
 	@AndroidFindBy(accessibility = "ID: e88198714e67562c\nName: io.mosip.mock.sbi.face\nStatus: Ready")
@@ -66,11 +67,11 @@ public class SettingsPageArabic extends SettingsPage{
 
 	@AndroidFindBy(accessibility = "CANCEL")
 	private WebElement changesCancelButton;
-	
-	@AndroidFindBy(accessibility = "Scheduled Job Settings")
+
+	@AndroidFindBy(accessibility = "إعدادات المهمة المجدولة")
 	private WebElement scheduledJobSettingsPageHeader;
 
-	@AndroidFindBy(xpath = "//*[@content-desc[contains(.,'Master Data Sync')]]")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Master Data Sync\")")
 	private WebElement masterDataSyncCard;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'Master Data Sync')]//android.widget.Button")
@@ -135,23 +136,13 @@ public class SettingsPageArabic extends SettingsPage{
 	}
 
 	public boolean isDeviceSettingsPageDisplayed() {
-		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-			wait.until(ExpectedConditions.visibilityOf(deviceSettingsPage));
-			return isElementDisplayed(deviceSettingsPage);
-		} catch (TimeoutException e) {
-			return false;
-		}
+		waitTime(2);
+		return isElementDisplayed(deviceSettingsPage);
 	}
 
 	public boolean isFaceDeviceCardDisplayed() {
-		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-			wait.until(ExpectedConditions.visibilityOf(faceDeviceCard));
-			return isElementDisplayed(faceDeviceCard);
-		} catch (TimeoutException e) {
-			return false;
-		}
+		waitTime(2);
+		return isElementDisplayed(faceDeviceCard);
 	}
 
 	public boolean isIrisDeviceCardDisplayed() {
@@ -199,12 +190,20 @@ public class SettingsPageArabic extends SettingsPage{
 		return isElementDisplayed(scheduledJobSettingsPageHeader);
 	}
 
-	public boolean isMasterDataSyncCardDisplayed() {
-		return isElementDisplayed(masterDataSyncCard);
+	public boolean isJobDisplayed(String jobName) {
+
+		// Scroll to jobs list (safe for long lists)
+		driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+				+ ".scrollIntoView(new UiSelector().className(\"android.widget.EditText\"))"));
+
+		By job = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
+
+		return isElementDisplayed(job);
 	}
 
-	public void clickOnMasterDataSyncButton() {
-		clickOnElement(masterDataSyncButton);
+	public void clickOnSyncButton(String jobName) {
+		By syncButton = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
+		click(syncButton);
 	}
 
 	public boolean isToastVisible(String toastMessage) {
@@ -226,10 +225,18 @@ public class SettingsPageArabic extends SettingsPage{
 	}
 
 	public boolean validateJobCardFields(String jobName) {
-		WebElement card = driver
-				.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + jobName + "')]"));
-		String cd = card.getAttribute("content-desc");
-		return cd.contains(jobName) && cd.contains("Next Run") && cd.contains("Last Sync")
-				&& cd.contains("Cron Expression");
+		try {
+			// Locate the Next Run / Last Sync field using job name as anchor
+			WebElement field = driver.findElement(By.xpath(
+					"//android.view.View[@content-desc='" + jobName + "']" + "/following::android.widget.EditText[1]"));
+
+			String text = field.getText();
+
+			return text.contains("Next Run") && text.contains("Last Sync");
+
+		} catch (Exception e) {
+			return false;
+		}
 	}
+
 }
