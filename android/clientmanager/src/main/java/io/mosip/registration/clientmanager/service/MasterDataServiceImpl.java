@@ -542,7 +542,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncUserDetails(Runnable onFinish, boolean isManualSync, String jobId) throws Exception {
-        auditManagerService.audit(AuditEvent.FETCH_USR_DET, Components.LOGIN);
+        auditManagerService.audit(AuditEvent.FETCH_USR_DET, Components. JOB_SERVICE);
         String serverVersion = getServerVersionFromConfigs();
         if (serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
             result = "";
