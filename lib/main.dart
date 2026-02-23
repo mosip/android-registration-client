@@ -43,15 +43,49 @@ void main() async {
   );
 }
 
+/// Max retries when showing the sync-restart dialog if context/localizations
+/// are not ready yet (e.g. native call before widget tree is mounted).
+const int _syncRestartDialogMaxRetries = 10;
+
 void _setupSyncRestartChannel() {
   const MethodChannel(_syncRestartChannel).setMethodCallHandler((MethodCall call) async {
     if (call.method == 'showRestartDialog') {
-      // Ensure we have a valid context (e.g. after first frame when navigator is built)
-      void showRestartDialog() {
+      int attempt = 0;
+
+      void tryShowRestartDialog() {
+        attempt++;
         final context = rootNavigatorKey.currentContext;
-        if (context == null) return;
+        if (context == null) {
+          if (attempt <= _syncRestartDialogMaxRetries) {
+            debugPrint(
+              'SyncRestart: context not ready (attempt $attempt/$_syncRestartDialogMaxRetries), '
+              'scheduling retry on next frame.',
+            );
+            WidgetsBinding.instance.addPostFrameCallback((_) => tryShowRestartDialog());
+          } else {
+            debugPrint(
+              'SyncRestart: WARNING — Restart prompt was not shown: navigator context was null '
+              'after $_syncRestartDialogMaxRetries attempts. User may need to restart the app manually.',
+            );
+          }
+          return;
+        }
         final loc = AppLocalizations.of(context);
-        if (loc == null) return;
+        if (loc == null) {
+          if (attempt <= _syncRestartDialogMaxRetries) {
+            debugPrint(
+              'SyncRestart: localizations not ready (attempt $attempt/$_syncRestartDialogMaxRetries), '
+              'scheduling retry on next frame.',
+            );
+            WidgetsBinding.instance.addPostFrameCallback((_) => tryShowRestartDialog());
+          } else {
+            debugPrint(
+              'SyncRestart: WARNING — Restart prompt was not shown: AppLocalizations was null '
+              'after $_syncRestartDialogMaxRetries attempts. User may need to restart the app manually.',
+            );
+          }
+          return;
+        }
         showDialog<void>(
           context: context,
           barrierDismissible: false,
@@ -70,11 +104,16 @@ void _setupSyncRestartChannel() {
           ),
         );
       }
+
       final context = rootNavigatorKey.currentContext;
       if (context != null) {
-        showRestartDialog();
+        tryShowRestartDialog();
       } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) => showRestartDialog());
+        debugPrint(
+          'SyncRestart: native call arrived before widget tree ready, '
+          'scheduling restart dialog on next frame.',
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) => tryShowRestartDialog());
       }
     }
     return null;
