@@ -306,10 +306,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 true, centerMachineDto.getMachineRefId());
 
         if (containerPath != null && !containerPath.trim().isEmpty()) {
-            // Log packet encryption success
-            auditManagerService.audit(AuditEvent.PACKET_ENCRYPTED, Components.REGISTRATION);
-            // Log packet zipped successfully
-            auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ZIP, Components.REGISTRATION);
+            auditManagerService.audit(AuditEvent.PACKET_ENCRYPTED_AND_INTERNAL_ZIP, Components.REGISTRATION);
 
             String packetId = containerPath.substring(containerPath.lastIndexOf("/") + 1);
                packetId = packetId.replace(".zip", "");

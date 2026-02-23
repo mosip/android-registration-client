@@ -174,12 +174,11 @@ public enum AuditEvent {
 
     // Registration Packet Creation
     PACKET_CREATION_SUCCESS("REG-EVT-078", USER_EVENT.getCode(), "PACKET_CREATION_SUCCESS","Packet Successfully Created"),
-    PACKET_ENCRYPTED("REG-EVT-079", USER_EVENT.getCode(), "PACKET_ENCRYPTED", "Packet Encrypted Successfully"),
+    PACKET_ENCRYPTED_AND_INTERNAL_ZIP("REG-EVT-085", USER_EVENT.getCode(), "PACKET_ENCRYPTED_AND_INTERNAL_ZIP", "Packet encrypted and zipped successfully"),
     PACKET_UPLOADED("REG-EVT-080", USER_EVENT.getCode(), "PACKET_UPLOADED", "Packet Uploaded Successfully"),
     PACKET_SYNCED_TO_SERVER("REG-EVT-081", USER_EVENT.getCode(), "PACKET_SYNCED_TO_SERVER", "Packet Synced to Server Successfully"),
     PACKET_STATUS_UPDATE("REG-EVT-071", USER_EVENT.getCode(), "PACKET_APPROVED", "Packet %s Successfully"),
     PACKET_INTERNAL_ERROR("REG-EVT-074", USER_EVENT.getCode(), "PACKET_INTERNAL_ERROR", "Packet Creation Error"),
-    PACKET_INTERNAL_ZIP("REG-EVT-075", USER_EVENT.getCode(), "PACKET_INTERNAL_ZIP", "Packet internally zipped successfully"),
     PACKET_DEMO_JSON_CREATED("REG-EVT-076", USER_EVENT.getCode(), "PACKET_DEMO_JSON_CREATED", "Packet Demographic JSON created successfully"),
     SAVE_DETAIL_TO_DTO("REG-EVT-084", USER_EVENT.getCode(), "SAVE_DETAIL_TO_DTO", "Saving the details to DTO"),
 
@@ -187,7 +186,6 @@ public enum AuditEvent {
     REG_BIO_EXCEPTION_MARKING("REG-EVT-027", USER_EVENT.getCode(), "REG_BIO_EXCEPTION_MARKING", "Biometric Exceptions: Marking"),
     REG_BIO_NEXT("REG-EVT-037", USER_EVENT.getCode(), "REG_BIO_NEXT", "Click Next to capture the next biometric"),
     REG_BIO_EXCEPTION_REMOVING("REG-EVT-065", USER_EVENT.getCode(), "REG_BIO_EXCEPTION_REMOVING", "Biometric Exceptions: Removing"),
-    REG_BIO_LEFT_SLAP_SCAN("REG-EVT-030", USER_EVENT.getCode(), "REG_BIO_LEFT_SLAP_SCAN", 	"Fingerprints: Scan of left slap"),
     REG_BIO_SCAN("REG-EVT-092", USER_EVENT.getCode(), "REG_BIO_SCAN", 	"Fingerprints: Scan of %s"),
     REG_BIO_CAPTURE_NEXT("REG-EVT-041", USER_EVENT.getCode(), "REG_BIO_CAPTURE_NEXT",	"Click of Next after capturing Biometrics");
 
