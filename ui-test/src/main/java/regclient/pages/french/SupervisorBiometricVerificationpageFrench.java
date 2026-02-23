@@ -8,10 +8,10 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometricVerificationpage {
 
-	@AndroidFindBy(accessibility = "Vérification biométrique du superviseur")
+	@AndroidFindBy(accessibility = "Enrôler les données biométriques de l'opérateur")
 	private WebElement operatorBiometricVerificationPageTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris ANALYSE\"))")
 	private WebElement irisScanIcon;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Main droite\"))")
@@ -89,7 +89,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	@AndroidFindBy(accessibility = "Marquage des exceptions sur Visage n'est pas autorisé")
 	private WebElement markingExceptionsOnFaceIsNotAllowedText;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.View\").clickable(true)")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(accessibility = "Permanent")

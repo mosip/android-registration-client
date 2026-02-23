@@ -20,7 +20,6 @@ public class AddMachineDetails extends AndroidBaseTest {
 	@Test(priority = 0, description = "Add machine details")
 	public void addMachineDetails() {
 
-		BasePage.disableAutoRotation();
 		LoginPageEnglish loginPage = new LoginPageEnglish(driver);
 
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),

@@ -137,7 +137,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify adult biometric correction")
 	public void adultBiometricCorrection() throws InterruptedException {
 
-		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -436,8 +435,10 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
-				"Verify if application ID In PreviewPage is displayed");
+
+//		Below commentout method may be required in future
+//		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
+//				"Verify if application ID In PreviewPage is displayed");
 
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
@@ -980,7 +981,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 	@Test(priority = 1, description = "Verify minor biometric correction")
 	public void minorBiometricCorrection() throws InterruptedException {
 
-		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

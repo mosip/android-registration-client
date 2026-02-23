@@ -105,6 +105,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -134,6 +136,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -166,7 +170,9 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
-//					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+					waitTime(1);
+					applyOrientation();
+					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
 					assertTrue(isDoccumentUploadPageDisplayed(),
@@ -205,6 +211,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 				cameraPage.handleCameraPermission();
 				cameraPage.clickimage();
 				cameraPage.clickOkButton();
+				waitTime(1);
+				applyOrientation();
 				assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 				cropCaptureImage();
 				clickOnSaveButton();
@@ -233,6 +241,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();

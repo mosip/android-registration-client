@@ -78,7 +78,7 @@ public class LoginTest extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify user login with valid credentials")
 	public void userloginTest() {
-		BasePage.disableAutoRotation();
+	
 		LoginPage loginPage = null;
 		OperationalTaskPage operationalTaskPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
@@ -227,7 +227,7 @@ public class LoginTest extends AndroidBaseTest {
 		}
 
 		profilePage.clickOnLogoutButton();
-
+		
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
@@ -237,7 +237,6 @@ public class LoginTest extends AndroidBaseTest {
 	@Test(priority = 1, description = "Verify operator onboarding process")
 	public void onboardingTest() {
 
-		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
 		OnBoardPage onBoardPage = null;
 		SupervisorBiometricVerificationpage supervisorBiometricVerificationpage = null;
@@ -449,7 +448,7 @@ public class LoginTest extends AndroidBaseTest {
 
 	@Test(priority = 2, description = "Verify operator biometric update functionality")
 	public void updateOperatorBiometrics() {
-		BasePage.disableAutoRotation();
+	
 		LoginPage loginPage = null;
 		OperationalTaskPage operationalTaskPage = null;
 		RegistrationTasksPage registrationTasksPage = null;

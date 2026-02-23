@@ -110,6 +110,8 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -142,6 +144,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 					waitTime(1);
 					cameraPage.clickOkButton();
 					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -176,6 +179,8 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 					cameraPage.clickimage();
 					waitTime(1);
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -214,6 +219,8 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 				cameraPage.handleCameraPermission();
 				cameraPage.clickimage();
 				cameraPage.clickOkButton();
+				waitTime(1);
+				applyOrientation();
 				assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 				cropCaptureImage();
 				clickOnSaveButton();
@@ -242,6 +249,8 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();

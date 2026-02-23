@@ -131,7 +131,6 @@ public class UpdateMyUinUpdateDocuments extends AndroidBaseTest {
 	public void updateMyUinUpdateDocuments() throws InterruptedException {
 		FetchUiSpec.getUiSpec("updateProcess");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;

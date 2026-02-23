@@ -51,10 +51,10 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
 	@AndroidFindBy(xpath = "//android.widget.EditText[contains(@hint, 'أدخل معرف طلب المعلومات الإضافية')]")
 	private WebElement additionalInfoRequestIdTextbox;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"لقد كنت خاملاً\")")
 	private WebElement autoLogoutPopup;
-	
+
 	@AndroidFindBy(accessibility = "البقاء مسجلاً الدخول")
 	private WebElement stayLoggedInButton;
 
@@ -152,7 +152,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		clickOnElement(continueButton);
 		return new PreviewPageArabic(driver);
 	}
-	
+
 	public RegistrationTasksPage clickOnStayLoggedInButton() {
 		clickOnElement(stayLoggedInButton);
 		return new RegistrationTasksPageArabic(driver);
@@ -178,21 +178,20 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 				id = OTPListener.getAdditionalReqId(emailId);
 			} catch (Exception e) {
 				// If getAdditionalReqId can throw, log and continue polling
-				System.out.println("OTPListener.getAdditionalReqId threw: " + e.getMessage());
+				logger.info("OTPListener.getAdditionalReqId threw: " + e.getMessage());
 			}
 
 			if (id != null && !id.isEmpty() && !"{Failed}".equals(id)) {
 				String finalId = id.trim() + (id.endsWith(SUFFIX) ? "" : SUFFIX);
-				System.out.println("Found id: " + id + " -> finalId: " + finalId);
+				logger.info("Found id: " + id + " -> finalId: " + finalId);
 
 				// typeAndVerify should return true on success; handle its failure/exception
 				try {
-				    typeAndVerify(additionalInfoRequestIdTextbox, finalId);
-				    System.out.println("Entered finalId: " + finalId);
-				    return; // success
+					typeAndVerify(additionalInfoRequestIdTextbox, finalId);
+					logger.info("Entered finalId: " + finalId);
+					return; // success
 				} catch (Exception e) {
-				    throw new AssertionError(
-				        "Failed while typing finalId: " + finalId + " : " + e.getMessage(), e);
+					throw new AssertionError("Failed while typing finalId: " + finalId + " : " + e.getMessage(), e);
 				}
 
 			}
@@ -200,7 +199,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 			// handle auto logout popup
 			try {
 				if (isAutoLogoutPopupDisplayed()) {
-					System.out.println("Auto-logout popup displayed — staying logged in.");
+					logger.info("Auto-logout popup displayed — staying logged in.");
 					clickOnStayLoggedInButton();
 				}
 			} catch (Exception ignored) {
@@ -209,7 +208,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 			// log remaining time
 			long elapsed = System.currentTimeMillis() - startMs;
 			long remainingMs = Math.max(0, timeoutMs - elapsed);
-			System.out.println("ID not found yet. Elapsed " + (elapsed / 1000) + "s, remaining " + (remainingMs / 1000)
+			logger.info("ID not found yet. Elapsed " + (elapsed / 1000) + "s, remaining " + (remainingMs / 1000)
 					+ "s. Sleeping " + pollIntervalSeconds + "s.");
 
 			try {
@@ -226,10 +225,11 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	}
 
 	private void typeAndVerify(WebElement el, String value) {
-	    el.click();
-	    el.clear();
-	    el.sendKeys(value);
+		el.click();
+		el.clear();
+		el.sendKeys(value);
 	}
+
 	public boolean isAutoLogoutPopupDisplayed() {
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofMinutes(10));

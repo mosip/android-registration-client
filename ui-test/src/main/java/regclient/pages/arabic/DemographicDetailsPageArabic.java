@@ -425,8 +425,8 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 
 	public void fetchPreregApplicationId(String age) {
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
-		By appIdTextbox = MobileBy
-				.AndroidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(0)");
+		By appIdTextbox = MobileBy.AndroidUIAutomator(
+			    "new UiSelector().className(\"android.widget.EditText\").instance(0)");
 
 		// Verify label is displayed
 		boolean isDisplayed = isElementDisplayed(appIdLabel);

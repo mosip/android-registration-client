@@ -224,45 +224,42 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
             ),
             Row(
               children: [
-                Expanded(
-                  flex: 3,
-                  child: TextFormField(
-                    key: _formFieldKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    textCapitalization: TextCapitalization.words,
-                    controller: preRegIdController,
-                    onChanged: (value) {
-                      //preRegIdController.text = value;
-                      globalProvider.setPreRegistrationId(value);
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return null; // Empty validation handled by button click
-                      }
-                      if (globalProvider.pridLength != null) {
-                        // Check if length matches configured value
-                        if (value.length > globalProvider.pridLength!) {
-                          return AppLocalizations.of(context)!
-                              .prid_length_greater(globalProvider.pridLength!);
-                        }
-                      }
-                      return null;
-                    },
-                    textAlign: TextAlign.left,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: appGreyShade, width: 1),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 14),
-                      hintText: AppLocalizations.of(context)!.enter_application_id,
-                      hintStyle:
-                          const TextStyle(color: appBlackShade3, fontSize: 14),
+              Expanded(
+              flex: 3,
+              child: Semantics(
+                label: 'application_id_text_field',
+                container: true,
+                excludeSemantics: true,
+                child: TextFormField(
+                  key: _formFieldKey,
+                  controller: preRegIdController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  textCapitalization: TextCapitalization.words,
+                  onChanged: (value) {
+                    globalProvider.setPreRegistrationId(value);
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return null;
+                    if (globalProvider.pridLength != null &&
+                        value.length > globalProvider.pridLength!) {
+                      return AppLocalizations.of(context)!
+                          .prid_length_greater(globalProvider.pridLength!);
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
+                    contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    hintText:
+                    AppLocalizations.of(context)!.enter_application_id,
                   ),
                 ),
-                SizedBox(width: 8.w),
+              ),
+            ),
+          SizedBox(width: 8.w),
         OutlinedButton(
           style: OutlinedButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
