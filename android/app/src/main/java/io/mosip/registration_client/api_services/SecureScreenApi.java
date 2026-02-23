@@ -8,6 +8,8 @@
 package io.mosip.registration_client.api_services;
 
 import android.app.Activity;
+import android.util.Log;
+import java.lang.ref.WeakReference;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -20,25 +22,27 @@ import io.mosip.registration_client.model.SecureScreenPigeon;
 @Singleton
 public class SecureScreenApi implements SecureScreenPigeon.SecureScreenApi {
 
-    private Activity activity;
+    private WeakReference<Activity> activityRef = new WeakReference<>(null);
 
     @Inject
     public SecureScreenApi() {
     }
 
     public void setCallbackActivity(Activity activity) {
-        this.activity = activity;
+        this.activityRef = new WeakReference<>(activity);
     }
 
     @Override
     public void addFlagSecure(@NonNull SecureScreenPigeon.Result<Boolean> result) {
+        Activity activity = activityRef.get();
         if (activity == null) {
             result.error(new IllegalStateException("Activity not set"));
             return;
         }
-        activity.runOnUiThread(() -> {
+        final Activity localActivity = activity;
+        localActivity.runOnUiThread(() -> {
             try {
-                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+                localActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
                 result.success(true);
             } catch (Exception e) {
                 result.error(e);
@@ -48,13 +52,15 @@ public class SecureScreenApi implements SecureScreenPigeon.SecureScreenApi {
 
     @Override
     public void clearFlagSecure(@NonNull SecureScreenPigeon.Result<Boolean> result) {
+        Activity activity = activityRef.get();
         if (activity == null) {
             result.error(new IllegalStateException("Activity not set"));
             return;
         }
-        activity.runOnUiThread(() -> {
+        final Activity localActivity = activity;
+        localActivity.runOnUiThread(() -> {
             try {
-                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+                localActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
                 result.success(true);
             } catch (Exception e) {
                 result.error(e);
