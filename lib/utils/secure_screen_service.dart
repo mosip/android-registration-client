@@ -8,10 +8,12 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:registration_client/pigeon/secure_screen_pigeon.dart';
 
 class SecureScreenService {
   SecureScreenService._();
+
+  static final SecureScreenApi _api = SecureScreenApi();
 
   static int _refCount = 0;
   static Future<void> _operationQueue = Future.value();
@@ -22,7 +24,7 @@ class SecureScreenService {
       _refCount++;
       if (_refCount == 1) {
         try {
-          await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+          await _api.addFlagSecure();
         } catch (e) {
           _refCount--;
           log('SecureScreenService: failed to add FLAG_SECURE – $e');
@@ -43,7 +45,7 @@ class SecureScreenService {
       _refCount--;
       if (_refCount == 0) {
         try {
-          await FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+          await _api.clearFlagSecure();
         } catch (e) {
           _refCount++;
           log('SecureScreenService: failed to clear FLAG_SECURE – $e');
