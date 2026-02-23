@@ -235,87 +235,83 @@ class _CustomDropDownState extends State<DropDownControl> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Column(
       children: [
-        Semantics(
-          label: '${widget.field.id}_dropdown',
-          child: Card(
-          elevation: 5,
-          margin: EdgeInsets.symmetric(
-              vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomLabel(field: widget.field),
-                const SizedBox(
-                  height: 10,
-                ),
-                DropdownButtonFormField<GenericData>(
-                  key: Key('${widget.field.id}_dropdown'),
-                  isExpanded: true,
-                  icon: const Icon(null),
-                  decoration: InputDecoration(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
-                      ),
+        Card(
+        elevation: 5,
+        margin: EdgeInsets.symmetric(
+            vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomLabel(field: widget.field),
+              const SizedBox(
+                height: 10,
+              ),
+              DropdownButtonFormField<GenericData>(
+                isExpanded: true,
+                icon: const Icon(null),
+                decoration: InputDecoration(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: const BorderSide(
+                      color: Colors.grey,
+                      width: 1.0,
                     ),
-                    hintText: "Select Option",
-                    hintStyle: const TextStyle(
-                      color: appBlackShade3,
-                    ),
-                    suffixIcon: const Icon(Icons.keyboard_arrow_down,
-                        color: Colors.grey),
                   ),
-                  items: list
-                      .map((option) => DropdownMenuItem(
-                            value: option,
-                      child: Text(option!.concatenatedName ?? option.name,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        softWrap: false,
-                      ),
-                          ))
-                      .toList(),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  value: selected,
-                  validator: (value) {
-                    if (!widget.field.required!) {
-                      if (widget.field.requiredOn == null ||
-                          widget.field.requiredOn!.isEmpty ||
-                          !(globalProvider
-                                  .mvelRequiredFields[widget.field.id] ??
-                              true)) {
-                        return null;
-                      }
-                    }
-                    if (value == null) {
-                      log("validation $value");
-                      return AppLocalizations.of(context)!.select_value_message;
-                    }
-                    if (!widget.validation.hasMatch(value.name)) {
-                      log("validation match $value");
-                      return AppLocalizations.of(context)!.select_value_message;
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    if (value != selected) {
-                      saveData(value);
-                      _saveDataToMap(value);
-                      globalProvider.setLocationHierarchy(
-                          widget.field.group!, value!.code, index!);
-                      String lang = globalProvider.mandatoryLanguages[0]!;
-                      _getSelectedValueFromMap(lang, list);
-                    }
-                  },
+                  hintText: "Select Option",
+                  hintStyle: const TextStyle(
+                    color: appBlackShade3,
+                  ),
+                  suffixIcon: const Icon(Icons.keyboard_arrow_down,
+                      color: Colors.grey),
                 ),
-              ],
-            ),
+                items: list
+                    .map((option) => DropdownMenuItem(
+                          value: option,
+                    child: Text(option!.concatenatedName ?? option.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                        ))
+                    .toList(),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                value: selected,
+                validator: (value) {
+                  if (!widget.field.required!) {
+                    if (widget.field.requiredOn == null ||
+                        widget.field.requiredOn!.isEmpty ||
+                        !(globalProvider
+                                .mvelRequiredFields[widget.field.id] ??
+                            true)) {
+                      return null;
+                    }
+                  }
+                  if (value == null) {
+                    log("validation $value");
+                    return AppLocalizations.of(context)!.select_value_message;
+                  }
+                  if (!widget.validation.hasMatch(value.name)) {
+                    log("validation match $value");
+                    return AppLocalizations.of(context)!.select_value_message;
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  if (value != selected) {
+                    saveData(value);
+                    _saveDataToMap(value);
+                    globalProvider.setLocationHierarchy(
+                        widget.field.group!, value!.code, index!);
+                    String lang = globalProvider.mandatoryLanguages[0]!;
+                    _getSelectedValueFromMap(lang, list);
+                  }
+                },
+              ),
+            ],
           ),
         ),
         ),

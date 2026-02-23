@@ -278,16 +278,21 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.search_for_key,
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+          child: Semantics(
+            label: 'global_config_search',
+            container: true,
+            excludeSemantics: true,
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.search_for_key,
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
             ),
           ),
         ),
@@ -302,31 +307,46 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
             children: [
               Expanded(
                 flex: 2,
-                child: Text(
-                  AppLocalizations.of(context)!.key,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+                child: Semantics(
+                  label: 'key',
+                  container: true,
+                  excludeSemantics: true,
+                  child: Text(
+                    AppLocalizations.of(context)!.key,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  AppLocalizations.of(context)!.server_value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+                child: Semantics(
+                  label: 'server_value',
+                  container: true,
+                  excludeSemantics: true,
+                  child: Text(
+                    AppLocalizations.of(context)!.server_value,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  AppLocalizations.of(context)!.local_value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+                child: Semantics(
+                  label: 'local_value',
+                  container: true,
+                  excludeSemantics: true,
+                  child: Text(
+                    AppLocalizations.of(context)!.local_value,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
