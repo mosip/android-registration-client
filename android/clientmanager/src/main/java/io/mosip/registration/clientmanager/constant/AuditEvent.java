@@ -109,9 +109,9 @@ public enum AuditEvent {
     REG_DOC_BACK("REG-EVT-026", USER_EVENT.getCode(), "REG_DOC_BACK", "Click of Back to demographic details"),
 
     // MDM
-    REG_DOC_SCAN("REG-EVT-089", USER_EVENT.getCode(), "REG_DOC_SCAN", "Doc: Click of Scan"),
-    REG_DOC_VIEW("REG-EVT-090", USER_EVENT.getCode(), "REG_DOC_VIEW", "Doc: View"),
-    REG_DOC_DELETE("REG-EVT-091", USER_EVENT.getCode(), "REG_DOC_DELETE", "Doc: Delete"),
+    REG_DOC_SCAN("REG-EVT-089", USER_EVENT.getCode(), "REG_DOC_SCAN", "Doc: Click of Scan for %s"),
+    REG_DOC_VIEW("REG-EVT-090", USER_EVENT.getCode(), "REG_DOC_VIEW", "Doc: View %s document"),
+    REG_DOC_DELETE("REG-EVT-091", USER_EVENT.getCode(), "REG_DOC_DELETE", "Doc: Delete %s document"),
 
     // Approve Registration
     APPR_VIEW_REG("REG-EVT-066", USER_EVENT.getCode(), "APPR_VIEW_REG", "View registration detail"),

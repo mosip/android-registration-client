@@ -10,14 +10,19 @@ import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.remote.SupportsContextSwitching;
+import io.appium.java_client.remote.SupportsRotation;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import regclient.pages.english.BiometricDetailsPageEnglish;
+import regclient.utils.TestDataReader;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -27,6 +32,8 @@ import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +45,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,6 +73,8 @@ public class BasePage {
 		PageFactory.initElements(new AppiumFieldDecorator(driver), this);
 
 	}
+
+	private static final Logger logger = LoggerFactory.getLogger(BasePage.class);
 
 	protected boolean isElementDisplayed(WebElement element) {
 		try {
@@ -105,9 +116,9 @@ public class BasePage {
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
 
-	protected void waitForElementToBeClickable(WebElement element) {
-		WebDriverWait wait = new WebDriverWait(driver, ofSeconds(20));
-		wait.until(ExpectedConditions.refreshed(ExpectedConditions.elementToBeClickable(element)));
+	protected WebElement waitForElementToBeClickable(WebElement element) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
 	protected boolean isElementDisplayed(WebElement element, int waitTime) {
@@ -148,6 +159,17 @@ public class BasePage {
 		((HidesKeyboard) driver).hideKeyboard();
 	}
 
+	protected void clickAndsendKeysToTextBox3(WebElement element, String text) {
+		this.waitForElementToBeClickable(element);
+		element.click();
+		waitTime(1);
+		element.clear();
+		waitTime(1);
+		element.sendKeys(text);
+		waitTime(1);
+		((HidesKeyboard) driver).hideKeyboard();
+	}
+
 	protected void clickAndsendKeysToTextBox2(WebElement element, String text) {
 		this.waitForElementToBeVisible(element);
 		element.click();
@@ -170,15 +192,13 @@ public class BasePage {
 	}
 
 	protected void sendKeys(By locator, String text) {
-	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-	    WebElement el = wait.until(
-	        ExpectedConditions.elementToBeClickable(locator)
-	    );
-	    el.click();
-	    el.clear();
-	    el.sendKeys(text);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
+		el.click();
+		el.clear();
+		el.sendKeys(text);
+		((HidesKeyboard) driver).hideKeyboard();
 	}
-
 
 	protected String getTextFromLocator(WebElement element) {
 		this.waitForElementToBeVisible(element);
@@ -235,25 +255,6 @@ public class BasePage {
 		}
 	}
 
-	public static void disableAutoRotation() {
-		try {
-			ProcessBuilder processBuilder;
-			String osName = System.getProperty("os.name");
-			if (osName.contains("Windows")) {
-				processBuilder = new ProcessBuilder("cmd.exe", "/c",
-						"adb shell settings put system accelerometer_rotation 0");
-
-			} else {
-				processBuilder = new ProcessBuilder("/bin/bash", "-c",
-						"adb shell settings put system accelerometer_rotation 0");
-			}
-			processBuilder.redirectErrorStream(true);
-			processBuilder.start();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	protected String getCurrentDate() {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -285,10 +286,10 @@ public class BasePage {
 				wait.until(ExpectedConditions.visibilityOf(element));
 				return element;
 			} catch (StaleElementReferenceException e) {
-				System.out.println("StaleElementReferenceException caught. Retrying... " + attempts);
+				logger.info("StaleElementReferenceException caught. Retrying... " + attempts);
 				attempts++;
 			} catch (TimeoutException e) {
-				System.out.println("TimeoutException caught. Retrying... " + attempts);
+				logger.info("TimeoutException caught. Retrying... " + attempts);
 				attempts++;
 			}
 		}
@@ -343,7 +344,6 @@ public class BasePage {
 			try {
 				element = driver.findElement(by);
 
-				// 🔑 force staleness check
 				element.isDisplayed();
 
 				return element;
@@ -399,7 +399,7 @@ public class BasePage {
 		Sequence clickSequence = new Sequence(finger, 1)
 				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y))
 				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-				.addAction(new Pause(finger, Duration.ofMillis(600))) // Pause for 200ms
+				.addAction(new Pause(finger, Duration.ofMillis(600))) // Pause for 600ms
 				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())); // Release at x, y
 																							// coordinates
 		driver.perform(Collections.singletonList(clickSequence));
@@ -528,7 +528,7 @@ public class BasePage {
 			return findElementWithRetry(locator); // reuse your existing retry logic
 		} catch (Exception e) {
 			// Optional: log for debugging
-			System.out.println("Element not found after retries: " + locator);
+			logger.info("Element not found after retries: " + locator);
 			return null; // prevents NoSuchElementException / NPE
 		}
 	}
@@ -708,21 +708,6 @@ public class BasePage {
 		}
 	}
 
-	public void switchToWebContext() {
-		SupportsContextSwitching ctx = (SupportsContextSwitching) driver;
-
-		if (!ctx.getContext().contains("WEBVIEW") && !ctx.getContext().contains("CHROMIUM")) {
-
-			for (String context : ctx.getContextHandles()) {
-				if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
-					ctx.context(context);
-					return;
-				}
-			}
-			throw new RuntimeException("No web context found");
-		}
-	}
-
 	public void scrollToTopSafe() {
 		try {
 			if (!((SupportsContextSwitching) driver).getContext().equals("NATIVE_APP")) {
@@ -731,7 +716,7 @@ public class BasePage {
 			driver.manage().window().getSize(); // safe now
 			scrollToTop();
 		} catch (Exception e) {
-			System.out.println("scrollToTop skipped — not in a native window");
+			logger.info("scrollToTop skipped — not in a native window");
 		}
 	}
 
@@ -829,19 +814,6 @@ public class BasePage {
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
 	}
 
-	public void clickAndsendKeysToTextBoxByLocator(By locator, String value) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-		wait.ignoring(StaleElementReferenceException.class);
-
-		wait.until(Webdriver -> {
-			WebElement element = Webdriver.findElement(locator);
-			element.click();
-			element.clear();
-			element.sendKeys(value);
-			return true;
-		});
-	}
-
 	public boolean isElementEnabled(By locator) {
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -889,24 +861,92 @@ public class BasePage {
 	}
 
 	protected void clickAndSendKeysToTextBox(By locator, String text) {
-		this.waitForElementToBeVisible(locator, 10);
 
-		WebElement element = driver.findElement(locator);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-		element.click();
-		waitTime(1);
+		for (int i = 0; i < 2; i++) {
+			try {
+				WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 
-		element.clear();
-		waitTime(1);
+				element.click();
+				element.clear();
+				element.sendKeys(text);
 
-		element.sendKeys(text);
-		waitTime(1);
+				hideKeyboardIfVisible();
+				return;
 
-		hideKeyboardIfVisible();
+			} catch (StaleElementReferenceException e) {
+
+			}
+		}
+
+		throw new RuntimeException("Unable to interact with textbox");
 	}
 
 	protected void waitForElementToBeVisible(By locator, int waitTime) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(waitTime));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
+
+	private ScreenOrientation desiredOrientation;
+
+	public void applyOrientation() {
+		String orientation = TestDataReader.readData("orientation");
+		ScreenOrientation finalOrientation = ScreenOrientation.PORTRAIT; // default fallback
+		if (orientation != null && !orientation.isBlank()) {
+			try {
+				finalOrientation = ScreenOrientation.valueOf(orientation.trim().toUpperCase());
+			} catch (IllegalArgumentException e) {
+				logger.info(
+						"Invalid orientation value in testdata.json: " + orientation + ". Falling back to PORTRAIT.");
+			}
+
+		} else {
+			logger.info("Orientation not provided or empty. Using default PORTRAIT.");
+		}
+
+		lockSystemRotation(finalOrientation);
+		((SupportsRotation) driver).rotate(finalOrientation);
+
+		logger.info("Orientation applied: " + finalOrientation);
+	}
+
+	private void lockSystemRotation(ScreenOrientation orientation) {
+
+		String rotationValue = "0"; // Portrait default
+
+		if (orientation == ScreenOrientation.LANDSCAPE) {
+			rotationValue = "1";
+		}
+
+		executeAdbCommand(new String[] { "adb", "shell", "settings", "put", "system", "accelerometer_rotation", "0" });
+
+		executeAdbCommand(new String[] { "adb", "shell", "settings", "put", "system", "user_rotation", rotationValue });
+	}
+
+	private void executeAdbCommand(String[] command) {
+		try {
+			ProcessBuilder processBuilder = new ProcessBuilder(command);
+			processBuilder.redirectErrorStream(true);
+
+			Process process = processBuilder.start();
+
+			// Read output (important to prevent stream blocking)
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				while (reader.readLine() != null) {
+					// optionally log output
+				}
+			}
+
+			int exitCode = process.waitFor();
+
+			if (exitCode != 0) {
+				System.out.println("ADB command failed with exit code: " + exitCode);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

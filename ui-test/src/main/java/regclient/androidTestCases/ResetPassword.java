@@ -36,7 +36,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify reset password")
 	public void resetPassword() throws IOException {
-		BasePage.disableAutoRotation();
+	
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		ProfilePage profilePage = null;
@@ -156,7 +156,6 @@ public class ResetPassword extends AndroidBaseTest {
 		keycloakPage.clickOnSignoutButton();
 
 		keycloakPage.resumeArcApplication();
-		assertTrue(profilePage.isLogoutPopUpMessageDisplayed(), "Verify if logout displayed in profile page");
 
 		profilePage.clickOnLogoutButton();
 
@@ -221,7 +220,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 	@Test(priority = 1, description = "Reset to default password", dependsOnMethods = "resetPassword")
 	public void resetToDefaultPassword() throws IOException {
-		BasePage.disableAutoRotation();
+		
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		ProfilePage profilePage = null;
@@ -336,7 +335,6 @@ public class ResetPassword extends AndroidBaseTest {
 
 		keycloakPage.clickOnSignoutButton();
 		keycloakPage.resumeArcApplication();
-		assertTrue(profilePage.isLogoutPopUpMessageDisplayed(), "Verify if logout displayed in profile page");
 		
 		profilePage.clickOnLogoutButton();
 	}

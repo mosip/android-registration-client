@@ -129,7 +129,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify adult pre-reg fetching registration")
 	public void adultPreRegFetching() throws InterruptedException {
-		BasePage.disableAutoRotation();
+
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -612,7 +612,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 	@Test(priority = 1, description = "Verify minor pre-reg fetching registration")
 	public void minorPreRegFetching() throws InterruptedException {
 
-		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -650,6 +649,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+
 		loginPage.selectLanguage();
 
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),
@@ -1180,7 +1180,6 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 	@Test(priority = 2, description = "Verify infant pre-reg fetching registration")
 	public void infantPreRegFetching() throws InterruptedException {
 
-		BasePage.disableAutoRotation();
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -1218,6 +1217,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+
 		loginPage.selectLanguage();
 
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),

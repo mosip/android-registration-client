@@ -70,7 +70,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	@AndroidFindBy(accessibility = "Device Settings\nTab 3 of 3")
 	private WebElement deviceSettingsTab;
 
-	@AndroidFindBy(accessibility = "Global Config Settings\nKey\nServer Value\nLocal Value")
+	@AndroidFindBy(xpath ="//android.widget.EditText/preceding::android.view.View[contains(@content-desc,'Global Config Settings')][1]")
 	private WebElement globalConfigSettingsHeader;
 
 	@AndroidFindBy(accessibility = "SUBMIT")
@@ -278,6 +278,11 @@ public class SettingsPageEnglish extends SettingsPage {
 	public void clickOnSyncButton(String jobName) {
 		By syncButton = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
 		click(syncButton);
+	}
+	
+	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
+		By searchBox = By.xpath("//android.view.View[@content-desc='Global Config Settings']//android.widget.EditText");
+		return isElementDisplayed(searchBox);
 	}
 
 }

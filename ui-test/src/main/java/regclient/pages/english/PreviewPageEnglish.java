@@ -9,6 +9,7 @@ import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.AdminTestUtil;
 import regclient.api.FetchUiSpec;
@@ -60,17 +61,34 @@ public class PreviewPageEnglish extends PreviewPage {
 		clickOnElement(continueButton);
 		return new AuthenticationPageEnglish(driver);
 	}
-
+	
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
-		return isElementDisplayed(demographicInformationInPreviewPage);
+		try {
+			scrollToText("Demographic Information");
+			WebElement demographicInformationInPreviewPage = driver
+					.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Demographic Information\")"));
+			return isElementDisplayed(demographicInformationInPreviewPage);
+		} catch (Exception e) {
+			return false;
+		}
 	}
-
+	
 	public boolean isDocumentsInformationInPreviewPageDisplayed() {
-		return isElementDisplayed(documentsInformationInPreviewPage);
+		try {
+			scrollToText("Documents");
+			return isElementDisplayed(documentsInformationInPreviewPage);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
-		return isElementDisplayed(biometricsInformationInPreviewPage);
+		try {
+			scrollToText("Biometrics");
+			return isElementDisplayed(biometricsInformationInPreviewPage);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -95,8 +113,12 @@ public class PreviewPageEnglish extends PreviewPage {
 	}
 
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
-		waitTime(1);
-		return isElementDisplayed(applicationIDPreviewPage);
+		try {
+			waitTime(1);
+			return isElementDisplayed(applicationIDPreviewPage);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -141,6 +163,12 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
+	}
+
+	public void scrollToText(String text) {
+		((AndroidDriver) driver)
+				.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+						+ ".scrollIntoView(new UiSelector().text(\"" + text + "\"))"));
 	}
 
 }

@@ -8,19 +8,19 @@ import regclient.page.DashboardPage;
 
 public class DashboardPageFrench extends DashboardPage {
 
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Dashboard\"]/following-sibling::android.view.View[3]")
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[3]")
 	private WebElement packetUploadedNumber;
 
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Dashboard\"]/following-sibling::android.view.View[2]")
+	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Tableau de bord\"]/following-sibling::android.view.View[2]")
 	private WebElement packetSyncedNumber;
 
 	@AndroidFindBy(accessibility = "Tableau de bord")
 	private WebElement dashboardPageTitle;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Identifiant utilisateur\")]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"ID de l'utilisateur\")]")
 	private WebElement userIDTitle;
 
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Nom d’utilisateur\")]")
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Nom d'utilisateur\")]")
 	private WebElement userNameTitle;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Statut\")]")

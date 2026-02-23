@@ -76,7 +76,7 @@ public class PreviewPageArabic extends PreviewPage {
 	public boolean isDocumentsInformationInPreviewPageDisplayed() {
 		try {
 			scrollToText("وثائق");
-			return documentsInformationInPreviewPage.isDisplayed();
+			return isElementDisplayed(documentsInformationInPreviewPage);
 		} catch (Exception e) {
 			return false;
 		}
@@ -85,7 +85,7 @@ public class PreviewPageArabic extends PreviewPage {
 	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
 		try {
 			scrollToText("القياسات الحيوية");
-			return biometricsInformationInPreviewPage.isDisplayed();
+			return isElementDisplayed(biometricsInformationInPreviewPage);
 		} catch (Exception e) {
 			return false;
 		}
@@ -105,6 +105,7 @@ public class PreviewPageArabic extends PreviewPage {
 	}
 
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
+		waitTime(1);
 		return isElementDisplayed(applicationIDPreviewPage);
 	}
 

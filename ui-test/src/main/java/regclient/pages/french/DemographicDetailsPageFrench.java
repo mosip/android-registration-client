@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
@@ -50,8 +51,9 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc='RÉCUPÉRER DES DONNÉES']/following-sibling::android.widget.Button")
 	private WebElement scanButton;
 
-	@AndroidFindBy(accessibility = "Postal/ بريدي")
-	private WebElement postalHeader;
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'Non-Foreigner') or "
+			+ "contains(@content-desc,'Non-étranger')]")
+	private WebElement nonForeignerOption;
 
 	public DemographicDetailsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -88,12 +90,10 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 	public DocumentUploadPage clickOnContinueButton() {
 		clickOnElement(continueButton);
 		return new DocumentUploadPageFrench(driver);
-
 	}
 
 	public boolean isContinueButtonEnable() {
 		return isElementEnabled(continueButton);
-
 	}
 
 	public boolean isPreRegFetchDataTextBoxDisplay() {
@@ -204,7 +204,8 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					clickOnElement(dropdownElement);
 					waitTime(2);
 					if (!isElementDisplayed(dropdownElement)) {
-						clickOnElement(findElement(By.className("android.view.View")));
+//						clickOnElement(findElement(By.className("android.view.View")));
+						clickOnElement(nonForeignerOption);
 					} else if (isElementDisplayed(dropdownElement)) {
 						swipeOrScroll();
 						clickOnElement(dropdownElement);
@@ -418,15 +419,13 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 
 	public void fetchPreregApplicationId(String age) {
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
-		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
+		By appIdTextbox = By.xpath("(//android.widget.ScrollView//android.widget.EditText)[1]");
 
-		// Verify label is displayed
 		boolean isDisplayed = isElementDisplayed(appIdLabel);
 		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
 
-		// Enter prereg ID
 		applicationIdTextBox = findElementWithRetry(appIdTextbox);
-		clickAndsendKeysToTextBox(applicationIdTextBox, AdminTestUtil.getPreRegistrationFlow(age));
+		clickAndsendKeysToTextBox3(applicationIdTextBox, AdminTestUtil.getPreRegistrationFlow(age));
 		clickOnElement(fetchDataButton);
 	}
 

@@ -122,7 +122,7 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	@AndroidFindBy(accessibility = "Marking exceptions on Face is not allowed")
 	private WebElement markingExceptionsOnFaceIsNotAllowedText;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.View\").clickable(true)")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View")
@@ -294,8 +294,7 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	}
 
 	public boolean isZoomButtonDisplayed() {
-		return true;
-//		return isElementDisplayed(zoomButton);
+		return isElementDisplayed(zoomButton);
 	}
 
 	public void clickOnRightHandScanTitle() {
