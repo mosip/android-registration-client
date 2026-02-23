@@ -2674,17 +2674,22 @@ class _BiometricCaptureScanBlockPortraitState
                       ),
                     );
                   },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1000),
-                          color: solidPrimary),
-                      height: 75,
-                      width: 75,
-                      child: Icon(
-                        Icons.zoom_in,
-                        color: pureWhite,
-                        size: 35,
-                      )))),
+                  child: Semantics(
+                    label: "zoom_in_button",
+                    container: true,
+                    excludeSemantics: true,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(1000),
+                            color: solidPrimary),
+                        height: 75,
+                        width: 75,
+                        child: Icon(
+                          Icons.zoom_in,
+                          color: pureWhite,
+                          size: 35,
+                        )),
+                  ))),
         ],
       );
     }
