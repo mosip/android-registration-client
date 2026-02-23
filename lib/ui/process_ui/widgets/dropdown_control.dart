@@ -235,7 +235,9 @@ class _CustomDropDownState extends State<DropDownControl> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Column(
       children: [
-        Card(
+        Semantics(
+          label: '${widget.field.id}_dropdown',
+          child: Card(
           elevation: 5,
           margin: EdgeInsets.symmetric(
               vertical: 1.h, horizontal: isPortrait ? 16.w : 0),
@@ -249,6 +251,7 @@ class _CustomDropDownState extends State<DropDownControl> {
                   height: 10,
                 ),
                 DropdownButtonFormField<GenericData>(
+                  key: Key('${widget.field.id}_dropdown'),
                   isExpanded: true,
                   icon: const Icon(null),
                   decoration: InputDecoration(
@@ -314,6 +317,7 @@ class _CustomDropDownState extends State<DropDownControl> {
               ],
             ),
           ),
+        ),
         ),
       ],
     );

@@ -89,23 +89,27 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
         elevation: 0,
         toolbarHeight: 75,
         leadingWidth: 80,
-        leading: Container(
-          margin: const EdgeInsets.all(14),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white.withOpacity(0.2),
-                padding: const EdgeInsets.all(4)),
-            child: const Icon(
-              Icons.arrow_back,
-              size: 32,
+        leading: Semantics(
+          label: 'pending_approval_back_button',
+          excludeSemantics: true,
+          child: Container(
+            margin: const EdgeInsets.all(14),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  padding: const EdgeInsets.all(4)),
+              child: const Icon(
+                Icons.arrow_back,
+                size: 32,
+              ),
+              onPressed: () {
+                context
+                    .read<RegistrationTaskProvider>()
+                    .getApplicationUploadNumber();
+                context.read<ApprovePacketsProvider>().getTotalCreatedPackets();
+                Navigator.of(context).pop();
+              },
             ),
-            onPressed: () {
-              context
-                  .read<RegistrationTaskProvider>()
-                  .getApplicationUploadNumber();
-              context.read<ApprovePacketsProvider>().getTotalCreatedPackets();
-              Navigator.of(context).pop();
-            },
           ),
         ),
         title: Text(AppLocalizations.of(context)!.pending_approval),

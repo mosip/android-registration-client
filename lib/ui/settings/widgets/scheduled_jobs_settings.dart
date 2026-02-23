@@ -393,20 +393,25 @@ class _JobCardState extends State<_JobCard> {
                             children: [
                               SizedBox(
                                 height: 32,
-                                child: TextField(
-                                  controller: _cronController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Cron Expression',
-                                    errorText: null,
-                                    errorBorder: _cronError != null 
-                                        ? const OutlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.red, width: 1))
-                                        : null,
-                                    border: const OutlineInputBorder(),
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                child: Semantics(
+                                  label: '${job.id}_cron_expression',
+                                  excludeSemantics: true,
+                                  container: true,
+                                  child: TextField(
+                                    controller: _cronController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Cron Expression',
+                                      errorText: null,
+                                      errorBorder: _cronError != null
+                                          ? const OutlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.red, width: 1))
+                                          : null,
+                                      border: const OutlineInputBorder(),
+                                      isDense: true,
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                    ),
+                                    style: const TextStyle(fontSize: 11),
                                   ),
-                                  style: const TextStyle(fontSize: 11),
                                 ),
                               ),
                               if (_cronError != null)
