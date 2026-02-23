@@ -19,7 +19,7 @@ public class OnBoardPageFrench extends OnBoardPage {
 	@AndroidFindBy(accessibility = "PASSEZ À LA MAISON")
 	private WebElement skipToHomeScreenButton;
 
-	@AndroidFindBy(accessibility = "Veuillez appuyer sur 'S'INSCRIRE' pour commencer le processus d'intégration.")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"INSCRIRE\")")
 	private WebElement onBoardWelcomeMessage;
 
 	public OnBoardPageFrench(AppiumDriver driver) {

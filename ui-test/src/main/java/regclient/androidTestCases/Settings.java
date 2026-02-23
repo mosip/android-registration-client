@@ -60,12 +60,9 @@ public class Settings extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify machine settings functionality")
 	public void settings() throws InterruptedException {
 
-		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SettingsPage settingsPage = null;
-		OperationalTaskPage operationalTaskPage = null;
-		UpdateOperatorBiometricspage UpdateOperatorBiometricspage = null;
 
 		final String language = TestDataReader.readData("language");
 		if ("eng".equalsIgnoreCase(language)) {
@@ -198,5 +195,4 @@ public class Settings extends AndroidBaseTest {
 //		assertTrue(settingsPage.isToastVisible("Master Data Sync Completed"), "Toast not found!");
 
 	}
-
 }

@@ -132,7 +132,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-		BasePage.disableAutoRotation();
+	
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;
@@ -287,7 +287,8 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				} else {
 					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
-				biometricDetailsPage.clickOnFaceScanIcon();
+				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+						"Verify if biometric details page is displayed");
 				if ("eng".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageEnglish(driver);
 				} else if ("hin".equalsIgnoreCase(language)) {
@@ -303,13 +304,18 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				} else {
 					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
-				applicantBiometricsPage.clickOnScanButton();
+				
+				if (FetchUiSpec.face.equals("yes")) {
+					
+					biometricDetailsPage.clickOnFaceScanIcon();
+					assertTrue(applicantBiometricsPage.isFaceScanTitleDisplayed(),
+							"Verify if applicant face scan title is displayed");
+					applicantBiometricsPage.clickOnScanButton();
 
-				assertTrue(applicantBiometricsPage.isFaceScan(),
-						"Verify if face captured and 2 attempts left text is displayed");
-				applicantBiometricsPage.closeScanCapturePopUp();
-
-				biometricDetailsPage = applicantBiometricsPage.clickOnNextButton();
+					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 1st attempt");
+					applicantBiometricsPage.closeScanCapturePopUp();
+					applicantBiometricsPage.clickOnNextButton();
+				}
 
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
 						"Verify if biometric details page is displayed");
@@ -335,15 +341,10 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				FetchUiSpec.face = "no";
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
+					
 					biometricDetailsPage.clickOnIntroducerIrisScan();
-					assertTrue(introducerBiometricPage.isIntroducerBiometricsPageDisplayed(),
-							"Verify if introducer biometric page is displayed");
-
+				
 					introducerBiometricPage.clickOnScanButton();
-
-					if (!introducerBiometricPage.isIrisScan()) {
-						introducerBiometricPage.clickOnScanButton();
-					}
 
 					assertTrue(introducerBiometricPage.isIrisScan(), "Verify if iris scan 1st attempt");
 					introducerBiometricPage.closeScanCapturePopUp();
@@ -351,49 +352,43 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				}
 				// righthand
 				if (FetchUiSpec.rightHand.equals("yes")) {
-
+					assertTrue(introducerBiometricPage.isRightHandScanTitleDisplayed(),
+							"Verify if right hand scan is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
-					if (!introducerBiometricPage.isRightHandScan()) {
-						introducerBiometricPage.clickOnScanButton();
-					}
-
 					assertTrue(introducerBiometricPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
-
 					introducerBiometricPage.closeScanCapturePopUp();
 					introducerBiometricPage.clickOnNextButton();
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
+					assertTrue(introducerBiometricPage.isLeftHandScanTitleDisplayed(),
+							"Verify if applicant left hand scan title is displayed");
 					introducerBiometricPage.clickOnScanButton();
-					assertTrue(introducerBiometricPage.isLeftHandScan(), "Verify if left hand scan 1st attempt");
+
+					assertTrue(introducerBiometricPage.isLeftHandScan(), "Verify if Left hand scan 1st attempt");
 					introducerBiometricPage.closeScanCapturePopUp();
-					assertTrue(introducerBiometricPage.isNextButtonDisplayed(), "Verify if next button displayed");
 					introducerBiometricPage.clickOnNextButton();
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
+					assertTrue(introducerBiometricPage.isThumbsScanTitleDisplayed(),
+							"Verify if thumbs scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
 
-					if (!introducerBiometricPage.isThumbsScan()) {
-						introducerBiometricPage.clickOnScanButton();
-					}
-
-					assertTrue(introducerBiometricPage.isThumbsScan(), "Verify if thumb scan 1st attempt");
-
+					assertTrue(introducerBiometricPage.isThumbsScan(), "Verify if thumbs scan 1st attempt");
 					introducerBiometricPage.closeScanCapturePopUp();
-
-					assertTrue(introducerBiometricPage.isNextButtonDisplayed(), "Verify if next button displayed");
 					introducerBiometricPage.clickOnNextButton();
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
+					assertTrue(introducerBiometricPage.isFaceScanTitleDisplayed(),
+							"Verify if face scan page is displayed");
 					introducerBiometricPage.clickOnScanButton();
-					assertTrue(introducerBiometricPage.isFaceScan(), "Verify if Face scan 1st attempt");
-					
+
+					assertTrue(introducerBiometricPage.isFaceScan(), "Verify if face scan 1st attempt");
 					introducerBiometricPage.closeScanCapturePopUp();
-					assertTrue(introducerBiometricPage.isNextButtonDisplayed(), "Verify if next button displayed");
-					introducerBiometricPage.clickOnNextButton();
+					biometricDetailsPage = introducerBiometricPage.clickOnNextButton();
 				}
 
 				biometricDetailsPage.clickOnContinueButton();

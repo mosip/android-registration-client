@@ -139,7 +139,8 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
-					clickAndsendKeysToTextBox(
+					waitTime(1);
+					clickAndsendKeysToTextBox3(
 							findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 									+ FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),

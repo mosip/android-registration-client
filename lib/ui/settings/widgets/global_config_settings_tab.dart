@@ -246,141 +246,162 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
 
   @override
   Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(5),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: _buildContent(),
+    );
+  }
+
+  Widget _buildHeader() {
     final heading = widget.settings.label?[widget.selectedLan] ??
         widget.settings.label?['eng'] ??
         (widget.settings.label?.values.first ?? 'Unknown');
 
-    return Scaffold(
-      body: Card(
-        margin: const EdgeInsets.all(5),
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+          child: Text(
+            heading,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0, right: 8.0),
-              child: Text(
-                heading,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.search_for_key,
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.search_for_key,
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
-                color: Colors.blue[50],
+                borderSide: BorderSide(color: Colors.grey[300]!),
               ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          AppLocalizations.of(context)!.key,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          AppLocalizations.of(context)!.server_value,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          AppLocalizations.of(context)!.local_value,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
             ),
-            Expanded(
-              child: _buildContent(),
-            ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: Colors.blue[50],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text(
+                  AppLocalizations.of(context)!.key,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.server_value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  AppLocalizations.of(context)!.local_value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildContent() {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Column(
+        children: [
+          _buildHeader(),
+          const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      );
     }
     if (errorMessage != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error, size: 64, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(
-              'Error: $errorMessage',
-              style: TextStyle(color: Colors.red[700]),
-              textAlign: TextAlign.center,
+      return Column(
+        children: [
+          _buildHeader(),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error, size: 64, color: Colors.red[300]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: $errorMessage',
+                    style: TextStyle(color: Colors.red[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadInitialData,
+                    child: Text(AppLocalizations.of(context)!.retry),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadInitialData,
-              child: Text(AppLocalizations.of(context)!.retry),
-            ),
-          ],
-        ),
+          ),
+        ],
       );
     }
     if (serverValues == null || serverValues!.isEmpty) {
-      return Center(
-          child: Text(
-              AppLocalizations.of(context)!.no_configuration_parameters_found));
+      return Column(
+        children: [
+          _buildHeader(),
+          Expanded(
+            child: Center(
+              child: Text(
+                  AppLocalizations.of(context)!.no_configuration_parameters_found),
+            ),
+          ),
+        ],
+      );
     }
 
     final configs = _getConfigurations();
-    return ListView.separated(
-      padding: const EdgeInsets.all(10),
-
-      itemCount: configs.length + 1,
-      separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey[300]),
+    // Use ListView.builder with header as first item for proper scrolling
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: configs.length + 2, // header + configs + submit button
       itemBuilder: (context, index) {
-        if (index == configs.length) {
+        // First item is the header
+        if (index == 0) {
+          return _buildHeader();
+        }
+        // Last item is the submit button
+        if (index == configs.length + 1) {
           bool enabled = _hasChanges();
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -389,58 +410,65 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
               child:enabled ? ElevatedButton(
                 onPressed: _onSaveChanges,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: enabled ? solidPrimary : Colors.grey,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
-                  elevation: enabled ? 4 : 0,
-                ),
-                child: Text(AppLocalizations.of(context)!.submit),
-              ):const SizedBox.shrink(),
+                  backgroundColor: solidPrimary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
+                        elevation: 4,
+                      ),
+                      child: Text(AppLocalizations.of(context)!.submit),
+                    ):const SizedBox.shrink(),
             ),
           );
         }
-        final config = configs[index];
-        return Semantics(
-          label: config.key,
-          container: true,
-          excludeSemantics: false,
-          child: Padding(
-            key: Key('config_row_${config.key}'),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: ExcludeSemantics(
-                    child: Text(
-                      config.key,
-                      key: Key('config_key_${config.key}'),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
-                        color: config.isModified ? Colors.blue : Colors.black,
+        // Config rows (index 1 to configs.length)
+        final configIndex = index - 1;
+        final config = configs[configIndex];
+        return Column(
+          children: [
+            if (configIndex > 0) Divider(height: 1, color: Colors.grey[300]),
+            Semantics(
+              label: config.key,
+              container: true,
+              excludeSemantics: false,
+              child: Padding(
+                key: Key('config_row_${config.key}'),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: ExcludeSemantics(
+                        child: Text(
+                          config.key,
+                          key: Key('config_key_${config.key}'),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: config.isModified ? FontWeight.bold : FontWeight.normal,
+                            color: config.isModified ? Colors.blue : Colors.black,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  flex: 1,
-                  child: ExcludeSemantics(
-                    child: Text(
-                      config.serverValue,
-                      key: Key('server_value_${config.key}'),
-                      style: const TextStyle(fontSize: 12),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: ExcludeSemantics(
+                        child: Text(
+                          config.serverValue,
+                          key: Key('server_value_${config.key}'),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      flex: 1,
+                      child: _buildEditableCell(config),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  flex: 1,
-                  child: _buildEditableCell(config),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         );
       },
     );
