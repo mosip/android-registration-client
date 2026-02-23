@@ -13,7 +13,6 @@ import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -75,6 +76,8 @@ import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.utils.BatchJob;
 import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.UploadBackgroundService;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodChannel;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.utils.NetworkUtils;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
@@ -116,12 +119,13 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     private Activity activity;
 
     BatchJob batchJob;
+    private BinaryMessenger flutterBinaryMessenger;
 
     private final Object restartLock = new Object();
-    private int runningSyncJobs = 0;
-    private boolean restartRequested = false;
+    private final AtomicInteger runningSyncJobs = new AtomicInteger(0);
+    private final AtomicBoolean restartRequested = new AtomicBoolean(false);
     private final Handler restartHandler = new Handler(Looper.getMainLooper());
-    private Runnable pendingRestartPrompt;
+    private volatile Runnable pendingRestartPrompt;
 
     @Inject
     public MasterDataSyncApi(ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository, SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository, IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
@@ -165,9 +169,10 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.localConfigService = localConfigService;
     }
 
-    public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob) {
+    public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob, BinaryMessenger flutterBinaryMessenger) {
         this.activity = mainActivity;
         this.batchJob = batchJob;
+        this.flutterBinaryMessenger = flutterBinaryMessenger;
     }
 
     @Override
@@ -765,23 +770,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     private void onSyncJobStart() {
-        synchronized (restartLock) {
-            runningSyncJobs++;
-        }
+        runningSyncJobs.incrementAndGet();
         cancelPendingRestartPrompt();
     }
 
     private void onSyncJobComplete(String jobId, boolean success, boolean isManualSync) {
         boolean shouldPrompt = false;
         synchronized (restartLock) {
-            if (runningSyncJobs > 0) {
-                runningSyncJobs--;
+            if (runningSyncJobs.get() > 0) {
+                runningSyncJobs.decrementAndGet();
             }
             // Only request restart when a restartable job completed successfully during manual sync
             if (success && isRestartableJob(jobId) && isManualSync) {
-                restartRequested = true;
+                restartRequested.set(true);
             }
-            if (runningSyncJobs == 0 && restartRequested) {
+            if (runningSyncJobs.get() == 0 && restartRequested.get()) {
                 shouldPrompt = true;
             }
         }
@@ -814,8 +817,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             pendingRestartPrompt = () -> {
                 boolean showPrompt = false;
                 synchronized (restartLock) {
-                    if (runningSyncJobs == 0 && restartRequested) {
-                        restartRequested = false;
+                    if (runningSyncJobs.get() == 0 && restartRequested.get()) {
+                        restartRequested.set(false);
                         showPrompt = true;
                     }
                 }
@@ -844,42 +847,18 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         }
     }
 
+    private static final String SYNC_RESTART_CHANNEL = "io.mosip.registration_client/sync_restart";
+
     private void showRestartDialog() {
-        if (activity == null || activity.isFinishing()) {
-            Log.w(TAG, "Restart prompt skipped: activity not available");
+        if (flutterBinaryMessenger == null) {
+            Log.w(TAG, "Restart prompt skipped: Flutter binary messenger not set");
             return;
         }
-        activity.runOnUiThread(() -> {
-            try {
-                new AlertDialog.Builder(activity, android.R.style.Theme_Material_Light_Dialog_Alert)
-                        .setTitle("Sync Completed Successfully")
-                        .setMessage("The app will restart once you click Restart, and you will be redirected to the login page.")
-                        .setCancelable(false)
-                        .setPositiveButton("Restart", (dialog, which) -> requestAppRestart())
-                        .show();
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to show restart dialog", e);
-            }
-        });
-    }
-
-    private void requestAppRestart() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            try {
-                Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-                if (intent != null) {
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(intent);
-                }
-                if (activity != null && !activity.isFinishing()) {
-                    activity.finishAffinity();
-                }
-                // Do not call Runtime.getRuntime().exit(0) - it kills the process before
-                // the new activity can start; finishing affinity allows a clean restart.
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to restart application", e);
-            }
-        });
+        try {
+            new MethodChannel(flutterBinaryMessenger, SYNC_RESTART_CHANNEL)
+                    .invokeMethod("showRestartDialog", null);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to request Flutter restart dialog", e);
+        }
     }
 }

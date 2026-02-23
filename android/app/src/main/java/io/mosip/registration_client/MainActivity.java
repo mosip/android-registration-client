@@ -409,7 +409,7 @@ public class MainActivity extends FlutterActivity {
         DynamicResponsePigeon.DynamicResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), dynamicDetailsApi);
         batchJob.setCallbackActivity(this);
         MasterDataSyncPigeon.SyncApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), masterDataSyncApi);
-        masterDataSyncApi.setCallbackActivity(this, batchJob);
+        masterDataSyncApi.setCallbackActivity(this, batchJob, flutterEngine.getDartExecutor().getBinaryMessenger());
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
     }

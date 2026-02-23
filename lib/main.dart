@@ -20,21 +20,65 @@ import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_driver/driver_extension.dart';
+import 'package:flutter/services.dart';
 import 'package:registration_client/utils/inactivity_tracker.dart';
+import 'package:restart_app/restart_app.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 GlobalKey<ScaffoldMessengerState>();
 
+/// MethodChannel name used by Android to request showing the sync-complete restart dialog.
+const String _syncRestartChannel = 'io.mosip.registration_client/sync_restart';
+
 void main() async {
   enableFlutterDriverExtension(enableTextEntryEmulation: false);
   WidgetsFlutterBinding.ensureInitialized();
+  _setupSyncRestartChannel();
   final GlobalProvider appLanguage = GlobalProvider();
   await FlutterConfig.loadEnvVariables();
   await appLanguage.fetchLocale();
   runApp(
     const RestartWidget(child: RegistrationClientApp()),
   );
+}
+
+void _setupSyncRestartChannel() {
+  const MethodChannel(_syncRestartChannel).setMethodCallHandler((MethodCall call) async {
+    if (call.method == 'showRestartDialog') {
+      // Ensure we have a valid context (e.g. after first frame when navigator is built)
+      void showRestartDialog() {
+        final context = rootNavigatorKey.currentContext;
+        if (context == null) return;
+        final loc = AppLocalizations.of(context);
+        if (loc == null) return;
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext dialogContext) => AlertDialog(
+            title: Text(loc.sync_completed_succesfully),
+            content: Text(loc.sync_restart_dialog_message),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  Restart.restartApp();
+                },
+                child: Text(loc.sync_restart_button),
+              ),
+            ],
+          ),
+        );
+      }
+      final context = rootNavigatorKey.currentContext;
+      if (context != null) {
+        showRestartDialog();
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) => showRestartDialog());
+      }
+    }
+    return null;
+  });
 }
 
 Future<void> _handleAutoLogout() async {
