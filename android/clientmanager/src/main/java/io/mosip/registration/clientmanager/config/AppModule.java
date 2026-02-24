@@ -172,13 +172,13 @@ public class AppModule {
                                                       LanguageRepository languageRepository,
                                                       JobManagerService jobManagerService,
                                                       FileSignatureDao fileSignatureDao, JobTransactionService jobTransactionService, PermittedLocalConfigRepository permittedLocalConfigRepository,
-                                                      LocalConfigDAO localConfigDAO) {
+                                                      LocalConfigDAO localConfigDAO, AuditManagerService auditManagerService) {
 
         return new MasterDataServiceImpl(appContext, objectMapper, syncRestService, clientCryptoManagerService,
                 machineRepository, reasonListRepository, registrationCenterRepository, documentTypeRepository, applicantValidDocRepository,
                 templateRepository, dynamicFieldRepository, locationRepository,
                 globalParamRepository, identitySchemaRepository, blocklistedWordRepository, syncJobDefRepository, userDetailRepository,
-                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO);
+                certificateManagerService, languageRepository, jobManagerService, fileSignatureDao, jobTransactionService, permittedLocalConfigRepository, localConfigDAO, auditManagerService);
 
     }
 
@@ -226,9 +226,10 @@ public class AppModule {
     @Singleton
     PacketService providePacketService(RegistrationRepository registrationRepository,
                                        IPacketCryptoService packetCryptoService, SyncRestService syncRestService,
-                                       MasterDataService masterDataService, GlobalParamRepository globalParamRepository) {
+                                       MasterDataService masterDataService, GlobalParamRepository globalParamRepository,
+                                       AuditManagerService auditManagerService) {
         return new PacketServiceImpl(appContext, registrationRepository, packetCryptoService, syncRestService,
-                masterDataService, globalParamRepository);
+                masterDataService, globalParamRepository, auditManagerService);
     }
 
     @Provides
@@ -322,9 +323,10 @@ public class AppModule {
                                                                  JobTransactionService jobTransactionService,
                                                                  LocationValidationService locationValidationService,
                                                                  MasterDataService masterDataService,
-                                                                 RegistrationCenterRepository registrationCenterRepository) {
+                                                                 RegistrationCenterRepository registrationCenterRepository,
+                                                                 AuditManagerService auditManagerService) {
         return new PreCheckValidatorServiceImpl(appContext, syncJobDefRepository, globalParamRepository,
                 jobManagerService, jobTransactionService, locationValidationService, masterDataService,
-                registrationCenterRepository);
+                registrationCenterRepository, auditManagerService);
     }
 }

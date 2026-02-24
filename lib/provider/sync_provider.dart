@@ -163,7 +163,7 @@ class SyncProvider with ChangeNotifier {
     });
 
     await syncResponseService
-        .getIDSchemaSync(false)
+        .getIDSchemaSync(false, findJobIdByApiName("latestIdSchemaSyncJob"))
         .then((Sync getAutoSync) async {
       setCurrentProgressType(getAutoSync.syncType!);
       if (getAutoSync.errorCode == "") {
@@ -237,7 +237,7 @@ class SyncProvider with ChangeNotifier {
     
     Sync syncResult = await syncResponseService.getMasterDataSync(true, findJobIdByApiName("masterSyncJob"));
     if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
-      syncResult = await syncResponseService.getIDSchemaSync(true);
+      syncResult = await syncResponseService.getIDSchemaSync(true, findJobIdByApiName("latestIdSchemaSyncJob"));
       if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
         syncResult = await syncResponseService.getUserDetailsSync(true, findJobIdByApiName("userDetailServiceJob"));
         if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {

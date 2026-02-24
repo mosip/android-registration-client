@@ -696,6 +696,7 @@ class _GenericProcessState extends State<GenericProcess>
         _nextButtonClickedAudit(process, size);
       } else {
         if (globalProvider.newProcessTabIndex == size + 1) {
+          globalProvider.getAudit("REG_OPERATOR_AUTH_PASSWORD", "REG-MOD-103");
           bool isPacketAuthenticated = await _authenticatePacket(context);
           if (!isPacketAuthenticated) {
             return;
@@ -722,8 +723,18 @@ class _GenericProcessState extends State<GenericProcess>
           _resetValuesOnRegistrationComplete();
           return;
         }
+        // Track if we are about to navigate to the acknowledgement page.
+        final bool navigatingToAcknowledgement =
+            globalProvider.newProcessTabIndex == size + 1;
+
         globalProvider.newProcessTabIndex =
             globalProvider.newProcessTabIndex + 1;
+
+        // After successful authentication and registration submit,
+        // when moving from Authentication to Acknowledgement, log preview audit.
+        if (navigatingToAcknowledgement) {
+          globalProvider.getAudit("REG_OPERATOR_AUTH_PREVIEW", "REG-MOD-103");
+        }
       }
     } finally {
       setState(() {

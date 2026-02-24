@@ -29,7 +29,7 @@ abstract class SyncApi {
   Sync getUserDetailsSync(bool isManualSync, String jobId);
 
   @async
-  Sync getIDSchemaSync(bool isManualSync);
+  Sync getIDSchemaSync(bool isManualSync, String jobId);
 
   @async
   Sync getMasterDataSync(bool isManualSync, String jobId);

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
@@ -29,6 +31,7 @@ import io.mosip.registration.clientmanager.entity.ReasonList;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.SyncJobDef;
 import io.mosip.registration.clientmanager.repository.*;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -111,6 +114,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private FileSignatureDao fileSignatureDao;
     private PermittedLocalConfigRepository permittedLocalConfigRepository;
     private LocalConfigDAO localConfigDAO;
+    private AuditManagerService auditManagerService;
     private String regCenterId;
     private String result = "";
     SharedPreferences sharedPreferences;
@@ -138,7 +142,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                                  FileSignatureDao fileSignatureDao,
                                  JobTransactionService jobTransactionService,
                                  PermittedLocalConfigRepository permittedLocalConfigRepository,
-                                 LocalConfigDAO localConfigDAO) {
+                                 LocalConfigDAO localConfigDAO,
+                                 AuditManagerService auditManagerService) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.syncRestService = syncRestService;
@@ -163,6 +168,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         this.jobTransactionService = jobTransactionService;
         this.permittedLocalConfigRepository = permittedLocalConfigRepository;
         this.localConfigDAO = localConfigDAO;
+        this.auditManagerService = auditManagerService;
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -536,6 +542,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void syncUserDetails(Runnable onFinish, boolean isManualSync, String jobId) throws Exception {
+        auditManagerService.audit(AuditEvent.FETCH_USR_DET, Components. JOB_SERVICE);
         String serverVersion = getServerVersionFromConfigs();
         if (serverVersion.startsWith(SERVER_VERSION_1_1_5)) {
             result = "";

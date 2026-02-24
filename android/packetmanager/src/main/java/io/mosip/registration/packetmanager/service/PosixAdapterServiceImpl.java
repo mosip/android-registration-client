@@ -75,9 +75,6 @@ public class PosixAdapterServiceImpl implements ObjectAdapterService {
         File baseDir = StorageUtils.getPacketStorageDir(context);
         if (baseDir.exists() || baseDir.mkdirs()) {
             BASE_LOCATION = baseDir.getAbsolutePath();
-        } else {
-            Log.e(TAG, "Failed to initialize packet storage directory: " + baseDir.getAbsolutePath());
-            BASE_LOCATION = null;
         }
     }
 

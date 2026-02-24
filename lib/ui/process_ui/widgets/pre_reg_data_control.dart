@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/screen.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
@@ -41,7 +44,29 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
     super.initState();
   }
 
-
+  /// Collects field IDs for biometric and document fields based on their controlType
+  /// so we can preserve them when clearing the map on PRID fetch (avoids re-upload prompt).
+  List<String> _getBiometricAndDocumentFieldIds() {
+    final ids = <String>[];
+    try {
+      for (final item in registrationTaskProvider.listOfProcesses) {
+        if (item == null) continue;
+        final json = jsonDecode(item.toString()) as Map<String, Object?>;
+        final process = Process.fromJson(json);
+        for (final screen in process.screens ?? []) {
+          for (final field in screen?.fields ?? []) {
+            // Identify by controlType rather than screen name for schema flexibility
+            if (field?.controlType == 'biometrics' || field?.controlType == 'fileupload') {
+              if (field?.id != null) ids.add(field!.id!);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error collecting biometric/document field IDs: $e');
+    }
+    return ids;
+  }
 
   widgetValue(Screen screen,Map<String?, Object?> value) async {
 
@@ -307,8 +332,10 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                                 .fetchPreRegistrationDetail(
                                 preRegIdController.text);
 
-                            globalProvider.clearMap();
-                            globalProvider.clearScannedPages();
+                            globalProvider.clearMapPreservingKeys(
+                                _getBiometricAndDocumentFieldIds());
+                            globalProvider.clearScannedPagesPreservingKeys(
+                                _getBiometricAndDocumentFieldIds());
                             globalProvider.preRegControllerRefresh = false;
                           } else {
                           globalProvider.preRegControllerRefresh = true;
@@ -317,13 +344,17 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                                 .fetchPreRegistrationDetail(
                                 preRegIdController.text);
                             if (value.isNotEmpty) {
-                              globalProvider.clearMap();
-                              globalProvider.clearScannedPages();
+                              globalProvider.clearMapPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
+                              globalProvider.clearScannedPagesPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
                               widgetValue(widget.screen, value);
                               registrationTaskProvider.setApplicationId(preRegIdController.text);
                             } else {
-                              globalProvider.clearMap();
-                              globalProvider.clearScannedPages();
+                              globalProvider.clearMapPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
+                              globalProvider.clearScannedPagesPreservingKeys(
+                                  _getBiometricAndDocumentFieldIds());
                               globalProvider.preRegControllerRefresh = false;
                             }
                           }
@@ -387,13 +418,17 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                             .fetchPreRegistrationDetail(
                             preRegIdController.text);
                         if (value.isNotEmpty) {
-                          globalProvider.clearMap();
-                          globalProvider.clearScannedPages();
+                          globalProvider.clearMapPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
+                          globalProvider.clearScannedPagesPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
                           widgetValue(widget.screen, value);
                           registrationTaskProvider.setApplicationId(preRegIdController.text);
                         } else {
-                          globalProvider.clearMap();
-                          globalProvider.clearScannedPages();
+                          globalProvider.clearMapPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
+                          globalProvider.clearScannedPagesPreservingKeys(
+                              _getBiometricAndDocumentFieldIds());
                           globalProvider.preRegControllerRefresh = false;
                         }
                         }
