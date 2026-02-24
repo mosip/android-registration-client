@@ -270,23 +270,38 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   Future<void> getScannedDocuments(Field e) async {
     try {
-      imageBytesList.clear();
+      // First check if we have preserved scanned pages (e.g., after PRID fetch)
+      List<Uint8List?> preservedPages = [];
+      if (globalProvider.scannedPages.containsKey(e.id!)) {
+        preservedPages = globalProvider.scannedPages[e.id!]!;
+      }
+      
       final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
       String refNumber = "";
       List<Uint8List?> scannedDoc = List.empty(growable: true);
       for (var element in listOfScannedDoc) {
-        setState(() {
-          scannedDoc.addAll(element!.doc);
-          refNumber = element.referenceNumber;
-        });
+        scannedDoc.addAll(element!.doc);
+        refNumber = element.referenceNumber;
       }
-      _setScannedPages(e, scannedDoc);
+      
+      // Use native API data if available, otherwise use preserved pages
+      List<Uint8List?> pagesToUse = scannedDoc.isNotEmpty ? scannedDoc : preservedPages;
+      
       setState(() {
-        imageBytesList.addAll(scannedDoc);
+        imageBytesList.clear();
+        imageBytesList.addAll(pagesToUse);
         doc.listofImages = imageBytesList;
-        doc.referenceNumber = refNumber;
-        referenceNumber = refNumber;
+        if (scannedDoc.isNotEmpty) {
+          doc.referenceNumber = refNumber;
+          referenceNumber = refNumber;
+        }
       });
+      
+      // Update scannedPages cache
+      if (pagesToUse.isNotEmpty) {
+        _setScannedPages(e, pagesToUse);
+      }
+      
       if (doc.title.isNotEmpty) {
         _setValueInMap();
       }

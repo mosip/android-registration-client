@@ -270,6 +270,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
     @Override
     public void getRolesByUserId(@NonNull String userId, @NonNull AuthResponsePigeon.Result<List<String>> result) {
+        auditManagerService.audit(AuditEvent.FETCH_USR_ROLE, Components.LOGIN);
         try {
             List<String> roles = loginService.getRolesByUserId(userId);
             result.success(roles);

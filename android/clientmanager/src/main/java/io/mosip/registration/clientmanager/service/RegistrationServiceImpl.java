@@ -47,6 +47,8 @@ import io.mosip.biometrics.util.face.FaceBDIR;
 import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.config.SessionManager;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.PacketClientStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
@@ -303,9 +305,9 @@ public class RegistrationServiceImpl implements RegistrationService {
                 this.registrationDto.getProcess(),
                 true, centerMachineDto.getMachineRefId());
 
+        if (containerPath != null && !containerPath.trim().isEmpty()) {
+            auditManagerService.audit(AuditEvent.PACKET_ENCRYPTED_AND_INTERNAL_ZIP, Components.REGISTRATION);
 
-
-        if (containerPath != null || !containerPath.trim().isEmpty()) {
             String packetId = containerPath.substring(containerPath.lastIndexOf("/") + 1);
                packetId = packetId.replace(".zip", "");
                this.registrationDto.setPacketId(packetId);
@@ -333,6 +335,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         registrationRepository.insertRegistration(this.registrationDto.getPacketId(), containerPath,
                 centerMachineDto.getCenterId(), this.registrationDto.getProcess(), additionalInfo, this.registrationDto.getAdditionalInfoRequestId(), this.registrationDto.getRId(), this.registrationDto.getApplicationId());
+
+        // Log packet creation success
+        auditManagerService.audit(AuditEvent.PACKET_CREATION_SUCCESS, Components.REGISTRATION);
 
         // Auto-approve when supervisor approval is disabled (flag not "Y")
         String supervisorApprovalFlag = globalParamRepository.getCachedStringGlobalParam(

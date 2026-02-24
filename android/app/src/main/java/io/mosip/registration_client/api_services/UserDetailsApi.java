@@ -18,6 +18,8 @@ import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.entity.RegistrationCenter;
 import io.mosip.registration.clientmanager.entity.UserDetail;
@@ -46,6 +48,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
 
     @Override
     public void validateUser(@NonNull String username, @NonNull String langCode, @NonNull UserPigeon.Result<UserPigeon.User> result) {
+        auditManagerService.audit(AuditEvent.USER_STATUS_FETCH, Components.LOGIN);
         if (username == null || username.trim().length() == 0) {
             UserPigeon.User user = new UserPigeon.User.Builder()
                     .setUserId(username)
@@ -65,6 +68,7 @@ public class UserDetailsApi implements UserPigeon.UserApi {
             result.success(user);
             return;
         }
+        auditManagerService.audit(AuditEvent.VALIDATE_USER_ID, Components.LOGIN);
         UserDetail userDetail = loginService.getUserDetailsByUserId(username);
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         boolean centerStatus = true;
@@ -112,11 +116,13 @@ public class UserDetailsApi implements UserPigeon.UserApi {
     }
 
     public String getCenterName(String regCenterId, String langCode) {
+        auditManagerService.audit(AuditEvent.FETCH_CNTR_NAME, Components.LOGIN);
         List<RegistrationCenter> registrationCenterList = new ArrayList<>();
         RegistrationCenter registrationCenter;
         String regCenter = "";
         try {
             registrationCenter = registrationCenterRepository.getRegistrationCenterByCenterIdAndLangCode(regCenterId, langCode);
+            auditManagerService.audit(AuditEvent.FETCH_CNTR_DET, Components.LOGIN);
             if(registrationCenter != null) {
                 regCenter = registrationCenter.getName();
                 return regCenter;

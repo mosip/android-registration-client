@@ -28,6 +28,12 @@ public enum AuditEvent {
             "Login with password: Click of Submit"),
     ABOUT_CLIENT("REG-AUTH-003", USER_EVENT.getCode(), "ABOUT_CLIENT", "Press and hold on logo to navigate: About activity"),
     LOGOUT_USER("REG-AUTH-009", USER_EVENT.getCode(), "LOGOUT_USER", "Logout"),
+    USER_STATUS_FETCH("REG-AUTH-011", USER_EVENT.getCode(), "USER_STATUS_FETCH", "Fetching User Status"),
+    VALIDATE_USER_ID("REG-AUTH-012", USER_EVENT.getCode(), "VALIDATE_USER_ID", "Validating User identifier"),
+    FETCH_USR_DET("REG-AUTH-013", USER_EVENT.getCode(), "FETCH_USER_DETAILS", "Fetching User Details"),
+    FETCH_CNTR_NAME("REG-AUTH-014", USER_EVENT.getCode(), "FETCH_CENTER_NAME", "Fetching Center Name"),
+    FETCH_CNTR_DET("REG-AUTH-015", USER_EVENT.getCode(), "FETCH_CENTER_DETAILS", "Fetching Center Details"),
+    FETCH_USR_ROLE("REG-AUTH-016", USER_EVENT.getCode(), "FETCH_USER_ROLE", "Fetching User Roles"),
 
     // Navigation
     NAV_LOST_UIN("REG-EVT-001", USER_EVENT.getCode(), "NAV_LOST_UIN", "Click of navigation link: Lost UIN"),
@@ -57,8 +63,10 @@ public enum AuditEvent {
 
     //REG_PACKET_LIST
     SYNC_PACKET("REG-PKT-001", USER_EVENT.getCode(), "SYNC_PACKET", "Packet sync clicked"),
+    PACKET_UPDATE("REG-PKT-002", USER_EVENT.getCode(), "PACKET_UPDATE", "Packets which are in created state are updated"),
     UPLOAD_PACKET("REG-UPL-PKT-001", USER_EVENT.getCode(), "UPLOAD_PACKET", "Upload packet clicked"),
     SYNC_AND_UPLOAD_PACKET("REG-PKT-003", USER_EVENT.getCode(), "SYNC_AND_UPLOAD_PACKET", "sync and upload started"),
+    PACKET_RETRIEVE("REG-PKT-004", USER_EVENT.getCode(), "PACKET_RETRIEVE", "Packets which are in created state for approval are retrieved"),
 
     //JOB_SERVICE
     TRIGGER_JOB("REG-JOB-001", USER_EVENT.getCode(), "TRIGGER_JOB", "Trigger job service clicked"),
@@ -126,6 +134,10 @@ public enum AuditEvent {
     SYNC_USER_MAPPING("REG-SYNC-008", USER_EVENT.getCode(), "SYNC_USER_MAPPING", "Sync user mapping"),
     SYNC_DEVICE_MAPPING("REG-SYNC-009", USER_EVENT.getCode(), "SYNC_DEVICE_MAPPING", "Sync device mapping"),
     SYNC_CLIENT_STATE("REG-SYNC-010", USER_EVENT.getCode(), "SYNC_CLIENT_STATE", "Sync client state"),
+    SYNCJOB_INFO_FETCH("REG-SYNC-011", USER_EVENT.getCode(), "SYNC_JOB_INFO_FETCH", "SyncJobInfo containing the sync control list and yet to export packet count fetched successfully"),
+    SYNC_INFO_VALIDATE("REG-SYNC-012", USER_EVENT.getCode(), "SYNC_INFO_VALIDATION", "Validating the sync status ended successfully"),
+    SYNC_PKT_COUNT_VALIDATE("REG-SYNC-013", USER_EVENT.getCode(), "SYNC_PKT_COUNT_VALIDATION", "Validating yet to export packets frequency with the configured limit count"),
+    SYNC_GEO_VALIDATE("REG-SYNC-015", USER_EVENT.getCode(), "SYNC_GEO_VALIDATE", "Validating the geo information ended successfully"),
 
     // Export Packets
     EXPORT_REG_PACKETS("REG-EXPT-PKT-001", USER_EVENT.getCode(), "EXPORT_REGISTRATION_PACKETS",
@@ -153,7 +165,30 @@ public enum AuditEvent {
     SCHEDULER_REFRESHED_TIMEOUT("REG-SCH-002", SYSTEM_EVENT.getCode(), "REFRESHED_TIMEOUT",
             "The time task remainder alert"),
     SCHEDULER_SESSION_TIMEOUT("REG-SCH-003", SYSTEM_EVENT.getCode(), "SESSION_TIMEOUT",
-            "The time task session expires");
+            "The time task session expires"),
+
+    // Registration: Operator/Supervisor Authentication
+    REG_OPERATOR_AUTH_PASSWORD("REG-EVT-048", USER_EVENT.getCode(), "REG_OPERATOR_AUTH_PASSWORD","Operator authentication with password: Click of Submit"),
+    REG_OPERATOR_AUTH_PREVIEW("REG-EVT-055", USER_EVENT.getCode(), "REG_OPERATOR_AUTH_PREVIEW", "Back to Preview"),
+    REG_ACK_PRINT("REG-EVT-056", USER_EVENT.getCode(), "REG_ACK_PRINT", "Print receipt"),
+
+    // Registration Packet Creation
+    PACKET_CREATION_SUCCESS("REG-EVT-078", USER_EVENT.getCode(), "PACKET_CREATION_SUCCESS","Packet Successfully Created"),
+    PACKET_ENCRYPTED_AND_INTERNAL_ZIP("REG-EVT-085", USER_EVENT.getCode(), "PACKET_ENCRYPTED_AND_INTERNAL_ZIP", "Packet encrypted and zipped successfully"),
+    PACKET_UPLOADED("REG-EVT-080", USER_EVENT.getCode(), "PACKET_UPLOADED", "Packet Uploaded Successfully"),
+    PACKET_SYNCED_TO_SERVER("REG-EVT-081", USER_EVENT.getCode(), "PACKET_SYNCED_TO_SERVER", "Packet Synced to Server Successfully"),
+    PACKET_STATUS_UPDATE("REG-EVT-071", USER_EVENT.getCode(), "PACKET_APPROVED", "Packet %s Successfully"),
+    PACKET_INTERNAL_ERROR("REG-EVT-074", USER_EVENT.getCode(), "PACKET_INTERNAL_ERROR", "Packet Creation Error"),
+    PACKET_DEMO_JSON_CREATED("REG-EVT-076", USER_EVENT.getCode(), "PACKET_DEMO_JSON_CREATED", "Packet Demographic JSON created successfully"),
+    SAVE_DETAIL_TO_DTO("REG-EVT-084", USER_EVENT.getCode(), "SAVE_DETAIL_TO_DTO", "Saving the details to DTO"),
+
+    // Biometrics
+    REG_BIO_EXCEPTION_MARKING("REG-EVT-027", USER_EVENT.getCode(), "REG_BIO_EXCEPTION_MARKING", "Biometric Exceptions: Marking"),
+    REG_BIO_NEXT("REG-EVT-037", USER_EVENT.getCode(), "REG_BIO_NEXT", "Click Next to capture the next biometric"),
+    REG_BIO_EXCEPTION_REMOVING("REG-EVT-065", USER_EVENT.getCode(), "REG_BIO_EXCEPTION_REMOVING", "Biometric Exceptions: Removing"),
+    REG_BIO_SCAN("REG-EVT-092", USER_EVENT.getCode(), "REG_BIO_SCAN", 	"Scan of %s"),
+    REG_BIO_CAPTURE_NEXT("REG-EVT-041", USER_EVENT.getCode(), "REG_BIO_CAPTURE_NEXT",	"Click of Next after capturing Biometrics");
+
     AuditEvent(String id, String type, String name, String description) {
         this.id = id;
         this.type = type;

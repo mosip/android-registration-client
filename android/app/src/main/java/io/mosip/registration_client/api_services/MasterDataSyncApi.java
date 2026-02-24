@@ -252,7 +252,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         try {
             masterDataService.syncUserDetails(() -> {
                 auditManagerService.audit(
-                        AuditEvent.SYNC_USER_MAPPING,
+                        AuditEvent.SYNC_USER_DETAILS,
                         Components.REGISTRATION
                 );
                 Log.i(TAG, "User details sync Completed.");
@@ -540,6 +540,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void getActiveSyncJobs(@NonNull MasterDataSyncPigeon.Result<List<String>> result) {
+        try {
+            auditManagerService.audit(AuditEvent.SYNCJOB_INFO_FETCH, Components.JOB_SERVICE);
+        } catch (Exception e) {
+            Log.e(TAG, "Audit logging failed for SYNCJOB_INFO_FETCH", e);
+        }
         List<SyncJobDef> list = syncJobDefRepository.getActiveSyncJobs();
         List<String> value = new ArrayList<>();
         try {

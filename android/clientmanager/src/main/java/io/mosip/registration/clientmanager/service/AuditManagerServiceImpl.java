@@ -136,54 +136,58 @@ public class AuditManagerServiceImpl implements AuditManagerService {
     }
 
     private void addAudit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String refId, String refIdType, String errorMsg, String... arguments) {
-        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
-                Context.MODE_PRIVATE);
+        try {
+            SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.app_name),
+                    Context.MODE_PRIVATE);
 
-        // Use device Android version for hostName in format Android_{deviceAndroidVersion}
-        // If Build.VERSION.RELEASE is null, use the default property name
-        String androidVersion = Build.VERSION.RELEASE;
-        String model = Build.MODEL;
-        String hostName = (androidVersion != null && model != null) ? model + "|" + androidVersion :
-                globalParamRepository.getCachedStringDefaultHostName();
-        String hostIP = globalParamRepository.getCachedStringDefaultHostIp();
-        String sessionUserId = sharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null);
-        String sessionUserName = sharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null);
-        String applicationId = globalParamRepository.getCachedStringAppId();
-        String applicationName = globalParamRepository.getCachedStringAppName();
-        String description = auditEventEnum.getDescription() == null? "NA" : auditEventEnum.getDescription();
+            // Use device Android version for hostName in format Android_{deviceAndroidVersion}
+            // If Build.VERSION.RELEASE is null, use the default property name
+            String androidVersion = Build.VERSION.RELEASE;
+            String model = Build.MODEL;
+            String hostName = (androidVersion != null && model != null) ? model + "|" + androidVersion :
+                    globalParamRepository.getCachedStringDefaultHostName();
+            String hostIP = globalParamRepository.getCachedStringDefaultHostIp();
+            String sessionUserId = sharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null);
+            String sessionUserName = sharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null);
+            String applicationId = globalParamRepository.getCachedStringAppId();
+            String applicationName = globalParamRepository.getCachedStringAppName();
+            String description = auditEventEnum.getDescription() == null? "NA" : auditEventEnum.getDescription();
 
-        if (description.contains("%s") && arguments != null && arguments.length > 0) {
-            try {
-                description = String.format(description, (Object[]) arguments);
-            } catch (IllegalArgumentException ex) {
-                Log.e(TAG, "Invalid audit description format: " + description
-                        + ", arguments=" + Arrays.toString(arguments), ex);
+            if (description.contains("%s") && arguments != null && arguments.length > 0) {
+                try {
+                    description = String.format(description, (Object[]) arguments);
+                } catch (IllegalArgumentException ex) {
+                    Log.e(TAG, "Invalid audit description format: " + description
+                            + ", arguments=" + Arrays.toString(arguments), ex);
+                }
             }
+
+            if (errorMsg != null) {
+                description = String.format(COLON_SEPARATED_DESCRIPTION, description, errorMsg);
+            }
+
+            Audit audit = new Audit(
+                    System.currentTimeMillis(),
+                    auditEventEnum.getId(),
+                    auditEventEnum.getName(),
+                    auditEventEnum.getType(),
+                    System.currentTimeMillis(),
+                    hostName,
+                    hostIP,
+                    applicationId,
+                    applicationName,
+                    sessionUserId,
+                    sessionUserName,
+                    refId,
+                    refIdType,
+                    sessionUserId,
+                    appModuleName,
+                    appModuleId,
+                    description);
+
+            auditRepository.insertAudit(audit);
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to audit event: " + (auditEventEnum != null ? auditEventEnum.getName() : "null"), ex);
         }
-
-        if (errorMsg != null) {
-            description = String.format(COLON_SEPARATED_DESCRIPTION, description, errorMsg);
-        }
-
-        Audit audit = new Audit(
-                System.currentTimeMillis(),
-                auditEventEnum.getId(),
-                auditEventEnum.getName(),
-                auditEventEnum.getType(),
-                System.currentTimeMillis(),
-                hostName,
-                hostIP,
-                applicationId,
-                applicationName,
-                sessionUserId,
-                sessionUserName,
-                refId,
-                refIdType,
-                sessionUserId,
-                appModuleName,
-                appModuleId,
-                description);
-
-        auditRepository.insertAudit(audit);
     }
 }

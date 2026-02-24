@@ -146,6 +146,23 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Clears scanned pages but preserves given keys (usually document field IDs).
+  /// This preserves document preview images when re-fetching PRID.
+  void clearScannedPagesPreservingKeys(List<String> keysToPreserve) {
+    if (keysToPreserve.isEmpty) {
+      clearScannedPages();
+      return;
+    }
+    final preserved = <String, List<Uint8List?>>{};
+    for (final key in keysToPreserve) {
+      if (_scannedPages.containsKey(key)) {
+        preserved[key] = _scannedPages[key]!;
+      }
+    }
+    _scannedPages = preserved;
+    notifyListeners();
+  }
+
   Map<String, List<Uint8List?>> get scannedPages {
     return _scannedPages;
   }
@@ -599,6 +616,27 @@ class GlobalProvider with ChangeNotifier {
     _mvelRequiredFields = {};
     _mvelVisibleFields = {};
     log("input value $_fieldInputValue");
+    notifyListeners();
+  }
+
+  /// Clears demographic and MVEL state but preserves given keys in
+  /// [fieldInputValue] (e.g. biometric and document field IDs) so that
+  /// re-fetching PRID does not force re-upload of already captured data.
+  void clearMapPreservingKeys(List<String> keysToPreserve) {
+    if (keysToPreserve.isEmpty) {
+      clearMap();
+      return;
+    }
+    final preserved = <String, dynamic>{};
+    for (final key in keysToPreserve) {
+      if (_fieldInputValue.containsKey(key)) {
+        preserved[key] = _fieldInputValue[key];
+      }
+    }
+    _fieldInputValue = preserved;
+    _mvelRequiredFields = {};
+    _mvelVisibleFields = {};
+    log("input value $_fieldInputValue (preserved ${preserved.length} keys)");
     notifyListeners();
   }
 

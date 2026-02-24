@@ -13,6 +13,7 @@ import '../../../provider/approve_packets_provider.dart';
 import '../../../provider/global_provider.dart';
 import 'reject_dialogbox.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/utils/secure_screen_service.dart';
 
 class TemplateBottomSheet {
   void loadHtmlData(WebViewPlusController? controller, String packetId) async {
@@ -29,8 +30,8 @@ class TemplateBottomSheet {
   }
 
   Widget bottomSheet(BuildContext context) {
-
-    return ChangeNotifierProvider<ApprovePacketsProvider>.value(
+    return _SecureBottomSheetWrapper(
+      child: ChangeNotifierProvider<ApprovePacketsProvider>.value(
       value: context.watch<ApprovePacketsProvider>(),
       builder: (context, _) {
         final globalProvider = context.read<GlobalProvider>();
@@ -144,7 +145,7 @@ class TemplateBottomSheet {
                                   onPressed: reviewStatus == ReviewStatus.APPROVED.name
                                       ? null
                                       : () {
-                                    globalProvider.getAudit("REG-EVT-067", "REG-MOD-103");
+                                    globalProvider.getAudit("PACKET_APPROVED", "REG-MOD-103");
                                     context
                                         .read<ApprovePacketsProvider>()
                                         .approvePacket(regCurrent.packetId);
@@ -182,7 +183,7 @@ class TemplateBottomSheet {
                                   onPressed: reviewStatus == ReviewStatus.REJECTED.name
                                       ? null
                                       : () {
-                                    globalProvider.getAudit("REG-EVT-068", "REG-MOD-103");
+                                    globalProvider.getAudit("PACKET_REJECTED", "REG-MOD-103");
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -533,6 +534,34 @@ class TemplateBottomSheet {
           ),
         );
       },
+    ),
     );
   }
+}
+
+class _SecureBottomSheetWrapper extends StatefulWidget {
+  final Widget child;
+  const _SecureBottomSheetWrapper({required this.child});
+
+  @override
+  State<_SecureBottomSheetWrapper> createState() =>
+      _SecureBottomSheetWrapperState();
+}
+
+class _SecureBottomSheetWrapperState
+    extends State<_SecureBottomSheetWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    SecureScreenService.acquire();
+  }
+
+  @override
+  void dispose() {
+    SecureScreenService.release();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

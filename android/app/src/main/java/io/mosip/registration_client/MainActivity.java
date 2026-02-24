@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -83,6 +84,7 @@ import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
+import io.mosip.registration_client.api_services.SecureScreenApi;
 import io.mosip.registration_client.api_services.TransliterationApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
 import io.mosip.registration_client.model.AuditResponsePigeon;
@@ -99,6 +101,7 @@ import io.mosip.registration_client.model.PacketAuthPigeon;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
 import io.mosip.registration_client.model.ProcessSpecPigeon;
 import io.mosip.registration_client.model.RegistrationDataPigeon;
+import io.mosip.registration_client.model.SecureScreenPigeon;
 import io.mosip.registration_client.model.TransliterationPigeon;
 import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
@@ -198,6 +201,9 @@ public class MainActivity extends FlutterActivity {
 
     @Inject
     GlobalConfigSettingsApi globalConfigSettingsApi;
+
+    @Inject
+    SecureScreenApi secureScreenApi;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -412,6 +418,8 @@ public class MainActivity extends FlutterActivity {
         masterDataSyncApi.setCallbackActivity(this, batchJob, flutterEngine.getDartExecutor().getBinaryMessenger());
         AuditResponsePigeon.AuditResponseApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), auditDetailsApi);
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
+        SecureScreenPigeon.SecureScreenApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), secureScreenApi);
+        secureScreenApi.setCallbackActivity(this);
     }
 
     @Override
