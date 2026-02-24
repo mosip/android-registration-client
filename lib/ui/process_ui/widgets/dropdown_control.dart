@@ -261,7 +261,7 @@ class _CustomDropDownState extends State<DropDownControl> {
                       width: 1.0,
                     ),
                   ),
-                  hintText: "Select Option",
+                  hintText: AppLocalizations.of(context)!.select_option,
                   hintStyle: const TextStyle(
                     color: appBlackShade3,
                   ),

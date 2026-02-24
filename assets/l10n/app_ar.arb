@@ -358,6 +358,8 @@
   "update_officer_biometric": "تحديث التحقق البيومتري للضابط",
   "submit_changes": "إرسال التغييرات",
   "local_preferences_saved_msg": "تم حفظ التفضيلات المحلية بنجاح. يلزم إعادة تشغيل التطبيق لرؤية التغييرات. هل ترغب في الإنهاء الآن؟",
-  "search_for_key": "ابحث عن المفتاح"
+  "search_for_key": "ابحث عن المفتاح",
+  "select_option": "اختر خياراً",
+  "cron_expression": "تعبير كرون"
 }
 

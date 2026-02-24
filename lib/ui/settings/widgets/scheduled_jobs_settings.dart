@@ -400,7 +400,7 @@ class _JobCardState extends State<_JobCard> {
                                   child: TextField(
                                     controller: _cronController,
                                     decoration: InputDecoration(
-                                      hintText: 'Cron Expression',
+                                       hintText: AppLocalizations.of(context)!.cron_expression,
                                       errorText: null,
                                       errorBorder: _cronError != null
                                           ? const OutlineInputBorder(
@@ -443,7 +443,7 @@ class _JobCardState extends State<_JobCard> {
                                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                     ),
                                   )
-                                : const Text('Submit', style: TextStyle(fontSize: 11)),
+                                 : Text(AppLocalizations.of(context)!.submit, style: const TextStyle(fontSize: 11)),
                           ),
                         ),
                       ],

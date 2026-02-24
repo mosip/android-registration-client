@@ -17,6 +17,8 @@ import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class RadioButtonControl extends StatefulWidget {
   const RadioButtonControl({super.key, required this.field});
 
@@ -118,7 +120,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                             setState(() {
                               showError = true;
                             });
-                            return "Select option";
+                            return AppLocalizations.of(context)!.select_option;
                           }
                           setState(() {
                             showError = false;
@@ -155,7 +157,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                   ),
                   showError
                       ? const Text(
-                          "* Select Option",
+                          "* ${AppLocalizations.of(context)!.select_option}",
                           style: TextStyle(
                               color: Color.fromARGB(255, 159, 21, 11),
                               fontSize: 12),

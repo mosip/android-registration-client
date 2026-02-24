@@ -3100,7 +3100,7 @@ class _BiometricCaptureScanBlockPortraitState
                               Navigator.pop(context);
                             },
                             child: Image.asset(
-                              "assets/images/Group 57951.png",
+                              "assets/images/Menu_Grid.png",
                               height: (isMobileSize) ? 30.h : 52.h,
                             ),
                           ),
