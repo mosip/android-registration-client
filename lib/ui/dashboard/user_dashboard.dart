@@ -119,10 +119,16 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Text(appLocalizations.packets_created,
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Text(
+                                      appLocalizations.packets_created,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: isMobileSize ? 15 : 20,
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                                 ],
                               ),
                             );
@@ -165,10 +171,16 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Text(appLocalizations.packets_synced,
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Text(
+                                      appLocalizations.packets_synced,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: isMobileSize ? 15 : 20,
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                                 ],
                               ),
                             );
@@ -209,25 +221,24 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                       )
                                     ],
                                   ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 12), // pushes text slightly downward
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                        child: FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: Text(
-                                            appLocalizations.packets_uploaded,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: isMobileSize ? 15 : 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          appLocalizations.packets_uploaded,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: isMobileSize ? 15 : 20,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   )
                                 ],
                               ),
@@ -315,55 +326,176 @@ class _UserDashBoardState extends State<UserDashBoard> {
                         ? const EdgeInsets.only(left: 10, right: 10, bottom: 10)
                         : const EdgeInsets.only(
                         left: 40, right: 40, bottom: 20),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: snapshot.hasData
-                          ? FittedBox(
-                          fit: BoxFit.scaleDown, // Shrinks table to fit in screen
-                          alignment: Alignment.topLeft,
-                          child:DataTable(
-                          dividerThickness: 2,
-                          headingRowHeight: 60,
-                          columns: [
-                            DataColumn(
-                                label: Text(appLocalizations.user_id,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: isMobileSize ? 12 : 20,
-                                        color: appBlackShade2))),
-                            DataColumn(
-                                label: Text(appLocalizations.user_name,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: isMobileSize ? 12 : 20,
-                                        color: appBlackShade2))),
-                            DataColumn(
-                                label: Text(appLocalizations.status,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: isMobileSize ? 12 : 20,
-                                        color: appBlackShade2))),
-                          ],
-                          rows: snapshot.data!
-                              .map<DataRow>((data) => DataRow(cells: [
-                            DataCell(Text(data!.userId.toString(),
-                                style: TextStyle(
-                                    fontSize:
-                                    isMobileSize ? 10 : 17,
-                                    color: appBlackShade1,
-                                    fontWeight: FontWeight.w500))),
-                            DataCell(Text(data.userName.toString(),
-                                style: TextStyle(
-                                    fontSize:
-                                    isMobileSize ? 10 : 17,
-                                    color: appBlackShade2,
-                                    fontWeight: FontWeight.w500))),
-                            DataCell(statusWidget(data.userStatus,
-                                data.userIsOnboarded))
-                          ]))
-                              .toList())
-                      )
-                              : const SizedBox.shrink(),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        const minTableWidth = 480.0;
+                        final cardMarginHorizontal =
+                            isMobileSize ? 20.0 : 80.0;
+                        final effectiveMaxWidth =
+                            constraints.maxWidth.isFinite
+                                ? constraints.maxWidth
+                                : MediaQuery.of(context).size.width -
+                                    cardMarginHorizontal;
+                        final tableWidth =
+                            effectiveMaxWidth < minTableWidth
+                                ? minTableWidth
+                                : effectiveMaxWidth;
+                        final needsHorizontalScroll =
+                            tableWidth > effectiveMaxWidth;
+                        final table = snapshot.hasData
+                            ? Table(
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(),
+                                    1: FlexColumnWidth(),
+                                    2: FlexColumnWidth(),
+                                  },
+                                  defaultVerticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  border: TableBorder(
+                                    horizontalInside: BorderSide(
+                                        width: 2, color: Colors.grey.shade300),
+                                  ),
+                                  children: [
+                                    TableRow(
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey.shade100),
+                                        children: [
+                                          TableCell(
+                                            verticalAlignment:
+                                                TableCellVerticalAlignment
+                                                    .middle,
+                                            child: Padding(
+                                              padding: const EdgeInsets
+                                                      .symmetric(
+                                                          horizontal: 16,
+                                                          vertical: 20),
+                                              child: Text(
+                                                  appLocalizations.user_id,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          isMobileSize ? 12 : 20,
+                                                      color: appBlackShade2)),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            verticalAlignment:
+                                                TableCellVerticalAlignment
+                                                    .middle,
+                                            child: Padding(
+                                              padding: const EdgeInsets
+                                                      .symmetric(
+                                                          horizontal: 16,
+                                                          vertical: 20),
+                                              child: Text(
+                                                  appLocalizations.user_name,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          isMobileSize ? 12 : 20,
+                                                      color: appBlackShade2)),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            verticalAlignment:
+                                                TableCellVerticalAlignment
+                                                    .middle,
+                                            child: Padding(
+                                              padding: const EdgeInsets
+                                                      .symmetric(
+                                                          horizontal: 16,
+                                                          vertical: 20),
+                                              child: Text(
+                                                  appLocalizations.status,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          isMobileSize ? 12 : 20,
+                                                      color: appBlackShade2)),
+                                            ),
+                                          ),
+                                        ]),
+                                    ...snapshot.data!
+                                        .map<TableRow>((data) => TableRow(
+                                              children: [
+                                                TableCell(
+                                                  verticalAlignment:
+                                                      TableCellVerticalAlignment
+                                                          .middle,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 12),
+                                                    child: Text(
+                                                        data!.userId.toString(),
+                                                        style: TextStyle(
+                                                            fontSize: isMobileSize
+                                                                ? 10
+                                                                : 16,
+                                                            color: appBlackShade1,
+                                                            fontWeight:
+                                                                FontWeight.w500)),
+                                                  ),
+                                                ),
+                                                TableCell(
+                                                  verticalAlignment:
+                                                      TableCellVerticalAlignment
+                                                          .middle,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 12),
+                                                    child: Text(
+                                                        data.userName.toString(),
+                                                        style: TextStyle(
+                                                            fontSize: isMobileSize
+                                                                ? 10
+                                                                : 16,
+                                                            color: appBlackShade2,
+                                                            fontWeight:
+                                                                FontWeight.w500)),
+                                                  ),
+                                                ),
+                                                TableCell(
+                                                  verticalAlignment:
+                                                      TableCellVerticalAlignment
+                                                          .middle,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 12),
+                                                    child: statusWidget(
+                                                        data.userStatus,
+                                                        data.userIsOnboarded),
+                                                  ),
+                                                ),
+                                              ],
+                                            ))
+                                        .toList(),
+                                  ],
+                                )
+                            : const SizedBox.shrink();
+                        final tableChild = SizedBox(
+                          width: tableWidth,
+                          child: table,
+                        );
+                        final content = needsHorizontalScroll
+                            ? SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: tableChild,
+                              )
+                            : tableChild;
+                        return SizedBox(
+                          width: effectiveMaxWidth,
+                          child: content,
+                        );
+                      },
                     ),
                   );
                 })
@@ -394,13 +526,16 @@ class _UserDashBoardState extends State<UserDashBoard> {
             size: isMobileSize ? 15 : 27,
             color: dashBoardPacketUploadPendingColor,
           ),
-          Text(
-            " ${appLocalizations.active_not_onboarded}",
-            style: TextStyle(
-                fontSize: isMobileSize ? 10 : 17,
-                color: appBlackShade2,
-                fontWeight: FontWeight.w500),
-          )
+          Expanded(
+            child: Text(
+              " ${appLocalizations.active_not_onboarded}",
+              style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 16,
+                  color: appBlackShade2,
+                  fontWeight: FontWeight.w500),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       );
     }
@@ -412,20 +547,23 @@ class _UserDashBoardState extends State<UserDashBoard> {
             size: isMobileSize ? 15 : 27,
             color: appBlackShade3,
           ),
-          Text(
-            " ${appLocalizations.user_inactive}",
-            style: TextStyle(
-                fontSize: isMobileSize ? 10 : 17,
-                color: appBlackShade2,
-                fontWeight: FontWeight.w500),
-          )
+          Expanded(
+            child: Text(
+              " ${appLocalizations.user_inactive}",
+              style: TextStyle(
+                  fontSize: isMobileSize ? 10 : 16,
+                  color: appBlackShade2,
+                  fontWeight: FontWeight.w500),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       );
     }
     return Container();
   }
 
-  Widget getUserOnboardedWidget(){
+  Widget getUserOnboardedWidget() {
     return Row(
       children: [
         Icon(
@@ -433,13 +571,16 @@ class _UserDashBoardState extends State<UserDashBoard> {
           size: isMobileSize ? 15 : 27,
           color: dashBoardPacketUploadColor,
         ),
-        Text(
-          " ${appLocalizations.onboarded}",
-          style: TextStyle(
-              fontSize: isMobileSize ? 10 : 17,
-              color: appBlackShade2,
-              fontWeight: FontWeight.w500),
-        )
+        Expanded(
+          child: Text(
+            " ${appLocalizations.onboarded}",
+            style: TextStyle(
+                fontSize: isMobileSize ? 10 : 16,
+                color: appBlackShade2,
+                fontWeight: FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }
