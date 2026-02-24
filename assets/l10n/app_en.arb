@@ -358,5 +358,7 @@
   "update_officer_biometric": "Officer's Biometric Update",
   "submit_changes": "Submit Changes",
   "local_preferences_saved_msg": "Local Preferences have been saved successfully. Application restart is needed to see the changes. Do you want to quit now?",
-  "search_for_key": "Search for Key"
+  "search_for_key": "Search for Key",
+  "no_devices_found": "No devices found",
+  "connect_devices_and_scan": "Please connect your devices and tap 'Scan' to detect them"
 }

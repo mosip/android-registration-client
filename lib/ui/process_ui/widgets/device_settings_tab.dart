@@ -56,9 +56,6 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
         }
 
         final devices = snapshot.data ?? [];
-        if (devices.isEmpty) {
-          return const Center(child: Text("No devices found"));
-        }
 
         return Padding(
           padding: const EdgeInsets.all(16.0),
@@ -92,70 +89,81 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Responsive grid: 1 column for mobile (<600), 2 for tablet (<800), 3 for desktop
-                    final crossAxisCount = constraints.maxWidth < 600 ? 1 : constraints.maxWidth < 800 ? 2 : 3;
-                    // Adjust aspect ratio based on screen size - allow more height on mobile
-                    final childAspectRatio = constraints.maxWidth < 600 ? 4.0 : 3.5;
-                    
-                    return GridView.builder(
-                      itemCount: devices.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: childAspectRatio,
-                      ),
-                      itemBuilder: (context, index) {
-                        final device = devices[index];
-                        return Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.scanner, size: 25, color: solidPrimary),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      "ID: ${device.deviceId ?? ''}",
-                                      style: const TextStyle(fontSize: 12),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "Name: ${device.deviceName ?? ''}",
-                                      style: const TextStyle(fontSize: 12),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "Status: ${device.connectionStatus ?? ''}",
-                                      style: const TextStyle(fontSize: 12),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
+                child: devices.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.devices_other_outlined,
+                              size: 64,
+                              color: Colors.grey.shade400,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              AppLocalizations.of(context)!.no_devices_found,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade700,
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              AppLocalizations.of(context)!.connect_devices_and_scan,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                    : GridView.builder(
+                        itemCount: devices.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 3.5,
+                        ),
+                        itemBuilder: (context, index) {
+                          final device = devices[index];
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.scanner, size: 25, color: solidPrimary),
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text("ID: ${device.deviceId ?? ''}",
+                                          style: const TextStyle(fontSize: 12)),
+                                      Text(
+                                          "Name: ${device.deviceName ?? ''}",
+                                          style: const TextStyle(fontSize: 12)),
+                                      Text(
+                                          "Status: ${device.connectionStatus ?? ''}",
+                                          style: const TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
               ),
             ],
           ),
