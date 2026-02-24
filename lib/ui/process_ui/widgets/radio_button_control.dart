@@ -156,9 +156,9 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                     height: 10,
                   ),
                   showError
-                      ? const Text(
+                      ?  Text(
                           "* ${AppLocalizations.of(context)!.select_option}",
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Color.fromARGB(255, 159, 21, 11),
                               fontSize: 12),
                         )
