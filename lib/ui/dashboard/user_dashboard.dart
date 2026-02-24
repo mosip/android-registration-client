@@ -121,12 +121,19 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                   const SizedBox(height: 10),
                                   SizedBox(
                                     width: double.infinity,
-                                    child: Text(
-                                      appLocalizations.packets_created,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: isMobileSize ? 15 : 20,
-                                          fontWeight: FontWeight.bold),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          appLocalizations.packets_created,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: isMobileSize ? 15 : 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -173,12 +180,19 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                   const SizedBox(height: 10),
                                   SizedBox(
                                     width: double.infinity,
-                                    child: Text(
-                                      appLocalizations.packets_synced,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: isMobileSize ? 15 : 20,
-                                          fontWeight: FontWeight.bold),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          appLocalizations.packets_synced,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: isMobileSize ? 15 : 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
