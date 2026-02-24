@@ -419,6 +419,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                           ),
                                         ]),
                                     ...snapshot.data!
+                                        .whereType<DashBoardData>()
                                         .map<TableRow>((data) => TableRow(
                                               children: [
                                                 TableCell(
@@ -431,7 +432,7 @@ class _UserDashBoardState extends State<UserDashBoard> {
                                                                 horizontal: 16,
                                                                 vertical: 12),
                                                     child: Text(
-                                                        data!.userId.toString(),
+                                                        data.userId.toString(),
                                                         style: TextStyle(
                                                             fontSize: isMobileSize
                                                                 ? 10
