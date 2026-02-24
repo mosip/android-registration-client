@@ -186,7 +186,7 @@ public enum AuditEvent {
     REG_BIO_EXCEPTION_MARKING("REG-EVT-027", USER_EVENT.getCode(), "REG_BIO_EXCEPTION_MARKING", "Biometric Exceptions: Marking"),
     REG_BIO_NEXT("REG-EVT-037", USER_EVENT.getCode(), "REG_BIO_NEXT", "Click Next to capture the next biometric"),
     REG_BIO_EXCEPTION_REMOVING("REG-EVT-065", USER_EVENT.getCode(), "REG_BIO_EXCEPTION_REMOVING", "Biometric Exceptions: Removing"),
-    REG_BIO_SCAN("REG-EVT-092", USER_EVENT.getCode(), "REG_BIO_SCAN", 	"Fingerprints: Scan of %s"),
+    REG_BIO_SCAN("REG-EVT-092", USER_EVENT.getCode(), "REG_BIO_SCAN", 	"Scan of %s"),
     REG_BIO_CAPTURE_NEXT("REG-EVT-041", USER_EVENT.getCode(), "REG_BIO_CAPTURE_NEXT",	"Click of Next after capturing Biometrics");
 
     AuditEvent(String id, String type, String name, String description) {
