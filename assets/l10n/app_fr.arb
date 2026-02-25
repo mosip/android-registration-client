@@ -363,6 +363,7 @@
   "connect_devices_and_scan": "Veuillez connecter vos appareils et appuyer sur 'ANALYSE' pour les détecter",
   "search_for_key": "Rechercher une clé",
   "sync_restart_dialog_message": "L'application redémarrera une fois que vous aurez cliqué sur Redémarrer, et vous serez redirigé vers la page de connexion.",
-  "sync_restart_button": "Redémarrer"
+  "sync_restart_button": "Redémarrer",
+  "app_restart_message": "Configuration enregistrée avec succès. Redémarrage de l'application..."
 }
 

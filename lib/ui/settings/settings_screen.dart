@@ -177,7 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     switch (controllerName) {
       case 'ScheduledJobsSettingsController':
-        return ScheduledJobsSettings(jobJsonList: activeJobs);
+        return ScheduledJobsSettings(settings: settings, selectedLan: selectedLang, jobJsonList: activeJobs);
       case 'GlobalConfigSettingsController':
         return GlobalConfigSettingsTab(settings: settings,selectedLan: selectedLang);
       case 'DeviceSettingsController':
