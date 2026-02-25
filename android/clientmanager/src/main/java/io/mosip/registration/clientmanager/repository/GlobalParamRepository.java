@@ -7,6 +7,7 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,9 +21,15 @@ import java.util.stream.Collectors;
 public class GlobalParamRepository {
 
     private static final String TAG = GlobalParamRepository.class.getSimpleName();
+    /** Config prefix for biometric SDK providers; only keys starting with this prefix are used. */
+    public static final String BIOMETRIC_SDK_PROVIDERS_PREFIX = "mosip.biometric.sdk.providers";
+
     private static Map<String, String> globalParamMap = new HashMap<>();
     private GlobalParamDao globalParamDao;
     private LocalConfigDAO localConfigDAO;
+
+    /** Cached parsed config: modality -> vendorId -> (paramKey -> paramValue). Cleared on refresh. */
+    private volatile Map<String, Map<String, Map<String, String>>> biometricProviderConfigCache = null;
 
     @Inject
     public GlobalParamRepository(GlobalParamDao globalParamDao, LocalConfigDAO localConfigDAO) {
@@ -278,10 +285,47 @@ public class GlobalParamRepository {
             globalParamMap.clear();
             globalParamMap.putAll(freshGlobalParams);
             globalParamMap.putAll(localConfigs); // Local preferences take precedence
+            biometricProviderConfigCache = null;
         } catch (Exception e) {
             Log.e(TAG, "Error refreshing configuration cache", e);
         }
 
+    }
+
+    /** Returns biometric provider config: modality -> vendorId -> (paramKey -> value) from keys under {@link #BIOMETRIC_SDK_PROVIDERS_PREFIX}. */
+    public Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
+        if (biometricProviderConfigCache != null) return biometricProviderConfigCache;
+        synchronized (this) {
+            if (biometricProviderConfigCache != null) return biometricProviderConfigCache;
+            biometricProviderConfigCache = resolveBiometricProviderConfig();
+            return biometricProviderConfigCache;
+        }
+    }
+
+    private Map<String, Map<String, Map<String, String>>> resolveBiometricProviderConfig() {
+        String prefix = BIOMETRIC_SDK_PROVIDERS_PREFIX + ".";
+        Map<String, ?> providerKeyValues = getGlobalParamsByPattern(BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%");
+        if (providerKeyValues.isEmpty()) {
+            Map<String, Object> fromCache = new LinkedHashMap<>();
+            synchronized (globalParamMap) {
+                for (Map.Entry<String, String> e : globalParamMap.entrySet()) {
+                    if (e.getKey() != null && e.getKey().startsWith(prefix)) fromCache.put(e.getKey(), e.getValue());
+                }
+            }
+            providerKeyValues = fromCache;
+        }
+        Map<String, Map<String, Map<String, String>>> result = new LinkedHashMap<>();
+        for (Map.Entry<String, ?> e : providerKeyValues.entrySet()) {
+            String key = e.getKey();
+            if (key == null || !key.startsWith(prefix) || key.length() <= prefix.length()) continue;
+            String[] parts = key.substring(prefix.length()).split("\\.", -1);
+            if (parts.length < 3) continue;
+            String value = e.getValue() != null ? String.valueOf(e.getValue()).trim() : "";
+            result.computeIfAbsent(parts[0], k -> new LinkedHashMap<>())
+                    .computeIfAbsent(parts[1], k -> new LinkedHashMap<>())
+                    .put(parts.length > 3 ? String.join(".", Arrays.copyOfRange(parts, 2, parts.length)) : parts[2], value);
+        }
+        return result;
     }
 
     private long parseLongWithDefault(String key) {
@@ -297,10 +341,21 @@ public class GlobalParamRepository {
         }
     }
 
-    // Returns SDK implementation class name for given modality.
-    // Key pattern: mosip.biometric.sdk.providers.{modality}.mockvendor.classname
+    /**
+     * Returns SDK implementation class name for given modality from config under
+     * {@link #BIOMETRIC_SDK_PROVIDERS_PREFIX}. Returns null if not configured for that modality.
+     */
     public String getBioSDKProviderClassName(String modality) {
-        String key = String.format("mosip.biometric.sdk.providers.%s.mockvendor.classname", modality);
-        return getCachedStringGlobalParam(key);
+        Map<String, Map<String, Map<String, String>>> config = getBiometricProviderConfig();
+        Map<String, Map<String, String>> vendors = config != null ? config.get(modality) : null;
+        if (vendors != null && !vendors.isEmpty()) {
+            for (Map<String, String> params : vendors.values()) {
+                String classname = params != null ? params.get("classname") : null;
+                if (classname != null && !classname.isEmpty()) {
+                    return classname;
+                }
+            }
+        }
+        return null;
     }
 }

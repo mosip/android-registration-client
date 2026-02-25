@@ -70,7 +70,7 @@ public class BiometricHandleTest {
     @Test
     public void test_successfully_parses_valid_capture_response() throws Exception {
         Biometrics095Service service = new Biometrics095Service(mockContext, mockObjectMapper,
-                mockAuditManagerService, mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository);
+                mockAuditManagerService, mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null);
         service.sharedPreferences = mockSharedPreferences;
 
         CaptureResponse captureResponse = new CaptureResponse();
@@ -112,7 +112,7 @@ public class BiometricHandleTest {
     @Test
     public void test_throws_exception_when_capture_response_has_error() throws Exception {
         Biometrics095Service service = new Biometrics095Service(mockContext, mockObjectMapper,
-                mockAuditManagerService, mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository);
+                mockAuditManagerService, mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null);
 
         CaptureResponse captureResponse = new CaptureResponse();
         CaptureRespDetail captureRespDetail = new CaptureRespDetail();
