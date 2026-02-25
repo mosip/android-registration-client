@@ -103,12 +103,13 @@ public class ExportPage extends BasePage {
 
 	public void clickOnOkButton() {
 		clickOnElement(okButton);
-		driver.navigate().back();
 	}
 
 	public void selectFolderByName(String folderName) {
+		String safeName = folderName.replace("\"", "\\\"");
 		By folderLocator = MobileBy.AndroidUIAutomator(
-				"new UiSelector().className(\"android.widget.TextView\")" + ".text(\"" + folderName + "\")");
+				"new UiSelector()" + ".className(\"android.widget.TextView\")" + ".text(\"" + safeName + "\")");
+
 		click(folderLocator);
 	}
 
@@ -120,12 +121,12 @@ public class ExportPage extends BasePage {
 		try {
 			if (isElementDisplayed(accessFolderAlertPopup)) {
 				clickOnElement(allowFolderButton);
-				logger.info("Access consent displayed and clicked.");
+				logger.info("Allow folder consent displayed and clicked.");
 			} else {
-				logger.info("Access consent not displayed. Skipping.");
+				logger.info("Allow folder consent not displayed. Skipping.");
 			}
 		} catch (Exception e) {
-			logger.info("Access consent not present. Continuing flow.");
+			logger.info("Allow folder consent not present. Continuing flow.");
 		}
 	}
 
@@ -176,7 +177,6 @@ public class ExportPage extends BasePage {
 			}
 			enterFolderName(folderName);
 			clickOnOkButton();
-			selectFolderByName(folderName);
 			clickOnUseThisFolderButton();
 			handleAllowFolderConsentIfPresent();
 		}
