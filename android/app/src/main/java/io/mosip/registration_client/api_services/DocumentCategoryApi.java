@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -95,29 +98,18 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
                 List<String> docs = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
                 documentCategory = docs != null ? docs : Collections.emptyList();
             } else {
-                List<List<String>> resultList = new ArrayList<>();
-                for (int i = 0; i < languages.size(); i++) {
-                    List<String> langDocs = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode,
-                            languages.get(i));
-                    resultList.add(langDocs != null ? langDocs : Collections.emptyList());
-                }
-                int maxSize = resultList.stream().mapToInt(List::size).max().orElse(0);
-                for (int k = 0; k < maxSize; k++) {
-                    StringBuilder concatenated = new StringBuilder();
-                    for (int j = 0; j < resultList.size(); j++) {
-                        List<String> langList = resultList.get(j);
-                        if (k < langList.size()) {
-                            concatenated.append(langList.get(k));
-                            if (j < resultList.size() - 1) {
-                                concatenated.append(" / ");
-                            }
-                        }
-                    }
-                    String entry = concatenated.toString().replaceAll("\\s/\\s$", "").trim();
-                    if (!entry.isEmpty()) {
-                        documentCategory.add(entry);
-                    }
-                }
+                List<List<String>> docsPerLang = languages.stream()
+                        .map(l -> this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, l))
+                        .map(d -> d != null ? d : Collections.<String>emptyList())
+                        .collect(Collectors.toList());
+
+                documentCategory = IntStream.range(0, docsPerLang.stream().mapToInt(List::size).max().orElse(0))
+                        .mapToObj(i -> docsPerLang.stream()
+                                .filter(l -> i < l.size())
+                                .map(l -> l.get(i))
+                                .collect(Collectors.joining(" / ")))
+                        .filter(s -> !s.isEmpty())
+                        .collect(Collectors.toList());
             }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
