@@ -90,6 +90,11 @@
 					<include name="Settings" />
 				</methods>
 			</class>
+			<class name="regclient.androidTestCases.ExportPacket">
+				<methods>
+					<include name="exportPacket" />
+				</methods>
+			</class>
 		</classes>
 	</test>
 	<listeners>

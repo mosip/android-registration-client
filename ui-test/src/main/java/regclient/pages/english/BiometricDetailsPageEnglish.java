@@ -98,19 +98,31 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	}
 
 	public ApplicantBiometricsPage clickOnLeftHandScanIcon() {
+
+		WebElement leftHandScanIcon = driver.findElement(MobileBy
+				.AndroidUIAutomator("new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\"))"
+						+ ".scrollIntoView(new UiSelector().description(\"Left Hand Scan\"))"));
+
 		clickOnElement(leftHandScanIcon);
 		return new ApplicantBiometricsPageEnglish(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnThumbsScanIcon() {
+		WebElement thumbsScanIcon = driver.findElement(MobileBy
+				.AndroidUIAutomator("new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\"))"
+						+ ".scrollIntoView(new UiSelector().description(\"Thumbs Scan\"))"));
 		clickOnElement(thumbsScanIcon);
 		return new ApplicantBiometricsPageEnglish(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnFaceScanIcon() {
+		WebElement faceScanIcon = driver.findElement(MobileBy
+				.AndroidUIAutomator("new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\"))"
+						+ ".scrollIntoView(new UiSelector().description(\"Face Scan\"))"));
 		clickOnElement(faceScanIcon);
-		return new ApplicantBiometricsPageEnglish(driver);
+	    return new ApplicantBiometricsPageEnglish(driver);
 	}
+
 
 	public ApplicantBiometricsPage clickOnExceptionScanIcon() {
 		clickOnElement(exceptionScanIcon);
