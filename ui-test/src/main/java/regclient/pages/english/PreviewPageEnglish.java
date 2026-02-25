@@ -49,7 +49,7 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "Lost UIN")
 	private WebElement lostUinTitle;
-	
+
 	@AndroidFindBy(accessibility = "Biometric correction")
 	private WebElement biometricCorrectionTitle;
 
@@ -104,12 +104,17 @@ public class PreviewPageEnglish extends PreviewPage {
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	public boolean isBiometricCorrectionTitleDisplayed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
-						+ FetchUiSpec.getTitleUsingId("BIO") + "\"))")));
+	    try {
+	        driver.findElement(MobileBy.AndroidUIAutomator(
+	            "new UiScrollable(new UiSelector().scrollable(true))" +
+	            ".scrollIntoView(new UiSelector().description(\"Biometric correction\"))"
+	        ));
+	        return true;
+	    } catch (Exception e) {
+	        return false;
+	    }
 	}
 
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
