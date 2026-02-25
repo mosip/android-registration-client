@@ -153,6 +153,10 @@ public class RegistrationConstants {
     public static final String REG_PAK_MAX_CNT_APPRV_LIMIT = "mosip.registration.reg_pak_max_cnt_apprv_limit";
     public static final String PACKET_STORE_LOCATION = "mosip.registration.registration_packet_store_location";
 
+    public static final String JOBS_OFFLINE = "mosip.registration.jobs.offline";
+    public static final String JOBS_UNTAGGED = "mosip.registration.jobs.unTagged";
+    public static final String JOBS_RESTART = "mosip.registration.jobs.restart";
+
     // Sync status validation constants
     public static final String MOSIP_REGISTRATION = "mosip.registration.";
     public static final String DOT = ".";

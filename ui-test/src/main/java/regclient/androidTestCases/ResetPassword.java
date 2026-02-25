@@ -36,7 +36,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify reset password")
 	public void resetPassword() throws IOException {
-		
+
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		ProfilePage profilePage = null;
@@ -338,7 +338,6 @@ public class ResetPassword extends AndroidBaseTest {
 
 		keycloakPage.clickOnSignoutButton();
 		keycloakPage.resumeArcApplication();
-
 		profilePage.clickOnLogoutButton();
 	}
 }

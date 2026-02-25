@@ -61,7 +61,7 @@ public class PreviewPageEnglish extends PreviewPage {
 		clickOnElement(continueButton);
 		return new AuthenticationPageEnglish(driver);
 	}
-
+	
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
 		try {
 			scrollToText("Demographic Information");
@@ -72,7 +72,7 @@ public class PreviewPageEnglish extends PreviewPage {
 			return false;
 		}
 	}
-
+	
 	public boolean isDocumentsInformationInPreviewPageDisplayed() {
 		try {
 			scrollToText("Documents");

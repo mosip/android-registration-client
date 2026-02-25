@@ -26,6 +26,9 @@ import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.constant.AuditEvent;
+import io.mosip.registration.clientmanager.constant.Components;
 
 /**
  * Validates pre-check requirements (sync status and GPS location).
@@ -45,6 +48,7 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
     private LocationValidationService locationValidationService;
     private MasterDataService masterDataService;
     private RegistrationCenterRepository registrationCenterRepository;
+    private AuditManagerService auditManagerService;
 
     @Inject
     public PreCheckValidatorServiceImpl(
@@ -55,7 +59,8 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
             JobTransactionService jobTransactionService,
             LocationValidationService locationValidationService,
             MasterDataService masterDataService,
-            RegistrationCenterRepository registrationCenterRepository) {
+            RegistrationCenterRepository registrationCenterRepository,
+            AuditManagerService auditManagerService) {
         this.context = context;
         this.syncJobDefRepository = syncJobDefRepository;
         this.globalParamRepository = globalParamRepository;
@@ -64,6 +69,7 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
         this.locationValidationService = locationValidationService;
         this.masterDataService = masterDataService;
         this.registrationCenterRepository = registrationCenterRepository;
+        this.auditManagerService = auditManagerService;
     }
 
     /**
@@ -75,6 +81,7 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
     public void validateSyncStatus() throws Exception {
         try {
             validatingSyncJobsConfig();
+            auditManagerService.audit(AuditEvent.SYNC_INFO_VALIDATE, Components.JOB_SERVICE);
         } catch (ClientCheckedException e) {
             Log.e(TAG, "Sync status validation failed", e);
             throw e;
@@ -281,6 +288,8 @@ public class PreCheckValidatorServiceImpl implements PreCheckValidatorService {
                     RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION,
                     context.getString(R.string.err_003));
             }
+
+            auditManagerService.audit(AuditEvent.SYNC_GEO_VALIDATE, Components.REGISTRATION);
 
         } catch (NumberFormatException e) {
             Log.e(TAG, "Invalid number format in center coordinates or max distance configuration", e);

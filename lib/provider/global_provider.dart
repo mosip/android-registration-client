@@ -25,6 +25,7 @@ import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:registration_client/platform_spi/packet_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/utils/constants.dart';
+import 'package:registration_client/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalProvider with ChangeNotifier {
@@ -142,6 +143,23 @@ class GlobalProvider with ChangeNotifier {
 
   void clearScannedPages() {
     _scannedPages.clear();
+    notifyListeners();
+  }
+
+  /// Clears scanned pages but preserves given keys (usually document field IDs).
+  /// This preserves document preview images when re-fetching PRID.
+  void clearScannedPagesPreservingKeys(List<String> keysToPreserve) {
+    if (keysToPreserve.isEmpty) {
+      clearScannedPages();
+      return;
+    }
+    final preserved = <String, List<Uint8List?>>{};
+    for (final key in keysToPreserve) {
+      if (_scannedPages.containsKey(key)) {
+        preserved[key] = _scannedPages[key]!;
+      }
+    }
+    _scannedPages = preserved;
     notifyListeners();
   }
 
@@ -601,6 +619,27 @@ class GlobalProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Clears demographic and MVEL state but preserves given keys in
+  /// [fieldInputValue] (e.g. biometric and document field IDs) so that
+  /// re-fetching PRID does not force re-upload of already captured data.
+  void clearMapPreservingKeys(List<String> keysToPreserve) {
+    if (keysToPreserve.isEmpty) {
+      clearMap();
+      return;
+    }
+    final preserved = <String, dynamic>{};
+    for (final key in keysToPreserve) {
+      if (_fieldInputValue.containsKey(key)) {
+        preserved[key] = _fieldInputValue[key];
+      }
+    }
+    _fieldInputValue = preserved;
+    _mvelRequiredFields = {};
+    _mvelVisibleFields = {};
+    log("input value $_fieldInputValue (preserved ${preserved.length} keys)");
+    notifyListeners();
+  }
+
   clearExceptions() {
     _exceptionAttributes = [];
     _completeException = {};
@@ -934,21 +973,14 @@ class GlobalProvider with ChangeNotifier {
       return null;
     }
 
-    // Check and request permission
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      audit.performAudit(
-        "REG-NAV-005",
-        "REG-MOD-102",
-      );
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions still denied
-        return null;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
+    // Session-aware permission: re-request if user had chosen "Only this time" in a previous session
+    bool hasPermission =
+        await LocationService.instance.checkLocationPermissionForSession();
+    await audit.performAudit(
+      "NAV_GEO_LOCATION",
+      "REG-MOD-102",
+    );
+    if (!hasPermission) {
       return null;
     }
 
