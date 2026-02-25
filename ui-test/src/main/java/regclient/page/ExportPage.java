@@ -164,7 +164,7 @@ public class ExportPage extends BasePage {
 	}
 
 	public void exportPacketIntoFolder(String folderName) {
-		if (isFolderDisplayed(folderName)) {
+		if (isFolderTitleDisplayed(folderName)) {
 			logger.info(folderName + " folder already exists. Using it.");
 			clickOnUseThisFolderButton();
 			handleAllowFolderConsentIfPresent();
@@ -182,7 +182,7 @@ public class ExportPage extends BasePage {
 		}
 	}
 
-	public boolean isFolderDisplayed(String folderName) {
+	public boolean isFolderTitleDisplayed(String folderName) {
 		By folderLocator = By.xpath("//android.widget.TextView[@text='" + folderName + "']");
 		return isElementDisplayed(folderLocator);
 	}
