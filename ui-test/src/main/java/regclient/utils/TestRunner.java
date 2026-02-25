@@ -65,6 +65,7 @@ public class TestRunner {
 			XmlClass autoLogout = new XmlClass("regclient.androidTestCases.AutoLogout");
 			XmlClass biometricCorrection = new XmlClass("regclient.androidTestCases.BiometricCorrection");
 			XmlClass preRegFetchingPacket = new XmlClass("regclient.androidTestCases.PreRegFetchingPacket");
+			XmlClass exportPacket = new XmlClass("regclient.androidTestCases.ExportPacket");
 
 			List<XmlClass> classes = new ArrayList<>();
 			String[] Scenarionames = ArcConfigManager.gettestcases().split(",");
@@ -82,7 +83,7 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdult"))
 					classes.add(newRegistrationAdult);
-				
+
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultException"))
 					classes.add(newRegistrationAdultException);
 
@@ -115,18 +116,21 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("settings"))
 					classes.add(settings);
-				
+
 				if (Scenarioname.equalsIgnoreCase("resetPassword"))
 					classes.add(resetPassword);
-				
+
 				if (Scenarioname.equalsIgnoreCase("autoLogout"))
 					classes.add(autoLogout);
-				
+
 				if (Scenarioname.equalsIgnoreCase("biometricCorrection"))
 					classes.add(biometricCorrection);
-				
+
 				if (Scenarioname.equalsIgnoreCase("preRegFetchingPacket"))
 					classes.add(preRegFetchingPacket);
+
+				if (Scenarioname.equalsIgnoreCase("exportPacket"))
+					classes.add(exportPacket);
 
 			}
 			XmlTest test = new XmlTest(suite);

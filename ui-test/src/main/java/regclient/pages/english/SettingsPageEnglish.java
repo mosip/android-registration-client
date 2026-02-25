@@ -82,7 +82,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	@AndroidFindBy(accessibility = "Device Settings")
 	private WebElement deviceSettingsPage;
 
-	@AndroidFindBy(accessibility = "Scan Now")
+	@AndroidFindBy(accessibility = "Scan")
 	private WebElement scanNowButton;
 
 	@AndroidFindBy(accessibility = "ID: e88198714e67562c\nName: io.mosip.mock.sbi.face\nStatus: Ready")
