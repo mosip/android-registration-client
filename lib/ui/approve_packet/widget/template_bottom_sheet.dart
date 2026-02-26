@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/utils/secure_storage.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/constants.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
@@ -18,12 +18,7 @@ import 'package:registration_client/utils/secure_screen_service.dart';
 class TemplateBottomSheet {
   void loadHtmlData(WebViewPlusController? controller, String packetId) async {
     log(packetId);
-    const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(
-        encryptedSharedPreferences: true,
-      ),
-    );
-    String? data = await storage.read(key: packetId);
+    String? data = await appSecureStorage.read(key: packetId);
     if (controller != null) {
       controller.webViewController.loadHtmlString(data ?? "No Template...");
     }

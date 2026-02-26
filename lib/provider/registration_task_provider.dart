@@ -9,8 +9,8 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:registration_client/utils/secure_storage.dart';
 import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/pigeon/registration_data_pigeon.dart';
@@ -32,11 +32,7 @@ class RegistrationTaskProvider with ChangeNotifier {
   final DashBoard dashBoard = DashBoard();
   DynamicResponseService dynamicResponseService = DynamicResponseService();
   final DocumentCategory documentCategory = DocumentCategory();
-  static const storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-  );
+  static const storage = appSecureStorage;
 
   List<Object?> _listOfProcesses = List.empty(growable: true);
   List<String?> _listOfSettings = List.empty(growable: true);
