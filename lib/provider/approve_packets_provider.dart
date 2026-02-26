@@ -14,7 +14,10 @@ import '../platform_spi/packet_service.dart';
 class ApprovePacketsProvider with ChangeNotifier {
   final storage = const FlutterSecureStorage(
     aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
+      keyCipherAlgorithm:
+          KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+      resetOnError: true,
     ),
   );
 
