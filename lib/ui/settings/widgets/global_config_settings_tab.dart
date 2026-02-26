@@ -196,8 +196,8 @@ class _GlobalConfigSettingsTabState extends State<GlobalConfigSettingsTab> {
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Configuration saved successfully. Restarting app...'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.app_restart_message),
           duration: Duration(seconds: 2),
         ),
       );
