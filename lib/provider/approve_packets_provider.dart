@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:registration_client/model/registration.dart';
+import 'package:registration_client/utils/secure_storage.dart';
 import 'package:registration_client/platform_android/packet_service_impl.dart';
 import 'package:registration_client/utils/constants.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
@@ -12,14 +12,7 @@ import '../platform_android/sync_response_service_impl.dart';
 import '../platform_spi/packet_service.dart';
 
 class ApprovePacketsProvider with ChangeNotifier {
-  final storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      keyCipherAlgorithm:
-          KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
-      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
-      resetOnError: true,
-    ),
-  );
+  final storage = appSecureStorage;
 
   List<Map<String, Object>> packetsList = [];
   List<Map<String, Object>> matchingPackets = [];
