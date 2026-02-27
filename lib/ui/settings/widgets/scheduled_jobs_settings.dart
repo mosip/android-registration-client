@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../model/settings.dart';
 import '../../../provider/sync_provider.dart';
