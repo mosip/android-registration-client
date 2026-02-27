@@ -50,7 +50,7 @@ import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.BiometricsService;
-import io.mosip.registration.clientmanager.util.BioProviderFactory;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.clientmanager.util.MatchUtil;
 import io.mosip.registration.keymanager.util.CryptoUtil;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
@@ -76,7 +76,7 @@ public class Biometrics095Service extends BiometricsService {
     private ClientCryptoManagerService clientCryptoManagerService;
 
     private final UserBiometricRepository userBiometricRepository;
-    private final BioProviderFactory bioProviderFactory;
+    private final BioSdkProviderFactory bioSdkProviderFactory;
     private IBioApiV2 iBioApiV2;
     SharedPreferences sharedPreferences;
     public Map<Modality, Object> BIO_DEVICES;
@@ -84,17 +84,17 @@ public class Biometrics095Service extends BiometricsService {
 
     @Inject
     public Biometrics095Service(Context context, ObjectMapper objectMapper,
-                                AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService, UserBiometricRepository userBiometricRepository, BioProviderFactory bioProviderFactory) {
+                                AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService, UserBiometricRepository userBiometricRepository, BioSdkProviderFactory bioSdkProviderFactory) {
         this.context = context;
         this.objectMapper = objectMapper;
         this.auditManagerService = auditManagerService;
         this.globalParamRepository = globalParamRepository;
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userBiometricRepository = userBiometricRepository;
-        this.bioProviderFactory = bioProviderFactory;
-        if (bioProviderFactory != null) {
-            bioProviderFactory.initialize(context);
-            this.iBioApiV2 = bioProviderFactory.getBioProvider(Modality.FACE);
+        this.bioSdkProviderFactory = bioSdkProviderFactory;
+        if (bioSdkProviderFactory != null) {
+            bioSdkProviderFactory.initialize(context);
+            this.iBioApiV2 = bioSdkProviderFactory.getBioProvider(Modality.FACE);
         } else {
             this.iBioApiV2 = null;
         }
@@ -187,7 +187,7 @@ public class Biometrics095Service extends BiometricsService {
                 }
 
                if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
-                    IBioApiV2 modalityBioSDK = bioProviderFactory != null ? bioProviderFactory.getBioProvider(modality) : null;
+                    IBioApiV2 modalityBioSDK = bioSdkProviderFactory != null ? bioSdkProviderFactory.getBioProvider(modality) : null;
 
                     if (modalityBioSDK != null) {
                         boolean isMatched;
@@ -345,7 +345,7 @@ public class Biometrics095Service extends BiometricsService {
                 false
         );
 
-        IBioApiV2 bioProvider = bioProviderFactory != null ? bioProviderFactory.getBioProvider(modality) : null;
+        IBioApiV2 bioProvider = bioSdkProviderFactory != null ? bioSdkProviderFactory.getBioProvider(modality) : null;
         if (bioProvider == null) {
             Log.w(TAG, "SDK provider not found for modality: " + modality + ", using device quality score");
             return biometricsDto.getQualityScore();

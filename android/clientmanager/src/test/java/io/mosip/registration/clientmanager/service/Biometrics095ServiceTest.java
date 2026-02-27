@@ -20,7 +20,7 @@ import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
-import io.mosip.registration.clientmanager.util.BioProviderFactory;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -56,7 +56,7 @@ public class Biometrics095ServiceTest {
     private UserBiometricRepository mockUserBiometricRepository;
 
     @Mock
-    private BioProviderFactory mockBioProviderFactory;
+    private BioSdkProviderFactory mockBioSdkProviderFactory;
 
     @Mock
     private SharedPreferences mockSharedPreferences;

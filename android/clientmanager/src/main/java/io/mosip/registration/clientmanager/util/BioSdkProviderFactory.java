@@ -23,9 +23,9 @@ import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
  * </ul>
  */
 @Singleton
-public class BioProviderFactory {
+public class BioSdkProviderFactory {
 
-    private static final String TAG = BioProviderFactory.class.getSimpleName();
+    private static final String TAG = BioSdkProviderFactory.class.getSimpleName();
 
     private final Context context;
     private final GlobalParamRepository globalParamRepository;
@@ -34,7 +34,7 @@ public class BioProviderFactory {
     private volatile boolean initialized = false;
 
     @Inject
-    public BioProviderFactory(Context context, GlobalParamRepository globalParamRepository) {
+    public BioSdkProviderFactory(Context context, GlobalParamRepository globalParamRepository) {
         this.context = context;
         this.globalParamRepository = globalParamRepository;
     }

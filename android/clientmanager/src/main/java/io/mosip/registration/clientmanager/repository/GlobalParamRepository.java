@@ -29,7 +29,7 @@ public class GlobalParamRepository {
     private LocalConfigDAO localConfigDAO;
 
     /** Cached parsed config: modality -> vendorId -> (paramKey -> paramValue). Cleared on refresh. */
-    private volatile Map<String, Map<String, Map<String, String>>> biometricProviderConfigCache = null;
+    private volatile Map<String, Map<String, Map<String, String>>> bioSdkProviderConfigCache = null;
 
     @Inject
     public GlobalParamRepository(GlobalParamDao globalParamDao, LocalConfigDAO localConfigDAO) {
@@ -298,7 +298,7 @@ public class GlobalParamRepository {
             globalParamMap.clear();
             globalParamMap.putAll(freshGlobalParams);
             globalParamMap.putAll(localConfigs); // Local preferences take precedence
-            biometricProviderConfigCache = null;
+            bioSdkProviderConfigCache = null;
         } catch (Exception e) {
             Log.e(TAG, "Error refreshing configuration cache", e);
         }
@@ -307,28 +307,28 @@ public class GlobalParamRepository {
 
     /** Returns biometric provider config: modality -> vendorId -> (paramKey -> value) from keys under {@link #BIOMETRIC_SDK_PROVIDERS_PREFIX}. */
     public Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
-        if (biometricProviderConfigCache != null) return biometricProviderConfigCache;
+        if (bioSdkProviderConfigCache != null) return bioSdkProviderConfigCache;
         synchronized (this) {
-            if (biometricProviderConfigCache != null) return biometricProviderConfigCache;
-            biometricProviderConfigCache = resolveBiometricProviderConfig();
-            return biometricProviderConfigCache;
+            if (bioSdkProviderConfigCache != null) return bioSdkProviderConfigCache;
+            bioSdkProviderConfigCache = resolveBiometricProviderConfig();
+            return bioSdkProviderConfigCache;
         }
     }
 
     private Map<String, Map<String, Map<String, String>>> resolveBiometricProviderConfig() {
         String prefix = BIOMETRIC_SDK_PROVIDERS_PREFIX + ".";
-        Map<String, ?> providerKeyValues = getGlobalParamsByPattern(BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%");
+        Map<String, Object> providerKeyValues = getGlobalParamsByPattern(BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%");
         if (providerKeyValues.isEmpty()) {
-            Map<String, Object> fromCache = new LinkedHashMap<>();
             synchronized (globalParamMap) {
                 for (Map.Entry<String, String> e : globalParamMap.entrySet()) {
-                    if (e.getKey() != null && e.getKey().startsWith(prefix)) fromCache.put(e.getKey(), e.getValue());
+                    if (e.getKey() != null && e.getKey().startsWith(prefix)) {
+                        providerKeyValues.put(e.getKey(), e.getValue());
+                    }
                 }
             }
-            providerKeyValues = fromCache;
         }
         Map<String, Map<String, Map<String, String>>> result = new LinkedHashMap<>();
-        for (Map.Entry<String, ?> e : providerKeyValues.entrySet()) {
+        for (Map.Entry<String, Object> e : providerKeyValues.entrySet()) {
             String key = e.getKey();
             if (key == null || !key.startsWith(prefix) || key.length() <= prefix.length()) continue;
             String[] parts = key.substring(prefix.length()).split("\\.", -1);

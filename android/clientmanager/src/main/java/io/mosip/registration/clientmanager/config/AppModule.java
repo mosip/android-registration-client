@@ -64,7 +64,7 @@ import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
-import io.mosip.registration.clientmanager.util.BioProviderFactory;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -271,16 +271,16 @@ public class AppModule {
 
     @Provides
     @Singleton
-    BioProviderFactory provideBioProviderFactory(GlobalParamRepository globalParamRepository) {
-        return new BioProviderFactory(appContext, globalParamRepository);
+    BioSdkProviderFactory provideBioSdkProviderFactory(GlobalParamRepository globalParamRepository) {
+        return new BioSdkProviderFactory(appContext, globalParamRepository);
     }
 
     @Provides
     @Singleton
     Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                      GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService,
-                                                     UserBiometricRepository userBiometricRepository, BioProviderFactory bioProviderFactory) {
-        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository, bioProviderFactory);
+                                                     UserBiometricRepository userBiometricRepository, BioSdkProviderFactory bioSdkProviderFactory) {
+        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository, bioSdkProviderFactory);
     }
 
     @Provides
