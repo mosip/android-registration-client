@@ -14,11 +14,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -65,10 +69,11 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
     ClientCryptoManagerService clientCryptoManagerService;
 
-
-
     @Inject
-    public DocumentCategoryApi(RegistrationService registrationService,FileSignatureDao fileSignatureRepository,GlobalParamRepository globalParamRepository,MasterDataService masterDataService,CertificateManagerService certificateManagerService,CryptoManagerService cryptoManagerServiceImpl,ClientCryptoManagerService clientCryptoManagerService,Context context) {
+    public DocumentCategoryApi(RegistrationService registrationService, FileSignatureDao fileSignatureRepository,
+            GlobalParamRepository globalParamRepository, MasterDataService masterDataService,
+            CertificateManagerService certificateManagerService, CryptoManagerService cryptoManagerServiceImpl,
+            ClientCryptoManagerService clientCryptoManagerService, Context context) {
         this.registrationService = registrationService;
         this.context = context;
         this.fileSignatureRepository = fileSignatureRepository;
@@ -79,14 +84,33 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
         this.cryptoManagerServiceImpl = cryptoManagerServiceImpl;
         this.clientCryptoManagerService = clientCryptoManagerService;
     }
+
     @Override
-    public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode, @NonNull DocumentCategoryPigeon.Result<List<String>> result) {
+    public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode,
+            @NonNull List<String> languages, @NonNull DocumentCategoryPigeon.Result<List<String>> result) {
         List<String> documentCategory = new ArrayList<>();
         try {
             Map<String, Object> dataContext = this.registrationService.getRegistrationDto().getMVELDataContext();
-            String applicantTypeCode = this.evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
+            String applicantTypeCode = this
+                    .evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
             Log.i(getClass().getSimpleName(), "applicantType: " + applicantTypeCode);
-            documentCategory = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
+            if (languages.size() <= 1) {
+                List<String> docs = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
+                documentCategory = docs != null ? docs : Collections.emptyList();
+            } else {
+                List<List<String>> docsPerLang = languages.stream()
+                        .map(l -> this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, l))
+                        .map(d -> d != null ? d : Collections.<String>emptyList())
+                        .collect(Collectors.toList());
+
+                documentCategory = IntStream.range(0, docsPerLang.stream().mapToInt(List::size).max().orElse(0))
+                        .mapToObj(i -> docsPerLang.stream()
+                                .filter(l -> i < l.size())
+                                .map(l -> l.get(i))
+                                .collect(Collectors.joining(" / ")))
+                        .filter(s -> !s.isEmpty())
+                        .collect(Collectors.toList());
+            }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
         }
@@ -106,9 +130,9 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
     public String evaluateMvelScript(String scriptName, Map<String, Object> dataContext) {
         try {
-            Map<String, String>  ageGroups = new HashMap<String, String>();
+            Map<String, String> ageGroups = new HashMap<String, String>();
             JSONObject ageGroupConfig = new JSONObject((String) this.globalParamRepository.getCachedStringAgeGroup());
-            for (Iterator<String> it = ageGroupConfig.keys(); it.hasNext(); ) {
+            for (Iterator<String> it = ageGroupConfig.keys(); it.hasNext();) {
                 String key = it.next();
                 ageGroups.put(key, ageGroupConfig.getString(key));
             }
@@ -119,25 +143,25 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
             context.put("ageGroups", ageGroups);
             return MVEL.eval("return getApplicantType();", context, String.class);
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(),"Failed to evaluate mvel script", e);
+            Log.e(getClass().getSimpleName(), "Failed to evaluate mvel script", e);
         }
         return null;
     }
 
     private String getScript(String scriptName) {
-        if(SCRIPT_CACHE.containsKey(scriptName) && SCRIPT_CACHE.get(scriptName) != null)
+        if (SCRIPT_CACHE.containsKey(scriptName) && SCRIPT_CACHE.get(scriptName) != null)
             return SCRIPT_CACHE.get(scriptName);
 
         try {
             Optional<FileSignature> fileSignature = this.fileSignatureRepository.findByFileName(scriptName);
-            if(!fileSignature.isPresent()) {
+            if (!fileSignature.isPresent()) {
                 Log.e("File signature not found : {}", scriptName);
                 return null;
             }
 
             Path path = Paths.get(context.getFilesDir().getAbsolutePath(), scriptName);
             byte[] bytes;
-            if(fileSignature.get().getEncrypted()) {
+            if (fileSignature.get().getEncrypted()) {
                 CryptoRequestDto cryptoRequestDto = new CryptoRequestDto();
                 cryptoRequestDto.setValue(FileUtils.readFileToString(path.toFile(), StandardCharsets.UTF_8));
                 CryptoResponseDto cryptoResponseDto = clientCryptoFacade.decrypt(cryptoRequestDto);
@@ -146,18 +170,17 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
                 bytes = FileUtils.readFileToByteArray(path.toFile());
             }
             String actualData = String.format("{\"hash\":\"%s\"}", HMACUtils2.digestAsPlainText(bytes));
-            if(!validateScriptSignature(fileSignature.get().getSignature(), actualData)) {
+            if (!validateScriptSignature(fileSignature.get().getSignature(), actualData)) {
                 Log.e("File signature validation failed : {}", scriptName);
                 return null;
             }
             SCRIPT_CACHE.put(scriptName, new String(bytes));
 
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(),"Failed to get mvel script", e);
+            Log.e(getClass().getSimpleName(), "Failed to get mvel script", e);
         }
         return SCRIPT_CACHE.get(scriptName);
     }
-
 
     private boolean validateScriptSignature(String signature, String actualData) throws Exception {
 
@@ -165,10 +188,12 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
 
         JWTSignatureVerifyRequestDto jwtSignatureVerifyRequestDto = new JWTSignatureVerifyRequestDto();
         jwtSignatureVerifyRequestDto.setJwtSignatureData(signature);
-        jwtSignatureVerifyRequestDto.setActualData(CryptoUtil.encodeToURLSafeBase64(actualData.getBytes(StandardCharsets.UTF_8)));
+        jwtSignatureVerifyRequestDto
+                .setActualData(CryptoUtil.encodeToURLSafeBase64(actualData.getBytes(StandardCharsets.UTF_8)));
         jwtSignatureVerifyRequestDto.setCertificateData(certificateData);
 
-        JWTSignatureVerifyResponseDto verifyResponseDto =  this.clientCryptoManagerService.jwtVerify(jwtSignatureVerifyRequestDto);
+        JWTSignatureVerifyResponseDto verifyResponseDto = this.clientCryptoManagerService
+                .jwtVerify(jwtSignatureVerifyRequestDto);
 
         return verifyResponseDto.isSignatureValid();
     }
