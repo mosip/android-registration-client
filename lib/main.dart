@@ -20,21 +20,104 @@ import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_driver/driver_extension.dart';
+import 'package:flutter/services.dart';
 import 'package:registration_client/utils/inactivity_tracker.dart';
+import 'package:restart_app/restart_app.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 GlobalKey<ScaffoldMessengerState>();
 
+/// MethodChannel name used by Android to request showing the sync-complete restart dialog.
+const String _syncRestartChannel = 'io.mosip.registration_client/sync_restart';
+
 void main() async {
   enableFlutterDriverExtension(enableTextEntryEmulation: false);
   WidgetsFlutterBinding.ensureInitialized();
+  _setupSyncRestartChannel();
   final GlobalProvider appLanguage = GlobalProvider();
   await FlutterConfig.loadEnvVariables();
   await appLanguage.fetchLocale();
   runApp(
     const RestartWidget(child: RegistrationClientApp()),
   );
+}
+
+/// Max retries when showing the sync-restart dialog if context/localizations
+/// are not ready yet (e.g. native call before widget tree is mounted).
+const int _syncRestartDialogMaxRetries = 10;
+
+void _setupSyncRestartChannel() {
+  const MethodChannel(_syncRestartChannel).setMethodCallHandler((MethodCall call) async {
+    if (call.method == 'showRestartDialog') {
+      int attempt = 0;
+
+      void tryShowRestartDialog() {
+        attempt++;
+        final context = rootNavigatorKey.currentContext;
+        if (context == null) {
+          if (attempt <= _syncRestartDialogMaxRetries) {
+            debugPrint(
+              'SyncRestart: context not ready (attempt $attempt/$_syncRestartDialogMaxRetries), '
+              'scheduling retry on next frame.',
+            );
+            WidgetsBinding.instance.addPostFrameCallback((_) => tryShowRestartDialog());
+          } else {
+            debugPrint(
+              'SyncRestart: WARNING — Restart prompt was not shown: navigator context was null '
+              'after $_syncRestartDialogMaxRetries attempts. User may need to restart the app manually.',
+            );
+          }
+          return;
+        }
+        final loc = AppLocalizations.of(context);
+        if (loc == null) {
+          if (attempt <= _syncRestartDialogMaxRetries) {
+            debugPrint(
+              'SyncRestart: localizations not ready (attempt $attempt/$_syncRestartDialogMaxRetries), '
+              'scheduling retry on next frame.',
+            );
+            WidgetsBinding.instance.addPostFrameCallback((_) => tryShowRestartDialog());
+          } else {
+            debugPrint(
+              'SyncRestart: WARNING — Restart prompt was not shown: AppLocalizations was null '
+              'after $_syncRestartDialogMaxRetries attempts. User may need to restart the app manually.',
+            );
+          }
+          return;
+        }
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext dialogContext) => AlertDialog(
+            title: Text(loc.sync_completed_succesfully),
+            content: Text(loc.sync_restart_dialog_message),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  Restart.restartApp();
+                },
+                child: Text(loc.sync_restart_button),
+              ),
+            ],
+          ),
+        );
+      }
+
+      final context = rootNavigatorKey.currentContext;
+      if (context != null) {
+        tryShowRestartDialog();
+      } else {
+        debugPrint(
+          'SyncRestart: native call arrived before widget tree ready, '
+          'scheduling restart dialog on next frame.',
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) => tryShowRestartDialog());
+      }
+    }
+    return null;
+  });
 }
 
 Future<void> _handleAutoLogout() async {

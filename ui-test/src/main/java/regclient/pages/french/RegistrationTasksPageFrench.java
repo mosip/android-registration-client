@@ -23,7 +23,7 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 	@AndroidFindBy(accessibility = "Tâches opérationnelles")
 	private WebElement operationalTaskPageTitle;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Tableau de bord\")")
 	private WebElement dashboardButton;
 
 	@AndroidFindBy(accessibility = "Nouvelle inscription")
@@ -140,7 +140,7 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 
 	public boolean checkLastSyncDate() {
 		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
-		if (contentDesc.contains("Synchronize Data\n" + getCurrentDateWord() + ","))
+		if (contentDesc.contains("Synchroniser les données\n" + getCurrentDateWord() + ","))
 			return true;
 		else
 			return false;

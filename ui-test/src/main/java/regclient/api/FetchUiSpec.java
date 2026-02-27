@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.springframework.test.context.TestContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.appium.java_client.AppiumDriver;
 import io.restassured.response.Response;
+import regclient.BaseTest.BaseTest;
 import regclient.utils.TestDataReader;
 
 public class FetchUiSpec extends BaseTestCase {
@@ -509,4 +511,92 @@ public class FetchUiSpec extends BaseTestCase {
 		}
 	}
 
+	//Below comment-out code required in future
+/*	public static List<String> getBioAttributesUsingId(String biometricId) {
+		List<String> bioAttributes = new ArrayList<>();
+
+		JSONObject rootObject = new JSONObject(UiSpec);
+		JSONArray responseArray = rootObject.getJSONArray("response");
+
+		for (int i = 0; i < responseArray.length(); i++) {
+			JSONObject responseObject = responseArray.getJSONObject(i);
+			JSONArray jsonSpecArray = responseObject.getJSONArray("jsonSpec");
+
+			for (int j = 0; j < jsonSpecArray.length(); j++) {
+				JSONObject specObject = jsonSpecArray.getJSONObject(j);
+
+				if (!"newProcess".equals(specObject.getString("type"))) {
+					continue;
+				}
+
+				JSONArray screensArray = specObject.getJSONObject("spec").getJSONArray("screens");
+
+				for (int k = 0; k < screensArray.length(); k++) {
+					JSONArray fieldsArray = screensArray.getJSONObject(k).getJSONArray("fields");
+
+					for (int l = 0; l < fieldsArray.length(); l++) {
+						JSONObject fieldObject = fieldsArray.getJSONObject(l);
+
+						if (biometricId.equals(fieldObject.getString("id"))) {
+							JSONArray bioArray = fieldObject.getJSONArray("bioAttributes");
+
+							for (int m = 0; m < bioArray.length(); m++) {
+								bioAttributes.add(bioArray.getString(m));
+							}
+							return bioAttributes;
+						}
+					}
+				}
+			}
+		}
+		return bioAttributes;
+	}
+
+	public static String getBiometricLabel(String attribute) {
+
+		JSONObject rootObject = new JSONObject(UiSpec);
+		JSONArray responseArray = rootObject.getJSONArray("response");
+
+		for (int i = 0; i < responseArray.length(); i++) {
+			JSONObject responseObject = responseArray.getJSONObject(i);
+			JSONArray jsonSpecArray = responseObject.getJSONArray("jsonSpec");
+
+			for (int j = 0; j < jsonSpecArray.length(); j++) {
+				JSONObject specObject = jsonSpecArray.getJSONObject(j);
+
+				if (!"newProcess".equals(specObject.getString("type"))) {
+					continue;
+				}
+
+				JSONArray screensArray = specObject.getJSONObject("spec").getJSONArray("screens");
+
+				for (int k = 0; k < screensArray.length(); k++) {
+					JSONArray fieldsArray = screensArray.getJSONObject(k).getJSONArray("fields");
+
+					for (int l = 0; l < fieldsArray.length(); l++) {
+						JSONObject fieldObject = fieldsArray.getJSONObject(l);
+
+						// 🔴 IMPORTANT GUARD
+						if (!fieldObject.has("bioAttributes") || fieldObject.isNull("bioAttributes")) {
+							continue;
+						}
+
+						JSONArray bioArray = fieldObject.getJSONArray("bioAttributes");
+
+						for (int m = 0; m < bioArray.length(); m++) {
+							if (attribute.equals(bioArray.getString(m))) {
+
+								JSONObject labelObj = fieldObject.getJSONObject("label");
+
+								return labelObj.getString(TestDataReader.readData("language"));
+							}
+						}
+					}
+				}
+			}
+		}
+
+		throw new RuntimeException("No label found for biometric attribute: " + attribute);
+	}
+*/
 }

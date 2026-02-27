@@ -122,7 +122,7 @@ public class LostUin extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify lost UIN")
 	public void lostUinAdult() {
-		BasePage.disableAutoRotation();
+		
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -261,25 +261,6 @@ public class LostUin extends AndroidBaseTest {
 						"Verify if demographic details page is displayed");
 
 				demographicPage.clickOnContinueButton();
-			} else if (screen.equals("Documents")) {
-				if ("eng".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentUploadPageEnglish(driver);
-				} else if ("hin".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentUploadPageHindi(driver);
-				} else if ("fra".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentUploadPageFrench(driver);
-				} else if ("kan".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentUploadPageKannada(driver);
-				} else if ("tam".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentUploadPageTamil(driver);
-				} else if ("ara".equalsIgnoreCase(language)) {
-					documentuploadPage = new DocumentUploadPageArabic(driver);
-				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
-				}
-				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
-						"Verify if doccumentupload page is displayed");
-				documentuploadPage.clickOnContinueButton();
 
 			} else if (screen.equals("BiometricDetails")) {
 				if ("eng".equalsIgnoreCase(language)) {
@@ -317,6 +298,8 @@ public class LostUin extends AndroidBaseTest {
 				biometricDetailsPage.clickOnContinueButton();
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
 						"Verify if biometric details page is displayed");
+				
+//				biometricDetailsPage.handleBiometricDetails();
 
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIrisScan();

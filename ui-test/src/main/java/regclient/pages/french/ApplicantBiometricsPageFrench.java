@@ -158,11 +158,12 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 
 	public BiometricDetailsPage clickOnNextButton() {
 		clickOnElement(nextButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageFrench(driver);
 	}
 
 	public void clickOnZoomButton() {
-		clickOnElement(zoomButton);
+		waitTime(1);
+		clickAtCoordinates(1035, 1077);
 	}
 
 	public void clickOnIrisScanTitle() {

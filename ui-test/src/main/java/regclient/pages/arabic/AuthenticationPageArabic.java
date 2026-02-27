@@ -41,7 +41,7 @@ public class AuthenticationPageArabic extends AuthenticationPage {
 	}
 
 	public AcknowledgementPage clickOnAuthenticatenButton() {
-		clickOnElement(authenticateButton);
+		clickOnElement2(authenticateButton);
 		return new AcknowledgementPageArabic(driver);
 	}
 

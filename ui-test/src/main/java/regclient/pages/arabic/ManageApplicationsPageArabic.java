@@ -18,10 +18,10 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "رفع")
 	private WebElement uploadButton;
 
-	@AndroidFindBy(accessibility = "حالة العميل")
+	@AndroidFindBy(accessibility = "  حالة العميل")
 	private WebElement clientStatusDropdown;
 
-	@AndroidFindBy(accessibility = "حالة الخادم")
+	@AndroidFindBy(accessibility = "حالة الملقم")
 	private WebElement serverStatusDropdown;
 
 	@AndroidFindBy(accessibility = "تصدير")
@@ -42,11 +42,8 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "تم التحميل")
 	private WebElement uploadedOption;
 
-	@AndroidFindBy(accessibility = "تم التصدير")
+	@AndroidFindBy(accessibility = "Exported")
 	private WebElement exportedsOption;
-
-	@AndroidFindBy(accessibility = "تجاهل")
-	private WebElement dismissButton;
 
 	@AndroidFindBy(accessibility = "عرض 0 تطبيقات")
 	private WebElement displayZeroApplication;
@@ -187,10 +184,6 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 
 	public boolean isExportedsDropdownOptionDisplayed() {
 		return isElementDisplayed(exportedsOption);
-	}
-
-	public void clickDismissButton() {
-		clickOnElement(dismissButton);
 	}
 
 	public void clickOnSearchCheckBox() {

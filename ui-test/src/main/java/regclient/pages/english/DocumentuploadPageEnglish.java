@@ -52,8 +52,10 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 
 	@SuppressWarnings("deprecation")
 	public boolean isDoccumentUploadPageDisplayed() {
-//		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"" + FetchUiSpec.getScreenTitle("Documents") + "\"))")));
-		return true;
+		return isElementDisplayed(
+				findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+						+ ".setAsHorizontalList()" + ".scrollIntoView(" + "new UiSelector().descriptionContains(\""
+						+ FetchUiSpec.getScreenTitle("Documents") + "\"))")));
 	}
 
 	public DocumentUploadPage clickOnSaveButton() {
@@ -103,6 +105,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -132,6 +136,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -164,7 +170,9 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
-//					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+					waitTime(1);
+					applyOrientation();
+					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
 					assertTrue(isDoccumentUploadPageDisplayed(),
@@ -203,6 +211,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 				cameraPage.handleCameraPermission();
 				cameraPage.clickimage();
 				cameraPage.clickOkButton();
+				waitTime(1);
+				applyOrientation();
 				assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 				cropCaptureImage();
 				clickOnSaveButton();
@@ -231,6 +241,8 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();

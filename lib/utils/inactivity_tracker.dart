@@ -94,12 +94,13 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
     _warningShown = true;
     _dialogOpen = true;
     _countdown.value = widget.gracePeriod.inSeconds;
-
+    globalProvider.getAudit("REG-SCH-002", "REG-MOD-103");
     _logoutTicker = Timer.periodic(const Duration(seconds: 1), (t) {
       _countdown.value -= 1;
       if (_countdown.value <= 0) {
         t.cancel();
         // Clear registration process data on auto logout
+        globalProvider.getAudit("REG-SCH-003", "REG-MOD-103");
         globalProvider.clearRegistrationProcessData();
         widget.onTimeout();
       }

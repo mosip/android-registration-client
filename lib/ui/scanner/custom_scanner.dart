@@ -38,7 +38,7 @@ class _CustomScannerState extends State<CustomScanner> {
   ImageFormat format = ImageFormat.jpg;
 
   _documentScanFailedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-005", "REG-MOD-103");
+    await context.read<GlobalProvider>().getAudit("REG-EVT-050", "REG-MOD-103");
   }
 
   _documentPreviewAudit() async {
@@ -110,7 +110,6 @@ class _CustomScannerState extends State<CustomScanner> {
         : const SizedBox.shrink();
 
     if (_pickedFile != null) {
-      _documentPreviewAudit();
       return Column(
         children: [
           Expanded(
@@ -200,6 +199,7 @@ class _CustomScannerState extends State<CustomScanner> {
       final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
       if (pickedFile != null) {
         _pickedFile = await pickedFile.readAsBytes();
+          context.read<GlobalProvider>().getAudit("REG-EVT-006", "REG-MOD-103");
         setState(() {});
       } else {
         Navigator.pop(context);

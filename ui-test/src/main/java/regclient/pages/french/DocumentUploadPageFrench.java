@@ -54,8 +54,9 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 
 	@SuppressWarnings("deprecation")
 	public boolean isDoccumentUploadPageDisplayed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+		return isElementDisplayed(
+				findElementWithRetry(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+						+ ".setAsHorizontalList()" + ".scrollIntoView(" + "new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getScreenTitle("Documents") + "\"))")));
 	}
 
@@ -105,6 +106,8 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -112,6 +115,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 							"Verify if doccumentupload page is displayed after upload of "
 									+ FetchUiSpec.getValueUsingId(id));
 				} else {
+					waitTime(1);
 					clickOnElement(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -121,6 +125,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
 					}
+					waitTime(1);
 					clickOnElement(PopUpCloseButton);
 					waitTime(1);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
@@ -133,10 +138,14 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					CameraPage cameraPage = new CameraPage(driver);
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
+					waitTime(1);
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
+					scrollToTop();
 					assertTrue(isDoccumentUploadPageDisplayed(),
 							"Verify if doccumentupload page is displayed after upload of "
 									+ FetchUiSpec.getValueUsingId(id));
@@ -144,6 +153,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 			}
 			if (id.equals("proofOfRelationship")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
+					waitTime(1);
 					clickOnElement(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -153,6 +163,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
 					}
+					waitTime(1);
 					clickOnElement(PopUpCloseButton);
 					waitTime(1);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
@@ -165,7 +176,10 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					CameraPage cameraPage = new CameraPage(driver);
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
+					waitTime(1);
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -179,6 +193,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 	}
 
 	public void uploadDoccumentsUpdate(String age, String type) {
+		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("Documents");
 		for (String id : idList) {
 			if (type.equals("all") && !id.equals("proofOfException") && !id.equals("proofOfRelationship")) {
@@ -204,6 +219,8 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 				cameraPage.handleCameraPermission();
 				cameraPage.clickimage();
 				cameraPage.clickOkButton();
+				waitTime(1);
+				applyOrientation();
 				assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 				cropCaptureImage();
 				clickOnSaveButton();
@@ -232,6 +249,8 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					cameraPage.handleCameraPermission();
 					cameraPage.clickimage();
 					cameraPage.clickOkButton();
+					waitTime(1);
+					applyOrientation();
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();

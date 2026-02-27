@@ -67,9 +67,6 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc='FETCH DATA']/following-sibling::android.widget.Button")
 	private WebElement scanButton;
 
-	@AndroidFindBy(accessibility = "Postal/ بريدي")
-	private WebElement postalHeader;
-
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-Foreigner\")")
 	private WebElement nonForeignerOption;
 
@@ -142,7 +139,8 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
-					clickAndsendKeysToTextBox(
+					waitTime(1);
+					clickAndsendKeysToTextBox3(
 							findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 									+ FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
@@ -239,7 +237,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					clickOnElement(dropdownElement);
 					waitTime(1);
 					if (!isElementDisplayed(dropdownElement)) {
-	//					clickOnElement(findElement(By.className("android.view.View")));
+//						clickOnElement(findElement(By.className("android.view.View")));
 						clickOnElement(nonForeignerOption);
 					} else if (isElementDisplayed(dropdownElement)) {
 						swipeOrScroll();

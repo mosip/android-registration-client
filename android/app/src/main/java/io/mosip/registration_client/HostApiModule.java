@@ -71,8 +71,8 @@ import io.mosip.registration_client.api_services.PacketAuthenticationApi;
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
+import io.mosip.registration_client.api_services.SecureScreenApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
-
 @Module
 public class HostApiModule {
 
@@ -248,6 +248,12 @@ public class HostApiModule {
     @Singleton
     LocationValidationService provideLocationValidationService() {
         return new LocationValidationServiceImpl();
+    }
+
+    @Provides
+    @Singleton
+    SecureScreenApi getSecureScreenApi() {
+        return new SecureScreenApi();
     }
 }
 

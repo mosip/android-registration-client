@@ -50,6 +50,32 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   int maxFileSize = 2 * 1024 * 1024; // Default 2MB
 
+  Future<void> _documentAudit(String action) async {
+    String event = "";
+
+    switch (action) {
+      case "SCAN":
+        event = "REG_DOC_SCAN";
+        break;
+      case "VIEW":
+        event = "REG_DOC_VIEW";
+        break;
+      case "DELETE":
+        event = "REG_DOC_DELETE";
+        break;
+      default:
+        event = "";
+    }
+
+    if (event.isNotEmpty) {
+      // Use the document category code (e.g. POA / POI) as the placeholder argument
+      final String docType = widget.field.subType ?? "";
+      await context
+          .read<GlobalProvider>()
+          .getAudit(event, "REG-MOD-103", docType);
+    }
+  }
+
   _fetchMaxFileSize() async {
     try {
       String sizeStr = await registrationTaskProvider.documentCategory.getDocumentSize();
@@ -244,23 +270,38 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
 
   Future<void> getScannedDocuments(Field e) async {
     try {
-      imageBytesList.clear();
+      // First check if we have preserved scanned pages (e.g., after PRID fetch)
+      List<Uint8List?> preservedPages = [];
+      if (globalProvider.scannedPages.containsKey(e.id!)) {
+        preservedPages = globalProvider.scannedPages[e.id!]!;
+      }
+      
       final listOfScannedDoc = await DocumentApi().getScannedPages(e.id!);
       String refNumber = "";
       List<Uint8List?> scannedDoc = List.empty(growable: true);
       for (var element in listOfScannedDoc) {
-        setState(() {
-          scannedDoc.addAll(element!.doc);
-          refNumber = element.referenceNumber;
-        });
+        scannedDoc.addAll(element!.doc);
+        refNumber = element.referenceNumber;
       }
-      _setScannedPages(e, scannedDoc);
+      
+      // Use native API data if available, otherwise use preserved pages
+      List<Uint8List?> pagesToUse = scannedDoc.isNotEmpty ? scannedDoc : preservedPages;
+      
       setState(() {
-        imageBytesList.addAll(scannedDoc);
+        imageBytesList.clear();
+        imageBytesList.addAll(pagesToUse);
         doc.listofImages = imageBytesList;
-        doc.referenceNumber = refNumber;
-        referenceNumber = refNumber;
+        if (scannedDoc.isNotEmpty) {
+          doc.referenceNumber = refNumber;
+          referenceNumber = refNumber;
+        }
       });
+      
+      // Update scannedPages cache
+      if (pagesToUse.isNotEmpty) {
+        _setScannedPages(e, pagesToUse);
+      }
+      
       if (doc.title.isNotEmpty) {
         _setValueInMap();
       }
@@ -269,8 +310,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  _documentScanClickedAudit() async {
-    await context.read<GlobalProvider>().getAudit("REG-EVT-004", "REG-MOD-103");
+  _documentScanClickedAudit()  {
+    _documentAudit("SCAN");
   }
 
   Future<List<int>> getImageBytes(String imagePath) async {
@@ -499,19 +540,19 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 onPressed: (documentController.text == "")
                                     ? null
                                     : () async {
-                                        _documentScanClickedAudit();
-                                        var doc = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CustomScanner(
-                                                      field: widget.field)),
-                                        );
+                                  _documentScanClickedAudit();
+                                  var doc = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CustomScanner(
+                                                field: widget.field)),
+                                  );
 
-                                        await addDocument(
-                                            doc, widget.field, referenceNumber);
-                                        await getScannedDocuments(widget.field);
-                                      },
+                                  await addDocument(
+                                      doc, widget.field, referenceNumber);
+                                  await getScannedDocuments(widget.field);
+                                },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -548,6 +589,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     children: [
                                       InkWell(
                                         onTap: () {
+                                          _documentAudit("VIEW");
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -568,7 +610,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       ),
                                       SizedBox(height: 2.h),
                                       GestureDetector(
-                                        onTap: () {
+                                        onTap: ()  {
+                                          _documentAudit("DELETE");
                                           _deleteImage(widget.field, item);
                                           _removeFieldValue(widget.field, item);
                                           _setRemoveScannedPages(widget.field,
@@ -768,18 +811,18 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                               onPressed: (documentController.text == "")
                                   ? null
                                   : () async {
-                                      _documentScanClickedAudit();
-                                      var doc = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => CustomScanner(
-                                                field: widget.field)),
-                                      );
-                                      await addDocument(
-                                          doc, widget.field, referenceNumber);
+                                _documentScanClickedAudit();
+                                var doc = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CustomScanner(
+                                          field: widget.field)),
+                                );
+                                await addDocument(
+                                    doc, widget.field, referenceNumber);
 
-                                      await getScannedDocuments(widget.field);
-                                    },
+                                await getScannedDocuments(widget.field);
+                              },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -814,7 +857,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                   child: Column(
                                     children: [
                                       InkWell(
-                                        onTap: () {
+                                        onTap: ()  {
+                                          _documentAudit("VIEW");
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -835,7 +879,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                       ),
                                       SizedBox(height: 10.h),
                                       GestureDetector(
-                                        onTap: () {
+                                        onTap: ()  {
+                                          _documentAudit("DELETE");
                                           _deleteImage(widget.field, item);
                                           _removeFieldValue(widget.field, item);
                                           _setRemoveScannedPages(widget.field,

@@ -37,7 +37,6 @@ import io.mosip.registration_client.utils.CustomToast;
 import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.R;
 import io.mosip.registration_client.model.PacketAuthPigeon;
-
 @Singleton
 public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     SyncRestService syncRestService;
@@ -48,7 +47,6 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     RegistrationRepository registrationRepository;
 
     private Activity activity;
-
     public void setCallbackActivity(MainActivity mainActivity) {
         this.activity = mainActivity;
     }
@@ -95,6 +93,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void syncPacketAll(@NonNull List<String> packetIds, @NonNull PacketAuthPigeon.Result<Void> result) {
+        auditManagerService.audit(AuditEvent.SYNC_REGISTRATION_PACKET_STATUS,Components.REGISTRATION);
         Integer packetSize = packetIds.size();
         final Integer[] remainingPack = {packetSize, 0};
 
@@ -117,6 +116,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                     public void onComplete(String RID, PacketTaskStatus status) {
                         if (status.equals(PacketTaskStatus.SYNC_COMPLETED) || status.equals(PacketTaskStatus.SYNC_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
+                            auditManagerService.audit(AuditEvent.PACKET_SYNCED_TO_SERVER, Components.REG_PACKET_LIST);
                         }
                         remainingPack[0] -= 1;
 
@@ -152,7 +152,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
         CustomToast newToast = new CustomToast(activity);
         for (String value : packetIds) {
             try {
-                auditManagerService.audit(AuditEvent.UPLOAD_PACKET, Components.REG_PACKET_LIST);
+                auditManagerService.audit(AuditEvent.PACKET_UPLOAD, Components.REG_PACKET_LIST);
                 Integer remaining = packetSize - remainingPack[0];
                 newToast.setText(String.format("Upload Packet Status : %s/%s Processed", remaining.toString(), packetSize.toString()));
                 newToast.showToast();
@@ -168,6 +168,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                     public void onComplete(String RID, PacketTaskStatus status) {
                         if (status.equals(PacketTaskStatus.UPLOAD_COMPLETED) || status.equals(PacketTaskStatus.UPLOAD_ALREADY_COMPLETED)) {
                             remainingPack[1] += 1;
+                            auditManagerService.audit(AuditEvent.PACKET_UPLOADED, Components.REG_PACKET_LIST);
                         }
                         remainingPack[0] -= 1;
 
@@ -192,6 +193,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
                 });
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
+                auditManagerService.audit(AuditEvent.PACKET_INTERNAL_ERROR, Components.REG_PACKET_LIST, e.getMessage());
             }
         }
     }
@@ -214,6 +216,7 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
 
     @Override
     public void getAllCreatedRegistrationPacket(@NonNull PacketAuthPigeon.Result<List<String>> result) {
+        auditManagerService.audit(AuditEvent.PACKET_RETRIEVE, Components.REGISTRATION);
         List<String> packets = new ArrayList();
         try {
             List<Registration> allRegistration = packetService.getRegistrationsByStatus(PacketClientStatus.CREATED.name(), 40);
@@ -231,12 +234,17 @@ public class PacketAuthenticationApi implements PacketAuthPigeon.PacketAuthApi {
     @Override
     public void updatePacketStatus(@NonNull String packetId, @Nullable String serverStatus, @NonNull String clientStatus, @NonNull PacketAuthPigeon.Result<Void> result) {
         registrationRepository.updateStatus(packetId, serverStatus, clientStatus);
+        auditManagerService.auditWithArguments(AuditEvent.PACKET_STATUS_UPDATE,
+                Components.REGISTRATION.getId(), Components.REGISTRATION.getName(), clientStatus);
         result.success(null);
     }
 
     @Override
     public void supervisorReview(@NonNull String packetId, @NonNull String supervisorStatus, @NonNull String supervisorComment, @NonNull PacketAuthPigeon.Result<Void> result) {
+        auditManagerService.audit(AuditEvent.PACKET_UPDATE, Components.REGISTRATION);
         registrationRepository.updateSupervisorReview(packetId, supervisorStatus, supervisorComment);
+        auditManagerService.auditWithArguments(AuditEvent.PACKET_STATUS_UPDATE,
+                Components.REGISTRATION.getId(), Components.REGISTRATION.getName(), supervisorStatus);
         result.success(null);
     }
 }

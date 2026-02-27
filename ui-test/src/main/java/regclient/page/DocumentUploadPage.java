@@ -21,4 +21,6 @@ public abstract class DocumentUploadPage extends BasePage {
 	public abstract void uploadDoccuments(String age, String type);
 
 	public abstract void uploadDoccumentsUpdate(String age, String type);
+	
+	
 }

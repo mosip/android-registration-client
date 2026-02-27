@@ -131,7 +131,6 @@ public class UpdateMyUinUpdateBiometrics extends AndroidBaseTest {
 	public void updateMyUinUpdateBiometrics() throws InterruptedException {
 		FetchUiSpec.getUiSpec("updateProcess");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-		BasePage.disableAutoRotation();
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;

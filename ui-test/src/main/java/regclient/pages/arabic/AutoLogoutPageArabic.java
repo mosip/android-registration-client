@@ -16,13 +16,13 @@ import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class AutoLogoutPageArabic extends AutoLogoutPage {
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"You have been idle\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"لقد كنت خاملاً\")")
 	private WebElement autoLogoutPopup;
 
-	@AndroidFindBy(accessibility = "LOG OUT")
+	@AndroidFindBy(accessibility = "تسجيل الخروج")
 	private WebElement logoutButton;
 
-	@AndroidFindBy(accessibility = "STAY LOGGED IN")
+	@AndroidFindBy(accessibility = "البقاء مسجلاً الدخول")
 	private WebElement stayLoggedInButton;
 
 	public AutoLogoutPageArabic(AppiumDriver driver) {

@@ -132,7 +132,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-		BasePage.disableAutoRotation();
+
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;
@@ -729,8 +729,8 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 				"Verify if Rejected Dropdown Option Displayed");
 		assertTrue(manageApplicationsPage.isExportedsDropdownOptionDisplayed(),
 				"Verify if Exported Dropdown Option Displayed");
+		manageApplicationsPage.clickClientStatusDropdown();
 
-		manageApplicationsPage.clickDismissButton();
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 

@@ -43,7 +43,7 @@ public class LoginPageArabic extends LoginPage {
 	@AndroidFindBy(accessibility = "ظهر")
 	private WebElement backButton;
 
-	@AndroidFindBy(accessibility = "نسيت كلمة المرور?")
+	@AndroidFindBy(accessibility = "هل نسيت كلمة السر؟")
 	private WebElement forgetPasswordButton;
 
 	@AndroidFindBy(accessibility = "لم يتم العثور على المستخدم!")

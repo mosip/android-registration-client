@@ -70,7 +70,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	@AndroidFindBy(accessibility = "Device Settings\nTab 3 of 3")
 	private WebElement deviceSettingsTab;
 
-	@AndroidFindBy(accessibility = "Global Config Settings\nKey\nServer Value\nLocal Value")
+	@AndroidFindBy(xpath ="//android.widget.EditText/preceding::android.view.View[contains(@content-desc,'Global Config Settings')][1]")
 	private WebElement globalConfigSettingsHeader;
 
 	@AndroidFindBy(accessibility = "SUBMIT")
@@ -238,14 +238,6 @@ public class SettingsPageEnglish extends SettingsPage {
 		return isElementDisplayed(scheduledJobSettingsPageHeader);
 	}
 
-	public boolean isMasterDataSyncCardDisplayed() {
-		return isElementDisplayed(masterDataSyncCard);
-	}
-
-	public void clickOnMasterDataSyncButton() {
-		clickOnElement(masterDataSyncButton);
-	}
-
 	public boolean isToastVisible(String toastMessage) {
 		for (int i = 0; i < 15; i++) { // ~3 seconds
 			if (driver.getPageSource().contains(toastMessage)) {
@@ -270,6 +262,27 @@ public class SettingsPageEnglish extends SettingsPage {
 		String cd = card.getAttribute("content-desc");
 		return cd.contains(jobName) && cd.contains("Next Run") && cd.contains("Last Sync")
 				&& cd.contains("Cron Expression");
+	}
+
+	public boolean isJobDisplayed(String jobName) {
+
+		// Scroll to jobs list (safe for long lists)
+		driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+				+ ".scrollIntoView(new UiSelector().className(\"android.widget.EditText\"))"));
+
+		By job = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
+
+		return isElementDisplayed(job);
+	}
+	
+	public void clickOnSyncButton(String jobName) {
+		By syncButton = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
+		click(syncButton);
+	}
+	
+	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
+		By searchBox = By.xpath("//android.view.View[@content-desc='Global Config Settings']//android.widget.EditText");
+		return isElementDisplayed(searchBox);
 	}
 
 }

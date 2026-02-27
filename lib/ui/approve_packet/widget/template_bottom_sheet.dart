@@ -2,36 +2,34 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/utils/secure_storage.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/constants.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 import '../../../model/registration.dart';
 import '../../../provider/approve_packets_provider.dart';
+import '../../../provider/global_provider.dart';
 import 'reject_dialogbox.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/utils/secure_screen_service.dart';
 
 class TemplateBottomSheet {
   void loadHtmlData(WebViewPlusController? controller, String packetId) async {
     log(packetId);
-    const storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(
-        encryptedSharedPreferences: true,
-      ),
-    );
-    String? data = await storage.read(key: packetId);
+    String? data = await appSecureStorage.read(key: packetId);
     if (controller != null) {
       controller.webViewController.loadHtmlString(data ?? "No Template...");
     }
   }
 
   Widget bottomSheet(BuildContext context) {
-
-    return ChangeNotifierProvider<ApprovePacketsProvider>.value(
+    return _SecureBottomSheetWrapper(
+      child: ChangeNotifierProvider<ApprovePacketsProvider>.value(
       value: context.watch<ApprovePacketsProvider>(),
       builder: (context, _) {
+        final globalProvider = context.read<GlobalProvider>();
         int currentInd = context.watch<ApprovePacketsProvider>().currentInd;
         Registration regCurrent = context
             .read<ApprovePacketsProvider>()
@@ -67,6 +65,8 @@ class TemplateBottomSheet {
                         context
                             .read<ApprovePacketsProvider>()
                             .setWebViewPlusController(controller);
+                        context.read<GlobalProvider>()
+                            .getAudit("REG-EVT-066", "REG-MOD-103");
                         loadHtmlData(controller, regCurrent.id!);
                       },
                       javascriptMode: JavascriptMode.unrestricted,
@@ -140,6 +140,7 @@ class TemplateBottomSheet {
                                   onPressed: reviewStatus == ReviewStatus.APPROVED.name
                                       ? null
                                       : () {
+                                    globalProvider.getAudit("PACKET_APPROVED", "REG-MOD-103");
                                     context
                                         .read<ApprovePacketsProvider>()
                                         .approvePacket(regCurrent.packetId);
@@ -177,6 +178,7 @@ class TemplateBottomSheet {
                                   onPressed: reviewStatus == ReviewStatus.REJECTED.name
                                       ? null
                                       : () {
+                                    globalProvider.getAudit("PACKET_REJECTED", "REG-MOD-103");
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -527,6 +529,34 @@ class TemplateBottomSheet {
           ),
         );
       },
+    ),
     );
   }
+}
+
+class _SecureBottomSheetWrapper extends StatefulWidget {
+  final Widget child;
+  const _SecureBottomSheetWrapper({required this.child});
+
+  @override
+  State<_SecureBottomSheetWrapper> createState() =>
+      _SecureBottomSheetWrapperState();
+}
+
+class _SecureBottomSheetWrapperState
+    extends State<_SecureBottomSheetWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    SecureScreenService.acquire();
+  }
+
+  @override
+  void dispose() {
+    SecureScreenService.release();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

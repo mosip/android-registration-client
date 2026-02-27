@@ -44,6 +44,21 @@ public interface AuditManagerService {
 
     void audit(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String errorMsg);
 
+    /**
+     * Audits the events with custom description arguments.
+     * <p>
+     * If one or more arguments are provided, they are passed to {@link String#format(String, Object...)}
+     * using the {@link AuditEvent#getDescription()} as the format string. This allows events whose
+     * description contains one or more <code>%s</code> placeholders to be formatted with multiple
+     * values. If the event description does not contain any placeholders, the first argument is used
+     * as the full description override.
+     *
+     * @param auditEventEnum the audit event
+     * @param appModuleId    the application module id
+     * @param appModuleName  the application module name
+     * @param arguments      optional description arguments to be applied to the event description
+     */
+    void auditWithArguments(AuditEvent auditEventEnum, String appModuleId, String appModuleName, String... arguments);
 
     /**
      * Delete Audit Logs

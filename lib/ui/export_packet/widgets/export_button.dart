@@ -7,7 +7,7 @@ import '../../../provider/export_packet_provider.dart';
 import '../../../utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../provider/global_provider.dart';
 
 class ExportButton extends StatefulWidget {
   const ExportButton({super.key});
@@ -47,6 +47,10 @@ class _ExportButtonState extends State<ExportButton> {
         }else{
           await exportPacketsProvider.packetSyncAll();
         }
+        await context.read<GlobalProvider>().getAudit(
+          "REG-EXPT-PKT-001",
+          "REG-MOD-103"
+        );
         await exportPacketsProvider.exportSelected();
         exportPacketsProvider.searchedList();
       },

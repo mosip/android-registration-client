@@ -14,7 +14,7 @@ public class InitialLaunch extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify initial app launch after machine details are configured")
 	public void initialLaunch() {
-		BasePage.disableAutoRotation();
+	
 		LoginPageEnglish loginPage = new LoginPageEnglish(driver);
 
 //		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(), "verify if the welcome msg in selected language displayed");
