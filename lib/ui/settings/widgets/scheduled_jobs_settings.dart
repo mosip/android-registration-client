@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
 import 'package:restart_app/restart_app.dart';
 
+import '../../../model/settings.dart';
 import '../../../provider/sync_provider.dart';
 
 // Dart equivalent of the Java PACKET_JOBS constant
@@ -15,10 +15,14 @@ const List<String> PACKET_JOBS = ['RPS_J00006', 'RSJ_J00014', 'PUJ_J00017'];
 class ScheduledJobsSettings extends StatefulWidget {
   const ScheduledJobsSettings({
     super.key,
+    required this.settings,
+    required this.selectedLan,
     required this.jobJsonList,
     this.onRefreshJob,
   });
 
+  final Settings settings;
+  final String selectedLan;
   final List<String?> jobJsonList;
   final void Function(String jobId)? onRefreshJob;
 
@@ -71,6 +75,10 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
         .map((e) => _ScheduledJob.fromJson(json.decode(e) as Map<String, dynamic>))
         .toList();
 
+    final heading = widget.settings.label?[widget.selectedLan] ??
+        widget.settings.label?['eng'] ??
+        (widget.settings.label?.values.first ?? 'Unknown');
+
     return SafeArea(
       top: false,
       bottom: true,
@@ -83,7 +91,7 @@ class _ScheduledJobsSettingsState extends State<ScheduledJobsSettings> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.scheduled_job_settings,
+                    heading,
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 12),
