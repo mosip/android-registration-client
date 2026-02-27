@@ -167,11 +167,15 @@ class _TextBoxControlState extends State<TextBoxControl>
                     controllerMap.putIfAbsent(lang,
                         () => TextEditingController(text: _getDataFromMap(lang)));
                   });
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: controllerMap[lang],
+                return Semantics(
+                  label: '${widget.e.id}',
+                  container: true,
+                  excludeSemantics: true,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      controller: controllerMap[lang],
                     textCapitalization: TextCapitalization.words,
                     onChanged: (value) async {
                       if (lang == mandatoryLanguageCode) {
@@ -249,6 +253,7 @@ class _TextBoxControlState extends State<TextBoxControl>
                           const TextStyle(color: appBlackShade3, fontSize: 14),
                     ),
                   ),
+                ),
                 );
               }).toList(),
             ),

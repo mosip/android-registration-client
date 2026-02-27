@@ -364,6 +364,8 @@
   "search_for_key": "Rechercher une clé",
   "sync_restart_dialog_message": "L'application redémarrera une fois que vous aurez cliqué sur Redémarrer, et vous serez redirigé vers la page de connexion.",
   "sync_restart_button": "Redémarrer",
-  "app_restart_message": "Configuration enregistrée avec succès. Redémarrage de l'application..."
+  "app_restart_message": "Configuration enregistrée avec succès. Redémarrage de l'application...",
+  "select_option": "Sélectionner une option",
+  "cron_expression": "Expression Cron"
 }
 

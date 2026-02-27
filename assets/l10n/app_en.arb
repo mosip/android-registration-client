@@ -364,5 +364,7 @@
   "search_for_key": "Search for Key",
   "sync_restart_dialog_message": "The app will restart once you click Restart, and you will be redirected to the login page.",
   "sync_restart_button": "Restart",
-  "app_restart_message": "Configuration saved successfully. Restarting app..."
+  "app_restart_message": "Configuration saved successfully. Restarting app...",
+  "select_option": "Select Option",
+  "cron_expression": "Cron Expression"
 }
