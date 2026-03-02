@@ -85,9 +85,9 @@ public class BioSdkProviderFactory {
                 if (vendorParamsList == null || vendorParamsList.isEmpty()) continue;
 
                 List<Map<String, String>> paramsWithClassname = new ArrayList<>();
-                for (Map<String, String> p : vendorParamsList) {
-                    String cn = p != null ? p.get("classname") : null;
-                    if (cn != null && !cn.trim().isEmpty()) paramsWithClassname.add(p);
+                for (Map<String, String> vendorParams : vendorParamsList) {
+                    String providerClassName = vendorParams != null ? vendorParams.get("classname") : null;
+                    if (providerClassName != null && !providerClassName.trim().isEmpty()) paramsWithClassname.add(vendorParams);
                 }
                 if (paramsWithClassname.isEmpty()) continue;
 
