@@ -366,5 +366,7 @@
   "sync_restart_button": "पुनः आरंभ करें",
   "app_restart_message": "कॉन्फ़िगरेशन सफलतापूर्वक सहेजा गया. ऐप पुनः प्रारंभ हो रहा है...",
   "select_option": "विकल्प चुनें",
-  "cron_expression": "क्रोन एक्सप्रेशन"
+  "cron_expression": "क्रोन एक्सप्रेशन",
+  "id": "आईडी",
+  "name": "नाम"
 }
