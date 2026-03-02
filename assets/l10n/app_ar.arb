@@ -366,6 +366,8 @@
   "sync_restart_button": "إعادة التشغيل",
   "app_restart_message": "تم حفظ التكوين بنجاح. جارٍ إعادة تشغيل التطبيق...",
   "select_option": "اختر خياراً",
-  "cron_expression": "تعبير كرون"
+  "cron_expression": "تعبير كرون",
+  "id": "بطاقة تعريف",
+  "name": "اسم"
 }
 

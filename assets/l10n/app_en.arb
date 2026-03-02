@@ -366,5 +366,7 @@
   "sync_restart_button": "Restart",
   "app_restart_message": "Configuration saved successfully. Restarting app...",
   "select_option": "Select Option",
-  "cron_expression": "Cron Expression"
+  "cron_expression": "Cron Expression",
+  "id": "ID",
+  "name": "Name"
 }

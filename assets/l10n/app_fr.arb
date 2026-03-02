@@ -366,6 +366,8 @@
   "sync_restart_button": "Redémarrer",
   "app_restart_message": "Configuration enregistrée avec succès. Redémarrage de l'application...",
   "select_option": "Sélectionner une option",
-  "cron_expression": "Expression Cron"
+  "cron_expression": "Expression Cron",
+  "id": "IDENTIFIANT",
+  "name": "Nom"
 }
 

@@ -166,7 +166,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            "ID: ${device.deviceId ?? ''}",
+                                            "${AppLocalizations.of(context)!.id}: ${device.deviceId ?? ''}",
                                             style: const TextStyle(
                                                 fontSize: 12),
                                             overflow: TextOverflow.ellipsis,
@@ -174,7 +174,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            "Name: ${device.deviceName ?? ''}",
+                                            "${AppLocalizations.of(context)!.name}: ${device.deviceName ?? ''}",
                                             style: const TextStyle(
                                                 fontSize: 12),
                                             overflow: TextOverflow.ellipsis,
@@ -182,7 +182,7 @@ class _DeviceSettingsTabState extends State<DeviceSettingsTab> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            "Status: ${device.connectionStatus ?? ''}",
+                                            "${AppLocalizations.of(context)!.status}: ${device.connectionStatus ?? ''}",
                                             style: const TextStyle(
                                                 fontSize: 12),
                                             overflow: TextOverflow.ellipsis,
