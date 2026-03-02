@@ -22,13 +22,13 @@ import java.util.Map;
 import javax.inject.Inject;
 
 
+import io.mosip.kernel.biometrics.constant.BiometricFunction;
 import io.mosip.kernel.biometrics.constant.BiometricType;
 import io.mosip.kernel.biometrics.constant.ProcessedLevelType;
 import io.mosip.kernel.biometrics.entities.BIR;
 import io.mosip.kernel.biometrics.entities.BiometricRecord;
 import io.mosip.kernel.biometrics.model.Response;
 import io.mosip.kernel.biometrics.spi.IBioApiV2;
-import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
@@ -77,7 +77,6 @@ public class Biometrics095Service extends BiometricsService {
 
     private final UserBiometricRepository userBiometricRepository;
     private final BioSdkProviderFactory bioSdkProviderFactory;
-    private IBioApiV2 iBioApiV2;
     SharedPreferences sharedPreferences;
     public Map<Modality, Object> BIO_DEVICES;
 
@@ -92,12 +91,6 @@ public class Biometrics095Service extends BiometricsService {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userBiometricRepository = userBiometricRepository;
         this.bioSdkProviderFactory = bioSdkProviderFactory;
-        if (bioSdkProviderFactory != null) {
-            bioSdkProviderFactory.initialize(context);
-            this.iBioApiV2 = bioSdkProviderFactory.getBioProvider(Modality.FACE);
-        } else {
-            this.iBioApiV2 = null;
-        }
         this.BIO_DEVICES = new HashMap<>();
         sharedPreferences = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),
@@ -187,24 +180,24 @@ public class Biometrics095Service extends BiometricsService {
                 }
 
                if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
-                    IBioApiV2 modalityBioSDK = bioSdkProviderFactory != null ? bioSdkProviderFactory.getBioProvider(modality) : null;
+                    IBioApiV2 matchProvider = bioSdkProviderFactory != null ? bioSdkProviderFactory.getProviderForMatch(modality) : null;
 
-                    if (modalityBioSDK != null) {
+                    if (matchProvider != null) {
                         boolean isMatched;
                         if (isOperatorOnboarding) {
                             String currentUserId = sharedPreferences.getString(SessionManager.USER_ID, "");
                             isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, 
-                                    userBiometricRepository, modalityBioSDK, currentUserId);
+                                    userBiometricRepository, matchProvider, currentUserId);
                         } else {
                             isMatched = MatchUtil.validateBiometricDataForRegistration(modality, captureDto, biometricsDtoList, 
-                                    userBiometricRepository, modalityBioSDK);
+                                    userBiometricRepository, matchProvider);
                         }
                         if(isMatched){
                             Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
                             return new ArrayList<>();
                         }
                     } else {
-                        Log.w(TAG, "BioSDK not found for " + modality + ", skipping deduplication check");
+                        Log.w(TAG, "No SDK with MATCH support found for " + modality + " (tried modality SDK and other loaded SDKs), skipping deduplication check");
                     }
                }
             }
@@ -345,9 +338,10 @@ public class Biometrics095Service extends BiometricsService {
                 false
         );
 
-        IBioApiV2 bioProvider = bioSdkProviderFactory != null ? bioSdkProviderFactory.getBioProvider(modality) : null;
+        IBioApiV2 bioProvider = bioSdkProviderFactory != null
+                ? bioSdkProviderFactory.getProviderForFunction(modality, BiometricFunction.QUALITY_CHECK) : null;
         if (bioProvider == null) {
-            Log.w(TAG, "SDK provider not found for modality: " + modality + ", using device quality score");
+            Log.d(TAG, "No SDK with QUALITY_CHECK support for modality: " + modality + ", using device quality score");
             return biometricsDto.getQualityScore();
         }
 

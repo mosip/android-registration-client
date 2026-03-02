@@ -7,6 +7,7 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,6 +24,8 @@ public class GlobalParamRepository {
     private static final String TAG = GlobalParamRepository.class.getSimpleName();
     /** Config prefix for biometric SDK providers; only keys starting with this prefix are used. */
     public static final String BIOMETRIC_SDK_PROVIDERS_PREFIX = "mosip.biometric.sdk.providers";
+    /** Param key for SDK implementation class name in biometric provider config. */
+    private static final String PARAM_CLASSNAME = "classname";
 
     private static Map<String, String> globalParamMap = new HashMap<>();
     private GlobalParamDao globalParamDao;
@@ -355,20 +358,38 @@ public class GlobalParamRepository {
     }
 
     /**
-     * Returns SDK implementation class name for given modality from config under
-     * {@link #BIOMETRIC_SDK_PROVIDERS_PREFIX}. Returns null if not configured for that modality.
+     * Returns init params for each configured vendor of the given modality, in vendor order.
+     * Single source of truth for "vendors for modality"; other methods derive from this.
+     * Each map includes "classname" and other init params for that vendor.
      */
-    public String getBioSDKProviderClassName(String modality) {
+    public List<Map<String, String>> getModalityVendorsParamsList(String modality) {
         Map<String, Map<String, Map<String, String>>> config = getBiometricProviderConfig();
         Map<String, Map<String, String>> vendors = config != null ? config.get(modality) : null;
-        if (vendors != null && !vendors.isEmpty()) {
-            for (Map<String, String> params : vendors.values()) {
-                String classname = params != null ? params.get("classname") : null;
-                if (classname != null && !classname.isEmpty()) {
-                    return classname;
-                }
+        if (vendors == null || vendors.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Map<String, String>> list = new ArrayList<>(vendors.size());
+        for (Map<String, String> params : vendors.values()) {
+            if (params != null && !params.isEmpty()) {
+                list.add(new HashMap<>(params));
             }
         }
-        return null;
+        return list;
     }
+
+    /**
+     * Returns SDK implementation class names for the given modality, in vendor order.
+     * Callers should try loading each in sequence and use the first class that exists in the asset/DEX.
+     */
+    public List<String> getBioSDKProviderClassNames(String modality) {
+        List<String> classNames = new ArrayList<>();
+        for (Map<String, String> params : getModalityVendorsParamsList(modality)) {
+            String classname = params == null ? null : params.get(PARAM_CLASSNAME);
+            if (classname != null && !classname.isEmpty()) {
+                classNames.add(classname.trim());
+            }
+        }
+        return classNames;
+    }
+
 }
