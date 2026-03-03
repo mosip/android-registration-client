@@ -11,9 +11,14 @@ import org.json.JSONObject;
 import com.github.javafaker.Faker;
 
 import javax.ws.rs.core.MediaType;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,17 +59,16 @@ public class AdminTestUtil extends BaseTestCase {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return dateFormat.format(date);
 	}
-	
+
 	public static String generateFutureUTCTimeStamp(int daysToAdd) {
-	    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-	    calendar.add(Calendar.DAY_OF_YEAR, daysToAdd);
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		calendar.add(Calendar.DAY_OF_YEAR, daysToAdd);
 
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-	    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-	    return dateFormat.format(calendar.getTime());
+		return dateFormat.format(calendar.getTime());
 	}
-
 
 	public static String machinespecificationsID() {
 		return AdminTestUtil.getmachinespecificationsID(tokenRoleAdmin);
@@ -106,7 +110,7 @@ public class AdminTestUtil extends BaseTestCase {
 		if (!initialized) {
 			ArcConfigManager.init();
 			BaseTestCase.initialize();
-			//user zone and center mapping
+			// user zone and center mapping
 			KeycloakUserManager.createUsers();
 			mapUserToZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create"),
 					propsKernel.getProperty("zone"));
@@ -114,13 +118,13 @@ public class AdminTestUtil extends BaseTestCase {
 			mapUserToCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create"),
 					propsKernel.getProperty("regCenterId"));
 			mapCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create"));
-			//user zone and center mapping
+			// user zone and center mapping
 			KeycloakUserManager.createUsersWithOutDefaultRole();
 			mapUserToZone(KeycloakUserManager.onboardUser, propsKernel.getProperty("zone"));
 			mapZone(KeycloakUserManager.onboardUser);
 			mapUserToCenter(KeycloakUserManager.onboardUser, propsKernel.getProperty("regCenterId"));
 			mapCenter(KeycloakUserManager.onboardUser);
-			//user zone and center mapping
+			// user zone and center mapping
 			KeycloakUserManager.createUsersWithOutSupervisorRole();
 			mapUserToZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-operator"),
 					propsKernel.getProperty("zone"));
@@ -427,6 +431,35 @@ public class AdminTestUtil extends BaseTestCase {
 		JSONObject responseJson = new JSONObject(response.asString());
 		JSONObject responseobj = responseJson.getJSONObject("response");
 		return responseobj.getString("status");
+	}
+
+	private static final Logger LOG = Logger.getLogger(AdminTestUtil.class);
+	private static final List<String> knownIssues = new ArrayList<>();
+
+	static {
+		try (InputStream is = AdminTestUtil.class.getClassLoader().getResourceAsStream("config/knownIssues.txt")) {
+
+			if (is == null) {
+				LOG.warn("knownIssues.txt not found in classpath");
+			} else {
+				try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+					String line;
+					while ((line = br.readLine()) != null) {
+						if (!line.trim().isEmpty()) {
+							knownIssues.add(line.trim());
+						}
+					}
+				}
+				LOG.info("Known Issues Loaded: " + knownIssues);
+			}
+
+		} catch (Exception e) {
+			LOG.warn("Error while loading knownIssues.txt", e);
+		}
+	}
+
+	public static List<String> getKnownIssues() {
+		return knownIssues;
 	}
 
 }

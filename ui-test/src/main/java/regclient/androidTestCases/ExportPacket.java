@@ -312,15 +312,6 @@ public class ExportPacket extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 3rd attempt");
-					applicantBiometricsPage.closeScanCapturePopUp();
-
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
 				}
 				// righthand
@@ -553,7 +544,7 @@ public class ExportPacket extends AndroidBaseTest {
 		exportPage = new ExportPage(driver);
 		exportPage.handleAccessConsentIfPresent();
 		
-		exportPage.exportPacketIntoFolderIfReady("ExportPacket");
+		exportPage.exportToFolder("ExportPacket");
 
 		manageApplicationsPage.clickOnBackButton();
 

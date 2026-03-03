@@ -57,6 +57,15 @@ public class ExportPage extends BasePage {
 	@FindBy(xpath = "(//android.widget.TextView[@text='PACKET_MANAGER_ACCOUNT'])[2]")
 	private WebElement packetManagerTitle;
 
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.TextView\").text(\"ExportPacket\")")
+	private WebElement exportPacketFolder;
+
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.TextView\").text(\"Documents\")")
+	private WebElement documentsTitleHeader;
+
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.TextView\").text(\"packets\")")
+	private WebElement packetsTitleHeader;
+
 	public ExportPage(AppiumDriver driver) {
 		super(driver);
 	}
@@ -97,6 +106,15 @@ public class ExportPage extends BasePage {
 		return isElementDisplayed(newfolderPopup);
 	}
 
+	public boolean isFolderDisplayed(String folderName) {
+		try {
+			return driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"" + folderName + "\")"))
+					.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public void enterFolderName(String foldername) {
 		clickAndsendKeysToTextBox(newfolderTextBox, foldername);
 	}
@@ -131,37 +149,13 @@ public class ExportPage extends BasePage {
 	}
 
 	public boolean isPacketManagerTitleDisplayed() {
-		if (isElementDisplayed(packetManagerTitle)) {
-			logger.info("Already inside PACKET_MANAGER_ACCOUNT screen.");
-			return true;
-		}
-		try {
-
-			if (!isElementDisplayed(documentsFolder)) {
-				scrollToText("Documents");
-			}
-			clickOnElement(documentsFolder);
-
-			if (!isElementDisplayed(packetsFolder)) {
-				scrollToText("packets");
-			}
-			clickOnElement(packetsFolder);
-
-			if (!isElementDisplayed(packetManagerAccountFolder)) {
-				scrollToText("PACKET_MANAGER_ACCOUNT");
-			}
-			clickOnElement(packetManagerAccountFolder);
-
-		} catch (Exception e) {
-			logger.info("Navigation failed: " + e.getMessage());
-			return false;
-		}
 		return isElementDisplayed(packetManagerTitle);
 	}
 
 	private void scrollToText(String text) {
+		String safeText = text.replace("\\", "\\\\").replace("\"", "\\\"");
 		driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
-				+ ".scrollIntoView(new UiSelector().text(\"" + text + "\"))"));
+				+ ".scrollIntoView(new UiSelector().text(\"" + safeText + "\"))"));
 	}
 
 	public void exportPacketIntoFolder(String folderName) {
@@ -169,16 +163,33 @@ public class ExportPage extends BasePage {
 			logger.info(folderName + " folder already exists. Using it.");
 			clickOnUseThisFolderButton();
 			handleAllowFolderConsentIfPresent();
-		} else {
-			logger.info(folderName + " folder not found. Creating new folder.");
-			clickNewFolderButton();
-			if (!isNewFolderPopupDisplayed()) {
-				throw new RuntimeException("New Folder popup not displayed");
+			if (exportIfTargetFolderAlreadyOpened(folderName)) {
+				return;
 			}
-			enterFolderName(folderName);
-			clickOnOkButton();
-			clickOnUseThisFolderButton();
-			handleAllowFolderConsentIfPresent();
+			if (!isPacketManagerTitleDisplayed()) {
+				throw new IllegalStateException("Packet Manager page is not displayed.");
+			}
+			boolean folderExists = false;
+			try {
+				scrollToText(folderName);
+				folderExists = isFolderDisplayed(folderName);
+			} catch (Exception e) {
+				logger.info("Folder not found during scroll: " + folderName);
+			}
+			if (folderExists) {
+				logger.info(folderName + " folder exists. Selecting it.");
+				selectFolderByName(folderName);
+			} else {
+				logger.info(folderName + " folder not found. Creating new folder.");
+				clickNewFolderButton();
+				if (!isNewFolderPopupDisplayed()) {
+					throw new RuntimeException("New Folder popup not displayed");
+				}
+				enterFolderName(folderName);
+				clickOnOkButton();
+				clickOnUseThisFolderButton();
+				handleAllowFolderConsentIfPresent();
+			}
 		}
 	}
 
@@ -187,12 +198,69 @@ public class ExportPage extends BasePage {
 		return isElementDisplayed(folderLocator);
 	}
 
-	public void exportPacketIntoFolderIfReady(String folderName) {
-		if (!isPacketManagerTitleDisplayed()) {
-			throw new IllegalStateException("Packet Manager page is not displayed. Aborting export.");
+	public void navigateToFolderPath(String... folderPath) {
+
+		try {
+
+			for (String folder : folderPath) {
+
+				logger.info("Navigating to folder: " + folder);
+
+				// If already inside this folder → skip
+				if (isFolderHeaderDisplayed(folder)) {
+					logger.info("Already inside folder: " + folder);
+					continue;
+				}
+
+				// Scroll and click folder
+				scrollToText(folder);
+				click(getFolderLocator(folder));
+
+				logger.info("Opened folder: " + folder);
+			}
+
+		} catch (Exception e) {
+			logger.error("Folder navigation failed", e);
+			throw new RuntimeException("Unable to navigate folder path", e);
 		}
-		logger.info("Packet Manager page verified.");
+	}
+
+	private By getFolderLocator(String folderName) {
+
+		return MobileBy.AndroidUIAutomator(
+				"new UiSelector()" + ".className(\"android.widget.TextView\")" + ".text(\"" + folderName + "\")");
+	}
+
+	private boolean isFolderHeaderDisplayed(String folderName) {
+
+		By headerLocator = MobileBy.AndroidUIAutomator("new UiSelector()"
+				+ ".resourceId(\"com.google.android.documentsui:id/title\")" + ".text(\"" + folderName + "\")");
+
+		return isElementDisplayed(headerLocator);
+	}
+
+	public void exportToFolder(String folderName) {
+
+		if (exportIfTargetFolderAlreadyOpened(folderName)) {
+			return;
+		}
+
+		navigateToFolderPath("Documents", "packets", "PACKET_MANAGER_ACCOUNT");
+
 		exportPacketIntoFolder(folderName);
+	}
+
+	private boolean exportIfTargetFolderAlreadyOpened(String folderName) {
+
+		if (isFolderTitleDisplayed(folderName)) {
+
+			logger.info(folderName + " folder already opened. Using it.");
+			clickOnUseThisFolderButton();
+			handleAllowFolderConsentIfPresent();
+			return true;
+		}
+
+		return false;
 	}
 
 }
