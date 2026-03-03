@@ -234,7 +234,6 @@ public class EmailableReport implements IReporter {
 				totalPassedTests += testResult.getPassedTestCount();
 				totalSkippedTests += testResult.getSkippedTestCount();
 				totalFailedTests += testResult.getFailedTestCount();
-				totalIgnoredTests += testResult.getIgnoredTestCount();
 				totalKnownIssueTests += testResult.getKnownIssueTestCount();
 				totalDuration += testResult.getDuration();
 			}
@@ -281,7 +280,7 @@ public class EmailableReport implements IReporter {
 		// Values row (colored bars)
 		writer.print("<tr>");
 		writer.print("<td class='bar bar-total num'>" + integerFormat.format(
-				totalPassedTests + totalFailedTests + totalSkippedTests + totalKnownIssueTests + totalIgnoredTests)
+				totalPassedTests + totalFailedTests + totalSkippedTests + totalKnownIssueTests)
 				+ "</td>");
 		writer.print("<td class='bar bar-passed num'>" + integerFormat.format(totalPassedTests) + "</td>");
 		// If you have an 'ignored' concept use it; here using 0 placeholder or compute
@@ -646,7 +645,6 @@ public class EmailableReport implements IReporter {
 		private final int skippedTestCount;
 		private final int passedTestCount;
 		private final int knownIssueTestCount;
-		private final int ignoredTestCount;
 		private final long duration;
 		private final String includedGroups;
 		private final String excludedGroups;
@@ -683,7 +681,6 @@ public class EmailableReport implements IReporter {
 			skippedTestCount = actualSkippedTests.size();
 			passedTestCount = passedTests.size();
 			knownIssueTestCount = knownIssueTests.size();
-			ignoredTestCount = context.getExcludedMethods().size();
 
 			duration = context.getEndDate().getTime() - context.getStartDate().getTime();
 
@@ -792,10 +789,6 @@ public class EmailableReport implements IReporter {
 
 		public int getKnownIssueTestCount() {
 			return knownIssueTestCount;
-		}
-
-		public int getIgnoredTestCount() {
-			return ignoredTestCount;
 		}
 
 		public long getDuration() {
