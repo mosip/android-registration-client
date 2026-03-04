@@ -1111,6 +1111,11 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                 }
             }
 
+        } catch (BiometricsServiceException e) {
+            auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
+            Log.e(TAG, "R-Capture failed: " + e.getErrorCode(), e);
+            String message = e.getMessage() != null ? e.getMessage() : "Biometric capture failed";
+            Toast.makeText(activity.getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Log.e(TAG, "Failed to parse rcapture response", e);

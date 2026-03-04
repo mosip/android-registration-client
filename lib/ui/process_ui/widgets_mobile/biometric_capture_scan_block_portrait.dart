@@ -24,6 +24,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/biometrics_utils.dart';
 
 class BiometricCaptureScanBlockPortrait extends StatefulWidget {
   const BiometricCaptureScanBlockPortrait({super.key, required this.field});
@@ -526,17 +527,11 @@ class _BiometricCaptureScanBlockPortraitState
 
                                 setState(() {
                                   biometricAttributeData.qualityPercentage =
-                                      context
-                                          .read<
-                                          BiometricCaptureControlProvider>()
-                                          .avgScore(biometricAttributeData
-                                          .listOfBiometricsDto);
+                                      biometricAttributeData
+                                          .listOfBiometricsDto.avgScore();
                                   biometricAttributeData.sdkQualityPercentage =
-                                      context
-                                          .read<
-                                          BiometricCaptureControlProvider>()
-                                          .avgSDKScore(biometricAttributeData
-                                          .listOfBiometricsDto);
+                                      biometricAttributeData
+                                          .listOfBiometricsDto.avgSDKScore();
                                 });
                                 await BiometricsApi()
                                     .extractImageValuesByAttempt(
@@ -634,11 +629,9 @@ class _BiometricCaptureScanBlockPortraitState
                   }
                 });
                 biometricAttributeData.qualityPercentage =
-                    biometricCaptureControlProvider
-                        .avgScore(biometricAttributeData.listOfBiometricsDto);
+                    biometricAttributeData.listOfBiometricsDto.avgScore();
                 biometricAttributeData.sdkQualityPercentage =
-                    biometricCaptureControlProvider
-                        .avgSDKScore(biometricAttributeData.listOfBiometricsDto);
+                    biometricAttributeData.listOfBiometricsDto.avgSDKScore();
                 await BiometricsApi()
                     .extractImageValues(widget.field.id!,
                     biometricAttributeData.title.replaceAll(" ", ""))

@@ -23,9 +23,9 @@ import io.mosip.kernel.biometrics.spi.IBioApiV2;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 
-public class BioSDKLoader {
+public class BioSdkLoader {
 
-    private static final String TAG = BioSDKLoader.class.getSimpleName();
+    private static final String TAG = BioSdkLoader.class.getSimpleName();
     private static final String ASSETS_FOLDER = "biosdk";
     private static final String DEX_ENTRY_NAME = "classes.dex";
 
@@ -57,7 +57,7 @@ public class BioSDKLoader {
      * Loads the first available BioSDK for the modality (tries configured class names in order).
      * Uses one DexClassLoader. Prefer {@link #loadAllProvidersForModality} when loading multiple vendors.
      */
-    public static IBioApiV2 loadBioSDK(Context context, Modality modality, GlobalParamRepository globalParamRepository) {
+    public static IBioApiV2 loadBioSdk(Context context, Modality modality, GlobalParamRepository globalParamRepository) {
         List<IBioApiV2> list = loadAllProvidersForModality(context, modality, globalParamRepository);
         for (IBioApiV2 provider : list) {
             if (provider != null) return provider;
@@ -361,7 +361,7 @@ public class BioSDKLoader {
     /**
      * Checks if a file is a valid DEX file.
      * A DEX file starts with "dex\n" magic number, or a JAR/ZIP containing classes.dex.
-     * 
+     *
      * @param file The file to check
      * @return true if the file appears to be a DEX file, false otherwise
      */
@@ -395,4 +395,3 @@ public class BioSDKLoader {
         return false;
     }
 }
-

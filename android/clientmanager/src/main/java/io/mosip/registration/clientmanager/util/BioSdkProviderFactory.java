@@ -91,7 +91,7 @@ public class BioSdkProviderFactory {
                 }
                 if (paramsWithClassname.isEmpty()) continue;
 
-                List<IBioApiV2> loaded = BioSDKLoader.loadAllProvidersForModality(context, modality, globalParamRepository);
+                List<IBioApiV2> loaded = BioSdkLoader.loadAllProvidersForModality(context, modality, globalParamRepository);
                 List<IBioApiV2> providers = new ArrayList<>();
                 List<SDKInfo> infos = new ArrayList<>();
                 for (int i = 0; i < loaded.size() && i < paramsWithClassname.size(); i++) {
@@ -207,22 +207,17 @@ public class BioSdkProviderFactory {
     }
 
     /**
-     * Calls provider.init(params) via reflection and returns SDKInfo if the method exists and returns non-null.
+     * Calls provider.init(params) directly via IBioApiV2 interface and returns SDKInfo.
      */
     private SDKInfo initProviderAndGetSdkInfo(IBioApiV2 provider, Map<String, String> params, String modalityKey) {
+        if (provider == null) return null;
         if (params == null) params = new HashMap<>();
         try {
-            java.lang.reflect.Method init = provider.getClass().getMethod("init", Map.class);
-            Object result = init.invoke(provider, params);
-            if (result != null && result instanceof SDKInfo) {
-                return (SDKInfo) result;
-            }
-        } catch (NoSuchMethodException e) {
-            Log.d(TAG, "init(Map) not found on provider for " + modalityKey + ", SDKInfo will be null");
+            return provider.init(params);
         } catch (Exception e) {
             Log.e(TAG, "SDK init failed for modality: " + modalityKey, e);
+            return null;
         }
-        return null;
     }
 
     private static BiometricType modalityToBiometricType(Modality modality) {

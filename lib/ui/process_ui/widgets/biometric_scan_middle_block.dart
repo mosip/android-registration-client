@@ -17,6 +17,7 @@ import 'package:registration_client/model/biometrics_dto.dart';
 import 'package:registration_client/model/field.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/biometrics_utils.dart';
 
 import '../../../provider/global_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -40,28 +41,6 @@ class BiometricScanMiddleBlock extends StatefulWidget {
 }
 
 class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
-  avgScore(List<BiometricsDto> list) {
-    double avg = 0;
-    int i;
-    for (i = 0; i < list.length; i++) {
-      avg = avg + list[i].qualityScore!;
-    }
-    avg = avg / i;
-    return avg;
-  }
-
-  avgSDKScore(List<BiometricsDto> list) {
-    double avg = 0;
-    int count = 0;
-    for (var dto in list) {
-      if (dto.sdkScore != null && dto.sdkScore! > 0) {
-        avg = avg + dto.sdkScore!;
-        count++;
-      }
-    }
-    return count > 0 ? avg / count : 0.0;
-  }
-
   listOfImages(List<dynamic> images) {
     List<Widget> temp = [];
     for (var e in images) {
@@ -252,11 +231,9 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                           }
                         });
                         widget.biometricAttributeData.qualityPercentage =
-                            avgScore(widget
-                                .biometricAttributeData.listOfBiometricsDto);
+                            widget.biometricAttributeData.listOfBiometricsDto.avgScore();
                         widget.biometricAttributeData.sdkQualityPercentage =
-                            avgSDKScore(widget
-                                .biometricAttributeData.listOfBiometricsDto);
+                            widget.biometricAttributeData.listOfBiometricsDto.avgSDKScore();
                         await BiometricsApi()
                             .extractImageValues(
                                 widget.field.id!, widget.parameterTitle)
@@ -499,12 +476,12 @@ class _BiometricScanMiddleBlockState extends State<BiometricScanMiddleBlock> {
                               setState(() {
                                 widget.biometricAttributeData
                                         .qualityPercentage =
-                                    avgScore(widget.biometricAttributeData
-                                        .listOfBiometricsDto);
+                                    widget.biometricAttributeData
+                                        .listOfBiometricsDto.avgScore();
                                 widget.biometricAttributeData
                                         .sdkQualityPercentage =
-                                    avgSDKScore(widget.biometricAttributeData
-                                        .listOfBiometricsDto);
+                                    widget.biometricAttributeData
+                                        .listOfBiometricsDto.avgSDKScore();
                               });
                               await BiometricsApi()
                                   .extractImageValuesByAttempt(widget.field.id!,

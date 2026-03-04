@@ -32,7 +32,7 @@ public class GlobalParamRepository {
     private LocalConfigDAO localConfigDAO;
 
     /** Cached parsed config: modality -> vendorId -> (paramKey -> paramValue). Cleared on refresh. */
-    private volatile Map<String, Map<String, Map<String, String>>> bioSdkProviderConfigCache = null;
+    private Map<String, Map<String, Map<String, String>>> bioSdkProviderConfigCache = null;
 
     @Inject
     public GlobalParamRepository(GlobalParamDao globalParamDao, LocalConfigDAO localConfigDAO) {
@@ -308,25 +308,26 @@ public class GlobalParamRepository {
 
     }
 
-    /** Returns biometric provider config: modality -> vendorId -> (paramKey -> value) from keys under {@link #BIOMETRIC_SDK_PROVIDERS_PREFIX}. */
+    /**
+     * Returns biometric provider config from cache.
+     * Cache is invalidated on refreshConfigurationCache().
+     * No synchronization needed — called only after singleton init is complete.
+     */
     public Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
-        if (bioSdkProviderConfigCache != null) return bioSdkProviderConfigCache;
-        synchronized (this) {
-            if (bioSdkProviderConfigCache != null) return bioSdkProviderConfigCache;
+        if (bioSdkProviderConfigCache == null) {
             bioSdkProviderConfigCache = resolveBiometricProviderConfig();
-            return bioSdkProviderConfigCache;
         }
+        return bioSdkProviderConfigCache;
     }
 
     private Map<String, Map<String, Map<String, String>>> resolveBiometricProviderConfig() {
         String prefix = BIOMETRIC_SDK_PROVIDERS_PREFIX + ".";
         Map<String, Object> providerKeyValues = getGlobalParamsByPattern(BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%");
+        // Fallback: scan in-memory map — read-only here, no sync needed
         if (providerKeyValues.isEmpty()) {
-            synchronized (globalParamMap) {
-                for (Map.Entry<String, String> e : globalParamMap.entrySet()) {
-                    if (e.getKey() != null && e.getKey().startsWith(prefix)) {
-                        providerKeyValues.put(e.getKey(), e.getValue());
-                    }
+            for (Map.Entry<String, String> e : globalParamMap.entrySet()) {
+                if (e.getKey() != null && e.getKey().startsWith(prefix)) {
+                    providerKeyValues.put(e.getKey(), e.getValue());
                 }
             }
         }
