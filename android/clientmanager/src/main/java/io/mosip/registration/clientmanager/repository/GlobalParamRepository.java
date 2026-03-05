@@ -271,8 +271,12 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.JOBS_RESTART);
     }
 
-    public int getCachedIntCaptureTimeout(){
-        return getCachedIntegerGlobalParam(RegistrationConstants.CAPTURE_TIMEOUT);
+    public int getCachedIntCaptureTimeout() {
+        long timeout = parseLongWithDefault(RegistrationConstants.CAPTURE_TIMEOUT);
+        if (timeout <= 0L) {
+            return 0;
+        }
+        return timeout > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) timeout;
     }
 
     /**
