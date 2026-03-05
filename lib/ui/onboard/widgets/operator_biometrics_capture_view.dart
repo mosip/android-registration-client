@@ -247,12 +247,8 @@ class _OperatorBiometricsCaptureState
                   });
 
                   // Resolve biometric capture timeout from global params (fallback to 60s)
-                  int timeoutMillis = 10000; // default
 
-                  final timeoutValue = await BiometricsApi().getCaptureTimeout();
-                  if (timeoutValue != null && timeoutValue > 0) {
-                    timeoutMillis = timeoutValue;
-                  }
+                  final timeoutMillis = await BiometricsApi().getCaptureTimeout();
 
                   String isOperatorBiometricSaved = "";
                   await BiometricsApi().saveOperatorBiometrics().timeout(

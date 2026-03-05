@@ -273,10 +273,8 @@ public class GlobalParamRepository {
 
     public int getCachedIntCaptureTimeout() {
         long timeout = parseLongWithDefault(RegistrationConstants.CAPTURE_TIMEOUT);
-        if (timeout <= 0L) {
-            return 0;
-        }
-        return timeout > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) timeout;
+        int defaultTimeout = Integer.parseInt(RegistrationConstants.DEFAULT_CAPTURE_TIMEOUT);
+        return  (timeout <= 0L || timeout > Integer.MAX_VALUE) ? defaultTimeout : (int) timeout;
     }
 
     /**

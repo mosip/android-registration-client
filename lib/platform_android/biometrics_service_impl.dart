@@ -195,7 +195,7 @@ class BiometricsServiceImpl implements BiometricsService {
 
   @override
   Future<int> getCaptureTimeout() async {
-    int response = 0;
+    int response = 10000;
     try {
       response = await BiometricsApi().getCaptureTimeout();
     } on PlatformException {
