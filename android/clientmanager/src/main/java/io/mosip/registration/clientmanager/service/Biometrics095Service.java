@@ -93,7 +93,12 @@ public class Biometrics095Service extends BiometricsService {
         CaptureRequest captureRequest = new CaptureRequest();
         captureRequest.setEnv(getServerActiveProfile());
         captureRequest.setPurpose("Registration");
-        captureRequest.setTimeout(10000);
+        int timeout = globalParamRepository.getCachedIntCaptureTimeout();
+        if (timeout <= 0) {
+            timeout = 10000;
+        }
+
+        captureRequest.setTimeout(timeout);
         captureRequest.setSpecVersion("0.9.5");
         List<CaptureBioDetail> list = new ArrayList<>();
         CaptureBioDetail detail = new CaptureBioDetail();

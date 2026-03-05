@@ -271,6 +271,10 @@ public class GlobalParamRepository {
         return globalParamMap.get(RegistrationConstants.JOBS_RESTART);
     }
 
+    public int getCachedIntCaptureTimeout(){
+        return getCachedIntegerGlobalParam(RegistrationConstants.CAPTURE_TIMEOUT);
+    }
+
     /**
      * Refresh configuration cache by merging global params with local preferences
      */
