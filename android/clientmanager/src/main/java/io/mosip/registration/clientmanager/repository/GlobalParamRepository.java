@@ -24,8 +24,8 @@ public class GlobalParamRepository {
     private static final String TAG = GlobalParamRepository.class.getSimpleName();
     /** Config prefix for biometric SDK providers; only keys starting with this prefix are used. */
     public static final String BIOMETRIC_SDK_PROVIDERS_PREFIX = "mosip.biometric.sdk.providers";
-    /** Param key for SDK implementation class name in biometric provider config. */
-    private static final String PARAM_CLASSNAME = "classname";
+
+    private static final String CLASSNAME = "classname";
 
     private static Map<String, String> globalParamMap = new HashMap<>();
     private GlobalParamDao globalParamDao;
@@ -308,12 +308,7 @@ public class GlobalParamRepository {
 
     }
 
-    /**
-     * Returns biometric provider config from cache.
-     * Cache is invalidated on refreshConfigurationCache().
-     * No synchronization needed — called only after singleton init is complete.
-     */
-    public Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
+    private Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
         if (bioSdkProviderConfigCache == null) {
             bioSdkProviderConfigCache = resolveBiometricProviderConfig();
         }
@@ -323,14 +318,7 @@ public class GlobalParamRepository {
     private Map<String, Map<String, Map<String, String>>> resolveBiometricProviderConfig() {
         String prefix = BIOMETRIC_SDK_PROVIDERS_PREFIX + ".";
         Map<String, Object> providerKeyValues = getGlobalParamsByPattern(BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%");
-        // Fallback: scan in-memory map — read-only here, no sync needed
-        if (providerKeyValues.isEmpty()) {
-            for (Map.Entry<String, String> e : globalParamMap.entrySet()) {
-                if (e.getKey() != null && e.getKey().startsWith(prefix)) {
-                    providerKeyValues.put(e.getKey(), e.getValue());
-                }
-            }
-        }
+
         Map<String, Map<String, Map<String, String>>> result = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : providerKeyValues.entrySet()) {
             String key = e.getKey();
@@ -347,50 +335,47 @@ public class GlobalParamRepository {
 
     private long parseLongWithDefault(String key) {
         String value = globalParamMap.get(key);
-        if (value == null || value.trim().isEmpty()) {
-            return 0L;
-        }
+        if (value == null || value.trim().isEmpty()) return 0L;
         try {
             return Long.parseLong(value.trim());
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Failed to parse long value for key: " + key + ", value: " + value, e);
+            Log.e(TAG, "Failed to parse long for key: " + key + ", value: " + value, e);
             return 0L;
         }
     }
 
     /**
-     * Returns init params for each configured vendor of the given modality, in vendor order.
-     * Single source of truth for "vendors for modality"; other methods derive from this.
-     * Each map includes "classname" and other init params for that vendor.
+     * Returns all modality -> vendor params in one pass. Never null — returns empty map if no config.
+     * Only includes vendors that have a non-empty classname (filtered in getModalityVendorsParamsList).
+     */
+    public Map<String, List<Map<String, String>>> getAllModalityVendorParamsList() {
+        Map<String, Map<String, Map<String, String>>> config = getBiometricProviderConfig();
+        if (config.isEmpty()) return Collections.emptyMap();
+
+        Map<String, List<Map<String, String>>> result = new LinkedHashMap<>();
+        for (String modality : config.keySet()) {
+            List<Map<String, String>> list = getModalityVendorsParamsList(modality);
+            if (!list.isEmpty()) result.put(modality, list);
+        }
+        return result;
+    }
+
+    /**
+     * Returns init params for each configured vendor of the given modality (vendor order).
+     * Only includes entries that have a non-empty "classname" — single place for classname filter.
      */
     public List<Map<String, String>> getModalityVendorsParamsList(String modality) {
-        Map<String, Map<String, Map<String, String>>> config = getBiometricProviderConfig();
-        Map<String, Map<String, String>> vendors = config != null ? config.get(modality) : null;
-        if (vendors == null || vendors.isEmpty()) {
-            return Collections.emptyList();
-        }
+        Map<String, Map<String, String>> vendors = getBiometricProviderConfig().get(modality);
+        if (vendors == null || vendors.isEmpty()) return Collections.emptyList();
+
         List<Map<String, String>> list = new ArrayList<>(vendors.size());
         for (Map<String, String> params : vendors.values()) {
-            if (params != null && !params.isEmpty()) {
+            String className = params != null ? params.get(CLASSNAME) : null;
+            if (className != null && !className.trim().isEmpty()) {
                 list.add(new HashMap<>(params));
             }
         }
         return list;
-    }
-
-    /**
-     * Returns SDK implementation class names for the given modality, in vendor order.
-     * Callers should try loading each in sequence and use the first class that exists in the asset/DEX.
-     */
-    public List<String> getBioSDKProviderClassNames(String modality) {
-        List<String> classNames = new ArrayList<>();
-        for (Map<String, String> params : getModalityVendorsParamsList(modality)) {
-            String classname = params == null ? null : params.get(PARAM_CLASSNAME);
-            if (classname != null && !classname.isEmpty()) {
-                classNames.add(classname.trim());
-            }
-        }
-        return classNames;
     }
 
 }

@@ -1086,29 +1086,29 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             } else {
                 currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId, currentModality);
 
-                if (!biometricsDtoList.isEmpty()) {
-                    biometricsDtoList.forEach(dto -> {
-                        try {
-                            this.registrationService.getRegistrationDto().addBiometric(
-                                    fieldId,
-                                    (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
-                                            ? currentModality.getAttributes().get(0)
-                                            : Modality.getBioAttribute(dto.getBioSubType()),
-                                    currentAttempt,
-                                    dto
-                            );
-                        } catch (Exception ex) {
-                            Log.e(TAG, ex.getMessage(), ex);
-                        }
-                    });
-                    result1.success("Ok");
-                } else {
+                if (biometricsDtoList.isEmpty()) {
                     Toast.makeText(
                             activity.getApplicationContext(),
-                            "Biometrics Matched With Operator Biometrics, Please Try Again",
+                            "No biometrics captured. Please try again.",
                             Toast.LENGTH_SHORT
                     ).show();
                 }
+
+                biometricsDtoList.forEach(dto -> {
+                    try {
+                        this.registrationService.getRegistrationDto().addBiometric(
+                                fieldId,
+                                (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
+                                        ? currentModality.getAttributes().get(0)
+                                        : Modality.getBioAttribute(dto.getBioSubType()),
+                                currentAttempt,
+                                dto
+                        );
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                    }
+                });
+                result1.success("Ok");
             }
 
         } catch (BiometricsServiceException e) {

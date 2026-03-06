@@ -184,25 +184,25 @@ public class Biometrics095Service extends BiometricsService {
                if(RegistrationConstants.ENABLE.equalsIgnoreCase(sharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))) {
                     IBioApiV2 matchProvider = bioSdkProviderFactory != null ? bioSdkProviderFactory.getProviderForMatch(modality) : null;
 
-                    if (matchProvider != null) {
-                        boolean isMatched;
-                        if (isOperatorOnboarding) {
-                            String currentUserId = sharedPreferences.getString(SessionManager.USER_ID, "");
-                            isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, 
-                                    userBiometricRepository, matchProvider, currentUserId);
-                        } else {
-                            isMatched = MatchUtil.validateBiometricDataForRegistration(modality, captureDto, biometricsDtoList, 
-                                    userBiometricRepository, matchProvider);
-                        }
-                        if(isMatched){
-                            Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
-                            throw new BiometricsServiceException(SBIError.SBI_DEDUPE_MATCH.getErrorCode(),
-                                    SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
-                        }
-                    } else {
+                    if (matchProvider == null) {
                         throw new BiometricsServiceException(SBIError.SBI_DEDUPE_SDK_UNAVAILABLE.getErrorCode(),
                                 SBIError.SBI_DEDUPE_SDK_UNAVAILABLE.getErrorMessage());
                     }
+
+                   boolean isMatched;
+                   if (isOperatorOnboarding) {
+                       String currentUserId = sharedPreferences.getString(SessionManager.USER_ID, "");
+                       isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList,
+                               userBiometricRepository, matchProvider, currentUserId);
+                   } else {
+                       isMatched = MatchUtil.validateBiometricDataForRegistration(modality, captureDto, biometricsDtoList,
+                               userBiometricRepository, matchProvider);
+                   }
+                   if(isMatched){
+                       Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
+                       throw new BiometricsServiceException(SBIError.SBI_DEDUPE_MATCH.getErrorCode(),
+                               SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
+                   }
                }
             }
         } catch (BiometricsServiceException e) {
@@ -305,26 +305,11 @@ public class Biometrics095Service extends BiometricsService {
     }
 
     private double getSDKScore(BiometricsDto biometricsDto, Modality modality) throws Exception {
-        // Resolve biometric type; fall back to modality if attribute mapping fails
-        BiometricType biometricType = null;
-        try {
-            String bioAttribute = biometricsDto.getBioSubType();
-            if (bioAttribute != null && !bioAttribute.isEmpty()) {
-                io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric biometric =
-                        io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.Biometric.getBiometricByAttribute(bioAttribute);
-                if (biometric != null) {
-                    io.mosip.registration.packetmanager.dto.PacketWriter.BiometricType packetBiometricType =
-                            biometric.getBiometricType();
-                    if (packetBiometricType != null) {
-                        biometricType = BiometricType.fromValue(packetBiometricType.name());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "Error getting biometric type from attribute, using modality", e);
-        }
+
+        BiometricType biometricType = Modality.modalityToBiometricType(modality);
         if (biometricType == null) {
-            biometricType = BiometricType.fromValue(biometricsDto.getModality());
+            Log.w(TAG, "Unknown modality for SDK quality check, using device quality score");
+            return biometricsDto.getQualityScore();
         }
 
         // Build kernel BIR from captured ISO
@@ -370,13 +355,12 @@ public class Biometrics095Service extends BiometricsService {
             Log.e(TAG, "Error calling SDK checkQuality, using device quality score", e);
         }
 
-        // Fallback: use device-reported quality
         return biometricsDto.getQualityScore();
     }
 
     /**
      * Extracts quality score from typed QualityCheck (from checkQuality response).
-     * Uses QualityCheck.getScores() and QualityScore.getScore() directly — no reflection.
+     * Uses QualityCheck.getScores() and QualityScore.getScore().
      */
     private Double extractScoreFromQualityCheck(QualityCheck qualityCheck, BiometricType biometricType) {
         if (qualityCheck == null) return null;

@@ -1,5 +1,6 @@
 package io.mosip.registration.clientmanager.constant;
 
+import io.mosip.kernel.biometrics.constant.BiometricType;
 import io.mosip.registration.clientmanager.R;
 import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
 import io.mosip.registration.packetmanager.util.PacketManagerConstant;
@@ -139,6 +140,24 @@ public enum Modality implements Serializable {
                 break;
         }
         return format;
+    }
+
+    public static BiometricType modalityToBiometricType(Modality modality) {
+        if (modality == null) return null;
+        switch (modality) {
+            case FINGERPRINT_SLAB_LEFT:
+            case FINGERPRINT_SLAB_RIGHT:
+            case FINGERPRINT_SLAB_THUMBS:
+                return BiometricType.FINGER;
+            case IRIS_DOUBLE:
+                return BiometricType.IRIS;
+            case FACE:
+                return BiometricType.FACE;
+            case EXCEPTION_PHOTO:
+                return BiometricType.EXCEPTION_PHOTO;
+            default:
+                return null;
+        }
     }
 
 }

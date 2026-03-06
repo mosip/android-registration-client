@@ -21,65 +21,46 @@ import java.util.zip.ZipFile;
 import dalvik.system.DexClassLoader;
 import io.mosip.kernel.biometrics.spi.IBioApiV2;
 import io.mosip.registration.clientmanager.constant.Modality;
-import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 
 public class BioSdkLoader {
 
     private static final String TAG = BioSdkLoader.class.getSimpleName();
     private static final String ASSETS_FOLDER = "biosdk";
     private static final String DEX_ENTRY_NAME = "classes.dex";
+    private static final String PARAM_CLASSNAME = "classname";
 
     /**
-     * Loads all configured SDK providers for the given modality. Tries each class name against
-     * every DEX/JAR in assets (biosdk folder, then root), so different vendors can come from
-     * different SDK files (e.g. vendor1 from sdk_match.jar, vendor2 from sdk_quality.jar).
-     * Returns a list in vendor order; failed loads are null at that index.
+     * Single entry point — called only from BioSdkProviderFactory.
+     * vendorParamsList already filtered by repository (classname guaranteed non-empty).
+     * Returns a list in vendor order; failed loads are null.
      */
     public static List<IBioApiV2> loadAllProvidersForModality(Context context, Modality modality,
-            GlobalParamRepository globalParamRepository) {
-        if (context == null || globalParamRepository == null) return Collections.emptyList();
+            List<Map<String, String>> vendorParamsList) {
+        if (context == null || vendorParamsList == null || vendorParamsList.isEmpty()) return Collections.emptyList();
         String modalityKey = getModalityKey(modality);
         if (modalityKey == null) return Collections.emptyList();
-
-        List<String> classNames = globalParamRepository.getBioSDKProviderClassNames(modalityKey);
-        if (classNames == null || classNames.isEmpty()) return Collections.emptyList();
 
         List<File> sdkFiles = findAllSdkFilesFromAssets(context);
         if (sdkFiles == null || sdkFiles.isEmpty()) {
             Log.w(TAG, "No SDK (.dex or DEX-jar) in assets for modality: " + modalityKey);
             return Collections.emptyList();
         }
-
-        return loadProvidersFromDexFiles(context, sdkFiles, classNames, modalityKey);
+        return loadProvidersFromDexFiles(context, sdkFiles, vendorParamsList, modalityKey);
     }
 
     /**
-     * Loads the first available BioSDK for the modality (tries configured class names in order).
-     * Uses one DexClassLoader. Prefer {@link #loadAllProvidersForModality} when loading multiple vendors.
-     */
-    public static IBioApiV2 loadBioSdk(Context context, Modality modality, GlobalParamRepository globalParamRepository) {
-        List<IBioApiV2> list = loadAllProvidersForModality(context, modality, globalParamRepository);
-        for (IBioApiV2 provider : list) {
-            if (provider != null) return provider;
-        }
-        return null;
-    }
-
-    /**
-     * Tries each class name against each DEX file in order; first DEX that contains the class is used.
-     * Enables different vendors to be loaded from different SDK files (e.g. vendor1 from sdk_match.jar, vendor2 from sdk_quality.jar).
-     * Caches one DexClassLoader per DEX file. Returns list same size as classNames (null = not found in any DEX).
+     * One pass over vendorParamsList: for each entry get classname from params and load from DEX.
+     * Returns list same size as vendorParamsList (null = not found or no classname).
      */
     private static List<IBioApiV2> loadProvidersFromDexFiles(Context context, List<File> sdkFiles,
-            List<String> classNames, String modalityKey) {
-        List<IBioApiV2> result = new ArrayList<>(classNames.size());
-        for (int i = 0; i < classNames.size(); i++) {
-            result.add(null);
-        }
+            List<Map<String, String>> vendorParamsList, String modalityKey) {
+        List<IBioApiV2> result = new ArrayList<>(Collections.nCopies(vendorParamsList.size(), null));
         Map<String, DexClassLoader> loaderCache = new HashMap<>();
 
-        for (int i = 0; i < classNames.size(); i++) {
-            String cn = classNames.get(i);
+        for (int i = 0; i < vendorParamsList.size(); i++) {
+            Map<String, String> params = vendorParamsList.get(i);
+            String className = params == null ? null : params.get(PARAM_CLASSNAME);
+            if (className == null || (className = className.trim()).isEmpty()) continue;
             boolean loaded = false;
             for (File sdkFile : sdkFiles) {
                 if (!sdkFile.exists() || !sdkFile.canRead() || !isDexFile(sdkFile)) continue;
@@ -99,59 +80,29 @@ public class BioSdkLoader {
                     }
                 }
                 try {
-                    Class<?> sdkClass = classLoader.loadClass(cn);
+                    Class<?> sdkClass = classLoader.loadClass(className);
                     Object instance = sdkClass.getDeclaredConstructor().newInstance();
                     if (instance instanceof IBioApiV2) {
                         result.set(i, (IBioApiV2) instance);
-                        Log.i(TAG, "Loaded BioSDK: " + cn + " for modality: " + modalityKey + " from: " + sdkFile.getName());
+                        Log.i(TAG, "Loaded BioSDK: " + className + " for modality: " + modalityKey + " from: " + sdkFile.getName());
                         loaded = true;
                         break;
                     } else {
-                        Log.w(TAG, "Class does not implement IBioApiV2: " + cn + " in " + sdkFile.getName());
+                        Log.w(TAG, "Class does not implement IBioApiV2: " + className + " in " + sdkFile.getName());
                     }
                 } catch (ClassNotFoundException e) {
-                    Log.d(TAG, "Class not in " + sdkFile.getName() + ": " + cn);
+                    Log.d(TAG, "Class not in " + sdkFile.getName() + ": " + className);
                 } catch (ReflectiveOperationException e) {
-                    Log.w(TAG, "Failed to load: " + cn + " from " + sdkFile.getName(), e);
+                    Log.w(TAG, "Failed to load: " + className + " from " + sdkFile.getName(), e);
                 }
             }
-            if (!loaded) {
-                Log.d(TAG, "Class not found in any SDK: " + cn);
-            }
+            if (!loaded) Log.d(TAG, "Class not found in any SDK: " + className);
         }
         return result;
     }
 
-    /**
-     * One DexClassLoader, try each class name; return list same size as classNames (null = failed).
-     * Used only when a single DEX is available; prefer {@link #loadProvidersFromDexFiles} for multiple SDKs.
-     */
-    private static List<IBioApiV2> loadFromDexFile(Context context, File sdkFile, List<String> classNames, String modalityKey) {
-        return loadProvidersFromDexFiles(context, Collections.singletonList(sdkFile), classNames, modalityKey);
-    }
-
-    private static File findAndValidateSdkFile(Context context, String modalityKey) {
-        File sdkFile = findAnySdkFromAssets(context);
-        if (sdkFile == null) {
-            Log.w(TAG, "No SDK (.dex or DEX-jar) in assets for modality: " + modalityKey);
-            return null;
-        }
-        if (!sdkFile.exists() || !sdkFile.canRead()) {
-            Log.e(TAG, "SDK file not accessible: " + sdkFile.getAbsolutePath());
-            return null;
-        }
-        if (sdkFile.length() == 0) {
-            Log.e(TAG, "SDK file empty: " + sdkFile.getAbsolutePath());
-            return null;
-        }
-        if (!isDexFile(sdkFile)) {
-            Log.e(TAG, "Not a valid DEX file (need .dex or JAR with classes.dex): " + sdkFile.getAbsolutePath());
-            return null;
-        }
-        return sdkFile;
-    }
-
     private static String getModalityKey(Modality modality) {
+        if (modality == null) return null;
         switch (modality) {
             case FINGERPRINT_SLAB_LEFT:
             case FINGERPRINT_SLAB_RIGHT:
@@ -208,50 +159,6 @@ public class BioSdkLoader {
             Log.w(TAG, "Failed to list assets in folder: " + (folder.isEmpty() ? "(root)" : folder), e);
         }
         return result;
-    }
-
-    private static File findAnySdkFromAssets(Context context) {
-        AssetManager assetManager = context.getAssets();
-        File file = findSdkInFolder(context, assetManager, ASSETS_FOLDER);
-        if (file != null) {
-            return file;
-        }
-        return findSdkInFolder(context, assetManager, "");
-    }
-
-    private static File findSdkInFolder(Context context, AssetManager assetManager, String folder) {
-        try {
-            String[] files = assetManager.list(folder);
-            if (files == null) {
-                Log.d(TAG, "Assets folder missing: '" + (folder.isEmpty() ? "(root)" : folder) + "'");
-                return null;
-            }
-            if (files.length > 0) {
-                Log.d(TAG, "Assets in '" + (folder.isEmpty() ? "(root)" : folder) + "': " + java.util.Arrays.toString(files));
-            }
-
-            for (String name : files) {
-                String lower = name.toLowerCase(Locale.ROOT);
-                if (!lower.endsWith(".dex") && !lower.endsWith(".jar")
-                        && !lower.endsWith(".apk") && !lower.endsWith(".zip")) {
-                    continue;
-                }
-
-                String assetPath = folder.isEmpty() ? name : folder + "/" + name;
-                if (isValidDexAsset(context, assetPath)) {
-                    File copiedFile = copyFileFromAssets(context, folder, name);
-                    if (copiedFile != null) {
-                        Log.d(TAG, "Successfully validated DEX source: " + name);
-                        return copiedFile;
-                    }
-                } else {
-                    Log.w(TAG, "Asset " + name + " is not a valid DEX container; skipping copy.");
-                }
-            }
-        } catch (IOException e) {
-            Log.w(TAG, "Failed to list assets in folder: " + folder, e);
-        }
-        return null;
     }
 
     /**
