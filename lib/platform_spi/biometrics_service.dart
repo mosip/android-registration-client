@@ -41,5 +41,7 @@ abstract class BiometricsService {
 
   Future<String> getOperatorOnboardingBioattributes();
 
+  Future<int> getCaptureTimeout();
+
   factory BiometricsService() => getBiometricsServiceImpl();
 }

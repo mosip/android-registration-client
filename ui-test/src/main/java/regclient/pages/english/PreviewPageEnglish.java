@@ -1,11 +1,14 @@
 package regclient.pages.english;
 
+import java.time.Duration;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -49,7 +52,7 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "Lost UIN")
 	private WebElement lostUinTitle;
-	
+
 	@AndroidFindBy(accessibility = "Biometric correction")
 	private WebElement biometricCorrectionTitle;
 
@@ -61,22 +64,32 @@ public class PreviewPageEnglish extends PreviewPage {
 		clickOnElement(continueButton);
 		return new AuthenticationPageEnglish(driver);
 	}
-	
+
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
 		try {
-			scrollToText("Demographic Information");
-			WebElement demographicInformationInPreviewPage = driver
-					.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"Demographic Information\")"));
-			return isElementDisplayed(demographicInformationInPreviewPage);
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+			By locator = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+					+ ".scrollIntoView(new UiSelector().text(\"Demographic Information\"))");
+
+			wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+			return true;
+
 		} catch (Exception e) {
 			return false;
 		}
 	}
-	
+
 	public boolean isDocumentsInformationInPreviewPageDisplayed() {
 		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+			wait.until(ExpectedConditions.visibilityOf(documentsInformationInPreviewPage));
+
 			scrollToText("Documents");
+
 			return isElementDisplayed(documentsInformationInPreviewPage);
+
 		} catch (Exception e) {
 			return false;
 		}
@@ -84,8 +97,12 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
 		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+			wait.until(ExpectedConditions.visibilityOf(biometricsInformationInPreviewPage));
 			scrollToText("Biometrics");
+
 			return isElementDisplayed(biometricsInformationInPreviewPage);
+
 		} catch (Exception e) {
 			return false;
 		}
@@ -104,18 +121,27 @@ public class PreviewPageEnglish extends PreviewPage {
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	public boolean isBiometricCorrectionTitleDisplayed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
-						+ FetchUiSpec.getTitleUsingId("BIO") + "\"))")));
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(
+					MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+							+ ".scrollIntoView(new UiSelector().description(\"Biometric correction\"))")));
+
+			return true;
+
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public boolean isApplicationIDPreviewPagePageDisplayed() {
 		try {
-			waitTime(1);
-			return isElementDisplayed(applicationIDPreviewPage);
+			scrollToText("Application ID");
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+			wait.until(ExpectedConditions.visibilityOf(applicationIDPreviewPage));
+			return true;
 		} catch (Exception e) {
 			return false;
 		}

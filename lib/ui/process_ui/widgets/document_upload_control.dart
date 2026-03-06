@@ -110,7 +110,14 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       _removeExceptionData(widget.field);
       getScannedDocuments(widget.field);
       myGetDocumentCategoryFuture =
-          _getDocumentType(widget.field.subType!, "eng");
+          _getDocumentType(
+              widget.field.subType!,
+              globalProvider.chosenLang.isNotEmpty
+                  ? globalProvider.langToCode(globalProvider.chosenLang.first)
+                  : "eng",
+              globalProvider.chosenLang
+                  .map<String>((value) => globalProvider.langToCode(value))
+                  .toList());
       _fetchMaxFileSize();
     }
 
@@ -349,10 +356,10 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   Future<List<String?>> _getDocumentType(
-      String categoryCode, String langCode) async {
+      String categoryCode, String langCode, List<String> languages) async {
     return await context
         .read<RegistrationTaskProvider>()
-        .getDocumentType(categoryCode, langCode);
+        .getDocumentType(categoryCode, langCode, languages);
   }
 
   void _deleteImage(Field e, Uint8List? item) async {

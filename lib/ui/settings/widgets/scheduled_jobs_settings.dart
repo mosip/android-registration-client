@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../model/settings.dart';
 import '../../../provider/sync_provider.dart';
@@ -401,20 +402,25 @@ class _JobCardState extends State<_JobCard> {
                             children: [
                               SizedBox(
                                 height: 32,
-                                child: TextField(
-                                  controller: _cronController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Cron Expression',
-                                    errorText: null,
-                                    errorBorder: _cronError != null 
-                                        ? const OutlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.red, width: 1))
-                                        : null,
-                                    border: const OutlineInputBorder(),
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                child: Semantics(
+                                  label: '${job.id}_cron_expression',
+                                  excludeSemantics: true,
+                                  container: true,
+                                  child: TextField(
+                                    controller: _cronController,
+                                    decoration: InputDecoration(
+                                       hintText: AppLocalizations.of(context)!.cron_expression,
+                                      errorText: null,
+                                      errorBorder: _cronError != null
+                                          ? const OutlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.red, width: 1))
+                                          : null,
+                                      border: const OutlineInputBorder(),
+                                      isDense: true,
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                    ),
+                                    style: const TextStyle(fontSize: 11),
                                   ),
-                                  style: const TextStyle(fontSize: 11),
                                 ),
                               ),
                               if (_cronError != null)
@@ -446,7 +452,7 @@ class _JobCardState extends State<_JobCard> {
                                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                     ),
                                   )
-                                : const Text('Submit', style: TextStyle(fontSize: 11)),
+                                 : Text(AppLocalizations.of(context)!.submit, style: const TextStyle(fontSize: 11)),
                           ),
                         ),
                       ],

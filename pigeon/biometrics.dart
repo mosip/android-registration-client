@@ -66,4 +66,7 @@ abstract class BiometricsApi {
 
   @async
   String getOperatorOnboardingBioattributes();
+
+  @async
+  int getCaptureTimeout();
 }

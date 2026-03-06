@@ -15,7 +15,7 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage {
 	@AndroidFindBy(accessibility = "System Storage Usage")
 	private WebElement systemStorageUsageTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Synchronize Data\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionStartsWith(\"Synchronize Data\")")
 	private WebElement synchronizeDataButton;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Application Upload\")")

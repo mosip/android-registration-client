@@ -270,8 +270,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   Future<List<String?>> getDocumentType(
-      String categoryCode, String langCode) async {
-    return await documentCategory.getDocumentCategories(categoryCode, langCode);
+      String categoryCode, String langCode, List<String> languages) async {
+    return await documentCategory.getDocumentCategories(categoryCode, langCode, languages);
   }
 
   removeDocumentField(String fieldId) async {

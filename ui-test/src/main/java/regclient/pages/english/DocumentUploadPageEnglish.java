@@ -172,7 +172,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 					cameraPage.clickOkButton();
 					waitTime(1);
 					applyOrientation();
-					assertTrue(isRetakeButtonDisplayed(),"Verify if retake  button displayed");
+					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
 					assertTrue(isDoccumentUploadPageDisplayed(),

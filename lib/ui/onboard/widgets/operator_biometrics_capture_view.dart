@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/platform_spi/biometrics_service.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -80,29 +81,34 @@ class _OperatorBiometricsCaptureState
                             ? secondaryColors.elementAt(12)
                             : secondaryColors.elementAt(14)),
                     borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset(
-                        "assets/svg/${biometricAttributeData.title}.svg",
-                        height: 200.h,
-                        width: 200.h,
+                child: Semantics(
+                  label: biometricAttributeData.title,
+                  excludeSemantics: true,
+                  container: true,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset(
+                          "assets/svg/${biometricAttributeData.title}.svg",
+                          height: 200.h,
+                          width: 200.h,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Text(
-                      "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: semiBold,
-                        color: blackShade1,
+                      SizedBox(
+                        height: 10.h,
                       ),
-                    )
-                  ],
+                      Text(
+                        "${biometricAttributeData.viewTitle} ${AppLocalizations.of(context)!.scan}",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: semiBold,
+                          color: blackShade1,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               if (biometricAttributeData.isScanned == true)
@@ -243,9 +249,12 @@ class _OperatorBiometricsCaptureState
                     isSavingBiometrics = true;
                   });
 
+                  // Resolve biometric capture timeout via BiometricsService (fallback handled in service)
+                  final timeoutMillis = await BiometricsService().getCaptureTimeout();
+
                   String isOperatorBiometricSaved = "";
                   await BiometricsApi().saveOperatorBiometrics().timeout(
-                    const Duration(seconds: 60),
+                    Duration(milliseconds: timeoutMillis),
                     onTimeout: () {
                       return "TIMEOUT";
                     },

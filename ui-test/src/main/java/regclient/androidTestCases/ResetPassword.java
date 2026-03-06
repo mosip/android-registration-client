@@ -36,7 +36,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify reset password")
 	public void resetPassword() throws IOException {
-	
+
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		ProfilePage profilePage = null;
@@ -107,6 +107,9 @@ public class ResetPassword extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		profilePage.clickOnLogoutButton();
+
+		profilePage.clickOnLogoutButton();
+		BasePage.waitTime(5);
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 		loginPage.enterUserName(KeycloakUserManager.onlyOperatorRoleUser);
 		loginPage.clickOnNextButton();
@@ -220,7 +223,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 	@Test(priority = 1, description = "Reset to default password", dependsOnMethods = "resetPassword")
 	public void resetToDefaultPassword() throws IOException {
-		
+
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		ProfilePage profilePage = null;
@@ -335,7 +338,6 @@ public class ResetPassword extends AndroidBaseTest {
 
 		keycloakPage.clickOnSignoutButton();
 		keycloakPage.resumeArcApplication();
-		
 		profilePage.clickOnLogoutButton();
 	}
 }

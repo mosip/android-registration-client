@@ -108,12 +108,12 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
-	
+
 	public void clickOnScanButton() {
-		if (!isElementDisplayedOnScreen(scanButton)) {
-			swipeOrScroll();
-		}
-		clickOnElement(scanButton);
+		WebElement scanBtn = driver.findElement(MobileBy
+				.AndroidUIAutomator("new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\"))"
+						+ ".scrollIntoView(new UiSelector().description(\"Scan\"))"));
+		clickOnElement(scanBtn);
 	}
 
 	public void clickOnExceptionTypePermanentButton() {

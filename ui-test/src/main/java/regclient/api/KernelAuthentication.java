@@ -65,6 +65,21 @@ public class KernelAuthentication extends BaseTestCase {
 		cookie = reponse.getCookie("Authorization");
 		return cookie;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public String getAuthForRegproc() {
+		JSONObject actualrequest = getRequestJson(authRequest);
+
+		JSONObject request = new JSONObject();
+		request.put("appId", ArcConfigManager.getRegprocAppId());
+		request.put("clientId", ArcConfigManager.getRegprocClientId());
+		request.put("secretKey", ArcConfigManager.getRegprocClientSecret());
+		actualrequest.put("request", request);
+
+		Response reponse = appl.postWithJson(props.get("authclientidsecretkeyURL"), actualrequest);
+		cookie = reponse.getCookie("Authorization");
+		return cookie;
+	}
 
 	@SuppressWarnings("unchecked")
 	public String getAuthForAdmin() {

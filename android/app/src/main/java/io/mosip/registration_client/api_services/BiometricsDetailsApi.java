@@ -695,6 +695,12 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         result.success(response == null ? "" : response);
     }
 
+    @Override
+    public void getCaptureTimeout(@NonNull BiometricsPigeon.Result<Long> result) {
+        int timeout = globalParamRepository.getCachedIntCaptureTimeout();
+        result.success(Long.valueOf(timeout));
+    }
+
     public void handleDeviceInfoResponseForList(Bundle bundle) {
         try {
             byte[] infoBytes = bundle.getByteArray(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
