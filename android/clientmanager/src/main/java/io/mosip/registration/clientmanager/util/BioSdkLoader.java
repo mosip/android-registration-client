@@ -11,111 +11,60 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import dalvik.system.DexClassLoader;
 import io.mosip.kernel.biometrics.spi.IBioApiV2;
-import io.mosip.registration.clientmanager.constant.Modality;
-
 public class BioSdkLoader {
 
     private static final String TAG = BioSdkLoader.class.getSimpleName();
     private static final String ASSETS_FOLDER = "biosdk";
     private static final String DEX_ENTRY_NAME = "classes.dex";
-    private static final String PARAM_CLASSNAME = "classname";
 
     /**
-     * Single entry point — called only from BioSdkProviderFactory.
-     * vendorParamsList already filtered by repository (classname guaranteed non-empty).
-     * Returns a list in vendor order; failed loads are null.
+     * Called once before the vendor loop — finds all SDK files from assets.
      */
-    public static List<IBioApiV2> loadAllProvidersForModality(Context context, Modality modality,
-            List<Map<String, String>> vendorParamsList) {
-        if (context == null || vendorParamsList == null || vendorParamsList.isEmpty()) return Collections.emptyList();
-        String modalityKey = getModalityKey(modality);
-        if (modalityKey == null) return Collections.emptyList();
-
-        List<File> sdkFiles = findAllSdkFilesFromAssets(context);
-        if (sdkFiles == null || sdkFiles.isEmpty()) {
-            Log.w(TAG, "No SDK (.dex or DEX-jar) in assets for modality: " + modalityKey);
-            return Collections.emptyList();
-        }
-        return loadProvidersFromDexFiles(context, sdkFiles, vendorParamsList, modalityKey);
+    public static List<File> findAllSdkFiles(Context context) {
+        if (context == null) return Collections.emptyList();
+        return findAllSdkFilesFromAssets(context);
     }
 
     /**
-     * One pass over vendorParamsList: for each entry get classname from params and load from DEX.
-     * Returns list same size as vendorParamsList (null = not found or no classname).
+     * Called per vendor inside the loop — loads single class from already-found SDK files.
+     * className guaranteed non-empty by repository.
      */
-    private static List<IBioApiV2> loadProvidersFromDexFiles(Context context, List<File> sdkFiles,
-            List<Map<String, String>> vendorParamsList, String modalityKey) {
-        List<IBioApiV2> result = new ArrayList<>(Collections.nCopies(vendorParamsList.size(), null));
-        Map<String, DexClassLoader> loaderCache = new HashMap<>();
+    public static IBioApiV2 loadProvider(Context context, String className, List<File> sdkFiles) {
+        if (context == null || className == null || (className = className.trim()).isEmpty()
+                || sdkFiles == null || sdkFiles.isEmpty())
+            return null;
 
-        for (int i = 0; i < vendorParamsList.size(); i++) {
-            Map<String, String> params = vendorParamsList.get(i);
-            String className = params == null ? null : params.get(PARAM_CLASSNAME);
-            if (className == null || (className = className.trim()).isEmpty()) continue;
-            boolean loaded = false;
-            for (File sdkFile : sdkFiles) {
-                if (!sdkFile.exists() || !sdkFile.canRead() || !isDexFile(sdkFile)) continue;
-                String path = sdkFile.getAbsolutePath();
-                DexClassLoader classLoader = loaderCache.get(path);
-                if (classLoader == null) {
-                    try {
-                        classLoader = new DexClassLoader(
-                                path,
-                                context.getCodeCacheDir().getAbsolutePath(),
-                                null,
-                                context.getClassLoader());
-                        loaderCache.put(path, classLoader);
-                    } catch (Exception e) {
-                        Log.e(TAG, "DexClassLoader failed for " + sdkFile.getName(), e);
-                        continue;
-                    }
+        for (File sdkFile : sdkFiles) {
+            if (!sdkFile.exists() || !sdkFile.canRead() || !isDexFile(sdkFile)) continue;
+            try {
+                DexClassLoader classLoader = new DexClassLoader(
+                        sdkFile.getAbsolutePath(),
+                        context.getCodeCacheDir().getAbsolutePath(),
+                        null,
+                        context.getClassLoader());
+                Class<?> sdkClass = classLoader.loadClass(className);
+                Object instance = sdkClass.getDeclaredConstructor().newInstance();
+                if (instance instanceof IBioApiV2) {
+                    Log.i(TAG, "Loaded: " + className + " from: " + sdkFile.getName());
+                    return (IBioApiV2) instance;
+                } else {
+                    Log.w(TAG, "Class does not implement IBioApiV2: " + className);
                 }
-                try {
-                    Class<?> sdkClass = classLoader.loadClass(className);
-                    Object instance = sdkClass.getDeclaredConstructor().newInstance();
-                    if (instance instanceof IBioApiV2) {
-                        result.set(i, (IBioApiV2) instance);
-                        Log.i(TAG, "Loaded BioSDK: " + className + " for modality: " + modalityKey + " from: " + sdkFile.getName());
-                        loaded = true;
-                        break;
-                    } else {
-                        Log.w(TAG, "Class does not implement IBioApiV2: " + className + " in " + sdkFile.getName());
-                    }
-                } catch (ClassNotFoundException e) {
-                    Log.d(TAG, "Class not in " + sdkFile.getName() + ": " + className);
-                } catch (ReflectiveOperationException e) {
-                    Log.w(TAG, "Failed to load: " + className + " from " + sdkFile.getName(), e);
-                }
+            } catch (ClassNotFoundException e) {
+                Log.d(TAG, "Class not in " + sdkFile.getName() + ": " + className);
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to load: " + className + " from " + sdkFile.getName(), e);
             }
-            if (!loaded) Log.d(TAG, "Class not found in any SDK: " + className);
         }
-        return result;
-    }
-
-    private static String getModalityKey(Modality modality) {
-        if (modality == null) return null;
-        switch (modality) {
-            case FINGERPRINT_SLAB_LEFT:
-            case FINGERPRINT_SLAB_RIGHT:
-            case FINGERPRINT_SLAB_THUMBS:
-                return "finger";
-            case IRIS_DOUBLE:
-                return "iris";
-            case FACE:
-            case EXCEPTION_PHOTO:
-                return "face";
-            default:
-                return null;
-        }
+        Log.d(TAG, "Class not found in any SDK file: " + className);
+        return null;
     }
 
     /**
@@ -205,63 +154,47 @@ public class BioSdkLoader {
     }
 
     private static File copyFileFromAssets(Context context, String folder, String fileName) {
-        File outputFile = null;
-        InputStream inputStream = null;
-        FileOutputStream outputStream = null;
+        File biosdkDir = new File(context.getFilesDir(), ASSETS_FOLDER);
+        if (!biosdkDir.exists() && !biosdkDir.mkdirs()) {
+            Log.e(TAG, "Failed to create bioSdk directory");
+            return null;
+        }
 
+        File outputFile = new File(biosdkDir, fileName);
+        if (outputFile.exists()) {
+            outputFile.setWritable(true, false);
+            outputFile.delete();
+        }
+
+        String assetPath = folder == null || folder.isEmpty() ? fileName : (folder + "/" + fileName);
+        InputStream inputStream;
         try {
-            File biosdkDir = new File(context.getFilesDir(), ASSETS_FOLDER);
-            if (!biosdkDir.exists() && !biosdkDir.mkdirs()) {
-                Log.e(TAG, "Failed to create bioSdk directory");
+            inputStream = context.getAssets().open(assetPath);
+        } catch (IOException e) {
+            try {
+                inputStream = context.getAssets().open(fileName);
+            } catch (IOException e2) {
+                Log.w(TAG, "File not found in assets: " + assetPath);
                 return null;
             }
+        }
 
-            outputFile = new File(biosdkDir, fileName);
-            // Delete if exists (may be read-only from previous run) so we can overwrite
-            if (outputFile.exists()) {
-                outputFile.setWritable(true, false);
-                outputFile.delete();
-            }
-
-            String assetPath = folder == null || folder.isEmpty() ? fileName : (folder + "/" + fileName);
-            try {
-                inputStream = context.getAssets().open(assetPath);
-            } catch (IOException e) {
-                try {
-                    inputStream = context.getAssets().open(fileName);
-                } catch (IOException e2) {
-                    Log.w(TAG, "File not found in assets: " + assetPath);
-                    return null;
-                }
-            }
-
-            outputStream = new FileOutputStream(outputFile);
+        try (InputStream in = inputStream; FileOutputStream out = new FileOutputStream(outputFile)) {
             byte[] buffer = new byte[8192];
             int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
             }
-            outputStream.flush();
-            outputStream.close();
-            outputStream = null;
+            out.flush();
             outputFile.setWritable(false, false);
             outputFile.setReadable(true, false);
-
             return outputFile;
-
         } catch (IOException e) {
             Log.e(TAG, "Failed to copy file from assets: " + fileName, e);
-            if (outputFile != null && outputFile.exists()) {
+            if (outputFile.exists()) {
                 outputFile.delete();
             }
             return null;
-        } finally {
-            try {
-                if (inputStream != null) inputStream.close();
-                if (outputStream != null) outputStream.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Error closing streams", e);
-            }
         }
     }
 

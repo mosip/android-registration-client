@@ -179,7 +179,7 @@ public class Biometrics095Service extends BiometricsService {
                         Log.i(TAG, "SDK quality score calculated: " + sdkScore + " for " + modality);
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to fetch SDK Score", e);
-                        biometricsDto.setSdkScore(biometricsDto.getQualityScore());
+                        biometricsDto.setSdkScore(0);
                     }
                 }
 
@@ -306,19 +306,19 @@ public class Biometrics095Service extends BiometricsService {
         return 0;
     }
 
-    private double getSDKScore(BiometricsDto biometricsDto, Modality modality) throws Exception {
+    private double getSDKScore(BiometricsDto biometricsDto, Modality modality) {
 
         BiometricType biometricType = Modality.modalityToBiometricType(modality);
         if (biometricType == null) {
-            Log.w(TAG, "Unknown modality for SDK quality check, using device quality score");
-            return biometricsDto.getQualityScore();
+            Log.w(TAG, "Unknown modality for SDK quality check");
+            return 0;
         }
 
         // Build kernel BIR from captured ISO
         byte[] iso = CryptoUtil.base64decoder.decode(biometricsDto.getBioValue());
         if (iso == null || iso.length == 0) {
-            Log.w(TAG, "Invalid biometric payload; using device quality score");
-            return biometricsDto.getQualityScore();
+            Log.w(TAG, "Invalid biometric payload for SDK quality check");
+            return 0;
         }
         BIR bir = MatchUtil.buildBir(
                 biometricsDto.getBioSubType(),
@@ -332,8 +332,8 @@ public class Biometrics095Service extends BiometricsService {
         IBioApiV2 bioProvider = bioSdkProviderFactory != null
                 ? bioSdkProviderFactory.getProviderForFunction(modality, BiometricFunction.QUALITY_CHECK) : null;
         if (bioProvider == null) {
-            Log.d(TAG, "No SDK with QUALITY_CHECK support for modality: " + modality + ", using device quality score");
-            return biometricsDto.getQualityScore();
+            Log.d(TAG, "No SDK with QUALITY_CHECK support for modality: " + modality);
+            return 0;
         }
 
         try {
@@ -345,19 +345,17 @@ public class Biometrics095Service extends BiometricsService {
             Response<QualityCheck> qualityResponse =
                     bioProvider.checkQuality(sample, modalitiesToCheck, flags);
 
-            if (qualityResponse != null && qualityResponse.getResponse() != null) {
-                Double score = extractScoreFromQualityCheck(
-                        qualityResponse.getResponse(), biometricType);
-                if (score != null && score > 0) {
-                    Log.i(TAG, "SDK quality score calculated using checkQuality(): " + score);
-                    return score;
-                }
+            Double score = extractScoreFromQualityCheck(
+                    qualityResponse != null ? qualityResponse.getResponse() : null, biometricType);
+            if (score != null) {
+                Log.d(TAG, "SDK quality score calculated using checkQuality(): " + score);
+                return score;
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error calling SDK checkQuality, using device quality score", e);
+            Log.e(TAG, "Error calling SDK checkQuality", e);
         }
 
-        return biometricsDto.getQualityScore();
+        return 0;
     }
 
     /**
@@ -365,7 +363,10 @@ public class Biometrics095Service extends BiometricsService {
      * Uses QualityCheck.getScores() and QualityScore.getScore().
      */
     private Double extractScoreFromQualityCheck(QualityCheck qualityCheck, BiometricType biometricType) {
-        if (qualityCheck == null) return null;
+        if (qualityCheck == null) {
+            Log.e(TAG, "SDK returned null QualityCheck");
+            return null;
+        }
 
         Map<BiometricType, QualityScore> scores = qualityCheck.getScores();
         if (scores != null && scores.containsKey(biometricType)) {

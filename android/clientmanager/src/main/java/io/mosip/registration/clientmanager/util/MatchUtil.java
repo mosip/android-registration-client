@@ -64,9 +64,8 @@ public class MatchUtil {
         }
         BiometricType biometricType = BiometricType.fromValue(modality == Modality.EXCEPTION_PHOTO ?
                 modality.getSingleType().value() : captureDto.getBioType());
-        String lowerCase = biometricType.toString().toLowerCase();
-        String biometricCode = StringUtils.capitalizeFirstLetter(lowerCase);
-        List<UserBiometric> userBiometrics = userBiometricRepository.findAllOperatorBiometricsExceptCurrent(biometricCode, currentUserId);
+        List<UserBiometric> userBiometrics = userBiometricRepository
+                .findAllOperatorBiometricsExceptCurrent(biometricType.toString(), currentUserId);
         if(userBiometrics.isEmpty()){
             return false;
         }
@@ -87,9 +86,7 @@ public class MatchUtil {
             biometricsDtoList, UserBiometricRepository userBiometricRepository, IBioApiV2 iBioApiV2) {
         BiometricType biometricType = BiometricType.fromValue(modality == Modality.EXCEPTION_PHOTO ?
                 modality.getSingleType().value() : captureDto.getBioType());
-        String lowerCase = biometricType.toString().toLowerCase();
-        String biometricCode = StringUtils.capitalizeFirstLetter(lowerCase);
-        List<UserBiometric> userBiometrics = userBiometricRepository.findAllOperatorBiometrics(biometricCode);
+        List<UserBiometric> userBiometrics = userBiometricRepository.findAllOperatorBiometrics(biometricType.toString());
         if(userBiometrics.isEmpty()){
             return false;
         }

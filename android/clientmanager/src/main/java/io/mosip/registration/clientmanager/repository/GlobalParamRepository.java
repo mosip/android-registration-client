@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -351,37 +352,26 @@ public class GlobalParamRepository {
     }
 
     /**
-     * Returns all modality -> vendor params in one pass. Never null — returns empty map if no config.
-     * Only includes vendors that have a non-empty classname (filtered in getModalityVendorsParamsList).
+     * Iterates config once and calls {@code onVendorParams} for each configured biometric vendor (modality + params)
+     * that has a non-empty "classname". No intermediate list — single pass. Passes a copy of params so the handler
+     * may not mutate the cache. Caller can load SDK and register in the handler.
      */
-    public Map<String, List<Map<String, String>>> getAllModalityVendorParamsList() {
+    public void forEachVendorParams(BiConsumer<String, Map<String, String>> onVendorParams) {
         Map<String, Map<String, Map<String, String>>> config = getBiometricProviderConfig();
-        if (config.isEmpty()) return Collections.emptyMap();
+        if (config.isEmpty() || onVendorParams == null) return;
 
-        Map<String, List<Map<String, String>>> result = new LinkedHashMap<>();
-        for (String modality : config.keySet()) {
-            List<Map<String, String>> list = getModalityVendorsParamsList(modality);
-            if (!list.isEmpty()) result.put(modality, list);
-        }
-        return result;
-    }
+        for (Map.Entry<String, Map<String, Map<String, String>>> modalityEntry : config.entrySet()) {
+            String modalityKey = modalityEntry.getKey();
+            Map<String, Map<String, String>> vendors = modalityEntry.getValue();
+            if (vendors == null) continue;
 
-    /**
-     * Returns init params for each configured vendor of the given modality (vendor order).
-     * Only includes entries that have a non-empty "classname" — single place for classname filter.
-     */
-    public List<Map<String, String>> getModalityVendorsParamsList(String modality) {
-        Map<String, Map<String, String>> vendors = getBiometricProviderConfig().get(modality);
-        if (vendors == null || vendors.isEmpty()) return Collections.emptyList();
-
-        List<Map<String, String>> list = new ArrayList<>(vendors.size());
-        for (Map<String, String> params : vendors.values()) {
-            String className = params != null ? params.get(CLASSNAME) : null;
-            if (className != null && !className.trim().isEmpty()) {
-                list.add(new HashMap<>(params));
+            for (Map<String, String> params : vendors.values()) {
+                String className = params != null ? params.get(CLASSNAME) : null;
+                if (className != null && !className.trim().isEmpty()) {
+                    onVendorParams.accept(modalityKey, new HashMap<>(params));
+                }
             }
         }
-        return list;
     }
 
 }

@@ -86,7 +86,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private final List<Bitmap> listBitmaps1 = new ArrayList<>();
     private byte[] byteArrayTester;
     private List<byte[]> listByteArrayTester1 = new ArrayList<>();
-    BiometricsPigeon.Result<String> result1;
+    BiometricsPigeon.Result<String> biometricResult;
 
     public List<String> OPERATOR_EXCEPTIONS=new ArrayList<>();
 
@@ -137,7 +137,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
         currentModality = getModality(modality);
         this.fieldId = fieldId;
         discoverSBI();
-        result1 = result;
+        biometricResult = result;
     }
 
     @Override
@@ -1088,7 +1088,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                 }
 
 
-                result1.success("Ok");
+                biometricResult.success("Ok");
             } else {
                 currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId, currentModality);
 
@@ -1098,6 +1098,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                             "No biometrics captured. Please try again.",
                             Toast.LENGTH_SHORT
                     ).show();
+                    return;
                 }
 
                 biometricsDtoList.forEach(dto -> {
@@ -1114,7 +1115,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
                         Log.e(TAG, ex.getMessage(), ex);
                     }
                 });
-                result1.success("Ok");
+                biometricResult.success("Ok");
             }
 
         } catch (BiometricsServiceException e) {

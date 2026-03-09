@@ -3,6 +3,7 @@ package io.mosip.registration.clientmanager.util;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ public class BioSdkProviderFactory {
 
     private static final String TAG = BioSdkProviderFactory.class.getSimpleName();
     private static final String VERSION_KEY = "version";
+    private static final String CLASSNAME_KEY = "classname";
 
     private final Context context;
     private final GlobalParamRepository globalParamRepository;
@@ -41,6 +43,7 @@ public class BioSdkProviderFactory {
 
     /**
      * Initializes biometric providers from config. Call once at app startup.
+     * Single pass via repository callback — no intermediate list; load + init + register per vendor inline.
      */
     public void initialize() {
         if (context == null) {
@@ -48,49 +51,35 @@ public class BioSdkProviderFactory {
             return;
         }
 
-        Map<String, List<Map<String, String>>> configByModality = globalParamRepository.getAllModalityVendorParamsList();
-        if (configByModality.isEmpty()) return;
-
-        for (Map.Entry<String, List<Map<String, String>>> entry : configByModality.entrySet()) {
-            String modalityKey = entry.getKey();
-            List<Map<String, String>> vendorParamsList = entry.getValue();
-            if (vendorParamsList.isEmpty()) continue;
-
-            Modality modality = parseModalityKey(modalityKey);
-            if (modality == null) continue;
-
-            List<IBioApiV2> loadedProviders = BioSdkLoader.loadAllProvidersForModality(context, modality, vendorParamsList);
-            List<IBioApiV2> providers = new ArrayList<>();
-            List<SDKInfo> sdkInfoList = new ArrayList<>();
-
-            for (int i = 0; i < loadedProviders.size() && i < vendorParamsList.size(); i++) {
-                IBioApiV2 provider = loadedProviders.get(i);
-                Map<String, String> vendorParams = vendorParamsList.get(i);
-                if (provider == null) continue;
-                try {
-                    SDKInfo sdkInfo = initProvider(provider, vendorParams, modalityKey);
-                    if (sdkInfo == null) continue;
-
-                    String configuredVersion = vendorParams.get(VERSION_KEY);
-                    if (configuredVersion != null && !configuredVersion.isEmpty()
-                            && !configuredVersion.equals(sdkInfo.getApiVersion())) {
-                        Log.e(TAG, "SDK version mismatch for modality: " + modalityKey);
-                        continue;
-                    }
-
-                    providers.add(provider);
-                    sdkInfoList.add(sdkInfo);
-                    Log.i(TAG, "Biometric provider loaded for modality: " + modalityKey);
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to init BioSDK for modality: " + modalityKey, e);
-                }
-            }
-
-            if (!providers.isEmpty()) {
-                providerRegistry.put(modalityKey, providers);
-                sdkInfoRegistry.put(modalityKey, sdkInfoList);
-            }
+        List<File> sdkFiles = BioSdkLoader.findAllSdkFiles(context);
+        if (sdkFiles == null || sdkFiles.isEmpty()) {
+            Log.w(TAG, "No SDK files found in assets");
+            return;
         }
+
+        globalParamRepository.forEachVendorParams((modalityKey, params) -> {
+            if (parseModalityKey(modalityKey) == null) return;
+
+            String className = params.get(CLASSNAME_KEY);
+            if (className == null || className.trim().isEmpty()) return;
+
+            IBioApiV2 provider = BioSdkLoader.loadProvider(context, className, sdkFiles);
+            if (provider == null) return;
+
+            SDKInfo sdkInfo = initProvider(provider, params, modalityKey);
+            if (sdkInfo == null) return;
+
+            String configuredVersion = params.get(VERSION_KEY);
+            if (configuredVersion != null && !configuredVersion.isEmpty()
+                    && !configuredVersion.equals(sdkInfo.getApiVersion())) {
+                Log.e(TAG, "SDK version mismatch for modality: " + modalityKey);
+                return;
+            }
+
+            providerRegistry.computeIfAbsent(modalityKey, k -> new ArrayList<>()).add(provider);
+            sdkInfoRegistry.computeIfAbsent(modalityKey, k -> new ArrayList<>()).add(sdkInfo);
+            Log.i(TAG, "Provider registered — modality: " + modalityKey + ", class: " + className);
+        });
     }
 
     public IBioApiV2 getProviderForFunction(Modality modality, BiometricFunction function) {
