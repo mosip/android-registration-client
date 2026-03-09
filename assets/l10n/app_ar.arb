@@ -130,6 +130,7 @@
   "retake": "استعادة",
   "reference_number": "أدخل الرقم المرجعي",
   "select_value_message": "رجاءا اختر قيمة",
+  "select_option": "اختر خيارًا",
   "enter_value_message": "الرجاء إدخال قيمة",
   "invalid_input": "مدخل غير صالح",
   "reference_number_validation": "الرجاء إدخال الرقم المرجعي",

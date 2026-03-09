@@ -245,6 +245,7 @@
   "retake": "ரீடேக்",
   "reference_number": "குறிப்பு எண்ணை உள்ளிடவும்",
   "select_value_message": "மதிப்பைத் தேர்ந்தெடுக்கவும்",
+  "select_option": "ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்",
   "enter_value_message": "தயவுசெய்து ஒரு மதிப்பை உள்ளிடவும்",
   "invalid_input": "தவறான உள்ளீடு",
   "reference_number_validation": "தயவுசெய்து ஆதார் எண்ணை உள்ளிடவும்",
