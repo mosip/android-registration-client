@@ -16,6 +16,7 @@ public class RestAuthInterceptor implements Interceptor {
 
     private static final String COOKIE = "Cookie";
     private static final String TOKEN_TEMPLATE = "Authorization=%s";
+    private final Object restoreLock = new Object();
     private SessionManager sessionManager;
     private final UserTokenDao userTokenDao;
     private final Context appContext;
@@ -45,26 +46,34 @@ public class RestAuthInterceptor implements Interceptor {
         }
 
         try {
-            String userId = appContext
-                    .getSharedPreferences(appContext.getString(io.mosip.registration.clientmanager.R.string.app_name), Context.MODE_PRIVATE)
-                    .getString(SessionManager.PREFERRED_USERNAME, null);
-            if (userId == null || userId.isEmpty()) {
-                return null;
-            }
+            synchronized (restoreLock) {
+                // Another thread may have already restored a valid token.
+                String currentToken = this.sessionManager.fetchAuthToken();
+                if (isTokenValid(currentToken)) {
+                    return currentToken;
+                }
 
-            UserToken userToken = userTokenDao.findByUsername(userId);
-            if (userToken == null) {
-                return null;
-            }
+                String userId = appContext
+                        .getSharedPreferences(appContext.getString(io.mosip.registration.clientmanager.R.string.app_name), Context.MODE_PRIVATE)
+                        .getString(SessionManager.PREFERRED_USERNAME, null);
+                if (userId == null || userId.isEmpty()) {
+                    return null;
+                }
 
-            String dbToken = userToken.getToken();
-            if (!isTokenValid(dbToken)) {
-                return null;
-            }
+                UserToken userToken = userTokenDao.findByUsername(userId);
+                if (userToken == null) {
+                    return null;
+                }
 
-            // Repopulate session prefs so subsequent calls use the same token.
-            sessionManager.saveAuthToken(dbToken);
-            return dbToken;
+                String dbToken = userToken.getToken();
+                if (!isTokenValid(dbToken)) {
+                    return null;
+                }
+
+                // Repopulate session prefs so subsequent calls use the same token.
+                sessionManager.saveAuthToken(dbToken);
+                return dbToken;
+            }
         } catch (Exception ignored) {
             return null;
         }

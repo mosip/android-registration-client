@@ -54,6 +54,7 @@ public class SyncWorker extends Worker {
             boolean completed = latch.await(SYNC_TIMEOUT_MINUTES, TimeUnit.MINUTES);
             if (!completed) {
                 Log.w(TAG, "Sync timed out: " + jobApiName);
+                return Result.retry();
             }
 
             scheduler.scheduleJob(getApplicationContext(), jobApiName);
