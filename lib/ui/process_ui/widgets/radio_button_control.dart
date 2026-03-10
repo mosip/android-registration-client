@@ -43,9 +43,11 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
       return true;
     }
 
+    final fieldId = widget.field.id;
     return widget.field.requiredOn != null &&
         widget.field.requiredOn!.isNotEmpty &&
-        (globalProvider.mvelRequiredFields[widget.field.id] ?? true);
+        fieldId != null &&
+        globalProvider.mvelRequiredFields[fieldId] == true;
   }
 
   void _updateErrorState(bool shouldShowError) {

@@ -130,7 +130,6 @@
   "retake": "REPRENDRE",
   "reference_number": "Entrez le numéro de référence",
   "select_value_message": "Veuillez sélectionner une valeur",
-  "select_option": "Sélectionnez une option",
   "enter_value_message": "S’il vous plaît entrer une valeur",
   "invalid_input": "Entrée invalide",
   "reference_number_validation": "Veuillez entrer le numéro de référence",
