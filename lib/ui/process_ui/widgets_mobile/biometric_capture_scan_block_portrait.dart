@@ -1941,16 +1941,21 @@ class _BiometricCaptureScanBlockPortraitState
                   ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(1000),
-                    color: solidPrimary),
-                height: 75,
-                width: 75,
-                child: Icon(
-                  Icons.zoom_in,
-                  color: pureWhite,
-                  size: 35,
+              child: Semantics(
+                label: "zoom_in_button",
+                container: true,
+                excludeSemantics: true,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(1000),
+                      color: solidPrimary),
+                  height: 75,
+                  width: 75,
+                  child: Icon(
+                    Icons.zoom_in,
+                    color: pureWhite,
+                    size: 35,
+                  ),
                 ),
               ),
             ),
@@ -2669,17 +2674,22 @@ class _BiometricCaptureScanBlockPortraitState
                       ),
                     );
                   },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1000),
-                          color: solidPrimary),
-                      height: 75,
-                      width: 75,
-                      child: Icon(
-                        Icons.zoom_in,
-                        color: pureWhite,
-                        size: 35,
-                      )))),
+                  child: Semantics(
+                    label: "zoom_in_button",
+                    container: true,
+                    excludeSemantics: true,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(1000),
+                            color: solidPrimary),
+                        height: 75,
+                        width: 75,
+                        child: Icon(
+                          Icons.zoom_in,
+                          color: pureWhite,
+                          size: 35,
+                        )),
+                  ))),
         ],
       );
     }
@@ -3086,15 +3096,20 @@ class _BiometricCaptureScanBlockPortraitState
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 30),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                            "assets/images/Group 57951.png",
-                            height: (isMobileSize) ? 30.h : 52.h,
+                      Semantics(
+                        label: "menu_back_button",
+                        container: true,
+                        excludeSemantics: true,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 30),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Image.asset(
+                              "assets/images/Menu_Grid.png",
+                              height: (isMobileSize) ? 30.h : 52.h,
+                            ),
                           ),
                         ),
                       )

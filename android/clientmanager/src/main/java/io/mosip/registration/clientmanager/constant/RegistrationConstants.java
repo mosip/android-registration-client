@@ -111,6 +111,7 @@ public class RegistrationConstants {
     public static final String RIGHT_THUMB = "Right Thumb";
     public static final String RIGHT = "Right";
     public static final String LEFT = "Left";
+    public static final String DEFAULT_CAPTURE_TIMEOUT = "10000";
     public static final String PRE_REG_DELETION_CONFIGURED_DAYS = "mosip.registration.pre_reg_deletion_configured_days";
     public static final String REG_DELETION_CONFIGURED_DAYS = "mosip.registration.reg_deletion_configured_days";
     public static final String PRE_REG_DELETE_SUCCESS = "PRE_REG_DELETE_SUCCESS";
@@ -135,6 +136,8 @@ public class RegistrationConstants {
     public static final String FIELDS_TO_RETAIN_ON_PRID_FETCH = "mosip.registration.fields.to.retain.post.prid.fetch";
     public static final String HTTP_API_READ_TIMEOUT = "mosip.registration.HTTP_API_READ_TIMEOUT";
     public static final String HTTP_API_WRITE_TIMEOUT = "mosip.registration.HTTP_API_WRITE_TIMEOUT";
+    public static final String CAPTURE_TIMEOUT = "mosip.registration.capture_time_out";
+
     public static final String REG_PAK_MAX_TIME_APPRV_LIMIT = "mosip.registration.reg_pak_max_time_apprv_limit";
     public static final String OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME = "mosip.registration.last_export_registration_config_time";
     public static final String REG_PAK_MAX_CNT_OFFLINE_FREQ = "mosip.registration.packet.maximum.count.offline.frequency";

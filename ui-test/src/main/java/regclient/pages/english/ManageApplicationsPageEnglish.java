@@ -84,10 +84,9 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "Displaying 1 Applications")
 	private WebElement displayOneApplication;
 
-	@AndroidFindBy(xpath =
-			  "(//android.widget.TextView[@content-desc='Manage Applications']" +
-			  "/ancestor::android.view.View)[1]//android.widget.Button")
-			private WebElement backButton;
+	@AndroidFindBy(xpath = "(//android.widget.TextView[@content-desc='Manage Applications']"
+			+ "/ancestor::android.view.View)[1]//android.widget.Button")
+	private WebElement backButton;
 
 	public ManageApplicationsPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -211,7 +210,6 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	public void selectUploadedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(uploadedOption);
-
 	}
 
 	public boolean isReceivedDropdownOptionDisplayed() {
@@ -233,7 +231,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	public void clickOnBackButton() {
 		driver.navigate().back();
 	}
-	
+
 	public void clickOnExportButton() {
 		clickOnElement(exportButton);
 		waitTime(10);

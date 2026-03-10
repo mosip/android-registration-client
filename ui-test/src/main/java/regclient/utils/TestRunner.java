@@ -1,9 +1,19 @@
 package regclient.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.junit.runner.Runner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlSuite;
@@ -17,6 +27,8 @@ import regclient.api.FetchUiSpec;
 import regclient.api.KeycloakUserManager;
 
 public class TestRunner {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestRunner.class);
 
 	public static String jarUrl = TestRunner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
@@ -65,6 +77,9 @@ public class TestRunner {
 			XmlClass autoLogout = new XmlClass("regclient.androidTestCases.AutoLogout");
 			XmlClass biometricCorrection = new XmlClass("regclient.androidTestCases.BiometricCorrection");
 			XmlClass preRegFetchingPacket = new XmlClass("regclient.androidTestCases.PreRegFetchingPacket");
+			XmlClass exportPacket = new XmlClass("regclient.androidTestCases.ExportPacket");
+			XmlClass newRegistrationAdultUploadMultipleDoccuments = new XmlClass(
+					"regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments");
 
 			List<XmlClass> classes = new ArrayList<>();
 			String[] Scenarionames = ArcConfigManager.gettestcases().split(",");
@@ -82,7 +97,7 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdult"))
 					classes.add(newRegistrationAdult);
-				
+
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultException"))
 					classes.add(newRegistrationAdultException);
 
@@ -115,18 +130,24 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("settings"))
 					classes.add(settings);
-				
+
 				if (Scenarioname.equalsIgnoreCase("resetPassword"))
 					classes.add(resetPassword);
-				
+
 				if (Scenarioname.equalsIgnoreCase("autoLogout"))
 					classes.add(autoLogout);
-				
+
 				if (Scenarioname.equalsIgnoreCase("biometricCorrection"))
 					classes.add(biometricCorrection);
-				
+
 				if (Scenarioname.equalsIgnoreCase("preRegFetchingPacket"))
 					classes.add(preRegFetchingPacket);
+
+				if (Scenarioname.equalsIgnoreCase("exportPacket"))
+					classes.add(exportPacket);
+
+				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDoccuments"))
+					classes.add(newRegistrationAdultUploadMultipleDoccuments);
 
 			}
 			XmlTest test = new XmlTest(suite);
@@ -173,4 +194,48 @@ public class TestRunner {
 			return "IDE";
 	}
 
+	public static final Map<String, String> knownIssues = new HashMap<>();
+
+	static {
+		loadKnownIssues();
+	}
+
+	private static void loadKnownIssues() {
+	    try {
+	        InputStream is = TestRunner.class
+	                .getResourceAsStream("/config/knownIssues.txt");
+
+	        if (is == null) {
+	            System.out.println("❌ knownIssues.txt file NOT FOUND in classpath!");
+	            return;
+	        }
+
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	        String line;
+
+	        while ((line = reader.readLine()) != null) {
+
+	            line = line.trim();
+
+	            if (!line.isEmpty() && !line.startsWith("#")) {
+
+	                String[] parts = line.split("------", 2);
+
+	                if (parts.length == 2) {
+	                    String bugId = parts[0].trim();
+	                    String testDescription = parts[1].trim().toLowerCase();
+
+	                    knownIssues.put(testDescription, bugId);
+	                }
+	            }
+	        }
+
+	        reader.close();
+
+	        System.out.println("✅ Loaded Known Issues: " + knownIssues);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 }

@@ -193,6 +193,19 @@ class BiometricsServiceImpl implements BiometricsService {
     return response;
   }
 
+  @override
+  Future<int> getCaptureTimeout() async {
+    int response = 10000;
+    try {
+      response = await BiometricsApi().getCaptureTimeout();
+    } on PlatformException {
+      debugPrint('Get Capture Timeout call failed!');
+    } catch (e) {
+      debugPrint('Fetch Capture Timeout failed: ${e.toString()}');
+    }
+    return response;
+  }
+
 }
 
 BiometricsService getBiometricsServiceImpl() => BiometricsServiceImpl();

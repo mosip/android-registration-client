@@ -12,11 +12,17 @@
 			</class>
 			<class name="regclient.androidTestCases.NewRegistrationAdult">
 				<methods>
-					<include name="newRegistrationAdult" />		
+					<include name="newRegistrationAdult" />
+				</methods>
+			</class>
+			<class
+				name="regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments">
+				<methods>
 					<include name="newRegistrationAdultUploadMultipleDoccuments" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.NewRegistrationAdultException">
+			<class
+				name="regclient.androidTestCases.NewRegistrationAdultException">
 				<methods>
 					<include name="newRegistrationAdultException" />
 				</methods>
@@ -31,7 +37,8 @@
 					<include name="newRegistrationMinor" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.NewRegistrationMinorException">
+			<class
+				name="regclient.androidTestCases.NewRegistrationMinorException">
 				<methods>
 					<include name="newRegistrationMinorException" />
 				</methods>
@@ -46,7 +53,8 @@
 					<include name="updateMyUinMinor" />
 				</methods>
 			</class>
-			<class name="regclient.androidTestCases.UpdateMyUinUpdateDemographicDetails">
+			<class
+				name="regclient.androidTestCases.UpdateMyUinUpdateDemographicDetails">
 				<methods>
 					<include name="updateMyUinUpdateDemographicDetails" />
 				</methods>
@@ -59,12 +67,6 @@
 			<class name="regclient.androidTestCases.UpdateMyUinUpdateDocuments">
 				<methods>
 					<include name="updateMyUinUpdateDocuments" />
-				</methods>
-			</class>
-			<class name="regclient.androidTestCases.BiometricCorrection">
-				<methods>
-				    <include name="adultBiometricCorrection" />
-					<include name="minorBiometricCorrection" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.LostUin">
@@ -88,6 +90,17 @@
 			<class name="regclient.androidTestCases.Settings">
 				<methods>
 					<include name="Settings" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.ExportPacket">
+				<methods>
+					<include name="exportPacket" />
+				</methods>
+			</class>
+			<class name="regclient.androidTestCases.BiometricCorrection">
+				<methods>
+					<include name="adultBiometricCorrection" />
+					<include name="minorBiometricCorrection" />
 				</methods>
 			</class>
 		</classes>

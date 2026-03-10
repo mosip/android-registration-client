@@ -5,7 +5,7 @@
   "language": "eng",
   "defaultlanguage": "eng",
   "notificationLanguage": "eng",
-  "orientation": "portrait", 
+  "orientation": "portrait",
   "RID": "10001142850000120251130090022",
   "id": "com.motorola.camera3:id/capture_bar_shutter_button",
   "fingerprint_threshold": "45"
