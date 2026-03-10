@@ -1,7 +1,9 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
+
 import io.mosip.registration.clientmanager.config.SessionManager;
+import io.mosip.registration.clientmanager.dao.UserTokenDao;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -9,11 +11,15 @@ import okhttp3.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestAuthInterceptorTest {
@@ -36,6 +42,9 @@ public class RestAuthInterceptorTest {
     @Mock
     Response mockResponse;
 
+    @Mock
+    UserTokenDao mockUserTokenDao;
+
     @Before
     public void setUp() {
         Mockito.mockStatic(SessionManager.class)
@@ -52,7 +61,7 @@ public class RestAuthInterceptorTest {
         when(mockRequestBuilder.build()).thenReturn(mockRequest);
         when(mockChain.proceed(mockRequest)).thenReturn(mockResponse);
 
-        RestAuthInterceptor interceptor = new RestAuthInterceptor(mockContext);
+        RestAuthInterceptor interceptor = new RestAuthInterceptor(mockContext, mockUserTokenDao);
         Response response = interceptor.intercept(mockChain);
 
         verify(mockRequestBuilder).addHeader(eq("Cookie"), eq("Authorization=token123"));

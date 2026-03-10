@@ -24,7 +24,10 @@ public class SyncWorker extends Worker {
 
     public static final String KEY_JOB_API_NAME = "job_api_name";
     private static final String TAG = "SyncWorker";
-    private static final long SYNC_TIMEOUT_MINUTES = 10;
+    // WorkManager enforces a ~10 minute execution limit per Worker. Use a slightly
+    // lower timeout here so there is enough time left to perform cleanup and
+    // return Result.retry() before the Worker is forcibly stopped.
+    private static final long SYNC_TIMEOUT_MINUTES = 9;
 
     public SyncWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
@@ -61,6 +64,10 @@ public class SyncWorker extends Worker {
 
             Log.d(TAG, "Background sync completed: " + jobApiName);
             return Result.success();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Log.w(TAG, "Background sync interrupted: " + jobApiName, e);
+            return Result.retry();
         } catch (Exception e) {
             Log.e(TAG, "Background sync failed: " + jobApiName, e);
             return Result.retry();

@@ -16,6 +16,8 @@ public class RestAuthInterceptor implements Interceptor {
 
     private static final String COOKIE = "Cookie";
     private static final String TOKEN_TEMPLATE = "Authorization=%s";
+    // Leeway in seconds for JWT expiry checks to account for clock skew/network delays.
+    private static final int TOKEN_EXPIRY_LEEWAY_SECONDS = 900; // 15 minutes
     private final Object restoreLock = new Object();
     private SessionManager sessionManager;
     private final UserTokenDao userTokenDao;
@@ -85,7 +87,7 @@ public class RestAuthInterceptor implements Interceptor {
         }
         try {
             JWT jwt = new JWT(token);
-            return !jwt.isExpired(15);
+            return !jwt.isExpired(TOKEN_EXPIRY_LEEWAY_SECONDS);
         } catch (Exception e) {
             return false;
         }
