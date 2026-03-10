@@ -13,6 +13,17 @@ import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
 
+/**
+ * Custom {@link Application} used as the root for dependency injection.
+ *
+ * - Builds the Dagger {@link AppComponent} once per process.
+ * - Exposes that component to both UI ({@link MainActivity}) and background
+ *   work ({@link SyncWorker}) via {@link #getAppComponent()}.
+ *
+ * Using a real Application class (referenced from AndroidManifest.xml) is
+ * what allows WorkManager jobs to resolve the same graph even when the UI
+ * process is recreated solely to run background work.
+ */
 public class RegistrationClientApp extends Application {
 
     private volatile AppComponent appComponent;

@@ -73,7 +73,7 @@ public class RestAuthInterceptor implements Interceptor {
                 }
 
                 // Repopulate session prefs so subsequent calls use the same token.
-                sessionManager.saveAuthToken(dbToken);
+                sessionManager.saveAuthTokenSync(dbToken);
                 return dbToken;
             }
         } catch (Exception ignored) {

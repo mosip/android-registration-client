@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -587,7 +588,12 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         executeJobByApiName(jobApiName, context, null);
     }
 
-    public void executeJobByApiName(String jobApiName, Context context, Runnable onComplete) {
+    /**
+     * Execute a sync job identified by its API name. The optional {@code onComplete}
+     * callback will be invoked exactly once when the job finishes, with a boolean
+     * indicating overall success or failure.
+     */
+    public void executeJobByApiName(String jobApiName, Context context, Consumer<Boolean> onComplete) {
         new Thread(() -> {
             try {
                 String jobId = getJobIdByApiName(jobApiName);
@@ -599,7 +605,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             Log.d(getClass().getSimpleName(), "Registration packet upload job completed");
                             masterDataService.logLastSyncCompletionDateTime(jobId);
                             onSyncJobComplete(jobId, true, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, true);
                         });
                         break;
                     case "registrationPacketSyncJob":
@@ -607,14 +613,14 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             Log.d(getClass().getSimpleName(), "Registration packet sync job completed");
                             masterDataService.logLastSyncCompletionDateTime(jobId);
                             onSyncJobComplete(jobId, true, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, true);
                         });
                         break;
                     case "packetSyncStatusJob":
                         packetService.syncAllPacketStatus();
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         onSyncJobComplete(jobId, true, false);
-                        notifyComplete(onComplete);
+                        notifyComplete(onComplete, true);
                         break;
                     case "masterSyncJob":
                         masterDataService.syncMasterData(() -> {
@@ -622,7 +628,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, success);
                         }, 0, false, jobId);
                         break;
                     case "synchConfigDataJob":
@@ -631,7 +637,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, success);
                         }, false, jobId);
                         break;
                     case "userDetailServiceJob":
@@ -640,7 +646,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, success);
                         }, false, jobId);
                         break;
                     case "keyPolicySyncJob":
@@ -651,12 +657,12 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 String errorCode = masterDataService.onResponseComplete();
                                 boolean success = errorCode == null || errorCode.isEmpty();
                                 onSyncJobComplete(jobId, success, false);
-                                notifyComplete(onComplete);
+                                notifyComplete(onComplete, success);
                             }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), false, jobId);
                         } else {
                             Log.w(getClass().getSimpleName(), "Skipping keyPolicySyncJob - machine details not available");
                             onSyncJobComplete(jobId, false, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, false);
                         }
                         break;
                     case "publicKeySyncJob":
@@ -665,7 +671,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, success);
                         }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", false, jobId);
                         break;
                     case "syncCertificateJob":
@@ -674,14 +680,14 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, success);
                         }, false, jobId);
                         break;
                     case "preRegistrationDataSyncJob":
                         preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
                             Log.i(TAG, "Application Id's Sync Completed");
                             onSyncJobComplete(jobId, true, false);
-                            notifyComplete(onComplete);
+                            notifyComplete(onComplete, true);
                         }, jobId);
                         break;
 
@@ -689,14 +695,14 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         auditManagerService.deleteAuditLogs();
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         onSyncJobComplete(jobId, true, false);
-                        notifyComplete(onComplete);
+                        notifyComplete(onComplete, true);
                         break;
 
                     case "preRegistrationPacketDeletionJob":
                         preRegistrationDataSyncService.fetchAndDeleteRecords();
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         onSyncJobComplete(jobId, true, false);
-                        notifyComplete(onComplete);
+                        notifyComplete(onComplete, true);
                         break;
 
                     case "registrationDeletionJob":
@@ -704,26 +710,26 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         Log.i(TAG, "Registration packet deletion job completed");
                         onSyncJobComplete(jobId, true, false);
-                        notifyComplete(onComplete);
+                        notifyComplete(onComplete, true);
                         break;
                     default:
                         Log.w(getClass().getSimpleName(), "Unknown job: " + jobApiName);
                         onSyncJobComplete(jobId, false, false);
-                        notifyComplete(onComplete);
+                        notifyComplete(onComplete, false);
                 }
                 Log.d(getClass().getSimpleName(), "Completed: " + jobApiName);
             } catch (Exception e) {
                 onSyncJobComplete(getJobIdByApiName(jobApiName), false, false);
                 Log.e(getClass().getSimpleName(), "Job failed: " + jobApiName, e);
-                notifyComplete(onComplete);
+                notifyComplete(onComplete, false);
             }
         }).start();
     }
 
-    private void notifyComplete(Runnable onComplete) {
+    private void notifyComplete(Consumer<Boolean> onComplete, boolean success) {
         if (onComplete != null) {
             try {
-                onComplete.run();
+                onComplete.accept(success);
             } catch (Exception e) {
                 Log.e(TAG, "Error in completion callback", e);
             }

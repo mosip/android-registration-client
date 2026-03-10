@@ -16,10 +16,26 @@ import androidx.work.WorkerParameters;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.mosip.registration_client.api_services.MasterDataSyncApi;
 import io.mosip.registration_client.utils.SyncScheduler;
 
+/**
+ * WorkManager worker that performs a single execution of a sync job.
+ *
+ * Lifecycle:
+ * - Scheduled by {@link SyncScheduler#scheduleJob(Context, String)} with an initial delay
+ *   derived from the job's cron expression.
+ * - When the WorkManager delay expires, {@link #doWork()} is called.
+ * - We resolve the Dagger graph from {@link RegistrationClientApp}, run the job via
+ *   {@link MasterDataSyncApi#executeJobByApiName(String, Context, java.util.function.Consumer)}, and wait
+ *   for completion (bounded by {@link #SYNC_TIMEOUT_MINUTES}).
+ * - When finished, we ask {@link SyncScheduler} to schedule the *next* run for the same job.
+ *
+ * This keeps each job run independent and lets WorkManager persist and reschedule work
+ * across process death and device reboot.
+ */
 public class SyncWorker extends Worker {
 
     public static final String KEY_JOB_API_NAME = "job_api_name";
@@ -36,6 +52,7 @@ public class SyncWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        // The API name of the job we should execute (e.g. "registrationPacketUploadJob").
         String jobApiName = getInputData().getString(KEY_JOB_API_NAME);
         if (jobApiName == null || jobApiName.isEmpty()) {
             Log.e(TAG, "No job API name provided");
@@ -51,12 +68,16 @@ public class SyncWorker extends Worker {
             MasterDataSyncApi syncApi = component.masterDataSyncApi();
             SyncScheduler scheduler = component.syncScheduler();
 
+            AtomicBoolean syncSucceeded = new AtomicBoolean(false);
             CountDownLatch latch = new CountDownLatch(1);
-            syncApi.executeJobByApiName(jobApiName, getApplicationContext(), latch::countDown);
+            syncApi.executeJobByApiName(jobApiName, getApplicationContext(), success -> {
+                syncSucceeded.set(Boolean.TRUE.equals(success));
+                latch.countDown();
+            });
 
             boolean completed = latch.await(SYNC_TIMEOUT_MINUTES, TimeUnit.MINUTES);
-            if (!completed) {
-                Log.w(TAG, "Sync timed out: " + jobApiName);
+            if (!completed || !syncSucceeded.get()) {
+                Log.w(TAG, "Sync timed out or failed: " + jobApiName);
                 return Result.retry();
             }
 

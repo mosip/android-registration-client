@@ -148,6 +148,9 @@ public class MainActivity extends FlutterActivity {
         RegistrationClientApp app = (RegistrationClientApp) getApplication();
         AppComponent appComponent = app.getAppComponent();
         appComponent.inject(this);
+        // Kick off WorkManager scheduling for all active sync jobs. The actual
+        // execution happens in {@link SyncWorker}; this call only ensures that
+        // cron-based jobs are enqueued once when the UI starts.
         syncScheduler.scheduleAllActiveJobs(getApplicationContext());
     }
 

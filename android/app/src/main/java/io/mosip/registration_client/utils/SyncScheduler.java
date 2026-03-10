@@ -33,6 +33,18 @@ import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration_client.SyncWorker;
 
+/**
+ * Central place for scheduling and cancelling all background sync jobs.
+ *
+ * Responsibilities:
+ * - Read cron expressions from DB / local config (via {@link BatchJob})
+ * - Translate cron → next execution time → delay
+ * - Schedule one-shot WorkManager jobs for each sync API
+ * - Re-schedule jobs after every run (called from {@link io.mosip.registration_client.SyncWorker})
+ * - Cancel individual jobs or all jobs (used from logout / stop-sync flows)
+ *
+ * Important: this class is process-safe and only depends on application {@link Context}.
+ */
 @Singleton
 public class SyncScheduler {
 
@@ -55,8 +67,18 @@ public class SyncScheduler {
         this.batchJob = batchJob;
     }
 
+    /**
+     * Schedule (or reschedule) a single sync job for the given API name.
+     * <p>
+     * We:
+     * - Ask {@link BatchJob#getIntervalMillis(String)} for the next cron-based execution time
+     * - Convert that absolute timestamp into an initial delay
+     * - Enqueue a unique {@link androidx.work.OneTimeWorkRequest} for {@link SyncWorker}
+     *   with name "sync_{apiName}" so there is only one pending job per API.
+     */
     public void scheduleJob(Context context, String jobApiName) {
         try {
+            // Absolute time (epoch millis) for the next run as per cron
             long nextExecutionTime = batchJob.getIntervalMillis(jobApiName);
             long delay = nextExecutionTime - System.currentTimeMillis();
 
@@ -69,6 +91,7 @@ public class SyncScheduler {
                     .putString(SyncWorker.KEY_JOB_API_NAME, jobApiName)
                     .build();
 
+            // Require network connectivity for all server-side sync operations.
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
@@ -81,6 +104,8 @@ public class SyncScheduler {
                     .addTag("sync_job_" + jobApiName)
                     .build();
 
+            // Use a unique name per API so that we can replace any older pending
+            // work for the same job (prevents duplicate queued executions).
             String uniqueWorkName = "sync_" + jobApiName;
             WorkManager.getInstance(context)
                     .enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest);
