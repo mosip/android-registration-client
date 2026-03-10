@@ -73,6 +73,8 @@ import io.mosip.registration_client.api_services.ProcessSpecDetailsApi;
 import io.mosip.registration_client.api_services.RegistrationApi;
 import io.mosip.registration_client.api_services.SecureScreenApi;
 import io.mosip.registration_client.api_services.UserDetailsApi;
+import io.mosip.registration_client.utils.BatchJob;
+import io.mosip.registration_client.utils.SyncScheduler;
 @Module
 public class HostApiModule {
 
@@ -119,9 +121,11 @@ public class HostApiModule {
     AuthenticationApi getAuthenticationApi(SyncRestService syncRestService,
                                            SyncRestUtil syncRestFactory,
                                            LoginService loginService,
-                                           AuditManagerService auditManagerService,GlobalParamRepository globalParamRepository) {
+                                           AuditManagerService auditManagerService,
+                                           GlobalParamRepository globalParamRepository,
+                                           SyncScheduler syncScheduler) {
         return new AuthenticationApi(appContext, syncRestService, syncRestFactory,
-                loginService, auditManagerService, globalParamRepository);
+                loginService, auditManagerService, globalParamRepository, syncScheduler);
     }
 
     @Provides
@@ -199,7 +203,8 @@ public class HostApiModule {
             AuditManagerService auditManagerService,
             MasterDataService masterDataService,
             PacketService packetService,
-            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao,PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService) {
+            GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService,
+            BatchJob batchJob, SyncScheduler syncScheduler) {
         return new MasterDataSyncApi(clientCryptoManagerService,
                 machineRepository, registrationCenterRepository,
                 syncRestService, certificateManagerService,
@@ -209,7 +214,8 @@ public class HostApiModule {
                 templateRepository, dynamicFieldRepository,
                 locationRepository, blocklistedWordRepository,
                 syncJobDefRepository, languageRepository, jobManagerService,
-                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao, preRegistrationDataSyncService, localConfigService
+                auditManagerService, masterDataService, packetService, globalParamDao, fileSignatureDao, preRegistrationDataSyncService, localConfigService,
+                batchJob, syncScheduler
         );
     }
 

@@ -12,15 +12,9 @@ import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.
 import static io.mosip.registration.clientmanager.service.MasterDataServiceImpl.REG_APP_ID;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -74,8 +68,8 @@ import io.mosip.registration.clientmanager.util.CronExpressionParser;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration_client.utils.BatchJob;
+import io.mosip.registration_client.utils.SyncScheduler;
 import io.mosip.registration_client.MainActivity;
-import io.mosip.registration_client.UploadBackgroundService;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 import io.mosip.registration_client.model.MasterDataSyncPigeon;
@@ -118,7 +112,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     private Activity activity;
 
-    BatchJob batchJob;
+    private final BatchJob batchJob;
+    private final SyncScheduler syncScheduler;
     private BinaryMessenger flutterBinaryMessenger;
 
     private final Object restartLock = new Object();
@@ -140,7 +135,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              AuditManagerService auditManagerService,
                              MasterDataService masterDataService,
                              PacketService packetService,
-                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService) {
+                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService,
+                             BatchJob batchJob, SyncScheduler syncScheduler) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -167,11 +163,13 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.fileSignatureDao = fileSignatureDao;
         this.preRegistrationDataSyncService = preRegistrationDataSyncService;
         this.localConfigService = localConfigService;
+        this.batchJob = batchJob;
+        this.syncScheduler = syncScheduler;
     }
 
-    public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob, BinaryMessenger flutterBinaryMessenger) {
+    public void setCallbackActivity(MainActivity mainActivity, BinaryMessenger flutterBinaryMessenger) {
         this.activity = mainActivity;
-        this.batchJob = batchJob;
+        this.batchJob.setCallbackActivity(mainActivity);
         this.flutterBinaryMessenger = flutterBinaryMessenger;
     }
 
@@ -410,43 +408,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     }
 
     void resetAlarm(String api) {
-        Intent intent = new Intent(activity, UploadBackgroundService.class);
-        PendingIntent pendingIntent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            pendingIntent = PendingIntent.getForegroundService(
-                    activity,
-                    0,  // Request code
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE
-            );
-        } else {
-            pendingIntent = PendingIntent.getService(
-                    activity,
-                    0,  // Request code
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            );
-        }
-        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-                Intent permissionIntent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                permissionIntent.setData(Uri.fromParts("package", activity.getPackageName(), null));
-                activity.startActivity(permissionIntent);
-            }
-            long alarmTime = batchJob.getIntervalMillis(api);
-            long currentTime = System.currentTimeMillis();
-            long delay = alarmTime > currentTime ? alarmTime - currentTime : alarmTime - currentTime;
-            Log.d(getClass().getSimpleName(), String.valueOf(delay) + " Next Execution");
-
-//            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), 30000, pendingIntent);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
-            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
-            } else {
-                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + delay, pendingIntent);
-            }
+        if (syncScheduler != null) {
+            syncScheduler.scheduleJob(context, api);
         }
     }
 
@@ -595,13 +558,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 // This will reschedule JobScheduler jobs with new cron
                 jobManagerService.refreshJobStatus(jobDef);
                 
-                // For AlarmManager-based jobs (like batch jobs), reschedule immediately
-                if (jobDef.getApiName() != null && activity != null) {
-                    // Reschedule using MainActivity's createBackgroundTask via broadcast
-                    Intent rescheduleIntent = new Intent("RESCHEDULE_JOB");
-                    rescheduleIntent.putExtra(UploadBackgroundService.EXTRA_JOB_API_NAME, jobDef.getApiName());
-                    context.sendBroadcast(rescheduleIntent);
-                    Log.d(TAG, "Sent reschedule broadcast for job: " + jobDef.getApiName());
+                if (jobDef.getApiName() != null && syncScheduler != null) {
+                    syncScheduler.scheduleJob(context, jobDef.getApiName());
+                    Log.d(TAG, "Rescheduled job via WorkManager: " + jobDef.getApiName());
                 }
             }
             
@@ -624,26 +583,38 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         }
     }
 
-    // Execute job based on API name
     public void executeJobByApiName(String jobApiName, Context context) {
+        executeJobByApiName(jobApiName, context, null);
+    }
+
+    public void executeJobByApiName(String jobApiName, Context context, Runnable onComplete) {
         new Thread(() -> {
             try {
-
-                // Get job ID from database for tracking last/next sync
                 String jobId = getJobIdByApiName(jobApiName);
                 onSyncJobStart();
 
-                // Execute appropriate sync job
                 switch (jobApiName) {
                     case "registrationPacketUploadJob":
-                        batchJob.syncRegistrationPackets(context, () -> {
+                        batchJob.uploadRegistrationPackets(context, () -> {
                             Log.d(getClass().getSimpleName(), "Registration packet upload job completed");
+                            masterDataService.logLastSyncCompletionDateTime(jobId);
                             onSyncJobComplete(jobId, true, false);
+                            notifyComplete(onComplete);
+                        });
+                        break;
+                    case "registrationPacketSyncJob":
+                        batchJob.syncRegistrationPackets(context, () -> {
+                            Log.d(getClass().getSimpleName(), "Registration packet sync job completed");
+                            masterDataService.logLastSyncCompletionDateTime(jobId);
+                            onSyncJobComplete(jobId, true, false);
+                            notifyComplete(onComplete);
                         });
                         break;
                     case "packetSyncStatusJob":
                         packetService.syncAllPacketStatus();
+                        masterDataService.logLastSyncCompletionDateTime(jobId);
                         onSyncJobComplete(jobId, true, false);
+                        notifyComplete(onComplete);
                         break;
                     case "masterSyncJob":
                         masterDataService.syncMasterData(() -> {
@@ -651,6 +622,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
+                            notifyComplete(onComplete);
                         }, 0, false, jobId);
                         break;
                     case "synchConfigDataJob":
@@ -659,6 +631,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
+                            notifyComplete(onComplete);
                         }, false, jobId);
                         break;
                     case "userDetailServiceJob":
@@ -667,6 +640,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
+                            notifyComplete(onComplete);
                         }, false, jobId);
                         break;
                     case "keyPolicySyncJob":
@@ -677,34 +651,37 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                                 String errorCode = masterDataService.onResponseComplete();
                                 boolean success = errorCode == null || errorCode.isEmpty();
                                 onSyncJobComplete(jobId, success, false);
+                                notifyComplete(onComplete);
                             }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), false, jobId);
                         } else {
                             Log.w(getClass().getSimpleName(), "Skipping keyPolicySyncJob - machine details not available");
                             onSyncJobComplete(jobId, false, false);
+                            notifyComplete(onComplete);
                         }
                         break;
                     case "publicKeySyncJob":
-                        // Public key sync for KERNEL app (SIGN certificates)
                         masterDataService.syncCertificate(() -> {
                             Log.d(getClass().getSimpleName(), "Public key sync callback");
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
+                            notifyComplete(onComplete);
                         }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", false, jobId);
                         break;
                     case "syncCertificateJob":
-                        // CA certificate sync
                         masterDataService.syncCACertificates(() -> {
                             Log.d(getClass().getSimpleName(), "CA cert sync callback");
                             String errorCode = masterDataService.onResponseComplete();
                             boolean success = errorCode == null || errorCode.isEmpty();
                             onSyncJobComplete(jobId, success, false);
+                            notifyComplete(onComplete);
                         }, false, jobId);
                         break;
                     case "preRegistrationDataSyncJob":
                         preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
                             Log.i(TAG, "Application Id's Sync Completed");
                             onSyncJobComplete(jobId, true, false);
+                            notifyComplete(onComplete);
                         }, jobId);
                         break;
 
@@ -712,12 +689,14 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         auditManagerService.deleteAuditLogs();
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         onSyncJobComplete(jobId, true, false);
+                        notifyComplete(onComplete);
                         break;
 
                     case "preRegistrationPacketDeletionJob":
                         preRegistrationDataSyncService.fetchAndDeleteRecords();
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         onSyncJobComplete(jobId, true, false);
+                        notifyComplete(onComplete);
                         break;
 
                     case "registrationDeletionJob":
@@ -725,17 +704,30 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         masterDataService.logLastSyncCompletionDateTime(jobId);
                         Log.i(TAG, "Registration packet deletion job completed");
                         onSyncJobComplete(jobId, true, false);
+                        notifyComplete(onComplete);
                         break;
                     default:
                         Log.w(getClass().getSimpleName(), "Unknown job: " + jobApiName);
                         onSyncJobComplete(jobId, false, false);
+                        notifyComplete(onComplete);
                 }
                 Log.d(getClass().getSimpleName(), "Completed: " + jobApiName);
             } catch (Exception e) {
                 onSyncJobComplete(getJobIdByApiName(jobApiName), false, false);
                 Log.e(getClass().getSimpleName(), "Job failed: " + jobApiName, e);
+                notifyComplete(onComplete);
             }
         }).start();
+    }
+
+    private void notifyComplete(Runnable onComplete) {
+        if (onComplete != null) {
+            try {
+                onComplete.run();
+            } catch (Exception e) {
+                Log.e(TAG, "Error in completion callback", e);
+            }
+        }
     }
 
     private String getJobIdByApiName(String apiName) {

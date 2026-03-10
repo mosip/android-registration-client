@@ -11,22 +11,17 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <!-- GPS Location Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:label="Registration Client"
-        android:name="${applicationName}"
+        android:name=".RegistrationClientApp"
         android:icon="@mipmap/launcher_icon"
         android:allowBackup="false"
         android:fullBackupOnly="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:usesCleartextTraffic="false">
-        <service android:name=".UploadBackgroundService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

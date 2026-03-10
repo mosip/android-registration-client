@@ -17,35 +17,51 @@ public class CustomToast{
 
     public CustomToast(Activity activity){
         this.activity = activity;
-        final LayoutInflater inflater = LayoutInflater.from(activity);
-        layout = inflater.inflate(R.layout.toast_layout, null);
-        // Show the toast
-        toast = new Toast(activity);
-        toast.setView(layout);
-        toast.setDuration(Toast.LENGTH_LONG);
+        if (!isActivityAvailable()) return;
+        activity.runOnUiThread(() -> {
+            final LayoutInflater inflater = LayoutInflater.from(activity);
+            layout = inflater.inflate(R.layout.toast_layout, null);
+            toast = new Toast(activity);
+            toast.setView(layout);
+            toast.setDuration(Toast.LENGTH_LONG);
+        });
     }
 
     public void showToast(){
-        toast.show();
+        if (!isActivityAvailable()) return;
+        activity.runOnUiThread(() -> {
+            if(toast != null) toast.show();
+        });
     }
 
     public void setText(String text){
-        if(layout!=null){
-            EditText parent = layout.findViewById(R.id.toast_message);
-            parent.setText(text);
-        }
+        if (!isActivityAvailable()) return;
+        activity.runOnUiThread(() -> {
+            if(layout != null){
+                EditText parent = layout.findViewById(R.id.toast_message);
+                parent.setText(text);
+            }
+        });
     }
 
     public void setIcon(int icon){
-        if(layout!=null){
-            ImageView imageView = layout.findViewById(R.id.toast_icon);
-            imageView.setImageResource(icon);
-        }
+        if (!isActivityAvailable()) return;
+        activity.runOnUiThread(() -> {
+            if(layout != null){
+                ImageView imageView = layout.findViewById(R.id.toast_icon);
+                imageView.setImageResource(icon);
+            }
+        });
     }
 
     public void hideToast(){
-        if(toast!=null){
-            toast.cancel();
-        }
+        if (!isActivityAvailable()) return;
+        activity.runOnUiThread(() -> {
+            if(toast != null) toast.cancel();
+        });
+    }
+
+    private boolean isActivityAvailable() {
+        return activity != null && !activity.isFinishing() && !activity.isDestroyed();
     }
 }

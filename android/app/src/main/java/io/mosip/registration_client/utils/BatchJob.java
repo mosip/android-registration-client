@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.ClientManagerConstant;
@@ -26,9 +27,9 @@ import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.PacketService;
-import io.mosip.registration_client.MainActivity;
 import io.mosip.registration_client.R;
 
+@Singleton
 public class BatchJob {
 
     PacketService packetService;
@@ -50,8 +51,8 @@ public class BatchJob {
         this.localConfigService = localConfigService;
     }
 
-    public void setCallbackActivity(MainActivity mainActivity) {
-        this.activity = mainActivity;
+    public void setCallbackActivity(Activity callbackActivity) {
+        this.activity = callbackActivity;
     }
 
     public boolean getInProgressStatus() {
