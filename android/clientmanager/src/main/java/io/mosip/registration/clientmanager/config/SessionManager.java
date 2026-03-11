@@ -31,6 +31,9 @@ public class SessionManager {
     private static final String USERNAME = "name";
     public static final String PREFERRED_USERNAME = "preferred_username";
     private static final String EMAIL = "email";
+    // Leeway (in seconds) for JWT expiry checks to tolerate clock skew between
+    // client and server. This should be small and consistent across the app.
+    private static final int TOKEN_EXPIRY_CLOCK_SKEW_LEEWAY_SECONDS = 90;
 
     SharedPreferences sharedPreferences;
 
@@ -76,7 +79,7 @@ public class SessionManager {
         List<String> roles = validateAndExtractRoles(token);
 
         final JWT jwt = new JWT(token);
-        if(jwt.isExpired(15))
+        if(jwt.isExpired(TOKEN_EXPIRY_CLOCK_SKEW_LEEWAY_SECONDS))
             throw new Exception("Expired token found : " + jwt.getExpiresAt());
 
         Map<String,Object> realmAccess = jwt.getClaim(REALM_ACCESS).asObject(Map.class);
@@ -90,7 +93,9 @@ public class SessionManager {
         editor.putBoolean(IS_DEFAULT, roles.contains("Default"));
         editor.putBoolean(IS_OFFICER, roles.contains("REGISTRATION_OFFICER"));
         editor.putBoolean(IS_OPERATOR, roles.contains("REGISTRATION_OPERATOR"));
-        editor.commit();
+        if (!editor.commit()) {
+            throw new Exception("Failed to persist auth token");
+        }
         return roles;
     }
 
@@ -100,11 +105,15 @@ public class SessionManager {
      */
     private List<String> validateAndExtractRoles(@NonNull String token) throws Exception {
         final JWT jwt = new JWT(token);
-        if(jwt.isExpired(15))
+        if(jwt.isExpired(TOKEN_EXPIRY_CLOCK_SKEW_LEEWAY_SECONDS))
             throw new Exception("Expired token found : " + jwt.getExpiresAt());
 
         Map<String,Object> realmAccess = jwt.getClaim(REALM_ACCESS).asObject(Map.class);
-        List<String> roles = (List<String>)realmAccess.get("roles");
+        Object rolesClaim = realmAccess != null ? realmAccess.get("roles") : null;
+        if (!(rolesClaim instanceof List)) {
+            throw new Exception("Unauthorized access, No roles");
+        }
+        List<String> roles = (List<String>) rolesClaim;
 
         if(roles.isEmpty())
             throw new Exception("Unauthorized access, No roles");

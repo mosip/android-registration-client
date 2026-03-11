@@ -11,13 +11,18 @@ import okhttp3.Response;
 import com.auth0.android.jwt.JWT;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class RestAuthInterceptor implements Interceptor {
 
     private static final String COOKIE = "Cookie";
     private static final String TOKEN_TEMPLATE = "Authorization=%s";
-    // Leeway in seconds for JWT expiry checks to account for clock skew/network delays.
-    private static final int TOKEN_EXPIRY_LEEWAY_SECONDS = 900; // 15 minutes
+    // Leeway in seconds for JWT expiry checks (clock skew only). Keep this small and
+    // consistent with SessionManager.
+    private static final int TOKEN_EXPIRY_CLOCK_SKEW_LEEWAY_SECONDS = 90;
+    // Extra safety buffer (in seconds) applied at decision points so we avoid sending
+    // requests with tokens that are about to expire.
+    private static final int TOKEN_EXPIRY_SAFETY_BUFFER_SECONDS = 120;
     private final Object restoreLock = new Object();
     private SessionManager sessionManager;
     private final UserTokenDao userTokenDao;
@@ -87,7 +92,17 @@ public class RestAuthInterceptor implements Interceptor {
         }
         try {
             JWT jwt = new JWT(token);
-            return !jwt.isExpired(TOKEN_EXPIRY_LEEWAY_SECONDS);
+            if (jwt.isExpired(TOKEN_EXPIRY_CLOCK_SKEW_LEEWAY_SECONDS)) {
+                return false;
+            }
+            Date expiresAt = jwt.getExpiresAt();
+            if (expiresAt != null) {
+                long msRemaining = expiresAt.getTime() - System.currentTimeMillis();
+                if (msRemaining <= TOKEN_EXPIRY_SAFETY_BUFFER_SECONDS * 1000L) {
+                    return false;
+                }
+            }
+            return true;
         } catch (Exception e) {
             return false;
         }

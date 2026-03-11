@@ -104,11 +104,12 @@ public class SyncScheduler {
                     .addTag("sync_job_" + jobApiName)
                     .build();
 
-            // Use a unique name per API so that we can replace any older pending
-            // work for the same job (prevents duplicate queued executions).
+            // Use a unique name per API so that only one pending job per sync API exists.
+            // For routine bootstrap scheduling (e.g. app startup), KEEP preserves any
+            // already enqueued work that may be waiting on constraints like network.
             String uniqueWorkName = "sync_" + jobApiName;
             WorkManager.getInstance(context)
-                    .enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest);
+                    .enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.KEEP, workRequest);
 
             Log.d(TAG, jobApiName + " - Scheduled, next execution in " + (delay / 1000) + " seconds");
         } catch (Exception e) {
