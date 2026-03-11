@@ -177,7 +177,6 @@ public class Biometrics095Service extends BiometricsService {
                         double sdkScore = getSDKScore(biometricsDto, modality);
                         biometricsDto.setSdkScore(sdkScore);
                         Log.i(TAG, "SDK quality score fetched: " + sdkScore + " for " + modality);
-                        auditManagerService.audit(AuditEvent.BIO_SDK_QUALITY_SCORE_FETCHED, Components.REGISTRATION);
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to fetch SDK Score", e);
                         biometricsDto.setSdkScore(0);
@@ -204,6 +203,8 @@ public class Biometrics095Service extends BiometricsService {
                    }
                    if(isMatched){
                        Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
+                       auditManagerService.audit(AuditEvent.BIO_SDK_DEDUPE_MATCH, Components.REGISTRATION,
+                               SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
                        throw new BiometricsServiceException(SBIError.SBI_DEDUPE_MATCH.getErrorCode(),
                                SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
                    }
