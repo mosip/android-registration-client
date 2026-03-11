@@ -1,6 +1,7 @@
 package io.mosip.registration.packetmanager.util;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -15,20 +16,25 @@ public class StorageUtils {
             location = "packets";
         }
 
-        // 1. Try SD card Documents folder
-        File baseDir = getSDCardDir(context, location);
-        if (baseDir != null && ensureDirWritable(baseDir)) {
-            return baseDir;
-        }
+        // Use shared "Documents" locations only when the app has
+        // MANAGE_EXTERNAL_STORAGE access on Android 11+; otherwise, fall
+        // back to app-specific storage to avoid unauthorized shared access.
+        if (hasManageExternalStorageAccess()) {
+            // 1. Try SD card Documents folder
+            File baseDir = getSDCardDir(context, location);
+            if (baseDir != null && ensureDirWritable(baseDir)) {
+                return baseDir;
+            }
 
-        // 2. Try Primary Shared Documents folder (Legacy/Scoped Storage might restrict this)
-        baseDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), location);
-        if (ensureDirWritable(baseDir)) {
-            return baseDir;
+            // 2. Try Primary Shared Documents folder (Legacy/Scoped Storage might restrict this)
+            baseDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), location);
+            if (ensureDirWritable(baseDir)) {
+                return baseDir;
+            }
         }
 
         // 3. Fallback to App-private external storage
-        baseDir = context.getExternalFilesDir(location);
+        File baseDir = context.getExternalFilesDir(location);
         if (baseDir != null && ensureDirWritable(baseDir)) {
             return baseDir;
         }
@@ -37,6 +43,15 @@ public class StorageUtils {
         baseDir = new File(context.getFilesDir(), location);
         ensureDirWritable(baseDir);
         return baseDir;
+    }
+
+    private static boolean hasManageExternalStorageAccess() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            // Before Android 11, MANAGE_EXTERNAL_STORAGE is not required in
+            // order to access shared storage via getExternalStoragePublicDirectory.
+            return true;
+        }
+        return Environment.isExternalStorageManager();
     }
 
     private static File getSDCardDir(Context context, String location) {

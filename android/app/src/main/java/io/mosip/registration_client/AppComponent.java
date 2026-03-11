@@ -19,6 +19,8 @@ import io.flutter.embedding.android.FlutterActivity;
 import io.mosip.registration.clientmanager.config.AppModule;
 import io.mosip.registration.clientmanager.config.NetworkModule;
 import io.mosip.registration.clientmanager.config.RoomModule;
+import io.mosip.registration_client.api_services.MasterDataSyncApi;
+import io.mosip.registration_client.utils.SyncScheduler;
 
 @Singleton
 @Component(
@@ -33,6 +35,10 @@ import io.mosip.registration.clientmanager.config.RoomModule;
 public interface AppComponent  extends AndroidInjector<FlutterActivity> {
 
     void inject(MainActivity mainActivity);
+
+    MasterDataSyncApi masterDataSyncApi();
+
+    SyncScheduler syncScheduler();
 
     @Component.Builder
     interface Builder{

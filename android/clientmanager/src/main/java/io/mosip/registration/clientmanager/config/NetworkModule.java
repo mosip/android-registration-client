@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
 import io.mosip.registration.clientmanager.BuildConfig;
+import io.mosip.registration.clientmanager.dao.UserTokenDao;
 import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -52,10 +53,10 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    OkHttpClient provideOkhttpClient(Cache cache, GlobalParamRepository globalParamRepository) {
+    OkHttpClient provideOkhttpClient(Cache cache, GlobalParamRepository globalParamRepository, UserTokenDao userTokenDao) {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.cache(cache);
-        client.addInterceptor(new RestAuthInterceptor(appContext));
+        client.addInterceptor(new RestAuthInterceptor(appContext, userTokenDao));
 
         long cachedReadTimeout = globalParamRepository.getCachedReadTimeout();
         long cachedWriteTimeout = globalParamRepository.getCachedWriteTimeout();

@@ -7,14 +7,8 @@
 
 package io.mosip.registration_client.api_services;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -37,8 +31,8 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration_client.R;
-import io.mosip.registration_client.UploadBackgroundService;
 import io.mosip.registration_client.model.AuthResponsePigeon;
+import io.mosip.registration_client.utils.SyncScheduler;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,6 +46,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     AuditManagerService auditManagerService;
     SharedPreferences sharedPreferences;
     GlobalParamRepository globalParamRepository;
+    SyncScheduler syncScheduler;
     public static final String IS_OFFICER = "is_officer";
     public static final String IS_SUPERVISOR = "is_supervisor";
     public static final String IS_DEFAULT = "is_default";
@@ -63,14 +58,20 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
 
 
     @Inject
-    public AuthenticationApi(Context context, SyncRestService syncRestService, SyncRestUtil syncRestFactory,
-                    LoginService loginService, AuditManagerService auditManagerService, GlobalParamRepository globalParamRepository) {
+    public AuthenticationApi(Context context,
+                             SyncRestService syncRestService,
+                             SyncRestUtil syncRestFactory,
+                             LoginService loginService,
+                             AuditManagerService auditManagerService,
+                             GlobalParamRepository globalParamRepository,
+                             SyncScheduler syncScheduler) {
         this.context = context;
         this.syncRestService = syncRestService;
         this.syncRestFactory = syncRestFactory;
         this.loginService = loginService;
         this.auditManagerService = auditManagerService;
         this.globalParamRepository = globalParamRepository;
+        this.syncScheduler = syncScheduler;
         sharedPreferences = this.context.
                 getSharedPreferences(
                         this.context.getString(R.string.app_name),
@@ -221,31 +222,14 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
     @Override
     public void stopAlarmService(@NonNull AuthResponsePigeon.Result<String> result) {
         String resultString = "";
-        try{
-            Intent intent = new Intent(context, UploadBackgroundService.class);
-            PendingIntent pendingIntent;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                pendingIntent = PendingIntent.getForegroundService(
-                        this.context,
-                        0,  // Request code
-                        intent,
-                        PendingIntent.FLAG_IMMUTABLE
-                );
-            } else {
-                pendingIntent = PendingIntent.getService(
-                        this.context,
-                        0,  // Request code
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+        try {
+            if (syncScheduler != null) {
+                syncScheduler.cancelAllJobs(context);
             }
-            AlarmManager alarmManager = (AlarmManager) getSystemService(context, AlarmManager.class);
-            assert alarmManager != null;
-            alarmManager.cancel(pendingIntent);
             resultString = "Success";
-        }catch (Exception e){
-            resultString = "Fail to Stop Alarm Service";
-            Log.e(getClass().getSimpleName(), "Failed to stop alarm service", e);
+        } catch (Exception e) {
+            resultString = "Fail to Stop Sync Service";
+            Log.e(getClass().getSimpleName(), "Failed to stop sync service", e);
         }
         result.success(resultString);
     }
