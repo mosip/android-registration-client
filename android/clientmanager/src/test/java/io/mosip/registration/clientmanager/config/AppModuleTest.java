@@ -252,7 +252,7 @@ public class AppModuleTest {
 
     @Test
     public void testProvideBiometrics095Service() {
-        BioSdkProviderFactory bioSdkProviderFactory = appModule.provideBioSdkProviderFactory(globalParamRepository);
+        BioSdkProviderFactory bioSdkProviderFactory = appModule.provideBioSdkProviderFactory(globalParamRepository, auditManagerService);
         Biometrics095Service service = appModule.provideBiometrics095Service(
                 objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository, bioSdkProviderFactory
         );

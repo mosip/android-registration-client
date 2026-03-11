@@ -271,8 +271,9 @@ public class AppModule {
 
     @Provides
     @Singleton
-    BioSdkProviderFactory provideBioSdkProviderFactory(GlobalParamRepository globalParamRepository) {
-        return new BioSdkProviderFactory(appContext, globalParamRepository);
+    BioSdkProviderFactory provideBioSdkProviderFactory(GlobalParamRepository globalParamRepository,
+                                                        AuditManagerService auditManagerService) {
+        return new BioSdkProviderFactory(appContext, globalParamRepository, auditManagerService);
     }
 
     @Provides

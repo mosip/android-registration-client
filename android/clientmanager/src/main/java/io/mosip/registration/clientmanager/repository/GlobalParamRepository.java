@@ -8,7 +8,6 @@ import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import java.util.Arrays;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class GlobalParamRepository {
@@ -315,7 +313,7 @@ public class GlobalParamRepository {
 
     }
 
-    private Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
+    public Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
         if (bioSdkProviderConfigCache == null) {
             bioSdkProviderConfigCache = resolveBiometricProviderConfig();
         }
@@ -348,29 +346,6 @@ public class GlobalParamRepository {
         } catch (NumberFormatException e) {
             Log.e(TAG, "Failed to parse long for key: " + key + ", value: " + value, e);
             return 0L;
-        }
-    }
-
-    /**
-     * Iterates config once and calls {@code onVendorParams} for each configured biometric vendor (modality + params)
-     * that has a non-empty "classname". No intermediate list — single pass. Passes a copy of params so the handler
-     * may not mutate the cache. Caller can load SDK and register in the handler.
-     */
-    public void forEachVendorParams(BiConsumer<String, Map<String, String>> onVendorParams) {
-        Map<String, Map<String, Map<String, String>>> config = getBiometricProviderConfig();
-        if (config.isEmpty() || onVendorParams == null) return;
-
-        for (Map.Entry<String, Map<String, Map<String, String>>> modalityEntry : config.entrySet()) {
-            String modalityKey = modalityEntry.getKey();
-            Map<String, Map<String, String>> vendors = modalityEntry.getValue();
-            if (vendors == null) continue;
-
-            for (Map<String, String> params : vendors.values()) {
-                String className = params != null ? params.get(CLASSNAME) : null;
-                if (className != null && !className.trim().isEmpty()) {
-                    onVendorParams.accept(modalityKey, new HashMap<>(params));
-                }
-            }
         }
     }
 
