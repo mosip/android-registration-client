@@ -24,9 +24,9 @@
         android:fullBackupOnly="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:usesCleartextTraffic="false">
-        <service android:name=".UploadBackgroundService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".UploadBackgroundService"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
