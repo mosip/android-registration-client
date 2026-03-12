@@ -40,6 +40,7 @@ public class PacketServiceImplTest {
     @Mock private SyncRestService mockSyncRestService;
     @Mock private MasterDataService mockMasterDataService;
     @Mock private GlobalParamRepository mockGlobalParamRepository;
+    @Mock private AuditManagerService mockAuditManagerService;
 
     @Mock private Call<RegProcResponseWrapper<List<SyncRIDResponse>>> mockSyncCall;
     @Mock private Call<RegProcResponseWrapper<UploadResponse>> mockUploadCall;
@@ -53,7 +54,7 @@ public class PacketServiceImplTest {
         MockitoAnnotations.openMocks(this);
         packetService = Mockito.spy(new PacketServiceImpl(
                 mockContext, mockRegistrationRepository, mockPacketCryptoService,
-                mockSyncRestService, mockMasterDataService, mockGlobalParamRepository
+                mockSyncRestService, mockMasterDataService, mockGlobalParamRepository, mockAuditManagerService
         ));
     }
 
@@ -436,10 +437,10 @@ public class PacketServiceImplTest {
 
             callback.onResponse(mockCall, httpResponse);
 
-            Mockito.verify(mockRegistrationRepository).updateStatus(
+            Mockito.verify(mockRegistrationRepository).updateServerStatusWithTimestamp(
                     Mockito.eq("reg123"),
-                    Mockito.anyString(),
-                    Mockito.eq(PacketClientStatus.UPLOADED.name())
+                    Mockito.eq("UPLOADED"),
+                    Mockito.anyLong()
             );
         }
     }

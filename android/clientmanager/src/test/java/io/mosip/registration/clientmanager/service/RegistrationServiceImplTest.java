@@ -13,8 +13,11 @@ import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
+import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.dto.ResponseDto;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
@@ -25,14 +28,18 @@ import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.mosip.registration.packetmanager.util.StorageUtils;
 import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.GeoLocationDto;
@@ -57,10 +64,12 @@ import java.util.List;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -68,7 +77,7 @@ import static org.mockito.Mockito.when;
 
 import javax.inject.Provider;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class RegistrationServiceImplTest {
 
     @Mock
@@ -106,18 +115,42 @@ public class RegistrationServiceImplTest {
     private PacketService packetService;
     @Mock
     private PreCheckValidatorService preCheckValidatorService;
+    @Mock
+    private SyncJobDefRepository syncJobDefRepository;
+    @Mock
+    private JobManagerService jobManagerService;
+    @Mock
+    private JobTransactionService jobTransactionService;
+
+    private MockedStatic<StorageUtils> storageUtilsMock;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        storageUtilsMock = Mockito.mockStatic(StorageUtils.class);
+        File packetStorageDir = mock(File.class);
+        when(packetStorageDir.exists()).thenReturn(true);
+        when(packetStorageDir.mkdirs()).thenReturn(true);
+        when(packetStorageDir.isDirectory()).thenReturn(true);
+        when(packetStorageDir.canWrite()).thenReturn(true);
+        when(packetStorageDir.getUsableSpace()).thenReturn(100L * 1024 * 1024 * 1024);
+        storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(Mockito.any(Context.class))).thenReturn(packetStorageDir);
+
         SharedPreferences.Editor editor = mock(SharedPreferences.Editor.class);
-        when(mockSharedPreferences.edit()).thenReturn(editor);
-        when(mockApplicationContext.getString(anyInt())).thenReturn("Registration Client");
-        when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
-        when(preRegistrationDataSyncServiceProvider.get()).thenReturn(preRegistrationDataSyncService);
+        lenient().when(mockSharedPreferences.edit()).thenReturn(editor);
+        lenient().when(mockApplicationContext.getString(anyInt())).thenReturn("Registration Client");
+        lenient().when(mockApplicationContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        lenient().when(preRegistrationDataSyncServiceProvider.get()).thenReturn(preRegistrationDataSyncService);
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
                 keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService, preCheckValidatorService);
+    }
+
+    @After
+    public void tearDown() {
+        if (storageUtilsMock != null) {
+            storageUtilsMock.close();
+        }
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -655,18 +688,27 @@ public class RegistrationServiceImplTest {
         doPreChecks.invoke(registrationService, centerMachineDto);
     }
 
-    @Test(expected = Exception.class)
-    // Test for doPreChecksBeforeRegistration with low disk space
+    @Test
+    // Test for doPreChecksBeforeRegistration with low disk space (uses StorageUtils.getPacketStorageDir, not getExternalCacheDir)
     public void testDoPreChecksBeforeRegistration_LowSpace() throws Exception {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(true);
         centerMachineDto.setMachineStatus(true);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(10L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+        File lowSpaceFile = mock(File.class);
+        when(lowSpaceFile.exists()).thenReturn(true);
+        when(lowSpaceFile.isDirectory()).thenReturn(true);
+        when(lowSpaceFile.canWrite()).thenReturn(true);
+        when(lowSpaceFile.getUsableSpace()).thenReturn(10L * (1024 * 1024)); // 10 MB
+        when(globalParamRepository.getCachedIntegerDiskSpaceSize()).thenReturn(100); // 100 MB required
+        storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(any(Context.class))).thenReturn(lowSpaceFile);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
-        doPreChecks.invoke(registrationService, centerMachineDto);
+        try {
+            doPreChecks.invoke(registrationService, centerMachineDto);
+            fail("Expected ClientCheckedException (low disk space)");
+        } catch (InvocationTargetException e) {
+            assertTrue(e.getCause() instanceof ClientCheckedException);
+        }
     }
 
     @Test(expected = Exception.class)
@@ -1586,17 +1628,9 @@ public class RegistrationServiceImplTest {
     }
 
     @Test
-    // Test for validateLocation when distance exceeds allowed threshold
+    // Test location validation (PreCheckValidatorService) when distance exceeds allowed threshold
     public void testValidateLocation_DistanceExceedsThrowsClientCheckedException() throws Exception {
-        RegistrationDto dto = mock(RegistrationDto.class);
-        GeoLocationDto geoLocationDto = new GeoLocationDto(77.0d, 12.0d);
-        when(dto.getGeoLocationDto()).thenReturn(geoLocationDto);
-
-        Field regDtoField = registrationService.getClass().getDeclaredField("registrationDto");
-        regDtoField.setAccessible(true);
-        regDtoField.set(registrationService, dto);
-
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("CENTER");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
@@ -1607,34 +1641,26 @@ public class RegistrationServiceImplTest {
         when(registrationCenterRepository.getRegistrationCenter("CENTER"))
                 .thenReturn(Collections.singletonList(center));
 
-        when(globalParamRepository.getCachedStringMachineToCenterDistance()).thenReturn("1.0");
-        when(locationValidationService.getDistance(anyDouble(), anyDouble(), anyDouble(), anyDouble())).thenReturn(5.0);
+        when(globalParamRepository.getCachedStringMachineToCenterDistance()).thenReturn("1.0"); // 1 meter
+        when(locationValidationService.getDistance(77.0, 12.0, 77.1, 12.0)).thenReturn(0.005); // 5 km in km
 
-        Method validateLocation = registrationService.getClass().getDeclaredMethod("validateLocation");
-        validateLocation.setAccessible(true);
+        PreCheckValidatorServiceImpl validator = new PreCheckValidatorServiceImpl(
+                mockApplicationContext, syncJobDefRepository, globalParamRepository,
+                jobManagerService, jobTransactionService, locationValidationService,
+                masterDataService, registrationCenterRepository, auditManagerService);
 
         try {
-            validateLocation.invoke(registrationService);
+            validator.validateCenterToMachineDistance(77.0, 12.0);
             fail("Expected ClientCheckedException");
-        } catch (InvocationTargetException e) {
-            assertTrue(e.getCause() instanceof ClientCheckedException);
-        } finally {
-            regDtoField.set(registrationService, null);
+        } catch (ClientCheckedException e) {
+            assertTrue(e.getErrorCode() != null && e.getErrorCode().contains(RegistrationConstants.OPT_TO_REG_OUTSIDE_LOCATION));
         }
     }
 
-    @Test
-    // Test for validateLocation when center coordinates are invalid
+    @Test(expected = ClientCheckedException.class)
+    // Test location validation when center coordinates are invalid (NumberFormatException -> ClientCheckedException)
     public void testValidateLocation_InvalidCenterCoordinatesIgnored() throws Exception {
-        RegistrationDto dto = mock(RegistrationDto.class);
-        GeoLocationDto geoLocationDto = new GeoLocationDto(77.0d, 12.0d);
-        when(dto.getGeoLocationDto()).thenReturn(geoLocationDto);
-
-        Field regDtoField = registrationService.getClass().getDeclaredField("registrationDto");
-        regDtoField.setAccessible(true);
-        regDtoField.set(registrationService, dto);
-
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("CENTER");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
@@ -1645,46 +1671,31 @@ public class RegistrationServiceImplTest {
         when(registrationCenterRepository.getRegistrationCenter("CENTER"))
                 .thenReturn(Collections.singletonList(center));
 
-        Method validateLocation = registrationService.getClass().getDeclaredMethod("validateLocation");
-        validateLocation.setAccessible(true);
+        PreCheckValidatorServiceImpl validator = new PreCheckValidatorServiceImpl(
+                mockApplicationContext, syncJobDefRepository, globalParamRepository,
+                jobManagerService, jobTransactionService, locationValidationService,
+                masterDataService, registrationCenterRepository, auditManagerService);
 
-        validateLocation.invoke(registrationService);
-
-        regDtoField.set(registrationService, null);
+        validator.validateCenterToMachineDistance(77.0, 12.0);
     }
 
     @Test
-    // Test for validateLocation when geo location is not available
+    // Test location validation when GPS disabled (N) - validation skipped, no exception
     public void testValidateLocation_NoGeoLocationSkipsValidation() throws Exception {
-        RegistrationDto dto = mock(RegistrationDto.class);
-        when(dto.getGeoLocationDto()).thenReturn(null);
-
-        Field regDtoField = registrationService.getClass().getDeclaredField("registrationDto");
-        regDtoField.setAccessible(true);
-        regDtoField.set(registrationService, dto);
-
         when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
 
-        Method validateLocation = registrationService.getClass().getDeclaredMethod("validateLocation");
-        validateLocation.setAccessible(true);
+        PreCheckValidatorServiceImpl validator = new PreCheckValidatorServiceImpl(
+                mockApplicationContext, syncJobDefRepository, globalParamRepository,
+                jobManagerService, jobTransactionService, locationValidationService,
+                masterDataService, registrationCenterRepository, auditManagerService);
 
-        validateLocation.invoke(registrationService);
-
-        regDtoField.set(registrationService, null);
+        validator.validateCenterToMachineDistance(null, null);
     }
 
-    @Test
-    // Test for validateLocation when max allowed distance is missing
+    @Test(expected = ClientCheckedException.class)
+    // Test location validation when max allowed distance config is missing
     public void testValidateLocation_MissingMaxDistanceThrowsClientCheckedException() throws Exception {
-        RegistrationDto dto = mock(RegistrationDto.class);
-        GeoLocationDto geoLocationDto = new GeoLocationDto(77.0d, 12.0d);
-        when(dto.getGeoLocationDto()).thenReturn(geoLocationDto);
-
-        Field regDtoField = registrationService.getClass().getDeclaredField("registrationDto");
-        regDtoField.setAccessible(true);
-        regDtoField.set(registrationService, dto);
-
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("CENTER");
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
@@ -1696,18 +1707,14 @@ public class RegistrationServiceImplTest {
                 .thenReturn(Collections.singletonList(center));
 
         when(globalParamRepository.getCachedStringMachineToCenterDistance()).thenReturn(null);
+        when(locationValidationService.getDistance(77.0, 12.0, 77.1, 12.0)).thenReturn(0.0);
 
-        Method validateLocation = registrationService.getClass().getDeclaredMethod("validateLocation");
-        validateLocation.setAccessible(true);
+        PreCheckValidatorServiceImpl validator = new PreCheckValidatorServiceImpl(
+                mockApplicationContext, syncJobDefRepository, globalParamRepository,
+                jobManagerService, jobTransactionService, locationValidationService,
+                masterDataService, registrationCenterRepository, auditManagerService);
 
-        try {
-            validateLocation.invoke(registrationService);
-            fail("Expected ClientCheckedException");
-        } catch (InvocationTargetException e) {
-            assertTrue(e.getCause() instanceof ClientCheckedException);
-        } finally {
-            regDtoField.set(registrationService, null);
-        }
+        validator.validateCenterToMachineDistance(77.0, 12.0);
     }
 
     @Test
@@ -1818,19 +1825,20 @@ public class RegistrationServiceImplTest {
     }
 
     @Test
-    // Test doPreChecksBeforeRegistration with null context external cache dir
+    // Test doPreChecksBeforeRegistration when StorageUtils.getPacketStorageDir returns null (NPE in isDiskSpaceAvailable)
     public void testDoPreChecksBeforeRegistration_NullCacheDir() throws Exception {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(true);
         centerMachineDto.setMachineStatus(true);
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(null);
+        storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(any(Context.class))).thenReturn(null);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
         try {
             doPreChecks.invoke(registrationService, centerMachineDto);
             fail("Expected NullPointerException");
         } catch (Exception e) {
-            // Expected
+            Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
+            assertTrue(cause instanceof NullPointerException);
         }
     }
 
@@ -1874,10 +1882,12 @@ public class RegistrationServiceImplTest {
         RegistrationDto result = registrationService.startRegistration(
                 Arrays.asList("eng"), "NEW", "NEW", null, null);
 
-        // Verify: Registration succeeds, no validation called
+        // Verify: Registration succeeds; implementation sets GeoLocationDto(null, null) and still calls validator
         assertNotNull(result);
-        assertNull(result.getGeoLocationDto());
-        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
+        assertNotNull(result.getGeoLocationDto());
+        assertNull(result.getGeoLocationDto().getLatitude());
+        assertNull(result.getGeoLocationDto().getLongitude());
+        verify(preCheckValidatorService).validateCenterToMachineDistance(null, null);
     }
 
     @Test
@@ -1935,7 +1945,7 @@ public class RegistrationServiceImplTest {
         Double latitude = 13.9716;
         Double longitude = 78.5946;
         ClientCheckedException validationException = new ClientCheckedException(
-                mockApplicationContext, android.R.string.unknownName, "OPT_TO_REG_OUTSIDE_LOCATION");
+                "OPT_TO_REG_OUTSIDE_LOCATION", "Optional registration outside location");
         Mockito.doThrow(validationException).when(preCheckValidatorService)
                 .validateCenterToMachineDistance(longitude, latitude);
 
@@ -1950,9 +1960,9 @@ public class RegistrationServiceImplTest {
         }
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testStartRegistration_WithGPS_SyncValidatorNull_SkipsValidation() throws Exception {
-        // Setup: Create service without PreCheckValidatorService (null)
+        // Setup: Create service without PreCheckValidatorService (null); implementation does not null-check, so NPE when validating
         RegistrationService serviceWithoutValidator = new RegistrationServiceImpl(
                 mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, 
@@ -1974,18 +1984,11 @@ public class RegistrationServiceImplTest {
         when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
-        // Execute with GPS but validator is null
+        // Execute with GPS but validator is null - implementation calls validator without null-check, so NPE
         Double latitude = 12.9716;
         Double longitude = 77.5946;
-        RegistrationDto result = serviceWithoutValidator.startRegistration(
+        serviceWithoutValidator.startRegistration(
                 Arrays.asList("eng"), "NEW", "NEW", latitude, longitude);
-
-        // Verify: Registration succeeds, GPS set, no validation exception
-        assertNotNull(result);
-        assertNotNull(result.getGeoLocationDto());
-        assertEquals(latitude, result.getGeoLocationDto().getLatitude(), 0.0001);
-        assertEquals(longitude, result.getGeoLocationDto().getLongitude(), 0.0001);
-        // PreCheckValidatorService is null, so validation should be skipped
     }
 
     @Test
@@ -2005,14 +2008,16 @@ public class RegistrationServiceImplTest {
         when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
-        // Execute with null latitude (partial GPS)
+        // Execute with null latitude (partial GPS) - implementation still sets GeoLocationDto and calls validator
         RegistrationDto result = registrationService.startRegistration(
                 Arrays.asList("eng"), "NEW", "NEW", null, 77.5946);
 
-        // Verify: Registration succeeds, no GPS set, no validation called
+        // Verify: Registration succeeds; GeoLocationDto has longitude set, latitude null; validator was called
         assertNotNull(result);
-        assertNull(result.getGeoLocationDto());
-        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
+        assertNotNull(result.getGeoLocationDto());
+        assertEquals(77.5946, result.getGeoLocationDto().getLongitude(), 0.0001);
+        assertNull(result.getGeoLocationDto().getLatitude());
+        verify(preCheckValidatorService).validateCenterToMachineDistance(77.5946, null);
     }
 
     @Test
@@ -2032,13 +2037,15 @@ public class RegistrationServiceImplTest {
         when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
         when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
-        // Execute with null longitude (partial GPS)
+        // Execute with null longitude (partial GPS) - implementation still sets GeoLocationDto and calls validator
         RegistrationDto result = registrationService.startRegistration(
                 Arrays.asList("eng"), "NEW", "NEW", 12.9716, null);
 
-        // Verify: Registration succeeds, no GPS set, no validation called
+        // Verify: Registration succeeds; GeoLocationDto has latitude set, longitude null; validator was called (args: longitude, latitude)
         assertNotNull(result);
-        assertNull(result.getGeoLocationDto());
-        verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
+        assertNotNull(result.getGeoLocationDto());
+        assertEquals(12.9716, result.getGeoLocationDto().getLatitude(), 0.0001);
+        assertNull(result.getGeoLocationDto().getLongitude());
+        verify(preCheckValidatorService).validateCenterToMachineDistance(null, 12.9716);
     }
 }

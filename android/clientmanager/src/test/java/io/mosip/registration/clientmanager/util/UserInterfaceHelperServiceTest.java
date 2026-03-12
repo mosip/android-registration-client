@@ -2,7 +2,6 @@ package io.mosip.registration.clientmanager.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.uispec.ConditionalBioAttrDto;
@@ -149,9 +148,7 @@ public class UserInterfaceHelperServiceTest {
 
     @Test
     public void testEvaluateMvel_Exception() {
-        try (MockedStatic<Log> logMock = mockStatic(Log.class)) {
-            assertFalse(service.evaluateMvel("invalid syntax", new HashMap<>()));
-        }
+        assertFalse(service.evaluateMvel("invalid syntax", new HashMap<>()));
     }
 
     @Test
@@ -163,9 +160,7 @@ public class UserInterfaceHelperServiceTest {
 
     @Test
     public void testEvaluateValidationExpression_Exception() {
-        try (MockedStatic<Log> logMock = mockStatic(Log.class)) {
-            assertFalse(service.evaluateValidationExpression("invalid", new HashMap<>()));
-        }
+        assertFalse(service.evaluateValidationExpression("invalid", new HashMap<>()));
     }
 
     @Test
@@ -177,8 +172,7 @@ public class UserInterfaceHelperServiceTest {
     public void testGetFaceBitMap_IOException() {
         BiometricsDto dto = new BiometricsDto();
         dto.setBioValue("invalid");
-        try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class);
-             MockedStatic<Log> logMock = mockStatic(Log.class)) {
+        try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class)) {
             assertNull(service.getFaceBitMap(dto));
         }
     }
@@ -192,8 +186,7 @@ public class UserInterfaceHelperServiceTest {
     public void testGetFingerBitMap_IOException() {
         BiometricsDto dto = new BiometricsDto();
         dto.setBioValue("invalid");
-        try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class);
-             MockedStatic<Log> logMock = mockStatic(Log.class)) {
+        try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class)) {
             assertNull(service.getFingerBitMap(dto));
         }
     }
@@ -207,8 +200,7 @@ public class UserInterfaceHelperServiceTest {
     public void testGetIrisBitMap_IOException() {
         BiometricsDto dto = new BiometricsDto();
         dto.setBioValue("invalid");
-        try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class);
-             MockedStatic<Log> logMock = mockStatic(Log.class)) {
+        try (MockedStatic<CryptoUtil> cryptoMock = mockStatic(CryptoUtil.class)) {
             assertNull(service.getIrisBitMap(dto));
         }
     }

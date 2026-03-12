@@ -1,12 +1,6 @@
 package io.mosip.registration.clientmanager.util;
 
-import android.util.Log;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.time.Instant;
 
@@ -20,22 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CronExpressionParserTest {
-
-    private MockedStatic<Log> logMock;
-
-    @Before
-    public void setUp() {
-        logMock = Mockito.mockStatic(Log.class);
-        logMock.when(() -> Log.e(Mockito.anyString(), Mockito.anyString())).thenReturn(0);
-        logMock.when(() -> Log.e(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable.class))).thenReturn(0);
-    }
-
-    @After
-    public void tearDown() {
-        if (logMock != null) {
-            logMock.close();
-        }
-    }
 
     @Test
     public void testGetNextExecutionTime_withValidExpression_returnsFutureInstant() {

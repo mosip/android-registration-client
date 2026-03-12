@@ -82,7 +82,7 @@ public class Biometrics095ServiceTest {
         CaptureRequest request = biometrics095Service.getRCaptureRequest(modality, deviceId, exceptionAttributes);
 
         assertNotNull(request);
-        assertEquals("Developer", request.getEnv());
+        assertEquals("Staging", request.getEnv());
         assertEquals("Registration", request.getPurpose());
         assertFalse("Bio list should not be empty", request.getBio().isEmpty());
         assertEquals(deviceId, request.getBio().get(0).getDeviceId());
@@ -173,6 +173,7 @@ public class Biometrics095ServiceTest {
     public void test_creates_capture_request_with_standard_environment_settings() {
         when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         when(mockContext.getString(anyInt())).thenReturn("app_name");
+        when(mockGlobalParamRepository.getCachedIntCaptureTimeout()).thenReturn(10000);
 
         Biometrics095Service biometrics095Service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService,
@@ -184,7 +185,7 @@ public class Biometrics095ServiceTest {
 
         CaptureRequest result = biometrics095Service.getRCaptureRequest(modality, deviceId, exceptionAttributes);
 
-        assertEquals("Developer", result.getEnv());
+        assertEquals("Staging", result.getEnv());
         assertEquals("Registration", result.getPurpose());
         assertEquals(10000, result.getTimeout());
         assertEquals("0.9.5", result.getSpecVersion());

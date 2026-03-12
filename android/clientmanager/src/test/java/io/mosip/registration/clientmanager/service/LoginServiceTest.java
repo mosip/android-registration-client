@@ -235,27 +235,34 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_session_manager_null() {
-        LoginService loginService = new LoginService(context, null, null,null);
+    public void test_session_manager_null() throws Exception {
+        LoginService loginService = new LoginService(context, null, null, null);
 
-        Exception exception = assertThrows(Exception.class, () -> {
-            loginService.clearAuthToken(context);
-        });
+        // Force sessionManager to null to verify behavior when it is not initialized
+        Field sessionManagerField = LoginService.class.getDeclaredField("sessionManager");
+        sessionManagerField.setAccessible(true);
+        sessionManagerField.set(loginService, null);
+
+        Exception exception = assertThrows(Exception.class, () -> loginService.clearAuthToken(context));
 
         assertNotNull(exception);
     }
 
     @Test
-    public void test_session_manager_returns_non_null_value() {
-        LoginService loginService = new LoginService(context, null, null,null);
+    public void test_session_manager_returns_non_null_value() throws Exception {
+        LoginService loginService = new LoginService(context, null, null, null);
+
+        // Inject mocked SessionManager
+        Field sessionManagerField = LoginService.class.getDeclaredField("sessionManager");
+        sessionManagerField.setAccessible(true);
+        sessionManagerField.set(loginService, sessionManager);
 
         lenient().when(sessionManager.clearAuthToken()).thenReturn("non-null-token");
 
-        Exception exception = assertThrows(Exception.class, () -> {
-            loginService.clearAuthToken(context);
-        });
+        // Should not throw; just delegate to SessionManager
+        loginService.clearAuthToken(context);
 
-        assertNotNull(exception);
+        verify(sessionManager, times(1)).clearAuthToken();
     }
 
     @Test

@@ -1,6 +1,5 @@
 package io.mosip.registration.clientmanager.util;
 
-import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.mosip.registration.clientmanager.dto.http.*;
 import io.mosip.registration.keymanager.dto.*;
@@ -123,8 +122,7 @@ public class SyncRestUtilTest {
         wrapper.getErrors().add(error1);
         wrapper.getErrors().add(error2);
 
-        try (MockedStatic<Log> logMock = mockStatic(Log.class);
-             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+        try (MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
             jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any())).thenReturn("json");
             ServiceError result = SyncRestUtil.getServiceError(wrapper);
             assertEquals(error1, result);
@@ -138,8 +136,7 @@ public class SyncRestUtilTest {
         wrapper.setErrors(Collections.singletonList(error));
         wrapper.setResponse(null);
 
-        try (MockedStatic<Log> logMock = mockStatic(Log.class);
-             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+        try (MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
             jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any()))
                     .thenThrow(new JsonProcessingException("fail") {});
             ServiceError result = SyncRestUtil.getServiceError(wrapper);

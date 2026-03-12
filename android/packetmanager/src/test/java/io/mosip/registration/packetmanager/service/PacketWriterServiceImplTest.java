@@ -52,6 +52,7 @@ import static org.mockito.Mockito.lenient;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
+@SuppressWarnings("unchecked")
 public class PacketWriterServiceImplTest {
     @Mock
     Context context;
