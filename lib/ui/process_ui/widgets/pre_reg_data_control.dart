@@ -251,36 +251,31 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
               children: [
               Expanded(
               flex: 3,
-              child: Semantics(
-                label: 'application_id_text_field',
-                container: true,
-                excludeSemantics: true,
-                child: TextFormField(
-                  key: _formFieldKey,
-                  controller: preRegIdController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  textCapitalization: TextCapitalization.words,
-                  onChanged: (value) {
-                    globalProvider.setPreRegistrationId(value);
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return null;
-                    if (globalProvider.pridLength != null &&
-                        value.length > globalProvider.pridLength!) {
-                      return AppLocalizations.of(context)!
-                          .prid_length_greater(globalProvider.pridLength!);
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    hintText:
-                    AppLocalizations.of(context)!.enter_application_id,
+              child: TextFormField(
+                key: _formFieldKey,
+                controller: preRegIdController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textCapitalization: TextCapitalization.words,
+                onChanged: (value) {
+                  globalProvider.setPreRegistrationId(value);
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) return null;
+                  if (globalProvider.pridLength != null &&
+                      value.length > globalProvider.pridLength!) {
+                    return AppLocalizations.of(context)!
+                        .prid_length_greater(globalProvider.pridLength!);
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  hintText:
+                  AppLocalizations.of(context)!.enter_application_id,
                 ),
               ),
             ),
