@@ -15,7 +15,7 @@ import 'package:registration_client/utils/app_style.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:registration_client/utils/secure_screen_service.dart';
+// import 'package:registration_client/utils/secure_screen_service.dart';
 
 
 class AcknowledgementPage extends StatefulWidget {
@@ -33,14 +33,14 @@ class _AcknowledgementPageState extends State<AcknowledgementPage> {
   @override
   void initState() {
     super.initState();
-    SecureScreenService.acquire();
+    // SecureScreenService.acquire();
   }
 
-  @override
-  void dispose() {
-    SecureScreenService.release();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   SecureScreenService.release();
+  //   super.dispose();
+  // }
 
   _printHtmlToPdf() async {
     String htmlContent =
