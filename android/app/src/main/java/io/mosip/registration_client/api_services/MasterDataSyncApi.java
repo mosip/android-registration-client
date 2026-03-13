@@ -598,7 +598,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             try {
                 String jobId = getJobIdByApiName(jobApiName);
                 onSyncJobStart();
-
+                Log.d(getClass().getSimpleName(), "Starting: " + jobApiName);
                 switch (jobApiName) {
                     case "registrationPacketUploadJob":
                         batchJob.uploadRegistrationPackets(context, () -> {

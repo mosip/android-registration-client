@@ -77,8 +77,8 @@ public class RestAuthInterceptor implements Interceptor {
                     return null;
                 }
 
-                // Repopulate session prefs so subsequent calls use the same token.
-                sessionManager.saveAuthTokenSync(dbToken);
+                // Use the most recent token from the local UserToken table directly
+                // without writing it back to SessionManager here.
                 return dbToken;
             }
         } catch (Exception ignored) {

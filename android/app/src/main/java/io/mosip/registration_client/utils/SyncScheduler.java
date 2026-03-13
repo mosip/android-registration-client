@@ -77,6 +77,7 @@ public class SyncScheduler {
      *   with name "sync_{apiName}" so there is only one pending job per API.
      */
     public void scheduleJob(Context context, String jobApiName) {
+        Log.d(TAG, "Scheduling job: " + jobApiName);
         try {
             // Absolute time (epoch millis) for the next run as per cron
             long nextExecutionTime = batchJob.getIntervalMillis(jobApiName);
