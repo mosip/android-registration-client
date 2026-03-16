@@ -948,4 +948,305 @@ public class PacketServiceImplTest {
         assertEquals(PacketClientStatus.APPROVED.name(), status);
     }
 
+    @Test
+    public void test_deleteRegistrationPackets_withValidConfig_deletesOldPackets() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS))
+                .thenReturn("30");
+        Registration oldReg = new Registration("rid1");
+        oldReg.setPacketId("p1");
+        oldReg.setFilePath("/data/p1.zip");
+        List<Registration> toDelete = java.util.Collections.singletonList(oldReg);
+        when(mockRegistrationRepository.findByServerStatusAndCrDtimeBefore(
+                org.mockito.ArgumentMatchers.anyList(),
+                org.mockito.ArgumentMatchers.anyLong())).thenReturn(toDelete);
+
+        packetService.deleteRegistrationPackets();
+
+        verify(mockRegistrationRepository).findByServerStatusAndCrDtimeBefore(
+                org.mockito.ArgumentMatchers.anyList(),
+                org.mockito.ArgumentMatchers.anyLong());
+        verify(mockRegistrationRepository).deleteRegistration("p1");
+    }
+
+    @Test
+    public void test_deleteRegistrationPackets_nullOrInvalidConfig_doesNotThrow() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS))
+                .thenReturn(null);
+
+        packetService.deleteRegistrationPackets();
+
+        verify(mockRegistrationRepository, org.mockito.Mockito.never()).findByServerStatusAndCrDtimeBefore(
+                org.mockito.ArgumentMatchers.anyList(),
+                org.mockito.ArgumentMatchers.anyLong());
+    }
+
+    @Test
+    public void test_deleteRegistrationPackets_emptyResult_doesNotCallDelete() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS))
+                .thenReturn("7");
+        when(mockRegistrationRepository.findByServerStatusAndCrDtimeBefore(
+                org.mockito.ArgumentMatchers.anyList(),
+                org.mockito.ArgumentMatchers.anyLong())).thenReturn(java.util.Collections.emptyList());
+
+        packetService.deleteRegistrationPackets();
+
+        verify(mockRegistrationRepository, org.mockito.Mockito.never()).deleteRegistration(org.mockito.ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void test_isMaxNotApprovedPacketCountLimitReached_maxCountZero_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenReturn(0);
+
+        boolean result = packetService.isMaxNotApprovedPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isMaxNotApprovedPacketCountLimitReached_underLimit_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenReturn(10);
+        when(mockRegistrationRepository.getAllRegistrationByStatus(PacketClientStatus.CREATED.name())).thenReturn(5);
+
+        boolean result = packetService.isMaxNotApprovedPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isMaxNotApprovedPacketCountLimitReached_atOrOverLimit_returnsTrue() {
+        when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenReturn(10);
+        when(mockRegistrationRepository.getAllRegistrationByStatus(PacketClientStatus.CREATED.name())).thenReturn(10);
+
+        boolean result = packetService.isMaxNotApprovedPacketCountLimitReached();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void test_isMaxNotApprovedPacketCountLimitReached_exception_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenThrow(new RuntimeException("config error"));
+
+        boolean result = packetService.isMaxNotApprovedPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isMaxPacketCountLimitReached_nullOrEmptyConfig_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ))
+                .thenReturn(null);
+
+        boolean result = packetService.isMaxPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isMaxPacketCountLimitReached_maxCountZero_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ))
+                .thenReturn("0");
+
+        boolean result = packetService.isMaxPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isMaxPacketCountLimitReached_underLimit_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ))
+                .thenReturn("10");
+        when(mockRegistrationRepository.getYetToExportCount()).thenReturn(5);
+
+        boolean result = packetService.isMaxPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isMaxPacketCountLimitReached_atOrOverLimit_returnsTrue() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ))
+                .thenReturn("10");
+        when(mockRegistrationRepository.getYetToExportCount()).thenReturn(10);
+
+        boolean result = packetService.isMaxPacketCountLimitReached();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void test_isMaxPacketCountLimitReached_invalidConfig_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ))
+                .thenReturn("not-a-number");
+
+        boolean result = packetService.isMaxPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isMaxPacketCountLimitReached_exception_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ))
+                .thenThrow(new RuntimeException("error"));
+
+        boolean result = packetService.isMaxPacketCountLimitReached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isRegisteredPacketApprovalTimeBreached_nullOrEmptyLimit_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT))
+                .thenReturn(null);
+
+        boolean result = packetService.isRegisteredPacketApprovalTimeBreached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isRegisteredPacketApprovalTimeBreached_noOldestRegistration_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT))
+                .thenReturn("10");
+        when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name()))
+                .thenReturn(null);
+
+        boolean result = packetService.isRegisteredPacketApprovalTimeBreached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isRegisteredPacketApprovalTimeBreached_breached_returnsTrue() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT))
+                .thenReturn("1");
+        Registration oldest = new Registration("id");
+        long twoDaysAgo = System.currentTimeMillis() - 2L * 24 * 60 * 60 * 1000;
+        oldest.setCrDtime(twoDaysAgo);
+        when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name()))
+                .thenReturn(oldest);
+
+        boolean result = packetService.isRegisteredPacketApprovalTimeBreached();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void test_isRegisteredPacketApprovalTimeBreached_notBreached_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT))
+                .thenReturn("10");
+        Registration oldest = new Registration("id");
+        oldest.setCrDtime(System.currentTimeMillis());
+        when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name()))
+                .thenReturn(oldest);
+
+        boolean result = packetService.isRegisteredPacketApprovalTimeBreached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isRegisteredPacketApprovalTimeBreached_invalidConfig_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT))
+                .thenReturn("not-a-number");
+
+        boolean result = packetService.isRegisteredPacketApprovalTimeBreached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_isRegisteredPacketApprovalTimeBreached_exception_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT))
+                .thenThrow(new RuntimeException("error"));
+
+        boolean result = packetService.isRegisteredPacketApprovalTimeBreached();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validatingLastExportDuration_nullOrEmptyLimit_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME))
+                .thenReturn(null);
+
+        boolean result = packetService.validatingLastExportDuration();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validatingLastExportDuration_noOldestApproved_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME))
+                .thenReturn("10");
+        when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name()))
+                .thenReturn(null);
+
+        boolean result = packetService.validatingLastExportDuration();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validatingLastExportDuration_creationTimeNull_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME))
+                .thenReturn("10");
+        Registration oldest = new Registration("id");
+        oldest.setCrDtime(null);
+        when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name()))
+                .thenReturn(oldest);
+
+        boolean result = packetService.validatingLastExportDuration();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validatingLastExportDuration_breached_returnsTrue() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME))
+                .thenReturn("1");
+        Registration oldest = new Registration("id");
+        long twoDaysAgo = System.currentTimeMillis() - 2L * 24 * 60 * 60 * 1000;
+        oldest.setCrDtime(twoDaysAgo);
+        when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name()))
+                .thenReturn(oldest);
+
+        boolean result = packetService.validatingLastExportDuration();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void test_validatingLastExportDuration_notBreached_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME))
+                .thenReturn("10");
+        Registration oldest = new Registration("id");
+        oldest.setCrDtime(System.currentTimeMillis());
+        when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name()))
+                .thenReturn(oldest);
+
+        boolean result = packetService.validatingLastExportDuration();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validatingLastExportDuration_invalidConfig_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME))
+                .thenReturn("not-a-number");
+
+        boolean result = packetService.validatingLastExportDuration();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_validatingLastExportDuration_exception_returnsFalse() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME))
+                .thenThrow(new RuntimeException("error"));
+
+        boolean result = packetService.validatingLastExportDuration();
+
+        assertFalse(result);
+    }
+
 }

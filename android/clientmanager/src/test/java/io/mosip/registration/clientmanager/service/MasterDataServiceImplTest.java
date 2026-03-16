@@ -897,6 +897,140 @@ public class MasterDataServiceImplTest {
     }
 
     /**
+     * Tests saveStructuredData for multiple entity types to ensure the appropriate repositories are invoked.
+     */
+    @Test
+    public void test_saveStructuredData_for_various_entities() throws Exception {
+        ReflectionTestUtils.setField(masterDataService, "reasonListRepository", mockReasonListRepository);
+        ReflectionTestUtils.setField(masterDataService, "machineRepository", mockMachineRepository);
+        ReflectionTestUtils.setField(masterDataService, "registrationCenterRepository", mockRegistrationCenterRepository);
+        ReflectionTestUtils.setField(masterDataService, "documentTypeRepository", mockDocumentTypeRepository);
+        ReflectionTestUtils.setField(masterDataService, "applicantValidDocRepository", mockApplicantValidDocRepository);
+        ReflectionTestUtils.setField(masterDataService, "templateRepository", mockTemplateRepository);
+        ReflectionTestUtils.setField(masterDataService, "locationRepository", mockLocationRepository);
+        ReflectionTestUtils.setField(masterDataService, "blocklistedWordRepository", mockBlocklistedWordRepository);
+        ReflectionTestUtils.setField(masterDataService, "syncJobDefRepository", mockSyncJobDefRepository);
+        ReflectionTestUtils.setField(masterDataService, "userDetailRepository", mockUserDetailRepository);
+        ReflectionTestUtils.setField(masterDataService, "languageRepository", mockLanguageRepository);
+        ReflectionTestUtils.setField(masterDataService, "permittedLocalConfigRepository", mockPermittedLocalConfigRepository);
+        ReflectionTestUtils.setField(masterDataService, "localConfigDAO", mockLocalConfigDao);
+        ReflectionTestUtils.setField(masterDataService, "globalParamRepository", mockGlobalParamRepository);
+        ReflectionTestUtils.setField(masterDataService, "clientCryptoManagerService", mockClientCryptoManagerService);
+
+        String reasonJson = "[\"{\\\"code\\\":\\\"R1\\\",\\\"name\\\":\\\"Reason1\\\",\\\"description\\\":\\\"desc\\\",\\\"langCode\\\":\\\"eng\\\"}\"]";
+        String machineJson = "[\"{\\\"id\\\":\\\"M1\\\",\\\"name\\\":\\\"Machine1\\\",\\\"regCenterId\\\":\\\"C1\\\",\\\"isActive\\\":true}\"]";
+        String regCenterJson = "[\"{\\\"id\\\":\\\"C1\\\",\\\"name\\\":\\\"Center1\\\",\\\"langCode\\\":\\\"eng\\\",\\\"isActive\\\":true}\"]";
+        String documentTypeJson = "[\"{\\\"code\\\":\\\"DOC1\\\",\\\"name\\\":\\\"Doc1\\\",\\\"description\\\":\\\"desc\\\"}\"]";
+        String applicantValidDocJson = "[\"{\\\"docTypeCode\\\":\\\"DOC1\\\"}\"]";
+        String templateJson = "[\"{\\\"code\\\":\\\"TMP1\\\",\\\"name\\\":\\\"Template1\\\"}\"]";
+        String locationJson = "[\"{\\\"code\\\":\\\"LOC1\\\",\\\"name\\\":\\\"Loc1\\\",\\\"isActive\\\":true}\"]";
+        String locationHierarchyJson = "[\"{\\\"code\\\":\\\"H1\\\",\\\"name\\\":\\\"Hierarchy1\\\"}\"]";
+        String blocklistedWordsJson = "[\"{\\\"word\\\":\\\"bad\\\"}\"]";
+        String syncJobDefJson = "[\"{\\\"id\\\":\\\"JOB1\\\",\\\"name\\\":\\\"Job1\\\",\\\"apiName\\\":\\\"api\\\",\\\"parentSyncJobId\\\":\\\"P1\\\",\\\"syncFreq\\\":\\\"* * * * *\\\",\\\"lockDuration\\\":\\\"5\\\",\\\"langCode\\\":\\\"eng\\\",\\\"isDeleted\\\":false,\\\"isActive\\\":true}\"]";
+        String languageJson = "[\"{\\\"code\\\":\\\"en\\\",\\\"name\\\":\\\"English\\\"}\"]";
+        String regCenterUserJson = "[\"{\\\"userId\\\":\\\"U1\\\"}\"]";
+        String regCenterMachineJson = "[\"{\\\"regCenterId\\\":\\\"C1\\\"}\"]";
+        String validDocumentJson = "[\"{\\\"docTypeCode\\\":\\\"DOC1\\\"}\"]";
+        String permittedConfigJson = "[\"{\\\"code\\\":\\\"CFG1\\\",\\\"name\\\":\\\"Cfg1\\\",\\\"type\\\":\\\"JOB\\\",\\\"isActive\\\":true}\"]";
+
+        Mockito.when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.DEFAULT_APP_TYPE_CODE))
+                .thenReturn("DEFAULT_APP");
+        Mockito.when(mockGlobalParamRepository.getGlobalParamValue("masterdata.lastupdated")).thenReturn(null);
+        Mockito.when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION))
+                .thenReturn("1.1.5");
+
+        Mockito.when(mockClientCryptoManagerService.decrypt(any(CryptoRequestDto.class)))
+                .thenAnswer(invocation -> {
+                    CryptoRequestDto req = invocation.getArgument(0);
+                    String value = req.getValue();
+                    String jsonArray;
+                    switch (value) {
+                        case "ReasonListData":
+                            jsonArray = reasonJson;
+                            break;
+                        case "MachineData":
+                            jsonArray = machineJson;
+                            break;
+                        case "RegCenterData":
+                            jsonArray = regCenterJson;
+                            break;
+                        case "DocTypeData":
+                            jsonArray = documentTypeJson;
+                            break;
+                        case "AppValidDocData":
+                            jsonArray = applicantValidDocJson;
+                            break;
+                        case "TemplateData":
+                            jsonArray = templateJson;
+                            break;
+                        case "LocationData":
+                            jsonArray = locationJson;
+                            break;
+                        case "LocationHierarchyData":
+                            jsonArray = locationHierarchyJson;
+                            break;
+                        case "BlockWordsData":
+                            jsonArray = blocklistedWordsJson;
+                            break;
+                        case "SyncJobDefData":
+                            jsonArray = syncJobDefJson;
+                            break;
+                        case "LanguageData":
+                            jsonArray = languageJson;
+                            break;
+                        case "RegCenterUserData":
+                            jsonArray = regCenterUserJson;
+                            break;
+                        case "RegCenterMachineData":
+                            jsonArray = regCenterMachineJson;
+                            break;
+                        case "ValidDocumentData":
+                            jsonArray = validDocumentJson;
+                            break;
+                        case "PermittedLocalConfigData":
+                            jsonArray = permittedConfigJson;
+                            break;
+                        default:
+                            jsonArray = "[]";
+                    }
+                    CryptoResponseDto resp = new CryptoResponseDto();
+                    resp.setValue(java.util.Base64.getEncoder().encodeToString(jsonArray.getBytes(StandardCharsets.UTF_8)));
+                    return resp;
+                });
+
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "ReasonList", "ReasonListData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Machine", "MachineData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "RegistrationCenter", "RegCenterData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "DocumentType", "DocTypeData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "ApplicantValidDocument", "AppValidDocData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Template", "TemplateData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Location", "LocationData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "LocationHierarchy", "LocationHierarchyData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "BlocklistedWords", "BlockWordsData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "SyncJobDef", "SyncJobDefData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "Language", "LanguageData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "RegistrationCenterUser", "RegCenterUserData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "RegistrationCenterMachine", "RegCenterMachineData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "ValidDocument", "ValidDocumentData", false);
+        ReflectionTestUtils.invokeMethod(masterDataService, "saveStructuredData", "PermittedLocalConfig", "PermittedLocalConfigData", false);
+
+        Mockito.verify(mockReasonListRepository, atLeastOnce()).saveReasonList(any(JSONObject.class));
+        Mockito.verify(mockMachineRepository, atLeastOnce()).saveMachineMaster(any(JSONObject.class));
+        Mockito.verify(mockRegistrationCenterRepository, atLeastOnce()).saveRegistrationCenter(any(JSONObject.class));
+        Mockito.verify(mockDocumentTypeRepository, atLeastOnce()).saveDocumentType(any(JSONObject.class));
+        Mockito.verify(mockApplicantValidDocRepository, atLeastOnce()).saveApplicantValidDocument(any(JSONObject.class), anyString());
+        Mockito.verify(mockTemplateRepository, atLeastOnce()).saveTemplate(any(JSONObject.class));
+        Mockito.verify(mockLocationRepository, atLeastOnce()).saveLocationData(any(JSONObject.class));
+        Mockito.verify(mockLocationRepository, atLeastOnce()).saveLocationHierarchyData(any(JSONObject.class));
+        Mockito.verify(mockBlocklistedWordRepository, atLeastOnce()).saveBlocklistedWord(any(JSONObject.class));
+        Mockito.verify(mockSyncJobDefRepository, atLeastOnce()).saveSyncJobDef(any(SyncJobDef.class));
+        Mockito.verify(mockLanguageRepository, atLeastOnce()).saveLanguage(any(JSONObject.class));
+        Mockito.verify(mockUserDetailRepository, atLeastOnce()).saveUserDetail(any(JSONArray.class));
+        Mockito.verify(mockPermittedLocalConfigRepository, atLeastOnce()).savePermittedConfigs(anyList());
+        Mockito.verify(mockLocalConfigDao, atLeastOnce()).cleanUpLocalPreferences();
+    }
+
+    /**
      * Tests that getHierarchyLevel returns the correct hierarchy level for a valid hierarchy name.
      */
     @Test

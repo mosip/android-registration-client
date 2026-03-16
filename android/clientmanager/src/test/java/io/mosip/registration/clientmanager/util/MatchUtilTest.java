@@ -112,6 +112,21 @@ public class MatchUtilTest {
     }
 
     @Test
+    public void testGetSubTypes_finger_rightThumb() {
+        List<String> subtypes = matchUtil.getSubTypes(BiometricType.FINGER, "RightThumb", true);
+        assertEquals(2, subtypes.size());
+        assertEquals(SingleAnySubtypeType.RIGHT.value(), subtypes.get(0));
+        assertEquals(SingleAnySubtypeType.THUMB.value(), subtypes.get(1));
+    }
+
+    @Test
+    public void testGetSubTypes_iris_right() {
+        List<String> subtypes = matchUtil.getSubTypes(BiometricType.IRIS, "RightIris", false);
+        assertEquals(1, subtypes.size());
+        assertEquals(SingleAnySubtypeType.RIGHT.value(), subtypes.get(0));
+    }
+
+    @Test
     public void test_validate_biometric_data_empty_user_biometrics() {
         Modality modality = Modality.FACE;
 
@@ -135,6 +150,89 @@ public class MatchUtilTest {
     }
 
     @Test
+    public void test_validate_biometric_data_missingCurrentUserId_returnsFalse() {
+        Modality modality = Modality.FACE;
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+        List<BiometricsDto> biometricsDtoList = Collections.emptyList();
+
+        boolean resultNull = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList,
+                userBiometricRepository, iBioApiV2, null);
+        boolean resultBlank = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList,
+                userBiometricRepository, iBioApiV2, "  ");
+
+        assertFalse(resultNull);
+        assertFalse(resultBlank);
+        verify(userBiometricRepository, never()).findAllOperatorBiometricsExceptCurrent(anyString(), anyString());
+        verify(iBioApiV2, never()).match(any(), any(), any(), any());
+    }
+
+    @Test
+    public void test_validate_biometric_data_for_registration_withEmptyUserBiometrics_returnsFalse() {
+        Modality modality = Modality.FACE;
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+
+        when(userBiometricRepository.findAllOperatorBiometrics("FACE")).thenReturn(Collections.emptyList());
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(modality, captureDto,
+                biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertFalse(result);
+        verify(userBiometricRepository).findAllOperatorBiometrics("FACE");
+        verify(iBioApiV2, never()).match(any(), any(), any(), any());
+    }
+
+    @Test
+    public void test_validate_biometric_data_for_registration_withMatch_returnsTrue() {
+        Modality modality = Modality.FACE;
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        // existing user biometric
+        List<UserBiometric> userBiometrics = new ArrayList<>();
+        UserBiometric userBiometric = new UserBiometric();
+        userBiometric.setUsrId("user1");
+        userBiometric.setBioAttributeCode("FACE");
+        userBiometric.setQualityScore(80);
+        userBiometric.setBioTemplate("template".getBytes());
+        userBiometrics.add(userBiometric);
+
+        when(userBiometricRepository.findAllOperatorBiometrics("FACE")).thenReturn(userBiometrics);
+
+        // incoming capture
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto biometricsDto = new BiometricsDto();
+        biometricsDto.setBioSubType("FACE");
+        biometricsDto.setQualityScore(85.0f);
+        biometricsDto.setBioValue(Base64.getUrlEncoder().encodeToString("template".getBytes()));
+        biometricsDtoList.add(biometricsDto);
+
+        // configure match response with MATCHED decision (MatchDecision has no no-arg constructor, so mock it)
+        Response<MatchDecision[]> response = new Response<>();
+        MatchDecision[] decisions = new MatchDecision[1];
+        MatchDecision matchDecision = mock(MatchDecision.class);
+        Map<BiometricType, Decision> decisionMap = new HashMap<>();
+        Decision decision = new Decision();
+        decision.setMatch(Match.MATCHED);
+        decisionMap.put(BiometricType.FACE, decision);
+        when(matchDecision.getDecisions()).thenReturn(decisionMap);
+        decisions[0] = matchDecision;
+        response.setResponse(decisions);
+
+        when(iBioApiV2.match(any(), any(), any(), any())).thenReturn(response);
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(modality, captureDto,
+                biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertTrue(result);
+        verify(userBiometricRepository).findAllOperatorBiometrics("FACE");
+        verify(iBioApiV2).match(any(), any(), any(), any());
+    }
+
+    @Test
     public void test_match_biometrics_when_valid_data_returns_true() {
         BiometricType biometricType = BiometricType.FINGER;
 
@@ -155,19 +253,22 @@ public class MatchUtilTest {
 
         Response<MatchDecision[]> response = new Response<>();
         MatchDecision[] decisions = new MatchDecision[1];
+        MatchDecision matchDecision = mock(MatchDecision.class);
         Map<BiometricType, Decision> decisionMap = new HashMap<>();
         Decision decision = new Decision();
         decision.setMatch(Match.MATCHED);
         decisionMap.put(biometricType, decision);
+        when(matchDecision.getDecisions()).thenReturn(decisionMap);
+        decisions[0] = matchDecision;
         response.setResponse(decisions);
 
         Mockito.when(iBioApiV2.match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(response);
 
-        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(matchUtil, "matchBiometrics",
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(MatchUtil.class, "matchBiometrics",
                 biometricType, userBiometrics, biometricsDto, iBioApiV2));
 
-        assertFalse(result);
+        assertTrue(result);
 
         Mockito.verify(iBioApiV2).match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
@@ -192,7 +293,7 @@ public class MatchUtilTest {
         Mockito.when(iBioApiV2.match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(response);
 
-        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(matchUtil, "matchBiometrics",
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(MatchUtil.class, "matchBiometrics",
                 biometricType, userBiometrics, biometricsDto, iBioApiV2));
 
         assertFalse(result);
@@ -200,6 +301,53 @@ public class MatchUtilTest {
         ArgumentCaptor<BiometricRecord[]> recordsCaptor = ArgumentCaptor.forClass(BiometricRecord[].class);
         Mockito.verify(iBioApiV2).match(Mockito.any(BiometricRecord.class), recordsCaptor.capture(), Mockito.any(), Mockito.any());
         assertEquals(0, recordsCaptor.getValue().length);
+    }
+
+    @Test
+    public void test_match_biometrics_withNullResponse_returnsFalse() {
+        BiometricType biometricType = BiometricType.FINGER;
+
+        List<UserBiometric> userBiometrics = new ArrayList<>();
+        List<BiometricsDto> biometricsDto = new ArrayList<>();
+
+        when(iBioApiV2.match(any(), any(), any(), any())).thenReturn(null);
+
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(MatchUtil.class, "matchBiometrics",
+                biometricType, userBiometrics, biometricsDto, iBioApiV2));
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_match_biometrics_withNullDecisions_returnsFalse() {
+        BiometricType biometricType = BiometricType.FINGER;
+
+        List<UserBiometric> userBiometrics = new ArrayList<>();
+        List<BiometricsDto> biometricsDto = new ArrayList<>();
+
+        Response<MatchDecision[]> response = new Response<>();
+        response.setResponse(null);
+        when(iBioApiV2.match(any(), any(), any(), any())).thenReturn(response);
+
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(MatchUtil.class, "matchBiometrics",
+                biometricType, userBiometrics, biometricsDto, iBioApiV2));
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_match_biometrics_whenExceptionThrown_returnsFalse() {
+        BiometricType biometricType = BiometricType.FINGER;
+
+        List<UserBiometric> userBiometrics = new ArrayList<>();
+        List<BiometricsDto> biometricsDto = new ArrayList<>();
+
+        when(iBioApiV2.match(any(), any(), any(), any())).thenThrow(new RuntimeException("match failed"));
+
+        boolean result = Boolean.TRUE.equals(ReflectionTestUtils.invokeMethod(MatchUtil.class, "matchBiometrics",
+                biometricType, userBiometrics, biometricsDto, iBioApiV2));
+
+        assertFalse(result);
     }
 
 }

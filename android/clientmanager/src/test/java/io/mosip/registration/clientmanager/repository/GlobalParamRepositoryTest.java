@@ -245,4 +245,165 @@ public class GlobalParamRepositoryTest {
         Map<String, Object> result = repositoryWithMocks.getGlobalParamsByPattern("demo");
         assertEquals("value", result.get("demo"));
     }
+
+    @Test
+    public void getGlobalParamsByPattern_withNullValue_putsNullInMap() {
+        GlobalParamDao mockDao = mock(GlobalParamDao.class);
+        LocalConfigDAO mockLocal = mock(LocalConfigDAO.class);
+        when(mockDao.getGlobalParams()).thenReturn(Collections.emptyList());
+        when(mockLocal.getLocalConfigurations()).thenReturn(Collections.emptyMap());
+        GlobalParamRepository repo = new GlobalParamRepository(mockDao, mockLocal);
+
+        GlobalParam paramWithNull = new GlobalParam("id", "key1", null, true);
+        when(mockDao.findByNameLikeAndIsActiveTrueAndValIsNotNull("p")).thenReturn(Collections.singletonList(paramWithNull));
+
+        Map<String, Object> result = repo.getGlobalParamsByPattern("p");
+        assertEquals(1, result.size());
+        assertNull(result.get("key1"));
+    }
+
+    @Test
+    public void getCachedStringAgeGroup_andOtherCachedStringGetters() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.AGE_GROUP_CONFIG, "ADULT");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.FORGOT_PASSWORD_URL, "http://forgot");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.IDLE_TIME, "300");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.REFRESHED_LOGIN_TIME, "600");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.GPS_DEVICE_ENABLE_FLAG, "true");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.DIST_FRM_MACHINE_TO_CENTER, "100");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.OPERATOR_ONBOARDING_BIO_ATTRIBUTES, "FINGER,FACE");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.ONBOARD_YOURSELF_URL, "http://onboard");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.REGISTERING_INDIVIDUAL_URL, "http://reg");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.SYNC_DATA_URL, "http://sync");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.MAPPING_DEVICES_URL, "http://mapping");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.UPLOADING_DATA_URL, "http://upload");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.UPDATING_BIOMETRICS_URL, "http://bio");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.PWORD_LENGTH, "8");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.DOC_SIZE, "1024");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.MAX_AGE, "120");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.INVALID_LOGIN_COUNT, "5");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.INVALID_LOGIN_TIME, "2");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.DOC_TYPE, "PDF");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.APP_NAME, "REG");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.APP_ID, "REG_ID");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.DEFAULT_HOST_IP, "127.0.0.1");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.DEFAULT_HOST_NAME, "localhost");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.FIELDS_TO_RETAIN_ON_PRID_FETCH, "name");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.PACKET_STORE_LOCATION, "/data/packets");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.JOBS_OFFLINE, "SyncJob");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.JOBS_UNTAGGED, "TagJob");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.JOBS_RESTART, "RestartJob");
+
+        assertEquals("ADULT", globalParamRepository.getCachedStringAgeGroup());
+        assertEquals("http://forgot", globalParamRepository.getCachedStringForgotPassword());
+        assertEquals("300", globalParamRepository.getCachedStringIdleTime());
+        assertEquals("600", globalParamRepository.getCachedStringRefreshedLoginTime());
+        assertEquals("true", globalParamRepository.getCachedStringGpsDeviceEnableFlag());
+        assertEquals("100", globalParamRepository.getCachedStringMachineToCenterDistance());
+        assertEquals("FINGER,FACE", globalParamRepository.getCachedStringOperatorOnboardingBioAttributes());
+        assertEquals("http://onboard", globalParamRepository.getCachedStringOnboardYourselfUrl());
+        assertEquals("http://reg", globalParamRepository.getCachedStringRegisteringIndividualUrl());
+        assertEquals("http://sync", globalParamRepository.getCachedStringSyncDataUrl());
+        assertEquals("http://mapping", globalParamRepository.getCachedStringMappingDevicesUrl());
+        assertEquals("http://upload", globalParamRepository.getCachedStringUploadingDataUrl());
+        assertEquals("http://bio", globalParamRepository.getCachedStringUpdatingBiometricsUrl());
+        assertEquals("8", globalParamRepository.getCachedStringPasswordLength());
+        assertEquals("1024", globalParamRepository.getCachedStringDocumentSize());
+        assertEquals("120", globalParamRepository.getCachedStringDOBAgeLimit());
+        assertEquals("5", globalParamRepository.getCachedStringInvalidLoginCount());
+        assertEquals("2", globalParamRepository.getCachedStringInvalidLoginTime());
+        assertEquals("PDF", globalParamRepository.getCachedStringDocType());
+        assertEquals("REG", globalParamRepository.getCachedStringAppName());
+        assertEquals("REG_ID", globalParamRepository.getCachedStringAppId());
+        assertEquals("127.0.0.1", globalParamRepository.getCachedStringDefaultHostIp());
+        assertEquals("localhost", globalParamRepository.getCachedStringDefaultHostName());
+        assertEquals("name", globalParamRepository.getCachedStringFieldsToRetainOnPridFetch());
+        assertEquals("/data/packets", globalParamRepository.getCachedStringPacketStoreLocation());
+        assertEquals("SyncJob", globalParamRepository.getCachedStringJobsOffline());
+        assertEquals("TagJob", globalParamRepository.getCachedStringJobsUntagged());
+        assertEquals("RestartJob", globalParamRepository.getCachedStringJobsRestart());
+    }
+
+    @Test
+    public void getCachedReadTimeout_andWriteTimeout_validAndInvalid() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.HTTP_API_READ_TIMEOUT, "30000");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.HTTP_API_WRITE_TIMEOUT, "60000");
+        assertEquals(30000L, globalParamRepository.getCachedReadTimeout());
+        assertEquals(60000L, globalParamRepository.getCachedWriteTimeout());
+
+        globalParamRepository.saveGlobalParam(RegistrationConstants.HTTP_API_READ_TIMEOUT, "");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.HTTP_API_WRITE_TIMEOUT, "invalid");
+        assertEquals(0L, globalParamRepository.getCachedReadTimeout());
+        assertEquals(0L, globalParamRepository.getCachedWriteTimeout());
+    }
+
+    @Test
+    public void getCachedIntCaptureTimeout_validZeroAndOverflow() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.CAPTURE_TIMEOUT, "5000");
+        assertEquals(5000, globalParamRepository.getCachedIntCaptureTimeout());
+
+        globalParamRepository.saveGlobalParam(RegistrationConstants.CAPTURE_TIMEOUT, "0");
+        assertEquals(Integer.parseInt(RegistrationConstants.DEFAULT_CAPTURE_TIMEOUT), globalParamRepository.getCachedIntCaptureTimeout());
+
+        globalParamRepository.saveGlobalParam(RegistrationConstants.CAPTURE_TIMEOUT, "9999999999999");
+        assertEquals(Integer.parseInt(RegistrationConstants.DEFAULT_CAPTURE_TIMEOUT), globalParamRepository.getCachedIntCaptureTimeout());
+    }
+
+    @Test
+    public void getCachedIntegerDiskSpacePRIDUINVID_andRegMaxCountApproveLimit() {
+        globalParamRepository.saveGlobalParam(RegistrationConstants.DISK_SPACE, "500");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.PRID_LENGTH, "14");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.UIN_LENGTH, "12");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.VID_LENGTH, "16");
+        globalParamRepository.saveGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_APPRV_LIMIT, "100");
+        assertEquals(500, globalParamRepository.getCachedIntegerDiskSpaceSize());
+        assertEquals(14, globalParamRepository.getCachedIntegerPRIDLength());
+        assertEquals(12, globalParamRepository.getCachedIntegerUINLength());
+        assertEquals(16, globalParamRepository.getCachedIntegerVIDLength());
+        assertEquals(100, globalParamRepository.getCachedIntRegMaxCountApproveLimit());
+    }
+
+    @Test
+    public void getBiometricProviderConfig_resolvesNestedConfig() {
+        GlobalParamDao mockDao = mock(GlobalParamDao.class);
+        LocalConfigDAO mockLocal = mock(LocalConfigDAO.class);
+        when(mockDao.getGlobalParams()).thenReturn(Collections.emptyList());
+        when(mockLocal.getLocalConfigurations()).thenReturn(Collections.emptyMap());
+        GlobalParamRepository repo = new GlobalParamRepository(mockDao, mockLocal);
+
+        String key1 = GlobalParamRepository.BIOMETRIC_SDK_PROVIDERS_PREFIX + ".face.vendor1.classname";
+        String key2 = GlobalParamRepository.BIOMETRIC_SDK_PROVIDERS_PREFIX + ".face.vendor1.version";
+        String key3 = GlobalParamRepository.BIOMETRIC_SDK_PROVIDERS_PREFIX + ".finger.vendor2.classname";
+        List<GlobalParam> params = Arrays.asList(
+                new GlobalParam("id1", key1, " com.face.Sdk ", true),
+                new GlobalParam("id2", key2, "1.0", true),
+                new GlobalParam("id3", key3, "com.finger.Sdk", true));
+        when(mockDao.findByNameLikeAndIsActiveTrueAndValIsNotNull(GlobalParamRepository.BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%"))
+                .thenReturn(params);
+
+        Map<String, Map<String, Map<String, String>>> config = repo.getBiometricProviderConfig();
+        assertEquals(2, config.size());
+        assertEquals("com.face.Sdk", config.get("face").get("vendor1").get("classname"));
+        assertEquals("1.0", config.get("face").get("vendor1").get("version"));
+        assertEquals("com.finger.Sdk", config.get("finger").get("vendor2").get("classname"));
+    }
+
+    @Test
+    public void getBiometricProviderConfig_skipsShortOrInvalidKeys() {
+        GlobalParamDao mockDao = mock(GlobalParamDao.class);
+        LocalConfigDAO mockLocal = mock(LocalConfigDAO.class);
+        when(mockDao.getGlobalParams()).thenReturn(Collections.emptyList());
+        when(mockLocal.getLocalConfigurations()).thenReturn(Collections.emptyMap());
+        GlobalParamRepository repo = new GlobalParamRepository(mockDao, mockLocal);
+
+        String prefix = GlobalParamRepository.BIOMETRIC_SDK_PROVIDERS_PREFIX + ".";
+        List<GlobalParam> params = Arrays.asList(
+                new GlobalParam("id1", prefix + "a.b.c", "val", true),
+                new GlobalParam("id2", prefix + "x.y", "val2", true));
+        when(mockDao.findByNameLikeAndIsActiveTrueAndValIsNotNull(GlobalParamRepository.BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%"))
+                .thenReturn(params);
+
+        Map<String, Map<String, Map<String, String>>> config = repo.getBiometricProviderConfig();
+        assertEquals(1, config.size());
+        assertEquals("val", config.get("a").get("b").get("c"));
+    }
 }

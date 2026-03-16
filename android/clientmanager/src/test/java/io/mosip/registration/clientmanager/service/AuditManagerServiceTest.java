@@ -302,4 +302,95 @@ public class AuditManagerServiceTest {
         verify(mockAuditRepository).getAuditsFromDate(-1000L);
     }
 
+    @Test
+    public void test_audit_whenNoRidAndNoSessionUserId_usesApplicationIdAsRefId() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn(null);
+        when(mockSharedPreferences.getString(SessionManager.RID, null)).thenReturn(null);
+        when(mockSharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn(null);
+        when(mockGlobalParamRepository.getCachedStringDefaultHostName()).thenReturn("host");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostIp()).thenReturn("127.0.0.1");
+        when(mockGlobalParamRepository.getCachedStringAppId()).thenReturn("APP_ID");
+        when(mockGlobalParamRepository.getCachedStringAppName()).thenReturn("AppName");
+
+        auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, "MOD001", "LoginModule", null);
+
+        ArgumentCaptor<Audit> captor = ArgumentCaptor.forClass(Audit.class);
+        verify(mockAuditRepository).insertAudit(captor.capture());
+        assertEquals("TestApp", captor.getValue().getRefId());
+        assertEquals(AuditReferenceIdTypes.APPLICATION_ID.name(), captor.getValue().getRefIdType());
+    }
+
+    @Test
+    public void test_audit_withErrorMsg_formatsDescriptionWithColonSeparated() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("user1");
+        when(mockSharedPreferences.getString(SessionManager.RID, null)).thenReturn(null);
+        when(mockSharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("user1");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostName()).thenReturn("host");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostIp()).thenReturn("127.0.0.1");
+        when(mockGlobalParamRepository.getCachedStringAppId()).thenReturn("APP_ID");
+        when(mockGlobalParamRepository.getCachedStringAppName()).thenReturn("AppName");
+
+        auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN, "Connection failed");
+
+        ArgumentCaptor<Audit> captor = ArgumentCaptor.forClass(Audit.class);
+        verify(mockAuditRepository).insertAudit(captor.capture());
+        assertTrue(captor.getValue().getDescription().contains("Connection failed"));
+    }
+
+    @Test
+    public void test_auditWithArguments_invokesAddAuditWithRefIdAndArguments() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("user1");
+        when(mockSharedPreferences.getString(SessionManager.RID, null)).thenReturn(null);
+        when(mockSharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("user1");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostName()).thenReturn("host");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostIp()).thenReturn("127.0.0.1");
+        when(mockGlobalParamRepository.getCachedStringAppId()).thenReturn("APP_ID");
+        when(mockGlobalParamRepository.getCachedStringAppName()).thenReturn("AppName");
+
+        auditManagerService.auditWithArguments(AuditEvent.LOGIN_WITH_PASSWORD, "MOD001", "LoginModule", "arg1");
+
+        verify(mockAuditRepository).insertAudit(any(Audit.class));
+    }
+
+    @Test
+    public void test_audit_Components_overload_delegatesWithIdAndName() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("user1");
+        when(mockSharedPreferences.getString(SessionManager.RID, null)).thenReturn(null);
+        when(mockSharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("user1");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostName()).thenReturn("host");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostIp()).thenReturn("127.0.0.1");
+        when(mockGlobalParamRepository.getCachedStringAppId()).thenReturn("APP_ID");
+        when(mockGlobalParamRepository.getCachedStringAppName()).thenReturn("AppName");
+
+        auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
+
+        verify(mockAuditRepository).insertAudit(any(Audit.class));
+    }
+
+    @Test
+    public void test_addAudit_whenInsertThrows_doesNotPropagate() {
+        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        when(mockContext.getString(R.string.app_name)).thenReturn("TestApp");
+        when(mockSharedPreferences.getString(SessionManager.USER_NAME, null)).thenReturn("user1");
+        when(mockSharedPreferences.getString(SessionManager.RID, null)).thenReturn(null);
+        when(mockSharedPreferences.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("user1");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostName()).thenReturn("host");
+        when(mockGlobalParamRepository.getCachedStringDefaultHostIp()).thenReturn("127.0.0.1");
+        when(mockGlobalParamRepository.getCachedStringAppId()).thenReturn("APP_ID");
+        when(mockGlobalParamRepository.getCachedStringAppName()).thenReturn("AppName");
+        doThrow(new RuntimeException("DB full")).when(mockAuditRepository).insertAudit(any(Audit.class));
+
+        auditManagerService.audit(AuditEvent.LOGIN_WITH_PASSWORD, "MOD001", "LoginModule", null);
+
+        verify(mockAuditRepository).insertAudit(any(Audit.class));
+    }
+
 }

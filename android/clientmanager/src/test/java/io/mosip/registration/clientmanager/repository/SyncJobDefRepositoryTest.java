@@ -26,7 +26,7 @@ public class SyncJobDefRepositoryTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         syncJobDefRepository = new SyncJobDefRepository(syncJobDefDao);
     }
 
@@ -66,5 +66,70 @@ public class SyncJobDefRepositoryTest {
         assertEquals("Job One", result.get(0).getName());
         assertEquals("RC_002", result.get(1).getId());
         assertEquals("Job Two", result.get(1).getName());
+    }
+
+    @Test
+    public void testGetActiveSyncJobs() {
+        SyncJobDef activeJob = new SyncJobDef("RC_001");
+        activeJob.setName("Active Job");
+        activeJob.setIsActive(true);
+        List<SyncJobDef> activeJobs = Arrays.asList(activeJob);
+        when(syncJobDefDao.findAllByActiveStatus(true)).thenReturn(activeJobs);
+
+        List<SyncJobDef> result = syncJobDefRepository.getActiveSyncJobs();
+
+        assertEquals(1, result.size());
+        assertEquals("RC_001", result.get(0).getId());
+        assertTrue(result.get(0).getIsActive());
+        verify(syncJobDefDao).findAllByActiveStatus(true);
+    }
+
+    @Test
+    public void testGetSyncJobDefById() {
+        SyncJobDef job = new SyncJobDef("JOB_123");
+        job.setName("Test Job");
+        when(syncJobDefDao.findOneById("JOB_123")).thenReturn(job);
+
+        SyncJobDef result = syncJobDefRepository.getSyncJobDefById("JOB_123");
+
+        assertNotNull(result);
+        assertEquals("JOB_123", result.getId());
+        assertEquals("Test Job", result.getName());
+        verify(syncJobDefDao).findOneById("JOB_123");
+    }
+
+    @Test
+    public void testGetSyncJobDefById_NotFound() {
+        when(syncJobDefDao.findOneById("NON_EXISTENT")).thenReturn(null);
+
+        SyncJobDef result = syncJobDefRepository.getSyncJobDefById("NON_EXISTENT");
+
+        assertNull(result);
+        verify(syncJobDefDao).findOneById("NON_EXISTENT");
+    }
+
+    @Test
+    public void testGetSyncJobDefByApiName() {
+        SyncJobDef job = new SyncJobDef("RC_001");
+        job.setName("Config Sync");
+        job.setApiName("syncConfig");
+        when(syncJobDefDao.findOneByApiName("syncConfig")).thenReturn(job);
+
+        SyncJobDef result = syncJobDefRepository.getSyncJobDefByApiName("syncConfig");
+
+        assertNotNull(result);
+        assertEquals("RC_001", result.getId());
+        assertEquals("syncConfig", result.getApiName());
+        verify(syncJobDefDao).findOneByApiName("syncConfig");
+    }
+
+    @Test
+    public void testGetSyncJobDefByApiName_NotFound() {
+        when(syncJobDefDao.findOneByApiName("unknown")).thenReturn(null);
+
+        SyncJobDef result = syncJobDefRepository.getSyncJobDefByApiName("unknown");
+
+        assertNull(result);
+        verify(syncJobDefDao).findOneByApiName("unknown");
     }
 }

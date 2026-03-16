@@ -861,4 +861,93 @@ public class Biometrics095ServiceTest {
         assertEquals("serial123", result[1]);
     }
 
+    @Test
+    public void test_addBioDevice_putsDeviceInBioDevicesMap() {
+        DigitalId digitalId = new DigitalId();
+        digitalId.setSerialNo("SN123");
+        digitalId.setMake("Make");
+        digitalId.setModel("Model");
+        digitalId.setType("Type");
+        digitalId.setDeviceProviderId("DPID");
+        digitalId.setDeviceProvider("Provider");
+        digitalId.setDateTime("2023-01-01");
+        digitalId.setDeviceSubType("SubType");
+
+        biometrics095Service.addBioDevice(Modality.FACE, "DEVICE_CODE_1", digitalId);
+
+        assertTrue(biometrics095Service.BIO_DEVICES.containsKey(Modality.FACE));
+        @SuppressWarnings("unchecked")
+        Map<String, Object> device = (Map<String, Object>) biometrics095Service.BIO_DEVICES.get(Modality.FACE);
+        assertEquals("0.9.5", device.get("deviceServiceVersion"));
+        assertEquals("DEVICE_CODE_1", device.get("deviceCode"));
+        @SuppressWarnings("unchecked")
+        Map<String, String> digitalIdMap = (Map<String, String>) device.get("digitalId");
+        assertEquals("SN123", digitalIdMap.get("serialNo"));
+        assertEquals("Make", digitalIdMap.get("make"));
+    }
+
+    @Test
+    public void test_getRCaptureRequest_usesServerActiveProfileWhenSet() {
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_ACTIVE_PROFILE))
+                .thenReturn(" Production ");
+        when(mockGlobalParamRepository.getCachedIntCaptureTimeout()).thenReturn(5000);
+
+        CaptureRequest request = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev1", new ArrayList<>());
+
+        assertEquals("Production", request.getEnv());
+    }
+
+    @Test
+    public void test_validateJWTResponse_trustInvalid_throws() throws Exception {
+        JWTSignatureVerifyResponseDto mockResponse = new JWTSignatureVerifyResponseDto();
+        mockResponse.setSignatureValid(true);
+        mockResponse.setTrustValid("INVALID");
+
+        when(mockCryptoManagerService.jwtVerify(any(JWTSignatureVerifyRequestDto.class))).thenReturn(mockResponse);
+
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class,
+                () -> biometrics095Service.validateJWTResponse("jwt", "DEVICE"));
+        assertEquals(SBIError.SBI_CERT_PATH_TRUST_FAILED.getErrorCode(), ex.getErrorCode());
+    }
+
+    @Test
+    public void test_handleRCaptureResponse_dedupeEnabledAndNoProvider_throwsDedupeError() throws Exception {
+        CaptureRespDetail respDetail = new CaptureRespDetail();
+        respDetail.setError(null);
+        respDetail.setData("dummy-jwt");
+        respDetail.setSpecVersion("0.9.5");
+        CaptureResponse captureResponse = new CaptureResponse();
+        captureResponse.setBiometrics(Collections.singletonList(respDetail));
+
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("FINGERPRINT");
+        captureDto.setBioSubType("LEFT_INDEX");
+        captureDto.setBioValue(java.util.Base64.getUrlEncoder().encodeToString("iso-data".getBytes()));
+        captureDto.setTimestamp("2024-01-01T00:00:00Z");
+        captureDto.setQualityScore(80.0f);
+
+        Biometrics095Service spyService = Mockito.spy(biometrics095Service);
+
+        when(mockObjectMapper.readValue(any(InputStream.class), any(TypeReference.class))).thenReturn(captureResponse);
+        when(mockObjectMapper.readValue(any(byte[].class), any(TypeReference.class))).thenReturn(captureDto);
+
+        doNothing().when(spyService).validateJWTResponse(anyString(), anyString());
+        doReturn(java.util.Base64.getUrlEncoder().encodeToString("{}".getBytes()))
+                .when(spyService).getJWTPayLoad(anyString());
+        doReturn("sig").when(spyService).getJWTSignatureWithHeader(anyString());
+        doNothing().when(spyService).validateResponseTimestamp(anyString());
+
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.QUALITY_CHECK_WITH_SDK))
+                .thenReturn(RegistrationConstants.DISABLE);
+        when(mockSharedPreferences.getString(eq(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG), anyString()))
+                .thenReturn(RegistrationConstants.ENABLE);
+        when(mockBioSdkProviderFactory.getProviderForMatch(Modality.FINGERPRINT_SLAB_LEFT)).thenReturn(null);
+
+        InputStream is = new ByteArrayInputStream("dummy".getBytes());
+
+        // Just assert that a BiometricsServiceException is thrown when dedupe is enabled
+        assertThrows(BiometricsServiceException.class,
+                () -> spyService.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList()));
+    }
+
 }

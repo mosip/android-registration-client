@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.uispec.ConditionalBioAttrDto;
@@ -137,6 +138,27 @@ public class UserInterfaceHelperServiceTest {
         Map<String, Object> data = new HashMap<>();
         data.put(RegistrationConstants.AGE_GROUP, "CHILD");
         assertEquals(cond, service.getConditionalBioAttributes(dto, data));
+    }
+
+    @Test
+    public void testGetRequiredBioAttributes_ConditionalNoMatch_UsesBaseAttributes() {
+        FieldSpecDto dto = new FieldSpecDto();
+        dto.setRequired(true);
+
+        // Conditional that will not match AGE_GROUP
+        ConditionalBioAttrDto cond = new ConditionalBioAttrDto();
+        cond.setAgeGroup("ADULT");
+        cond.setBioAttributes(Arrays.asList("FINGER", "FACE"));
+        dto.setConditionalBioAttributes(Collections.singletonList(cond));
+
+        // Fallback attributes
+        dto.setBioAttributes(Arrays.asList("IRIS"));
+
+        Map<String, Object> data = new HashMap<>();
+        data.put(RegistrationConstants.AGE_GROUP, "CHILD");
+
+        List<String> result = service.getRequiredBioAttributes(dto, data);
+        assertEquals(Collections.singletonList("IRIS"), result);
     }
 
     @Test
@@ -323,6 +345,30 @@ public class UserInterfaceHelperServiceTest {
             Bitmap combined = UserInterfaceHelperService.combineBitmaps(Collections.emptyList(), missingImage);
 
             assertNotNull(combined);
+        }
+    }
+
+    @Test
+    public void testCombineBitmaps_WithNullAndNonNullImages() {
+        Bitmap missingImage = mock(Bitmap.class);
+        when(missingImage.getWidth()).thenReturn(5);
+        when(missingImage.getHeight()).thenReturn(5);
+
+        Bitmap img1 = mock(Bitmap.class);
+        when(img1.getWidth()).thenReturn(10);
+        when(img1.getHeight()).thenReturn(20);
+
+        try (MockedStatic<Bitmap> mockedBitmap = mockStatic(Bitmap.class);
+             org.mockito.MockedConstruction<Canvas> canvasConstruction = org.mockito.Mockito.mockConstruction(Canvas.class)) {
+            Bitmap combinedMock = mock(Bitmap.class);
+            mockedBitmap.when(() -> Bitmap.createBitmap(15, 20, Bitmap.Config.ARGB_8888))
+                    .thenReturn(combinedMock);
+
+            List<Bitmap> images = Arrays.asList(img1, null);
+
+            Bitmap combined = UserInterfaceHelperService.combineBitmaps(images, missingImage);
+
+            assertSame(combinedMock, combined);
         }
     }
 
