@@ -47,7 +47,7 @@ class _ExportButtonState extends State<ExportButton> {
         }else{
           await exportPacketsProvider.packetSyncAll();
         }
-        await context.read<GlobalProvider>().getAudit(
+        context.read<GlobalProvider>().getAudit(
           "REG-EXPT-PKT-001",
           "REG-MOD-103"
         );
