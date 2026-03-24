@@ -37,13 +37,20 @@ public class ApplicantValidDocRepositoryTest {
         String langCode = "en";
 
         List<String> docTypes = Arrays.asList("doc1", "doc2");
-        DocumentType langSpecificDoc = new DocumentType("doc1", langCode);
-        langSpecificDoc.setName("doc1_en");
 
         when(applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType, categoryCode))
                 .thenReturn(docTypes);
-        when(applicantValidDocumentDao.findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode)))
-                .thenReturn(langSpecificDoc);
+        when(applicantValidDocumentDao.findAllDocTypesByLanguageCode(anyString(), eq(langCode)))
+                .thenAnswer(invocation -> {
+                    String code = invocation.getArgument(0);
+                    if ("doc1".equals(code)) {
+                        return Collections.singletonList("doc1_en");
+                    }
+                    if ("doc2".equals(code)) {
+                        return Collections.singletonList("doc2_en");
+                    }
+                    return Collections.emptyList();
+                });
 
         List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
 
@@ -51,9 +58,11 @@ public class ApplicantValidDocRepositoryTest {
         assertEquals(2, result.size());
         assertEquals("doc1_en", result.get(0).getName());
         assertEquals("doc1", result.get(0).getCode());
+        assertEquals("doc2_en", result.get(1).getName());
+        assertEquals("doc2", result.get(1).getCode());
 
         verify(applicantValidDocumentDao, times(1)).findAllDocTypesByDocCategoryAndApplicantType(applicantType, categoryCode);
-        verify(applicantValidDocumentDao, times(2)).findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode));
+        verify(applicantValidDocumentDao, times(2)).findAllDocTypesByLanguageCode(anyString(), eq(langCode));
     }
 
     @Test
@@ -62,13 +71,20 @@ public class ApplicantValidDocRepositoryTest {
         String langCode = "en";
 
         List<String> docTypes = Arrays.asList("doc1", "doc2");
-        DocumentType langSpecificDoc = new DocumentType("doc1", langCode);
-        langSpecificDoc.setName("doc1_en");
 
         when(applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode))
                 .thenReturn(docTypes);
-        when(applicantValidDocumentDao.findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode)))
-                .thenReturn(langSpecificDoc);
+        when(applicantValidDocumentDao.findAllDocTypesByLanguageCode(anyString(), eq(langCode)))
+                .thenAnswer(invocation -> {
+                    String code = invocation.getArgument(0);
+                    if ("doc1".equals(code)) {
+                        return Collections.singletonList("doc1_en");
+                    }
+                    if ("doc2".equals(code)) {
+                        return Collections.singletonList("doc2_en");
+                    }
+                    return Collections.emptyList();
+                });
 
         List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(null, categoryCode, langCode);
 
@@ -76,9 +92,11 @@ public class ApplicantValidDocRepositoryTest {
         assertEquals(2, result.size());
         assertEquals("doc1_en", result.get(0).getName());
         assertEquals("doc1", result.get(0).getCode());
+        assertEquals("doc2_en", result.get(1).getName());
+        assertEquals("doc2", result.get(1).getCode());
 
         verify(applicantValidDocumentDao, times(1)).findAllDocTypesByDocCategory(categoryCode);
-        verify(applicantValidDocumentDao, times(2)).findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode));
+        verify(applicantValidDocumentDao, times(2)).findAllDocTypesByLanguageCode(anyString(), eq(langCode));
     }
 
     @Test

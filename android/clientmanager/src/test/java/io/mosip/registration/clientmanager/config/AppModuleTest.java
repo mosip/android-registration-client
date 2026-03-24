@@ -273,7 +273,7 @@ public class AppModuleTest {
     @Test
     public void testTemplateService() {
         TemplateService service = appModule.TemplateService(
-                mock(MasterDataService.class), identitySchemaRepository, globalParamRepository, documentTypeRepository
+                mock(MasterDataService.class), identitySchemaRepository, globalParamRepository
         );
         assertNotNull(service);
     }

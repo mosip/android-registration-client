@@ -132,7 +132,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           .title!;
       doc.title =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
-      initialSelectedData = context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
     myGetDocumentCategoryFuture.then((List<DocumentType?> list) {
       if (!mounted) return;
@@ -348,7 +347,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   );
   String? selected;
   String referenceNumber = "";
-  String initialSelectedData = "";
   String _selectedDocCode = "";
 
   final TextEditingController documentController =
@@ -1041,12 +1039,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                   initialValue: documentController.text,
                   onSelectedItemChanged: (label, code) {
                     saveData(label);
+                    final previousLabel = documentController.text;
                     setState(() {
                       documentController.text = label;
                       doc.title = label;
                       _selectedDocCode = code;
                     });
-                    if (initialSelectedData != documentController.text) {
+                    if (previousLabel != label) {
                       _removeDropDownChangeData(field.id!);
                     }
                   },
