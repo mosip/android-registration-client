@@ -77,7 +77,6 @@ class _CustomCupertinoDropDownPickerState
 
   int _getInitialSelectedIndex() {
     if (widget.initialValue != null && widget.snapshot.hasData) {
-      debugPrint("initail value"+widget.initialValue.toString());
       final items = widget.snapshot.data as List<dynamic>;
       final idx = items.indexWhere((item) {
         if (item is DocumentType) {
@@ -128,7 +127,6 @@ class _CustomCupertinoDropDownPickerState
         if (item == null) return;
         final label = item is DocumentType ? item.label : item.toString();
         final code = item is DocumentType ? item.code : item.toString();
-        debugPrint("selected label==>$label code==>$code");
         widget.onSelectedItemChanged(label, code);
       },
       itemBuilder: (context, index) {
