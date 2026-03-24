@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.repository;
 
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.entity.ApplicantValidDocument;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,9 +20,9 @@ public class ApplicantValidDocRepository {
         this.applicantValidDocumentDao = applicantValidDocumentDao;
     }
 
-    public List<String> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
+    public List<DocumentType> getDocumentTypes(String applicantType, String categoryCode, String langCode) {
         List<String> docTypeList;
-        ArrayList<String> documentList = new ArrayList<>();
+        ArrayList<DocumentType> documentList = new ArrayList<>();
         if (applicantType == null) {
             docTypeList = this.applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode);
         }else {
@@ -32,7 +33,9 @@ public class ApplicantValidDocRepository {
             if(v!=null) {
                 List<String> docListByLang = this.applicantValidDocumentDao.findAllDocTypesByLanguageCode(v, langCode);
                 if (docListByLang != null && !docListByLang.isEmpty()) {
-                    documentList.add(docListByLang.get(0));
+                    DocumentType documentType = new DocumentType(v, langCode);
+                    documentType.setName(docListByLang.get(0));
+                    documentList.add(documentType);
                 }
             }
         });

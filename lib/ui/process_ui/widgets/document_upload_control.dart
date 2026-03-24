@@ -22,6 +22,7 @@ import 'package:registration_client/ui/scanner/preview_screen.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 import '../../../model/field.dart';
+import '../../../pigeon/document_category_pigeon.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
 
@@ -37,7 +38,7 @@ class DocumentUploadControl extends StatefulWidget {
 }
 
 class _DocumentUploadControlState extends State<DocumentUploadControl> {
-  late Future<List<String?>> myGetDocumentCategoryFuture;
+  late Future<List<DocumentType?>> myGetDocumentCategoryFuture;
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
   Map<String, String> transliterationLangMapper = {};
@@ -133,6 +134,17 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
       initialSelectedData = context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
+    myGetDocumentCategoryFuture.then((List<DocumentType?> list) {
+      if (!mounted) return;
+      final label = documentController.text;
+      if (label.isEmpty) return;
+      for (final docType in list) {
+        if (docType != null && docType.label == label) {
+          setState(() => _selectedDocCode = docType.code);
+          break;
+        }
+      }
+    });
     super.initState();
   }
 
@@ -217,7 +229,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   _getAddDocumentProvider(Field e, Uint8List myBytes, String referenceNumber) {
     context
         .read<RegistrationTaskProvider>()
-        .addDocument(e.id!, documentController.text, referenceNumber, myBytes);
+        .addDocument(e.id!, _selectedDocCode, referenceNumber, myBytes);
   }
 
   Future<void> addDocument(var item, Field e, String referenceNumber) async {
@@ -337,6 +349,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   String? selected;
   String referenceNumber = "";
   String initialSelectedData = "";
+  String _selectedDocCode = "";
 
   final TextEditingController documentController =
       TextEditingController(text: "");
@@ -355,7 +368,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     }
   }
 
-  Future<List<String?>> _getDocumentType(
+  Future<List<DocumentType?>> _getDocumentType(
       String categoryCode, String langCode, List<String> languages) async {
     return await context
         .read<RegistrationTaskProvider>()
@@ -405,7 +418,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     FutureBuilder(
                         future: myGetDocumentCategoryFuture,
                         builder: (BuildContext context,
-                            AsyncSnapshot<List<String?>> snapshot) {
+                            AsyncSnapshot<List<DocumentType?>> snapshot) {
                           return Card(
                             elevation: 0,
                             margin: EdgeInsets.symmetric(horizontal: 12.w),
@@ -662,7 +675,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                             child: FutureBuilder(
                                 future: myGetDocumentCategoryFuture,
                                 builder: (BuildContext context,
-                                    AsyncSnapshot<List<String?>> snapshot) {
+                                    AsyncSnapshot<List<DocumentType?>> snapshot) {
                                   return Card(
                                     elevation: 0,
                                     margin: EdgeInsets.symmetric(
@@ -957,6 +970,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                         setState(() {
                           documentController.clear();
                           doc.title = "";
+                          _selectedDocCode = "";
                         });
                         Navigator.of(context).pop();
                       },
@@ -1025,13 +1039,14 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                     fontSize: 21,
                   ),
                   initialValue: documentController.text,
-                  onSelectedItemChanged: (selectedItem)  {
-                    saveData(selectedItem);
+                  onSelectedItemChanged: (label, code) {
+                    saveData(label);
                     setState(() {
-                      documentController.text = selectedItem;
-                      doc.title = selectedItem;
+                      documentController.text = label;
+                      doc.title = label;
+                      _selectedDocCode = code;
                     });
-                    if(initialSelectedData != documentController.text) {
+                    if (initialSelectedData != documentController.text) {
                       _removeDropDownChangeData(field.id!);
                     }
                   },

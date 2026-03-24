@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.mosip.registration.clientmanager.dao.FileSignatureDao;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -86,35 +87,60 @@ public class DocumentCategoryApi implements DocumentCategoryPigeon.DocumentCateg
     }
 
     @Override
-    public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode,
-            @NonNull List<String> languages, @NonNull DocumentCategoryPigeon.Result<List<String>> result) {
-        List<String> documentCategory = new ArrayList<>();
+    public void getDocumentCategories(@NonNull String categoryCode, @NonNull String langCode, @NonNull List<String> languages, @NonNull DocumentCategoryPigeon.Result<List<DocumentCategoryPigeon.DocumentType>> result) {
+        List<DocumentCategoryPigeon.DocumentType> documentTypeList = new ArrayList<>();
         try {
             Map<String, Object> dataContext = this.registrationService.getRegistrationDto().getMVELDataContext();
             String applicantTypeCode = this
                     .evaluateMvelScript((String) this.globalParamRepository.getCachedStringMAVELScript(), dataContext);
             Log.i(getClass().getSimpleName(), "applicantType: " + applicantTypeCode);
+            List<DocumentType> docsInSelectedLang = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
+            docsInSelectedLang = docsInSelectedLang != null ? docsInSelectedLang : Collections.emptyList();
+            final List<DocumentType> docsInSelectedLangFinal = docsInSelectedLang;
             if (languages.size() <= 1) {
-                List<String> docs = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, langCode);
-                documentCategory = docs != null ? docs : Collections.emptyList();
-            } else {
-                List<List<String>> docsPerLang = languages.stream()
-                        .map(l -> this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, l))
-                        .map(d -> d != null ? d : Collections.<String>emptyList())
-                        .collect(Collectors.toList());
+                docsInSelectedLang.forEach(doc -> {
+                    if (doc != null && doc.getCode() != null && doc.getName() != null) {
+                        documentTypeList.add(new DocumentCategoryPigeon.DocumentType.Builder()
+                                .setCode(doc.getCode())
+                                .setLabel(doc.getName())
+                                .build());
+                    }
+                });
+                result.success(documentTypeList);
+                return;
+            }
 
-                documentCategory = IntStream.range(0, docsPerLang.stream().mapToInt(List::size).max().orElse(0))
-                        .mapToObj(i -> docsPerLang.stream()
-                                .filter(l -> i < l.size())
-                                .map(l -> l.get(i))
-                                .collect(Collectors.joining(" / ")))
-                        .filter(s -> !s.isEmpty())
-                        .collect(Collectors.toList());
+            List<List<DocumentType>> docsPerLang = languages.stream()
+                    .map(language -> {
+                        if (langCode.equals(language)) {
+                            return docsInSelectedLangFinal;
+                        }
+                        List<DocumentType> docs = this.masterDataService.getDocumentTypes(categoryCode, applicantTypeCode, language);
+                        return docs != null ? docs : Collections.<DocumentType>emptyList();
+                    })
+                    .collect(Collectors.toList());
+
+            List<String> labels = IntStream.range(0, docsPerLang.stream().mapToInt(List::size).max().orElse(0))
+                    .mapToObj(i -> docsPerLang.stream()
+                            .filter(l -> i < l.size())
+                            .map(l -> l.get(i).getName())
+                            .collect(Collectors.joining(" / ")))
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+
+            for (int i = 0; i < labels.size(); i++) {
+                String code = (i < docsInSelectedLang.size() && docsInSelectedLang.get(i) != null
+                        && docsInSelectedLang.get(i).getCode() != null)
+                        ? docsInSelectedLang.get(i).getCode() : labels.get(i);
+                documentTypeList.add(new DocumentCategoryPigeon.DocumentType.Builder()
+                        .setCode(code)
+                        .setLabel(labels.get(i))
+                        .build());
             }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
         }
-        result.success(documentCategory);
+        result.success(documentTypeList);
     }
 
     @Override

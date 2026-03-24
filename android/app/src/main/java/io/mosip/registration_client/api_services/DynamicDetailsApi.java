@@ -38,6 +38,7 @@ import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
@@ -45,7 +46,6 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.packetmanager.dto.PacketWriter.DocumentType;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
@@ -160,7 +160,14 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
 
         List<String> documentResponse = new ArrayList<>();
         try {
-            documentResponse = this.masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+            List<DocumentType> documentTypes = this.masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+            if (documentTypes != null) {
+                for (DocumentType documentType : documentTypes) {
+                    if (documentType != null && documentType.getName() != null) {
+                        documentResponse.add(documentType.getName());
+                    }
+                }
+            }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
         }

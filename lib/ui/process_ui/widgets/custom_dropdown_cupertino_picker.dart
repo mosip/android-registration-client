@@ -7,6 +7,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:registration_client/pigeon/document_category_pigeon.dart';
 import 'package:registration_client/utils/app_config.dart';
 
 class CustomCupertinoDropDownPicker extends StatefulWidget {
@@ -20,7 +21,7 @@ class CustomCupertinoDropDownPicker extends StatefulWidget {
   final double magnification;
   final double squeeze;
   final String? initialValue;
-  final void Function(String) onSelectedItemChanged;
+  final void Function(String label, String code) onSelectedItemChanged;
   final TextStyle? selectedStyle;
   final TextStyle? unselectedStyle;
 
@@ -59,14 +60,32 @@ class _CustomCupertinoDropDownPickerState
         FixedExtentScrollController(initialItem: _selectedIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpToItem(_selectedIndex);
+      if (widget.snapshot.hasData) {
+        final items = widget.snapshot.data as List<dynamic>;
+        if (items.length == 1) {
+          final item = items[0];
+          if (item != null) {
+            final label =
+                item is DocumentType ? item.label : item.toString();
+            final code = item is DocumentType ? item.code : item.toString();
+            widget.onSelectedItemChanged(label, code);
+          }
+        }
+      }
     });
   }
 
   int _getInitialSelectedIndex() {
     if (widget.initialValue != null && widget.snapshot.hasData) {
-      List<String> items =
-      (widget.snapshot.data as List<dynamic>).whereType<String>().toList();
-      return items.indexOf(widget.initialValue!);
+      debugPrint("initail value"+widget.initialValue.toString());
+      final items = widget.snapshot.data as List<dynamic>;
+      final idx = items.indexWhere((item) {
+        if (item is DocumentType) {
+          return item.label == widget.initialValue;
+        }
+        return item.toString() == widget.initialValue;
+      });
+      return idx >= 0 ? idx : 0;
     }
     return 0;
   }
@@ -90,9 +109,7 @@ class _CustomCupertinoDropDownPickerState
       return const Center(child: Text("No data available"));
     }
 
-    // Convert data to List<String> to avoid type mismatch
-    List<String> items =
-    (widget.snapshot.data as List<dynamic>).whereType<String>().toList();
+    final List<dynamic> items = widget.snapshot.data as List<dynamic>;
 
     return CupertinoPicker.builder(
       childCount: items.length,
@@ -107,23 +124,35 @@ class _CustomCupertinoDropDownPickerState
       selectionOverlay: widget.selectionOverlay,
       onSelectedItemChanged: (index) {
         setState(() => _selectedIndex = index);
-        widget.onSelectedItemChanged(items[index]);
+        final item = items[index];
+        if (item == null) return;
+        final label = item is DocumentType ? item.label : item.toString();
+        final code = item is DocumentType ? item.code : item.toString();
+        debugPrint("selected label==>$label code==>$code");
+        widget.onSelectedItemChanged(label, code);
       },
-      itemBuilder: (context, index) => ListTile(
-        title: Center(
-          child: Text(
-            items[index],
-            style: index == _selectedIndex
-                ? widget.selectedStyle
-                : widget.unselectedStyle,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        final displayText = item == null
+            ? ''
+            : (item is DocumentType ? item.label : item.toString());
+        return ListTile(
+          title: Center(
+            child: Text(
+              displayText,
+              style: index == _selectedIndex
+                  ? widget.selectedStyle
+                  : widget.unselectedStyle,
+            ),
           ),
-        ),
-        trailing: Icon(
-          Icons.check,
-          size: 28,
-          color: index == _selectedIndex ? dropDownSelector : Colors.white,
-        ),
-      ),
+          trailing: Icon(
+            Icons.check,
+            size: 28,
+            color: index == _selectedIndex ? dropDownSelector : Colors.white,
+          ),
+        );
+      },
     );
   }
 }
+

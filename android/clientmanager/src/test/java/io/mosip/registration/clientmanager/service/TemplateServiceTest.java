@@ -13,6 +13,8 @@ import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.entity.DocumentType;
+import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -46,6 +48,8 @@ public class TemplateServiceTest {
     @Mock
     private GlobalParamRepository globalParamRepository;
     @Mock
+    private DocumentTypeRepository documentTypeRepository;
+    @Mock
     private SharedPreferences sharedPreferences;
     @Mock
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -75,7 +79,7 @@ public class TemplateServiceTest {
         when(context.getString(R.string.double_iris)).thenReturn("Iris");
         when(context.getString(R.string.face_label)).thenReturn("Face");
 
-        templateService = new TemplateService(context, masterDataService, identitySchemaRepository, globalParamRepository);
+        templateService = new TemplateService(context, masterDataService, identitySchemaRepository, globalParamRepository, documentTypeRepository);
     }
 
     /**
@@ -269,7 +273,7 @@ public class TemplateServiceTest {
     public void testGetImage_returnsEmptyOnException() {
         Context mockContext = mock(Context.class);
         when(mockContext.getResources()).thenThrow(new RuntimeException("No resources"));
-        TemplateService ts = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository);
+        TemplateService ts = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository, documentTypeRepository);
         String result = ReflectionTestUtils.invokeMethod(ts, "getImage", 123);
         assertEquals("", result);
     }
@@ -415,11 +419,14 @@ public class TemplateServiceTest {
         docs.put("doc1", doc);
         when(registrationDto.getDocuments()).thenReturn(docs);
         when(registrationDto.getSelectedLanguages()).thenReturn(Collections.singletonList("en"));
+        DocumentType documentType = new DocumentType("passport", "en");
+        documentType.setName("Passport");
+        when(documentTypeRepository.getDocumentType("passport", "en")).thenReturn(documentType);
         VelocityContext velocityContext = new VelocityContext();
         Map<String, Object> data = ReflectionTestUtils.invokeMethod(templateService, "getDocumentData", field, registrationDto, velocityContext);
         assertNotNull(data);
         assertEquals("DocLabel", data.get("label"));
-        assertEquals("passport", data.get("value"));
+        assertEquals("Passport", data.get("value"));
     }
 
     /**
@@ -509,7 +516,7 @@ public class TemplateServiceTest {
     public void testGetImage_decodeResourceNull() {
         Context mockContext = mock(Context.class);
         when(mockContext.getResources()).thenReturn(null);
-        TemplateService ts = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository);
+        TemplateService ts = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository, documentTypeRepository);
         String result = ReflectionTestUtils.invokeMethod(ts, "getImage", 123);
         assertEquals("", result);
     }
@@ -710,7 +717,7 @@ public class TemplateServiceTest {
         try (MockedStatic<BitmapFactory> bitmapFactoryMock = mockStatic(BitmapFactory.class)) {
             bitmapFactoryMock.when(() -> BitmapFactory.decodeResource(any(), anyInt())).thenReturn(mockBitmap);
             when(mockBitmap.compress(any(), anyInt(), any(ByteArrayOutputStream.class))).thenThrow(new RuntimeException("fail"));
-            TemplateService ts = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository);
+            TemplateService ts = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository, documentTypeRepository);
             String result = ReflectionTestUtils.invokeMethod(ts, "getImage", 123);
             assertEquals("", result);
         }

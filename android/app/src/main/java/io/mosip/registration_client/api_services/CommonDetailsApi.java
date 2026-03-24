@@ -20,6 +20,7 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 
 @Singleton
@@ -48,8 +49,16 @@ public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
 
     @Override
     public void getDocumentTypes(@NonNull String categoryCode, @NonNull String applicantType, @NonNull String langCode, @NonNull CommonDetailsPigeon.Result<List<String>> result) {
-     List<String> response=masterDataService.getDocumentTypes(categoryCode,applicantType,langCode);
-     result.success(response);
+        List<String> response = new ArrayList<>();
+        List<DocumentType> documentTypes = masterDataService.getDocumentTypes(categoryCode,applicantType,langCode);
+        if (documentTypes != null) {
+            documentTypes.forEach((value) -> {
+                if (value != null && value.getName() != null) {
+                    response.add(value.getName());
+                }
+            });
+        }
+        result.success(response);
     }
 
     @Override

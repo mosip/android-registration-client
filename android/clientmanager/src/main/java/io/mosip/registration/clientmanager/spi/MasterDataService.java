@@ -4,6 +4,7 @@ import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.ReasonListDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 
@@ -121,7 +122,7 @@ public interface MasterDataService {
      * @param langCode
      * @return
      */
-    List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode);
+    List<DocumentType> getDocumentTypes(String categoryCode, String applicantType, String langCode);
 
     /**
      * @param templateName

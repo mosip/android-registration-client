@@ -479,11 +479,15 @@ public class MasterDataServiceImplTest {
         String applicantType = "ADULT";
         String langCode = "eng";
 
-        List<String> expectedDocTypes = Arrays.asList("Passport", "Driving License");
+        DocumentType doc1 = new DocumentType("DOC1", langCode);
+        doc1.setName("Passport");
+        DocumentType doc2 = new DocumentType("DOC2", langCode);
+        doc2.setName("Driving License");
+        List<DocumentType> expectedDocTypes = Arrays.asList(doc1, doc2);
         when(mockApplicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode))
                 .thenReturn(expectedDocTypes);
 
-        List<String> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+        List<DocumentType> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
 
         assertEquals(expectedDocTypes, actualDocTypes);
         verify(mockApplicantValidDocRepository).getDocumentTypes(applicantType, categoryCode, langCode);
@@ -498,11 +502,17 @@ public class MasterDataServiceImplTest {
         String applicantType = null;
         String langCode = "eng";
 
-        List<String> expectedDocTypes = Arrays.asList("Passport", "Driving License", "National ID");
+        DocumentType doc1 = new DocumentType("DOC1", langCode);
+        doc1.setName("Passport");
+        DocumentType doc2 = new DocumentType("DOC2", langCode);
+        doc2.setName("Driving License");
+        DocumentType doc3 = new DocumentType("DOC3", langCode);
+        doc3.setName("National ID");
+        List<DocumentType> expectedDocTypes = Arrays.asList(doc1, doc2, doc3);
         when(mockApplicantValidDocRepository.getDocumentTypes(null, categoryCode, langCode))
                 .thenReturn(expectedDocTypes);
 
-        List<String> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+        List<DocumentType> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
 
         assertEquals(expectedDocTypes, actualDocTypes);
         verify(mockApplicantValidDocRepository).getDocumentTypes(null, categoryCode, langCode);

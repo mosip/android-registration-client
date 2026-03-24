@@ -295,8 +295,9 @@ public class AppModule {
 
     @Provides
     @Singleton
-    TemplateService TemplateService(MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository, GlobalParamRepository globalParamRepository) {
-        return new TemplateService(appContext, masterDataService, identitySchemaRepository, globalParamRepository);
+    TemplateService TemplateService(MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository,
+                                    GlobalParamRepository globalParamRepository, DocumentTypeRepository documentTypeRepository) {
+        return new TemplateService(appContext, masterDataService, identitySchemaRepository, globalParamRepository, documentTypeRepository);
     }
 
     @Provides

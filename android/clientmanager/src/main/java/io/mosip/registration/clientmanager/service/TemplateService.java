@@ -40,8 +40,11 @@ import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
+import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.entity.DocumentType;
+import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -65,15 +68,18 @@ public class TemplateService {
     SharedPreferences sharedPreferences;
 
     MasterDataService masterDataService;
+    DocumentTypeRepository documentTypeRepository;
 
     IdentitySchemaRepository identitySchemaRepository;
     GlobalParamRepository globalParamRepository;
 
-    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository, GlobalParamRepository globalParamRepository) {
+    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository,
+                           GlobalParamRepository globalParamRepository, DocumentTypeRepository documentTypeRepository) {
         this.appContext = appContext;
         this.masterDataService = masterDataService;
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaRepository = identitySchemaRepository;
+        this.documentTypeRepository = documentTypeRepository;
         sharedPreferences = this.appContext.getSharedPreferences(
                 this.appContext.getString(R.string.app_name),
                 Context.MODE_PRIVATE);
@@ -506,13 +512,30 @@ public class TemplateService {
     }
 
     private Map<String, Object> getDocumentData(FieldSpecDto field, RegistrationDto registrationDto, VelocityContext velocityContext) {
-        Map<String, Object> data = null;
-        if (registrationDto.getDocuments().get(field.getId()) != null) {
-            data = new HashMap<>();
-            data.put(LABEL_KEY, getFieldLabel(field, registrationDto));
-            data.put("value", registrationDto.getDocuments().get(field.getId()).getType());
+        DocumentDto document = registrationDto.getDocuments().get(field.getId());
+        if (document == null) {
+            return null;
         }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put(LABEL_KEY, getFieldLabel(field, registrationDto));
+        data.put("value", getDocumentDisplayValue(document.getType(), registrationDto.getSelectedLanguages()));
         return data;
+    }
+
+    private String getDocumentDisplayValue(String documentCode, List<String> selectedLanguages) {
+        if (documentCode == null || selectedLanguages == null || selectedLanguages.isEmpty()) {
+            return documentCode;
+        }
+
+        List<String> labels = selectedLanguages.stream()
+                .map(language -> {
+                    DocumentType docType = documentTypeRepository.getDocumentType(documentCode, language);
+                    return (docType != null && docType.getName() != null) ? docType.getName() : documentCode;
+                })
+                .collect(Collectors.toList());
+
+        return String.join(SLASH, labels);
     }
 
 }

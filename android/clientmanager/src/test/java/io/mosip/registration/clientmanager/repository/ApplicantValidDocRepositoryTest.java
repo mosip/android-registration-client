@@ -2,6 +2,7 @@ package io.mosip.registration.clientmanager.repository;
 
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
 import io.mosip.registration.clientmanager.entity.ApplicantValidDocument;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -36,21 +37,23 @@ public class ApplicantValidDocRepositoryTest {
         String langCode = "en";
 
         List<String> docTypes = Arrays.asList("doc1", "doc2");
-        List<String> langSpecificDocs = Arrays.asList("doc1_en");
+        DocumentType langSpecificDoc = new DocumentType("doc1", langCode);
+        langSpecificDoc.setName("doc1_en");
 
         when(applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType, categoryCode))
                 .thenReturn(docTypes);
-        when(applicantValidDocumentDao.findAllDocTypesByLanguageCode(anyString(), eq(langCode)))
-                .thenReturn(langSpecificDocs);
+        when(applicantValidDocumentDao.findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode)))
+                .thenReturn(langSpecificDoc);
 
-        List<String> result = applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
+        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals("doc1_en", result.get(0));
+        assertEquals("doc1_en", result.get(0).getName());
+        assertEquals("doc1", result.get(0).getCode());
 
         verify(applicantValidDocumentDao, times(1)).findAllDocTypesByDocCategoryAndApplicantType(applicantType, categoryCode);
-        verify(applicantValidDocumentDao, times(2)).findAllDocTypesByLanguageCode(anyString(), eq(langCode));
+        verify(applicantValidDocumentDao, times(2)).findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode));
     }
 
     @Test
@@ -59,21 +62,23 @@ public class ApplicantValidDocRepositoryTest {
         String langCode = "en";
 
         List<String> docTypes = Arrays.asList("doc1", "doc2");
-        List<String> langSpecificDocs = Arrays.asList("doc1_en");
+        DocumentType langSpecificDoc = new DocumentType("doc1", langCode);
+        langSpecificDoc.setName("doc1_en");
 
         when(applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode))
                 .thenReturn(docTypes);
-        when(applicantValidDocumentDao.findAllDocTypesByLanguageCode(anyString(), eq(langCode)))
-                .thenReturn(langSpecificDocs);
+        when(applicantValidDocumentDao.findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode)))
+                .thenReturn(langSpecificDoc);
 
-        List<String> result = applicantValidDocRepository.getDocumentTypes(null, categoryCode, langCode);
+        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(null, categoryCode, langCode);
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals("doc1_en", result.get(0));
+        assertEquals("doc1_en", result.get(0).getName());
+        assertEquals("doc1", result.get(0).getCode());
 
         verify(applicantValidDocumentDao, times(1)).findAllDocTypesByDocCategory(categoryCode);
-        verify(applicantValidDocumentDao, times(2)).findAllDocTypesByLanguageCode(anyString(), eq(langCode));
+        verify(applicantValidDocumentDao, times(2)).findDocTypeByCodeAndLanguageCode(anyString(), eq(langCode));
     }
 
     @Test
@@ -81,7 +86,7 @@ public class ApplicantValidDocRepositoryTest {
         when(applicantValidDocumentDao.findAllDocTypesByDocCategory(anyString()))
                 .thenReturn(Collections.emptyList());
 
-        List<String> result = applicantValidDocRepository.getDocumentTypes(null, "POA", "en");
+        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(null, "POA", "en");
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
