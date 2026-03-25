@@ -478,19 +478,20 @@ public class MasterDataServiceImplTest {
         String categoryCode = "POI";
         String applicantType = "ADULT";
         String langCode = "eng";
+        List<String> langCodes = Collections.singletonList(langCode);
 
         DocumentType doc1 = new DocumentType("DOC1", langCode);
         doc1.setName("Passport");
         DocumentType doc2 = new DocumentType("DOC2", langCode);
         doc2.setName("Driving License");
         List<DocumentType> expectedDocTypes = Arrays.asList(doc1, doc2);
-        when(mockApplicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode))
+        when(mockApplicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCodes))
                 .thenReturn(expectedDocTypes);
 
-        List<DocumentType> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+        List<DocumentType> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCodes);
 
         assertEquals(expectedDocTypes, actualDocTypes);
-        verify(mockApplicantValidDocRepository).getDocumentTypes(applicantType, categoryCode, langCode);
+        verify(mockApplicantValidDocRepository).getDocumentTypes(applicantType, categoryCode, langCodes);
     }
 
     /**
@@ -501,6 +502,7 @@ public class MasterDataServiceImplTest {
         String categoryCode = "POI";
         String applicantType = null;
         String langCode = "eng";
+        List<String> langCodes = Collections.singletonList(langCode);
 
         DocumentType doc1 = new DocumentType("DOC1", langCode);
         doc1.setName("Passport");
@@ -509,13 +511,13 @@ public class MasterDataServiceImplTest {
         DocumentType doc3 = new DocumentType("DOC3", langCode);
         doc3.setName("National ID");
         List<DocumentType> expectedDocTypes = Arrays.asList(doc1, doc2, doc3);
-        when(mockApplicantValidDocRepository.getDocumentTypes(null, categoryCode, langCode))
+        when(mockApplicantValidDocRepository.getDocumentTypes(null, categoryCode, langCodes))
                 .thenReturn(expectedDocTypes);
 
-        List<DocumentType> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
+        List<DocumentType> actualDocTypes = masterDataService.getDocumentTypes(categoryCode, applicantType, langCodes);
 
         assertEquals(expectedDocTypes, actualDocTypes);
-        verify(mockApplicantValidDocRepository).getDocumentTypes(null, categoryCode, langCode);
+        verify(mockApplicantValidDocRepository).getDocumentTypes(null, categoryCode, langCodes);
     }
 
     /**

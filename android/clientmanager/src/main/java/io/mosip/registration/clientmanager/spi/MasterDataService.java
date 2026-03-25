@@ -115,14 +115,13 @@ public interface MasterDataService {
      */
     List<GenericValueDto> findLocationByCode(String code);
 
-
     /**
      * @param categoryCode
      * @param applicantType
-     * @param langCode
+     * @param langCodes
      * @return
      */
-    List<DocumentType> getDocumentTypes(String categoryCode, String applicantType, String langCode);
+    List<DocumentType> getDocumentTypes(String categoryCode, String applicantType, List<String> langCodes);
 
     /**
      * @param templateName

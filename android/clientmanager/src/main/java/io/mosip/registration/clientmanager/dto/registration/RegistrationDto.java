@@ -222,7 +222,7 @@ public class RegistrationDto extends Observable {
         this.consentDto = new ConsentDto(consentText, LocalDateTime.now(ZoneOffset.UTC));
     }
 
-    public void addDocument(String fieldId, String docType, String format,String reference, byte[] bytes) {
+    public void addDocument(String fieldId, String docType, String value, String format,String reference, byte[] bytes) {
         if( docType != null && bytes != null ) {
             DocumentDto documentDto = this.documents.getOrDefault(fieldId, new DocumentDto());
             documentDto.setType(docType);
@@ -231,6 +231,7 @@ public class RegistrationDto extends Observable {
             }else{
                 documentDto.setFormat("pdf");
             }
+            documentDto.setValue(value);
             documentDto.setRefNumber(reference);
             documentDto.getContent().add(bytes);
             this.documents.put(fieldId, documentDto);

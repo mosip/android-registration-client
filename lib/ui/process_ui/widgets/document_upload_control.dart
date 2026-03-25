@@ -228,7 +228,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   _getAddDocumentProvider(Field e, Uint8List myBytes, String referenceNumber) {
     context
         .read<RegistrationTaskProvider>()
-        .addDocument(e.id!, _selectedDocCode, referenceNumber, myBytes);
+        .addDocument(e.id!, _selectedDocCode,documentController.text, referenceNumber, myBytes);
   }
 
   Future<void> addDocument(var item, Field e, String referenceNumber) async {

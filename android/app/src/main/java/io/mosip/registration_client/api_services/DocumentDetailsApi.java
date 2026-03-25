@@ -37,11 +37,10 @@ public class DocumentDetailsApi implements DocumentDataPigeon.DocumentApi {
         this.globalParamRepository = globalParamRepository;
     }
 
-
     @Override
-    public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String reference, @NonNull byte[] bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
+    public void addDocument(@NonNull String fieldId, @NonNull String docType, @NonNull String value, @NonNull String reference, @NonNull byte[] bytes, @NonNull DocumentDataPigeon.Result<Void> result) {
         try {
-            this.registrationService.getRegistrationDto().addDocument(fieldId, docType, globalParamRepository.getCachedStringDocType(), reference, bytes);
+            this.registrationService.getRegistrationDto().addDocument(fieldId, docType, value, globalParamRepository.getCachedStringDocType(), reference, bytes);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Add Document failed!" + Arrays.toString(e.getStackTrace()));
         }

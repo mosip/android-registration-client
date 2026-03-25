@@ -1050,8 +1050,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public List<DocumentType> getDocumentTypes(String categoryCode, String applicantType, String langCode) {
-        return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
+    public List<DocumentType> getDocumentTypes(String categoryCode, String applicantType, List<String> langCodes) {
+        return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCodes);
     }
 
     @Override

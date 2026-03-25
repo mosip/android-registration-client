@@ -48,20 +48,6 @@ public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
     }
 
     @Override
-    public void getDocumentTypes(@NonNull String categoryCode, @NonNull String applicantType, @NonNull String langCode, @NonNull CommonDetailsPigeon.Result<List<String>> result) {
-        List<String> response = new ArrayList<>();
-        List<DocumentType> documentTypes = masterDataService.getDocumentTypes(categoryCode,applicantType,langCode);
-        if (documentTypes != null) {
-            documentTypes.forEach((value) -> {
-                if (value != null && value.getName() != null) {
-                    response.add(value.getName());
-                }
-            });
-        }
-        result.success(response);
-    }
-
-    @Override
     public void getFieldValues(@NonNull String fieldName, @NonNull String langCode, @NonNull CommonDetailsPigeon.Result<List<String>> result) {
       List<GenericValueDto> output=masterDataService.getFieldValues(fieldName,langCode);
       List<String> response=new ArrayList<>();

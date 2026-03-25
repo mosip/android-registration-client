@@ -156,26 +156,6 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
     }
 
     @Override
-    public void getDocumentValues(@NonNull String categoryCode, String applicantType, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<String>> result) {
-
-        List<String> documentResponse = new ArrayList<>();
-        try {
-            List<DocumentType> documentTypes = this.masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
-            if (documentTypes != null) {
-                for (DocumentType documentType : documentTypes) {
-                    if (documentType != null && documentType.getName() != null) {
-                        documentResponse.add(documentType.getName());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
-        }
-        result.success(documentResponse);
-
-    }
-
-    @Override
     public void getLocationValuesBasedOnParent(@Nullable String parentCode, @NonNull String hierarchyLevelName, @NonNull String langCode, @NonNull List<String> languages, @NonNull DynamicResponsePigeon.Result<List<DynamicResponsePigeon.GenericData>> result) {
         List<DynamicResponsePigeon.GenericData> locationList = new ArrayList<>();
         int numberOfLanguages = languages.size();

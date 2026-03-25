@@ -7,8 +7,6 @@ import org.json.JSONObject;
 
 import javax.inject.Inject;
 
-import java.util.List;
-
 public class DocumentTypeRepository {
 
     private DocumentTypeDao documentTypeDao;
@@ -25,14 +23,5 @@ public class DocumentTypeRepository {
         documentType.setDescription(typeJson.getString("description"));
         documentType.setIsDeleted(typeJson.optBoolean("isDeleted"));
         documentTypeDao.insert(documentType);
-    }
-
-    public DocumentType getDocumentType(String code, String langCode) {
-        DocumentType localizedType = documentTypeDao.findByCodeAndLangCode(code, langCode);
-        if (localizedType != null) {
-            return localizedType;
-        }
-        List<DocumentType> fallbackList = documentTypeDao.findByCode(code);
-        return fallbackList == null || fallbackList.isEmpty() ? null : fallbackList.get(0);
     }
 }

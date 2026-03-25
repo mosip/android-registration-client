@@ -14,9 +14,6 @@ public interface DocumentTypeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(DocumentType documentType);
 
-    @Query("select * from document_type where code=:code and lang_code=:langCode limit 1")
-    DocumentType findByCodeAndLangCode(String code, String langCode);
-
-    @Query("select * from document_type where code=:code limit 1")
-    List<DocumentType> findByCode(String code);
+    @Query("select * from document_type where code in (:codes) and lang_code in (:langCodes)")
+    List<DocumentType> findDocumentTypesByCodesAndLangCodes(List<String> codes, List<String> langCodes);
 }

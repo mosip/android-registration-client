@@ -1,6 +1,7 @@
 package io.mosip.registration.clientmanager.repository;
 
 import io.mosip.registration.clientmanager.dao.ApplicantValidDocumentDao;
+import io.mosip.registration.clientmanager.dao.DocumentTypeDao;
 import io.mosip.registration.clientmanager.entity.ApplicantValidDocument;
 import io.mosip.registration.clientmanager.entity.DocumentType;
 import org.json.JSONException;
@@ -22,12 +23,16 @@ public class ApplicantValidDocRepositoryTest {
     @Mock
     private ApplicantValidDocumentDao applicantValidDocumentDao;
 
+    @Mock
+    private DocumentTypeDao documentTypeDao;
+
     private ApplicantValidDocRepository applicantValidDocRepository;
 
     @Before
     public void setUp() {
         applicantValidDocumentDao = mock(ApplicantValidDocumentDao.class);
-        applicantValidDocRepository = new ApplicantValidDocRepository(applicantValidDocumentDao);
+        documentTypeDao = mock(DocumentTypeDao.class);
+        applicantValidDocRepository = new ApplicantValidDocRepository(applicantValidDocumentDao, documentTypeDao);
     }
 
     @Test
@@ -35,24 +40,22 @@ public class ApplicantValidDocRepositoryTest {
         String applicantType = "004";
         String categoryCode = "POA";
         String langCode = "en";
-
+        List<String> langCodes = Collections.singletonList(langCode);
         List<String> docTypes = Arrays.asList("doc1", "doc2");
 
         when(applicantValidDocumentDao.findAllDocTypesByDocCategoryAndApplicantType(applicantType, categoryCode))
                 .thenReturn(docTypes);
-        when(applicantValidDocumentDao.findAllDocTypesByLanguageCode(anyString(), eq(langCode)))
-                .thenAnswer(invocation -> {
-                    String code = invocation.getArgument(0);
-                    if ("doc1".equals(code)) {
-                        return Collections.singletonList("doc1_en");
-                    }
-                    if ("doc2".equals(code)) {
-                        return Collections.singletonList("doc2_en");
-                    }
-                    return Collections.emptyList();
-                });
 
-        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
+        DocumentType doc1 = new DocumentType("doc1", langCode);
+        doc1.setName("doc1_en");
+        DocumentType doc2 = new DocumentType("doc2", langCode);
+        doc2.setName("doc2_en");
+        List<DocumentType> expected = Arrays.asList(doc1, doc2);
+
+        when(documentTypeDao.findDocumentTypesByCodesAndLangCodes(eq(docTypes), eq(langCodes)))
+                .thenReturn(expected);
+
+        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCodes);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -62,7 +65,7 @@ public class ApplicantValidDocRepositoryTest {
         assertEquals("doc2", result.get(1).getCode());
 
         verify(applicantValidDocumentDao, times(1)).findAllDocTypesByDocCategoryAndApplicantType(applicantType, categoryCode);
-        verify(applicantValidDocumentDao, times(2)).findAllDocTypesByLanguageCode(anyString(), eq(langCode));
+        verify(documentTypeDao, times(1)).findDocumentTypesByCodesAndLangCodes(eq(docTypes), eq(langCodes));
     }
 
     @Test
@@ -70,23 +73,22 @@ public class ApplicantValidDocRepositoryTest {
         String categoryCode = "POA";
         String langCode = "en";
 
+        List<String> langCodes = Collections.singletonList(langCode);
         List<String> docTypes = Arrays.asList("doc1", "doc2");
 
         when(applicantValidDocumentDao.findAllDocTypesByDocCategory(categoryCode))
                 .thenReturn(docTypes);
-        when(applicantValidDocumentDao.findAllDocTypesByLanguageCode(anyString(), eq(langCode)))
-                .thenAnswer(invocation -> {
-                    String code = invocation.getArgument(0);
-                    if ("doc1".equals(code)) {
-                        return Collections.singletonList("doc1_en");
-                    }
-                    if ("doc2".equals(code)) {
-                        return Collections.singletonList("doc2_en");
-                    }
-                    return Collections.emptyList();
-                });
 
-        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(null, categoryCode, langCode);
+        DocumentType doc1 = new DocumentType("doc1", langCode);
+        doc1.setName("doc1_en");
+        DocumentType doc2 = new DocumentType("doc2", langCode);
+        doc2.setName("doc2_en");
+        List<DocumentType> expected = Arrays.asList(doc1, doc2);
+
+        when(documentTypeDao.findDocumentTypesByCodesAndLangCodes(eq(docTypes), eq(langCodes)))
+                .thenReturn(expected);
+
+        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(null, categoryCode, langCodes);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -96,7 +98,7 @@ public class ApplicantValidDocRepositoryTest {
         assertEquals("doc2", result.get(1).getCode());
 
         verify(applicantValidDocumentDao, times(1)).findAllDocTypesByDocCategory(categoryCode);
-        verify(applicantValidDocumentDao, times(2)).findAllDocTypesByLanguageCode(anyString(), eq(langCode));
+        verify(documentTypeDao, times(1)).findDocumentTypesByCodesAndLangCodes(eq(docTypes), eq(langCodes));
     }
 
     @Test
@@ -104,10 +106,11 @@ public class ApplicantValidDocRepositoryTest {
         when(applicantValidDocumentDao.findAllDocTypesByDocCategory(anyString()))
                 .thenReturn(Collections.emptyList());
 
-        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(null, "POA", "en");
+        List<DocumentType> result = applicantValidDocRepository.getDocumentTypes(null, "POA", Collections.singletonList("en"));
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+        verify(documentTypeDao, never()).findDocumentTypesByCodesAndLangCodes(anyList(), anyList());
     }
 
     @Test

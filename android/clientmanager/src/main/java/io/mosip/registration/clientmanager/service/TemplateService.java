@@ -512,30 +512,13 @@ public class TemplateService {
     }
 
     private Map<String, Object> getDocumentData(FieldSpecDto field, RegistrationDto registrationDto, VelocityContext velocityContext) {
-        DocumentDto document = registrationDto.getDocuments().get(field.getId());
-        if (document == null) {
-            return null;
+        Map<String, Object> data = null;
+        if (registrationDto.getDocuments().get(field.getId()) != null) {
+            data = new HashMap<>();
+            data.put(LABEL_KEY, getFieldLabel(field, registrationDto));
+            data.put("value", registrationDto.getDocuments().get(field.getId()).getValue());
         }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put(LABEL_KEY, getFieldLabel(field, registrationDto));
-        data.put("value", getDocumentDisplayValue(document.getType(), registrationDto.getSelectedLanguages()));
         return data;
-    }
-
-    private String getDocumentDisplayValue(String documentCode, List<String> selectedLanguages) {
-        if (documentCode == null || selectedLanguages == null || selectedLanguages.isEmpty()) {
-            return documentCode;
-        }
-
-        List<String> labels = selectedLanguages.stream()
-                .map(language -> {
-                    DocumentType docType = documentTypeRepository.getDocumentType(documentCode, language);
-                    return (docType != null && docType.getName() != null) ? docType.getName() : documentCode;
-                })
-                .collect(Collectors.toList());
-
-        return String.join(SLASH, labels);
     }
 
 }
