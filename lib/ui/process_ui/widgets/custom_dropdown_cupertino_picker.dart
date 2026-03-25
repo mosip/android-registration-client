@@ -58,21 +58,16 @@ class _CustomCupertinoDropDownPickerState
     _selectedIndex = _getInitialSelectedIndex();
     _scrollController =
         FixedExtentScrollController(initialItem: _selectedIndex);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpToItem(_selectedIndex);
-      if (widget.snapshot.hasData) {
-        final items = widget.snapshot.data as List<dynamic>;
-        if (items.length == 1) {
-          final item = items[0];
-          if (item != null) {
-            final label =
-                item is DocumentType ? item.label : item.toString();
-            final code = item is DocumentType ? item.code : item.toString();
-            widget.onSelectedItemChanged(label, code);
-          }
-        }
-      }
-    });
+    _syncSelectionWithSnapshot(notifySingleItemSelection: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomCupertinoDropDownPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.snapshot != widget.snapshot ||
+        oldWidget.initialValue != widget.initialValue) {
+      _syncSelectionWithSnapshot(notifySingleItemSelection: true);
+    }
   }
 
   int _getInitialSelectedIndex() {
@@ -80,13 +75,54 @@ class _CustomCupertinoDropDownPickerState
       final items = widget.snapshot.data as List<dynamic>;
       final index = items.indexWhere((item) {
         if (item is DocumentType) {
-          return item.label == widget.initialValue;
+          return item.code == widget.initialValue ||
+              item.label == widget.initialValue;
         }
         return item.toString() == widget.initialValue;
       });
       return index >= 0 ? index : 0;
     }
     return 0;
+  }
+
+  void _syncSelectionWithSnapshot({required bool notifySingleItemSelection}) {
+    _updateSelectedIndex();
+    _jumpToSelectedIndex();
+    if (notifySingleItemSelection) {
+      _autoSelectIfSingleItem();
+    }
+  }
+
+  void _updateSelectedIndex() {
+    final int nextIndex = _getInitialSelectedIndex();
+    if (nextIndex != _selectedIndex && mounted) {
+      setState(() => _selectedIndex = nextIndex);
+    } else {
+      _selectedIndex = nextIndex;
+    }
+  }
+
+  void _jumpToSelectedIndex() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpToItem(_selectedIndex);
+      }
+    });
+  }
+
+  void _autoSelectIfSingleItem() {
+    if (!widget.snapshot.hasData) return;
+    final items = widget.snapshot.data as List<dynamic>;
+    if (items.length != 1) return;
+
+    final item = items[0];
+    if (item == null) return;
+    final label = item is DocumentType ? item.label : item.toString();
+    final code = item is DocumentType ? item.code : item.toString();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      widget.onSelectedItemChanged(label, code);
+    });
   }
 
   @override

@@ -133,6 +133,8 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
       doc.title =
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
+    super.initState();
+
     myGetDocumentCategoryFuture.then((List<DocumentType?> list) {
       if (!mounted) return;
       final label = documentController.text;
@@ -144,7 +146,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
         }
       }
     });
-    super.initState();
   }
 
   @override
