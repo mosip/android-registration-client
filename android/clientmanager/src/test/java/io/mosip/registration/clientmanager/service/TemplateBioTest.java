@@ -28,7 +28,6 @@ import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
-import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -47,7 +46,6 @@ public class TemplateBioTest {
     @Mock MasterDataService masterDataService;
     @Mock IdentitySchemaRepository identitySchemaRepository;
     @Mock GlobalParamRepository globalParamRepository;
-    @Mock DocumentTypeRepository documentTypeRepository;
     @Mock Resources mockResources;
     @Mock SharedPreferences sharedPreferences;
 
@@ -59,7 +57,7 @@ public class TemplateBioTest {
         when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockPrefs);
         when(mockContext.getResources()).thenReturn(mockResources);
         lenient().when(mockPrefs.getString(anyString(), anyString())).thenReturn("user");
-        templateService = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository, documentTypeRepository);
+        templateService = new TemplateService(mockContext, masterDataService, identitySchemaRepository, globalParamRepository);
     }
 
     @Test

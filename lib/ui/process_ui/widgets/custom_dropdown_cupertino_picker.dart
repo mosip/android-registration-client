@@ -78,13 +78,13 @@ class _CustomCupertinoDropDownPickerState
   int _getInitialSelectedIndex() {
     if (widget.initialValue != null && widget.snapshot.hasData) {
       final items = widget.snapshot.data as List<dynamic>;
-      final idx = items.indexWhere((item) {
+      final index = items.indexWhere((item) {
         if (item is DocumentType) {
           return item.label == widget.initialValue;
         }
         return item.toString() == widget.initialValue;
       });
-      return idx >= 0 ? idx : 0;
+      return index >= 0 ? index : 0;
     }
     return 0;
   }

@@ -68,18 +68,16 @@ public class TemplateService {
     SharedPreferences sharedPreferences;
 
     MasterDataService masterDataService;
-    DocumentTypeRepository documentTypeRepository;
 
     IdentitySchemaRepository identitySchemaRepository;
     GlobalParamRepository globalParamRepository;
 
     public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository,
-                           GlobalParamRepository globalParamRepository, DocumentTypeRepository documentTypeRepository) {
+                           GlobalParamRepository globalParamRepository) {
         this.appContext = appContext;
         this.masterDataService = masterDataService;
         this.globalParamRepository = globalParamRepository;
         this.identitySchemaRepository = identitySchemaRepository;
-        this.documentTypeRepository = documentTypeRepository;
         sharedPreferences = this.appContext.getSharedPreferences(
                 this.appContext.getString(R.string.app_name),
                 Context.MODE_PRIVATE);

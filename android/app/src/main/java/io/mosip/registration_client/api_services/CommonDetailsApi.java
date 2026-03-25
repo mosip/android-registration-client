@@ -20,7 +20,6 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
-import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 
 @Singleton

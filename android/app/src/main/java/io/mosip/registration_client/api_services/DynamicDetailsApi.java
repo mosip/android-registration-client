@@ -38,7 +38,6 @@ import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
-import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
