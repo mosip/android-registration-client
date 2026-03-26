@@ -165,6 +165,7 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isScanNowButtonDisplayed(), "Verify if scan now button displayed");
 
+//		Now we not getting NoDevicesFound message so comment out
 //		assertTrue(settingsPage.isNoDevicesFoundDisplayed(), "Verify if no devices found displayed");
 
 		settingsPage.clickOnGlobalConfigSettingsTab();

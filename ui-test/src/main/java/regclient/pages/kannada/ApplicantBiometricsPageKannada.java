@@ -265,6 +265,6 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageKannada(driver);
 	}
 }

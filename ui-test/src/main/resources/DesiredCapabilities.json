@@ -2,7 +2,7 @@
   {
     "name": "androidDevice",
     "caps": {
-      "appium:udid": "M01JPG1004392102744",
+      "appium:udid": "ADNKCP3523400513",
       "appium:automationName": "UiAutomator2",
       "appium:app": "D:/ARC/qa-base/apk-output/app-release.apk",
       "platformName": "android",

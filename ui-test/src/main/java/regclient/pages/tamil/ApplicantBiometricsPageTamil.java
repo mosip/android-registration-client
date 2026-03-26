@@ -269,6 +269,6 @@ public class ApplicantBiometricsPageTamil extends ApplicantBiometricsPage {
 
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
-		return new BiometricDetailsPageEnglish(driver);
+		return new BiometricDetailsPageTamil(driver);
 	}
 }

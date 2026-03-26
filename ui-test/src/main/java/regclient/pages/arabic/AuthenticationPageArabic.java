@@ -1,6 +1,7 @@
 package regclient.pages.arabic;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.openqa.selenium.WebElement;
 
@@ -43,11 +44,14 @@ public class AuthenticationPageArabic extends AuthenticationPage {
 	}
 
 	public AcknowledgementPage clickOnAuthenticatenButton() {
-		int size=authenticateButtons.size()-1;
-		clickOnElement2(authenticateButtons.get(size));
-		return new AcknowledgementPageArabic(driver);
+	    if (authenticateButtons == null || authenticateButtons.isEmpty()) {
+	        throw new NoSuchElementException("Authenticate buttons not found");
+	    }
+	    int lastIndex = authenticateButtons.size() - 1;
+	    clickOnElement2(authenticateButtons.get(lastIndex));
+	    return new AcknowledgementPageArabic(driver);
 	}
-
+	
 	public boolean isAuthenticationImageDisplayed() {
 		return isElementDisplayed(authenticationImage);
 	}

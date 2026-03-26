@@ -3,14 +3,9 @@ package regclient.androidTestCases;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Map;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
 import io.appium.java_client.HidesKeyboard;
-import io.appium.java_client.android.AndroidDriver;
 import regclient.BaseTest.AndroidBaseTest;
 import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
@@ -33,7 +28,6 @@ import regclient.page.PreviewPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.page.SettingsPage;
 import regclient.pages.arabic.AcknowledgementPageArabic;
 import regclient.pages.arabic.ApplicantBiometricsPageArabic;
 import regclient.pages.arabic.AuthenticationPageArabic;
@@ -446,7 +440,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -598,19 +592,16 @@ public class BiometricCorrection extends AndroidBaseTest {
 		manageApplicationsPage.clickOnSearchCheckBox();
 
 		boolean uploadSuccess = false;
-
 		for (int i = 0; i < 3; i++) {
-
 			manageApplicationsPage.clickOnUploadButton();
-
 			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
-
-			if (!uploadSuccess) {
-
+			if (uploadSuccess) {
+				break;
 			}
 		}
 
 		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		// Return to mocksbi page
@@ -917,7 +908,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		boolean isBioCorrectionAuthenticationPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isBioCorrectionAuthenticationPageDisplayed = true;
 				break;
@@ -961,13 +952,10 @@ public class BiometricCorrection extends AndroidBaseTest {
 		manageApplicationsPage.clickOnSearchCheckBox();
 
 		for (int i = 0; i < 3; i++) {
-
 			manageApplicationsPage.clickOnUploadButton();
-
 			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
-
-			if (!uploadSuccess) {
-
+			if (uploadSuccess) {
+				break;
 			}
 		}
 
@@ -1496,7 +1484,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-		
+
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
@@ -1542,7 +1530,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
 			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
-			if (!uploadSuccess) {
+			if (uploadSuccess) {
+				break;
 			}
 		}
 
@@ -1868,11 +1857,13 @@ public class BiometricCorrection extends AndroidBaseTest {
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
 			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
-			if (!uploadSuccess) {
+			if (uploadSuccess) {
+				break;
 			}
 		}
 
 		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
+		
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 

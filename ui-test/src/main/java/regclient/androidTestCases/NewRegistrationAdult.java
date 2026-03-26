@@ -17,7 +17,6 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
-import regclient.page.IntroducerBiometricPage;
 import regclient.page.LoginPage;
 import regclient.page.ManageApplicationsPage;
 import regclient.page.OperationalTaskPage;
@@ -33,7 +32,6 @@ import regclient.pages.arabic.BiometricDetailsPageArabic;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
 import regclient.pages.arabic.DocumentUploadPageArabic;
-import regclient.pages.arabic.IntroducerBiometricPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
@@ -49,7 +47,6 @@ import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.pages.english.ConsentPageEnglish;
 import regclient.pages.english.DemographicDetailsPageEnglish;
 import regclient.pages.english.DocumentUploadPageEnglish;
-import regclient.pages.english.IntroducerBiometricPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
 import regclient.pages.english.OperationalTaskPageEnglish;
@@ -65,7 +62,6 @@ import regclient.pages.french.BiometricDetailsPageFrench;
 import regclient.pages.french.ConsentPageFrench;
 import regclient.pages.french.DemographicDetailsPageFrench;
 import regclient.pages.french.DocumentUploadPageFrench;
-import regclient.pages.french.IntroducerBiometricPageFrench;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.ManageApplicationsPageFrench;
 import regclient.pages.french.OperationalTaskPageFrench;
@@ -81,7 +77,6 @@ import regclient.pages.hindi.BiometricDetailsPageHindi;
 import regclient.pages.hindi.ConsentPageHindi;
 import regclient.pages.hindi.DemographicDetailsPageHindi;
 import regclient.pages.hindi.DocumentUploadPageHindi;
-import regclient.pages.hindi.IntroducerBiometricPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.ManageApplicationsPageHindi;
 import regclient.pages.hindi.OperationalTaskPageHindi;
@@ -97,7 +92,6 @@ import regclient.pages.kannada.BiometricDetailsPageKannada;
 import regclient.pages.kannada.ConsentPageKannada;
 import regclient.pages.kannada.DemographicDetailsPageKannada;
 import regclient.pages.kannada.DocumentUploadPageKannada;
-import regclient.pages.kannada.IntroducerBiometricPageKannada;
 import regclient.pages.kannada.LoginPageKannada;
 import regclient.pages.kannada.ManageApplicationsPageKannada;
 import regclient.pages.kannada.OperationalTaskPageKannada;
@@ -113,7 +107,6 @@ import regclient.pages.tamil.BiometricDetailsPageTamil;
 import regclient.pages.tamil.ConsentPageTamil;
 import regclient.pages.tamil.DemographicDetailsPageTamil;
 import regclient.pages.tamil.DocumentUploadPageTamil;
-import regclient.pages.tamil.IntroducerBiometricPageTamil;
 import regclient.pages.tamil.LoginPageTamil;
 import regclient.pages.tamil.ManageApplicationsPageTamil;
 import regclient.pages.tamil.OperationalTaskPageTamil;
@@ -147,7 +140,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		PendingApproval pendingApproval = null;
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
-		BasePage basePage = null;
 
 		final String language = TestDataReader.readData("language");
 
@@ -598,16 +590,12 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		manageApplicationsPage.clickOnSearchCheckBox();
 
 		boolean uploadSuccess = false;
-
 		for (int i = 0; i < 3; i++) {
-
-		    manageApplicationsPage.clickOnUploadButton();
-
-		    uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
-
-		    if (!uploadSuccess) {
-		        
-		    }
+			manageApplicationsPage.clickOnUploadButton();
+			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+			if (uploadSuccess) {
+				break;
+			}
 		}
 
 		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
