@@ -1,12 +1,9 @@
 package regclient.pages.arabic;
 
-import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -24,8 +21,6 @@ import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
 import regclient.page.PreviewPage;
 import regclient.page.RegistrationTasksPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 
@@ -165,7 +160,7 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 	}
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
-		System.out.println(emailId);
+		logger.info(emailId);
 	    String additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
 	    if (additionalInfoReqId == null || additionalInfoReqId.trim().isEmpty()) {
 	        throw new IllegalStateException("Additional Info Request ID is missing for email: " + emailId);

@@ -178,7 +178,7 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	}
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
-		System.out.println(emailId);
+		logger.info(emailId);
 	    String additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
 	    if (additionalInfoReqId == null || additionalInfoReqId.trim().isEmpty()) {
 	        throw new IllegalStateException("Additional Info Request ID is missing for email: " + emailId);
