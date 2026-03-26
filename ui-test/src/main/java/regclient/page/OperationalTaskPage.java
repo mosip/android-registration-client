@@ -23,4 +23,6 @@ public abstract class OperationalTaskPage extends BasePage {
 	public abstract void clickPendingApprovalTitle();
 
 	public abstract boolean isPendingApprovalTitleDisplayed();
+	
+	public abstract void handleIfSyncPopUpDisplayed();
 }

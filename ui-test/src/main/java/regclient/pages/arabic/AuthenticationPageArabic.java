@@ -1,5 +1,7 @@
 package regclient.pages.arabic;
 
+import java.util.List;
+
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -19,7 +21,7 @@ public class AuthenticationPageArabic extends AuthenticationPage {
 	private WebElement passwordTextBox;
 
 	@AndroidFindBy(accessibility = "المصادقة")
-	private WebElement authenticateButton;
+	private List<WebElement> authenticateButtons;;
 
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc='المصادقة باستخدام كلمة المرور']/preceding-sibling::android.widget.ImageView")
 	private WebElement authenticationImage;
@@ -41,7 +43,8 @@ public class AuthenticationPageArabic extends AuthenticationPage {
 	}
 
 	public AcknowledgementPage clickOnAuthenticatenButton() {
-		clickOnElement2(authenticateButton);
+		int size=authenticateButtons.size()-1;
+		clickOnElement2(authenticateButtons.get(size));
 		return new AcknowledgementPageArabic(driver);
 	}
 

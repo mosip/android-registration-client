@@ -29,6 +29,12 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 	@AndroidFindBy(accessibility = "المهام التشغيلية")
 	private WebElement operationalTaskPageTitle;
 
+	@AndroidFindBy(accessibility = "مزامنة. تم بنجاح")
+	private WebElement syncCompletedPopup;
+
+	@AndroidFindBy(accessibility = "إعادة التشغيل")
+	private WebElement restartButton;
+
 	public OperationalTaskPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -77,6 +83,17 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 			swipeOrScroll();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
+	}
+
+	public void handleIfSyncPopUpDisplayed() {
+		for (int i = 0; i < 120; i++) {
+			if (isElementDisplayed(syncCompletedPopup)) {
+				clickOnElement(restartButton);
+				return;
+			}
+			waitTime(5);
+		}
+		throw new RuntimeException("Sync popup not displayed");
 	}
 
 }

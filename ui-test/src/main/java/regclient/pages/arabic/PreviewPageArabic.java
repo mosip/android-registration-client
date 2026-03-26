@@ -1,5 +1,6 @@
 package regclient.pages.arabic;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
@@ -82,7 +83,7 @@ public class PreviewPageArabic extends PreviewPage {
 		}
 	}
 
-	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
+	public boolean isBiometricsInformationInPreviewPageDisplayed() {
 		try {
 			scrollToText("القياسات الحيوية");
 			return isElementDisplayed(biometricsInformationInPreviewPage);
@@ -104,9 +105,20 @@ public class PreviewPageArabic extends PreviewPage {
 						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 
-	public boolean isApplicationIDPreviewPagePageDisplayed() {
-		waitTime(1);
-		return isElementDisplayed(applicationIDPreviewPage);
+	public boolean isApplicationIDPreviewPageDisplayed() {
+		By applicationIdLocator = By.xpath("//android.view.View[contains(@text,'Application ID')]");
+		for (int i = 0; i < 5; i++) {
+			try {
+				waitTime(1);
+				tapScreenCenter();
+				waitTime(1);
+				if (driver.findElement(applicationIdLocator).isDisplayed()) {
+					return true;
+				}
+			} catch (Exception e) {
+			}
+		}
+		return false;
 	}
 
 	@SuppressWarnings("deprecation")

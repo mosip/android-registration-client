@@ -51,5 +51,7 @@ public abstract class RegistrationTasksPage extends BasePage {
 	public abstract void clickOnRegistrationTasksTab();
 	
 	public abstract boolean isSettingsButtonDisplayed();
+	
+	public abstract void handleIfSyncPopUpDisplayed();
 
 }

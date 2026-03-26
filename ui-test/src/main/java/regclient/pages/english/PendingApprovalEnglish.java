@@ -53,7 +53,7 @@ public class PendingApprovalEnglish extends PendingApproval {
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.EditText\").instance(1)")
 	private WebElement passwordTextBox;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc,\"Pending Approval\")]//preceding-sibling::android.widget.Button")
+	@AndroidFindBy(accessibility = "pending_approval_back_button")
 	private WebElement backButton;
 
 	@AndroidFindBy(accessibility = "Sl.no Application ID Reg. Date Client Status Review Status Operator ID")
@@ -105,7 +105,8 @@ public class PendingApprovalEnglish extends PendingApproval {
 
 	@SuppressWarnings("deprecation")
 	public void clickOnAID(String AID) {
-		clickOnElement(findElementWithRetry(MobileBy.AccessibilityId(AID)));
+		By RID = MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + AID + "\")");
+		click(RID);
 	}
 
 	public void clickOnApproveButton() {

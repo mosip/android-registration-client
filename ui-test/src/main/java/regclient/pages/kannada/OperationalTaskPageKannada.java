@@ -23,6 +23,12 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 	
 	@AndroidFindBy(accessibility = "ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾದಿರುವ")
 	private WebElement pendingApprovalTitle;
+	
+	@AndroidFindBy(accessibility = "Sync Completed Successfully")
+	private WebElement syncCompletedPopup;
+	
+	@AndroidFindBy(accessibility = "Restart")
+	private WebElement restartButton;
 
 	public OperationalTaskPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -72,6 +78,17 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 			swipeOrScroll();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
+	}
+	
+	public void handleIfSyncPopUpDisplayed() {
+	    for (int i = 0; i < 120; i++) {
+	        if (isElementDisplayed(syncCompletedPopup)) {
+	            clickOnElement(restartButton);
+	            return;
+	        }
+	        waitTime(5);
+	    }
+	    throw new RuntimeException("Sync popup not displayed");
 	}
 
 }

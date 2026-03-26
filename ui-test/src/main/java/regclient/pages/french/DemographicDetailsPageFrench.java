@@ -101,15 +101,17 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 	}
 
 	public void fillDemographicDetailsPage(String age) {
+		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("DemographicDetails");
 		for (String id : idList) {
 			if (FetchUiSpec.getRequiredTypeUsingId(id)) {
 				if (FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
-					waitTime(3);
+					waitTime(1);
 					boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
-					clickAndsendKeysToTextBox(
+					waitTime(1);
+					clickAndsendKeysToTextBox3(
 							findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 									+ FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
@@ -119,33 +121,35 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 								"Verify if " + id + " is enter in second language text box");
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
-					waitTime(3);
+					waitTime(1);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
 						swipeOrScroll();
 					}
+
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
 					WebElement dropdownElement = findElement(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.widget.Button"));
+							By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
+									+ FetchUiSpec.getValueUsingId(id) + "')]]"));
+
 					clickOnElement(dropdownElement);
-					waitTime(3);
+					waitTime(1);
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
 						swipeOrScroll();
 						clickOnElement(dropdownElement);
-						waitTime(2);
+						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
 					}
-					waitTime(2);
+					waitTime(1);
 					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
 							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc,\"Sélectionner une option\")]"))) {
 						clickOnElement(dropdownElement);
-						waitTime(2);
+						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
 					}
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
@@ -157,7 +161,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 						clickOnElement(maleButton);
 
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("ageDate")) {
-					waitTime(3);
+					waitTime(1);
 					boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
@@ -194,7 +198,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 			} else if (id.equals("residenceStatus")) {
 				if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
-					waitTime(2);
+					waitTime(1);
 					boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
@@ -202,22 +206,22 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.widget.Button"));
 					clickOnElement(dropdownElement);
-					waitTime(2);
+					waitTime(1);
 					if (!isElementDisplayed(dropdownElement)) {
 //						clickOnElement(findElement(By.className("android.view.View")));
 						clickOnElement(nonForeignerOption);
 					} else if (isElementDisplayed(dropdownElement)) {
 						swipeOrScroll();
 						clickOnElement(dropdownElement);
-						waitTime(2);
+						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
 					}
-					waitTime(2);
+					waitTime(1);
 					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
 							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Sélectionner une option\")]"))) {
 						clickOnElement(dropdownElement);
-						waitTime(2);
+						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
 					}
 				}
@@ -225,7 +229,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 			if (id.equals("introducerName") && FetchUiSpec.getFlowType().equals("newProcess")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
 					if (FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
-						waitTime(3);
+						waitTime(1);
 						boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 								"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 						assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
@@ -243,7 +247,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 			if (id.equals("introducerRID") && FetchUiSpec.getFlowType().equals("newProcess")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
 					if (FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
-						waitTime(3);
+						waitTime(1);
 						boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 								"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 						assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
@@ -679,7 +683,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					waitTime(2);
 					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
 							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Sélectionner une option\")]"))) {
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -687,7 +691,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 				}
 			} else if (FetchUiSpec.getRequiredTypeUsingId(id) && id.equals("Postal")) {
 				By postalDropdown = By.xpath("//android.view.View[contains(@content-desc, 'Postal')]"
-						+ "/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, 'Select Option')]");
+						+ "/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Sélectionner une option\")]");
 
 				int attempts = 0;
 				while (attempts < 3) {

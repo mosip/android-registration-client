@@ -158,6 +158,15 @@ public class BasePage {
 		waitTime(1);
 		((HidesKeyboard) driver).hideKeyboard();
 	}
+	
+	protected void clickAndsendKeysToTextBox4(WebElement element, String text) {
+		this.waitForElementToBeVisible(element);
+		element.click();
+		waitTime(1);
+		element.clear();
+		waitTime(1);
+		element.sendKeys(text);
+	}
 
 	protected void clickAndsendKeysToTextBox3(WebElement element, String text) {
 		this.waitForElementToBeClickable(element);
@@ -212,7 +221,7 @@ public class BasePage {
 						getCenterOfElement(element.getLocation(), element.getSize()))) // ,43,1166
 				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger1, Duration.ofMillis(200)))
-				.addAction(finger1.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 414, 598))
+				.addAction(finger1.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 623, 261))
 				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 		driver.perform(Collections.singletonList(sequence));
 	}
@@ -409,12 +418,12 @@ public class BasePage {
 
 	public static String generateData(String validator) {
 		if (validator == null || validator.isEmpty()) {
-			return generateStringOfLength(3, 30);
+			return generateStringOfLength(3, 10);
 		}
 
 		switch (validator) {
 		case "^(?=.{2,50}$).*":
-			return generateStringOfLength(2, 30);
+			return generateStringOfLength(2, 10);
 
 		case "^([0-9]{10})$":
 			return generateTenDigitNumber();
@@ -423,7 +432,7 @@ public class BasePage {
 			return generateDateInRange();
 
 		case "^(?=.{3,50}$).*":
-			return generateStringOfLength(3, 30);
+			return generateStringOfLength(3, 10);
 
 		case "^[+]*([0-9]{1})([0-9]{9})$":
 			return generateNineDigitNumber() + "1";
@@ -947,6 +956,59 @@ public class BasePage {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected void scrollUntilElementVisible(WebElement element) {
+		hideKeyboardIfVisible();
+		try {
+			if (element.isDisplayed()) {
+				return;
+			}
+		} catch (Exception ignored) {
+		}
+
+		for (int i = 0; i < 6; i++) {
+			swipeUp();
+			try {
+				if (element.isDisplayed()) {
+					return;
+				}
+			} catch (Exception ignored) {
+			}
+		}
+
+		scrollToTopSafe();
+		hideKeyboardIfVisible();
+
+		for (int i = 0; i < 6; i++) {
+			swipeUp();
+			try {
+				if (element.isDisplayed()) {
+					return;
+				}
+			} catch (Exception ignored) {
+			}
+		}
+
+		throw new NoSuchElementException("Element not visible after scrolling: " + element);
+	}
+	
+	protected void tapScreenCenter() {
+
+	    Dimension size = driver.manage().window().getSize();
+
+	    int x = size.width / 2;
+	    int y = size.height / 2;
+
+	    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+
+	    Sequence tap = new Sequence(finger, 1);
+	    tap.addAction(finger.createPointerMove(Duration.ZERO,
+	            PointerInput.Origin.viewport(), x, y));
+	    tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+	    tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+	    driver.perform(Arrays.asList(tap));
 	}
 
 }

@@ -75,4 +75,6 @@ public abstract class ApplicantBiometricsPage extends BasePage {
 	public abstract boolean isExceptionCountDisplayed();
 
 	public abstract boolean isAuthenticationBiometricsPageDisplayed();
+	
+	public abstract BiometricDetailsPage clickOnBiometricsMenuButton();
 }

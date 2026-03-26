@@ -1,5 +1,6 @@
 package regclient.pages.french;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
@@ -61,8 +62,10 @@ public class PreviewPageFrench extends PreviewPage {
 
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
 		try {
-			scrollToText("Informations démographiques");
-			return isElementDisplayed(demographicInformationInPreviewPage);
+			By locator = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+					+ ".scrollIntoView(new UiSelector().textContains(\"Informations démographiques\"))");
+			driver.findElement(locator);
+			return true;
 		} catch (Exception e) {
 			return false;
 		}
@@ -77,7 +80,7 @@ public class PreviewPageFrench extends PreviewPage {
 		}
 	}
 
-	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
+	public boolean isBiometricsInformationInPreviewPageDisplayed() {
 		try {
 			scrollToText("Biométrie");
 			return isElementDisplayed(biometricsInformationInPreviewPage);
@@ -99,13 +102,20 @@ public class PreviewPageFrench extends PreviewPage {
 						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 
-	public boolean isApplicationIDPreviewPagePageDisplayed() {
-		try {
-			scrollToText("Application ID");
-			return isElementDisplayed(applicationIDPreviewPage);
-		} catch (Exception e) {
-			return false;
+	public boolean isApplicationIDPreviewPageDisplayed() {
+		By applicationIdLocator = By.xpath("//android.view.View[contains(@text,'Application ID')]");
+		for (int i = 0; i < 5; i++) {
+			try {
+				waitTime(1);
+				tapScreenCenter();
+				waitTime(1);
+				if (driver.findElement(applicationIdLocator).isDisplayed()) {
+					return true;
+				}
+			} catch (Exception e) {
+			}
 		}
+		return false;
 	}
 
 	@SuppressWarnings("deprecation")

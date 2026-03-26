@@ -59,7 +59,7 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Scan\"))")
+	@AndroidFindBy(accessibility = "Scan")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capture')]")
@@ -80,7 +80,7 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception Capture')]")
 	private WebElement exceptionCapturerHeader;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[10]")
+	@AndroidFindBy(accessibility = "zoom_in_button")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Comments\")]/following-sibling::android.widget.EditText")
@@ -98,6 +98,9 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Exceptions\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 
+	@AndroidFindBy(accessibility = "menu_back_button")
+	private WebElement biometricsMenuButton;
+
 	public ApplicantBiometricsPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
@@ -110,10 +113,8 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnScanButton() {
-		WebElement scanBtn = driver.findElement(MobileBy
-				.AndroidUIAutomator("new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\"))"
-						+ ".scrollIntoView(new UiSelector().description(\"Scan\"))"));
-		clickOnElement(scanBtn);
+		scrollUntilElementVisible(scanButton);
+		clickOnElement(scanButton);
 	}
 
 	public void clickOnExceptionTypePermanentButton() {
@@ -164,8 +165,7 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnZoomButton() {
-		waitTime(1);
-		clickAtCoordinates(1035, 1077);
+		clickOnElement(zoomButton);
 	}
 
 	public void clickOnIrisScanTitle() {
@@ -265,5 +265,10 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+
+	public BiometricDetailsPage clickOnBiometricsMenuButton() {
+		clickOnElement(biometricsMenuButton);
+		return new BiometricDetailsPageEnglish(driver);
 	}
 }

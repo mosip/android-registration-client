@@ -86,6 +86,51 @@ public class ResetPassword extends AndroidBaseTest {
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickSynchronizeDataButton();
+
+		registrationTasksPage.handleIfSyncPopUpDisplayed();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		loginPage.selectLanguage();
+
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+
+		loginPage.clickOnNextButton();
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
+		loginPage.clickOnloginButton();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+
+		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
+				"Verify if registration tasks page is loaded");
+
 		assertTrue(registrationTasksPage.checkLastSyncDate(), "Verify  last sync date and time");
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
@@ -109,7 +154,7 @@ public class ResetPassword extends AndroidBaseTest {
 		profilePage.clickOnLogoutButton();
 
 		profilePage.clickOnLogoutButton();
-		BasePage.waitTime(5);
+		
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 		loginPage.enterUserName(KeycloakUserManager.onlyOperatorRoleUser);
 		loginPage.clickOnNextButton();
@@ -272,6 +317,50 @@ public class ResetPassword extends AndroidBaseTest {
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
 		registrationTasksPage.clickSynchronizeDataButton();
+		
+		registrationTasksPage.handleIfSyncPopUpDisplayed();
+		
+		if ("eng".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		loginPage.selectLanguage();
+
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		loginPage.clickOnNextButton();
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
+		loginPage.clickOnloginButton();
+
+		if ("eng".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+
+		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
+				"Verify if registration tasks page is loaded");
+		
 		registrationTasksPage.clickProfileButton();
 
 		if ("eng".equalsIgnoreCase(language)) {

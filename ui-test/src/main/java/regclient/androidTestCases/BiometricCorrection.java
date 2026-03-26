@@ -436,18 +436,17 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
 
-//		Below commentout method may be required in future
-//		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
-//				"Verify if application ID In PreviewPage is displayed");
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
+				"Verify if application ID In PreviewPage is displayed");
 
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
+		
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -463,8 +462,18 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -587,12 +596,21 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
+		boolean uploadSuccess = false;
+
 		for (int i = 0; i < 3; i++) {
+
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
-				break;
+
+			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+
+			if (!uploadSuccess) {
+
+			}
 		}
+
+		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
 		manageApplicationsPage.clickOnBackButton();
 
 		// Return to mocksbi page
@@ -601,6 +619,10 @@ public class BiometricCorrection extends AndroidBaseTest {
 		mockSBIPage.setAllModalityHighScore();
 		mockSBIPage.switchBackToArcApp();
 		// biocorrection flow
+
+		FetchUiSpec.getUiSpec("bioCorrectionProcess");
+		FetchUiSpec.getBiometricDetails("individualBiometrics");
+		List<String> screenOrder1 = FetchUiSpec.getAllScreenOrder();
 
 		if ("eng".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
@@ -654,7 +676,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
 		selectLanguagePage.clickOnSubmitButton();
-		for (String screen : screenOrder) {
+		for (String screen : screenOrder1) {
 			if (screen.equals("consentdet") || screen.equals("consent")) {
 				if ("eng".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageEnglish(driver);
@@ -715,7 +737,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIrisScan();
-
 					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
@@ -727,9 +748,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 				}
 				// righthand
 				if (FetchUiSpec.rightHand.equals("yes")) {
-
-					biometricDetailsPage.clickOnRightHandScanIcon();
-
 					assertTrue(applicantBiometricsPage.isRightHandScanTitleDisplayed(),
 							"Verify if right hand scan is displayed");
 					applicantBiometricsPage.clickOnScanButton();
@@ -740,8 +758,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
-					biometricDetailsPage.clickOnLeftHandScanIcon();
-
 					assertTrue(applicantBiometricsPage.isLeftHandScanTitleDisplayed(),
 							"Verify if left hand scan is displayed");
 					applicantBiometricsPage.clickOnScanButton();
@@ -752,8 +768,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
-					biometricDetailsPage.clickOnThumbsScanIcon();
-
 					assertTrue(applicantBiometricsPage.isThumbsScanTitleDisplayed(),
 							"Verify if thumb hand scan is displayed");
 					applicantBiometricsPage.clickOnScanButton();
@@ -764,8 +778,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
-					biometricDetailsPage.clickOnFaceScanIcon();
-
 					assertTrue(applicantBiometricsPage.isFaceScanTitleDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
@@ -814,11 +826,10 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		boolean isAuthenticationPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
 			previewPage.clickOnContinueButton();
-			Thread.sleep(2000);
+
 			if (authenticationPage.isAuthenticationPageDisplayed()) {
 				isAuthenticationPageDisplayed = true;
 				break;
@@ -906,7 +917,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		boolean isBioCorrectionAuthenticationPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+			
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isBioCorrectionAuthenticationPageDisplayed = true;
 				break;
@@ -948,12 +959,20 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
 		for (int i = 0; i < 3; i++) {
+
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
-				break;
+
+			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+
+			if (!uploadSuccess) {
+
+			}
 		}
+
+		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
+
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 
@@ -1361,15 +1380,16 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
 				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
+				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1385,8 +1405,18 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -1466,7 +1496,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
+		
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
@@ -1507,17 +1537,17 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
+		boolean uploadSuccess = false;
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
-				break;
+			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+			if (!uploadSuccess) {
+			}
 		}
-		manageApplicationsPage.clickOnBackButton();
 
-		// Biometric correction packet process
-		// Reset biometric capabilities back to individual biometrics for correction
-		// flow
+		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
+		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isOperationalTaskDisplayed(), "Verify if operation tasks page is loaded");
 
@@ -1629,49 +1659,36 @@ public class BiometricCorrection extends AndroidBaseTest {
 				}
 				// righthand
 				if (FetchUiSpec.rightHand.equals("yes")) {
-
-					biometricDetailsPage.clickOnRightHandScanIcon();
-
 					assertTrue(applicantBiometricsPage.isRightHandScanTitleDisplayed(),
 							"Verify if right hand scan is displayed");
 					applicantBiometricsPage.clickOnScanButton();
-
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 					applicantBiometricsPage.clickOnNextButton();
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
-					biometricDetailsPage.clickOnLeftHandScanIcon();
-
 					assertTrue(applicantBiometricsPage.isLeftHandScanTitleDisplayed(),
 							"Verify if left hand scan is displayed");
 					applicantBiometricsPage.clickOnScanButton();
-
 					assertTrue(applicantBiometricsPage.isLeftHandScan(), "Verify if Left hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 					applicantBiometricsPage.clickOnNextButton();
 				}
 				// thumb
 				if (FetchUiSpec.thumb.equals("yes")) {
-					biometricDetailsPage.clickOnThumbsScanIcon();
-
 					assertTrue(applicantBiometricsPage.isThumbsScanTitleDisplayed(),
 							"Verify if thumb hand scan is displayed");
 					applicantBiometricsPage.clickOnScanButton();
-
 					assertTrue(applicantBiometricsPage.isThumbsScan(), "Verify if thumbs scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 					applicantBiometricsPage.clickOnNextButton();
 				}
 				// face
 				if (FetchUiSpec.face.equals("yes")) {
-					biometricDetailsPage.clickOnFaceScanIcon();
-
 					assertTrue(applicantBiometricsPage.isFaceScanTitleDisplayed(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
-
 					assertTrue(applicantBiometricsPage.isFaceScan(), "Verify if face scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 					applicantBiometricsPage.clickOnNextButton();
@@ -1717,11 +1734,9 @@ public class BiometricCorrection extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		boolean isAuthenticationPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
 			previewPage.clickOnContinueButton();
-
 			if (authenticationPage.isAuthenticationPageDisplayed()) {
 				isAuthenticationPageDisplayed = true;
 				break;
@@ -1808,7 +1823,6 @@ public class BiometricCorrection extends AndroidBaseTest {
 		boolean isBioCorrectionAuthenticationPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			Thread.sleep(2000);
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isBioCorrectionAuthenticationPageDisplayed = true;
 				break;
@@ -1850,12 +1864,15 @@ public class BiometricCorrection extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-			Thread.sleep(2000);
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed())
-				break;
+			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+			if (!uploadSuccess) {
+			}
 		}
+
+		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 
@@ -1879,6 +1896,5 @@ public class BiometricCorrection extends AndroidBaseTest {
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
 	}
-
 
 }

@@ -41,7 +41,7 @@ public class IntroducerBiometricPageEnglish extends IntroducerBiometricPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Scan\"))")
+	@AndroidFindBy(accessibility = "Scan")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capture')]")
@@ -76,6 +76,7 @@ public class IntroducerBiometricPageEnglish extends IntroducerBiometricPage {
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 
@@ -183,7 +184,7 @@ public class IntroducerBiometricPageEnglish extends IntroducerBiometricPage {
 	public boolean isExceptionScan() {
 		return isElementDisplayed(exceptionCapturerHeader, 2000);
 	}
-	
+
 	public boolean isNextButtonDisplayed() {
 		return isElementDisplayed(nextButton);
 	}

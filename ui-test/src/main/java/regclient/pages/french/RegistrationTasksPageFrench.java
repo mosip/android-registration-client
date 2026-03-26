@@ -67,6 +67,12 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
 	private WebElement dontAllowButton;
+	
+	@AndroidFindBy(accessibility = "Synchro. Complété avec succès")
+	private WebElement syncCompletedPopup;
+	
+	@AndroidFindBy(accessibility = "Redémarrer")
+	private WebElement restartButton;
 
 	public SelectLanguagePage clickOnNewRegistrationButton() {
 		clickOnElement(newRegistrationButton);
@@ -174,5 +180,16 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 	
 	public boolean isSettingsButtonDisplayed() {
 		return isElementDisplayed(settingsButton);
+	}
+	
+	public void handleIfSyncPopUpDisplayed() {
+	    for (int i = 0; i < 120; i++) {
+	        if (isElementDisplayed(syncCompletedPopup)) {
+	            clickOnElement(restartButton);
+	            return;
+	        }
+	        waitTime(5);
+	    }
+	    throw new RuntimeException("Sync popup not displayed");
 	}
 }

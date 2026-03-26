@@ -60,7 +60,7 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception ANALYSE\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"ANALYSE\"))")
+	@AndroidFindBy(accessibility = "ANALYSE")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capturer')]")
@@ -81,7 +81,7 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception Capturer')]")
 	private WebElement exceptionCapturerHeader;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(accessibility = "zoom_in_button")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Commentaires\")]/following-sibling::android.widget.EditText")
@@ -99,6 +99,9 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"Des exceptions\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 
+	@AndroidFindBy(accessibility = "menu_back_button")
+	private WebElement biometricsMenuButton;
+
 	public ApplicantBiometricsPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
@@ -111,6 +114,7 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 
@@ -162,8 +166,7 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnZoomButton() {
-		waitTime(1);
-		clickAtCoordinates(1035, 1077);
+		clickOnElement(zoomButton);
 	}
 
 	public void clickOnIrisScanTitle() {
@@ -263,5 +266,10 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+
+	public BiometricDetailsPage clickOnBiometricsMenuButton() {
+		clickOnElement(biometricsMenuButton);
+		return new BiometricDetailsPageFrench(driver);
 	}
 }

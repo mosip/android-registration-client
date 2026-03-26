@@ -63,6 +63,12 @@ public class RegistrationTasksPageTamil extends RegistrationTasksPage {
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
 	private WebElement dontAllowButton;
+	
+	@AndroidFindBy(accessibility = "Sync Completed Successfully")
+	private WebElement syncCompletedPopup;
+	
+	@AndroidFindBy(accessibility = "Restart")
+	private WebElement restartButton;
 
 	public RegistrationTasksPageTamil(AppiumDriver driver) {
 		super(driver);
@@ -174,5 +180,16 @@ public class RegistrationTasksPageTamil extends RegistrationTasksPage {
 	
 	public boolean isSettingsButtonDisplayed() {
 		return isElementDisplayed(settingsButton);
+	}
+
+	public void handleIfSyncPopUpDisplayed() {
+	    for (int i = 0; i < 120; i++) {
+	        if (isElementDisplayed(syncCompletedPopup)) {
+	            clickOnElement(restartButton);
+	            return;
+	        }
+	        waitTime(5);
+	    }
+	    throw new RuntimeException("Sync popup not displayed");
 	}
 }

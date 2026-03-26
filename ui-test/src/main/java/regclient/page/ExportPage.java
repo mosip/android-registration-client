@@ -116,7 +116,7 @@ public class ExportPage extends BasePage {
 	}
 
 	public void enterFolderName(String foldername) {
-		clickAndsendKeysToTextBox(newfolderTextBox, foldername);
+		clickAndsendKeysToTextBox4(newfolderTextBox, foldername);
 	}
 
 	public void clickOnOkButton() {
@@ -159,38 +159,49 @@ public class ExportPage extends BasePage {
 	}
 
 	public void exportPacketIntoFolder(String folderName) {
-		if (isFolderTitleDisplayed(folderName)) {
-			logger.info(folderName + " folder already exists. Using it.");
+
+		// STEP 1: If already opened → just return
+		if (exportIfTargetFolderAlreadyOpened(folderName)) {
+			logger.info("Target folder already opened: " + folderName);
+			return;
+		}
+
+		// STEP 2: Scroll till end and check folder
+		boolean folderExists = false;
+
+		try {
+			scrollToText(folderName); // ideally should scroll till end
+			folderExists = isFolderDisplayed(folderName);
+		} catch (Exception e) {
+			logger.info("Folder not found during scroll: " + folderName);
+		}
+
+		// STEP 3: If folder exists → select + use
+		if (folderExists) {
+			logger.info(folderName + " folder exists. Selecting it.");
+
+			selectFolderByName(folderName);
+
 			clickOnUseThisFolderButton();
 			handleAllowFolderConsentIfPresent();
-			if (exportIfTargetFolderAlreadyOpened(folderName)) {
-				return;
-			}
-			if (!isPacketManagerTitleDisplayed()) {
-				throw new IllegalStateException("Packet Manager page is not displayed.");
-			}
-			boolean folderExists = false;
-			try {
-				scrollToText(folderName);
-				folderExists = isFolderDisplayed(folderName);
-			} catch (Exception e) {
-				logger.info("Folder not found during scroll: " + folderName);
-			}
-			if (folderExists) {
-				logger.info(folderName + " folder exists. Selecting it.");
-				selectFolderByName(folderName);
-			} else {
-				logger.info(folderName + " folder not found. Creating new folder.");
-				clickNewFolderButton();
-				if (!isNewFolderPopupDisplayed()) {
-					throw new RuntimeException("New Folder popup not displayed");
-				}
-				enterFolderName(folderName);
-				clickOnOkButton();
-				clickOnUseThisFolderButton();
-				handleAllowFolderConsentIfPresent();
-			}
+
+			return;
 		}
+
+		// STEP 4: If folder NOT exists → create new
+		logger.info(folderName + " folder not found. Creating new folder.");
+
+		clickNewFolderButton();
+
+		if (!isNewFolderPopupDisplayed()) {
+			throw new RuntimeException("New Folder popup not displayed");
+		}
+
+		enterFolderName(folderName);
+		clickOnOkButton();
+
+		clickOnUseThisFolderButton();
+		handleAllowFolderConsentIfPresent();
 	}
 
 	public boolean isFolderTitleDisplayed(String folderName) {
@@ -202,17 +213,24 @@ public class ExportPage extends BasePage {
 
 		try {
 
+			String targetFolder = folderPath[folderPath.length - 1];
+
+			// ✅ STEP 1: If already inside final folder → skip everything
+			if (isFolderTitleDisplayed(targetFolder)) {
+				logger.info("Already inside target folder: " + targetFolder);
+				return;
+			}
+
+			// ✅ STEP 2: Navigate step by step
 			for (String folder : folderPath) {
 
 				logger.info("Navigating to folder: " + folder);
 
-				// If already inside this folder → skip
 				if (isFolderHeaderDisplayed(folder)) {
 					logger.info("Already inside folder: " + folder);
 					continue;
 				}
 
-				// Scroll and click folder
 				scrollToText(folder);
 				click(getFolderLocator(folder));
 

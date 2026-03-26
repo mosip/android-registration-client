@@ -61,7 +61,7 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"استثناء مسح\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"مسح\"))")
+	@AndroidFindBy(accessibility = "مسح")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris')]")
@@ -82,7 +82,7 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception')]")
 	private WebElement exceptionCapturerHeader;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[2]")
+	@AndroidFindBy(accessibility = "zoom_in_button")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"التعليقات\")]/following-sibling::android.widget.EditText")
@@ -100,6 +100,9 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"الاستثناءات\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 
+	@AndroidFindBy(accessibility = "menu_back_button")
+	private WebElement biometricsMenuButton;
+
 	public ApplicantBiometricsPageArabic(AppiumDriver driver) {
 		super(driver);
 	}
@@ -112,6 +115,7 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 
@@ -163,8 +167,7 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnZoomButton() {
-		waitTime(1);
-		clickAtCoordinates(1035, 1077);
+		clickOnElement(zoomButton);
 	}
 
 	public void clickOnIrisScanTitle() {
@@ -264,6 +267,11 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+
+	public BiometricDetailsPage clickOnBiometricsMenuButton() {
+		clickOnElement(biometricsMenuButton);
+		return new BiometricDetailsPageArabic(driver);
 	}
 
 }

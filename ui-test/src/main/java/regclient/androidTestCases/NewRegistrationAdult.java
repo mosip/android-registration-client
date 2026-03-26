@@ -293,6 +293,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 						"Verify if doccumentupload page is displayed");
 				
 				documentuploadPage.uploadDoccuments("adult", "ReferenceNumber");
+				
 				documentuploadPage.clickOnContinueButton();
 
 			} else if (screen.equals("BiometricDetails")) {
@@ -360,7 +361,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
+					biometricDetailsPage = applicantBiometricsPage.clickOnBiometricsMenuButton();
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
@@ -426,13 +427,13 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
 				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 		if ("eng".equalsIgnoreCase(language)) {

@@ -45,7 +45,7 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"Script Sync Completed\"]")
 	private WebElement scriptSyncCompletedMessage;
 
-	@AndroidFindBy(xpath = "//android.widget.ImageView[contains(@content-desc,'Synchronize Data')]")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionStartsWith(\"Synchronize Data\")")
 	private WebElement synchronizeDataButton;
 
 	@AndroidFindBy(accessibility = "Settings\nTab 2 of 4")
@@ -62,6 +62,12 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
 	private WebElement dontAllowButton;
+	
+	@AndroidFindBy(accessibility = "Sync Completed Successfully")
+	private WebElement syncCompletedPopup;
+	
+	@AndroidFindBy(accessibility = "Restart")
+	private WebElement restartButton;
 
 	public RegistrationTasksPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -170,9 +176,24 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 	public void clickOnRegistrationTasksTab() {
 		clickOnElement(registrationTasksTitle);
 	}
-	
+
 	public boolean isSettingsButtonDisplayed() {
 		return isElementDisplayed(settingsButton);
+	}
+	
+	public void handleIfSyncPopUpDisplayed() {
+
+	    for (int i = 0; i < 120; i++) { // 120 * 5 sec = 10 min
+
+	        if (isElementDisplayed(syncCompletedPopup)) {
+	            clickOnElement(restartButton);
+	            return;
+	        }
+
+	        waitTime(5); // wait 5 seconds
+	    }
+
+	    throw new RuntimeException("Sync popup not displayed");
 	}
 
 }

@@ -67,12 +67,11 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	public boolean isDemographicInformationInPreviewPageDisplayed() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
 			By locator = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
-					+ ".scrollIntoView(new UiSelector().text(\"Demographic Information\"))");
+					+ ".scrollIntoView(new UiSelector().textContains(\"Demographic\"))");
 
-			wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+			driver.findElement(locator);
 
 			return true;
 
@@ -83,25 +82,36 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	public boolean isDocumentsInformationInPreviewPageDisplayed() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-			wait.until(ExpectedConditions.visibilityOf(documentsInformationInPreviewPage));
+
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+			// wait until preview page loads
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.className("android.webkit.WebView")));
 
 			scrollToText("Documents");
 
-			return isElementDisplayed(documentsInformationInPreviewPage);
+			wait.until(ExpectedConditions.visibilityOf(documentsInformationInPreviewPage));
+
+			return true;
 
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
+	public boolean isBiometricsInformationInPreviewPageDisplayed() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-			wait.until(ExpectedConditions.visibilityOf(biometricsInformationInPreviewPage));
+
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+			// wait for WebView
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.className("android.webkit.WebView")));
+
 			scrollToText("Biometrics");
 
-			return isElementDisplayed(biometricsInformationInPreviewPage);
+			wait.until(ExpectedConditions.visibilityOf(biometricsInformationInPreviewPage));
+
+			return true;
 
 		} catch (Exception e) {
 			return false;
@@ -136,15 +146,27 @@ public class PreviewPageEnglish extends PreviewPage {
 		}
 	}
 
-	public boolean isApplicationIDPreviewPagePageDisplayed() {
-		try {
-			scrollToText("Application ID");
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-			wait.until(ExpectedConditions.visibilityOf(applicationIDPreviewPage));
-			return true;
-		} catch (Exception e) {
-			return false;
+	public boolean isApplicationIDPreviewPageDisplayed() {
+
+		By applicationIdLocator = By.xpath("//android.view.View[contains(@text,'Application ID')]");
+
+		for (int i = 0; i < 5; i++) {
+
+			try {
+				waitTime(1);
+				tapScreenCenter();
+				waitTime(1);
+
+				if (driver.findElement(applicationIdLocator).isDisplayed()) {
+					return true;
+				}
+
+			} catch (Exception e) {
+				// retry
+			}
 		}
+
+		return false;
 	}
 
 	@SuppressWarnings("deprecation")

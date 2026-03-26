@@ -24,6 +24,12 @@ public class OperationalTaskPageFrench extends OperationalTaskPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"En attente de validation\")")
 	private WebElement pendingApprovalTitle;
 
+	@AndroidFindBy(accessibility = "Synchro. Complété avec succès")
+	private WebElement syncCompletedPopup;
+
+	@AndroidFindBy(accessibility = "Redémarrer")
+	private WebElement restartButton;
+
 	public OperationalTaskPageFrench(AppiumDriver driver) {
 		super(driver);
 	}
@@ -71,6 +77,17 @@ public class OperationalTaskPageFrench extends OperationalTaskPage {
 			swipeOrScroll();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
+	}
+
+	public void handleIfSyncPopUpDisplayed() {
+		for (int i = 0; i < 120; i++) {
+			if (isElementDisplayed(syncCompletedPopup)) {
+				clickOnElement(restartButton);
+				return;
+			}
+			waitTime(5);
+		}
+		throw new RuntimeException("Sync popup not displayed");
 	}
 
 }
