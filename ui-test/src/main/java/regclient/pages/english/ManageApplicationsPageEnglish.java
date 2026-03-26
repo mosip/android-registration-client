@@ -1,6 +1,5 @@
 package regclient.pages.english;
 
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -259,6 +258,9 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	}
 
 	public void clickCheckboxByAID(String aid) {
+		if (aid == null || aid.trim().isEmpty()) {
+			throw new IllegalArgumentException("AID cannot be null or empty");
+		}
 		By checkbox = By
 				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");
 		click(checkbox);
