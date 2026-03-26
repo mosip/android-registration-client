@@ -59,6 +59,16 @@ public class UserBiometricRepository {
         return userBiometricDao.findAll(biometricType);
     }
 
+    /**
+     * Retrieves list of operator biometrics from storage for biometric type, excluding current user
+     * @param biometricType biometric type
+     * @param userId current user ID to exclude
+     * @return {@link List<UserBiometric>}
+     */
+    public List<UserBiometric> findAllOperatorBiometricsExceptCurrent(String biometricType, String userId){
+        return userBiometricDao.findAllOtherUsersByBiometricType(biometricType, userId);
+    }
+
     public String saveOnboardStatus(String userId) {
         UserDetail userDetail = userDetailDao.getUserDetail(userId);
         Long updatedTime = System.currentTimeMillis();

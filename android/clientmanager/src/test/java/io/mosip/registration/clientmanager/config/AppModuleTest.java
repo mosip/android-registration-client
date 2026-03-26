@@ -25,6 +25,7 @@ import io.mosip.registration.clientmanager.repository.*;
 import io.mosip.registration.clientmanager.service.*;
 import io.mosip.registration.clientmanager.service.external.PreRegZipHandlingService;
 import io.mosip.registration.clientmanager.spi.*;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -251,8 +252,9 @@ public class AppModuleTest {
 
     @Test
     public void testProvideBiometrics095Service() {
+        BioSdkProviderFactory bioSdkProviderFactory = appModule.provideBioSdkProviderFactory(globalParamRepository, auditManagerService);
         Biometrics095Service service = appModule.provideBiometrics095Service(
-                objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository
+                objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository, bioSdkProviderFactory
         );
         assertNotNull(service);
         assertTrue(service instanceof Biometrics095Service);

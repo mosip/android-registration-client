@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/model/biometrics_dto.dart';
+import 'package:registration_client/utils/biometrics_utils.dart';
 
 class BiometricCaptureControlProvider with ChangeNotifier {
   //Variables
@@ -318,16 +319,6 @@ class BiometricCaptureControlProvider with ChangeNotifier {
       }
     }
     return -1;
-  }
-
-  avgScore(List<BiometricsDto> list) {
-    double avg = 0;
-    int i;
-    for (i = 0; i < list.length; i++) {
-      avg = avg + list[i].qualityScore!;
-    }
-    avg = avg / i;
-    return avg;
   }
 
   int returnNoOfAttributes(List<String?> attributes) {

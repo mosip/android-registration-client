@@ -70,6 +70,7 @@ import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.clientmanager.util.CronExpressionParser;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -113,6 +114,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     FileSignatureDao fileSignatureDao;
     PreRegistrationDataSyncService preRegistrationDataSyncService;
     LocalConfigService localConfigService;
+    BioSdkProviderFactory bioSdkProviderFactory;
     Context context;
     private String regCenterId;
 
@@ -128,7 +130,17 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     private volatile Runnable pendingRestartPrompt;
 
     @Inject
-    public MasterDataSyncApi(ClientCryptoManagerService clientCryptoManagerService, MachineRepository machineRepository, RegistrationCenterRepository registrationCenterRepository, SyncRestService syncRestService, CertificateManagerService certificateManagerService, GlobalParamRepository globalParamRepository, ObjectMapper objectMapper, UserDetailRepository userDetailRepository, IdentitySchemaRepository identitySchemaRepository, Context context, DocumentTypeRepository documentTypeRepository,
+    public MasterDataSyncApi(ClientCryptoManagerService clientCryptoManagerService,
+                             MachineRepository machineRepository,
+                             RegistrationCenterRepository registrationCenterRepository,
+                             SyncRestService syncRestService,
+                             CertificateManagerService certificateManagerService,
+                             GlobalParamRepository globalParamRepository,
+                             ObjectMapper objectMapper,
+                             UserDetailRepository userDetailRepository,
+                             IdentitySchemaRepository identitySchemaRepository,
+                             Context context,
+                             DocumentTypeRepository documentTypeRepository,
                              ApplicantValidDocRepository applicantValidDocRepository,
                              TemplateRepository templateRepository,
                              DynamicFieldRepository dynamicFieldRepository,
@@ -140,7 +152,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              AuditManagerService auditManagerService,
                              MasterDataService masterDataService,
                              PacketService packetService,
-                             GlobalParamDao globalParamDao, FileSignatureDao fileSignatureDao, PreRegistrationDataSyncService preRegistrationDataSyncService, LocalConfigService localConfigService) {
+                             GlobalParamDao globalParamDao,
+                             FileSignatureDao fileSignatureDao,
+                             PreRegistrationDataSyncService preRegistrationDataSyncService,
+                             LocalConfigService localConfigService,
+                             BioSdkProviderFactory bioSdkProviderFactory) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -167,6 +183,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.fileSignatureDao = fileSignatureDao;
         this.preRegistrationDataSyncService = preRegistrationDataSyncService;
         this.localConfigService = localConfigService;
+        this.bioSdkProviderFactory = bioSdkProviderFactory;
     }
 
     public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob, BinaryMessenger flutterBinaryMessenger) {
@@ -231,6 +248,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         Components.REGISTRATION
                 );
                 Log.i(TAG, "Sync Global Params Completed.");
+                bioSdkProviderFactory.initialize();
                 String errorCode = masterDataService.onResponseComplete();
                 boolean success = errorCode == null || errorCode.isEmpty();
                 onSyncJobComplete(jobId, success, isManualSync);

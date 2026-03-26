@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:provider/provider.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
@@ -16,8 +17,6 @@ import 'package:registration_client/utils/app_config.dart';
 import '../../../model/field.dart';
 import '../../../provider/global_provider.dart';
 import 'custom_label.dart';
-
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RadioButtonControl extends StatefulWidget {
   const RadioButtonControl({super.key, required this.field});
@@ -38,6 +37,32 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   }
 
   bool showError = false;
+
+  bool get _isFieldRequired {
+    if (widget.field.required == true) {
+      return true;
+    }
+
+    final fieldId = widget.field.id;
+    return widget.field.requiredOn != null &&
+        widget.field.requiredOn!.isNotEmpty &&
+        fieldId != null &&
+        globalProvider.mvelRequiredFields[fieldId] == true;
+  }
+
+  void _updateErrorState(bool shouldShowError) {
+    if (!mounted || showError == shouldShowError) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && showError != shouldShowError) {
+        setState(() {
+          showError = shouldShowError;
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -82,7 +107,8 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
       globalProvider.fieldInputValue[widget.field.id!] = value;
     }
     setState(() {
-      selectedOption = value;
+      selectedOption = name?.toLowerCase() ?? value;
+      showError = false;
     });
   }
 
@@ -116,15 +142,16 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                     child: TextFormField(
                         readOnly: true,
                         validator: (value) {
-                          if (selectedOption == null) {
-                            setState(() {
-                              showError = true;
-                            });
+                          if (!_isFieldRequired) {
+                            _updateErrorState(false);
+                            return null;
+                          }
+
+                          if (selectedOption == null || selectedOption!.isEmpty) {
+                            _updateErrorState(true);
                             return AppLocalizations.of(context)!.select_option;
                           }
-                          setState(() {
-                            showError = false;
-                          });
+                          _updateErrorState(false);
                           return null;
                         }),
                   ),
@@ -140,10 +167,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                                     value: e.name.toLowerCase(),
                                     groupValue: selectedOption,
                                     onChanged: (value) {
-                                        setState(() {
-                                          selectedOption = value;
-                                        });
-                                        handleOptionChange(e.code,e.name);
+                                        handleOptionChange(e.code, e.name);
                                     }
                                     //handleOptionChange,
                                   ),
@@ -156,7 +180,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
                     height: 10,
                   ),
                   showError
-                      ?  Text(
+                      ? Text(
                           "* ${AppLocalizations.of(context)!.select_option}",
                           style: const TextStyle(
                               color: Color.fromARGB(255, 159, 21, 11),

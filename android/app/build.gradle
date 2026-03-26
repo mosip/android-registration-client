@@ -35,6 +35,13 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'jacoco'
 
+// Ensure bioSdk DEX conversion runs before asset merge
+afterEvaluate {
+    ['mergeDebugAssets', 'mergeReleaseAssets'].each { taskName ->
+        tasks.findByName(taskName)?.dependsOn(':clientmanager:dexifyBiosdkAars')
+    }
+}
+
 android {
     lintOptions {
         abortOnError false

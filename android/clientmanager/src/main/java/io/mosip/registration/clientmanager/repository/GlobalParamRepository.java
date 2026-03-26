@@ -7,6 +7,7 @@ import io.mosip.registration.clientmanager.dao.GlobalParamDao;
 import io.mosip.registration.clientmanager.dao.LocalConfigDAO;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,9 +21,17 @@ import java.util.stream.Collectors;
 public class GlobalParamRepository {
 
     private static final String TAG = GlobalParamRepository.class.getSimpleName();
+    /** Config prefix for biometric SDK providers; only keys starting with this prefix are used. */
+    public static final String BIOMETRIC_SDK_PROVIDERS_PREFIX = "mosip.biometric.sdk.providers";
+
+    private static final String CLASSNAME = "classname";
+
     private static Map<String, String> globalParamMap = new HashMap<>();
     private GlobalParamDao globalParamDao;
     private LocalConfigDAO localConfigDAO;
+
+    /** Cached parsed config: modality -> vendorId -> (paramKey -> paramValue). Cleared on refresh. */
+    private Map<String, Map<String, Map<String, String>>> bioSdkProviderConfigCache = null;
 
     @Inject
     public GlobalParamRepository(GlobalParamDao globalParamDao, LocalConfigDAO localConfigDAO) {
@@ -297,22 +306,47 @@ public class GlobalParamRepository {
             globalParamMap.clear();
             globalParamMap.putAll(freshGlobalParams);
             globalParamMap.putAll(localConfigs); // Local preferences take precedence
+            bioSdkProviderConfigCache = null;
         } catch (Exception e) {
             Log.e(TAG, "Error refreshing configuration cache", e);
         }
 
     }
 
+    public Map<String, Map<String, Map<String, String>>> getBiometricProviderConfig() {
+        if (bioSdkProviderConfigCache == null) {
+            bioSdkProviderConfigCache = resolveBiometricProviderConfig();
+        }
+        return bioSdkProviderConfigCache;
+    }
+
+    private Map<String, Map<String, Map<String, String>>> resolveBiometricProviderConfig() {
+        String prefix = BIOMETRIC_SDK_PROVIDERS_PREFIX + ".";
+        Map<String, Object> providerKeyValues = getGlobalParamsByPattern(BIOMETRIC_SDK_PROVIDERS_PREFIX + ".%");
+
+        Map<String, Map<String, Map<String, String>>> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> e : providerKeyValues.entrySet()) {
+            String key = e.getKey();
+            if (key == null || !key.startsWith(prefix) || key.length() <= prefix.length()) continue;
+            String[] parts = key.substring(prefix.length()).split("\\.", -1);
+            if (parts.length < 3) continue;
+            String value = e.getValue() != null ? String.valueOf(e.getValue()).trim() : "";
+            result.computeIfAbsent(parts[0], k -> new LinkedHashMap<>())
+                    .computeIfAbsent(parts[1], k -> new LinkedHashMap<>())
+                    .put(parts.length > 3 ? String.join(".", Arrays.copyOfRange(parts, 2, parts.length)) : parts[2], value);
+        }
+        return result;
+    }
+
     private long parseLongWithDefault(String key) {
         String value = globalParamMap.get(key);
-        if (value == null || value.trim().isEmpty()) {
-            return 0L;
-        }
+        if (value == null || value.trim().isEmpty()) return 0L;
         try {
             return Long.parseLong(value.trim());
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Failed to parse long value for key: " + key + ", value: " + value, e);
+            Log.e(TAG, "Failed to parse long for key: " + key + ", value: " + value, e);
             return 0L;
         }
     }
+
 }

@@ -46,7 +46,35 @@ import io.mosip.registration.packetmanager.util.PacketManagerConstant;
 public class MatchUtil {
 
     /**
-     * Responsible for validating the biometric records
+     * Responsible for validating the biometric records (for operator onboarding)
+     * Excludes current operator from deduplication check
+     * @param modality {@link Modality}
+     * @param captureDto {@link CaptureDto}
+     * @param biometricsDtoList {@link List<BiometricsDto>}
+     * @param userBiometricRepository {@link UserBiometricRepository}
+     * @param iBioApiV2 {@link IBioApiV2}
+     * @param currentUserId current logged-in user ID to exclude from deduplication check
+     * @return boolean value based on the match result
+     */
+    public static boolean validateBiometricData(Modality modality, CaptureDto captureDto, List<BiometricsDto>
+            biometricsDtoList, UserBiometricRepository userBiometricRepository, IBioApiV2 iBioApiV2, String currentUserId) {
+        if (currentUserId == null || currentUserId.trim().isEmpty()) {
+            Log.w("MatchUtil", "currentUserId missing; skipping operator dedupe");
+            return false;
+        }
+        BiometricType biometricType = BiometricType.fromValue(modality == Modality.EXCEPTION_PHOTO ?
+                modality.getSingleType().value() : captureDto.getBioType());
+        List<UserBiometric> userBiometrics = userBiometricRepository
+                .findAllOperatorBiometricsExceptCurrent(biometricType.toString(), currentUserId);
+        if(userBiometrics.isEmpty()){
+            return false;
+        }
+        return matchBiometrics(biometricType, userBiometrics, biometricsDtoList, iBioApiV2);
+    }
+
+    /**
+     * Responsible for validating the biometric records (for registration)
+     * Includes all operators (including current) in deduplication check
      * @param modality {@link Modality}
      * @param captureDto {@link CaptureDto}
      * @param biometricsDtoList {@link List<BiometricsDto>}
@@ -54,13 +82,11 @@ public class MatchUtil {
      * @param iBioApiV2 {@link IBioApiV2}
      * @return boolean value based on the match result
      */
-    public static boolean validateBiometricData(Modality modality, CaptureDto captureDto, List<BiometricsDto>
+    public static boolean validateBiometricDataForRegistration(Modality modality, CaptureDto captureDto, List<BiometricsDto>
             biometricsDtoList, UserBiometricRepository userBiometricRepository, IBioApiV2 iBioApiV2) {
         BiometricType biometricType = BiometricType.fromValue(modality == Modality.EXCEPTION_PHOTO ?
                 modality.getSingleType().value() : captureDto.getBioType());
-        String lowerCase = biometricType.toString().toLowerCase();
-        String biometricCode = StringUtils.capitalizeFirstLetter(lowerCase);
-        List<UserBiometric> userBiometrics = userBiometricRepository.findAllOperatorBiometrics(biometricCode);
+        List<UserBiometric> userBiometrics = userBiometricRepository.findAllOperatorBiometrics(biometricType.toString());
         if(userBiometrics.isEmpty()){
             return false;
         }

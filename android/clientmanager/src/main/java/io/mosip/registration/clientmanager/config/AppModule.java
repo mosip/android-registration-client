@@ -64,6 +64,7 @@ import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.clientmanager.util.DateUtil;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
 import io.mosip.registration.clientmanager.util.UserInterfaceHelperService;
@@ -270,10 +271,17 @@ public class AppModule {
 
     @Provides
     @Singleton
+    BioSdkProviderFactory provideBioSdkProviderFactory(GlobalParamRepository globalParamRepository,
+                                                        AuditManagerService auditManagerService) {
+        return new BioSdkProviderFactory(appContext, globalParamRepository, auditManagerService);
+    }
+
+    @Provides
+    @Singleton
     Biometrics095Service provideBiometrics095Service(ObjectMapper objectMapper, AuditManagerService auditManagerService,
                                                      GlobalParamRepository globalParamRepository, ClientCryptoManagerService clientCryptoManagerService,
-                                                     UserBiometricRepository userBiometricRepository) {
-        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository);
+                                                     UserBiometricRepository userBiometricRepository, BioSdkProviderFactory bioSdkProviderFactory) {
+        return new Biometrics095Service(appContext, objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository, bioSdkProviderFactory);
     }
 
     @Provides

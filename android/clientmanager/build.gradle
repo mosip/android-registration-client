@@ -3,6 +3,102 @@ plugins {
 }
 apply from: '../jacoco.gradle'
 
+// Task to convert AAR (classes.jar) to DEX at build time for BioSDKLoader runtime loading.
+// Standard AARs contain classes.jar (Java bytecode); Android runtime requires DEX format.
+def biosdkAssetsDir = file("${projectDir}/src/main/assets/biosdk")
+def biosdkDexOutputDir = file("${buildDir}/biosdk-dex/biosdk")
+
+configurations { dexify }
+
+tasks.register('dexifyBiosdkAars') {
+    description = 'Convert AAR classes.jar to DEX format for runtime BioSDK loading'
+    group = 'build'
+    doLast {
+        if (!biosdkAssetsDir.exists()) return
+        def aarFiles = fileTree(biosdkAssetsDir).filter { it.name.endsWith('.aar') }.files
+
+        def sdkDir = android.sdkDirectory
+        def androidJar = new File(sdkDir, "platforms/${android.compileSdkVersion}/android.jar")
+        if (!androidJar.exists()) {
+            throw new GradleException("android.jar not found at ${androidJar}")
+        }
+
+        biosdkDexOutputDir.mkdirs()
+        // Purge stale dex outputs when AARs are removed
+        def aarBaseNames = aarFiles.collect { it.name.replaceAll('\\.aar$', '') } as Set
+        biosdkDexOutputDir.listFiles()?.findAll { it.name.endsWith('.jar') }?.each { f ->
+            def jarBase = f.name.replaceAll('\\.jar$', '')
+            if (!aarBaseNames.contains(jarBase)) {
+                println "dexifyBiosdkAars: Removing stale output (no AAR): ${f.name}"
+                f.delete()
+            }
+        }
+        if (aarFiles.isEmpty()) return
+
+        def workDir = file("${buildDir}/biosdk-dex/work")
+        workDir.mkdirs()
+
+        aarFiles.each { aarFile ->
+            def baseName = aarFile.name.replaceAll('\\.aar$', '')
+            def vendorJar = new File(biosdkAssetsDir, "${baseName}.jar")
+            def outputJar = new File(biosdkDexOutputDir, "${baseName}.jar")
+            if (vendorJar.exists()) {
+                println "dexifyBiosdkAars: Vendor provided ${baseName}.jar (DEX already), skipping AAR conversion"
+                if (outputJar.exists()) outputJar.delete()
+                return
+            }
+            if (outputJar.exists() && outputJar.lastModified() >= aarFile.lastModified()) {
+                println "dexifyBiosdkAars: ${baseName}.jar up to date, skipping"
+                return
+            }
+            println "dexifyBiosdkAars: Converting ${aarFile.name} -> ${baseName}.jar"
+
+            // Extract classes.jar from AAR (AAR has classes.jar at root or in jars/)
+            def classesJar = new File(workDir, "${baseName}-classes.jar")
+            def extractDir = new File(workDir, "extract-${baseName}")
+            project.delete(extractDir)
+            extractDir.mkdirs()
+            project.copy {
+                from project.zipTree(aarFile)
+                into extractDir
+            }
+            def srcJar = new File(extractDir, 'classes.jar')
+            if (!srcJar.exists()) srcJar = new File(extractDir, 'jars/classes.jar')
+            if (!srcJar.exists()) {
+                println "dexifyBiosdkAars: No classes.jar in ${aarFile.name}, skipping"
+                return
+            }
+            project.copy { from srcJar; into workDir; rename { "${baseName}-classes.jar" } }
+
+            def dexOutDir = new File(workDir, "${baseName}-dex")
+            project.delete(dexOutDir)
+            dexOutDir.mkdirs()
+            javaexec {
+                classpath = configurations.dexify
+                mainClass = 'com.android.tools.r8.D8'
+                args = [
+                    '--output', dexOutDir,
+                    '--lib', androidJar,
+                    '--min-api', android.defaultConfig.minSdkVersion.apiLevel,
+                    classesJar
+                ]
+            }
+
+            def dexFile = new File(dexOutDir, 'classes.dex')
+            if (!dexFile.exists()) {
+                throw new GradleException("D8 did not produce classes.dex for ${aarFile.name}")
+            }
+
+            // Create JAR containing classes.dex (DexClassLoader accepts JAR with classes.dex)
+            outputJar.delete()
+            project.ant.jar(destfile: outputJar) {
+                zipfileset(dir: dexOutDir, includes: '*.dex')
+            }
+            println "dexifyBiosdkAars: Created ${outputJar.name}"
+        }
+    }
+}
+
 android {
     lintOptions {
         abortOnError false
@@ -41,7 +137,8 @@ android {
     sourceSets {
         main {
             assets {
-                srcDirs 'src\\main\\assets', 'src\\androidTest\\assets'
+                // Prepend dexified output so DEX-JAR takes precedence over raw AAR
+                srcDirs "${buildDir}/biosdk-dex/biosdk", 'src/main/assets'
             }
         }
     }
@@ -56,8 +153,18 @@ android {
     }
 }
 
+// Run dexify before clientmanager merges assets
+afterEvaluate {
+    ['mergeDebugAssets', 'mergeReleaseAssets'].each { taskName ->
+        tasks.findByName(taskName)?.dependsOn(dexifyBiosdkAars)
+    }
+}
+
 dependencies {
     def work_version = "2.7.1"
+
+    // R8/D8 for dexifyBiosdkAars task (DEX conversion)
+    dexify 'com.android.tools:r8:3.0.73'
 
     implementation 'com.google.dagger:dagger:2.41'
     implementation 'com.google.dagger:dagger-android-support:2.41'

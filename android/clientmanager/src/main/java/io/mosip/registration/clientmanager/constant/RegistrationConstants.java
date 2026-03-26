@@ -26,6 +26,7 @@ public class RegistrationConstants {
     public static final List<String> EXCEPTION_PHOTO_ATTR = Arrays.asList("unknown");
 
     public static String DEDUPLICATION_ENABLE_FLAG = "mosip.registration.mds.deduplication.enable.flag";
+    public static String QUALITY_CHECK_WITH_SDK = "mosip.registration.quality_check_with_sdk";
     public static final String ENABLE = "Y";
     public static final String DISABLE = "N";
 

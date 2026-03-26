@@ -20,6 +20,7 @@ import io.mosip.registration.clientmanager.exception.BiometricsServiceException;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyRequestDto;
 import io.mosip.registration.keymanager.dto.JWTSignatureVerifyResponseDto;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
@@ -53,6 +54,9 @@ public class Biometrics095ServiceTest {
 
     @Mock
     private UserBiometricRepository mockUserBiometricRepository;
+
+    @Mock
+    private BioSdkProviderFactory mockBioSdkProviderFactory;
 
     @Mock
     private SharedPreferences mockSharedPreferences;
@@ -172,7 +176,7 @@ public class Biometrics095ServiceTest {
 
         Biometrics095Service biometrics095Service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService,
-                mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository);
+                mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null);
 
         Modality modality = Modality.FACE;
         String deviceId = "test-device-id";
@@ -193,7 +197,7 @@ public class Biometrics095ServiceTest {
 
         Biometrics095Service biometrics095Service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService,
-                mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository);
+                mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null);
 
         String deviceId = "test-device-id";
         List<String> exceptionAttributes = new ArrayList<>();
@@ -207,7 +211,7 @@ public class Biometrics095ServiceTest {
     public void test_biometric_type_based_on_modality() {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, new ObjectMapper(), mockAuditManagerService, mockGlobalParamRepository,
-                mockCryptoManagerService, mockUserBiometricRepository
+                mockCryptoManagerService, mockUserBiometricRepository, null
         );
 
         CaptureRequest request = service.getRCaptureRequest(Modality.EXCEPTION_PHOTO, "device123", new ArrayList<>());
@@ -221,7 +225,7 @@ public class Biometrics095ServiceTest {
     public void test_exception_attributes_conversion() {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, new ObjectMapper(), mockAuditManagerService, mockGlobalParamRepository,
-                mockCryptoManagerService, mockUserBiometricRepository
+                mockCryptoManagerService, mockUserBiometricRepository, null
         );
 
         List<String> exceptionAttributes = Arrays.asList("leftthumb", "rightthumb");
@@ -235,7 +239,7 @@ public class Biometrics095ServiceTest {
     public void test_count_setting_based_on_modality() {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, new ObjectMapper(), mockAuditManagerService, mockGlobalParamRepository,
-                mockCryptoManagerService, mockUserBiometricRepository
+                mockCryptoManagerService, mockUserBiometricRepository, null
         );
 
         List<String> exceptionAttributes = Arrays.asList("leftthumb");
@@ -259,7 +263,8 @@ public class Biometrics095ServiceTest {
                 mock(AuditManagerService.class),
                 mockGlobalParamRepository,
                 mock(ClientCryptoManagerService.class),
-                mock(UserBiometricRepository.class)
+                mock(UserBiometricRepository.class),
+                null
         );
 
         CaptureRequest request = service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "device123", new ArrayList<>());
@@ -272,7 +277,7 @@ public class Biometrics095ServiceTest {
     public void test_validate_jwt_response_with_trust_domain() throws Exception {
         Biometrics095Service serviceSpy = Mockito.spy(
                 new Biometrics095Service(mockContext, mockObjectMapper, mockAuditManagerService,
-                        mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository)
+                        mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null)
         );
 
         InputStream mockResponse = new ByteArrayInputStream("{\"biometrics\":[{\"specVersion\":\"0.9.5\",\"data\":\"mockData\",\"error\":null}]}".getBytes());
@@ -290,7 +295,7 @@ public class Biometrics095ServiceTest {
     public void test_handle_device_info_response_with_invalid_response_throws_exception() throws Exception {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService, mockGlobalParamRepository,
-                mockCryptoManagerService, mockUserBiometricRepository);
+                mockCryptoManagerService, mockUserBiometricRepository, null);
 
         InfoResponse infoResponse = new InfoResponse();
         infoResponse.setDeviceInfo("invalidDeviceInfoJWT");
@@ -312,7 +317,7 @@ public class Biometrics095ServiceTest {
     public void test_unsuccessful_device_info_response_parsing_invalid_jwt_payload() throws Exception {
         Biometrics095Service biometrics095Service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService, mockGlobalParamRepository,
-                mockCryptoManagerService, mockUserBiometricRepository);
+                mockCryptoManagerService, mockUserBiometricRepository, null);
 
         InfoResponse infoResponse = new InfoResponse();
         String invalidDeviceInfo = "header.invalidPayload.signature";

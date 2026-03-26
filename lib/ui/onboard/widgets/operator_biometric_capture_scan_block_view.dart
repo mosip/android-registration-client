@@ -14,6 +14,7 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/biometrics_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:registration_client/provider/auth_provider.dart';
@@ -30,6 +31,28 @@ class _OperatorBiometricCaptureScanBlockViewState
     extends State<OperatorBiometricCaptureScanBlockView> {
   bool isPortrait = true;
   late GlobalProvider globalProvider;
+  
+  // Helper function to safely convert qualityPercentage to int
+  int safeQualityToInt(double qualityPercentage) {
+    if (!qualityPercentage.isFinite || qualityPercentage < 0) {
+      return 0;
+    }
+    if (qualityPercentage > 100) {
+      return 100;
+    }
+    return qualityPercentage.toInt();
+  }
+  
+  // Helper function to safely clamp qualityPercentage for percent calculations
+  double safeQualityPercent(double qualityPercentage) {
+    if (!qualityPercentage.isFinite || qualityPercentage < 0) {
+      return 0.0;
+    }
+    if (qualityPercentage > 100) {
+      return 1.0;
+    }
+    return qualityPercentage / 100;
+  }
 
   @override
   void initState() {
@@ -320,10 +343,10 @@ class _OperatorBiometricCaptureScanBlockViewState
                   LinearPercentIndicator(
                     width: (isMobileSize) ? 250.w : 450.w,
                     lineHeight: 15.4,
-                    percent: biometricAttributeData.qualityPercentage / 100,
+                    percent: safeQualityPercent(biometricAttributeData.qualityPercentage),
                     backgroundColor: Colors.grey,
                     progressColor:
-                        (biometricAttributeData.qualityPercentage.toInt() <
+                        (safeQualityToInt(biometricAttributeData.qualityPercentage) <
                                 int.parse(
                                     biometricAttributeData.thresholdPercentage))
                             ? secondaryColors.elementAt(26)
@@ -333,7 +356,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                     width: (isMobileSize) ? 20.w : 43.w,
                   ),
                   Text(
-                    "${biometricAttributeData.qualityPercentage.toInt()}%",
+                    "${safeQualityToInt(biometricAttributeData.qualityPercentage)}%",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontSize: 23,
                           fontWeight: semiBold,
@@ -390,8 +413,7 @@ class _OperatorBiometricCaptureScanBlockViewState
                 }
               });
               biometricAttributeData.qualityPercentage =
-                  biometricCaptureControlProvider
-                      .avgScore(biometricAttributeData.listOfBiometricsDto);
+                  biometricAttributeData.listOfBiometricsDto.avgScore();
               await BiometricsApi()
                   .extractImageValues("operatorBiometrics",
                       biometricAttributeData.title.replaceAll(" ", ""))

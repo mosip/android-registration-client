@@ -20,8 +20,17 @@ public interface UserBiometricDao {
      * @param biometricType biometric type
      * @return {@link List<UserBiometric>}
      */
-    @Query("select * from user_biometric where bmtyp_code=:biometricType")
+    @Query("select * from user_biometric where LOWER(bmtyp_code) = LOWER(:biometricType)")
     List<UserBiometric> findAll(String biometricType);
+
+    /**
+     * Retrieves list of operator biometrics from storage for biometric type, excluding current user
+     * @param biometricType biometric type
+     * @param userId current user ID to exclude
+     * @return {@link List<UserBiometric>}
+     */
+    @Query("select * from user_biometric where LOWER(bmtyp_code) = LOWER(:biometricType) and usr_id != :userId")
+    List<UserBiometric> findAllOtherUsersByBiometricType(String biometricType, String userId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(UserBiometric userBiometric);
