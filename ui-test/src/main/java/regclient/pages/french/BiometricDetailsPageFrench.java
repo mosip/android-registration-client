@@ -200,15 +200,12 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	}
 
 	private boolean typeAndVerify(WebElement el, String value) {
-		el.click();
-		el.clear();
-		el.sendKeys(value);
-
-		// read the visible/real value in a safe way
-		String curr = readElementValue(el);
-
-		// exact match (keeps your previous behavior)
-		return value.equals(curr);
+	    el.click();
+	    el.clear();
+	    el.sendKeys(value);
+	    waitTime(1);
+	    String curr = readElementValue(el);
+	    return value.equals(curr);
 	}
 
 	private String readElementValue(WebElement el) {
