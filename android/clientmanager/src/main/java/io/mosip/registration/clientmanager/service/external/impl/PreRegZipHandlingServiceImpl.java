@@ -192,7 +192,7 @@ public class PreRegZipHandlingServiceImpl implements PreRegZipHandlingService {
                             documentNameType.add(dataType.get(0));
                         });
 
-                        this.registrationService.getRegistrationDto().addDocument(result.get().getKey(), documentDto.getType(),documentDto.getFormat(), documentDto.getRefNumber(),entryData);
+                        this.registrationService.getRegistrationDto().addDocument(result.get().getKey(), documentDto.getType(), documentDto.getValue(), documentDto.getFormat(), documentDto.getRefNumber(),entryData);
                         Log.i(TAG,"Added zip entry as document for field >>>> {}"+ result.get().getKey());
                     }
                     //}

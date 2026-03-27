@@ -5,9 +5,9 @@ import 'package:registration_client/platform_spi/document_category_service.dart'
 
 class DocumentCategoryImpl implements DocumentCategory {
   @override
-  Future<List<String?>> getDocumentCategories(String categoryCode, String langCode, List<String> languages) async{
+  Future<List<DocumentType?>> getDocumentCategories(String categoryCode, String langCode, List<String> languages) async{
 
-    List<String?> documentValuesList = [];
+    List<DocumentType?> documentValuesList = [];
     try {
       documentValuesList = await DocumentCategoryApi()
           .getDocumentCategories(categoryCode, langCode, languages);

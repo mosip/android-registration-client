@@ -58,10 +58,6 @@ abstract class DynamicResponseApi {
       String hierarchyLevelName, String langCode, List<String> languages);
 
   @async
-  List<String> getDocumentValues(
-      String categoryCode, String? applicantType, String langCode);
-
-  @async
   List<GenericData> getLocationValuesBasedOnParent(
       String? parentCode, String hierarchyLevelName, String langCode, List<String> languages);
 

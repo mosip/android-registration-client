@@ -13,7 +13,7 @@ class DocumentData {
 @HostApi()
 abstract class DocumentApi {
   @async
-  void addDocument(String fieldId, String docType, String reference,
+  void addDocument(String fieldId, String docType, String value, String reference,
       Uint8List bytes); //byte[] bytes
 
   @async

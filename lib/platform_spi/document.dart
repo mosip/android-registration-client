@@ -12,7 +12,7 @@ import 'package:registration_client/platform_android/document_impl.dart';
 
 abstract class Document {
   Future<void> addDocument(
-      String fieldId, String docType, String reference, Uint8List bytes);
+      String fieldId, String docType, String value, String reference, Uint8List bytes);
   Future<void> removeDocument(String fieldId, int pageIndex);
 
   Future<List<DocumentData?>> getScannedPages(String fieldId);

@@ -22,6 +22,7 @@ import 'package:registration_client/platform_spi/dynamic_response_service.dart';
 import 'package:registration_client/platform_spi/process_spec_service.dart';
 import 'package:registration_client/platform_spi/registration_service.dart';
 
+import '../pigeon/document_category_pigeon.dart';
 import '../platform_android/packet_service_impl.dart';
 
 class RegistrationTaskProvider with ChangeNotifier {
@@ -244,12 +245,6 @@ class RegistrationTaskProvider with ChangeNotifier {
         fieldName, langCode,languages);
   }
 
-  Future<List<String?>> getDocumentValues(
-      String fieldName, String langCode, String? applicantType) async {
-    return await dynamicResponseService.fetchDocumentValues(
-        fieldName, applicantType, langCode);
-  }
-
   Future<List<GenericData?>> getLocationValuesBasedOnParent(String? parentCode,
       String fieldName, String langCode, List<String> languages) async {
     return await dynamicResponseService.fetchLocationValuesBasedOnParent(
@@ -257,8 +252,8 @@ class RegistrationTaskProvider with ChangeNotifier {
   }
 
   addDocument(
-      String fieldId, String docType, String reference, Uint8List bytes) async {
-    await document.addDocument(fieldId, docType, reference, bytes);
+      String fieldId, String docType, String value, String reference, Uint8List bytes) async {
+    await document.addDocument(fieldId, docType, value, reference, bytes);
   }
 
   getScannedDocument(String fieldId) async {
@@ -269,7 +264,7 @@ class RegistrationTaskProvider with ChangeNotifier {
     await document.removeDocument(fieldId, pageIndex);
   }
 
-  Future<List<String?>> getDocumentType(
+  Future<List<DocumentType?>> getDocumentType(
       String categoryCode, String langCode, List<String> languages) async {
     return await documentCategory.getDocumentCategories(categoryCode, langCode, languages);
   }

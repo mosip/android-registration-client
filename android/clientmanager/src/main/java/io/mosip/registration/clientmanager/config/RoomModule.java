@@ -353,8 +353,9 @@ public class RoomModule {
     @Provides
     @Singleton
     ApplicantValidDocRepository provideApplicantValidDocRepository(ApplicantValidDocumentDao
-                                                                   applicantValidDocumentDao) {
-        return new ApplicantValidDocRepository(applicantValidDocumentDao);
+                                                                   applicantValidDocumentDao,
+                                                                   DocumentTypeDao documentTypeDao) {
+        return new ApplicantValidDocRepository(applicantValidDocumentDao, documentTypeDao);
     }
 
     @Provides

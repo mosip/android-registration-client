@@ -23,6 +23,7 @@ import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.FileSignature;
 import io.mosip.registration.clientmanager.entity.GlobalParam;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
+import io.mosip.registration.clientmanager.entity.DocumentType;
 import io.mosip.registration.clientmanager.entity.Language;
 import io.mosip.registration.clientmanager.entity.Location;
 import io.mosip.registration.clientmanager.entity.MachineMaster;
@@ -1049,8 +1050,8 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public List<String> getDocumentTypes(String categoryCode, String applicantType, String langCode) {
-        return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCode);
+    public List<DocumentType> getDocumentTypes(String categoryCode, String applicantType, List<String> langCodes) {
+        return this.applicantValidDocRepository.getDocumentTypes(applicantType, categoryCode, langCodes);
     }
 
     @Override
