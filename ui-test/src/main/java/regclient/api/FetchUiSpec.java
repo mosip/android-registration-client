@@ -54,7 +54,24 @@ public class FetchUiSpec extends BaseTestCase {
 			Response response = RestClient.getRequestWithCookieAndQueryParm(url, map, MediaType.APPLICATION_JSON,
 					MediaType.APPLICATION_JSON, "Authorization", token);
 			UiSpec = response.asString();
+		}else if (type.equals("bioCorrectionProcess")) {
+			String token = kernelAuthLib.getTokenByRole("globalAdmin");
+			String url = ApplnURI + "/v1/masterdata/uispec/registration-client/latest";
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("type", type);
+			Response response = RestClient.getRequestWithCookieAndQueryParm(url, map, MediaType.APPLICATION_JSON,
+					MediaType.APPLICATION_JSON, "Authorization", token);
+			UiSpec = response.asString();
+		}else if (type.equals("lostProcess")) {
+			String token = kernelAuthLib.getTokenByRole("globalAdmin");
+			String url = ApplnURI + "/v1/masterdata/uispec/registration-client/latest";
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("type", type);
+			Response response = RestClient.getRequestWithCookieAndQueryParm(url, map, MediaType.APPLICATION_JSON,
+					MediaType.APPLICATION_JSON, "Authorization", token);
+			UiSpec = response.asString();
 		}
+		
 	}
 
 	public static List<String> getAllScreenOrder() {

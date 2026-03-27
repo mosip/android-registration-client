@@ -13,7 +13,6 @@ import regclient.api.KeycloakUserManager;
 import regclient.page.AcknowledgementPage;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.AuthenticationPage;
-import regclient.page.BasePage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
@@ -450,7 +449,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
 				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");

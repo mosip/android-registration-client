@@ -14,11 +14,11 @@ public abstract class PreviewPage extends BasePage {
 
 	public abstract boolean isDocumentsInformationInPreviewPageDisplayed();
 
-	public abstract boolean isBiometricsInformationInPreviewPagePageDisplayed();
+	public abstract boolean isBiometricsInformationInPreviewPageDisplayed();
 
 	public abstract boolean isNewRegistrationTitleDisplayed();
 
-	public abstract boolean isApplicationIDPreviewPagePageDisplayed();
+	public abstract boolean isApplicationIDPreviewPageDisplayed();
 
 	public abstract DemographicDetailsPage clickOnDemographicDetailsTitle();
 

@@ -66,7 +66,7 @@ public class PreviewPageHindi extends PreviewPage {
 		return isElementDisplayed(documentsInformationInPreviewPage);
 	}
 
-	public boolean isBiometricsInformationInPreviewPagePageDisplayed() {
+	public boolean isBiometricsInformationInPreviewPageDisplayed() {
 		return isElementDisplayed(biometricsInformationInPreviewPage);
 	}
 
@@ -83,7 +83,7 @@ public class PreviewPageHindi extends PreviewPage {
 						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 
-	public boolean isApplicationIDPreviewPagePageDisplayed() {
+	public boolean isApplicationIDPreviewPageDisplayed() {
 		return isElementDisplayed(applicationIDPreviewPage);
 	}
 

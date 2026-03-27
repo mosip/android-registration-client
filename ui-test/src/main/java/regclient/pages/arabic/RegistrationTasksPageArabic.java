@@ -34,13 +34,10 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 	@AndroidFindBy(xpath = "//android.widget.Toast[@text=\"اكتملت مزامنة البرنامج النصي\"]")
 	private WebElement scriptSyncCompletedMessage;
 
-//	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionEndsWith(\"لوحة القيادة\")")
-//	private WebElement dashboardButton;
-
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionMatches(\".*لوحة القيادة.*\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"لوحة القيادة\")")
 	private WebElement dashboardButton;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionMatches(\".*حساب تعريفي.*\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"حساب تعريفي\")")
 	private WebElement profileButton;
 
 	@AndroidFindBy(accessibility = "تحديث UIN")
@@ -66,6 +63,12 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
 	private WebElement dontAllowButton;
+
+	@AndroidFindBy(accessibility = "مزامنة. تم بنجاح")
+	private WebElement syncCompletedPopup;
+
+	@AndroidFindBy(accessibility = "إعادة التشغيل")
+	private WebElement restartButton;
 
 	public RegistrationTasksPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -180,6 +183,17 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 
 	public boolean isSettingsButtonDisplayed() {
 		return isElementDisplayed(settingsButton);
+	}
+
+	public void handleIfSyncPopUpDisplayed() {
+		for (int i = 0; i < 120; i++) {
+			if (isElementDisplayed(syncCompletedPopup)) {
+				clickOnElement(restartButton);
+				return;
+			}
+			waitTime(5);
+		}
+		throw new RuntimeException("Sync popup not displayed");
 	}
 
 }

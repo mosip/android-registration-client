@@ -24,7 +24,7 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "حالة الملقم")
 	private WebElement serverStatusDropdown;
 
-	@AndroidFindBy(accessibility = "تصدير")
+	@AndroidFindBy(accessibility = "يصدّر")
 	private WebElement exportButton;
 
 	@AndroidFindBy(accessibility = "تم الإنشاء")
@@ -80,6 +80,9 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
 	private WebElement latestAidCheckBox;
+	
+	@AndroidFindBy(accessibility = "manage_application_back_button")
+	private WebElement backButton;
 
 	public ManageApplicationsPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -223,7 +226,7 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	}
 
 	public void clickOnBackButton() {
-		driver.navigate().back();
+		clickOnElement(backButton);
 	}
 
 	public void clickOnExportButton() {
@@ -254,6 +257,12 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 
 	public void selectLatestAidCheckBox() {
 		clickOnElement(latestAidCheckBox);
+	}
+
+	public void clickCheckboxByAID(String aid) {
+		By checkbox = By
+				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");
+		click(checkbox);
 	}
 
 }

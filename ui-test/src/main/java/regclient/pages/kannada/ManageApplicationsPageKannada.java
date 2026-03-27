@@ -262,5 +262,11 @@ public class ManageApplicationsPageKannada extends ManageApplicationsPage{
 	public void selectLatestAidCheckBox() {
 		clickOnElement(latestAidCheckBox);
 	}
+	
+	public void clickCheckboxByAID(String aid) {
+		By checkbox = By
+				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");
+		click(checkbox);
+	}
 
 }

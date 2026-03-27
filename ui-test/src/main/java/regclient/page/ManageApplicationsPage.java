@@ -68,6 +68,6 @@ public abstract class ManageApplicationsPage extends BasePage {
 
 	public abstract boolean isNoNetworkFoundDisplayed();
 
-	public abstract void selectLatestAidCheckBox();
+	public abstract void clickCheckboxByAID(String aid);
 
 }

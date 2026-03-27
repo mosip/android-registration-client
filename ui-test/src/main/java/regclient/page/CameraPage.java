@@ -24,7 +24,7 @@ public class CameraPage extends BasePage {
 	@AndroidFindBy(accessibility = "RETAKE")
 	private WebElement retakeButton;
 	
-	@AndroidFindBy(id = "com.hihonor.camera:id/done_button")
+	@AndroidFindBy(id = "com.android.camera2:id/done_button")
 	private WebElement okBtn;
 
 	public CameraPage(AppiumDriver driver) {
@@ -33,9 +33,9 @@ public class CameraPage extends BasePage {
 
 	public void clickimage() {
 		for (int i = 0; i < 3; i++) {
-			clickAtCoordinates(1840, 598);
+			clickAtCoordinates(732, 696);
 
-			if (isElementDisplayed(okButton, 2)) {
+			if (isElementDisplayed(okBtn, 2)) {
 				break;
 			}
 		}

@@ -99,6 +99,9 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"ಅಂಶಗಳು\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 	
+	@AndroidFindBy(accessibility = "menu_back_button")
+	private WebElement biometricsMenuButton;
+	
 	public ApplicantBiometricsPageKannada(AppiumDriver driver) {
 		super(driver);
 	}
@@ -258,5 +261,10 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+	
+	public BiometricDetailsPage clickOnBiometricsMenuButton() {
+		clickOnElement(biometricsMenuButton);
+		return new BiometricDetailsPageKannada(driver);
 	}
 }

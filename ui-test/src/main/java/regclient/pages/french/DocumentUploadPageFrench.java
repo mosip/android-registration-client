@@ -48,7 +48,9 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 	}
 
 	public BiometricDetailsPage clickOnContinueButton() {
+		waitTime(1);
 		clickOnElement(continueButton);
+		waitTime(1);
 		return new BiometricDetailsPageFrench(driver);
 	}
 
@@ -108,6 +110,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					cameraPage.clickOkButton();
 					waitTime(1);
 					applyOrientation();
+					waitTime(1);
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -142,6 +145,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					cameraPage.clickOkButton();
 					waitTime(1);
 					applyOrientation();
+					waitTime(1);
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -180,6 +184,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					cameraPage.clickOkButton();
 					waitTime(1);
 					applyOrientation();
+					waitTime(1);
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();
@@ -221,6 +226,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 				cameraPage.clickOkButton();
 				waitTime(1);
 				applyOrientation();
+				waitTime(1);
 				assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 				cropCaptureImage();
 				clickOnSaveButton();
@@ -251,6 +257,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 					cameraPage.clickOkButton();
 					waitTime(1);
 					applyOrientation();
+					waitTime(1);
 					assertTrue(isRetakeButtonDisplayed(), "Verify if retake  button displayed");
 					cropCaptureImage();
 					clickOnSaveButton();

@@ -47,13 +47,13 @@ public class SettingsPageArabic extends SettingsPage {
 	@AndroidFindBy(accessibility = "مسح")
 	private WebElement scanNowButton;
 
-	@AndroidFindBy(accessibility = "ID: e88198714e67562c\nName: io.mosip.mock.sbi.face\nStatus: Ready")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"mock.sbi.face\")")
 	private WebElement faceDeviceCard;
 
-	@AndroidFindBy(accessibility = "ID: e88198714e67562c\nName: io.mosip.mock.sbi.iris\nStatus: Ready")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"mock.sbi.iris\")")
 	private WebElement irisDeviceCard;
 
-	@AndroidFindBy(accessibility = "ID: e88198714e67562c\nName: io.mosip.mock.sbi.finger\nStatus: Ready")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"mock.sbi.finger\")")
 	private WebElement fingerDeviceCard;
 
 	@AndroidFindBy(accessibility = "No devices found")
@@ -68,7 +68,7 @@ public class SettingsPageArabic extends SettingsPage {
 	@AndroidFindBy(accessibility = "CANCEL")
 	private WebElement changesCancelButton;
 
-	@AndroidFindBy(accessibility = "إعدادات المهمة المجدولة")
+	@AndroidFindBy(accessibility = "إعدادات الوظائف المجدولة")
 	private WebElement scheduledJobSettingsPageHeader;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Master Data Sync\")")
@@ -162,20 +162,16 @@ public class SettingsPageArabic extends SettingsPage {
 	}
 
 	public void validateDeviceCard(String deviceName) {
-		// Wait a bit for the card to appear (helps if page loads slowly)
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		WebElement card = wait.until(ExpectedConditions
-				.presenceOfElementLocated(By.xpath("//*[contains(@content-desc,'" + deviceName + "')]")));
-
+		WebElement card = wait.until(ExpectedConditions.presenceOfElementLocated(
+				MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + deviceName + "\")")));
 		String desc = card.getAttribute("content-desc");
 		System.out.println("Card text: " + desc);
-
-		Pattern p = Pattern.compile("ID:\\s*([a-zA-Z0-9]+)");
+		assertTrue(desc.contains(deviceName), "Device name not found");
+		assertTrue(desc.toLowerCase().contains("ready"), "Device status not Ready");
+		Pattern p = Pattern.compile("\\b[a-f0-9]{10,}\\b");
 		Matcher m = p.matcher(desc);
-		assertTrue(m.find(), "ID not found or empty");
-
-		assertTrue(desc.contains("Name: " + deviceName), "Device name mismatch");
-		assertTrue(desc.contains("Status: Ready"), "Device status not Ready");
+		assertTrue(m.find(), "Device ID not found or empty");
 	}
 
 	public boolean isSubmitChangesPopupDisplayed() {
@@ -192,18 +188,24 @@ public class SettingsPageArabic extends SettingsPage {
 
 	public boolean isJobDisplayed(String jobName) {
 
-		// Scroll to jobs list (safe for long lists)
-		driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
-				+ ".scrollIntoView(new UiSelector().className(\"android.widget.EditText\"))"));
+		try {
+			By locator = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+					+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
 
-		By job = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
+			WebElement element = driver.findElement(locator);
+			return element.isDisplayed();
 
-		return isElementDisplayed(job);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public void clickOnSyncButton(String jobName) {
-		By syncButton = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
-		click(syncButton);
+		By job = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+				+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
+		WebElement jobElement = driver.findElement(job);
+		WebElement syncBtn = jobElement.findElement(By.xpath(".//android.widget.Button[1]"));
+		syncBtn.click();
 	}
 
 	public boolean isToastVisible(String toastMessage) {

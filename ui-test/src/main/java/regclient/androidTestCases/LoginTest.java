@@ -3,10 +3,6 @@ package regclient.androidTestCases;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.time.Duration;
-
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
@@ -180,6 +176,72 @@ public class LoginTest extends AndroidBaseTest {
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 
 		operationalTaskPage.clickSynchronizeDataButton();
+		
+		operationalTaskPage.handleIfSyncPopUpDisplayed();
+		
+		if ("eng".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			loginPage = new LoginPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+
+		loginPage.selectLanguage();
+
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+
+		assertTrue(loginPage.isNextButtonEnabled(), "verify if the next button enabled");
+		loginPage.clickOnNextButton();
+
+		loginPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
+		assertTrue(loginPage.isLoginButtonEnabled(), "Verify if the login button enabled");
+
+		loginPage.clickOnloginButton();
+		if ("eng".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			registrationTasksPage = new RegistrationTasksPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
+				"Verify if registration tasks page is loaded");
+
+		registrationTasksPage.clickOnOperationalTasksTitle();
+		if ("eng".equalsIgnoreCase(language)) {
+			operationalTaskPage = new OperationalTaskPageEnglish(driver);
+		} else if ("hin".equalsIgnoreCase(language)) {
+			operationalTaskPage = new OperationalTaskPageHindi(driver);
+		} else if ("fra".equalsIgnoreCase(language)) {
+			operationalTaskPage = new OperationalTaskPageFrench(driver);
+		} else if ("kan".equalsIgnoreCase(language)) {
+			operationalTaskPage = new OperationalTaskPageKannada(driver);
+		} else if ("tam".equalsIgnoreCase(language)) {
+			operationalTaskPage = new OperationalTaskPageTamil(driver);
+		} else if ("ara".equalsIgnoreCase(language)) {
+			operationalTaskPage = new OperationalTaskPageArabic(driver);
+		} else {
+			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+		}
+		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
+		
 		assertTrue(operationalTaskPage.checkLastSyncDate(), "Verify  last sync date and time");
 
 		registrationTasksPage.clickOnDashboardButton();

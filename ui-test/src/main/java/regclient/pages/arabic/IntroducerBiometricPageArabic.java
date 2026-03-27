@@ -42,7 +42,7 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"استثناء مسح\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"مسح\"))")
+	@AndroidFindBy(accessibility = "مسح")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris')]")
@@ -77,6 +77,7 @@ public class IntroducerBiometricPageArabic extends IntroducerBiometricPage {
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 

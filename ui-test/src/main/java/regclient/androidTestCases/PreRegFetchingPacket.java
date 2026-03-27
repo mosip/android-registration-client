@@ -413,15 +413,15 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
+				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
-				"Verify if application ID In PreviewPage is displayed");
 
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 
@@ -516,7 +516,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 
-		pendingApproval.clickOnLatestAid();
+		pendingApproval.clickOnAID(Aid);
 
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
@@ -524,8 +524,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(),
 				"Verify if pending approval page  displayed after approving packet");
-
-		pendingApproval.selectLatestAIdCheckBox();
+		pendingApproval.clickOnCheckBox();
 
 		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
 				"Verify if authenticate button is enable after selecting packet");
@@ -569,18 +568,20 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
 
-		manageApplicationsPage.selectLatestAidCheckBox();
-		boolean uploadSuccess = false;
+		manageApplicationsPage.clickCheckboxByAID(Aid);
 
+		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid),
+				"Verify if  packet is approved after approve in pending approval");
+
+		boolean uploadSuccess = false;
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-
 			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
 				uploadSuccess = true;
 				break;
 			}
 		}
-
 		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
 		manageApplicationsPage.clickOnBackButton();
@@ -990,15 +991,16 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
+				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
-				"Verify if application ID In PreviewPage is displayed");
 
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 
-//	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
+				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -1090,7 +1092,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 
-		pendingApproval.clickOnLatestAid();
+		pendingApproval.clickOnAID(Aid);
 
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
@@ -1098,8 +1100,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(),
 				"Verify if pending approval page  displayed after approving packet");
-
-		pendingApproval.selectLatestAIdCheckBox();
+		pendingApproval.clickOnCheckBox();
 
 		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
 				"Verify if authenticate button is enable after selecting packet");
@@ -1143,14 +1144,22 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
 
-		manageApplicationsPage.selectLatestAidCheckBox();
+		manageApplicationsPage.clickCheckboxByAID(Aid);
+
+		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid),
+				"Verify if  packet is approved after approve in pending approval");
+
+		boolean uploadSuccess = false;
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-
 			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
 				break;
 			}
 		}
+		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
+
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
@@ -1492,15 +1501,16 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
+				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
-				"Verify if application ID In PreviewPage is displayed");
 
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 
-//	assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
+				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -1593,7 +1603,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 
-		pendingApproval.clickOnLatestAid();
+		pendingApproval.clickOnAID(Aid);
 
 		assertTrue(pendingApproval.isApprovalButtonDisplayed(), "Verify if  approval button  displayed");
 		pendingApproval.clickOnApproveButton();
@@ -1601,8 +1611,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(),
 				"Verify if pending approval page  displayed after approving packet");
-
-		pendingApproval.selectLatestAIdCheckBox();
+		pendingApproval.clickOnCheckBox();
 
 		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
 				"Verify if authenticate button is enable after selecting packet");
@@ -1646,18 +1655,20 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
 
-		manageApplicationsPage.selectLatestAidCheckBox();
-		boolean uploadSuccess = false;
+		manageApplicationsPage.clickCheckboxByAID(Aid);
 
+		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
+		assertTrue(manageApplicationsPage.isPacketApproved(Aid),
+				"Verify if  packet is approved after approve in pending approval");
+
+		boolean uploadSuccess = false;
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-
 			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
 				uploadSuccess = true;
 				break;
 			}
 		}
-
 		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
 		manageApplicationsPage.clickOnBackButton();

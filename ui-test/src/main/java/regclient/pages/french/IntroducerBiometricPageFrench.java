@@ -51,7 +51,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception ANALYSE\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"ANALYSE\"))")
+	@AndroidFindBy(accessibility = "ANALYSE")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capturer')]")
@@ -72,7 +72,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage {
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Exception Capturer')]")
 	private WebElement exceptionCapturerHeader;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(accessibility = "zoom_in_button")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(className = "android.widget.Button")
@@ -86,6 +86,7 @@ public class IntroducerBiometricPageFrench extends IntroducerBiometricPage {
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 

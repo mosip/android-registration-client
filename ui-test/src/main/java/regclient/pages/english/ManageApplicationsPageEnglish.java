@@ -84,8 +84,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	@AndroidFindBy(accessibility = "Displaying 1 Applications")
 	private WebElement displayOneApplication;
 
-	@AndroidFindBy(xpath = "(//android.widget.TextView[@content-desc='Manage Applications']"
-			+ "/ancestor::android.view.View)[1]//android.widget.Button")
+	@AndroidFindBy(accessibility = "manage_application_back_button")
 	private WebElement backButton;
 
 	public ManageApplicationsPageEnglish(AppiumDriver driver) {
@@ -229,7 +228,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	}
 
 	public void clickOnBackButton() {
-		driver.navigate().back();
+		clickOnElement(backButton);
 	}
 
 	public void clickOnExportButton() {
@@ -258,8 +257,13 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 		return isElementDisplayed(noNetworkFound);
 	}
 
-	public void selectLatestAidCheckBox() {
-		clickOnElement(latestAidCheckBox);
+	public void clickCheckboxByAID(String aid) {
+		if (aid == null || aid.trim().isEmpty()) {
+			throw new IllegalArgumentException("AID cannot be null or empty");
+		}
+		By checkbox = By
+				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");
+		click(checkbox);
 	}
 
 }

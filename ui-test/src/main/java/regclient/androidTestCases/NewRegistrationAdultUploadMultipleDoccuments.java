@@ -424,7 +424,7 @@ public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTes
 		assertTrue(previewPage.isBothIrisImageDisplayed(), "Verify if both iris  image In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
@@ -504,7 +504,9 @@ public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTes
 					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
 				if (FetchUiSpec.eye.equals("yes")) {
-					biometricDetailsPage.clickOnIrisScan();
+					assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+							"Verify if biometric details page is displayed");
+					applicantBiometricsPage = biometricDetailsPage.clickOnIrisScan();
 
 					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
 							"Verify if applicant biometric page is displayed");
@@ -663,13 +665,13 @@ public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTes
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
 				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 
 		String Aid = previewPage.getAID();

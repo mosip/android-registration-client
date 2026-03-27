@@ -11,22 +11,22 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	@AndroidFindBy(accessibility = "Enrôler les données biométriques de l'opérateur")
 	private WebElement operatorBiometricVerificationPageTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris ANALYSE\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Main droite\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Right\"))")
 	private WebElement rightHandScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Main gauche\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\")).scrollIntoView(new UiSelector().className(\"android.widget.ImageView\").description(\"Left Hand Scan\"))")
 	private WebElement leftHandScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Pouces ANALYSE\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Thumbs\"))")
 	private WebElement thumbsScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Visage ANALYSE\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\")).scrollIntoView(new UiSelector().className(\"android.widget.ImageView\").description(\"Face Scan\"))")
 	private WebElement faceScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Exception\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
 	private WebElement exceptionScanIcon;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Iris ANALYSE\"))")
@@ -47,7 +47,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception ANALYSE\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"ANALYSE\"))")
+	@AndroidFindBy(accessibility = "ANALYSE")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capturer')]")
@@ -89,7 +89,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	@AndroidFindBy(accessibility = "Marquage des exceptions sur Visage n'est pas autorisé")
 	private WebElement markingExceptionsOnFaceIsNotAllowedText;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.view.View\").clickable(true)")
+	@AndroidFindBy(accessibility = "zoom_in_button")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(accessibility = "Permanent")
@@ -164,6 +164,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 

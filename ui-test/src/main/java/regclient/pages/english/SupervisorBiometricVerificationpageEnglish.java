@@ -48,7 +48,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"Scan\"))")
+	@AndroidFindBy(accessibility = "Scan")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capture')]")
@@ -114,7 +114,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	@AndroidFindBy(accessibility = "Marking exceptions on Face is not allowed")
 	private WebElement markingExceptionsOnFaceIsNotAllowedText;
 
-	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.View[3]")
+	@AndroidFindBy(accessibility = "zoom_in_button")
 	private WebElement zoomButton;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, \"Threshold\")]/following-sibling::android.view.View")
@@ -165,6 +165,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 
@@ -287,8 +288,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 
 	public boolean isZoomButtonDisplayed() {
-		return true;
-//		return isElementDisplayed(zoomButton);
+		return isElementDisplayed(zoomButton);
 	}
 
 	public void clickOnRightHandScanTitle() {

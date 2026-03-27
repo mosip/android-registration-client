@@ -23,19 +23,19 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
 	private WebElement irisScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Main droite\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Right\"))")
 	private WebElement rightHandScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Main gauche\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\")).scrollIntoView(new UiSelector().className(\"android.widget.ImageView\").description(\"Left Hand Scan\"))")
 	private WebElement leftHandScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Pouces ANALYSE\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Thumbs\"))")
 	private WebElement thumbsScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Visage ANALYSE\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().className(\"android.widget.ScrollView\")).scrollIntoView(new UiSelector().className(\"android.widget.ImageView\").description(\"Face Scan\"))")
 	private WebElement faceScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Exception\"))")
+	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception Scan\"))")
 	private WebElement exceptionScanIcon;
 
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Iris ANALYSE\"))")
@@ -56,7 +56,7 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"Exception ANALYSE\"))")
 	private WebElement exceptionScanTitle;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"ANALYSE\"))")
+	@AndroidFindBy(accessibility = "ANALYSE")
 	private WebElement scanButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris Capturer')]")
@@ -172,6 +172,7 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 	}
 
 	public void clickOnScanButton() {
+		scrollUntilElementVisible(scanButton);
 		clickOnElement(scanButton);
 	}
 

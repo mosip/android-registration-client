@@ -99,6 +99,9 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 	@AndroidFindBy(xpath = "//android.view.View[@content-desc=\"अस्तित्वाएं\"]/following-sibling::android.view.View[@content-desc=\"1\"]")
 	private WebElement exceptionCount;
 
+	@AndroidFindBy(accessibility = "menu_back_button")
+	private WebElement biometricsMenuButton;
+
 	public ApplicantBiometricsPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
@@ -262,5 +265,10 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
+	}
+
+	public BiometricDetailsPage clickOnBiometricsMenuButton() {
+		clickOnElement(biometricsMenuButton);
+		return new BiometricDetailsPageHindi(driver);
 	}
 }

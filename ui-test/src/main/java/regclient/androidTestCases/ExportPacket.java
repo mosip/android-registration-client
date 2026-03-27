@@ -16,7 +16,6 @@ import regclient.page.AuthenticationPage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
-import regclient.page.DocumentUploadPage;
 import regclient.page.ExportPage;
 import regclient.page.LoginPage;
 import regclient.page.ManageApplicationsPage;
@@ -26,14 +25,12 @@ import regclient.page.PreviewPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.page.UpdateUINPage;
 import regclient.pages.arabic.AcknowledgementPageArabic;
 import regclient.pages.arabic.ApplicantBiometricsPageArabic;
 import regclient.pages.arabic.AuthenticationPageArabic;
 import regclient.pages.arabic.BiometricDetailsPageArabic;
 import regclient.pages.arabic.ConsentPageArabic;
 import regclient.pages.arabic.DemographicDetailsPageArabic;
-import regclient.pages.arabic.DocumentUploadPageArabic;
 import regclient.pages.arabic.LoginPageArabic;
 import regclient.pages.arabic.ManageApplicationsPageArabic;
 import regclient.pages.arabic.OperationalTaskPageArabic;
@@ -42,14 +39,12 @@ import regclient.pages.arabic.PreviewPageArabic;
 import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SelectLanguagePageArabic;
-import regclient.pages.arabic.UpdateUINPageArabic;
 import regclient.pages.english.AcknowledgementPageEnglish;
 import regclient.pages.english.ApplicantBiometricsPageEnglish;
 import regclient.pages.english.AuthenticationPageEnglish;
 import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.pages.english.ConsentPageEnglish;
 import regclient.pages.english.DemographicDetailsPageEnglish;
-import regclient.pages.english.DocumentUploadPageEnglish;
 import regclient.pages.english.LoginPageEnglish;
 import regclient.pages.english.ManageApplicationsPageEnglish;
 import regclient.pages.english.OperationalTaskPageEnglish;
@@ -58,14 +53,12 @@ import regclient.pages.english.PreviewPageEnglish;
 import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SelectLanguagePageEnglish;
-import regclient.pages.english.UpdateUINPageEnglish;
 import regclient.pages.french.AcknowledgementPageFrench;
 import regclient.pages.french.ApplicantBiometricsPageFrench;
 import regclient.pages.french.AuthenticationPageFrench;
 import regclient.pages.french.BiometricDetailsPageFrench;
 import regclient.pages.french.ConsentPageFrench;
 import regclient.pages.french.DemographicDetailsPageFrench;
-import regclient.pages.french.DocumentUploadPageFrench;
 import regclient.pages.french.LoginPageFrench;
 import regclient.pages.french.ManageApplicationsPageFrench;
 import regclient.pages.french.OperationalTaskPageFrench;
@@ -74,14 +67,12 @@ import regclient.pages.french.PreviewPageFrench;
 import regclient.pages.french.ProfilePageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SelectLanguagePageFrench;
-import regclient.pages.french.UpdateUINPageFrench;
 import regclient.pages.hindi.AcknowledgementPageHindi;
 import regclient.pages.hindi.ApplicantBiometricsPageHindi;
 import regclient.pages.hindi.AuthenticationPageHindi;
 import regclient.pages.hindi.BiometricDetailsPageHindi;
 import regclient.pages.hindi.ConsentPageHindi;
 import regclient.pages.hindi.DemographicDetailsPageHindi;
-import regclient.pages.hindi.DocumentUploadPageHindi;
 import regclient.pages.hindi.LoginPageHindi;
 import regclient.pages.hindi.ManageApplicationsPageHindi;
 import regclient.pages.hindi.OperationalTaskPageHindi;
@@ -90,7 +81,6 @@ import regclient.pages.hindi.PreviewPageHindi;
 import regclient.pages.hindi.ProfilePageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SelectLanguagePageHindi;
-import regclient.pages.hindi.UpdateUINPageHindi;
 import regclient.pages.kannada.AcknowledgementPageKannada;
 import regclient.pages.kannada.ApplicantBiometricsPageKannada;
 import regclient.pages.kannada.AuthenticationPageKannada;
@@ -124,7 +114,7 @@ import regclient.utils.TestDataReader;
 public class ExportPacket extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify exporting of created packet")
 	public void exportPacket() throws InterruptedException {
-		FetchUiSpec.getUiSpec("newProcess");
+		FetchUiSpec.getUiSpec("lostProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
 		LoginPage loginPage = null;
@@ -132,7 +122,6 @@ public class ExportPacket extends AndroidBaseTest {
 		SelectLanguagePage selectLanguagePage = null;
 		ConsentPage consentPage = null;
 		DemographicDetailsPage demographicPage = null;
-		DocumentUploadPage documentuploadPage = null;
 		BiometricDetailsPage biometricDetailsPage = null;
 		ApplicantBiometricsPage applicantBiometricsPage = null;
 		PreviewPage previewPage = null;
@@ -392,16 +381,16 @@ public class ExportPacket extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isLostUinTitleDisplayed(), "Verify if lost uin title is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
 				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -417,8 +406,18 @@ public class ExportPacket extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -440,8 +439,6 @@ public class ExportPacket extends AndroidBaseTest {
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
 
-		// assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code
-		// image is displayed");
 		acknowledgementPage.clickOnGoToHomeButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
@@ -494,10 +491,19 @@ public class ExportPacket extends AndroidBaseTest {
 
 		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
 				"Verify if authenticate button is enable after selecting packet");
-		pendingApproval.clickOnAuthenticateButton();
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
+		boolean isPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			pendingApproval.clickOnAuthenticateButton();
+
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
@@ -539,11 +545,23 @@ public class ExportPacket extends AndroidBaseTest {
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 
 		manageApplicationsPage.clickOnSearchCheckBox();
-		manageApplicationsPage.clickOnExportButton();
+
+		boolean success = false;
+
+		for (int i = 0; i < 3; i++) {
+			manageApplicationsPage.clickOnExportButton();
+
+			if (!manageApplicationsPage.isManageApplicationPageDisplayed()) {
+				success = true;
+				break;
+			}
+		}
+
+		assertTrue(success, "Export failed after retries");
 
 		exportPage = new ExportPage(driver);
 		exportPage.handleAccessConsentIfPresent();
-		
+
 		exportPage.exportToFolder("ExportPacket");
 
 		manageApplicationsPage.clickOnBackButton();

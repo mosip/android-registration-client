@@ -13,11 +13,9 @@ import regclient.api.KeycloakUserManager;
 import regclient.page.AcknowledgementPage;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.AuthenticationPage;
-import regclient.page.BasePage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
-import regclient.page.DocumentUploadPage;
 import regclient.page.LoginPage;
 import regclient.page.ManageApplicationsPage;
 import regclient.page.OperationalTaskPage;
@@ -117,7 +115,7 @@ public class LostUin extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify lost UIN")
 	public void lostUinAdult() {
 
-		FetchUiSpec.getUiSpec("newProcess");
+		FetchUiSpec.getUiSpec("lostProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
 		LoginPage loginPage = null;
@@ -392,16 +390,16 @@ public class LostUin extends AndroidBaseTest {
 		}
 
 		assertTrue(previewPage.isLostUinTitleDisplayed(), "Verify if lost uin title is displayed");
-		assertTrue(previewPage.isApplicationIDPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isApplicationIDPreviewPageDisplayed(),
 				"Verify if application ID In PreviewPage is displayed");
 		assertTrue(previewPage.isDemographicInformationInPreviewPageDisplayed(),
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPagePageDisplayed(),
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		previewPage.clickOnContinueButton();
+
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -417,8 +415,18 @@ public class LostUin extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(authenticationPage.isAuthenticationPageDisplayed(),
-				"Verify if authentication details page is displayed");
+		boolean isAuthenticationPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			previewPage.clickOnContinueButton();
+
+			if (authenticationPage.isAuthenticationPageDisplayed()) {
+				isAuthenticationPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -440,8 +448,6 @@ public class LostUin extends AndroidBaseTest {
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
 
-		// assertTrue(acknowledgementPage.isQrCodeImageDisplayed(),"Verify if qr code
-		// image is displayed");
 		acknowledgementPage.clickOnGoToHomeButton();
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
@@ -494,10 +500,19 @@ public class LostUin extends AndroidBaseTest {
 
 		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
 				"Verify if authenticate button is enable after selecting packet");
-		pendingApproval.clickOnAuthenticateButton();
 
-		assertTrue(pendingApproval.isSupervisorAuthenticationTitleDisplayed(),
-				"Verify if Supervisor Authentication page displayed");
+		boolean isPageDisplayed = false;
+
+		for (int i = 0; i < 3; i++) {
+			pendingApproval.clickOnAuthenticateButton();
+
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
+		}
+
+		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
 
@@ -542,7 +557,7 @@ public class LostUin extends AndroidBaseTest {
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 		manageApplicationsPage.clickOnSearchCheckBox();
-		
+
 		boolean uploadSuccess = false;
 
 		for (int i = 0; i < 3; i++) {

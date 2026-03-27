@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import io.appium.java_client.remote.SupportsContextSwitching;
 import io.mosip.testrig.apirig.testrunner.OTPListener;
 import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
@@ -30,22 +31,22 @@ import regclient.pages.english.PreviewPageEnglish;
 
 public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Iris\"))")
+	@AndroidFindBy(accessibility = "Iris")
 	private WebElement irisScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Main droite\"))")
-	private WebElement rightHandScanIcon;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Main gauche\"))")
-	private WebElement leftHandScanIcon;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Pouces ANALYSE\"))")
-	private WebElement thumbsScanIcon;
-
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Visage ANALYSE\"))")
+	@AndroidFindBy(accessibility = "Face")
 	private WebElement faceScanIcon;
 
-	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"Exception\"))")
+	@AndroidFindBy(accessibility = "Thumbs")
+	private WebElement thumbsScanIcon;
+
+	@AndroidFindBy(accessibility = "Left Hand")
+	private WebElement leftHandScanIcon;
+
+	@AndroidFindBy(accessibility = "Right Hand")
+	private WebElement rightHandScanIcon;
+
+	@AndroidFindBy(accessibility = "Exception")
 	private WebElement exceptionScanIcon;
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,\"Introducteur BiomÃ©trie\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris ANALYSE\"]")
@@ -82,74 +83,74 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	}
 
 	public ApplicantBiometricsPage clickOnIrisScan() {
+		scrollUntilElementVisible(irisScanIcon);
 		clickOnElement(irisScanIcon);
 		return new ApplicantBiometricsPageFrench(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnRightHandScanIcon() {
+		scrollUntilElementVisible(rightHandScanIcon);
 		clickOnElement(rightHandScanIcon);
 		return new ApplicantBiometricsPageFrench(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnLeftHandScanIcon() {
+		scrollUntilElementVisible(leftHandScanIcon);
 		clickOnElement(leftHandScanIcon);
 		return new ApplicantBiometricsPageFrench(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnThumbsScanIcon() {
+		scrollUntilElementVisible(thumbsScanIcon);
 		clickOnElement(thumbsScanIcon);
 		return new ApplicantBiometricsPageFrench(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnFaceScanIcon() {
+		scrollUntilElementVisible(faceScanIcon);
 		clickOnElement(faceScanIcon);
 		return new ApplicantBiometricsPageFrench(driver);
 	}
 
 	public ApplicantBiometricsPage clickOnExceptionScanIcon() {
+		scrollUntilElementVisible(exceptionScanIcon);
 		clickOnElement(exceptionScanIcon);
 		return new ApplicantBiometricsPageFrench(driver);
-
 	}
 
 	public IntroducerBiometricPage clickOnIntroducerIrisScan() {
-		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
-				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Iris ANALYSE\"]")));
+		clickOnElement(findElementWithRetry(By.xpath(
+				"//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics")
+						+ "\")]/following-sibling::android.view.View//android.view.View[@content-desc='Iris']")));
 		return new IntroducerBiometricPageFrench(driver);
-
 	}
 
 	public IntroducerBiometricPage clickOnIntroducerRightHandScan() {
-		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
-				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Main droite ANALYSE\"]")));
+		clickOnElement(findElementWithRetry(By.xpath(
+				"//android.view.View[contains(@content-desc,\"" + FetchUiSpec.getValueUsingId("introducerBiometrics")
+						+ "\")]/following-sibling::android.view.View//android.view.View[@content-desc='Right Hand']")));
 		return new IntroducerBiometricPageFrench(driver);
-
 	}
 
 	public IntroducerBiometricPage clickOnIntroducerLeftHandScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Main gauche ANALYSE\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Left Hand\"]")));
 		return new IntroducerBiometricPageFrench(driver);
-
 	}
 
 	public IntroducerBiometricPage clickOnIntroducerThumbScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Pouces ANALYSE\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Thumbs\"]")));
 		return new IntroducerBiometricPageFrench(driver);
-
 	}
 
 	public IntroducerBiometricPage clickOnIntroducerFaceScan() {
 		clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc,\""
 				+ FetchUiSpec.getValueUsingId("introducerBiometrics")
-				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Visage ANALYSE\"]")));
+				+ "\")]/following-sibling::android.view.View/descendant::android.view.View/descendant::android.widget.ImageView[@content-desc=\"Face\"]")));
 		return new IntroducerBiometricPageFrench(driver);
-
 	}
 
 	public PreviewPage clickOnContinueButton() {
@@ -163,13 +164,7 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 
 	public RegistrationTasksPage clickOnStayLoggedInButton() {
 		clickOnElement(stayLoggedInButton);
-		return new RegistrationTasksPageArabic(driver);
-	}
-
-	private void typeAndVerify(WebElement el, String value) {
-		el.click();
-		el.clear();
-		el.sendKeys(value);
+		return new RegistrationTasksPageFrench(driver);
 	}
 
 	public boolean isAutoLogoutPopupDisplayed() {
@@ -183,72 +178,68 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	}
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
+		logger.info(emailId);
+	    String additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
+	    if (additionalInfoReqId == null || additionalInfoReqId.trim().isEmpty()) {
+	        throw new IllegalStateException("Additional Info Request ID is missing for email: " + emailId);
+	    }
+	    additionalInfoReqId = additionalInfoReqId + "-BIOMETRIC_CORRECTION-1";
 
-		final int totalTimeoutMinutes = 15;
-		final int pollIntervalSeconds = 20;
-		final String SUFFIX = "-BIOMETRIC_CORRECTION-1";
+	  
+	    try {
+			if (typeAndVerify(additionalInfoRequestIdTextbox, additionalInfoReqId)) {
+				logger.info("typeAndVerify succeeded.");
+				return; // SUCCESS → exit method
+			} else {
+				throw new AssertionError("Textbox did not accept the id: " + additionalInfoReqId);
+			}
+		} catch (Exception e) {
+			throw new AssertionError("Failed while typing/verifying finalId: " + additionalInfoReqId, e);
+		}
 
-		long startMs = System.currentTimeMillis();
-		long timeoutMs = TimeUnit.MINUTES.toMillis(totalTimeoutMinutes);
+	}
+
+	private boolean typeAndVerify(WebElement el, String value) {
+	    el.click();
+	    el.clear();
+	    el.sendKeys(value);
+	    waitTime(1);
+	    String curr = readElementValue(el);
+	    return value.equals(curr);
+	}
+
+	private String readElementValue(WebElement el) {
+		try {
+			String ctx = "";
+			try {
+				ctx = ((SupportsContextSwitching) driver).getContext();
+			} catch (Exception ignored) {
+			}
+
+			if (ctx != null && ctx.toUpperCase().contains("WEBVIEW")) {
+				String v = el.getAttribute("value");
+				return v == null ? "" : v;
+			}
+		} catch (Exception ignored) {
+		}
 
 		try {
-			logger.info("Waiting 30 seconds for email delivery...");
-			Thread.sleep(30000);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+			String t = el.getText();
+			if (t != null && !t.isEmpty())
+				return t;
+		} catch (Exception ignored) {
 		}
 
-		while (System.currentTimeMillis() - startMs < timeoutMs) {
-
-			String id = null;
-
+		for (String attr : new String[] { "text", "content-desc", "name" }) {
 			try {
-				id = OTPListener.getAdditionalReqId(emailId.trim().toLowerCase());
-				logger.info("Polled raw id = [" + id + "]");
-			} catch (Exception e) {
-				logger.info("Error fetching id: " + e.getMessage());
-			}
-
-			if (id != null) {
-				id = id.trim();
-				if (!id.isEmpty()) {
-					String finalId = id.endsWith(SUFFIX) ? id : id + SUFFIX;
-					logger.info("Using finalId = " + finalId);
-					try {
-						typeAndVerify(additionalInfoRequestIdTextbox, finalId);
-						logger.info("Successfully entered: " + finalId);
-						return;
-					} catch (Exception e) {
-						throw new AssertionError("Failed while typing finalId: " + finalId + " : " + e.getMessage(), e);
-					}
-				}
-			}
-
-			try {
-				WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-				shortWait.until(ExpectedConditions.visibilityOf(autoLogoutPopup));
-				logger.info("Auto logout popup detected. Clicking Stay Logged In.");
-				clickOnStayLoggedInButton();
+				String v = el.getAttribute(attr);
+				if (v != null && !v.isEmpty())
+					return v;
 			} catch (Exception ignored) {
-
-			}
-
-			long elapsed = System.currentTimeMillis() - startMs;
-			long remainingMs = Math.max(0, timeoutMs - elapsed);
-
-			logger.info("ID not found. Elapsed " + (elapsed / 1000) + "s, remaining " + (remainingMs / 1000)
-					+ "s. Sleeping " + pollIntervalSeconds + "s.");
-
-			try {
-				Thread.sleep(TimeUnit.SECONDS.toMillis(pollIntervalSeconds));
-			} catch (InterruptedException ie) {
-				Thread.currentThread().interrupt();
-				throw new AssertionError("Interrupted while waiting for AdditionalInfoReqId", ie);
 			}
 		}
 
-		throw new AssertionError(
-				"AdditionalInfoReqId not found within " + totalTimeoutMinutes + " minutes for " + emailId);
+		return "";
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageFrench.class);

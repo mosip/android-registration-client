@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.lang.NumberFormatException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

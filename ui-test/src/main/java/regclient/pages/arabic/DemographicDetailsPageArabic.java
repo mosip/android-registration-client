@@ -103,6 +103,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 	}
 
 	public void fillDemographicDetailsPage(String age) {
+		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("DemographicDetails");
 		for (String id : idList) {
 			if (FetchUiSpec.getRequiredTypeUsingId(id)) {
@@ -111,7 +112,8 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 					boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
-					clickAndsendKeysToTextBox(
+					waitTime(1);
+					clickAndsendKeysToTextBox3(
 							findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 									+ FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
@@ -126,12 +128,14 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
 						swipeOrScroll();
 					}
+
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
 					WebElement dropdownElement = findElement(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.widget.Button"));
+							By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
+									+ FetchUiSpec.getValueUsingId(id) + "')]]"));
+
 					clickOnElement(dropdownElement);
 					waitTime(1);
 					if (!isElementDisplayed(dropdownElement)) {
@@ -145,7 +149,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 					waitTime(1);
 					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
 							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"اختر خياراً\")]"))) {
 						clickOnElement(dropdownElement);
 						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -217,7 +221,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 					waitTime(1);
 					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
 							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"اختر خياراً\")]"))) {
 						clickOnElement(dropdownElement);
 						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -227,7 +231,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 			if (id.equals("introducerName") && FetchUiSpec.getFlowType().equals("newProcess")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
 					if (FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
-						waitTime(3);
+						waitTime(1);
 						boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 								"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 						assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
@@ -245,7 +249,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 			if (id.equals("introducerRID") && FetchUiSpec.getFlowType().equals("newProcess")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
 					if (FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
-						waitTime(3);
+						waitTime(1);
 						boolean isdisplayed = isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 								"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")));
 						assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
@@ -688,7 +692,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 					waitTime(2);
 					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
 							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"اختر خياراً\")]"))) {
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -696,7 +700,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 				}
 			} else if (FetchUiSpec.getRequiredTypeUsingId(id) && id.equals("Postal")) {
 				By postalDropdown = By.xpath("//android.view.View[contains(@content-desc, 'Postal')]"
-						+ "/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, 'Select Option')]");
+						+ "/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"اختر خياراً\")]");
 
 				int attempts = 0;
 				while (attempts < 3) {
