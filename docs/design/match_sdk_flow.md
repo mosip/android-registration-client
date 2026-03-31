@@ -52,7 +52,7 @@ The Match SDK is dynamically loaded using a **Dex-based loader**.
 
 * Vendor/reference SDK artifacts are placed in:
 
-  ```
+  ```text
   clientmanager/src/main/assets/biosdk/
   ```
 
@@ -87,7 +87,7 @@ The Match SDK is dynamically loaded using a **Dex-based loader**.
 
 * Parsed via:
 
-    * `GlobalParamRepository.resolveBiometricProviderConfig()`
+    * `GlobalParamRepository.getBiometricProviderConfig()`
 
 * Initialized via:
 
@@ -227,7 +227,7 @@ Registration capture path (applicant biometrics). **Operator onboarding** uses t
 
 3. Place SDK files in:
 
-   ```
+   ```text
    assets/biosdk/
    ```
 
