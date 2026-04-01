@@ -1,6 +1,6 @@
 # Design – Local Deduplication using Match SDK
 
-## Background
+## Purpose
 
 During applicant registration in the Android Registration Client (ARC), there is a possibility that an Operator may provide their own biometrics instead of the applicant’s.
 
@@ -39,7 +39,7 @@ The Match SDK is dynamically loaded using a **Dex-based loader**.
 
 ## Non-Functional Requirements
 
-1. Match SDK must be **pluggable and vendor-independent**.
+1. Match SDK must be **pluggable and vendor-specific**.
 2. SDK must be loaded dynamically using **DexClassLoader**.
 3. Matching should be fast and not block UI performance.
 4. Configuration-driven behavior must be supported.
