@@ -57,20 +57,11 @@ These permissions must be granted at runtime when the app requests location acce
 2. Location Service Validation:
     * System checks if device location services are enabled.
     * If location services are disabled, system logs warning and proceeds without GPS data.
-    * Permission Handling:
-        * **Timing**: Permissions are requested immediately before the first packet creation attempt if not already granted.
-        * **UI**: The user is presented with the standard system permission dialog. No custom pre-prompt is shown.
-        * **Denial Handling**: If the user denies permission, GPS capture is skipped for the current packet. The permission will be requested again on the next packet creation attempt unless "Don't ask again" is selected.
-        * **Revocation**: If permissions are revoked by the user (e.g., via settings) after packet creation (GPS capture) but before submission, the already captured GPS data is **retained** and attached to the packet. It is NOT removed. GPS data will not be captured for subsequent packets where permission is missing.
+    * System checks and requests location permissions if not granted.
 3. GPS Location Capture:
     * When packet creation is initiated (New Registration, Lost UIN, Update UIN, Applicant Correction), the system automatically fetches current GPS coordinates.
     * Location is captured using high-accuracy GPS mode via Geo-locator service.
-    * Coordinates (latitude and longitude) are obtained.
-    * **Format**: Decimal Degrees (DD).
-    * **Precision**: Minimum 4 decimal places (giving approx. 11m precision).
-    * **Units**: Degrees.
-    * **Validation**: Latitude must be between -90 and +90. Longitude must be between -180 and +180.
-    * **String Representation**: Standard string conversion of the double value (e.g., "12.3456").
+    * Coordinates (latitude and longitude) are obtained along with timestamp.
 4. Location Storage:
     * GPS coordinates are stored in RegistrationDto via setMachineLocation() method.
     * Location is stored in GeoLocationDto object with latitude and longitude.
@@ -80,14 +71,13 @@ These permissions must be granted at runtime when the app requests location acce
     * If GPS location is unavailable, metadata values are set to "null".
 6. Offline Mode Support:
     * GPS coordinates are captured and stored locally even in offline mode.
-    * Coordinates are attached to packet metadata at the moment of packet creation.
-    * **Precedence**: The system uses the latest coordinates available in the session at the exact moment of packet creation (submission).
-    * **Immutability**: Immediately after packet creation, the GPS metadata is finalized and stored. It is **never** updated for that packet, even if better location data becomes available later or before upload.
+    * Coordinates are attached to packet metadata when packet is created.
     * Packets with GPS metadata are stored locally and synced when connectivity is restored.
 7. Error Handling:
     * If location services are disabled, system logs warning and continues without blocking packet creation.
     * If location permission is denied, system logs warning and continues without GPS data.
     * If GPS capture fails, metadata values are set to "null" and packet creation proceeds.
+    * Packet is created with "No GPS data available" flag in metadata if location capture fails.
 
 ## Sequence Diagram
 ![GPSLocationUserFlow.png](../GPSLocationUserFlow.png)
