@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/biometric_attribute_data.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+import 'package:registration_client/platform_spi/biometrics_service.dart';
 import 'package:registration_client/provider/biometric_capture_control_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -27,7 +28,7 @@ class _OperatorBiometricsCaptureState
   late GlobalProvider globalProvider;
   bool isSavingBiometrics = false;
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
-
+ 
 
   @override
   void initState() {
@@ -145,8 +146,8 @@ class _OperatorBiometricsCaptureState
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
                       child: Text(
-                          "${(biometricAttributeData.qualityPercentage.isFinite
-                              ? biometricAttributeData.qualityPercentage.clamp(0.0, 100.0).toInt()
+                          "${(biometricAttributeData.qualityPercentage.isFinite 
+                              ? biometricAttributeData.qualityPercentage.clamp(0.0, 100.0).toInt() 
                               : 0)}%",
                           style: TextStyle(
                               fontSize: 20,
@@ -248,9 +249,12 @@ class _OperatorBiometricsCaptureState
                     isSavingBiometrics = true;
                   });
 
+                  // Resolve biometric capture timeout via BiometricsService (fallback handled in service)
+                  final timeoutMillis = await BiometricsService().getCaptureTimeout();
+
                   String isOperatorBiometricSaved = "";
                   await BiometricsApi().saveOperatorBiometrics().timeout(
-                    const Duration(seconds: 60),
+                    Duration(milliseconds: timeoutMillis),
                     onTimeout: () {
                       return "TIMEOUT";
                     },

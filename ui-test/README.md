@@ -154,7 +154,7 @@ Update these files before execution:
 * `resources/testdata.json` — Test data (uin, language, rid, camera id)
 * `resources/config.properties` — `nodePath`, `appiumServerExecutable`
 * `resources/DesiredCapabilies.json` — `udid`, app path
-* `camera.java` — Update camera & retake button coordinates [If camera id not available use camera button coordinates] 
+* `camera.java` — Update camera & retake button coordinates
 
 📌 Any runtime properties (e.g. `bioValue.properties`) must be placed under:
 ```
@@ -193,3 +193,4 @@ Reports include:
 
 * **Class name mismatch**  
   Java class names are **case-sensitive** — ensure TestNG XML matches compiled class names
+
