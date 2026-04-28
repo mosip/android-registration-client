@@ -108,12 +108,11 @@ class TemplateBottomSheet {
                                     .setCurrentInd(currentInd - 1);
                                 Registration reg = context
                                     .read<ApprovePacketsProvider>().matchingPackets[(currentInd - 1) - 1]['packet'] as Registration;
-                                log(reg.packetId);
                                 loadHtmlData(
                                     context
                                         .read<ApprovePacketsProvider>()
                                         .webViewPlusController,
-                                    reg.packetId);
+                                    reg.id.toString());
                               }
                                   : () {
                                 log("Out of range");
@@ -283,12 +282,11 @@ class TemplateBottomSheet {
                                     .read<ApprovePacketsProvider>()
                                     .matchingPackets[(currentInd + 1) - 1]
                                 ['packet'] as Registration;
-                                log(reg.packetId);
                                 loadHtmlData(
                                     context
                                         .read<ApprovePacketsProvider>()
                                         .webViewPlusController,
-                                    reg.packetId);
+                                    reg.id.toString());
                               }
                                   : () {
                                 log("Out of range");
@@ -324,12 +322,11 @@ class TemplateBottomSheet {
                             .read<ApprovePacketsProvider>()
                             .matchingPackets[(currentInd - 1) - 1]
                         ['packet'] as Registration;
-                        log(reg.packetId);
                         loadHtmlData(
                             context
                                 .read<ApprovePacketsProvider>()
                                 .webViewPlusController,
-                            reg.packetId);
+                            reg.id.toString());
                       }
                           : () {
                         log("Out of range");
@@ -369,12 +366,11 @@ class TemplateBottomSheet {
                                 .read<ApprovePacketsProvider>()
                                 .matchingPackets[(currentInd + 1) - 1]
                             ['packet'] as Registration;
-                            log(reg.packetId);
                             loadHtmlData(
                                 context
                                     .read<ApprovePacketsProvider>()
                                     .webViewPlusController,
-                                reg.packetId);
+                                reg.id.toString());
                           }
                         },
                         label: Text(AppLocalizations.of(context)!.approve),
@@ -408,13 +404,12 @@ class TemplateBottomSheet {
                                         .matchingPackets[(currentInd +
                                         1) -
                                         1]['packet'] as Registration;
-                                    log(reg.packetId);
                                     loadHtmlData(
                                         context
                                             .read<
                                             ApprovePacketsProvider>()
                                             .webViewPlusController,
-                                        reg.packetId);
+                                        reg.id.toString());
                                   }
                                   Navigator.of(context).pop();
                                 }, context);
@@ -508,12 +503,11 @@ class TemplateBottomSheet {
                             .read<ApprovePacketsProvider>()
                             .matchingPackets[(currentInd + 1) - 1]
                         ['packet'] as Registration;
-                        log(reg.packetId);
                         loadHtmlData(
                             context
                                 .read<ApprovePacketsProvider>()
                                 .webViewPlusController,
-                            reg.packetId);
+                            reg.id.toString());
                       }
                           : () {
                         log("Out of range");
