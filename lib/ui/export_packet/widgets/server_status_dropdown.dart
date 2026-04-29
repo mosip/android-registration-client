@@ -25,6 +25,9 @@ class ServerStatusDropdown extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         items:   [
           DropdownMenuItem(value: null, child: Text(AppLocalizations.of(context)!.server_status)),
+          const DropdownMenuItem(
+              value: ExportPacketsProvider.notUploadedServerStatusFilter,
+              child: Text("NOT UPLOADED")),
           const DropdownMenuItem(value: "Packet has reached Packet Receiver", child: Text("Received")),
           const DropdownMenuItem(value: "Processing", child: Text("Processing")),
           const DropdownMenuItem(value: "Accepted", child: Text("Accepted")),
