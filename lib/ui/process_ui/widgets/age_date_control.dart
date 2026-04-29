@@ -6,7 +6,6 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
@@ -40,6 +39,11 @@ class _AgeDateControlState extends State<AgeDateControl> {
   TextEditingController ageController = TextEditingController();
   int maxAge = 150;
 
+  String get _dateFormat =>
+      widget.field.format == null || widget.field.format!.toLowerCase() == "none"
+          ? "yyyy/MM/dd"
+          : widget.field.format!;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -66,11 +70,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
       return;
     }
     String dateString = dateController.text;
-    DateTime date = DateFormat(widget.field.format == null ||
-                widget.field.format!.toLowerCase() == "none"
-            ? "yyyy/MM/dd"
-            : widget.field.format)
-        .parse(dateString);
+    DateTime date = DateFormat(_dateFormat).parse(dateString);
 
     DateTime currentDate = DateTime.now();
     if (date.compareTo(currentDate) < 0) {
@@ -89,11 +89,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
       return;
     }
     String dateString = dateController.text;
-    DateTime date = DateFormat(widget.field.format == null ||
-                widget.field.format!.toLowerCase() == "none"
-            ? "yyyy/MM/dd"
-            : widget.field.format)
-        .parse(dateString);
+    DateTime date = DateFormat(_dateFormat).parse(dateString);
     registrationTaskProvider.setDateField(
       widget.field.id ?? "",
       widget.field.subType ?? "",
@@ -128,11 +124,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
       String savedDate = globalProvider.fieldInputValue[widget.field.id];
-      DateTime parsedDate = DateFormat(widget.field.format == null ||
-                  widget.field.format!.toLowerCase() == "none"
-              ? "yyyy/MM/dd"
-              : widget.field.format)
-          .parse(savedDate);
+      DateTime parsedDate = DateFormat(_dateFormat).parse(savedDate);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           dateController.text = savedDate;
@@ -145,17 +137,46 @@ class _AgeDateControlState extends State<AgeDateControl> {
     }
   }
 
-  void _getDateFromAge(String value) {
-    int age = int.parse(value);
+  int? _parseAge(String value) {
+    String trimmedValue = value.trim();
+    if (!RegExp(r'^\d+$').hasMatch(trimmedValue)) {
+      return null;
+    }
+    return int.tryParse(trimmedValue);
+  }
+
+  String? _validateAge(String? value) {
+    String trimmedValue = value?.trim() ?? "";
+    if (widget.field.required == true && trimmedValue.isEmpty) {
+      return AppLocalizations.of(context)!.select_value_message;
+    }
+    if (trimmedValue.isEmpty) {
+      return null;
+    }
+    int? age = _parseAge(trimmedValue);
+    if (age == null) {
+      return AppLocalizations.of(context)!.invalid_input;
+    }
+    if (age > maxAge) {
+      return AppLocalizations.of(context)!.age_should_not_be_greater(maxAge);
+    }
+    return null;
+  }
+
+  bool _getDateFromAge(String value) {
+    int? age = _parseAge(value);
+    if (age == null || age > maxAge) {
+      setState(() {
+        dateController.text = "";
+      });
+      return false;
+    }
     DateTime currentDate = DateTime.now();
     DateTime calculatedDate = DateTime(currentDate.year - age, 1, 1);
     setState(() {
-      dateController.text = DateFormat(widget.field.format == null ||
-                  widget.field.format!.toLowerCase() == "none"
-              ? "yyyy/MM/dd"
-              : widget.field.format)
-          .format(calculatedDate);
+      dateController.text = DateFormat(_dateFormat).format(calculatedDate);
     });
+    return true;
   }
 
   void showBottomPopup(BuildContext context) {
@@ -206,11 +227,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                 maxDate: DateTime.now(),
                 minDate: DateTime(DateTime.now().year - localMaxAge),
                 selectedDate: dateString != ""
-                    ? DateFormat(widget.field.format == null ||
-                                widget.field.format!.toLowerCase() == "none"
-                            ? "yyyy/MM/dd"
-                            : widget.field.format)
-                        .parse(dateString)
+                    ? DateFormat(_dateFormat).parse(dateString)
                     : null,
                 squeeze: 1,
                 itemExtent: 50,
@@ -235,10 +252,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                   fontSize: 15,
                 ),
                 onSelectedItemChanged: (selectedDate) {
-                  String targetDateString = (widget.field.format == null ||
-                              widget.field.format!.toLowerCase() == "none"
-                          ? "yyyy/MM/dd"
-                          : widget.field.format!)
+                  String targetDateString = _dateFormat
                       .replaceAll(
                           'dd', selectedDate.day.toString().padLeft(2, "0"))
                       .replaceAll(
@@ -294,14 +308,7 @@ class _AgeDateControlState extends State<AgeDateControl> {
                           }
                           if (value != null && value.isNotEmpty) {
                             try {
-                              DateTime date = DateFormat(
-                                      widget.field.format == null ||
-                                              widget.field.format!
-                                                      .toLowerCase() ==
-                                                  "none"
-                                          ? "yyyy/MM/dd"
-                                          : widget.field.format)
-                                  .parse(value);
+                              DateTime date = DateFormat(_dateFormat).parse(value);
                               int age = calculateYearDifference(
                                       date, DateTime.now())
                                   .abs();
@@ -352,23 +359,19 @@ class _AgeDateControlState extends State<AgeDateControl> {
                       child: TextFormField(
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: ageController,
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (widget.field.required == true && (value == null || value.isEmpty)) {
-                            return AppLocalizations.of(context)!
-                                .select_value_message;
-                          }
-                          return null;
-                        },
+                        keyboardType: const TextInputType.numberWithOptions(
+                          signed: true,
+                          decimal: true,
+                        ),
+                        validator: _validateAge,
                         onChanged: (value) async {
-                          if (value != "") {
-                            _getDateFromAge(value);
-                          } else {
+                          if (value.isEmpty) {
                             dateController.text = "";
+                          } else {
+                            _getDateFromAge(value);
                           }
                           saveData();
                         },
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 14, horizontal: 16),
