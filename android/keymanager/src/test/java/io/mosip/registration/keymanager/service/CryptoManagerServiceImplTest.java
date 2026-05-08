@@ -55,7 +55,9 @@ public class CryptoManagerServiceImplTest {
         try {
             CryptoUtil.base64encoder = Base64.getEncoder();
             CryptoUtil.base64decoder = Base64.getDecoder();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // field assignment cannot throw; catch required by compiler due to field visibility
+        }
     }
 
     @Before
@@ -226,7 +228,9 @@ public class CryptoManagerServiceImplTest {
         try {
             cryptoManagerService.generateRandomBytes(-1);
             fail("Should throw NegativeArraySizeException");
-        } catch (NegativeArraySizeException ignored) {}
+        } catch (NegativeArraySizeException ignored) {
+            // expected for negative input — fail() above already guards the no-exception path
+        }
     }
 
     /**

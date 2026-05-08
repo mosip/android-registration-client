@@ -125,12 +125,12 @@ public class MatchUtilTest {
         biometricsDto.setQualityScore(85.0f);
         biometricsDtoList.add(biometricsDto);
 
-        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("Face")).thenReturn(new ArrayList<>());
+        Mockito.when(userBiometricRepository.findAllOperatorBiometricsExceptCurrent("FACE", "testUser")).thenReturn(new ArrayList<>());
 
-        boolean result = matchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+        boolean result = matchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2, "testUser");
 
         assertFalse(result);
-        Mockito.verify(userBiometricRepository).findAllOperatorBiometrics("Face");
+        Mockito.verify(userBiometricRepository).findAllOperatorBiometricsExceptCurrent("FACE", "testUser");
         Mockito.verify(iBioApiV2, Mockito.never()).match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 

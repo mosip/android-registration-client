@@ -24,12 +24,16 @@ import io.mosip.registration.clientmanager.spi.PreCheckValidatorService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.packetmanager.spi.PacketWriterService;
+import io.mosip.registration.packetmanager.util.StorageUtils;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -57,10 +61,12 @@ import java.util.List;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -107,6 +113,8 @@ public class RegistrationServiceImplTest {
     @Mock
     private PreCheckValidatorService preCheckValidatorService;
 
+    private MockedStatic<StorageUtils> storageUtilsMock;
+
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -118,6 +126,21 @@ public class RegistrationServiceImplTest {
         registrationService = new RegistrationServiceImpl(mockApplicationContext, packetWriterService,
                 registrationRepository, masterDataService, identitySchemaRepository, clientCryptoManagerService,
                 keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider, biometricService, packetService, preCheckValidatorService);
+
+        File mockPacketDir = mock(File.class);
+        lenient().when(mockPacketDir.exists()).thenReturn(true);
+        lenient().when(mockPacketDir.isDirectory()).thenReturn(true);
+        lenient().when(mockPacketDir.canWrite()).thenReturn(true);
+        lenient().when(mockPacketDir.getUsableSpace()).thenReturn(1024L * 1024 * 1024);
+        storageUtilsMock = Mockito.mockStatic(StorageUtils.class, Mockito.withSettings().strictness(org.mockito.quality.Strictness.LENIENT));
+        storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(any())).thenReturn(mockPacketDir);
+    }
+
+    @After
+    public void tearDown() {
+        if (storageUtilsMock != null) {
+            storageUtilsMock.close();
+        }
     }
 
     @Test(expected = ClientCheckedException.class)
@@ -139,9 +162,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         RegistrationDto registrationDto = registrationService.startRegistration(Arrays.asList("eng"), "NEW", "NEW", null, null);
         RegistrationDto result = registrationService.getRegistrationDto();
 
@@ -171,9 +191,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         List<String> selectedLanguages = new ArrayList<>();
         selectedLanguages.add("eng");
         RegistrationDto registrationDto = registrationService.startRegistration(selectedLanguages, "NEW", "NEW", null, null);
@@ -189,8 +206,6 @@ public class RegistrationServiceImplTest {
         // Mock additional required dependencies for submitRegistrationDto
         when(globalParamRepository.getSelectedHandles()).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.anyString())).thenReturn(null);
-        // Mock GPS validation to be disabled to skip location validation
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         // Mock audit service to return empty list to avoid NPE
         when(auditManagerService.getAuditLogs(Mockito.anyLong())).thenReturn(Collections.emptyList());
         when(masterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
@@ -286,9 +301,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100l*(1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         List<String> languages = new ArrayList<>();
         languages.add("eng");
         RegistrationDto registrationDto = registrationService.startRegistration(languages, "NEW", "NEW", null, null);
@@ -346,9 +358,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         registrationService.startRegistration(new ArrayList<>(Collections.singletonList("eng")), "NEW", "NEW", null, null);
         Method setRegistrationDto = registrationService.getClass().getDeclaredMethod("getRegistrationDto");
@@ -423,9 +432,6 @@ public class RegistrationServiceImplTest {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(false);
         centerMachineDto.setMachineStatus(false);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(10l * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
@@ -647,9 +653,6 @@ public class RegistrationServiceImplTest {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(true);
         centerMachineDto.setMachineStatus(true);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
         doPreChecks.invoke(registrationService, centerMachineDto);
@@ -661,9 +664,12 @@ public class RegistrationServiceImplTest {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(true);
         centerMachineDto.setMachineStatus(true);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(10L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
+        File lowSpaceFile = mock(File.class);
+        when(lowSpaceFile.exists()).thenReturn(true);
+        when(lowSpaceFile.isDirectory()).thenReturn(true);
+        when(lowSpaceFile.canWrite()).thenReturn(true);
+        when(lowSpaceFile.getUsableSpace()).thenReturn(10L * 1024 * 1024);
+        storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(any())).thenReturn(lowSpaceFile);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
         doPreChecks.invoke(registrationService, centerMachineDto);
@@ -675,9 +681,6 @@ public class RegistrationServiceImplTest {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(false);
         centerMachineDto.setMachineStatus(true);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
         doPreChecks.invoke(registrationService, centerMachineDto);
@@ -689,9 +692,6 @@ public class RegistrationServiceImplTest {
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(true);
         centerMachineDto.setMachineStatus(false);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
         doPreChecks.invoke(registrationService, centerMachineDto);
@@ -733,8 +733,6 @@ public class RegistrationServiceImplTest {
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
                 !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
-        // Mock GPS validation to be disabled to skip location validation
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         // Mock audit service to return empty list to avoid NPE
         when(auditManagerService.getAuditLogs(Mockito.anyLong())).thenReturn(Collections.emptyList());
         // Provide a fully initialized CenterMachineDto
@@ -789,8 +787,6 @@ public class RegistrationServiceImplTest {
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
                 !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
-        // Mock GPS validation to be disabled to skip location validation
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         // Mock audit service to return empty list to avoid NPE
         when(auditManagerService.getAuditLogs(Mockito.anyLong())).thenReturn(Collections.emptyList());
         // Provide a fully initialized CenterMachineDto
@@ -845,8 +841,6 @@ public class RegistrationServiceImplTest {
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
                 !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
-        // Mock GPS validation to be disabled to skip location validation
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         // Mock audit service to return empty list to avoid NPE
         when(auditManagerService.getAuditLogs(Mockito.anyLong())).thenReturn(Collections.emptyList());
         // Provide a fully initialized CenterMachineDto
@@ -901,8 +895,6 @@ public class RegistrationServiceImplTest {
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
                 !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
-        // Mock GPS validation to be disabled to skip location validation
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         // Mock audit service to return empty list to avoid NPE
         when(auditManagerService.getAuditLogs(Mockito.anyLong())).thenReturn(Collections.emptyList());
         // Provide a fully initialized CenterMachineDto
@@ -957,8 +949,6 @@ public class RegistrationServiceImplTest {
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.eq(RegistrationConstants.AUDIT_EXPORTED_TILL))).thenReturn(null);
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
                 !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg)))).thenReturn("1.2.3");
-        // Mock GPS validation to be disabled to skip location validation
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         // Mock audit service to return empty list to avoid NPE
         when(auditManagerService.getAuditLogs(Mockito.anyLong())).thenReturn(Collections.emptyList());
         // Provide a fully initialized CenterMachineDto
@@ -1166,9 +1156,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         RegistrationDto result = registrationService.startRegistration(languages, "NEW", "NEW", null, null);
         assertNotNull(result);
@@ -1216,8 +1203,6 @@ public class RegistrationServiceImplTest {
                 RegistrationConstants.SERVER_VERSION.equals(arg)))).thenReturn("1.1.5");
         Mockito.when(globalParamRepository.getCachedStringGlobalParam(Mockito.argThat(arg ->
                 !RegistrationConstants.AUDIT_EXPORTED_TILL.equals(arg) && !RegistrationConstants.SERVER_VERSION.equals(arg)))).thenReturn("1");
-        // Mock GPS validation to be disabled to skip location validation
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         // Mock audit service to return empty list to avoid NPE
         when(auditManagerService.getAuditLogs(Mockito.anyLong())).thenReturn(Collections.emptyList());
         CenterMachineDto centerMachineDto = new CenterMachineDto();
@@ -1585,6 +1570,7 @@ public class RegistrationServiceImplTest {
         assertTrue(audits.isEmpty());
     }
 
+    @Ignore("validateLocation() private method was removed; GPS validation moved to PreCheckValidatorService")
     @Test
     // Test for validateLocation when distance exceeds allowed threshold
     public void testValidateLocation_DistanceExceedsThrowsClientCheckedException() throws Exception {
@@ -1623,6 +1609,7 @@ public class RegistrationServiceImplTest {
         }
     }
 
+    @Ignore("validateLocation() private method was removed; GPS validation moved to PreCheckValidatorService")
     @Test
     // Test for validateLocation when center coordinates are invalid
     public void testValidateLocation_InvalidCenterCoordinatesIgnored() throws Exception {
@@ -1653,6 +1640,7 @@ public class RegistrationServiceImplTest {
         regDtoField.set(registrationService, null);
     }
 
+    @Ignore("validateLocation() private method was removed; GPS validation moved to PreCheckValidatorService")
     @Test
     // Test for validateLocation when geo location is not available
     public void testValidateLocation_NoGeoLocationSkipsValidation() throws Exception {
@@ -1673,6 +1661,7 @@ public class RegistrationServiceImplTest {
         regDtoField.set(registrationService, null);
     }
 
+    @Ignore("validateLocation() private method was removed; GPS validation moved to PreCheckValidatorService")
     @Test
     // Test for validateLocation when max allowed distance is missing
     public void testValidateLocation_MissingMaxDistanceThrowsClientCheckedException() throws Exception {
@@ -1742,7 +1731,6 @@ public class RegistrationServiceImplTest {
         exceptionsField.set(dto, new HashMap<>());
 
         when(globalParamRepository.getSelectedHandles()).thenReturn(Collections.singletonList("handle1"));
-        when(globalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.AUDIT_EXPORTED_TILL)).thenReturn("0");
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.INDIVIDUAL_BIOMETRICS_ID)).thenReturn("bioField");
         when(globalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("2.0.0");
@@ -1818,12 +1806,12 @@ public class RegistrationServiceImplTest {
     }
 
     @Test
-    // Test doPreChecksBeforeRegistration with null context external cache dir
+    // Test doPreChecksBeforeRegistration when StorageUtils returns null (NPE in isDiskSpaceAvailable)
     public void testDoPreChecksBeforeRegistration_NullCacheDir() throws Exception {
+        storageUtilsMock.when(() -> StorageUtils.getPacketStorageDir(any())).thenReturn(null);
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterStatus(true);
         centerMachineDto.setMachineStatus(true);
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(null);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
         try {
@@ -1837,9 +1825,6 @@ public class RegistrationServiceImplTest {
     @Test
     // Test doPreChecksBeforeRegistration with null CenterMachineDto
     public void testDoPreChecksBeforeRegistration_NullCenterMachineDto() throws Exception {
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
         Method doPreChecks = registrationService.getClass().getDeclaredMethod("doPreChecksBeforeRegistration", CenterMachineDto.class);
         doPreChecks.setAccessible(true);
         try {
@@ -1866,9 +1851,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         // Execute with null GPS
         RegistrationDto result = registrationService.startRegistration(
@@ -1893,9 +1875,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         // Setup: Validation passes (no exception thrown)
         // Note: PreCheckValidatorService.validateCenterToMachineDistance doesn't throw when validation passes
@@ -1927,15 +1906,12 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         // Setup: Validation fails - throw exception
         Double latitude = 13.9716;
         Double longitude = 78.5946;
         ClientCheckedException validationException = new ClientCheckedException(
-                mockApplicationContext, android.R.string.unknownName, "OPT_TO_REG_OUTSIDE_LOCATION");
+                "OPT_TO_REG_OUTSIDE_LOCATION", "Location validation failed");
         Mockito.doThrow(validationException).when(preCheckValidatorService)
                 .validateCenterToMachineDistance(longitude, latitude);
 
@@ -1970,9 +1946,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         // Execute with GPS but validator is null
         Double latitude = 12.9716;
@@ -2001,9 +1974,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         // Execute with null latitude (partial GPS)
         RegistrationDto result = registrationService.startRegistration(
@@ -2028,9 +1998,6 @@ public class RegistrationServiceImplTest {
         when(identitySchemaRepository.getLatestSchemaVersion()).thenReturn(1.3);
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
-        File mockFile = mock(File.class);
-        when(mockFile.getUsableSpace()).thenReturn(100L * (1024 * 1024));
-        when(mockApplicationContext.getExternalCacheDir()).thenReturn(mockFile);
 
         // Execute with null longitude (partial GPS)
         RegistrationDto result = registrationService.startRegistration(

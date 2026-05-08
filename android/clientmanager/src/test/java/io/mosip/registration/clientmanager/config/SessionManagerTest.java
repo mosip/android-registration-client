@@ -8,13 +8,12 @@ import com.auth0.android.jwt.JWT;
 
 import io.mosip.registration.clientmanager.R;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -31,7 +30,12 @@ public class SessionManagerTest {
     SharedPreferences.Editor mockEditor;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        // Reset singleton so each test gets a fresh SessionManager backed by the current mock
+        Field managerField = SessionManager.class.getDeclaredField("manager");
+        managerField.setAccessible(true);
+        managerField.set(null, null);
+
         lenient().when(mockContext.getString(anyInt())).thenReturn("app_name");
         lenient().when(mockContext.getSharedPreferences(eq("app_name"), eq(Context.MODE_PRIVATE))).thenReturn(mockPrefs);
         lenient().when(mockPrefs.edit()).thenReturn(mockEditor);
@@ -93,57 +97,40 @@ public class SessionManagerTest {
         return claim;
     }
 
-    @Ignore
     @Test
     public void test_fetch_auth_token_returns_null_when_no_token_exists() {
-        Mockito.when(mockContext.getString(R.string.app_name)).thenReturn("app_name");
-        lenient().when(mockContext.getSharedPreferences("app_name", Context.MODE_PRIVATE)).thenReturn(mockPrefs);
         lenient().when(mockPrefs.getString(SessionManager.USER_TOKEN, null)).thenReturn(null);
 
         SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
         String token = sessionManager.fetchAuthToken();
 
-        Assertions.assertNull(token);
+        assertNull(token);
     }
 
-    @Ignore
     @Test
-    public void test_fetch_auth_token_retrieves_saved_token() throws Exception {
-        lenient().when(mockContext.getString(R.string.app_name)).thenReturn("app_name");
-        lenient().when(mockContext.getSharedPreferences("app_name", Context.MODE_PRIVATE)).thenReturn(mockPrefs);
-        lenient().when(mockPrefs.edit()).thenReturn(mockEditor);
-        lenient().when(mockEditor.putString(Mockito.anyString(), Mockito.anyString())).thenReturn(mockEditor);
-        lenient().when(mockEditor.putBoolean(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(mockEditor);
-
-        SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
+    public void test_fetch_auth_token_retrieves_saved_token() {
         String token = "valid.jwt.token";
-
         lenient().when(mockPrefs.getString(SessionManager.USER_TOKEN, null)).thenReturn(token);
 
-        sessionManager.fetchAuthToken();
+        SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
+        String result = sessionManager.fetchAuthToken();
+
+        assertEquals(token, result);
     }
 
-    @Ignore
     @Test
     public void test_fetch_auth_token_uses_correct_shared_preferences_name() {
-        lenient().when(mockContext.getString(R.string.app_name)).thenReturn("app_name");
-        lenient().when(mockContext.getSharedPreferences("app_name", Context.MODE_PRIVATE)).thenReturn(mockPrefs);
-
         SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
         sessionManager.fetchAuthToken();
+
+        verify(mockContext, atLeastOnce()).getSharedPreferences(eq("app_name"), eq(Context.MODE_PRIVATE));
     }
 
-    @Ignore
     @Test
     public void test_clear_auth_token_removes_all_user_session_data() {
-        lenient().when(mockContext.getString(R.string.app_name)).thenReturn("app_name");
-        lenient().when(mockContext.getSharedPreferences("app_name", Context.MODE_PRIVATE)).thenReturn(mockPrefs);
-        lenient().when(mockPrefs.edit()).thenReturn(mockEditor);
-        lenient().when(mockEditor.remove(anyString())).thenReturn(mockEditor);
         lenient().when(mockPrefs.getString(SessionManager.USER_TOKEN, null)).thenReturn(null);
 
         SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
-
         String result = sessionManager.clearAuthToken();
 
         assertNull(result);
@@ -163,8 +150,6 @@ public class SessionManagerTest {
         assertThrows(Exception.class, () -> {
             sessionManager.saveAuthToken(expiredToken);
         });
-
-        verify(mockContext, never()).getSharedPreferences(anyString(), anyInt());
     }
 
 }

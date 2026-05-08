@@ -236,7 +236,15 @@ public class LoginServiceTest {
 
     @Test
     public void test_session_manager_null() {
-        LoginService loginService = new LoginService(context, null, null,null);
+        LoginService loginService = new LoginService(context, null, null, null);
+
+        try {
+            Field sessionManagerField = LoginService.class.getDeclaredField("sessionManager");
+            sessionManagerField.setAccessible(true);
+            sessionManagerField.set(loginService, null);
+        } catch (Exception e) {
+            fail("Failed to set sessionManager field: " + e.getMessage());
+        }
 
         Exception exception = assertThrows(Exception.class, () -> {
             loginService.clearAuthToken(context);
@@ -247,15 +255,21 @@ public class LoginServiceTest {
 
     @Test
     public void test_session_manager_returns_non_null_value() {
-        LoginService loginService = new LoginService(context, null, null,null);
+        LoginService loginService = new LoginService(context, null, null, null);
 
-        lenient().when(sessionManager.clearAuthToken()).thenReturn("non-null-token");
+        try {
+            Field sessionManagerField = LoginService.class.getDeclaredField("sessionManager");
+            sessionManagerField.setAccessible(true);
+            sessionManagerField.set(loginService, sessionManager);
+        } catch (Exception e) {
+            fail("Failed to set sessionManager field: " + e.getMessage());
+        }
 
-        Exception exception = assertThrows(Exception.class, () -> {
-            loginService.clearAuthToken(context);
-        });
+        when(sessionManager.clearAuthToken()).thenReturn("non-null-token");
 
-        assertNotNull(exception);
+        loginService.clearAuthToken(context);
+
+        verify(sessionManager, times(1)).clearAuthToken();
     }
 
     @Test

@@ -22,11 +22,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwx.CompactSerializer;
 import org.json.JSONObject;
-import org.spongycastle.crypto.InvalidCipherTextException;
-import org.spongycastle.crypto.digests.SHA256Digest;
-import org.spongycastle.crypto.encodings.OAEPEncoding;
-import org.spongycastle.crypto.engines.RSAEngine;
-import org.spongycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.encodings.OAEPEncoding;
+import org.bouncycastle.crypto.engines.RSAEngine;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;

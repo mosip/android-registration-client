@@ -17,6 +17,7 @@ import org.mockito.*;
 
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
+import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.util.CronExpressionParser;
 import io.mosip.registration.clientmanager.util.DateUtil;
 
@@ -42,6 +43,9 @@ public class JobManagerServiceImplTest {
     @Mock
     private DateUtil mockDateUtil;
 
+    @Mock
+    private LocalConfigService mockLocalConfigService;
+
     private JobManagerServiceImpl jobManagerService;
 
     private static final String JOB_ID = "mosip.syncJobId";
@@ -56,7 +60,7 @@ public class JobManagerServiceImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
         when(mockContext.getSystemService(JOB_SCHEDULER_SERVICE)).thenReturn(mockJobScheduler);
 
         mockJobInfoBuilder = mock(JobInfo.Builder.class);
@@ -120,7 +124,8 @@ public class JobManagerServiceImplTest {
                     nullContext,
                     mockSyncJobDefRepository,
                     mockJobTransactionService,
-                    mockDateUtil
+                    mockDateUtil,
+                    mockLocalConfigService
             );
         });
     }
@@ -138,7 +143,7 @@ public class JobManagerServiceImplTest {
         when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(mockJobDefList);
 
         JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(
-                mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+                mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         jobManagerService.refreshAllJobs();
 
@@ -153,7 +158,7 @@ public class JobManagerServiceImplTest {
         when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(emptyJobDefList);
 
         JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(
-                mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+                mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         jobManagerService.refreshAllJobs();
 
@@ -168,7 +173,7 @@ public class JobManagerServiceImplTest {
         when(mockContext.getSystemService(JOB_SCHEDULER_SERVICE)).thenReturn(mockJobScheduler);
 
         JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext,
-                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         SyncJobDef jobDef = new SyncJobDef("12345");
         jobDef.setId("12345");
@@ -198,7 +203,7 @@ public class JobManagerServiceImplTest {
         when(mockContext.getSystemService(JOB_SCHEDULER_SERVICE)).thenReturn(mockJobScheduler);
 
         JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext,
-                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         SyncJobDef jobDef = new SyncJobDef("12345");
         jobDef.setId("12345");
@@ -227,7 +232,8 @@ public class JobManagerServiceImplTest {
                 mockContext,
                 mockSyncJobDefRepository,
                 mockJobTransactionService,
-                mockDateUtil);
+                mockDateUtil,
+                mockLocalConfigService);
 
         int jobId = 12345;
         String invalidApiName = "nonExistentJobService";
@@ -248,7 +254,7 @@ public class JobManagerServiceImplTest {
         when(mockJobScheduler.getPendingJob(anyInt())).thenReturn(null);
 
         JobManagerServiceImpl triggerJobService = new JobManagerServiceImpl(mockContext,
-                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         JobManagerServiceImpl spyTriggerJobService = spy(triggerJobService);
         doReturn(JobScheduler.RESULT_SUCCESS).when(spyTriggerJobService).scheduleJob(anyInt(), anyString(), isNull());
@@ -270,7 +276,7 @@ public class JobManagerServiceImplTest {
         when(mockJobScheduler.schedule(any(JobInfo.class))).thenReturn(JobScheduler.RESULT_SUCCESS);
 
         JobManagerServiceImpl triggerJobService = new JobManagerServiceImpl(mockContext,
-                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+                mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         int jobId = 12345;
         String apiName = "packetSyncStatusJob";
@@ -285,7 +291,7 @@ public class JobManagerServiceImplTest {
     @Test
     public void test_job_already_scheduled() {
         when(mockJobScheduler.getPendingJob(anyInt())).thenReturn(mockJobInfo);
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
         jobManagerService.jobScheduler = mockJobScheduler;
 
         boolean result = jobManagerService.triggerJobService(1, "packetSyncStatusJob");
@@ -297,7 +303,7 @@ public class JobManagerServiceImplTest {
     @Test
     public void test_job_already_scheduled_always_returns_true() {
         when(mockJobScheduler.getPendingJob(anyInt())).thenReturn(mockJobInfo);
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
         jobManagerService.jobScheduler = mockJobScheduler;
 
         boolean result = jobManagerService.triggerJobService(1, "packetSyncStatusJob");
@@ -313,7 +319,8 @@ public class JobManagerServiceImplTest {
                 mockContext,
                 mockSyncJobDefRepository,
                 mockJobTransactionService,
-                mockDateUtil
+                mockDateUtil,
+                mockLocalConfigService
         );
 
         int validJobId = 12345;
@@ -331,7 +338,8 @@ public class JobManagerServiceImplTest {
                 mockContext,
                 mockSyncJobDefRepository,
                 mockJobTransactionService,
-                mockDateUtil
+                mockDateUtil,
+                mockLocalConfigService
         );
 
         int negativeJobId = -123;
@@ -345,7 +353,7 @@ public class JobManagerServiceImplTest {
     public void test_cancel_existing_scheduled_job() {
         when(mockContext.getSystemService(JOB_SCHEDULER_SERVICE)).thenReturn(mockJobScheduler);
 
-        JobManagerServiceImpl jobManager = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManager = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         int jobId = 123;
         jobManager.cancelJob(jobId);
@@ -357,7 +365,7 @@ public class JobManagerServiceImplTest {
     public void test_cancel_inactive_job_in_refresh_status() {
         when(mockContext.getSystemService(JOB_SCHEDULER_SERVICE)).thenReturn(mockJobScheduler);
 
-        JobManagerServiceImpl jobManager = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManager = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         SyncJobDef inactiveJobDef = new SyncJobDef("inactive12345");
         inactiveJobDef.setIsActive(false);
@@ -370,7 +378,7 @@ public class JobManagerServiceImplTest {
 
     @Test
     public void test_returns_true_for_packet_sync_status_job() {
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         boolean result = jobManagerService.isJobImplementedOnRegClient("packetSyncStatusJob");
 
@@ -379,7 +387,7 @@ public class JobManagerServiceImplTest {
 
     @Test (expected = NullPointerException.class)
     public void test_returns_false_for_null_job_api_name() {
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
         boolean result = jobManagerService.isJobImplementedOnRegClient(null);
 
         assertFalse(result);
@@ -387,7 +395,7 @@ public class JobManagerServiceImplTest {
 
     @Test
     public void test_returns_true_for_synchConfigDataJob() {
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
         boolean result = jobManagerService.isJobImplementedOnRegClient("synchConfigDataJob");
 
         assertTrue(result);
@@ -395,7 +403,7 @@ public class JobManagerServiceImplTest {
 
     @Test
     public void test_identifies_implemented_job_services() {
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         boolean result = jobManagerService.isJobImplementedOnRegClient("packetSyncStatusJob");
 
@@ -404,7 +412,7 @@ public class JobManagerServiceImplTest {
 
     @Test
     public void test_method_returns_boolean_value() {
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         boolean resultForImplementedJob = jobManagerService.isJobImplementedOnRegClient("packetSyncStatusJob");
         boolean resultForNonImplementedJob = jobManagerService.isJobImplementedOnRegClient("nonExistentJob");
@@ -426,7 +434,8 @@ public class JobManagerServiceImplTest {
                 mockContext,
                 mockSyncJobDefRepository,
                 mockJobTransactionService,
-                mockDateUtil);
+                mockDateUtil,
+                mockLocalConfigService);
 
         String result = jobManagerService.getLastSyncTime(jobId);
 
@@ -448,7 +457,8 @@ public class JobManagerServiceImplTest {
                 mockContext,
                 mockSyncJobDefRepository,
                 mockJobTransactionService,
-                mockDateUtil);
+                mockDateUtil,
+                mockLocalConfigService);
 
         String result = jobManagerService.getLastSyncTime(jobId);
 
@@ -463,7 +473,7 @@ public class JobManagerServiceImplTest {
         when(mockContext.getString(R.string.NA)).thenReturn("N/A");
         when(mockJobTransactionService.getLastSyncTime(anyInt())).thenReturn(0L);
 
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         String result = jobManagerService.getLastSyncTime(1);
 
@@ -478,7 +488,7 @@ public class JobManagerServiceImplTest {
         when(mockJobTransactionService.getLastSyncTime(anyInt())).thenReturn(lastSyncTimeSeconds);
         when(mockDateUtil.getDateTime(lastSyncTimeSeconds)).thenReturn(expectedFormattedDate);
 
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         String result = jobManagerService.getLastSyncTime(1);
 
@@ -493,7 +503,7 @@ public class JobManagerServiceImplTest {
         when(mockJobTransactionService.getLastSyncTime(anyInt())).thenReturn(lastSyncTimeSeconds);
         when(mockDateUtil.getDateTime(lastSyncTimeSeconds)).thenReturn("01 Jun 2021 12:00 PM");
 
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         String result = jobManagerService.getLastSyncTime(1);
 
@@ -504,7 +514,7 @@ public class JobManagerServiceImplTest {
     @Test
     public void test_extract_last_five_chars_and_convert_to_int() {
 
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         String syncJobDefId = "JOB_12345";
         int result = jobManagerService.generateJobServiceId(syncJobDefId);
@@ -514,7 +524,7 @@ public class JobManagerServiceImplTest {
 
     @Test
     public void test_throws_exception_when_sync_job_def_id_is_null() {
-        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl jobManagerService = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         assertThrows(NullPointerException.class, () -> jobManagerService.generateJobServiceId(null));
     }
@@ -523,7 +533,7 @@ public class JobManagerServiceImplTest {
     public void test_isJobScheduled_returnsTrueWhenPendingJobExists() {
         when(mockJobScheduler.getPendingJob(42)).thenReturn(mockJobInfo);
 
-        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         assertTrue(service.isJobScheduled(42));
         verify(mockJobScheduler).getPendingJob(42);
@@ -533,7 +543,7 @@ public class JobManagerServiceImplTest {
     public void test_isJobScheduled_returnsFalseWhenNoPendingJob() {
         when(mockJobScheduler.getPendingJob(77)).thenReturn(null);
 
-        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         assertFalse(service.isJobScheduled(77));
         verify(mockJobScheduler).getPendingJob(77);
@@ -544,7 +554,7 @@ public class JobManagerServiceImplTest {
         List<SyncJobDef> expected = Collections.singletonList(new SyncJobDef("job00123"));
         when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(expected);
 
-        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         assertSame(expected, service.getAllSyncJobDefList());
         verify(mockSyncJobDefRepository).getAllSyncJobDefList();
@@ -565,7 +575,7 @@ public class JobManagerServiceImplTest {
         long nextExecutionMillis = nextExecution.toEpochMilli();
         when(mockDateUtil.getDateTime(nextExecutionMillis)).thenReturn("formatted-time");
 
-        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         String result = service.getNextSyncTime(1);
 
@@ -578,7 +588,7 @@ public class JobManagerServiceImplTest {
     public void test_getNextSyncTime_returnsNAWhenJobDefMissing() {
         when(mockSyncJobDefRepository.getAllSyncJobDefList()).thenReturn(Collections.emptyList());
 
-        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil);
+        JobManagerServiceImpl service = new JobManagerServiceImpl(mockContext, mockSyncJobDefRepository, mockJobTransactionService, mockDateUtil, mockLocalConfigService);
 
         String result = service.getNextSyncTime(999);
 
