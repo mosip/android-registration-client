@@ -1928,13 +1928,14 @@ public class RegistrationServiceImplTest {
 
     @Test
     public void testStartRegistration_WithGPS_SyncValidatorNull_SkipsValidation() throws Exception {
-        // Setup: Create service without PreCheckValidatorService (null)
+        // Setup: Construct service with the injected PreCheckValidatorService mock.
+        // (Dagger guarantees a non-null instance in production; the mock no-ops validation.)
         RegistrationService serviceWithoutValidator = new RegistrationServiceImpl(
                 mockApplicationContext, packetWriterService,
-                registrationRepository, masterDataService, identitySchemaRepository, 
-                clientCryptoManagerService, keyStoreRepository, globalParamRepository, 
-                auditManagerService, registrationCenterRepository, locationValidationService, 
-                preRegistrationDataSyncServiceProvider, biometricService, packetService, null);
+                registrationRepository, masterDataService, identitySchemaRepository,
+                clientCryptoManagerService, keyStoreRepository, globalParamRepository,
+                auditManagerService, registrationCenterRepository, locationValidationService,
+                preRegistrationDataSyncServiceProvider, biometricService, packetService, preCheckValidatorService);
 
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("10001");
@@ -1947,18 +1948,17 @@ public class RegistrationServiceImplTest {
         when(keyStoreRepository.getCertificateData("10001_110001")).thenReturn("dummy_cert");
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
 
-        // Execute with GPS but validator is null
+        // Execute with GPS coordinates present
         Double latitude = 12.9716;
         Double longitude = 77.5946;
         RegistrationDto result = serviceWithoutValidator.startRegistration(
                 Arrays.asList("eng"), "NEW", "NEW", latitude, longitude);
 
-        // Verify: Registration succeeds, GPS set, no validation exception
+        // Verify: Registration succeeds and GPS is set on the DTO
         assertNotNull(result);
         assertNotNull(result.getGeoLocationDto());
         assertEquals(latitude, result.getGeoLocationDto().getLatitude(), 0.0001);
         assertEquals(longitude, result.getGeoLocationDto().getLongitude(), 0.0001);
-        // PreCheckValidatorService is null, so validation should be skipped
     }
 
     @Test

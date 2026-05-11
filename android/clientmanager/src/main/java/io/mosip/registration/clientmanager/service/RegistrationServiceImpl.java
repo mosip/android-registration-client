@@ -204,9 +204,6 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         if (latitude != null && longitude != null) {
             this.registrationDto.setGeoLocation(longitude, latitude);
-        }
-
-        if (latitude != null && longitude != null && preCheckValidatorService != null) {
             try {
                 preCheckValidatorService.validateCenterToMachineDistance(longitude, latitude);
             } catch (ClientCheckedException e) {
@@ -591,9 +588,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new ClientCheckedException(context, R.string.err_007);
 
         // validate sync status - checks if all sync jobs ran within configured time limits
-        if (preCheckValidatorService != null) {
-            preCheckValidatorService.validateSyncStatus();
-        }
+        preCheckValidatorService.validateSyncStatus();
 
         // registered packet approval time breach check
         if (packetService != null && packetService.isRegisteredPacketApprovalTimeBreached()) {
