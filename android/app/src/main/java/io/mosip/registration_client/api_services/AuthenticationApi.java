@@ -36,6 +36,7 @@ import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
 import io.mosip.registration.clientmanager.util.SyncRestUtil;
+import io.mosip.registration.clientmanager.R;
 import io.mosip.registration_client.UploadBackgroundService;
 import io.mosip.registration_client.model.AuthResponsePigeon;
 import retrofit2.Call;
@@ -72,7 +73,7 @@ public class AuthenticationApi implements AuthResponsePigeon.AuthResponseApi {
         this.globalParamRepository = globalParamRepository;
         sharedPreferences = this.context.
                 getSharedPreferences(
-                        this.context.getString(io.mosip.registration.clientmanager.R.string.app_name),
+                        this.context.getString(R.string.app_name),
                         Context.MODE_PRIVATE);
     }
 
