@@ -13,8 +13,9 @@ import 'package:registration_client/platform_spi/machine_key_service.dart';
 
 class MachineKeyImpl implements MachineKeyService {
   @override
-  Future<Machine> getMachineKeys() async {
-    late Machine machine;
+  Future<Machine?> getMachineKeys() async {
+    // late Machine machine;
+    Machine? machine;
     try {
       machine = await MachineApi().getMachineDetails();
     } on PlatformException {
