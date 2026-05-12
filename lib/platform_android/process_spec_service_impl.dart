@@ -18,9 +18,9 @@ class ProcessSpecServiceImpl implements ProcessSpecService {
       listOfProcesses = await ProcessSpecApi().getNewProcessSpec();
     } on PlatformException {
       debugPrint("Process Spec Api failed!");
-      listOfProcesses = List.empty();
+      listOfProcesses = [];
     }  catch (e) {
-      listOfProcesses = List.empty();
+      listOfProcesses = [];
       debugPrint("Process spec fetch error: $e");
     }
     
@@ -99,9 +99,9 @@ class ProcessSpecServiceImpl implements ProcessSpecService {
       optionalLanguageCodes = await ProcessSpecApi().getOptionalLanguageCodes();
     } on PlatformException {
       debugPrint("Process Spec Api failed!");
-      optionalLanguageCodes = List.empty();
+      optionalLanguageCodes = [];
     }  catch (e) {
-      optionalLanguageCodes = List.empty();
+      optionalLanguageCodes = [];
       debugPrint("Process spec fetch error: $e");
     }
     return optionalLanguageCodes;
@@ -114,9 +114,9 @@ class ProcessSpecServiceImpl implements ProcessSpecService {
       settingSpec = await ProcessSpecApi().getSettingSpec();
     } on PlatformException {
       debugPrint("Settings Spec Api failed!");
-      settingSpec = List.empty();
+      settingSpec = [];
     } catch (e) {
-      settingSpec = List.empty();
+      settingSpec = [];
       debugPrint("Settings spec fetch error: $e");
     }
     return settingSpec;
