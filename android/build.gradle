@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath 'com.android.tools.build:gradle:8.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.ibotta:plugin:1.2.0"
         //Jacoco Plugin
@@ -137,7 +137,9 @@ subprojects { project ->
     ]
     if (thirdPartyPluginsWithBrokenTests.any { project.name.contains(it) }) {
         project.tasks.whenTaskAdded { task ->
-            if (task.name.contains("UnitTest") || task.name.contains("unitTest")) {
+            // Disable test runners but keep lint model generation tasks enabled —
+            // lintReportDebug on :app requires the unit_test_lint_model directories to exist.
+            if ((task.name.contains("UnitTest") || task.name.contains("unitTest")) && !task.name.contains("LintModel")) {
                 task.enabled = false
             }
         }

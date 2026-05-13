@@ -565,12 +565,11 @@ public class LocalClientCryptoServiceImplTest {
     }
 
     /**
-     * Test decrypt returns null for null request.
+     * Test decrypt throws KeymanagerServiceException for null request.
      */
     @Test
     public void testDecryptNullRequest() {
-        CryptoResponseDto response = cryptoService.decrypt(null);
-        assertNull(response);
+        assertThrows(KeymanagerServiceException.class, () -> cryptoService.decrypt(null));
     }
 
     /**
@@ -593,11 +592,10 @@ public class LocalClientCryptoServiceImplTest {
         CryptoResponseDto encResponse = cryptoService.encrypt(request);
         assertNotNull(encResponse);
 
-        // Now test decrypt with invalid data (simulate error)
+        // Now test decrypt with invalid data — decrypt throws KeymanagerServiceException on failure
         CryptoRequestDto badRequest = new CryptoRequestDto();
         badRequest.setValue("badData");
-        CryptoResponseDto decResponse = cryptoService.decrypt(badRequest);
-        assertNull(decResponse);
+        assertThrows(KeymanagerServiceException.class, () -> cryptoService.decrypt(badRequest));
     }
 
     /**
@@ -888,7 +886,7 @@ public class LocalClientCryptoServiceImplTest {
     }
 
     /**
-     * Test decrypt returns null when exception occurs in keyStore.getCertificate.
+     * Test decrypt throws KeymanagerServiceException when an exception occurs during decryption.
      */
     @Test
     public void testDecryptWithException() throws Exception {
@@ -900,7 +898,7 @@ public class LocalClientCryptoServiceImplTest {
         Field keyStoreField = LocalClientCryptoServiceImpl.class.getDeclaredField("keyStore");
         keyStoreField.setAccessible(true);
         keyStoreField.set(impl, keyStoreMock);
-        assertNull(impl.decrypt(dto));
+        assertThrows(KeymanagerServiceException.class, () -> impl.decrypt(dto));
     }
 
     /**

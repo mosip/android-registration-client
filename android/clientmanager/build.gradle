@@ -126,6 +126,12 @@ android {
         buildConfigField("long", "HTTP_WRITE_TIMEOUT", "${rootProject.ext.httpWriteTimeout}L")
     }
 
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+        }
+    }
+
     buildTypes {
         debug {
             testCoverageEnabled true
@@ -176,12 +182,12 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
 
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     implementation 'javax.validation:validation-api:2.0.1.Final'
 
-    implementation 'com.cronutils:cron-utils:9.2.0'
+    implementation 'com.cronutils:cron-utils:9.2.1'
 
     //AspectJ
     implementation 'org.aspectj:aspectjrt:1.9.7'
@@ -216,16 +222,16 @@ dependencies {
     implementation "androidx.work:work-runtime:$work_version"
 
     // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okio:okio:3.4.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.okio:okio:3.17.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
 
     // JWT decoding library
     implementation 'com.auth0.android:jwtdecode:2.0.1'
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.22.0'
 
     implementation 'com.fasterxml.jackson.core:jackson-core:2.16.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.2'
@@ -247,7 +253,7 @@ dependencies {
         exclude group: 'org.openpnp'
     }
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha7'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.1.0-alpha1'
 
     // added packet-manager Android library module as a dependency
     implementation project(':packetmanager')
@@ -257,5 +263,5 @@ dependencies {
     implementation("io.mosip.kernel:kernel-biometrics-api:1.2.0.3"){
         transitive = false
     }
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
 }
