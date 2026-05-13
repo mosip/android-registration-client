@@ -286,7 +286,14 @@ public class PreRegZipHandlingServiceImplTest {
     public void test_init_prereg_adapter_when_external_storage_not_mounted() {
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
         assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
+        // BASE_LOCATION is not set by initPreRegAdapter; storage path comes from appContext.getFilesDir()
         assertNull(ReflectionTestUtils.getField(service, "BASE_LOCATION"));
+        // Verify storage-path logic: when storage is not mounted getFilesDir() is unavailable;
+        // storePreRegPacketToDisk must propagate the failure
+        when(mockContext.getFilesDir()).thenThrow(new RuntimeException("External storage not mounted"));
+        assertThrows(Exception.class, () ->
+            service.storePreRegPacketToDisk("id", new byte[]{1, 2, 3}, new CenterMachineDto())
+        );
     }
 
     @Test
@@ -664,6 +671,12 @@ public class PreRegZipHandlingServiceImplTest {
     public void test_initPreRegAdapter_externalStorageNotMounted() {
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
         assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
+        // Verify storage-path logic: when storage is not mounted getFilesDir() is unavailable;
+        // storePreRegPacketToDisk must propagate the failure
+        when(mockContext.getFilesDir()).thenThrow(new RuntimeException("External storage not mounted"));
+        assertThrows(Exception.class, () ->
+            service.storePreRegPacketToDisk("id", new byte[]{1, 2, 3}, new CenterMachineDto())
+        );
     }
 
     @Test
@@ -893,8 +906,24 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_initPreRegAdapter_externalStorageMounted() {
+        File validStorage = new File(System.getProperty("java.io.tmpdir"));
+        when(mockContext.getFilesDir()).thenReturn(validStorage);
+        when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("prereg-mounted-test");
+
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
         assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
+        // Verify storage-path logic: when the context provides a valid writable directory
+        // (simulating storage mounted), storePreRegPacketToDisk must succeed
+        try {
+            String path = service.storePreRegPacketToDisk("mountedId", new byte[]{1, 2, 3}, new CenterMachineDto());
+            assertNotNull(path);
+            assertTrue(path.contains("mountedId.zip"));
+        } catch (Exception e) {
+            fail("storePreRegPacketToDisk should succeed when storage is mounted: " + e.getMessage());
+        } finally {
+            new File(validStorage, "prereg-mounted-test/mountedId.zip").delete();
+            new File(validStorage, "prereg-mounted-test").delete();
+        }
     }
 
     @Test

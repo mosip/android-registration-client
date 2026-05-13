@@ -512,7 +512,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
             encode.init(false, keyParams);
             return encode.processBlock(paddedPlainText, 0, paddedPlainText.length);
         } catch (InvalidCipherTextException e) {
-            Log.w(TAG, "unpadOAEPPadding: SHA256+SHA1(MGF1) failed, retrying with SHA256+SHA1(MGF1)");
+            Log.w(TAG, "unpadOAEPPadding: SHA256+SHA256(MGF1) failed, retrying with SHA256+SHA1(MGF1)");
         }
 
         OAEPEncoding encode = new OAEPEncoding(new RSAEngine(), new SHA256Digest(), new SHA1Digest(), null);

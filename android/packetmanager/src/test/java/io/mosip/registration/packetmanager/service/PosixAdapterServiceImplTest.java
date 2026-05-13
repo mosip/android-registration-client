@@ -116,18 +116,19 @@ public class PosixAdapterServiceImplTest {
         String content = "Packet content";
         InputStream data = new ByteArrayInputStream(content.getBytes());
 
-        // Reflect and set BASE_LOCATION to src/test/assets
         Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
         baseLocationField.setAccessible(true);
-        baseLocationField.set(service, "src/test/assets");
+        baseLocationField.set(service, baseDir.getAbsolutePath());
+
+        ShadowEnvironment.setExternalStorageState(baseDir, Environment.MEDIA_MOUNTED);
 
         Method method = PosixAdapterServiceImpl.class.getDeclaredMethod("createContainerZipWithSubPacket",
                 String.class, String.class, String.class, String.class, String.class, InputStream.class);
         method.setAccessible(true);
 
-        method.invoke(service, "", "", "", "", "tmp/packet.zip", data);
+        method.invoke(service, "testAcc", "testCont", "src", "proc", "packet.zip", data);
 
-        File zipFile = new File("src/test/assets/packet.zip");
+        File zipFile = new File(baseDir, "testAcc/testCont.zip");
         assertTrue("Zip file should be created at expected location", zipFile.exists());
     }
 
@@ -1422,28 +1423,23 @@ public class PosixAdapterServiceImplTest {
     @Test
     // Tests if createContainerZipWithSubPacket returns immediately if storage is not mounted
     public void testCreateContainerZipWithSubPacket_shouldReturnIfStorageNotMounted() throws Exception {
-        // Simulate storage not mounted
         Field baseLocationField = PosixAdapterServiceImpl.class.getDeclaredField("BASE_LOCATION");
         baseLocationField.setAccessible(true);
         baseLocationField.set(service, baseDir.getAbsolutePath());
 
-        // Patch Environment.getExternalStorageState() to return not mounted
-        String originalState = System.getProperty("EXTERNAL_STORAGE_STATE");
-        System.setProperty("EXTERNAL_STORAGE_STATE", "unmounted");
+        // Use ShadowEnvironment to properly simulate unmounted external storage
+        ShadowEnvironment.setExternalStorageState(baseDir, Environment.MEDIA_UNMOUNTED);
 
         Method method = PosixAdapterServiceImpl.class.getDeclaredMethod("createContainerZipWithSubPacket",
                 String.class, String.class, String.class, String.class, String.class, InputStream.class);
         method.setAccessible(true);
 
-        // Should return immediately, not throw
+        // Should return immediately without creating a zip file
         method.invoke(service, "acc", "cont", "src", "proc", "file.zip", new ByteArrayInputStream("data".getBytes()));
 
-        // Restore property
-        if (originalState != null) {
-            System.setProperty("EXTERNAL_STORAGE_STATE", originalState);
-        } else {
-            System.clearProperty("EXTERNAL_STORAGE_STATE");
-        }
+        // Verify ZIP file was NOT created because storage is not mounted
+        File zipFile = new File(baseDir, "acc/cont.zip");
+        assertFalse("ZIP file should not be created when storage is not mounted", zipFile.exists());
     }
 
     // Additional edge case: test addEntryToZip logs exception if putNextEntry throws
