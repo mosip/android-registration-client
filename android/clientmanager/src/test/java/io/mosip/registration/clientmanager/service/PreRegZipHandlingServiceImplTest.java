@@ -310,7 +310,7 @@ public class PreRegZipHandlingServiceImplTest {
         List<FieldSpecDto> fieldList = new ArrayList<>();
         FieldSpecDto fieldSpec1 = new FieldSpecDto();
         fieldSpec1.setId("fullName");
-        fieldSpec1.setType("string");
+        fieldSpec1.setType("simpleType");
         fieldSpec1.setControlType("textbox");
         fieldList.add(fieldSpec1);
 

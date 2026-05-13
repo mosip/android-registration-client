@@ -34,6 +34,7 @@ import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Unit tests for PreCheckValidatorServiceImpl.
@@ -454,8 +455,8 @@ public class PreCheckValidatorServiceImplTest {
     public void testValidateSyncStatus_JobWithNullId_Skipped() throws Exception {
         // Setup: Create job with null ID
         List<SyncJobDef> activeJobs = new ArrayList<>();
-        SyncJobDef job = new SyncJobDef("placeholder");
-        org.springframework.test.util.ReflectionTestUtils.setField(job, "id", null);
+        SyncJobDef job = new SyncJobDef("JOB_ID_1");
+        ReflectionTestUtils.setField(job, "id", null);
         job.setApiName(API_NAME_1);
         job.setIsActive(true);
         activeJobs.add(job);
