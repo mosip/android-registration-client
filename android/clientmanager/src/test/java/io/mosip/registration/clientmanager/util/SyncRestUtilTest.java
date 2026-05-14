@@ -151,4 +151,76 @@ public class SyncRestUtilTest {
     public void testThrowsNullPointerExceptionWhenWrapperIsNull() {
         SyncRestUtil.getServiceError((RegProcResponseWrapper) null);
     }
+
+    @Test
+    public void testGetServiceError_ResponseWrapper_nullErrors_nullResponse_throwsNPE() {
+        ResponseWrapper wrapper = new ResponseWrapper();
+        wrapper.setErrors(null);
+        wrapper.setResponse(null);
+        try {
+            SyncRestUtil.getServiceError(wrapper);
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
+            // expected — errors is null and response is null, falls through to getErrors().get(0)
+        }
+    }
+
+    @Test
+    public void testGetServiceError_ResponseWrapper_withJsonProcessingException() throws Exception {
+        ResponseWrapper wrapper = new ResponseWrapper();
+        ServiceError error = new ServiceError("E001", "Error");
+        wrapper.setErrors(Collections.singletonList(error));
+        wrapper.setResponse(null);
+
+        try (MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+            jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any()))
+                    .thenThrow(new JsonProcessingException("fail") {});
+            ServiceError result = SyncRestUtil.getServiceError(wrapper);
+            assertEquals(error, result);
+        }
+    }
+
+    @Test
+    public void testGetServiceError_OnboardResponseWrapper_nullErrors_nullResponse_throwsNPE() {
+        OnboardResponseWrapper wrapper = new OnboardResponseWrapper();
+        wrapper.setErrors(null);
+        wrapper.setResponse(null);
+        try {
+            SyncRestUtil.getServiceError(wrapper);
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
+            // expected — errors is null and response is null, falls through to getErrors().get(0)
+        }
+    }
+
+    @Test
+    public void testGetServiceError_OnboardResponseWrapper_withJsonProcessingException() throws Exception {
+        OnboardResponseWrapper wrapper = new OnboardResponseWrapper();
+        OnboardError error = new OnboardError();
+        wrapper.setErrors(Collections.singletonList(error));
+        wrapper.setResponse(null);
+
+        try (MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+            jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any()))
+                    .thenThrow(new JsonProcessingException("fail") {});
+            OnboardError result = SyncRestUtil.getServiceError(wrapper);
+            assertEquals(error, result);
+        }
+    }
+
+    @Test
+    public void testGetServiceError_ResponseWrapper_nullErrors_withResponse_returnsNull() {
+        ResponseWrapper wrapper = new ResponseWrapper();
+        wrapper.setErrors(null);
+        wrapper.setResponse(new Object());
+        assertNull(SyncRestUtil.getServiceError(wrapper));
+    }
+
+    @Test
+    public void testGetServiceError_OnboardResponseWrapper_nullErrors_withResponse_returnsNull() {
+        OnboardResponseWrapper wrapper = new OnboardResponseWrapper();
+        wrapper.setErrors(null);
+        wrapper.setResponse(new Object());
+        assertNull(SyncRestUtil.getServiceError(wrapper));
+    }
 }

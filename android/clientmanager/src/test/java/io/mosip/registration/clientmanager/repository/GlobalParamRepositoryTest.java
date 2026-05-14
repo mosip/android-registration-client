@@ -245,4 +245,134 @@ public class GlobalParamRepositoryTest {
         Map<String, Object> result = repositoryWithMocks.getGlobalParamsByPattern("demo");
         assertEquals("value", result.get("demo"));
     }
+
+    @Test
+    public void getCachedStringAgeGroup_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringAgeGroup());
+    }
+
+    @Test
+    public void getCachedStringForgotPassword_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringForgotPassword());
+    }
+
+    @Test
+    public void getCachedStringIdleTime_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringIdleTime());
+    }
+
+    @Test
+    public void getCachedStringRefreshedLoginTime_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringRefreshedLoginTime());
+    }
+
+    @Test
+    public void getCachedStringGpsDeviceEnableFlag_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringGpsDeviceEnableFlag());
+    }
+
+    @Test
+    public void getCachedStringMachineToCenterDistance_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringMachineToCenterDistance());
+    }
+
+    @Test
+    public void getCachedStringOperatorOnboardingBioAttributes_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringOperatorOnboardingBioAttributes());
+    }
+
+    @Test
+    public void getCachedStringOnboardYourselfUrl_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringOnboardYourselfUrl());
+    }
+
+    @Test
+    public void getCachedStringRegisteringIndividualUrl_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringRegisteringIndividualUrl());
+    }
+
+    @Test
+    public void getCachedStringSyncDataUrl_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringSyncDataUrl());
+    }
+
+    @Test
+    public void getCachedStringMappingDevicesUrl_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringMappingDevicesUrl());
+    }
+
+    @Test
+    public void getCachedStringUploadingDataUrl_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringUploadingDataUrl());
+    }
+
+    @Test
+    public void getCachedStringUpdatingBiometricsUrl_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringUpdatingBiometricsUrl());
+    }
+
+    @Test
+    public void getCachedStringPasswordLength_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringPasswordLength());
+    }
+
+    @Test
+    public void getCachedStringDocumentSize_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringDocumentSize());
+    }
+
+    @Test
+    public void getCachedStringDOBAgeLimit_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringDOBAgeLimit());
+    }
+
+    @Test
+    public void getCachedStringDocType_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringDocType());
+    }
+
+    @Test
+    public void getCachedStringAppName_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringAppName());
+    }
+
+    @Test
+    public void getCachedStringAppId_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringAppId());
+    }
+
+    @Test
+    public void getCachedStringDefaultHostIp_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringDefaultHostIp());
+    }
+
+    @Test
+    public void getCachedStringDefaultHostName_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringDefaultHostName());
+    }
+
+    @Test
+    public void getCachedStringFieldsToRetainOnPridFetch_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringFieldsToRetainOnPridFetch());
+    }
+
+    @Test
+    public void getCachedStringPacketStoreLocation_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringPacketStoreLocation());
+    }
+
+    @Test
+    public void getCachedStringJobsOffline_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringJobsOffline());
+    }
+
+    @Test
+    public void getCachedStringJobsUntagged_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringJobsUntagged());
+    }
+
+    @Test
+    public void getCachedStringJobsRestart_returnsNullWhenNotSet() {
+        assertNull(globalParamRepository.getCachedStringJobsRestart());
+    }
 }

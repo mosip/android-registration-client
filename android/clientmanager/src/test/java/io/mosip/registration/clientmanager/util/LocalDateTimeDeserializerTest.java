@@ -63,4 +63,23 @@ public class LocalDateTimeDeserializerTest {
 
         assertNull(result);
     }
+
+    @Test
+    public void deserializeInvalidDateFormat_returnsNull() {
+        // No format in the supported list can parse a plain date without time
+        String invalidDate = "\"2024-11-25\"";
+
+        LocalDateTime result = gson.fromJson(invalidDate, LocalDateTime.class);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void deserializeCompletelyInvalidString_returnsNull() {
+        String invalidDate = "\"not-a-date-at-all\"";
+
+        LocalDateTime result = gson.fromJson(invalidDate, LocalDateTime.class);
+
+        assertNull(result);
+    }
 }

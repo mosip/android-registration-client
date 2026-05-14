@@ -295,4 +295,129 @@ public class AuditManagerServiceTest {
         verify(mockAuditRepository).getAuditsFromDate(-1000L);
     }
 
+    @Test
+    public void test_audit_withComponents_delegatesWithComponentId() {
+        Context ctx = mock(Context.class);
+        SharedPreferences prefs = mock(SharedPreferences.class);
+        AuditRepository repo = mock(AuditRepository.class);
+        GlobalParamRepository globalRepo = mock(GlobalParamRepository.class);
+        AuditManagerServiceImpl service = new AuditManagerServiceImpl(ctx, repo, globalRepo);
+
+        when(ctx.getString(R.string.app_name)).thenReturn("TestApp");
+        when(ctx.getSharedPreferences("TestApp", Context.MODE_PRIVATE)).thenReturn(prefs);
+        when(prefs.getString(SessionManager.USER_NAME, null)).thenReturn("officer1");
+        when(prefs.getString(SessionManager.RID, null)).thenReturn(null);
+        when(prefs.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("officer1");
+
+        service.audit(AuditEvent.LOGIN_WITH_PASSWORD, Components.LOGIN);
+
+        verify(repo, times(1)).insertAudit(any(Audit.class));
+    }
+
+    @Test
+    public void test_auditWithArguments_withSessionUser_insertsAudit() {
+        Context ctx = mock(Context.class);
+        SharedPreferences prefs = mock(SharedPreferences.class);
+        AuditRepository repo = mock(AuditRepository.class);
+        GlobalParamRepository globalRepo = mock(GlobalParamRepository.class);
+        AuditManagerServiceImpl service = new AuditManagerServiceImpl(ctx, repo, globalRepo);
+
+        when(ctx.getString(R.string.app_name)).thenReturn("TestApp");
+        when(ctx.getSharedPreferences("TestApp", Context.MODE_PRIVATE)).thenReturn(prefs);
+        when(prefs.getString(SessionManager.USER_NAME, null)).thenReturn("operator1");
+        when(prefs.getString(SessionManager.RID, null)).thenReturn(null);
+        when(prefs.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("operator1");
+
+        service.auditWithArguments(AuditEvent.LOGIN_WITH_PASSWORD, "MOD-001", "LoginModule");
+
+        verify(repo, times(1)).insertAudit(any(Audit.class));
+    }
+
+    @Test
+    public void test_auditWithArguments_withRegistrationEventAndRid_setsRidAsRefId() {
+        Context ctx = mock(Context.class);
+        SharedPreferences prefs = mock(SharedPreferences.class);
+        AuditRepository repo = mock(AuditRepository.class);
+        GlobalParamRepository globalRepo = mock(GlobalParamRepository.class);
+        AuditManagerServiceImpl service = new AuditManagerServiceImpl(ctx, repo, globalRepo);
+
+        String rid = "2024010112345678901234567890";
+        when(ctx.getString(R.string.app_name)).thenReturn("TestApp");
+        when(ctx.getSharedPreferences("TestApp", Context.MODE_PRIVATE)).thenReturn(prefs);
+        when(prefs.getString(SessionManager.USER_NAME, null)).thenReturn("operator1");
+        when(prefs.getString(SessionManager.RID, null)).thenReturn(rid);
+        when(prefs.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("operator1");
+
+        ArgumentCaptor<Audit> captor = ArgumentCaptor.forClass(Audit.class);
+        service.auditWithArguments(AuditEvent.REGISTRATION_START, "REG-MOD", "RegModule");
+
+        verify(repo).insertAudit(captor.capture());
+        assertEquals(rid, captor.getValue().getRefId());
+    }
+
+    @Test
+    public void test_auditWithArguments_withNoSession_usesAppNameAsRefId() {
+        Context ctx = mock(Context.class);
+        SharedPreferences prefs = mock(SharedPreferences.class);
+        AuditRepository repo = mock(AuditRepository.class);
+        GlobalParamRepository globalRepo = mock(GlobalParamRepository.class);
+        AuditManagerServiceImpl service = new AuditManagerServiceImpl(ctx, repo, globalRepo);
+
+        when(ctx.getString(R.string.app_name)).thenReturn("RegApp");
+        when(ctx.getSharedPreferences("RegApp", Context.MODE_PRIVATE)).thenReturn(prefs);
+        when(prefs.getString(SessionManager.USER_NAME, null)).thenReturn(null);
+        when(prefs.getString(SessionManager.RID, null)).thenReturn(null);
+        when(prefs.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn(null);
+
+        ArgumentCaptor<Audit> captor = ArgumentCaptor.forClass(Audit.class);
+        service.auditWithArguments(AuditEvent.LOGIN_WITH_PASSWORD, "MOD-001", "LoginModule");
+
+        verify(repo).insertAudit(captor.capture());
+        assertEquals("RegApp", captor.getValue().getRefId());
+    }
+
+    @Test
+    public void test_auditWithArguments_withFormatStringEvent_formatsDescription() {
+        Context ctx = mock(Context.class);
+        SharedPreferences prefs = mock(SharedPreferences.class);
+        AuditRepository repo = mock(AuditRepository.class);
+        GlobalParamRepository globalRepo = mock(GlobalParamRepository.class);
+        AuditManagerServiceImpl service = new AuditManagerServiceImpl(ctx, repo, globalRepo);
+
+        when(ctx.getString(R.string.app_name)).thenReturn("TestApp");
+        when(ctx.getSharedPreferences("TestApp", Context.MODE_PRIVATE)).thenReturn(prefs);
+        when(prefs.getString(SessionManager.USER_NAME, null)).thenReturn("operator1");
+        when(prefs.getString(SessionManager.RID, null)).thenReturn(null);
+        when(prefs.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn("operator1");
+
+        ArgumentCaptor<Audit> captor = ArgumentCaptor.forClass(Audit.class);
+        // NEXT_BUTTON_CLICKED has description "Next button clicked to %s"
+        service.auditWithArguments(AuditEvent.NEXT_BUTTON_CLICKED, "REG-MOD", "RegModule", "FingerPage");
+
+        verify(repo).insertAudit(captor.capture());
+        assertTrue(captor.getValue().getDescription().contains("FingerPage"));
+    }
+
+    @Test
+    public void test_audit_fourArgs_withNullSessionAndNonRegistrationEvent_usesAppNameAsRefId() {
+        Context ctx = mock(Context.class);
+        SharedPreferences prefs = mock(SharedPreferences.class);
+        AuditRepository repo = mock(AuditRepository.class);
+        GlobalParamRepository globalRepo = mock(GlobalParamRepository.class);
+        AuditManagerServiceImpl service = new AuditManagerServiceImpl(ctx, repo, globalRepo);
+
+        when(ctx.getString(R.string.app_name)).thenReturn("RegApp");
+        when(ctx.getSharedPreferences("RegApp", Context.MODE_PRIVATE)).thenReturn(prefs);
+        when(prefs.getString(SessionManager.USER_NAME, null)).thenReturn(null);
+        when(prefs.getString(SessionManager.RID, null)).thenReturn(null);
+        when(prefs.getString(SessionManager.PREFERRED_USERNAME, null)).thenReturn(null);
+
+        ArgumentCaptor<Audit> captor = ArgumentCaptor.forClass(Audit.class);
+        service.audit(AuditEvent.LOGIN_WITH_PASSWORD, "MOD-001", "LoginModule", null);
+
+        verify(repo).insertAudit(captor.capture());
+        assertEquals("RegApp", captor.getValue().getRefId());
+        assertEquals(AuditReferenceIdTypes.APPLICATION_ID.name(), captor.getValue().getRefIdType());
+    }
+
 }
