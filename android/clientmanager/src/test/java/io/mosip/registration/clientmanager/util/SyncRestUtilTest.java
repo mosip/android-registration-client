@@ -172,7 +172,8 @@ public class SyncRestUtilTest {
         wrapper.setErrors(Collections.singletonList(error));
         wrapper.setResponse(null);
 
-        try (MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+        try (MockedStatic<Log> logMock = mockStatic(Log.class);
+             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
             jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any()))
                     .thenThrow(new JsonProcessingException("fail") {});
             ServiceError result = SyncRestUtil.getServiceError(wrapper);
@@ -200,7 +201,8 @@ public class SyncRestUtilTest {
         wrapper.setErrors(Collections.singletonList(error));
         wrapper.setResponse(null);
 
-        try (MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
+        try (MockedStatic<Log> logMock = mockStatic(Log.class);
+             MockedStatic<JsonUtils> jsonMock = mockStatic(JsonUtils.class)) {
             jsonMock.when(() -> JsonUtils.javaObjectToJsonString(any()))
                     .thenThrow(new JsonProcessingException("fail") {});
             OnboardError result = SyncRestUtil.getServiceError(wrapper);

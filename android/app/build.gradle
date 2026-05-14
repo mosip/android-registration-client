@@ -111,8 +111,16 @@ android {
     }
     packagingOptions {
         resources.merges.add("git.properties")
-        resources.excludes.add("META-INF/*")
-        resources.excludes.add("META-INF/**")
+        resources.excludes.add("META-INF/LICENSE*")
+        resources.excludes.add("META-INF/NOTICE*")
+        resources.excludes.add("META-INF/DEPENDENCIES")
+        resources.excludes.add("META-INF/AL2.0")
+        resources.excludes.add("META-INF/LGPL2.1")
+        resources.excludes.add("META-INF/*.kotlin_module")
+        resources.excludes.add("META-INF/maven/**")
+        resources.excludes.add("META-INF/versions/**")
+        resources.excludes.add("META-INF/proguard/**")
+        resources.excludes.add("notice.txt")
     }
     sonar {
         properties {
@@ -199,7 +207,7 @@ dependencies {
     implementation 'org.aspectj:aspectjrt:1.9.7'
     implementation 'org.apache.velocity:velocity:1.7'
     implementation 'org.mvel:mvel2:2.4.14.Final'
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.1.0-alpha1'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.17'
 
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'io.swagger.core.v3:swagger-annotations:2.1.11'

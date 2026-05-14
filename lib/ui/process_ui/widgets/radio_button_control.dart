@@ -76,9 +76,8 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
         Provider.of<RegistrationTaskProvider>(context, listen: false);
     _fieldValuesFuture =
         _getFieldValues(widget.field.subType!, globalProvider.selectedLanguage);
-    String lang = globalProvider.mandatoryLanguages[0]!;
     if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
-      _getSelectedValueFromMap(lang);
+      _getSelectedValueFromMap(globalProvider.selectedLanguage);
     }
     globalProvider.addListener(_onPreRegAutoFill);
     super.initState();
@@ -120,7 +119,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
 
   void _applyPreRegValue(String fieldVal) async {
-    final String lang = globalProvider.mandatoryLanguages[0]!;
+    final String lang = globalProvider.selectedLanguage;
     final List<DynamicFieldData?> data =
         await _getFieldValues(widget.field.subType!, lang);
 

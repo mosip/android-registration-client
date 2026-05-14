@@ -253,7 +253,7 @@ dependencies {
         exclude group: 'org.openpnp'
     }
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.1.0-alpha1'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.17'
 
     // added packet-manager Android library module as a dependency
     implementation project(':packetmanager')
