@@ -73,6 +73,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private final UserOnboardService userOnboardService;
 
     private Modality currentModality;
+    private CaptureRequest currentCaptureRequest;
     private static final String TAG = "BiometricsDetailApi";
     private String callbackId;
     private String fieldId;
@@ -959,9 +960,9 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             intent.setAction(callbackId + RegistrationConstants.R_CAPTURE_INTENT_ACTION);
             queryPackage(intent);
             Log.e(TAG, "Initiating capture request : ");
-            CaptureRequest captureRequest = biometricsService.getRCaptureRequest(currentModality, deviceId,
+            currentCaptureRequest = biometricsService.getRCaptureRequest(currentModality, deviceId,
                     getExceptionAttributes());
-            intent.putExtra("input", objectMapper.writeValueAsBytes(captureRequest));
+            intent.putExtra("input", objectMapper.writeValueAsBytes(currentCaptureRequest));
             activity.startActivityForResult(intent, 3);
         } catch (Exception ex) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_FAILED, Components.REGISTRATION, ex.getMessage());
@@ -1065,7 +1066,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             InputStream respData = activity.getContentResolver().openInputStream(uri);
             boolean isOperatorOnboarding = fieldId.equals(OPERATOR_BIOMETRICS);
             List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
-                    getExceptionAttributes(), isOperatorOnboarding);
+                    getExceptionAttributes(), currentCaptureRequest, isOperatorOnboarding);
             // if attempts is zero, there is no need to maintain the counter
             if (fieldId.equals(OPERATOR_BIOMETRICS)) {
                 removeDuplicatesFromOperatorBiometricList(currentModality);

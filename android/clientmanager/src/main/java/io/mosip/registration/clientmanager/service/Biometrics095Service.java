@@ -11,6 +11,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -101,12 +104,15 @@ public class Biometrics095Service extends BiometricsService {
 
     public CaptureRequest getRCaptureRequest(Modality modality, String deviceId, List<String> exceptionAttributes) {
         CaptureRequest captureRequest = new CaptureRequest();
+        Map<String, Object> deviceInfo = (Map<String, Object>) BIO_DEVICES.get(modality);
         captureRequest.setEnv(getServerActiveProfile());
-        captureRequest.setPurpose("Registration");
+        captureRequest.setPurpose(deviceInfo != null ? (String) deviceInfo.get("purpose") : "Registration");
         int timeout = globalParamRepository.getCachedIntCaptureTimeout();
 
         captureRequest.setTimeout(timeout);
-        captureRequest.setSpecVersion("0.9.5");
+        captureRequest.setSpecVersion(deviceInfo != null ? (String) deviceInfo.get("deviceServiceVersion") : "0.9.5");
+        captureRequest.setCaptureTime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        captureRequest.setTransactionId(UUID.randomUUID().toString().toUpperCase());
         List<CaptureBioDetail> list = new ArrayList<>();
         CaptureBioDetail detail = new CaptureBioDetail();
         detail.setType(modality == Modality.EXCEPTION_PHOTO ? Modality.FACE.getSingleType().value() : modality.getSingleType().value());
@@ -124,12 +130,12 @@ public class Biometrics095Service extends BiometricsService {
     }
 
 
-    public List<BiometricsDto> handleRCaptureResponse(Modality modality, InputStream response, List<String> exceptionAttributes)
+    public List<BiometricsDto> handleRCaptureResponse(Modality modality, InputStream response, List<String> exceptionAttributes, CaptureRequest captureRequest)
             throws BiometricsServiceException {
-        return handleRCaptureResponse(modality, response, exceptionAttributes, false);
+        return handleRCaptureResponse(modality, response, exceptionAttributes, captureRequest, false);
     }
 
-    public List<BiometricsDto> handleRCaptureResponse(Modality modality, InputStream response, List<String> exceptionAttributes, boolean isOperatorOnboarding)
+    public List<BiometricsDto> handleRCaptureResponse(Modality modality, InputStream response, List<String> exceptionAttributes, CaptureRequest captureRequest, boolean isOperatorOnboarding)
             throws BiometricsServiceException {
         List<BiometricsDto> biometricsDtoList = new ArrayList<>();
         try {
@@ -151,8 +157,22 @@ public class Biometrics095Service extends BiometricsService {
                 byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
                 CaptureDto captureDto = objectMapper.readValue(decodedPayload, new TypeReference<CaptureDto>() {});
                 validateResponseTimestamp(captureDto.getTimestamp());
-                //TODO need request transaction id to validate response transaction id
-                //TODO need requested spec version to validate response spec version
+
+                if (captureDto.getTransactionId() == null ||
+                        (captureRequest != null && !captureDto.getTransactionId().equalsIgnoreCase(captureRequest.getTransactionId()))) {
+                    throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
+                            "RCapture TransactionId Mismatch: request=" + (captureRequest != null ? captureRequest.getTransactionId() : null) + " response=" + captureDto.getTransactionId());
+                }
+                if (bio.getSpecVersion() == null ||
+                        (captureRequest != null && !bio.getSpecVersion().equalsIgnoreCase(captureRequest.getSpecVersion()))) {
+                    throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
+                            "RCapture SpecVersion Mismatch: request=" + (captureRequest != null ? captureRequest.getSpecVersion() : null) + " response=" + bio.getSpecVersion());
+                }
+                if (captureDto.getPurpose() == null ||
+                        (captureRequest != null && !captureDto.getPurpose().equalsIgnoreCase(captureRequest.getPurpose()))) {
+                    throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
+                            "RCapture Purpose Mismatch: request=" + (captureRequest != null ? captureRequest.getPurpose() : null) + " response=" + captureDto.getPurpose());
+                }
 
                 BiometricsDto biometricsDto = new BiometricsDto(
                         modality == Modality.EXCEPTION_PHOTO ? modality.getSingleType().value() : captureDto.getBioType(),
@@ -251,7 +271,8 @@ public class Biometrics095Service extends BiometricsService {
             byte[] decodedDigitalIdPayload = Base64.getUrlDecoder().decode(digitalIdPayload);
             DigitalId digitalId = objectMapper.readValue(decodedDigitalIdPayload, DigitalId.class);
             serialNo = digitalId.getSerialNo();
-            addBioDevice(modality, deviceDto.getDeviceCode(), digitalId);
+            addBioDevice(modality, deviceDto.getDeviceCode(), digitalId, deviceDto.getPurpose(),
+                    deviceDto.getSpecVersion() != null && deviceDto.getSpecVersion().length > 0 ? deviceDto.getSpecVersion()[0] : null);
         } catch (BiometricsServiceException e) {
             auditManagerService.audit(AuditEvent.DEVICE_INFO_PARSE_FAILED, Components.REGISTRATION, e.getMessage());
             Toast.makeText(context, "No SBI found!", Toast.LENGTH_LONG).show();
@@ -422,7 +443,7 @@ public class Biometrics095Service extends BiometricsService {
         }
     }
 
-    public void addBioDevice(Modality modality, String deviceCode, DigitalId digitalId) {
+    public void addBioDevice(Modality modality, String deviceCode, DigitalId digitalId, String purpose, String specVersion) {
         Map<String, Object> registeredDevice = new LinkedHashMap<>();
         Map<String, String> digitalIdMap = new HashMap<>();
         digitalIdMap.put("serialNo", digitalId.getSerialNo());
@@ -433,7 +454,8 @@ public class Biometrics095Service extends BiometricsService {
         digitalIdMap.put("deviceProvider", digitalId.getDeviceProvider());
         digitalIdMap.put("dateTime", digitalId.getDateTime());
         digitalIdMap.put("deviceSubType", digitalId.getDeviceSubType());
-        registeredDevice.put("deviceServiceVersion", "0.9.5");
+        registeredDevice.put("deviceServiceVersion", specVersion != null ? specVersion : "0.9.5");
+        registeredDevice.put("purpose", purpose != null ? purpose : "Registration");
         registeredDevice.put("digitalId", digitalIdMap);
         registeredDevice.put("deviceCode", deviceCode);
         BIO_DEVICES.put(modality, registeredDevice);
