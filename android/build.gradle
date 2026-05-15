@@ -53,8 +53,6 @@ ext {
     minSdkVersion = 28
     targetSdkVersion = 34
 
-    junitVersion = "4.+"
-
     // clientmanager Library Info
     clientmanagerLibVersionCode = 1
     clientmanagerLibVersionName = "\"1.0.0\""
@@ -65,6 +63,87 @@ ext {
     debugPassword = "\"APTyKejHxACQyKBSRciR\""
     httpReadTimeout = 60000L
     httpWriteTimeout = 60000L
+
+    // Dependency Injection
+    daggerVersion              = "2.41"
+    lombokVersion              = "1.18.30"
+    javaxInjectVersion         = "1"
+
+    // AndroidX
+    appcompatVersion           = "1.4.1"
+    materialVersion            = "1.4.0"
+    lifecycleExtVersion        = "2.2.0"
+    lifecycleRuntimeVersion    = "2.4.1"
+    constraintlayoutVersion    = "2.1.3"
+    fragmentVersion            = "1.4.1"
+    legacySupportVersion       = "1.0.0"
+    viewpager2Version          = "1.0.0"
+    recyclerviewVersion        = "1.2.1"
+    swipeRefreshVersion        = "1.1.0"
+    preferenceVersion          = "1.2.0"
+    navigationVersion          = "2.4.2"
+    roomVersion                = "2.4.2"
+    workVersion                = "2.7.1"
+    securityCryptoVersion      = "1.1.0-alpha06"
+
+    // Network
+    okhttpVersion              = "5.3.2"
+    okioVersion                = "3.17.0"
+    retrofitVersion            = "3.0.0"
+    mockwebserverVersion       = "4.10.0"
+
+    // Jackson (unified across all modules)
+    jacksonVersion             = "2.16.2"
+
+    // Serialization / Utils
+    gsonVersion                = "2.13.2"
+    cronUtilsVersion           = "9.2.1"
+    commonsLang3Version        = "3.20.0"
+    commonsCollections4Version = "4.4"
+    commonsCodecVersion        = "1.17.1"
+    commonsIoVersion           = "2.22.0"
+    slf4jVersion               = "2.0.17"
+    validationApiVersion       = "2.0.1.Final"
+    swaggerAnnotationsVersion  = "2.1.11"
+    jsonVersion                = "20231013"
+
+    // Security
+    bouncycastleVersion        = "1.78.1"
+    jose4jVersion              = "0.6.5"
+    sqlcipherVersion           = "4.5.3"
+
+    // PDF / Image / Biometric
+    pdfboxAndroidVersion       = "2.0.27.0"
+    jp2ForAndroidVersion       = "1.0.4"
+    jaiImageioVersion          = "1.4.0"
+    jwtDecodeVersion           = "2.0.1"
+    icu4jVersion               = "74.1"
+    biometricsUtilVersion      = "1.2.0.2"
+    kernelBiometricsApiVersion = "1.2.0.3"
+    qrGenVersion               = "3.0.1"
+
+    // Other libs
+    aspectjrtVersion           = "1.9.7"
+    velocityVersion            = "1.7"
+    mvel2Version               = "2.4.14.Final"
+    materialRippleVersion      = "1.0.2"
+    simpleXmlVersion           = "2.7.1"
+    desugarJdkLibsVersion      = "2.0.4"
+    r8Version                  = "3.0.73"
+
+    // Test
+    junitVersion               = "4.13.2"
+    mockitoCoreVersion         = "5.3.1"
+    mockitoAndroidVersion      = "5.3.1"
+    robolectricVersion         = "4.13"
+    androidxTestCoreVersion    = "1.5.0"
+    androidxJunitVersion       = "1.2.1"
+    espressoVersion            = "3.6.1"
+    byteBuddyVersion           = "1.14.0"
+    objenesisVersion           = "3.3"
+    junitJupiterVersion        = "5.8.1"
+    springTestVersion          = "5.3.20"
+    slf4jSimpleVersion         = "2.0.13"
 }
 
 
