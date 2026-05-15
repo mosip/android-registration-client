@@ -100,12 +100,17 @@ tasks.register('dexifyBiosdkAars') {
 }
 
 android {
+    namespace 'io.mosip.registration.clientmanager'
     lintOptions {
         abortOnError false
         ignoreWarnings true
     }
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
+
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -121,6 +126,12 @@ android {
         buildConfigField("long", "HTTP_WRITE_TIMEOUT", "${rootProject.ext.httpWriteTimeout}L")
     }
 
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+        }
+    }
+
     buildTypes {
         debug {
             testCoverageEnabled true
@@ -131,8 +142,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     sourceSets {
         main {
@@ -161,100 +172,81 @@ afterEvaluate {
 }
 
 dependencies {
-    def work_version = "2.7.1"
-
     // R8/D8 for dexifyBiosdkAars task (DEX conversion)
-    dexify 'com.android.tools:r8:3.0.73'
+    dexify "com.android.tools:r8:${rootProject.ext.r8Version}"
 
-    implementation 'com.google.dagger:dagger:2.41'
-    implementation 'com.google.dagger:dagger-android-support:2.41'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
+    implementation "com.google.dagger:dagger:${rootProject.ext.daggerVersion}"
+    implementation "com.google.dagger:dagger-android-support:${rootProject.ext.daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${rootProject.ext.daggerVersion}"
 
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly "org.projectlombok:lombok:${rootProject.ext.lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${rootProject.ext.lombokVersion}"
 
-    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation "javax.validation:validation-api:${rootProject.ext.validationApiVersion}"
+    implementation "com.cronutils:cron-utils:${rootProject.ext.cronUtilsVersion}"
+    implementation "org.aspectj:aspectjrt:${rootProject.ext.aspectjrtVersion}"
+    implementation "io.swagger.core.v3:swagger-annotations:${rootProject.ext.swaggerAnnotationsVersion}"
 
-    implementation 'com.cronutils:cron-utils:9.2.0'
+    implementation "androidx.room:room-runtime:${rootProject.ext.roomVersion}"
+    annotationProcessor "androidx.room:room-compiler:${rootProject.ext.roomVersion}"
 
-    //AspectJ
-    implementation 'org.aspectj:aspectjrt:1.9.7'
+    implementation "net.zetetic:android-database-sqlcipher:${rootProject.ext.sqlcipherVersion}"
+    implementation "androidx.security:security-crypto:${rootProject.ext.securityCryptoVersion}"
 
-    // https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
-    implementation 'io.swagger.core.v3:swagger-annotations:2.1.11'
+    implementation "org.json:json:${rootProject.ext.jsonVersion}"
+    implementation "androidx.work:work-runtime:${rootProject.ext.workVersion}"
 
-    implementation "androidx.room:room-runtime:2.4.2"
-    annotationProcessor "androidx.room:room-compiler:2.4.2"
+    implementation "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
+    implementation "com.squareup.okio:okio:${rootProject.ext.okioVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${rootProject.ext.okhttpVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofitVersion}"
 
-    implementation "net.zetetic:android-database-sqlcipher:4.5.3"
-    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+    implementation "com.auth0.android:jwtdecode:${rootProject.ext.jwtDecodeVersion}"
 
-    implementation 'org.json:json:20231013'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-    testImplementation 'org.springframework:spring-test:5.3.20'
-    testImplementation 'org.slf4j:slf4j-simple:2.0.13'
+    implementation group: 'commons-io', name: 'commons-io', version: "${rootProject.ext.commonsIoVersion}"
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
-    androidTestImplementation "org.mockito:mockito-android:4.6.1"
-    testImplementation "junit:junit:4.13.2"
-    testImplementation "org.mockito:mockito-core:4.6.1"
-    testImplementation 'org.mockito:mockito-inline:4.4.0'
-    testImplementation 'org.robolectric:robolectric:4.8'
-    testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
-    testImplementation "org.mockito:mockito-android:4.6.1"
-    testImplementation "androidx.test:core:1.5.0"
-    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
-    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+    implementation "com.fasterxml.jackson.core:jackson-core:${rootProject.ext.jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${rootProject.ext.jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${rootProject.ext.jacksonVersion}"
 
+    implementation "org.apache.velocity:velocity:${rootProject.ext.velocityVersion}"
+    implementation "org.mvel:mvel2:${rootProject.ext.mvel2Version}"
 
-
-    // (Java only)
-    implementation "androidx.work:work-runtime:$work_version"
-
-    // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okio:okio:3.4.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
-    // JWT decoding library
-    implementation 'com.auth0.android:jwtdecode:2.0.1'
-
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
-
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0-rc1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.1'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
-
-    implementation 'org.apache.velocity:velocity:1.7'
-    implementation 'org.mvel:mvel2:2.4.14.Final'
-
-    implementation('com.tom-roush:pdfbox-android:2.0.27.0') {
+    implementation("com.tom-roush:pdfbox-android:${rootProject.ext.pdfboxAndroidVersion}") {
         exclude group: 'org.bouncycastle'
     }
 
-    implementation 'com.github.Tgo1014:JP2ForAndroid:1.0.4'
+    implementation "com.github.Tgo1014:JP2ForAndroid:${rootProject.ext.jp2ForAndroidVersion}"
 
-    implementation('io.mosip.biometric.util:biometrics-util:1.2.0.2') {
+    implementation("io.mosip.biometric.util:biometrics-util:${rootProject.ext.biometricsUtilVersion}") {
         exclude group: 'org.springframework.boot'
         exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'org.projectlombok'
         exclude group: 'org.openpnp'
     }
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha7'
 
-    // added packet-manager Android library module as a dependency
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: "${rootProject.ext.slf4jVersion}"
+
     implementation project(':packetmanager')
     implementation project(':keymanager')
 
-    implementation 'com.github.kenglxn.QRGen:android:3.0.1'
-    implementation("io.mosip.kernel:kernel-biometrics-api:1.2.0.3"){
+    implementation "com.github.kenglxn.QRGen:android:${rootProject.ext.qrGenVersion}"
+    implementation("io.mosip.kernel:kernel-biometrics-api:${rootProject.ext.kernelBiometricsApiVersion}") {
         transitive = false
     }
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation "com.google.code.gson:gson:${rootProject.ext.gsonVersion}"
+
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+    testImplementation "org.robolectric:robolectric:${rootProject.ext.robolectricVersion}"
+    testImplementation "androidx.test:core:${rootProject.ext.androidxTestCoreVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter:${rootProject.ext.junitJupiterVersion}"
+    testImplementation "org.springframework:spring-test:${rootProject.ext.springTestVersion}"
+    testImplementation "org.slf4j:slf4j-simple:${rootProject.ext.slf4jSimpleVersion}"
+    testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoCoreVersion}"
+
+    androidTestImplementation "androidx.test.ext:junit:${rootProject.ext.androidxJunitVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:${rootProject.ext.mockwebserverVersion}"
+    androidTestImplementation "org.mockito:mockito-android:${rootProject.ext.mockitoAndroidVersion}"
 }

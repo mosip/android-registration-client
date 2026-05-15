@@ -130,6 +130,15 @@ class _PreRegDataControlState extends State<PreRegDataControl> {
                       globalProvider.fieldInputValue,
                     );
                   }
+                  if(e.controlType == "button"){
+                    if(language == globalProvider.mandatoryLanguages[0]) {
+                      globalProvider.setInputMapValue(
+                        key!,
+                        value,
+                        globalProvider.fieldInputValue,
+                      );
+                    }
+                  }
                   if(e.controlType == "dropdown"){
                     setState(() {
                       index = globalProvider.hierarchyReverse.indexOf(e.subType!);
