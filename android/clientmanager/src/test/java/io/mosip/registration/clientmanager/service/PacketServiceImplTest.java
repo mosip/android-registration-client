@@ -951,38 +951,38 @@ public class PacketServiceImplTest {
     // ===== isRegisteredPacketApprovalTimeBreached =====
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_nullLimit() {
+    public void isRegisteredPacketApprovalTimeBreached_withNullLimit_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn(null);
         assertFalse(packetService.isRegisteredPacketApprovalTimeBreached());
     }
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_emptyLimit() {
+    public void isRegisteredPacketApprovalTimeBreached_withEmptyLimit_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn("  ");
         assertFalse(packetService.isRegisteredPacketApprovalTimeBreached());
     }
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_zeroDays() {
+    public void isRegisteredPacketApprovalTimeBreached_withZeroDays_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn("0");
         assertFalse(packetService.isRegisteredPacketApprovalTimeBreached());
     }
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_negativeDays() {
+    public void isRegisteredPacketApprovalTimeBreached_withNegativeDays_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn("-5");
         assertFalse(packetService.isRegisteredPacketApprovalTimeBreached());
     }
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_noOldestRegistration() {
+    public void isRegisteredPacketApprovalTimeBreached_withNoOldestRegistration_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn("7");
         when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.CREATED.name())).thenReturn(null);
         assertFalse(packetService.isRegisteredPacketApprovalTimeBreached());
     }
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_notBreached() {
+    public void isRegisteredPacketApprovalTimeBreached_withRecentRegistration_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn("7");
         Registration reg = new Registration("id");
         reg.setCrDtime(System.currentTimeMillis());
@@ -991,7 +991,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_breached() {
+    public void isRegisteredPacketApprovalTimeBreached_withOldRegistration_returnsTrue() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn("1");
         Registration reg = new Registration("id");
         reg.setCrDtime(System.currentTimeMillis() - (2L * 24 * 60 * 60 * 1000));
@@ -1000,7 +1000,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_isRegisteredPacketApprovalTimeBreached_invalidConfig() {
+    public void isRegisteredPacketApprovalTimeBreached_withInvalidConfig_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_TIME_APPRV_LIMIT)).thenReturn("not-a-number");
         assertFalse(packetService.isRegisteredPacketApprovalTimeBreached());
     }
@@ -1008,38 +1008,38 @@ public class PacketServiceImplTest {
     // ===== validatingLastExportDuration =====
 
     @Test
-    public void test_validatingLastExportDuration_nullLimit() {
+    public void validatingLastExportDuration_withNullLimit_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn(null);
         assertFalse(packetService.validatingLastExportDuration());
     }
 
     @Test
-    public void test_validatingLastExportDuration_emptyLimit() {
+    public void validatingLastExportDuration_withEmptyLimit_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("  ");
         assertFalse(packetService.validatingLastExportDuration());
     }
 
     @Test
-    public void test_validatingLastExportDuration_zeroDays() {
+    public void validatingLastExportDuration_withZeroDays_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("0");
         assertFalse(packetService.validatingLastExportDuration());
     }
 
     @Test
-    public void test_validatingLastExportDuration_negativeDays() {
+    public void validatingLastExportDuration_withNegativeDays_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("-3");
         assertFalse(packetService.validatingLastExportDuration());
     }
 
     @Test
-    public void test_validatingLastExportDuration_noOldestApprovedRegistration() {
+    public void validatingLastExportDuration_withNoOldestApprovedRegistration_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("7");
         when(mockRegistrationRepository.getOldestRegistrationByStatus(PacketClientStatus.APPROVED.name())).thenReturn(null);
         assertFalse(packetService.validatingLastExportDuration());
     }
 
     @Test
-    public void test_validatingLastExportDuration_nullCreationTime() {
+    public void validatingLastExportDuration_withNullCreationTime_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("7");
         Registration reg = new Registration("id");
         reg.setCrDtime(null);
@@ -1048,7 +1048,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_validatingLastExportDuration_notBreached() {
+    public void validatingLastExportDuration_withRecentApprovedRegistration_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("7");
         Registration reg = new Registration("id");
         reg.setCrDtime(System.currentTimeMillis());
@@ -1057,7 +1057,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_validatingLastExportDuration_breached() {
+    public void validatingLastExportDuration_withOldApprovedRegistration_returnsTrue() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("1");
         Registration reg = new Registration("id");
         reg.setCrDtime(System.currentTimeMillis() - (2L * 24 * 60 * 60 * 1000));
@@ -1066,7 +1066,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_validatingLastExportDuration_invalidConfig() {
+    public void validatingLastExportDuration_withInvalidConfig_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.OPT_TO_REG_LAST_EXPORT_REG_PKTS_TIME)).thenReturn("abc");
         assertFalse(packetService.validatingLastExportDuration());
     }
@@ -1074,25 +1074,25 @@ public class PacketServiceImplTest {
     // ===== isMaxPacketCountLimitReached =====
 
     @Test
-    public void test_isMaxPacketCountLimitReached_nullConfig() {
+    public void isMaxPacketCountLimitReached_withNullConfig_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn(null);
         assertFalse(packetService.isMaxPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxPacketCountLimitReached_emptyConfig() {
+    public void isMaxPacketCountLimitReached_withEmptyConfig_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn("  ");
         assertFalse(packetService.isMaxPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxPacketCountLimitReached_zeroMaxCount() {
+    public void isMaxPacketCountLimitReached_withZeroMaxCount_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn("0");
         assertFalse(packetService.isMaxPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxPacketCountLimitReached_belowLimit() {
+    public void isMaxPacketCountLimitReached_withCountBelowLimit_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn("10");
         when(mockRegistrationRepository.getYetToExportCount()).thenReturn(5);
         assertFalse(packetService.isMaxPacketCountLimitReached());
@@ -1100,7 +1100,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_isMaxPacketCountLimitReached_atLimit() {
+    public void isMaxPacketCountLimitReached_withCountAtLimit_returnsTrue() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn("5");
         when(mockRegistrationRepository.getYetToExportCount()).thenReturn(5);
         assertTrue(packetService.isMaxPacketCountLimitReached());
@@ -1108,20 +1108,20 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_isMaxPacketCountLimitReached_exceedsLimit() {
+    public void isMaxPacketCountLimitReached_withCountExceedingLimit_returnsTrue() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn("3");
         when(mockRegistrationRepository.getYetToExportCount()).thenReturn(10);
         assertTrue(packetService.isMaxPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxPacketCountLimitReached_invalidConfig() {
+    public void isMaxPacketCountLimitReached_withInvalidConfig_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn("not-a-number");
         assertFalse(packetService.isMaxPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxPacketCountLimitReached_exceptionFromRepository() {
+    public void isMaxPacketCountLimitReached_whenRepositoryThrows_returnsFalse() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_PAK_MAX_CNT_OFFLINE_FREQ)).thenReturn("5");
         when(mockRegistrationRepository.getYetToExportCount()).thenThrow(new RuntimeException("db error"));
         assertFalse(packetService.isMaxPacketCountLimitReached());
@@ -1130,34 +1130,34 @@ public class PacketServiceImplTest {
     // ===== isMaxNotApprovedPacketCountLimitReached =====
 
     @Test
-    public void test_isMaxNotApprovedPacketCountLimitReached_zeroMaxCount() {
+    public void isMaxNotApprovedPacketCountLimitReached_withZeroMaxCount_returnsFalse() {
         when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenReturn(0);
         assertFalse(packetService.isMaxNotApprovedPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxNotApprovedPacketCountLimitReached_belowLimit() {
+    public void isMaxNotApprovedPacketCountLimitReached_withCountBelowLimit_returnsFalse() {
         when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenReturn(10);
         when(mockRegistrationRepository.getAllRegistrationByStatus(PacketClientStatus.CREATED.name())).thenReturn(5);
         assertFalse(packetService.isMaxNotApprovedPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxNotApprovedPacketCountLimitReached_atLimit() {
+    public void isMaxNotApprovedPacketCountLimitReached_withCountAtLimit_returnsTrue() {
         when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenReturn(5);
         when(mockRegistrationRepository.getAllRegistrationByStatus(PacketClientStatus.CREATED.name())).thenReturn(5);
         assertTrue(packetService.isMaxNotApprovedPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxNotApprovedPacketCountLimitReached_exceedsLimit() {
+    public void isMaxNotApprovedPacketCountLimitReached_withCountExceedingLimit_returnsTrue() {
         when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenReturn(3);
         when(mockRegistrationRepository.getAllRegistrationByStatus(PacketClientStatus.CREATED.name())).thenReturn(7);
         assertTrue(packetService.isMaxNotApprovedPacketCountLimitReached());
     }
 
     @Test
-    public void test_isMaxNotApprovedPacketCountLimitReached_exception() {
+    public void isMaxNotApprovedPacketCountLimitReached_whenRepoThrows_returnsFalse() {
         when(mockGlobalParamRepository.getCachedIntRegMaxCountApproveLimit()).thenThrow(new RuntimeException("error"));
         assertFalse(packetService.isMaxNotApprovedPacketCountLimitReached());
     }
@@ -1165,21 +1165,21 @@ public class PacketServiceImplTest {
     // ===== deleteRegistrationPackets =====
 
     @Test
-    public void test_deleteRegistrationPackets_nullConfig() {
+    public void deleteRegistrationPackets_withNullConfig_doesNotDelete() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS)).thenReturn(null);
         packetService.deleteRegistrationPackets();
         verify(mockRegistrationRepository, never()).findByServerStatusAndCrDtimeBefore(any(), anyLong());
     }
 
     @Test
-    public void test_deleteRegistrationPackets_invalidConfig() {
+    public void deleteRegistrationPackets_withInvalidConfig_doesNotDelete() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS)).thenReturn("invalid");
         packetService.deleteRegistrationPackets();
         verify(mockRegistrationRepository, never()).findByServerStatusAndCrDtimeBefore(any(), anyLong());
     }
 
     @Test
-    public void test_deleteRegistrationPackets_noRegistrations() {
+    public void deleteRegistrationPackets_withNoMatchingRegistrations_doesNotDelete() {
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.REG_DELETION_CONFIGURED_DAYS)).thenReturn("30");
         when(mockRegistrationRepository.findByServerStatusAndCrDtimeBefore(any(), anyLong())).thenReturn(Collections.emptyList());
         packetService.deleteRegistrationPackets();
@@ -1187,7 +1187,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_deleteRegistrationPackets_withExistingFile() throws IOException {
+    public void deleteRegistrationPackets_withExistingFile_deletesFileAndRecord() throws IOException {
         File tempFile = File.createTempFile("test-packet", ".zip");
         tempFile.deleteOnExit();
 
@@ -1203,7 +1203,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_deleteRegistrationPackets_withNonExistentFile() {
+    public void deleteRegistrationPackets_withNonExistentFile_deletesRecord() {
         Registration reg = new Registration("packet-del-2");
         reg.setFilePath("/non/existent/path/packet.zip");
 
@@ -1216,7 +1216,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_deleteRegistrationPackets_withNullFilePath() {
+    public void deleteRegistrationPackets_withNullFilePath_deletesRecord() {
         Registration reg = new Registration("packet-del-3");
         reg.setFilePath(null);
 
@@ -1229,7 +1229,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_deleteRegistrationPackets_deleteRepoThrowsException() {
+    public void deleteRegistrationPackets_whenRepoThrows_completesWithoutException() {
         Registration reg = new Registration("packet-del-4");
         reg.setFilePath(null);
 
@@ -1241,7 +1241,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_deleteRegistrationPackets_multipleRegistrations() throws IOException {
+    public void deleteRegistrationPackets_withMultipleRegistrations_deletesAll() throws IOException {
         File tempFile1 = File.createTempFile("packet1", ".zip");
         File tempFile2 = File.createTempFile("packet2", ".zip");
         tempFile1.deleteOnExit();
@@ -1264,7 +1264,7 @@ public class PacketServiceImplTest {
     // ===== Missing syncRegistration branches =====
 
     @Test
-    public void test_syncRegistration_nonV115_usesLegacyEndpoint() throws Exception {
+    public void syncRegistration_withNonV115Version_usesLegacyEndpoint() throws Exception {
         Registration reg = new Registration("id");
         reg.setClientStatus(PacketClientStatus.APPROVED.name());
         reg.setRegType("NEW");
@@ -1297,7 +1297,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_syncRegistration_httpErrorResponse() throws Exception {
+    public void syncRegistration_withHttpErrorResponse_callsSyncFailed() throws Exception {
         Registration reg = new Registration("id");
         reg.setClientStatus(PacketClientStatus.APPROVED.name());
         reg.setRegType("NEW");
@@ -1325,7 +1325,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_syncRegistration_withAdditionalInfo_allFields() throws Exception {
+    public void syncRegistration_withAllAdditionalInfoFields_completesSyncSuccessfully() throws Exception {
         Registration reg = new Registration("id");
         reg.setClientStatus(PacketClientStatus.APPROVED.name());
         reg.setRegType("NEW");
@@ -1359,7 +1359,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_syncRegistration_withAdditionalInfo_missingOptionalFields() throws Exception {
+    public void syncRegistration_withMissingOptionalInfoFields_completesSyncSuccessfully() throws Exception {
         Registration reg = new Registration("id");
         reg.setClientStatus(PacketClientStatus.REJECTED.name());
         reg.setClientStatusComment("rejected comment");
@@ -1396,7 +1396,7 @@ public class PacketServiceImplTest {
     // ===== Missing syncAllPacketStatus branches =====
 
     @Test
-    public void test_syncAllPacketStatus_httpErrorResponse() {
+    public void syncAllPacketStatus_withHttpErrorResponse_doesNotUpdateStatus() {
         List<Registration> registrations = Collections.singletonList(new Registration("id"));
         when(mockRegistrationRepository.getAllRegistrations()).thenReturn(registrations);
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("1.1.5");
@@ -1420,7 +1420,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_syncAllPacketStatus_successWithNullPacketStatusList() {
+    public void syncAllPacketStatus_withNullPacketStatusList_doesNotUpdateStatus() {
         List<Registration> registrations = Collections.singletonList(new Registration("id"));
         when(mockRegistrationRepository.getAllRegistrations()).thenReturn(registrations);
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_VERSION)).thenReturn("1.1.5");
@@ -1446,7 +1446,7 @@ public class PacketServiceImplTest {
     }
 
     @Test
-    public void test_syncAllPacketStatus_nullRegistrations() {
+    public void syncAllPacketStatus_withNullRegistrations_doesNotCallSyncService() {
         when(mockRegistrationRepository.getAllRegistrations()).thenReturn(null);
         packetService.syncAllPacketStatus();
         verify(mockRegistrationRepository).getAllRegistrations();
@@ -1456,7 +1456,7 @@ public class PacketServiceImplTest {
     // ===== uploadRegistration single-arg delegation =====
 
     @Test
-    public void test_uploadRegistration_singleArg_delegates() {
+    public void uploadRegistration_withSingleArg_delegatesToOverloadedMethod() {
         doNothing().when(packetService).uploadRegistration(anyString(), any(AsyncPacketTaskCallBack.class));
         packetService.uploadRegistration("pid");
         verify(packetService).uploadRegistration(eq("pid"), any(AsyncPacketTaskCallBack.class));

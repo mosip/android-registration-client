@@ -28,7 +28,7 @@ public class LocalConfigServiceImplTest {
     private LocalConfigServiceImpl localConfigService;
 
     @Test
-    public void testGetLocalConfigurations_returnsDaoResult() {
+    public void getLocalConfigurations_withDaoSetup_returnsDaoResult() {
         Map<String, String> expected = Map.of(
                 "mosip.registration.idle_time", "300",
                 "mosip.registration.theme", "dark");
@@ -41,7 +41,7 @@ public class LocalConfigServiceImplTest {
     }
 
     @Test
-    public void testModifyConfigurations_delegatesToDao() {
+    public void modifyConfigurations_withValidMap_delegatesToDao() {
         Map<String, String> preferences = Map.of(
                 "mosip.registration.idle_time", "600");
 
@@ -51,7 +51,7 @@ public class LocalConfigServiceImplTest {
     }
 
     @Test
-    public void testGetPermittedConfiguration_usesRegistrationConstant() {
+    public void getPermittedConfiguration_withRegistrationConstant_returnsPermittedList() {
         List<String> permitted = List.of("mosip.registration.idle_time", "mosip.registration.theme");
         when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_CONFIG_TYPE))
                 .thenReturn(permitted);
@@ -63,7 +63,7 @@ public class LocalConfigServiceImplTest {
     }
 
     @Test
-    public void testGetValue_delegatesToDao() {
+    public void getValue_withKeyParam_delegatesToDao() {
         when(localConfigDAO.getValue("mosip.registration.theme", "CONFIGURATION")).thenReturn("dark");
 
         String result = localConfigService.getValue("mosip.registration.theme", "CONFIGURATION");
@@ -73,7 +73,7 @@ public class LocalConfigServiceImplTest {
     }
 
     @Test
-    public void testGetPermittedJobs_usesPermittedJobType() {
+    public void getPermittedJobs_withPermittedJobType_returnsPermittedJobList() {
         List<String> permittedJobs = List.of("MasterDataSyncJob", "PacketStatusSyncJob");
         when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE))
                 .thenReturn(permittedJobs);
@@ -85,32 +85,32 @@ public class LocalConfigServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testModifyJob_nullName_throwsIllegalArgumentException() {
+    public void modifyJob_withNullName_throwsIllegalArgumentException() {
         localConfigService.modifyJob(null, "0 0 12 * * ?");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testModifyJob_emptyName_throwsIllegalArgumentException() {
+    public void modifyJob_withEmptyName_throwsIllegalArgumentException() {
         localConfigService.modifyJob("   ", "0 0 12 * * ?");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testModifyJob_nullValue_throwsIllegalArgumentException() {
+    public void modifyJob_withNullValue_throwsIllegalArgumentException() {
         localConfigService.modifyJob("MasterDataSyncJob", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testModifyJob_emptyValue_throwsIllegalArgumentException() {
+    public void modifyJob_withEmptyValue_throwsIllegalArgumentException() {
         localConfigService.modifyJob("MasterDataSyncJob", "   ");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testModifyJob_invalidCronExpression_throwsIllegalArgumentException() {
+    public void modifyJob_withInvalidCronExpression_throwsIllegalArgumentException() {
         localConfigService.modifyJob("MasterDataSyncJob", "NOT_A_VALID_CRON");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testModifyJob_notPermittedJob_throwsIllegalArgumentException() {
+    public void modifyJob_withNonPermittedJob_throwsIllegalArgumentException() {
         when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE))
                 .thenReturn(Arrays.asList("PacketStatusSyncJob"));
 
@@ -118,7 +118,7 @@ public class LocalConfigServiceImplTest {
     }
 
     @Test
-    public void testModifyJob_validCronAndPermittedJob_delegatesToDao() {
+    public void modifyJob_withValidCronAndPermittedJob_delegatesToDao() {
         String jobName = "MasterDataSyncJob";
         String cronExpr = "0 0 12 * * ?";
         when(localConfigDAO.getPermittedConfigurations(RegistrationConstants.PERMITTED_JOB_TYPE))

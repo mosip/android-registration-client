@@ -66,7 +66,7 @@ public class NetworkModuleTest {
     }
 
     @Test
-    public void testProvideHttpCache() {
+    public void provideHttpCache_withTempDir_returnsConfiguredCache() {
         Cache cache = networkModule.provideHttpCache();
         assertNotNull(cache);
         assertEquals(tempCacheDir.getAbsolutePath(), cache.directory().getAbsolutePath());
@@ -74,7 +74,7 @@ public class NetworkModuleTest {
     }
 
     @Test
-    public void testProvideGson() {
+    public void provideGson_withValidConfig_returnsGsonWithDateTimeAdapter() {
         Gson gson = networkModule.provideGson();
         assertNotNull(gson);
         String json = gson.toJson(new TestDateTimeHolder(LocalDateTime.of(2020, 1, 1, 12, 0)));
@@ -82,7 +82,7 @@ public class NetworkModuleTest {
     }
 
     @Test
-    public void testProvideOkhttpClient() {
+    public void provideOkhttpClient_withCacheAndRepository_returnsClientWithRestInterceptor() {
         Cache cache = networkModule.provideHttpCache();
         OkHttpClient client = networkModule.provideOkhttpClient(cache,globalParamRepository);
         assertNotNull(client);
@@ -91,7 +91,7 @@ public class NetworkModuleTest {
     }
 
     @Test
-    public void testProvideRetrofit() {
+    public void provideRetrofit_withGsonAndOkHttpClient_returnsRetrofitWithGsonConverter() {
         Gson gson = networkModule.provideGson();
         OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache(),globalParamRepository);
         Retrofit retrofit = networkModule.provideRetrofit(gson, client);
@@ -101,7 +101,7 @@ public class NetworkModuleTest {
     }
 
     @Test
-    public void testProvideSyncRestService() {
+    public void provideSyncRestService_withRetrofit_returnsServiceImplementation() {
         Gson gson = networkModule.provideGson();
         OkHttpClient client = networkModule.provideOkhttpClient(networkModule.provideHttpCache(),globalParamRepository);
         Retrofit retrofit = networkModule.provideRetrofit(gson, client);

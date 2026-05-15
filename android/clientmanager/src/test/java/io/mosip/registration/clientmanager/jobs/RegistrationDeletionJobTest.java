@@ -31,7 +31,7 @@ public class RegistrationDeletionJobTest {
     }
 
     @Test
-    public void testTriggerJob_success_returnsTrue() {
+    public void triggerJob_withValidJobId_returnsTrue() {
         int jobId = 5;
 
         boolean result = registrationDeletionJob.triggerJob(jobId);
@@ -41,7 +41,7 @@ public class RegistrationDeletionJobTest {
     }
 
     @Test
-    public void testTriggerJob_packetServiceThrowsException_returnsFalse() {
+    public void triggerJob_withPacketServiceException_returnsFalse() {
         int jobId = 5;
         doThrow(new RuntimeException("Deletion failed"))
                 .when(packetService).deleteRegistrationPackets();

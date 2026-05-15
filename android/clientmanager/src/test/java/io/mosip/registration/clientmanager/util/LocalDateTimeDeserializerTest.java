@@ -26,7 +26,7 @@ public class LocalDateTimeDeserializerTest {
     }
 
     @Test
-    public void deserializeValidDateFormats_Test() {
+    public void deserialize_withValidDateFormats_returnsLocalDateTime() {
         String date1 = "\"2024-11-25T10:15:30.123Z\"";
         String date2 = "\"2024-11-25T10:15:30.123\"";
         String date3 = "\"2024-11-25T10:15:30.1234\"";
@@ -56,7 +56,7 @@ public class LocalDateTimeDeserializerTest {
 
 
     @Test
-    public void deserializeNullValue_Test() {
+    public void deserialize_withNullValue_returnsNull() {
         String nullDate = "null";
 
         LocalDateTime result = gson.fromJson(nullDate, LocalDateTime.class);
@@ -65,7 +65,7 @@ public class LocalDateTimeDeserializerTest {
     }
 
     @Test
-    public void deserializeInvalidDateFormat_returnsNull() {
+    public void deserialize_withInvalidDateFormat_returnsNull() {
         // No format in the supported list can parse a plain date without time
         String invalidDate = "\"2024-11-25\"";
 
@@ -75,7 +75,7 @@ public class LocalDateTimeDeserializerTest {
     }
 
     @Test
-    public void deserializeCompletelyInvalidString_returnsNull() {
+    public void deserialize_withCompletelyInvalidString_returnsNull() {
         String invalidDate = "\"not-a-date-at-all\"";
 
         LocalDateTime result = gson.fromJson(invalidDate, LocalDateTime.class);

@@ -430,18 +430,19 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
                 cipher_symmetric.updateAAD(aad);
                 cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(cipher_symmetric.doFinal(encrypted_data)));
                 return cryptoResponseDto;
-            } catch (Exception e) {
+            } catch (Throwable t) {
                 Log.w(TAG, "decrypt: primary IV/AAD lengths failed, retrying with legacy lengths (IV=16, AAD=12)");
-                // backward-compat with server 1.1.4.4 packets (IV=16 bytes, AAD=12 bytes)
-                byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH + 16);
-                byte[] aad = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + 16, KEYGEN_SYMMETRIC_KEY_LENGTH + 16 + 12);
-                byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + 16 + 12, dataToDecrypt.length);
-                final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-                cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv));
-                cipher_symmetric.updateAAD(aad);
-                cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(cipher_symmetric.doFinal(encrypted_data)));
-                return cryptoResponseDto;
             }
+
+            // backward-compat with server 1.1.4.4 packets (IV=16 bytes, AAD=12 bytes)
+            byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH + 16);
+            byte[] aad = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + 16, KEYGEN_SYMMETRIC_KEY_LENGTH + 16 + 12);
+            byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + 16 + 12, dataToDecrypt.length);
+            final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+            cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv));
+            cipher_symmetric.updateAAD(aad);
+            cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(cipher_symmetric.doFinal(encrypted_data)));
+            return cryptoResponseDto;
         } catch (Exception e) {
             Log.e(TAG, "decrypt failed", e);
             throw new KeymanagerServiceException(

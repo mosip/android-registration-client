@@ -44,7 +44,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getProperty_withValidKey_thenReturnCorrectValue() throws Exception {
+    public void getProperty_withValidKey_returnsCorrectValue() throws Exception {
         String key = "packet.manager.account.name";
         String expectedValue = "PACKET_MANAGER_ACCOUNT";
         String propertiesContent = key + "=" + expectedValue + "\n";
@@ -58,7 +58,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getProperty_withPropertiesFileNotFound_thenReturnNull() throws Exception {
+    public void getProperty_withPropertiesFileNotFound_returnsNull() throws Exception {
         String key = "packet.manager.account.names";
         when(mockAssetManager.open("packetmanagerconfig.properties")).thenThrow(new IOException());
 
@@ -68,7 +68,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getProperty_withPropertiesAlreadyLoaded_thenReturnCorrectValue() throws Exception {
+    public void getProperty_withAlreadyLoadedProperties_returnsCorrectValue() throws Exception {
         String key = "packet.manager.account.name";
         String expectedValue = "PACKET_MANAGER_ACCOUNT";
         String propertiesContent = key + "=" + expectedValue + "\n";
@@ -84,7 +84,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getProperty_withNonExistentKey_thenReturnNull() throws Exception {
+    public void getProperty_withNonExistentKey_returnsNull() throws Exception {
         String key = "non.existent.key";
         String propertiesContent = "packet.manager.account.name=PACKET_MANAGER_ACCOUNT\n";
         InputStream inputStream = new ByteArrayInputStream(propertiesContent.getBytes());
@@ -97,7 +97,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getProperty_whenIOExceptionOccurs_thenLogError() throws Exception {
+    public void getProperty_whenIOExceptionOccurs_logsErrorAndReturnsNull() throws Exception {
         String key = "packet.manager.account.names";
         when(mockAssetManager.open("packetmanagerconfig.properties")).thenThrow(new IOException("Test IO Exception"));
 

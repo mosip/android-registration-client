@@ -74,7 +74,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testGetRCaptureRequest() {
+    public void getRCaptureRequest_withFaceModality_returnsConfiguredRequest() {
         Modality modality = Modality.FACE;
         String deviceId = "testDevice";
         List<String> exceptionAttributes = new ArrayList<>();
@@ -89,7 +89,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testHandleRCaptureResponse_errorResponse() throws Exception {
+    public void handleRCaptureResponse_withParsingError_throwsBiometricsServiceException() throws Exception {
         Modality modality = Modality.FACE;
         List<String> exceptionAttributes = new ArrayList<>();
         InputStream responseStream = new ByteArrayInputStream("{}".getBytes());
@@ -105,7 +105,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testHandleDeviceInfoResponse_invalidResponse() throws Exception {
+    public void handleDeviceInfoResponse_withInvalidResponse_throwsBiometricsServiceException() throws Exception {
         Modality modality = Modality.FACE;
         byte[] response = "{}".getBytes();
 
@@ -119,7 +119,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testHandleDiscoveryResponse_success() throws Exception {
+    public void handleDiscoveryResponse_withSingleDevice_returnsCallbackId() throws Exception {
         Modality modality = Modality.FACE;
         byte[] response = "[{\"callbackId\":\"device_123\"}]".getBytes();
 
@@ -137,7 +137,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testHandleDiscoveryResponse_error() throws Exception {
+    public void handleDiscoveryResponse_withParsingError_throwsBiometricsServiceException() throws Exception {
         Modality modality = Modality.FACE;
         byte[] response = "{}".getBytes();
 
@@ -151,7 +151,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testGetModalityThreshold() {
+    public void getModalityThreshold_withFaceModality_returnsGlobalParamValue() {
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(anyString())).thenReturn(50);
 
         int threshold = biometrics095Service.getModalityThreshold(Modality.FACE);
@@ -160,7 +160,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testValidateJWTResponse_invalidSignature() throws Exception {
+    public void validateJWTResponse_withCryptoServiceException_throwsBiometricsServiceException() throws Exception {
         when(mockCryptoManagerService.jwtVerify(any())).thenThrow(new BiometricsServiceException(SBIError.SBI_INVALID_SIGNATURE.getErrorCode(), "Invalid signature"));
 
         BiometricsServiceException exception = assertThrows(BiometricsServiceException.class, () ->
@@ -170,7 +170,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_creates_capture_request_with_standard_environment_settings() {
+    public void getRCaptureRequest_withDeveloperProfile_setsEnvironmentFromProfile() {
         when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         when(mockContext.getString(anyInt())).thenReturn("app_name");
         when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_ACTIVE_PROFILE)).thenReturn("Developer");
@@ -193,7 +193,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handles_null_modality_parameter() {
+    public void getRCaptureRequest_withNullModality_throwsNullPointerException() {
         when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         when(mockContext.getString(anyInt())).thenReturn("app_name");
 

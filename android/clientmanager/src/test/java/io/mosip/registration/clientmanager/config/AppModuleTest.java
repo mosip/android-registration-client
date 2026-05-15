@@ -139,45 +139,45 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testProvidesApplication() {
+    public void providesApplication_withMockApp_returnsMockApplication() {
         assertEquals(mockApplication, appModule.providesApplication());
     }
 
     @Test
-    public void testProvideApplicationContext() {
+    public void provideApplicationContext_withMockApp_returnsApplicationContext() {
         assertEquals(mockContext, appModule.provideApplicationContext());
     }
 
     @Test
-    public void testProvideClientCryptoManagerService() {
+    public void provideClientCryptoManagerService_withCertManager_returnsLocalClientCryptoService() {
         ClientCryptoManagerService service = appModule.provideClientCryptoManagerService(certificateManagerService);
         assertNotNull(service);
         assertTrue(service instanceof LocalClientCryptoServiceImpl);
     }
 
     @Test
-    public void testProvideIPacketCryptoService() {
+    public void provideIPacketCryptoService_withDependencies_returnsPacketCryptoServiceImpl() {
         IPacketCryptoService service = appModule.provideIPacketCryptoService(clientCryptoManagerService, cryptoManagerService);
         assertNotNull(service);
         assertTrue(service instanceof PacketCryptoServiceImpl);
     }
 
     @Test
-    public void testProvideObjectAdapterService() {
+    public void provideObjectAdapterService_withDependencies_returnsPosixAdapterService() {
         ObjectAdapterService service = appModule.provideObjectAdapterService(iPacketCryptoService, objectMapper);
         assertNotNull(service);
         assertTrue(service instanceof PosixAdapterServiceImpl);
     }
 
     @Test
-    public void testProvidePacketWriterService() {
+    public void providePacketWriterService_withDependencies_returnsPacketWriterServiceImpl() {
         PacketWriterService service = appModule.providePacketWriterService(packetManagerHelper, packetKeeper);
         assertNotNull(service);
         assertTrue(service instanceof PacketWriterServiceImpl);
     }
 
     @Test
-    public void testProvideMasterDataService() {
+    public void provideMasterDataService_withDependencies_returnsMasterDataServiceImpl() {
         MasterDataService service = appModule.provideMasterDataService(
                 objectMapper, syncRestService, clientCryptoManagerService, machineRepository, reasonListRepository,
                 registrationCenterRepository, documentTypeRepository, applicantValidDocRepository, templateRepository,
@@ -190,19 +190,19 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testProvideSyncRestFactory() {
+    public void provideSyncRestFactory_withCryptoService_returnsSyncRestUtil() {
         SyncRestUtil util = appModule.provideSyncRestFactory(clientCryptoManagerService);
         assertNotNull(util);
     }
 
     @Test
-    public void testProvideLoginService() {
+    public void provideLoginService_withDependencies_returnsLoginServiceInstance() {
         LoginService service = appModule.provideLoginService(clientCryptoManagerService, userDetailRepository,userRoleRepository);
         assertNotNull(service);
     }
 
     @Test
-    public void testProvideRegistrationService() {
+    public void provideRegistrationService_withDependencies_returnsRegistrationServiceImpl() {
         RegistrationService service = appModule.provideRegistrationService(
                 packetWriterService, registrationRepository, mock(MasterDataService.class), identitySchemaRepository,
                 clientCryptoManagerService, keyStoreRepository, globalParamRepository, auditManagerService,registrationCenterRepository,locationValidationService, preRegistrationDataSyncServiceProvider,biometricService, packetService, preCheckValidatorService
@@ -212,13 +212,13 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testProvideUserInterfaceHelperService() {
+    public void provideUserInterfaceHelperService_withNoArgs_returnsHelperServiceInstance() {
         UserInterfaceHelperService service = appModule.provideUserInterfaceHelperService();
         assertNotNull(service);
     }
 
     @Test
-    public void testProvidePacketService() {
+    public void providePacketService_withDependencies_returnsPacketServiceImpl() {
         PacketService service = appModule.providePacketService(
                 registrationRepository, iPacketCryptoService, syncRestService, mock(MasterDataService.class), globalParamRepository, auditManagerService
         );
@@ -227,34 +227,34 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testProvideJobTransactionService() {
+    public void provideJobTransactionService_withRepository_returnsJobTransactionServiceImpl() {
         JobTransactionService service = appModule.provideJobTransactionService(jobTransactionRepository);
         assertNotNull(service);
         assertTrue(service instanceof JobTransactionServiceImpl);
     }
 
     @Test
-    public void testProvideCertificateDBHelper() {
+    public void provideCertificateDBHelper_withRepository_returnsCertificateDbHelper() {
         CertificateDBHelper helper = appModule.provideCertificateDBHelper(caCertificateStoreRepository);
         assertNotNull(helper);
     }
 
     @Test
-    public void testProvideAuditManagerService() {
+    public void provideAuditManagerService_withDependencies_returnsAuditManagerServiceImpl() {
         AuditManagerService service = appModule.provideAuditManagerService(auditRepository, globalParamRepository);
         assertNotNull(service);
         assertTrue(service instanceof AuditManagerServiceImpl);
     }
 
     @Test
-    public void testProvideJobManagerService() {
+    public void provideJobManagerService_withDependencies_returnsJobManagerServiceImpl() {
         JobManagerService service = appModule.provideJobManagerService(syncJobDefRepository, mock(JobTransactionService.class), dateUtil, localConfigService);
         assertNotNull(service);
         assertTrue(service instanceof JobManagerServiceImpl);
     }
 
     @Test
-    public void testProvideBiometrics095Service() {
+    public void provideBiometrics095Service_withDependencies_returnsBiometrics095Service() {
         BioSdkProviderFactory bioSdkProviderFactory = appModule.provideBioSdkProviderFactory(globalParamRepository, auditManagerService);
         Biometrics095Service service = appModule.provideBiometrics095Service(
                 objectMapper, auditManagerService, globalParamRepository, clientCryptoManagerService, userBiometricRepository, bioSdkProviderFactory
@@ -264,7 +264,7 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testProvideUserOnboardService() {
+    public void provideUserOnboardService_withDependencies_returnsUserOnboardServiceInstance() {
         UserOnboardService service = appModule.provideUserOnboardService(
                 objectMapper, auditManagerService, certificateManagerService, syncRestService, cryptoManagerService,
                 mock(RegistrationService.class), userBiometricRepository, clientCryptoManagerService, userDetailRepository, globalParamRepository
@@ -274,7 +274,7 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testTemplateService() {
+    public void templateService_withDependencies_returnsTemplateServiceInstance() {
         TemplateService service = appModule.TemplateService(
                 mock(MasterDataService.class), identitySchemaRepository, globalParamRepository
         );
@@ -282,7 +282,7 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testPreRegistrationDataSyncService() {
+    public void preRegistrationDataSyncService_withDependencies_returnsServiceInstance() {
         PreRegistrationDataSyncService service = appModule.PreRegistrationDataSyncService(
                 preRegistrationDataSyncDao, mock(MasterDataService.class), syncRestService, preRegZipHandlingService,
                 preRegistrationList, globalParamRepository, mock(RegistrationService.class)
@@ -291,13 +291,13 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testPreRegistrationDataSyncDao() {
+    public void preRegistrationDataSyncDao_withRepository_returnsDaoInstance() {
         PreRegistrationDataSyncDao dao = appModule.PreRegistrationDataSyncDao(preRegistrationDataSyncRepositoryDao);
         assertNotNull(dao);
     }
 
     @Test
-    public void testPreRegZipHandlingService() {
+    public void preRegZipHandlingService_withDependencies_returnsServiceInstance() {
         PreRegZipHandlingService service = appModule.PreRegZipHandlingService(
                 mock(ApplicantValidDocumentDao.class), identitySchemaRepository, clientCryptoManagerService,
                 mock(RegistrationService.class), cryptoManagerService, packetKeeper, iPacketCryptoService,
@@ -307,13 +307,13 @@ public class AppModuleTest {
     }
 
     @Test
-    public void testPreRegistrationList() {
+    public void preRegistrationList_withNoArgs_returnsNewInstance() {
         PreRegistrationList list = appModule.PreRegistrationList();
         assertNotNull(list);
     }
 
     @Test
-    public void test_provide_crypto_manager_service_with_null_app_context() {
+    public void provideCryptoManagerService_withNullAppContext_throwsNullPointerException() {
         appModule.appContext = null;
 
         Exception exception = assertThrows(NullPointerException.class, () -> {
@@ -324,7 +324,7 @@ public class AppModuleTest {
     }
 
     @Test
-    public void test_provide_packet_keeper_with_null_app_context() {
+    public void providePacketKeeper_withNullAppContext_throwsNullPointerException() {
         appModule.appContext = null;
         IPacketCryptoService mockCryptoService = mock(IPacketCryptoService.class);
         ObjectAdapterService mockAdapterService = mock(ObjectAdapterService.class);
@@ -335,7 +335,7 @@ public class AppModuleTest {
     }
 
     @Test
-    public void test_provide_packet_manager_helper_with_null_context() {
+    public void providePacketManagerHelper_withNullAppContext_throwsNullPointerException() {
         appModule.appContext = null;
 
         assertThrows(NullPointerException.class, () -> {

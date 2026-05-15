@@ -45,14 +45,14 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void testGetSessionManager_Singleton() {
+    public void getSessionManager_calledTwice_returnsSameInstance() {
         SessionManager m1 = SessionManager.getSessionManager(mockContext);
         SessionManager m2 = SessionManager.getSessionManager(mockContext);
         assertSame(m1, m2);
     }
 
     @Test(expected = Exception.class)
-    public void testSaveAuthToken_ExpiredToken() throws Exception {
+    public void saveAuthToken_withExpiredToken_throwsException() throws Exception {
         try (MockedConstruction<JWT> jwtMock = Mockito.mockConstruction(JWT.class, (mock, context) -> {
             lenient().when(mock.isExpired(15)).thenReturn(true);
         })) {
@@ -62,7 +62,7 @@ public class SessionManagerTest {
     }
 
     @Test(expected = Exception.class)
-    public void testSaveAuthToken_NoRoles() throws Exception {
+    public void saveAuthToken_withNoRoles_throwsException() throws Exception {
         Map<String, Object> realmAccess = new HashMap<>();
         realmAccess.put("roles", Collections.emptyList());
         try (MockedConstruction<JWT> jwtMock = Mockito.mockConstruction(JWT.class, (mock, context) -> {
@@ -75,7 +75,7 @@ public class SessionManagerTest {
     }
 
     @Test(expected = Exception.class)
-    public void testSaveAuthToken_MissingRequiredRoles() throws Exception {
+    public void saveAuthToken_withMissingRequiredRoles_throwsException() throws Exception {
         Map<String, Object> realmAccess = new HashMap<>();
         realmAccess.put("roles", Arrays.asList("REGISTRATION_OPERATOR"));
         try (MockedConstruction<JWT> jwtMock = Mockito.mockConstruction(JWT.class, (mock, context) -> {
@@ -98,7 +98,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void test_fetch_auth_token_returns_null_when_no_token_exists() {
+    public void fetchAuthToken_withNoTokenStored_returnsNull() {
         lenient().when(mockPrefs.getString(SessionManager.USER_TOKEN, null)).thenReturn(null);
 
         SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
@@ -108,7 +108,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void test_fetch_auth_token_retrieves_saved_token() {
+    public void fetchAuthToken_withStoredToken_returnsToken() {
         String token = "valid.jwt.token";
         lenient().when(mockPrefs.getString(SessionManager.USER_TOKEN, null)).thenReturn(token);
 
@@ -119,7 +119,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void test_fetch_auth_token_uses_correct_shared_preferences_name() {
+    public void fetchAuthToken_withMockContext_usesCorrectPreferencesName() {
         SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
         sessionManager.fetchAuthToken();
 
@@ -127,7 +127,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void test_clear_auth_token_removes_all_user_session_data() {
+    public void clearAuthToken_withActiveSession_returnsNull() {
         lenient().when(mockPrefs.getString(SessionManager.USER_TOKEN, null)).thenReturn(null);
 
         SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
@@ -137,7 +137,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void test_expired_token_throws_exception() {
+    public void saveAuthToken_withExpiredJwtString_throwsException() {
         String expiredToken = "expired.jwt.token";
         JWT mockJwt = mock(JWT.class);
         Date expiryDate = new Date(System.currentTimeMillis() - 1000);
