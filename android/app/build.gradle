@@ -121,6 +121,11 @@ android {
         resources.excludes.add("META-INF/versions/**")
         resources.excludes.add("META-INF/proguard/**")
         resources.excludes.add("notice.txt")
+        resources.excludes.add("META-INF/spring*")
+        resources.excludes.add("META-INF/spring/**")
+        resources.excludes.add("META-INF/additional-spring*")
+        resources.pickFirsts.add("mozilla/public-suffix-list.txt")
+        resources.excludes.add("META-INF/INDEX.LIST")
     }
     sonar {
         properties {
@@ -206,6 +211,7 @@ dependencies {
     implementation "org.apache.velocity:velocity:${rootProject.ext.velocityVersion}"
     implementation "org.mvel:mvel2:${rootProject.ext.mvel2Version}"
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "${rootProject.ext.slf4jVersion}"
+    runtimeOnly group: 'org.slf4j', name: 'slf4j-nop', version: "${rootProject.ext.slf4jVersion}"
 
     implementation "javax.validation:validation-api:${rootProject.ext.validationApiVersion}"
     implementation "io.swagger.core.v3:swagger-annotations:${rootProject.ext.swaggerAnnotationsVersion}"
@@ -215,9 +221,23 @@ dependencies {
     }
     implementation("io.mosip.biometric.util:biometrics-util:${rootProject.ext.biometricsUtilVersion}") {
         exclude group: 'org.springframework.boot'
+        exclude group: 'org.springframework'
+        exclude group: 'org.springframework.cloud'
+        exclude group: 'org.springframework.data'
+        exclude group: 'ch.qos.logback'
         exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'org.projectlombok'
         exclude group: 'org.openpnp'
+        exclude group: 'org.junit'
+        exclude group: 'jakarta.xml.bind'
+        exclude group: 'jakarta.annotation'
+        exclude group: 'jakarta.activation'
+        exclude group: 'javax.activation'
+        exclude group: 'org.apache.tomcat'
+        exclude group: 'aopalliance'
+        exclude group: 'commons-logging'
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'org.aspectj', module: 'aspectjweaver'
     }
 
     implementation project(':clientmanager')

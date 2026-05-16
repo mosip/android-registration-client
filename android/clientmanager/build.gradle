@@ -221,9 +221,21 @@ dependencies {
 
     implementation("io.mosip.biometric.util:biometrics-util:${rootProject.ext.biometricsUtilVersion}") {
         exclude group: 'org.springframework.boot'
+        exclude group: 'org.springframework'
+        exclude group: 'org.springframework.data'
         exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'org.projectlombok'
         exclude group: 'org.openpnp'
+        exclude group: 'org.junit'
+        exclude group: 'jakarta.xml.bind'
+        exclude group: 'jakarta.annotation'
+        exclude group: 'jakarta.activation'
+        exclude group: 'javax.activation'
+        exclude group: 'org.apache.tomcat'
+        exclude group: 'aopalliance'
+        exclude group: 'commons-logging'
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'org.aspectj', module: 'aspectjweaver'
     }
 
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "${rootProject.ext.slf4jVersion}"
