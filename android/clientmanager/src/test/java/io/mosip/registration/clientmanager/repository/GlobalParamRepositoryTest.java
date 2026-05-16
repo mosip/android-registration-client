@@ -115,7 +115,11 @@ public class GlobalParamRepositoryTest {
 
     @Test
     public void getCachedGlobalParams_afterSavingList_returnsCachedValues() {
-        saveGlobalParamList();
+        List<GlobalParam> globalParamList = new ArrayList<>();
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_VALUE.toString(), true));
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_VALUE, true));
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_INT_ID, GLOBAL_PARAM_INT_ID, String.valueOf(GLOBAL_PARAM_INT_VALUE), true));
+        globalParamRepository.saveGlobalParams(globalParamList);
 
         assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID));
         assertEquals(GLOBAL_PARAM_BOOLEAN_VALUE, globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID));

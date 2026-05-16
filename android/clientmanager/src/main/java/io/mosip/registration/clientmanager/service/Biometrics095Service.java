@@ -158,20 +158,30 @@ public class Biometrics095Service extends BiometricsService {
                 CaptureDto captureDto = objectMapper.readValue(decodedPayload, new TypeReference<CaptureDto>() {});
                 validateResponseTimestamp(captureDto.getTimestamp());
 
+                if (captureRequest == null
+                        || captureRequest.getTransactionId() == null
+                        || captureRequest.getSpecVersion() == null
+                        || captureRequest.getPurpose() == null) {
+                    throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
+                            "RCapture request context missing for response validation");
+                }
+
                 if (captureDto.getTransactionId() == null ||
-                        (captureRequest != null && !captureDto.getTransactionId().equalsIgnoreCase(captureRequest.getTransactionId()))) {
+                        !captureDto.getTransactionId().equalsIgnoreCase(captureRequest.getTransactionId())) {
                     throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
-                            "RCapture TransactionId Mismatch: request=" + (captureRequest != null ? captureRequest.getTransactionId() : null) + " response=" + captureDto.getTransactionId());
+                            "RCapture TransactionId Mismatch: request=" + captureRequest.getTransactionId() + " response=" + captureDto.getTransactionId());
                 }
+
                 if (bio.getSpecVersion() == null ||
-                        (captureRequest != null && !bio.getSpecVersion().equalsIgnoreCase(captureRequest.getSpecVersion()))) {
+                        !bio.getSpecVersion().equalsIgnoreCase(captureRequest.getSpecVersion())) {
                     throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
-                            "RCapture SpecVersion Mismatch: request=" + (captureRequest != null ? captureRequest.getSpecVersion() : null) + " response=" + bio.getSpecVersion());
+                            "RCapture SpecVersion Mismatch: request=" + captureRequest.getSpecVersion() + " response=" + bio.getSpecVersion());
                 }
+                
                 if (captureDto.getPurpose() == null ||
-                        (captureRequest != null && !captureDto.getPurpose().equalsIgnoreCase(captureRequest.getPurpose()))) {
+                        !captureDto.getPurpose().equalsIgnoreCase(captureRequest.getPurpose())) {
                     throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
-                            "RCapture Purpose Mismatch: request=" + (captureRequest != null ? captureRequest.getPurpose() : null) + " response=" + captureDto.getPurpose());
+                            "RCapture Purpose Mismatch: request=" + captureRequest.getPurpose() + " response=" + captureDto.getPurpose());
                 }
 
                 BiometricsDto biometricsDto = new BiometricsDto(
@@ -454,8 +464,10 @@ public class Biometrics095Service extends BiometricsService {
         digitalIdMap.put("deviceProvider", digitalId.getDeviceProvider());
         digitalIdMap.put("dateTime", digitalId.getDateTime());
         digitalIdMap.put("deviceSubType", digitalId.getDeviceSubType());
-        registeredDevice.put("deviceServiceVersion", specVersion != null ? specVersion : "0.9.5");
-        registeredDevice.put("purpose", purpose != null ? purpose : "Registration");
+        registeredDevice.put("deviceServiceVersion",
+                (specVersion != null && !specVersion.trim().isEmpty()) ? specVersion.trim() : "0.9.5");
+        registeredDevice.put("purpose",
+                (purpose != null && !purpose.trim().isEmpty()) ? purpose.trim() : "Registration");
         registeredDevice.put("digitalId", digitalIdMap);
         registeredDevice.put("deviceCode", deviceCode);
         BIO_DEVICES.put(modality, registeredDevice);
