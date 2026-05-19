@@ -41,6 +41,7 @@ import javax.inject.Singleton;
 import io.mosip.biometrics.util.face.FaceBDIR;
 import io.mosip.biometrics.util.finger.FingerBDIR;
 import io.mosip.biometrics.util.iris.IrisBDIR;
+import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.Modality;
@@ -73,7 +74,6 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
     private final UserOnboardService userOnboardService;
 
     private Modality currentModality;
-    private CaptureRequest currentCaptureRequest;
     private static final String TAG = "BiometricsDetailApi";
     private String callbackId;
     private String fieldId;
@@ -525,6 +525,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             userOnboardService.getOperatorBiometrics().clear();
             userOnboardService.setIdaResponse(false);
             userOnboardService.setIsOnboardSuccess(false);
+            SessionManager.getSessionManager(activity).setOperatorCaptureTransactionId(null);
             result.success("Ok");
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -960,9 +961,14 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             intent.setAction(callbackId + RegistrationConstants.R_CAPTURE_INTENT_ACTION);
             queryPackage(intent);
             Log.e(TAG, "Initiating capture request : ");
-            currentCaptureRequest = biometricsService.getRCaptureRequest(currentModality, deviceId,
+            CaptureRequest captureRequest = biometricsService.getRCaptureRequest(currentModality, deviceId,
                     getExceptionAttributes());
-            intent.putExtra("input", objectMapper.writeValueAsBytes(currentCaptureRequest));
+            if (fieldId.equals(OPERATOR_BIOMETRICS)) {
+                SessionManager.getSessionManager(activity).setOperatorCaptureTransactionId(captureRequest.getTransactionId());
+            } else {
+                registrationService.getRegistrationDto().setCaptureTransactionId(captureRequest.getTransactionId());
+            }
+            intent.putExtra("input", objectMapper.writeValueAsBytes(captureRequest));
             activity.startActivityForResult(intent, 3);
         } catch (Exception ex) {
             auditManagerService.audit(AuditEvent.R_CAPTURE_FAILED, Components.REGISTRATION, ex.getMessage());
@@ -1065,8 +1071,11 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             Uri uri = bundle.getParcelable(RegistrationConstants.SBI_INTENT_RESPONSE_KEY);
             InputStream respData = activity.getContentResolver().openInputStream(uri);
             boolean isOperatorOnboarding = fieldId.equals(OPERATOR_BIOMETRICS);
+            String transactionId = isOperatorOnboarding
+                    ? SessionManager.getSessionManager(activity).getOperatorCaptureTransactionId()
+                    : registrationService.getRegistrationDto().getCaptureTransactionId();
             List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
-                    getExceptionAttributes(), currentCaptureRequest, isOperatorOnboarding);
+                    getExceptionAttributes(), transactionId, isOperatorOnboarding);
             // if attempts is zero, there is no need to maintain the counter
             if (fieldId.equals(OPERATOR_BIOMETRICS)) {
                 removeDuplicatesFromOperatorBiometricList(currentModality);

@@ -101,7 +101,7 @@ public class BiometricHandleTest {
         captureDto.setTransactionId(captureRequest.getTransactionId());
         captureDto.setPurpose(captureRequest.getPurpose());
 
-        List<BiometricsDto> result = spyService.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes, captureRequest);
+        List<BiometricsDto> result = spyService.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes, captureRequest.getTransactionId());
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -132,7 +132,7 @@ public class BiometricHandleTest {
         CaptureRequest captureRequest = service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", exceptionAttributes);
 
         BiometricsServiceException exception = assertThrows(BiometricsServiceException.class, () -> {
-            service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes, captureRequest);
+            service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes, captureRequest.getTransactionId());
         });
 
         assertEquals("101", exception.getErrorCode());
@@ -148,7 +148,7 @@ public class BiometricHandleTest {
         CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.EXCEPTION_PHOTO, "dev", exceptionAttributes);
 
         assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.EXCEPTION_PHOTO, responseStream, exceptionAttributes, captureRequest));
+                biometrics095Service.handleRCaptureResponse(Modality.EXCEPTION_PHOTO, responseStream, exceptionAttributes, captureRequest.getTransactionId()));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class BiometricHandleTest {
         CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", exceptionAttributes);
 
         assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FACE, responseStream, exceptionAttributes, captureRequest));
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, responseStream, exceptionAttributes, captureRequest.getTransactionId()));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class BiometricHandleTest {
         CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(modality, "dev", exceptionAttributes);
 
         assertThrows(BiometricsServiceException.class, () -> {
-            biometrics095Service.handleRCaptureResponse(modality, mockInputStream, exceptionAttributes, captureRequest);
+            biometrics095Service.handleRCaptureResponse(modality, mockInputStream, exceptionAttributes, captureRequest.getTransactionId());
         });
     }
 

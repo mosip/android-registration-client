@@ -152,4 +152,46 @@ public class SessionManagerTest {
         });
     }
 
+    @Test
+    public void setOperatorCaptureTransactionId_storesTransactionIdInPreferences() {
+        lenient().when(mockEditor.putString(eq(SessionManager.OPERATOR_CAPTURE_TRANSACTION_ID), eq("TXN-123"))).thenReturn(mockEditor);
+
+        SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
+        sessionManager.setOperatorCaptureTransactionId("TXN-123");
+
+        verify(mockEditor).putString(eq(SessionManager.OPERATOR_CAPTURE_TRANSACTION_ID), eq("TXN-123"));
+        verify(mockEditor).apply();
+    }
+
+    @Test
+    public void getOperatorCaptureTransactionId_withStoredId_returnsTransactionId() {
+        String expectedId = "TXN-ABC-123";
+        lenient().when(mockPrefs.getString(SessionManager.OPERATOR_CAPTURE_TRANSACTION_ID, null)).thenReturn(expectedId);
+
+        SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
+        String result = sessionManager.getOperatorCaptureTransactionId();
+
+        assertEquals(expectedId, result);
+    }
+
+    @Test
+    public void getOperatorCaptureTransactionId_withNoStoredId_returnsNull() {
+        lenient().when(mockPrefs.getString(SessionManager.OPERATOR_CAPTURE_TRANSACTION_ID, null)).thenReturn(null);
+
+        SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
+        String result = sessionManager.getOperatorCaptureTransactionId();
+
+        assertNull(result);
+    }
+
+    @Test
+    public void clearAuthToken_removesOperatorCaptureTransactionId() {
+        lenient().when(mockPrefs.getString(SessionManager.USER_TOKEN, null)).thenReturn(null);
+
+        SessionManager sessionManager = SessionManager.getSessionManager(mockContext);
+        sessionManager.clearAuthToken();
+
+        verify(mockEditor).remove(SessionManager.OPERATOR_CAPTURE_TRANSACTION_ID);
+    }
+
 }

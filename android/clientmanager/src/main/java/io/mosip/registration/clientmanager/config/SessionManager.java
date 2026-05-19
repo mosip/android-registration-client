@@ -25,6 +25,7 @@ public class SessionManager {
     public static final String USER_TOKEN = "user_token";
     public static final String RID = "current_rid";
     public static final String USER_EMAIL = "user_email";
+    public static final String OPERATOR_CAPTURE_TRANSACTION_ID = "operator_capture_transaction_id";
 
     private static SessionManager manager = null;
     private static final String REALM_ACCESS = "realm_access";
@@ -83,6 +84,16 @@ public class SessionManager {
                 Context.MODE_PRIVATE).getString(USER_TOKEN, null);
     }
 
+    public void setOperatorCaptureTransactionId(String transactionId) {
+        sharedPreferences.edit()
+                .putString(OPERATOR_CAPTURE_TRANSACTION_ID, transactionId)
+                .apply();
+    }
+
+    public String getOperatorCaptureTransactionId() {
+        return sharedPreferences.getString(OPERATOR_CAPTURE_TRANSACTION_ID, null);
+    }
+
     public String clearAuthToken(){
         SharedPreferences.Editor editor = this.context.getSharedPreferences(
                 this.context.getString(R.string.app_name),Context.MODE_PRIVATE).edit();
@@ -95,6 +106,7 @@ public class SessionManager {
         editor.remove(IS_DEFAULT);
         editor.remove(IS_OFFICER);
         editor.remove(IS_OPERATOR);
+        editor.remove(OPERATOR_CAPTURE_TRANSACTION_ID);
         editor.apply();
         return this.context.getSharedPreferences(this.context.getString(R.string.app_name),
                 Context.MODE_PRIVATE).getString(USER_TOKEN, null);
