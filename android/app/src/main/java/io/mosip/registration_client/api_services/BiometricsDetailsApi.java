@@ -41,7 +41,6 @@ import javax.inject.Singleton;
 import io.mosip.biometrics.util.face.FaceBDIR;
 import io.mosip.biometrics.util.finger.FingerBDIR;
 import io.mosip.biometrics.util.iris.IrisBDIR;
-import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
 import io.mosip.registration.clientmanager.constant.Modality;
@@ -525,7 +524,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             userOnboardService.getOperatorBiometrics().clear();
             userOnboardService.setIdaResponse(false);
             userOnboardService.setIsOnboardSuccess(false);
-            SessionManager.getSessionManager(activity).setOperatorCaptureTransactionId(null);
+            userOnboardService.setCaptureTransactionId(null);
             result.success("Ok");
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -964,7 +963,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             CaptureRequest captureRequest = biometricsService.getRCaptureRequest(currentModality, deviceId,
                     getExceptionAttributes());
             if (fieldId.equals(OPERATOR_BIOMETRICS)) {
-                SessionManager.getSessionManager(activity).setOperatorCaptureTransactionId(captureRequest.getTransactionId());
+                userOnboardService.setCaptureTransactionId(captureRequest.getTransactionId());
             } else {
                 registrationService.getRegistrationDto().setCaptureTransactionId(captureRequest.getTransactionId());
             }
@@ -1072,7 +1071,7 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
             InputStream respData = activity.getContentResolver().openInputStream(uri);
             boolean isOperatorOnboarding = fieldId.equals(OPERATOR_BIOMETRICS);
             String transactionId = isOperatorOnboarding
-                    ? SessionManager.getSessionManager(activity).getOperatorCaptureTransactionId()
+                    ? userOnboardService.getCaptureTransactionId()
                     : registrationService.getRegistrationDto().getCaptureTransactionId();
             List<BiometricsDto> biometricsDtoList = biometricsService.handleRCaptureResponse(currentModality, respData,
                     getExceptionAttributes(), transactionId, isOperatorOnboarding);
