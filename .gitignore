@@ -88,3 +88,22 @@ app.*.map.json
 /ios/Runner/pigeon.h
 /ios/Runner/pigeon.m
 
+# Firebase config
+android/app/google-services.json
+
+# Generated localization files
+assets/l10n/app_localizations*.dart
+
+# Generated mock files
+*.mocks.dart
+
+# Flutter generated plugin files
+linux/flutter/generated_plugin_registrant.*
+linux/flutter/generated_plugins.cmake
+
+windows/flutter/generated_plugin_registrant.*
+windows/flutter/generated_plugins.cmake
+
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+generate_all_pigeon.bat

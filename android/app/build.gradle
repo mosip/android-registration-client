@@ -43,12 +43,17 @@ afterEvaluate {
 }
 
 android {
+    namespace "io.mosip.registration_client"
     lintOptions {
         abortOnError false
         ignoreWarnings true
     }
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
+    
+    buildFeatures {
+    buildConfig true
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -61,7 +66,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 28
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -153,6 +158,8 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation 'com.cronutils:cron-utils:9.1.7'
+    implementation platform('com.google.firebase:firebase-bom:34.12.0')//firebase
+    implementation 'com.google.firebase:firebase-analytics' //firebase analytics
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -315,3 +322,4 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha7'
 }
+apply plugin: 'com.google.gms.google-services'

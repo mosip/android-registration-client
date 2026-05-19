@@ -100,7 +100,7 @@ class AuthServiceImpl implements AuthService {
 
   @override
   Future<String> getIdleTime() async {
-    late String idleTime;
+    String idleTime = "0"; // ✅ default safe value
     try {
       idleTime = await AuthResponseApi().getIdleTime();
     } on PlatformException {
@@ -113,7 +113,7 @@ class AuthServiceImpl implements AuthService {
 
   @override
   Future<String> getAutoLogoutPopupTimeout() async {
-    late String refreshLoginTime;
+    String refreshLoginTime = "0";;
     try {
       refreshLoginTime = await AuthResponseApi().getAutoLogoutPopupTimeout();
     } on PlatformException {

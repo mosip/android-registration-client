@@ -1,3 +1,14 @@
+# Firebase config
+app/google-services.json
+
+# Flutter generated files
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
+build/
+
+# Mock files
+*.mocks.dart
 gradle-wrapper.jar
 /.gradle
 /captures/

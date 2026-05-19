@@ -6,6 +6,11 @@ plugins {
 apply from: '../jacoco.gradle'
 
 android {
+    namespace "io.mosip.registration.packetmanager"
+    buildFeatures {
+        buildConfig true
+    }
+
     lintOptions {
         abortOnError false
         ignoreWarnings true

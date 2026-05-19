@@ -5,6 +5,11 @@ plugins {
 apply from: '../jacoco.gradle'
 
 android {
+    
+    buildFeatures {
+        buildConfig true
+    }
+
     lintOptions {
         abortOnError false
         ignoreWarnings true

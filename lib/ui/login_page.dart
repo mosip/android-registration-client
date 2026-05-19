@@ -37,6 +37,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/life_cycle_event_handler.dart';
 import '../utils/location_service.dart';
+import 'package:registration_client/telemetry/telemetry_service.dart';// Telemetry service for tracking events
+import 'package:registration_client/telemetry/telemetry_manager.dart';// Telemetry manager for logging events with user consent and Firebase integration
 
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";
@@ -70,11 +72,10 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    authProvider = Provider.of<AuthProvider>(context, listen: false);
-    syncProvider = Provider.of<SyncProvider>(context, listen: false);
-    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    connectivityProvider =
-        Provider.of<ConnectivityProvider>(context, listen: false);
+  authProvider = context.read<AuthProvider>();
+  syncProvider = context.read<SyncProvider>();
+  globalProvider = context.read<GlobalProvider>();
+  connectivityProvider = context.read<ConnectivityProvider>();
     _initializeAppData();
     super.initState();
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
@@ -273,6 +274,14 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _getLoginAction() async {
+    TelemetryService.trackEvent("login_clicked");// Telemetry event for login button click
+    TelemetryManager.logEvent(
+   "login_attempt",
+  {
+    "screen": "login_page",
+    "username_entered": username.isNotEmpty,
+  },
+);// Example of using the new TelemetryManager to log an event  with data
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     FocusManager.instance.primaryFocus?.unfocus();
     if (password.isEmpty) {
@@ -302,6 +311,11 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     if (!authProvider.isLoggedIn) {
       authProvider.setIsSyncing(false);
       _showErrorInSnackbar();
+      // Telemetry event for login failure with error details
+      TelemetryService.trackEvent("login_failed", data: {
+  "error": authProvider.loginError
+});
+      //
       return;
     }
 
@@ -343,6 +357,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       await _autoSyncHandler();
     } else {
       authProvider.setIsSyncing(false);
+      TelemetryService.trackEvent("login_success");
       await _navigateToHomePage();
     }
     setState(() {

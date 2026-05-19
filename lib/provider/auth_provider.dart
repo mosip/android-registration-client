@@ -59,6 +59,7 @@ class AuthProvider with ChangeNotifier {
   String get refreshedLoginTime => _refreshedLoginTime;
   String get idleTime => _idleTime;
   String get passwordLength => _passwordLength;
+  //for dummy data
 
   setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -111,7 +112,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   setIsLoggingIn(bool value) {
-    _isLoggingIn = false;
+    _isLoggingIn = value;
     notifyListeners();
   }
 

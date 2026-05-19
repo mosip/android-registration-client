@@ -14,6 +14,8 @@ import 'package:registration_client/model/actuator_info.dart';
 import 'package:registration_client/pigeon/common_details_pigeon.dart';
 import 'package:registration_client/platform_spi/network_service.dart';
 import 'package:http/http.dart' as http;
+//telementary import
+import 'package:registration_client/telemetry/telemetry_service.dart';
 
 class NetworkServiceImpl implements NetworkService {
   @override
@@ -26,6 +28,13 @@ class NetworkServiceImpl implements NetworkService {
       return response.statusCode.toString();
     } catch (e) {
       debugPrint("Network Connection failed $e");
+      // log network failure event to telemetry with error details
+      TelemetryService.trackEvent("network_failure", data: {
+    "error": e.toString(),
+    "api": "health_check"
+  });
+  TelemetryService.logError(e);
+  //
     }
     return "";
   }

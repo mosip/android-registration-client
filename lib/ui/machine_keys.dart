@@ -35,19 +35,26 @@ class _MachineKeysState extends State<MachineKeys> {
   String machineDetails = '';
   bool isMobile = true;
   late GlobalProvider globalProvider;
-  late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-
+  // late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+  late AppLocalizations appLocalizations;
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     Map<String?, String?> map = globalProvider.machineDetails;
     if (map.isEmpty) {
-      machineDetails = appLocalizations.not_initialized;
+      // machineDetails = appLocalizations.not_initialized;
+      machineDetails = "Not initialized";
     } else {
       machineDetails = jsonEncode(map).toString();
     }
     globalProvider.getAudit("REG-LOAD-002", "REG-MOD-101");
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    appLocalizations = AppLocalizations.of(context)!;
   }
 
   @override
