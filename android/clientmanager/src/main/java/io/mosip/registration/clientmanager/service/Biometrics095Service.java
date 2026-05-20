@@ -164,7 +164,7 @@ public class Biometrics095Service extends BiometricsService {
                 validateResponseTimestamp(captureDto.getTimestamp());
 
                 if (transactionId == null || captureDto.getTransactionId() == null ||
-                        !captureDto.getTransactionId().equalsIgnoreCase(transactionId)) {
+                        !captureDto.getTransactionId().equals(transactionId)) {
                     throw new BiometricsServiceException(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(),
                             "RCapture TransactionId Mismatch: request=" + transactionId + " response=" + captureDto.getTransactionId());
                 }
