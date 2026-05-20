@@ -115,7 +115,7 @@ public class Biometrics095Service extends BiometricsService {
         int timeout = globalParamRepository.getCachedIntCaptureTimeout();
 
         captureRequest.setTimeout(timeout);
-        captureRequest.setSpecVersion(deviceInfo != null ? (String) deviceInfo.get("deviceServiceVersion") : SPEC_VERSION);
+        captureRequest.setSpecVersion(deviceInfo != null ? (String) deviceInfo.get("specVersion") : SPEC_VERSION);
         captureRequest.setCaptureTime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         captureRequest.setTransactionId(UUID.randomUUID().toString().toUpperCase());
         List<CaptureBioDetail> list = new ArrayList<>();
@@ -296,7 +296,10 @@ public class Biometrics095Service extends BiometricsService {
         boolean isCertificationValid = DEVICE_CERTIFICATE
                 .equalsIgnoreCase(deviceDto.getCertification());
 
-        return isSpecVersionValid && isDeviceStatusValid && isCertificationValid;
+        boolean isPurposeValid = DEFAULT_PURPOSE
+                .equalsIgnoreCase(deviceDto.getPurpose());
+
+        return isSpecVersionValid && isDeviceStatusValid && isCertificationValid && isPurposeValid;
     }
 
     public String handleDiscoveryResponse(Modality modality, byte[] response) throws BiometricsServiceException {
@@ -465,7 +468,7 @@ public class Biometrics095Service extends BiometricsService {
         digitalIdMap.put("deviceProvider", digitalId.getDeviceProvider());
         digitalIdMap.put("dateTime", digitalId.getDateTime());
         digitalIdMap.put("deviceSubType", digitalId.getDeviceSubType());
-        registeredDevice.put("deviceServiceVersion", specVersion);
+        registeredDevice.put("specVersion", specVersion);
         registeredDevice.put("purpose", purpose != null ? purpose : DEFAULT_PURPOSE);
         registeredDevice.put("digitalId", digitalIdMap);
         registeredDevice.put("deviceCode", deviceCode);

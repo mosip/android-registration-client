@@ -1072,7 +1072,7 @@ public class Biometrics095ServiceTest {
         biometrics095Service.addBioDevice(Modality.FACE, "deviceCode1", digitalId, "Registration", "0.9.5");
 
         Map<String, Object> stored = (Map<String, Object>) biometrics095Service.BIO_DEVICES.get(Modality.FACE);
-        assertEquals("0.9.5", stored.get("deviceServiceVersion"));
+        assertEquals("0.9.5", stored.get("specVersion"));
     }
 
     // --- helpers ---
