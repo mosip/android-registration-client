@@ -167,24 +167,33 @@ subprojects {
     }
 }
 
-// AGP 8 fixes (separate block)
+// AGP 8 fix: migrate namespace from package= in AndroidManifest.xml for unmaintained plugins.
+// Fires before android {} is processed so namespace can be set without "project already evaluated" error.
 subprojects {
-
     plugins.withId("com.android.library") {
-        def androidExt = project.extensions.findByName("android")
-        if (androidExt != null) {
-            if (androidExt.namespace == null) {
-                androidExt.namespace = "com.auto.${project.name}"
-            }
-        }
-    }
+        def androidExtension = project.extensions.findByName("android")
+        if (androidExtension == null) return
 
-    plugins.withId("com.android.application") {
-        def androidExt = project.extensions.findByName("android")
-        if (androidExt != null) {
-            if (androidExt.namespace == null) {
-                androidExt.namespace = "com.auto.${project.name}"
-            }
+        def existingNamespace = null
+        try { existingNamespace = androidExtension.namespace } catch (ignored) {}
+        if (existingNamespace != null && !existingNamespace.isEmpty()) return
+
+        def manifestFile = new File(project.projectDir, "src/main/AndroidManifest.xml")
+        if (!manifestFile.exists()) return
+
+        def manifestContent = manifestFile.text
+        def packageAttributeMatcher = (manifestContent =~ /package="([^"]+)"/)
+        if (!packageAttributeMatcher.find()) return
+
+        def resolvedNamespace = packageAttributeMatcher.group(1)
+
+        androidExtension.namespace = resolvedNamespace
+        manifestFile.text = manifestContent.replaceAll(/ package="[^"]+"/, '')
+
+        def pluginBuildFileContent = project.buildFile.text
+        if (!pluginBuildFileContent.contains('namespace')) {
+            project.buildFile.text = pluginBuildFileContent
+                .replace('android {', "android {\n    namespace '${resolvedNamespace}'")
         }
     }
 }
