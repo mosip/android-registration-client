@@ -20,6 +20,7 @@ import javax.inject.Singleton;
 import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration_client.BuildConfig;
 import io.mosip.registration_client.model.CommonDetailsPigeon;
 
 @Singleton
@@ -153,5 +154,20 @@ public class CommonDetailsApi implements CommonDetailsPigeon.CommonDetailsApi {
             Log.e(getClass().getSimpleName(), "Error fetching Updating Biometrics URL", e);
         }
         result.success(response);
+    }
+
+    @Override
+    public void getBaseUrl(@NonNull CommonDetailsPigeon.Result<String> result) {
+        result.success(BuildConfig.BASE_URL);
+    }
+
+    @Override
+    public void getHealthCheckPath(@NonNull CommonDetailsPigeon.Result<String> result) {
+        result.success(BuildConfig.HEALTH_CHECK_PATH);
+    }
+
+    @Override
+    public void getActuatorInfoPath(@NonNull CommonDetailsPigeon.Result<String> result) {
+        result.success(BuildConfig.ACTUATOR_INFO_PATH);
     }
 }

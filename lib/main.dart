@@ -6,7 +6,6 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
@@ -18,6 +17,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
+import 'package:registration_client/platform_android/network_service_impl.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +36,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _setupSyncRestartChannel();
   final GlobalProvider appLanguage = GlobalProvider();
-  await FlutterConfig.loadEnvVariables();
+  await loadServerBuildConfig();
   await appLanguage.fetchLocale();
   runApp(
     const RestartWidget(child: RegistrationClientApp()),

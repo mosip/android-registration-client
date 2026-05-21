@@ -26,4 +26,10 @@ abstract class CommonDetailsApi {
   String getUploadingDataUrl();
   @async
   String getUpdatingBiometricsUrl();
+  @async
+  String getBaseUrl();
+  @async
+  String getHealthCheckPath();
+  @async
+  String getActuatorInfoPath();
 }
