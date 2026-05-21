@@ -167,8 +167,6 @@ subprojects {
     }
 }
 
-// AGP 8 fix: migrate namespace from package= in AndroidManifest.xml for unmaintained plugins.
-// Fires before android {} is processed so namespace can be set without "project already evaluated" error.
 subprojects {
     plugins.withId("com.android.library") {
         def androidExtension = project.extensions.findByName("android")
@@ -178,22 +176,30 @@ subprojects {
         try { existingNamespace = androidExtension.namespace } catch (ignored) {}
         if (existingNamespace != null && !existingNamespace.isEmpty()) return
 
+        def resolvedNamespace = null
+
         def manifestFile = new File(project.projectDir, "src/main/AndroidManifest.xml")
-        if (!manifestFile.exists()) return
+        if (manifestFile.exists()) {
+            def m = (manifestFile.text =~ /package="([^"]+)"/)
+            if (m.find()) resolvedNamespace = m.group(1)
+        }
 
-        def manifestContent = manifestFile.text
-        def packageAttributeMatcher = (manifestContent =~ /package="([^"]+)"/)
-        if (!packageAttributeMatcher.find()) return
+        if (resolvedNamespace == null) {
+            ['src/main/kotlin', 'src/main/java'].each { srcPath ->
+                if (resolvedNamespace != null) return
+                def srcDir = new File(project.projectDir, srcPath)
+                if (!srcDir.exists()) return
+                srcDir.eachFileRecurse(groovy.io.FileType.FILES) { f ->
+                    if (resolvedNamespace == null && (f.name.endsWith('.kt') || f.name.endsWith('.java'))) {
+                        def m = (f.text =~ /(?m)^\s*package\s+([\w.]+)/)
+                        if (m.find()) resolvedNamespace = m[0][1]
+                    }
+                }
+            }
+        }
 
-        def resolvedNamespace = packageAttributeMatcher.group(1)
-
-        androidExtension.namespace = resolvedNamespace
-        manifestFile.text = manifestContent.replaceAll(/ package="[^"]+"/, '')
-
-        def pluginBuildFileContent = project.buildFile.text
-        if (!pluginBuildFileContent.contains('namespace')) {
-            project.buildFile.text = pluginBuildFileContent
-                .replace('android {', "android {\n    namespace '${resolvedNamespace}'")
+        if (resolvedNamespace != null) {
+            androidExtension.namespace = resolvedNamespace
         }
     }
 }

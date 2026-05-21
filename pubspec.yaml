@@ -66,7 +66,7 @@ dependencies:
   printing: ^5.11.0
   #android_alarm_manager_plus: ^4.0.5
   http: ^0.13.6
-  #flutter_config: ^2.0.2
+  flutter_config: ^2.0.2
   native_image_cropper: ^0.6.0
   qr_code_scanner: ^1.0.1
   restart_app: ^1.2.1
