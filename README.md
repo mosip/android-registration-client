@@ -50,6 +50,25 @@ flutter gen-l10n
 
 * The label and application logo can be changed here android/app/src/main/AndroidManifest.xml
 
+### Firebase Setup
+
+Firebase Analytics requires a `google-services.json` configuration file.
+
+1. Go to the Firebase Console.
+2. Open the MOSIP Firebase project.
+3. Download the `google-services.json` file.
+4. Place the file in the following directory:
+
+```text
+android/app/
+```
+
+**Important Notes:**
+
+- `google-services.json` is excluded from version control using `.gitignore`.
+- Each developer must add the Firebase configuration file locally.
+- CI/CD pipelines should securely store this file as a secret and inject it during build time.
+
 #### Step 3: Build and Run the Application
 
 * The `pigeon.sh` file consists of the necessary commands for downloading dependencies and generating Flutter - Android native communication code. Please execute the `pigeon.sh` file or execute the commands within the file separately.
