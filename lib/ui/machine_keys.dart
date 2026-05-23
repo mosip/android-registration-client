@@ -40,13 +40,13 @@ class _MachineKeysState extends State<MachineKeys> {
   @override
   void initState() {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
-    Map<String?, String?> map = globalProvider.machineDetails;
-    if (map.isEmpty) {
-      // machineDetails = appLocalizations.not_initialized;
-      machineDetails = "Not initialized";
-    } else {
-      machineDetails = jsonEncode(map).toString();
-    }
+    // Map<String?, String?> map = globalProvider.machineDetails;
+    // if (map.isEmpty) {
+    //   // machineDetails = appLocalizations.not_initialized;
+    //   machineDetails = "Not initialized";
+    // } else {
+    //   machineDetails = jsonEncode(map).toString();
+    // }
     globalProvider.getAudit("REG-LOAD-002", "REG-MOD-101");
     super.initState();
   }
@@ -55,6 +55,15 @@ class _MachineKeysState extends State<MachineKeys> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     appLocalizations = AppLocalizations.of(context)!;
+    globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+
+    Map<String?, String?> map = globalProvider.machineDetails;
+
+    if (map.isEmpty) {
+      machineDetails = appLocalizations.not_initialized;
+    } else {
+    machineDetails = jsonEncode(map).toString();
+  }
   }
 
   @override
