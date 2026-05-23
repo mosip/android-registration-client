@@ -26,14 +26,29 @@ class NetworkServiceImpl implements NetworkService {
               FlutterConfig.get('HEALTH_CHECK_PATH')))
           .timeout(const Duration(seconds: 2));
       return response.statusCode.toString();
-    } catch (e) {
-      debugPrint("Network Connection failed $e");
-      // log network failure event to telemetry with error details
-      TelemetryService.trackEvent("network_failure", data: {
-    "error": e.toString(),
-    "api": "health_check"
-  });
-  TelemetryService.logError(e);
+  //   } catch (e) {
+  //     debugPrint("Network Connection failed $e");
+  //     // log network failure event to telemetry with error details
+  //     TelemetryService.trackEvent("network_failure", data: {
+  //   "error": e.toString(),
+  //   "api": "health_check"
+  // });
+  // TelemetryService.logError(e);
+  //
+    }catch (e) {
+    try {
+    TelemetryService.trackEvent(
+      "network_failure",
+      data: {
+        "error": e.toString(),
+        "api": "health_check",
+      },
+    );
+
+    TelemetryService.logError(e);
+  } catch (_) {
+    debugPrint("Telemetry logging failed");
+  }
   //
     }
     return "";
