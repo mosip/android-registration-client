@@ -51,9 +51,18 @@ class TelemetryService {
     trackEvent("screen_view", data: {"screen": screenName});
   }
 
-  static void logError(Object error) {
-    trackEvent("error", data: {"message": error.toString()});
-  }
+  // static void logError(Object error) {
+  //   trackEvent("error", data: {"message": error.toString()});
+  // }
+ static void logError(Object error, {String? context}) {
+  trackEvent(
+    "error",
+    data: {
+      "type": error.runtimeType.toString(),
+      if (context != null) "context": context,
+    },
+  );
+}
 
   static void trackPerformance(String metric, int value) {
     trackEvent("performance", data: {
