@@ -6,7 +6,7 @@ import 'telemetry_event.dart';
 class TelemetryManager {
   static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
-  static bool _isEnabled = true;// This should be loaded from user consent (e.g., SharedPreferences) in initialize()
+  static bool _isEnabled = false;// This should be loaded from user consent (e.g., SharedPreferences) in initialize()
 
   /// ✅ Initialize telemetry (call in main)
   static Future<void> initialize() async {
