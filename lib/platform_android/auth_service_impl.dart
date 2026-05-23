@@ -113,7 +113,7 @@ class AuthServiceImpl implements AuthService {
 
   @override
   Future<String> getAutoLogoutPopupTimeout() async {
-    String refreshLoginTime = "0";;
+    String refreshLoginTime = "0";
     try {
       refreshLoginTime = await AuthResponseApi().getAutoLogoutPopupTimeout();
     } on PlatformException {
