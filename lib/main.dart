@@ -44,8 +44,10 @@ void main() async {
   await FlutterConfig.loadEnvVariables();
   await appLanguage.fetchLocale();
   // Load telemetry config from backend or local config
+  // await TelemetryService.init();
+  // await TelemetryManager.initialize();// Initialize telemetry manager (loads user consent and configures Firebase accordingly)
+  await TelemetryManager.initialize();
   await TelemetryService.init();
-  await TelemetryManager.initialize();// Initialize telemetry manager (loads user consent and configures Firebase accordingly)
    //
   runApp(
     const RestartWidget(child: RegistrationClientApp()),
