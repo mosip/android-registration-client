@@ -40,8 +40,11 @@ import io.mosip.registration.clientmanager.constant.Modality;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.dto.CenterMachineDto;
 import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
+import io.mosip.registration.clientmanager.dto.registration.DocumentDto;
 import io.mosip.registration.clientmanager.dto.registration.RegistrationDto;
 import io.mosip.registration.clientmanager.dto.uispec.FieldSpecDto;
+import io.mosip.registration.clientmanager.entity.DocumentType;
+import io.mosip.registration.clientmanager.repository.DocumentTypeRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -69,7 +72,8 @@ public class TemplateService {
     IdentitySchemaRepository identitySchemaRepository;
     GlobalParamRepository globalParamRepository;
 
-    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository, GlobalParamRepository globalParamRepository) {
+    public TemplateService(Context appContext, MasterDataService masterDataService, IdentitySchemaRepository identitySchemaRepository,
+                           GlobalParamRepository globalParamRepository) {
         this.appContext = appContext;
         this.masterDataService = masterDataService;
         this.globalParamRepository = globalParamRepository;
@@ -510,7 +514,7 @@ public class TemplateService {
         if (registrationDto.getDocuments().get(field.getId()) != null) {
             data = new HashMap<>();
             data.put(LABEL_KEY, getFieldLabel(field, registrationDto));
-            data.put("value", registrationDto.getDocuments().get(field.getId()).getType());
+            data.put("value", registrationDto.getDocuments().get(field.getId()).getValue());
         }
         return data;
     }

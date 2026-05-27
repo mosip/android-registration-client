@@ -13,9 +13,9 @@ import 'package:registration_client/platform_spi/document.dart';
 class DocumentImpl implements Document {
   @override
   Future<void> addDocument(
-      String fieldId, String docType, String reference, Uint8List bytes) async {
+      String fieldId, String docType, String value, String reference, Uint8List bytes) async {
     try {
-      await DocumentApi().addDocument(fieldId, docType, reference, bytes);
+      await DocumentApi().addDocument(fieldId, docType, value, reference, bytes);
     } on PlatformException {
       debugPrint('DocumentApi call failed');
     } catch (e) {

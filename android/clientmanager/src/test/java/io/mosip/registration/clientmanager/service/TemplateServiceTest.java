@@ -412,6 +412,7 @@ public class TemplateServiceTest {
         Map<String, DocumentDto> docs = new HashMap<>();
         DocumentDto doc = new DocumentDto();
         doc.setType("passport");
+        doc.setValue("Passport");
         docs.put("doc1", doc);
         when(registrationDto.getDocuments()).thenReturn(docs);
         when(registrationDto.getSelectedLanguages()).thenReturn(Collections.singletonList("en"));
@@ -419,7 +420,7 @@ public class TemplateServiceTest {
         Map<String, Object> data = ReflectionTestUtils.invokeMethod(templateService, "getDocumentData", field, registrationDto, velocityContext);
         assertNotNull(data);
         assertEquals("DocLabel", data.get("label"));
-        assertEquals("passport", data.get("value"));
+        assertEquals("Passport", data.get("value"));
     }
 
     /**

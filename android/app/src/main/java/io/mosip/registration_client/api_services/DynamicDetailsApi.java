@@ -45,7 +45,6 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.RegistrationService;
-import io.mosip.registration.packetmanager.dto.PacketWriter.DocumentType;
 import io.mosip.registration.packetmanager.dto.SimpleType;
 import io.mosip.registration_client.model.DynamicResponsePigeon;
 import io.mosip.registration.clientmanager.constant.AuditEvent;
@@ -153,19 +152,6 @@ public class DynamicDetailsApi implements DynamicResponsePigeon.DynamicResponseA
             Log.e(getClass().getSimpleName(), "Fetch location values: " + Arrays.toString(e.getStackTrace()));
         }
         result.success(locationList);
-    }
-
-    @Override
-    public void getDocumentValues(@NonNull String categoryCode, String applicantType, @NonNull String langCode, @NonNull DynamicResponsePigeon.Result<List<String>> result) {
-
-        List<String> documentResponse = new ArrayList<>();
-        try {
-            documentResponse = this.masterDataService.getDocumentTypes(categoryCode, applicantType, langCode);
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Fetch document values: " + Arrays.toString(e.getStackTrace()));
-        }
-        result.success(documentResponse);
-
     }
 
     @Override
