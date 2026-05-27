@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
@@ -116,6 +118,7 @@ import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
+import regclient.utils.GenerateUinFromAid;
 import regclient.utils.TestDataReader;
 
 public class NewRegistrationAdult extends AndroidBaseTest {
@@ -142,6 +145,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
 
+		final Logger logger = Logger.getLogger(NewRegistrationAdult.class);
 		final String language = TestDataReader.readData("language");
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -356,9 +360,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-//					int thresholdScore = applicantBiometricsPage.getThresholdScore();
-//					assertTrue(thresholdScore >= 90,
-//							"Threshold score is less than expected value. Actual: " + thresholdScore);
 					biometricDetailsPage = applicantBiometricsPage.clickOnBiometricsMenuButton();
 
 				}
@@ -634,13 +635,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		String generatedUIN = TestDataReader.readData(Aid + "_UIN");
 
-		assertTrue(generatedUIN != null && !generatedUIN.isEmpty(), "Verify if UIN is generated for AID: " + Aid);
+		assertTrue(generatedUIN != null && !generatedUIN.isEmpty(), "Verify if UIN is generated successfully");
 
-		System.out.println("==========================");
-		System.out.println("AID : " + Aid);
-		System.out.println("UIN : " + generatedUIN);
-		System.out.println("==========================");
-
+		logger.info("UIN generation validation completed successfully");
 	}
 
 }
