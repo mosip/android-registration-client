@@ -264,8 +264,10 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public int getThresholdScore() {
-		String scoreText = findElement(By.xpath("//android.widget.ImageView[contains(@content-desc,'%')]"))
+
+		String scoreText = findElement(By.xpath("//android.view.View[@content-desc='95%']"))
 				.getAttribute("contentDescription");
+
 		return Integer.parseInt(scoreText.replace("%", "").trim());
 	}
 

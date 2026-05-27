@@ -165,10 +165,10 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(1);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-					}
-
+					By dropdownLocator = By
+							.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
+									+ FetchUiSpec.getValueUsingId(id) + "')]]");
+					scrollUntilElementVisible(dropdownLocator);
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");

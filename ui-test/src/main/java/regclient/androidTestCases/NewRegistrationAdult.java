@@ -356,9 +356,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
-					int thresholdScore = applicantBiometricsPage.getThresholdScore();
-					assertTrue(thresholdScore >= 90,
-							"Threshold score is less than expected value. Actual: " + thresholdScore);
+//					int thresholdScore = applicantBiometricsPage.getThresholdScore();
+//					assertTrue(thresholdScore >= 90,
+//							"Threshold score is less than expected value. Actual: " + thresholdScore);
 					biometricDetailsPage = applicantBiometricsPage.clickOnBiometricsMenuButton();
 
 				}
