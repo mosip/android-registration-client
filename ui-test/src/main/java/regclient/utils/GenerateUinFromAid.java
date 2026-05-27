@@ -40,149 +40,144 @@ import io.restassured.response.Response;
 
 public class GenerateUinFromAid extends AdminTestUtil implements ITest {
 
-    private static final Logger logger = Logger.getLogger(GenerateUinFromAid.class);
-    protected String testCaseName = "";
-    public Response response = null;
+	private static final Logger logger = Logger.getLogger(GenerateUinFromAid.class);
+	protected String testCaseName = "";
+	public Response response = null;
 
-    private static final String IDREPO_RID_ENDPOINT   = "/v1/idrepository/v1/identity/rid/";
-    private static final String RESPONSE_IDENTITY_UIN = "response.identity.UIN";
-    private static final String AID_PREFIX            = "AID-";
-    private static final int    MAX_RETRIES           = 5;
-    private static final int    WAIT_SECONDS          = 10;
+	private static final String IDREPO_RID_ENDPOINT = "/v1/idrepository/v1/identity/rid/";
+	private static final String RESPONSE_IDENTITY_UIN = "response.identity.UIN";
+	private static final String AID_PREFIX = "AID-";
+	private static final int MAX_RETRIES = 5;
+	private static final int WAIT_SECONDS = 10;
 
-    @Override
-    public String getTestName() {
-        return testCaseName;
-    }
+	@Override
+	public String getTestName() {
+		return testCaseName;
+	}
 
-    @BeforeClass
-    public static void setLogLevel() {
-        if (ArcConfigManager.IsDebugEnabled())
-            logger.setLevel(Level.ALL);
-        else
-            logger.setLevel(Level.ERROR);
-    }
+	@BeforeClass
+	public static void setLogLevel() {
+		if (ArcConfigManager.IsDebugEnabled())
+			logger.setLevel(Level.ALL);
+		else
+			logger.setLevel(Level.ERROR);
+	}
 
-    @DataProvider(name = "testcaselist")
-    public Object[] getTestCaseList(ITestContext context) {
-        String ymlFile = context.getCurrentXmlTest().getLocalParameters().get("ymlFile");
-        logger.info("Started executing yml: " + ymlFile);
-        return getYmlTestData(ymlFile);
-    }
+	@DataProvider(name = "testcaselist")
+	public Object[] getTestCaseList(ITestContext context) {
+		String ymlFile = context.getCurrentXmlTest().getLocalParameters().get("ymlFile");
+		logger.info("Started executing yml: " + ymlFile);
+		return getYmlTestData(ymlFile);
+	}
 
-    @Test(dataProvider = "testcaselist")
-    public void test(TestCaseDTO testCaseDTO)
-            throws AuthenticationTestException, AdminTestException, SecurityXSSException, InterruptedException {
+	@Test(dataProvider = "testcaselist")
+	public void test(TestCaseDTO testCaseDTO)
+			throws AuthenticationTestException, AdminTestException, SecurityXSSException, InterruptedException {
 
-        testCaseName = testCaseDTO.getTestCaseName();
+		testCaseName = testCaseDTO.getTestCaseName();
 
-        if (HealthChecker.signalTerminateExecution) {
-            throw new SkipException(
-                    GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
-        }
+		if (HealthChecker.signalTerminateExecution) {
+			throw new SkipException(
+					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
+		}
 
-        testCaseDTO.setInputTemplate(AdminTestUtil.modifySchemaGenerateHbs(testCaseDTO.isRegenerateHbs()));
+		testCaseDTO.setInputTemplate(AdminTestUtil.modifySchemaGenerateHbs(testCaseDTO.isRegenerateHbs()));
 
-        String aid = TestDataReader.readData("AID");
-        String rid = aid.replace(AID_PREFIX, "");
-        logger.info("AID: " + aid + " | RID: " + rid);
+		String aid = TestDataReader.readData("AID");
+		if (aid == null || aid.isBlank() || !aid.startsWith(AID_PREFIX)) {
+			throw new AdminTestException("Invalid or missing AID in testdata.json: " + aid);
+		}
+		String rid = aid.substring(AID_PREFIX.length());
+		logger.info("AID and RID generated successfully");
 
-        String token = new KernelAuthentication().getTokenByRole(testCaseDTO.getRole());
-        String uin   = fetchUINWithRetry(rid, token);
+		String token = new KernelAuthentication().getTokenByRole(testCaseDTO.getRole());
+		String uin = fetchUINWithRetry(rid, token);
 
-        if (uin == null || uin.isEmpty()) {
-            throw new AdminTestException("UIN not generated for AID [" + aid + "] after " + MAX_RETRIES + " retries");
-        }
+		if (uin == null || uin.isEmpty()) {
+			throw new AdminTestException("UIN not generated for AID [" + aid + "] after " + MAX_RETRIES + " retries");
+		}
 
-        TestDataReader.saveData("UIN", uin);
-        logger.info("UIN persisted: " + uin);
+		TestDataReader.saveData("UIN", uin);
+		logger.info("UIN persisted: " + uin);
 
-        String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate(), false);
-        inputJson = inputJson.replace("$UIN$", uin);
-        inputJson = inputJson.replace("$RID$", rid);
+		String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate(), false);
+		inputJson = inputJson.replace("$UIN$", uin);
+		inputJson = inputJson.replace("$RID$", rid);
 
-        response = postWithBodyAndCookie(
-                ApplnURI + testCaseDTO.getEndPoint(),
-                inputJson,
-                COOKIENAME,
-                testCaseDTO.getRole(),
-                testCaseDTO.getTestCaseName());
+		response = postWithBodyAndCookie(ApplnURI + testCaseDTO.getEndPoint(), inputJson, COOKIENAME,
+				testCaseDTO.getRole(), testCaseDTO.getTestCaseName());
 
-        Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
-                response.asString(),
-                getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()),
-                testCaseDTO,
-                response.getStatusCode());
+		Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
+				response.asString(), getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()),
+				testCaseDTO, response.getStatusCode());
 
-        Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
+		Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
 
-        if (!OutputValidationUtil.publishOutputResult(ouputValid))
-            throw new AdminTestException("Failed at output validation");
+		if (!OutputValidationUtil.publishOutputResult(ouputValid))
+			throw new AdminTestException("Failed at output validation");
 
-        // ── Step 7: Persist IDs for positive cases ──────────────────
-        if (testCaseDTO.getTestCaseName().contains("_Pos")) {
-            writeAutoGeneratedId(testCaseName, "UIN", uin);
-            writeAutoGeneratedId(testCaseName, "RID", rid);
-            logger.info("Persisted — UIN: " + uin + " | RID: " + rid);
-        }
-    }
+		// ── Step 7: Persist IDs for positive cases ──────────────────
+		if (testCaseDTO.getTestCaseName().contains("_Pos")) {
+			writeAutoGeneratedId(testCaseName, "UIN", uin);
+			writeAutoGeneratedId(testCaseName, "RID", rid);
+			logger.info("Persisted — UIN: " + uin + " | RID: " + rid);
+		}
+	}
 
-    private String fetchUINWithRetry(String rid, String token) throws InterruptedException {
-        String uin = null;
-        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-            uin = fetchUINByRID(rid, token);
-            if (uin != null && !uin.isEmpty()) {
-                logger.info("UIN fetched on attempt " + attempt + ": " + uin);
-                return uin;
-            }
-            logger.warn("UIN not ready, attempt " + attempt + "/" + MAX_RETRIES
-                    + " — waiting " + WAIT_SECONDS + "s...");
-            Thread.sleep(WAIT_SECONDS * 1000L);
-        }
-        return uin;
-    }
+	private String fetchUINWithRetry(String rid, String token) throws InterruptedException {
+		String uin = null;
+		for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+			uin = fetchUINByRID(rid, token);
+			if (uin != null && !uin.isEmpty()) {
+				logger.info("UIN fetched on attempt " + attempt + ": " + uin);
+				return uin;
+			}
+			logger.warn(
+					"UIN not ready, attempt " + attempt + "/" + MAX_RETRIES + " — waiting " + WAIT_SECONDS + "s...");
+			Thread.sleep(WAIT_SECONDS * 1000L);
+		}
+		return uin;
+	}
 
-    private String fetchUINByRID(String rid, String token) {
-        try {
-            Response ridResponse = RestClient.getRequestWithCookie(
-                    ApplnURI + IDREPO_RID_ENDPOINT + rid,
-                    MediaType.APPLICATION_JSON,
-                    MediaType.APPLICATION_JSON,
-                    COOKIENAME,
-                    token);
+	private String fetchUINByRID(String rid, String token) {
+		try {
+			Response ridResponse = RestClient.getRequestWithCookie(ApplnURI + IDREPO_RID_ENDPOINT + rid,
+					MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, COOKIENAME, token);
 
-            logger.info("IDREPO response for RID [" + rid + "]: " + ridResponse.asString());
-            return JsonPrecondtion.getValueFromJson(ridResponse.asString(), RESPONSE_IDENTITY_UIN);
+			logger.info("IDREPO response for RID [" + rid + "]: " + ridResponse.asString());
+			return JsonPrecondtion.getValueFromJson(ridResponse.asString(), RESPONSE_IDENTITY_UIN);
 
-        } catch (Exception e) {
-            logger.error("Error fetching UIN for RID [" + rid + "]: " + e.getMessage());
-            return null;
-        }
-    }
+		} catch (Exception e) {
+			logger.error("Error fetching UIN for RID [" + rid + "]: " + e.getMessage());
+			return null;
+		}
+	}
 
-    @AfterMethod(alwaysRun = true)
-    public void setResultTestName(ITestResult result) {
-        try {
-            Field method = TestResult.class.getDeclaredField("m_method");
-            method.setAccessible(true);
-            method.set(result, result.getMethod().clone());
-            BaseTestMethod baseTestMethod = (BaseTestMethod) result.getMethod();
-            Field f = baseTestMethod.getClass().getSuperclass().getDeclaredField("m_methodName");
-            f.setAccessible(true);
-            f.set(baseTestMethod, testCaseName);
-        } catch (Exception e) {
-            Reporter.log("Exception : " + e.getMessage());
-        }
-    }
+	@AfterMethod(alwaysRun = true)
+	public void setResultTestName(ITestResult result) {
+		try {
+			Field method = TestResult.class.getDeclaredField("m_method");
+			method.setAccessible(true);
+			method.set(result, result.getMethod().clone());
+			BaseTestMethod baseTestMethod = (BaseTestMethod) result.getMethod();
+			Field f = baseTestMethod.getClass().getSuperclass().getDeclaredField("m_methodName");
+			f.setAccessible(true);
+			f.set(baseTestMethod, testCaseName);
+		} catch (Exception e) {
+			Reporter.log("Exception : " + e.getMessage());
+		}
+	}
 
-    @AfterClass(alwaysRun = true)
-    public void waittime() {
-        try {
-            logger.info("Waiting " + properties.getProperty("Delaytime") + " ms after UIN generation");
-            Thread.sleep(Long.parseLong(properties.getProperty("Delaytime")));
-        } catch (Exception e) {
-            logger.error("Exception in waittime: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-    }
+	@AfterClass(alwaysRun = true)
+	public void waittime() {
+		try {
+			logger.info("Waiting " + properties.getProperty("Delaytime") + " ms after UIN generation");
+			Thread.sleep(Long.parseLong(properties.getProperty("Delaytime")));
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			logger.error("Interrupted in waittime: " + e.getMessage());
+		} catch (Exception e) {
+
+		}
+	}
 }

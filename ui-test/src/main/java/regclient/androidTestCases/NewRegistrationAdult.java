@@ -217,7 +217,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
 				"verify if the notification language display in english");
-		
+
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -285,9 +285,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
-				
+
 				documentuploadPage.uploadDoccuments("adult", "ReferenceNumber");
-				
+
 				documentuploadPage.clickOnContinueButton();
 
 			} else if (screen.equals("BiometricDetails")) {
@@ -356,10 +356,11 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
+					int thresholdScore = applicantBiometricsPage.getThresholdScore();
+					assertTrue(thresholdScore >= 90,
+							"Threshold score is less than expected value. Actual: " + thresholdScore);
 					biometricDetailsPage = applicantBiometricsPage.clickOnBiometricsMenuButton();
-					assertTrue(applicantBiometricsPage.getThresholdScore() >= 90,
-					        "Threshold score is more than expected value");
-					
+
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
@@ -489,9 +490,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
-		
+
 		registrationTasksPage.clickOnOperationalTasksTitle();
-		
+
 		if ("eng".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -553,11 +554,11 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				break;
 			}
 		}
-		
+
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
-		
+
 		assertTrue(pendingApproval.isInvalidUsernameMessageDisplayed(),
 				"Verify if invalid username messgae is displayed");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
@@ -630,16 +631,15 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-		
-		String generatedUIN = TestDataReader.readData("UIN");
 
-        assertTrue(generatedUIN != null && !generatedUIN.isEmpty(),
-                "Verify if UIN is generated for AID: " + Aid);
+		String generatedUIN = TestDataReader.readData(Aid + "_UIN");
 
-        System.out.println("==========================");
-        System.out.println("AID : " + Aid);
-        System.out.println("UIN : " + generatedUIN);
-        System.out.println("==========================");
+		assertTrue(generatedUIN != null && !generatedUIN.isEmpty(), "Verify if UIN is generated for AID: " + Aid);
+
+		System.out.println("==========================");
+		System.out.println("AID : " + Aid);
+		System.out.println("UIN : " + generatedUIN);
+		System.out.println("==========================");
 
 	}
 

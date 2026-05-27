@@ -1,5 +1,6 @@
 package regclient.pages.english;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -100,7 +101,7 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 
 	@AndroidFindBy(accessibility = "menu_back_button")
 	private WebElement biometricsMenuButton;
-	
+
 	@AndroidFindBy(xpath = "//android.widget.ImageView[contains(@content-desc,'%')]")
 	WebElement thresholdScore;
 
@@ -261,15 +262,16 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 		clickOnElement(biometricsMenuButton);
 		return new BiometricDetailsPageEnglish(driver);
 	}
-	
+
 	public int getThresholdScore() {
-	    String scoreText = thresholdScore.getAttribute("contentDescription");
-	    return Integer.parseInt(scoreText.replace("%", "").trim());
+		String scoreText = findElement(By.xpath("//android.widget.ImageView[contains(@content-desc,'%')]"))
+				.getAttribute("contentDescription");
+		return Integer.parseInt(scoreText.replace("%", "").trim());
 	}
-	
+
 	public int irisAttemptLeft() {
-	    String attemptText = irisCapturerHeader.getAttribute("contentDescription");
-	    String count = attemptText.replaceAll("\\D+", "");
-	    return Integer.parseInt(count);
+		String attemptText = irisCapturerHeader.getAttribute("contentDescription");
+		String count = attemptText.replaceAll("\\D+", "");
+		return Integer.parseInt(count);
 	}
 }
