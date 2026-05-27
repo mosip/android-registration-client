@@ -100,15 +100,15 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 
 	@AndroidFindBy(accessibility = "menu_back_button")
 	private WebElement biometricsMenuButton;
+	
+	@AndroidFindBy(xpath = "//android.widget.ImageView[contains(@content-desc,'%')]")
+	WebElement thresholdScore;
 
 	public ApplicantBiometricsPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public void enterCommentsInTextBox(String comments) {
-		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
-		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
 
@@ -118,16 +118,10 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnExceptionTypePermanentButton() {
-		if (!isElementDisplayedOnScreen(permanentButton)) {
-			swipeOrScroll();
-		}
 		clickOnElement(permanentButton);
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
-		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
-		}
 		clickOnElement(temporaryButton);
 	}
 
@@ -260,15 +254,22 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public boolean isExceptionCountDisplayed() {
-		if (!isElementDisplayedOnScreen(exceptionCount)) {
-			swipeOrScroll();
-			isElementDisplayed(exceptionCount);
-		}
 		return isElementDisplayed(exceptionCount);
 	}
 
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
 		return new BiometricDetailsPageEnglish(driver);
+	}
+	
+	public int getThresholdScore() {
+	    String scoreText = thresholdScore.getAttribute("contentDescription");
+	    return Integer.parseInt(scoreText.replace("%", "").trim());
+	}
+	
+	public int irisAttemptLeft() {
+	    String attemptText = irisCapturerHeader.getAttribute("contentDescription");
+	    String count = attemptText.replaceAll("\\D+", "");
+	    return Integer.parseInt(count);
 	}
 }

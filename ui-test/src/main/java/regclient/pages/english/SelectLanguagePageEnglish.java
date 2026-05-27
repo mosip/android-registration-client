@@ -1,7 +1,14 @@
 package regclient.pages.english;
 
-import org.openqa.selenium.WebElement;
+import java.time.Duration;
+import java.util.Collections;
 
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
+
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ConsentPage;
@@ -19,7 +26,7 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage {
 	@AndroidFindBy(accessibility = "French")
 	private WebElement frenchLanguageButton;
 
-	@AndroidFindBy(accessibility = "عربي")
+	@AndroidFindBy(accessibility = "Arabic")
 	private WebElement arabicLanguageButton;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"ಕನ್ನಡ\"])[1]")
@@ -81,6 +88,7 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage {
 	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {
+		
 		switch (notificationLanguage) {
 		case "eng":
 			clickOnElement(englishLanguageNotificationButton);
@@ -138,7 +146,9 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage {
 	}
 
 	public boolean isNotificationLanguageEnglishDisplayed() {
-		swipeOrScroll();
-		return isElementDisplayed(notificationLanguageHeaderInEnglish);
+		scrollInsidePopup();
+	    return isElementDisplayed(notificationLanguageHeaderInEnglish);
 	}
+	
+	
 }

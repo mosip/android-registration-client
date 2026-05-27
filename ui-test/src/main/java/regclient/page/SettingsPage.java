@@ -48,12 +48,14 @@ public abstract class SettingsPage extends BasePage {
 	
 	public abstract boolean isScheduledJobSettingsPageHeaderDisplayed();
 	
-	public abstract boolean isToastVisible(String toastMessage);
+	public abstract boolean isMasterDataToastMessageDisplayed();
 	
 	public abstract void clickOnSyncButton(String jobName);
 	
 	public abstract boolean validateJobCardFields(String jobName);
 	
 	public abstract boolean isJobDisplayed(String jobName);
+	
+	public abstract boolean isDeviceSettingsLabelDisplayedInLoggedLanguage();
 
 }

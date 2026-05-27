@@ -79,9 +79,9 @@ public class MockSBIPage extends BasePage {
 	public void setAllToNotReadyAndSave() {
 
 		setAllToNotReady("Face", "io.mosip.mock.sbi:id/face_device_status");
-		swipeOrScroll();
+		swipeUp();
 		setAllToNotReady("Finger", "io.mosip.mock.sbi:id/finger_device_status");
-		swipeOrScroll();
+		swipeUp();
 		setAllToNotReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
 		clickOnElement(mockSbiSaveButton);
@@ -114,9 +114,9 @@ public class MockSBIPage extends BasePage {
 	public void setAllToReadyAndSave() {
 
 		setAllToReady("Face", "io.mosip.mock.sbi:id/face_device_status");
-		swipeOrScroll();
+		swipeUp();
 		setAllToReady("Finger", "io.mosip.mock.sbi:id/finger_device_status");
-		swipeOrScroll();
+		swipeUp();
 		setAllToReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
 		clickOnElement(mockSbiSaveButton);
@@ -125,7 +125,7 @@ public class MockSBIPage extends BasePage {
 	public void setAllModalityLowScore() {
 		// ModalityScore should be (20-5=15)
 		setModalityScore("Iris", 20);
-		swipeOrScroll();
+		swipeUp();
 		clickOnElement(mockSbiSaveButton);
 	}
 
@@ -171,7 +171,7 @@ public class MockSBIPage extends BasePage {
 			WebElement seekBar = findElementIfExists(By.xpath(xpath)); // non-throwing
 			// fallback: a few swipes + re-checks
 			for (int i = 0; i < 5 && seekBar == null; i++) {
-				swipeOrScroll();
+				swipeUp();
 				waitTime(1);
 				seekBar = findElementIfExists(By.xpath(xpath));
 			}
@@ -224,7 +224,7 @@ public class MockSBIPage extends BasePage {
 				}
 			} catch (Exception ignored) {
 			}
-			swipeOrScroll();
+			swipeUp();
 			waitTime(1);
 		}
 	}

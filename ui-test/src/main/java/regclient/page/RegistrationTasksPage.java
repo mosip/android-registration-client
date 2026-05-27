@@ -53,5 +53,7 @@ public abstract class RegistrationTasksPage extends BasePage {
 	public abstract boolean isSettingsButtonDisplayed();
 	
 	public abstract void handleIfSyncPopUpDisplayed();
+	
+	public abstract boolean isClientVersionDisplayed();
 
 }

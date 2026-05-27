@@ -94,7 +94,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"mock.sbi.finger\")")
 	private WebElement fingerDeviceCard;
 
-	@AndroidFindBy(accessibility = "No devices found")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'No devices found')]")
 	private WebElement noDevicesFound;
 
 	@AndroidFindBy(accessibility = "Submit Changes")
@@ -126,6 +126,9 @@ public class SettingsPageEnglish extends SettingsPage {
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'leftslap_fingerprint_threshold')]//android.widget.EditText")
 	private WebElement leftSlapThresholdField;
+	
+	@AndroidFindBy(xpath = "//android.widget.Toast[@text='Master Data Sync Completed']")
+	private WebElement masterDatatoastMessage;
 
 	public SettingsPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -182,6 +185,11 @@ public class SettingsPageEnglish extends SettingsPage {
 			return false;
 		}
 	}
+	
+	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
+		String actualLabel = deviceSettingsPage.getAttribute("content-desc");
+		return actualLabel.equals("Device Settings");
+	}
 
 	public boolean isFaceDeviceCardDisplayed() {
 		try {
@@ -234,19 +242,6 @@ public class SettingsPageEnglish extends SettingsPage {
 		return isElementDisplayed(scheduledJobSettingsPageHeader);
 	}
 
-	public boolean isToastVisible(String toastMessage) {
-		for (int i = 0; i < 15; i++) { // ~3 seconds
-			if (driver.getPageSource().contains(toastMessage)) {
-				return true;
-			}
-			try {
-				Thread.sleep(200);
-			} catch (Exception ignored) {
-			}
-		}
-		return false;
-	}
-
 	public WebElement getSyncButton(String jobName) {
 		return driver.findElement(
 				By.xpath("//android.view.View[contains(@content-desc,'" + jobName + "')]//*[@clickable='true']"));
@@ -285,6 +280,10 @@ public class SettingsPageEnglish extends SettingsPage {
 	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
 		By searchBox = By.xpath("//android.view.View[@content-desc='Global Config Settings']//android.widget.EditText");
 		return isElementDisplayed(searchBox);
+	}
+	
+	public boolean isMasterDataToastMessageDisplayed() {
+		return isElementDisplayed(masterDatatoastMessage);
 	}
 
 }

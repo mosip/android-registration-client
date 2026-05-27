@@ -77,4 +77,10 @@ public abstract class ApplicantBiometricsPage extends BasePage {
 	public abstract boolean isAuthenticationBiometricsPageDisplayed();
 	
 	public abstract BiometricDetailsPage clickOnBiometricsMenuButton();
+	
+	public abstract int getThresholdScore();
+	
+	public abstract int irisAttemptLeft();
+	
+	
 }

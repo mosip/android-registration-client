@@ -89,7 +89,6 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -121,7 +120,6 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -156,7 +154,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+					
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -198,7 +196,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 						By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 								+ "\")]/parent::android.view.View/parent::android.view.View")));
 				if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-					swipeOrScroll();
+					swipeUp();
 					clickOnElement(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -228,7 +226,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));

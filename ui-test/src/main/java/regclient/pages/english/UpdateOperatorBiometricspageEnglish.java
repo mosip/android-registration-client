@@ -265,9 +265,6 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
-		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
-		}
 		clickOnElement(temporaryButton);
 	}
 
@@ -276,9 +273,6 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	}
 
 	public void enterCommentsInTextBox(String comments) {
-		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
-		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
 

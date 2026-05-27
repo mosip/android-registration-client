@@ -136,10 +136,8 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	public boolean isPacketApproved(String AID) {
 		waitTime(2);
 		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-		if (element.getAttribute("contentDescription").contains("APPROVED"))
-			return true;
-		else
-			return false;
+		scrollHorizontallyUntilVisible(element);
+		return element.getAttribute("contentDescription").contains("APPROVED");
 	}
 
 	public boolean isPacketSynned(String AID) {
@@ -197,6 +195,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	}
 
 	public void selectApprovedValueDropdown() {
+		scrollHorizontallyUntilVisible(clientStatusDropdown);
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(approvedOption);
 	}
