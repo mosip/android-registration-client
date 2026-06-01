@@ -67,7 +67,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc='FETCH DATA']/following-sibling::android.widget.Button")
 	private WebElement scanButton;
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-Foreigner\")")
+	@AndroidFindBy(accessibility = "Non-Foreigner / غير أجنبي")
 	private WebElement nonForeignerOption;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Application ID does not exist')]")
