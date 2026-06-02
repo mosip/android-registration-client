@@ -73,12 +73,17 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 		isElementDisplayed(captureImage);
 		cropCaptureImage(imageleftCorner);
 	}
-	
+
 	public boolean isPacketSizeDisplayed() {
-	    WebElement packetSize = driver.findElement(
-	            By.xpath("//android.view.View[contains(@content-desc,'Size:')]"));
-	    String sizeText = packetSize.getAttribute("contentDescription");
-	    return sizeText.matches("Size: \\d+(\\.\\d+)?\\s?(KB|MB)");
+		try {
+			WebElement packetSize = driver
+					.findElement(By.xpath("//android.view.View[contains(@content-desc,'Size:')]"));
+
+			String sizeText = packetSize.getAttribute("contentDescription");
+			return sizeText.matches("Size: \\d+(\\.\\d+)?\\s?(KB|MB)");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public void uploadDoccuments(String age, String type) {
