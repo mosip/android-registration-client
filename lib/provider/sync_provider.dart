@@ -76,8 +76,7 @@ class SyncProvider with ChangeNotifier {
 
   Future<void> checkCentreRemapState() async {
     try {
-      final val = await _globalConfigService.getCentreRemapFlag();
-      if (val.toLowerCase() == 'true') _onRemapDetected();
+      if (await _globalConfigService.getCenterRemapFlag()) _onRemapDetected();
     } catch (e) {
       log('REMAP: checkCentreRemapState error: $e');
     }
