@@ -12,11 +12,9 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
-import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../provider/registration_task_provider.dart';
 
@@ -48,49 +46,11 @@ class _OperationalTasksState extends State<OperationalTasks> {
 
   @override
   Widget build(BuildContext context) {
-    final bool centreRemapped =
-        context.watch<SyncProvider>().isCentreRemapped;
     return Column(
       children: [
         SizedBox(height: 12.h),
-        if (centreRemapped) _buildRemapBanner(context),
         _getTasks(),
       ],
-    );
-  }
-
-  Widget _buildRemapBanner(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFFBE6),
-          border: Border.all(color: const Color(0xFFE6A817), width: 1.5),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: const Color(0xFFE6A817),
-              size: isMobileSize ? 22 : 30,
-            ),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Text(
-                AppLocalizations.of(context)!.center_remap_notification,
-                style: TextStyle(
-                  color: const Color(0xFF8A5B00),
-                  fontWeight: FontWeight.bold,
-                  fontSize: isMobileSize ? 13 : 18,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 

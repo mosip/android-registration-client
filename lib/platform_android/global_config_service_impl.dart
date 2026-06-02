@@ -72,14 +72,14 @@ class GlobalConfigServiceImpl implements GlobalConfigService {
   }
 
   @override
-  Future<String> getCentreRemapFlag() async {
-    String remapFlag = "";
+  Future<bool> getCenterRemapFlag() async {
+    bool remapFlag = false;
     try {
-      remapFlag = await GlobalConfigSettingsApi().getCentreRemapFlag();
+      remapFlag = await GlobalConfigSettingsApi().getCenterRemapFlag();
     } on PlatformException {
-      debugPrint("Centre remap flag Api failed!");
+      debugPrint("Center remap flag Api failed!");
     } catch (e) {
-      debugPrint("Centre remap flag fetch error: $e");
+      debugPrint("Center remap flag fetch error: $e");
     }
     return remapFlag;
   }
