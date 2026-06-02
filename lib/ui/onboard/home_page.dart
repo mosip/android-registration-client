@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
       return;
     }
     if (syncProvider.isCentreRemapped) {
-      await syncProvider.centreRemapSync();
+      _showInSnackBar(appLocalizations.remap_operation_blocked);
       return;
     }
     await syncProvider.manualSync();
@@ -105,13 +105,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _remapBlockedMessage(String? flow) {
-    switch (flow) {
-      case 'NEW':        return appLocalizations.remap_blocked_new_registration;
-      case 'UPDATE':     return appLocalizations.remap_blocked_uin_update;
-      case 'LOST':       return appLocalizations.remap_blocked_lost_uin;
-      case 'CORRECTION': return appLocalizations.remap_blocked_correction;
-      default:           return appLocalizations.center_remap_notification;
-    }
+    return appLocalizations.remap_operation_blocked;
   }
 
   void _fetchProcessSpec() async {
@@ -257,10 +251,7 @@ class _HomePageState extends State<HomePage> {
         "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
           if (syncProvider.isCentreRemapped) {
-            final isOnboarding = globalProvider.onboardingProcessName == "Onboarding";
-            _showInSnackBar(isOnboarding
-                ? appLocalizations.remap_blocked_onboarding
-                : appLocalizations.remap_blocked_biometric_update);
+            _showInSnackBar(appLocalizations.remap_operation_blocked);
             return;
           }
           await BiometricsApi().startOperatorOnboarding();

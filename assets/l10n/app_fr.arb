@@ -189,6 +189,7 @@
   "check_updates": "Vérifier les mises à jour",
   "center_remap_sync": "Synchronisation du remappage central.",
   "center_remap_notification": "Votre machine a été réaffectée à un autre centre. Veuillez compléter les activités en attente.",
+  "remap_operation_blocked": "Opération non autorisée. La machine a été réaffectée à un autre centre, veuillez compléter les activités en attente.",
   "sync_activities": "Synchronisation. Activités",
   "pending_approval": "En attente de validation",
   "dashboard": "Tableau de bord",
