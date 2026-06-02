@@ -207,22 +207,27 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public boolean isRightHandScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
 	public boolean isLeftHandScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
 	public boolean isThumbsScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
 	public boolean isFaceScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(faceScanTitle);
 	}
 
 	public boolean isExceptionScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(exceptionScanTitle);
 	}
 

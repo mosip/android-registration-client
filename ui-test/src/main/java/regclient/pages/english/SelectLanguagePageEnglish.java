@@ -88,7 +88,7 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage {
 	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {
-		
+		scrollInsidePopup();
 		switch (notificationLanguage) {
 		case "eng":
 			clickOnElement(englishLanguageNotificationButton);
@@ -146,7 +146,6 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage {
 	}
 
 	public boolean isNotificationLanguageEnglishDisplayed() {
-		scrollInsidePopup();
 	    return isElementDisplayed(notificationLanguageHeaderInEnglish);
 	}
 	

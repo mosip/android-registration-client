@@ -1,6 +1,7 @@
 package regclient.androidTestCases;
 
 import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import org.testng.annotations.Test;
@@ -138,6 +139,9 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isDeviceSettingsPageDisplayed(), "Verify if device settings page displayed");
 
+		assertTrue(settingsPage.isDeviceSettingsLabelDisplayedInLoggedLanguage(),
+				"Verify if device settings label displayed in logged language");
+
 		assertTrue(settingsPage.isScanNowButtonDisplayed(), "Verify if scan now button displayed");
 
 		settingsPage.clickOnScanNowButton();
@@ -165,8 +169,7 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isScanNowButtonDisplayed(), "Verify if scan now button displayed");
 
-//		Now we not getting NoDevicesFound message so comment out
-//		assertTrue(settingsPage.isNoDevicesFoundDisplayed(), "Verify if no devices found displayed");
+		assertTrue(settingsPage.isNoDevicesFoundDisplayed(), "Verify if no devices found displayed");
 
 		settingsPage.clickOnGlobalConfigSettingsTab();
 
@@ -188,12 +191,28 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isJobDisplayed("Master Data Sync"), "Verify if Masterdata Sync Card Displayed");
 
-//	current build after added submit button this scenario failing
-//		assertTrue(settingsPage.validateJobCardFields("Master Data Sync"), "Validate job card fields");
+		assertTrue(settingsPage.validateJobCardFields("Master Data Sync"), "Validate job card fields");
 
+		BasePage.waitTime(10);
 		settingsPage.clickOnSyncButton("Master Data Sync");
 
-//		assertTrue(settingsPage.isToastVisible("Master Data Sync Completed"), "Toast not found!");
+		assertTrue(settingsPage.isMasterDataToastMessageDisplayed(), "Verify if masterdata toast message Displayed");
+
+		// Verify Global config Settings Tab
+		settingsPage.clickOnGlobalConfigSettingsTab();
+		assertTrue(settingsPage.isGlobalConfigSettingsHeaderDisplayed(),
+				"Verify if global config settings header Displayed");
+		assertTrue(settingsPage.isKeyLabelDisplayed(), "Verify if key label Displayed");
+		assertTrue(settingsPage.isLocalValueLabelDisplayed(), "Verify if local value label Displayed");
+		assertTrue(settingsPage.isServerValueLabelDisplayed(), "Verify if server value label Displayed");
+
+		assertTrue(settingsPage.isConfigListPresent(), "Verify config keys are present under Global Config Settings");
+
+		assertTrue(settingsPage.isLocalValueBoxDisplayed(), "Verify local value box is displayed");
+
+		assertTrue(settingsPage.isGlobalConfigSettingsSearchBoxDisplayed(),
+				"Verify if global config settings search box is displayed");
 
 	}
+
 }

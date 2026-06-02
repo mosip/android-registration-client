@@ -53,7 +53,9 @@ public class UpdateUINPageEnglish extends UpdateUINPage {
 		for (String title : groupLabelList) {
 			WebElement webelement = findElementWithRetry(
 					MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + title + "\")"));
+			scrollUntilElementVisible(webelement);
 			assertTrue(isElementDisplayed(webelement), "Verify if " + title + " title is displayed in update uin page");
+			
 			clickOnElement(webelement);
 		}
 	}
