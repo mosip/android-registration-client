@@ -49,7 +49,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
       case 'UPDATE':     return l.remap_blocked_uin_update;
       case 'LOST':       return l.remap_blocked_lost_uin;
       case 'CORRECTION': return l.remap_blocked_correction;
-      default:           return l.centre_remap_notification;
+      default:           return l.center_remap_notification;
     }
   }
 

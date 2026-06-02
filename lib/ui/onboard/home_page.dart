@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
       case 'UPDATE':     return appLocalizations.remap_blocked_uin_update;
       case 'LOST':       return appLocalizations.remap_blocked_lost_uin;
       case 'CORRECTION': return appLocalizations.remap_blocked_correction;
-      default:           return appLocalizations.centre_remap_notification;
+      default:           return appLocalizations.center_remap_notification;
     }
   }
 

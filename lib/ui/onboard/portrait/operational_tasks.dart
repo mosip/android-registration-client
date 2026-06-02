@@ -80,9 +80,9 @@ class _OperationalTasksState extends State<OperationalTasks> {
             SizedBox(width: 10.w),
             Expanded(
               child: Text(
-                AppLocalizations.of(context)!.centre_remap_notification,
+                AppLocalizations.of(context)!.center_remap_notification,
                 style: TextStyle(
-                  color: const Color(0xFFE6A817),
+                  color: const Color(0xFF8A5B00),
                   fontWeight: FontWeight.bold,
                   fontSize: isMobileSize ? 13 : 18,
                 ),

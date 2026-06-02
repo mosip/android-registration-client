@@ -189,7 +189,7 @@
   "appliction_upload": "تحميل التطبيق",
   "check_updates": "تفقد التحديث",
   "center_remap_sync": "مركز إعادة رسم خريطة المزامنة.",
-  "centre_remap_notification": "تمت إعادة تعيين جهازك إلى مركز آخر. يرجى إكمال الأنشطة المعلقة.",
+  "center_remap_notification": "تمت إعادة تعيين جهازك إلى مركز آخر. يرجى إكمال الأنشطة المعلقة.",
   "remap_blocked_new_registration": "لا يُسمح بالتسجيل الجديد أثناء إعادة تعيين المركز.",
   "remap_blocked_uin_update": "لا يُسمح بتحديث UIN أثناء إعادة تعيين المركز.",
   "remap_blocked_lost_uin": "لا يُسمح بـ UIN المفقودة أثناء إعادة تعيين المركز.",
