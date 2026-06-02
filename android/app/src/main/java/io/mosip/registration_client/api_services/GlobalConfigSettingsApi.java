@@ -87,6 +87,18 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
     }
 
     @Override
+    public void getCentreRemapFlag(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
+        String remapFlag = "";
+        try {
+            String val = globalParamRepository.getGlobalParamValue(RegistrationConstants.MACHINE_CENTER_CHANGED);
+            if (val != null) remapFlag = val;
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching centre remap flag", e);
+        }
+        result.success(remapFlag);
+    }
+
+    @Override
     public void getPRIDLength(@NonNull GlobalConfigSettingsPigeon.Result<Long> result) {
         int pridLength = 0;
         try {

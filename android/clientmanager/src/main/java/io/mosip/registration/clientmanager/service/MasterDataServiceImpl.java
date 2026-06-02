@@ -329,6 +329,12 @@ public class MasterDataServiceImpl implements MasterDataService {
                             Log.e(TAG, "Failed to store master data sync last sync time", e);
                         }
                     } else {
+                        if (RegistrationConstants.CENTRE_REMAP_ERROR_CODE.equals(error.getErrorCode())) {
+                            globalParamRepository.saveGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED, "true");
+                            result = RegistrationConstants.CENTRE_REMAP_ERROR_CODE;
+                            onFinish.run();
+                            return;
+                        }
                         result = MASTER_DATA_SYNC_FAILED;
                         if (isManualSync) {
                             Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
