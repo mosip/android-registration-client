@@ -25,7 +25,6 @@ import org.openqa.selenium.StaleElementReferenceException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -40,7 +39,6 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import io.appium.java_client.TouchAction;
-import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.StartsActivity;
 import regclient.api.FetchUiSpec;
@@ -53,7 +51,6 @@ import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import regclient.api.FetchUiSpec;
 import regclient.page.BasePage;
 import regclient.page.SettingsPage;
 
@@ -300,15 +297,15 @@ public class SettingsPageEnglish extends SettingsPage {
 	}
 
 	public boolean isMasterDataToastMessageDisplayed() {
-	    try {
-	        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-	        wait.until(ExpectedConditions.presenceOfElementLocated(
-	                By.xpath("//android.widget.Toast[@text='Master Data Sync Completed']")));
-	        return true;
-	    } catch (Exception e) {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions
+					.presenceOfElementLocated(By.xpath("//android.widget.Toast[@text='Master Data Sync Completed']")));
+			return true;
+		} catch (Exception e) {
 
-	        return false;
-	    }
+			return false;
+		}
 	}
 
 	public boolean isKeyLabelDisplayed() {

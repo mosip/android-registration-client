@@ -215,7 +215,6 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	}
 
 	public void selectApprovedValueDropdown() {
-
 		WebElement clientStatus = driver.findElement(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
 						+ ".setAsHorizontalList()"

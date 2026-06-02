@@ -55,7 +55,7 @@ public abstract class SettingsPage extends BasePage {
 	public abstract boolean validateJobCardFields(String jobName);
 
 	public abstract boolean isJobDisplayed(String jobName);
-
+	
 	public abstract boolean isDeviceSettingsLabelDisplayedInLoggedLanguage();
 
 	public abstract boolean isKeyLabelDisplayed();
