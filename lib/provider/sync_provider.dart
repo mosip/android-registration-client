@@ -287,6 +287,15 @@ class SyncProvider with ChangeNotifier {
     await syncResponseService.batchJob();
   }
 
+  Future<void> centreRemapSync() async {
+    String Function(String) findJobIdByApiName = await _getJobIdFinder();
+    await syncResponseService.syncPacketStatus(findJobIdByApiName("packetSyncStatusJob"));
+    await syncResponseService.batchJob();
+    await syncResponseService.deleteRegistrationPackets(findJobIdByApiName("registrationDeletionJob"));
+    await syncResponseService.getPreRegIds(findJobIdByApiName("preRegistrationDataSyncJob"));
+    await syncResponseService.deletePreRegRecords(findJobIdByApiName("preRegistrationPacketDeletionJob"));
+  }
+
   getPreRegistrationIds() async {
     String Function(String) findJobIdByApiName = await _getJobIdFinder();
     await syncResponseService.getPreRegIds(findJobIdByApiName("preRegistrationDataSyncJob"));

@@ -42,6 +42,17 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
     super.initState();
   }
 
+  String _remapBlockedMessage(BuildContext context, String? flow) {
+    final l = AppLocalizations.of(context)!;
+    switch (flow) {
+      case 'NEW':        return l.remap_blocked_new_registration;
+      case 'UPDATE':     return l.remap_blocked_uin_update;
+      case 'LOST':       return l.remap_blocked_lost_uin;
+      case 'CORRECTION': return l.remap_blocked_correction;
+      default:           return l.centre_remap_notification;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
@@ -161,6 +172,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   }
 
   _getTasks() {
+    final bool centreRemapped = context.watch<SyncProvider>().isCentreRemapped;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: GridView.builder(
@@ -182,6 +194,12 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
 
             return InkWell(
               onTap: () {
+                if (centreRemapped) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(_remapBlockedMessage(context, process.flow)),
+                  ));
+                  return;
+                }
                 widget.getProcessUI(
                   context,
                   Process.fromJson(

@@ -86,6 +86,10 @@ class _HomePageState extends State<HomePage> {
       _showInSnackBar(appLocalizations.network_error);
       return;
     }
+    if (syncProvider.isCentreRemapped) {
+      await syncProvider.centreRemapSync();
+      return;
+    }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
     syncProvider.isSyncAndUploadInProgress = true;
@@ -98,6 +102,16 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.getAudit("REG-SYNC-002", "REG-MOD-102");
     await globalProvider.initializeLanguageDataList(true);
     await globalProvider.initializeLocationHierarchyMap();
+  }
+
+  String _remapBlockedMessage(String? flow) {
+    switch (flow) {
+      case 'NEW':        return appLocalizations.remap_blocked_new_registration;
+      case 'UPDATE':     return appLocalizations.remap_blocked_uin_update;
+      case 'LOST':       return appLocalizations.remap_blocked_lost_uin;
+      case 'CORRECTION': return appLocalizations.remap_blocked_correction;
+      default:           return appLocalizations.centre_remap_notification;
+    }
   }
 
   void _fetchProcessSpec() async {
@@ -121,6 +135,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
+    if (syncProvider.isCentreRemapped) {
+      _showInSnackBar(_remapBlockedMessage(process.flow));
+      return Container();
+    }
     List<Screen?> sortedScreens;
     sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
     if (process.flow == "NEW" || process.flow == "UPDATE" || process.flow == "LOST" || process.flow == "CORRECTION") {
@@ -238,6 +256,13 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
+          if (syncProvider.isCentreRemapped) {
+            final isOnboarding = globalProvider.onboardingProcessName == "Onboarding";
+            _showInSnackBar(isOnboarding
+                ? appLocalizations.remap_blocked_onboarding
+                : appLocalizations.remap_blocked_biometric_update);
+            return;
+          }
           await BiometricsApi().startOperatorOnboarding();
           globalProvider.onboardingProcessName = "Updation";
           Navigator.push(
