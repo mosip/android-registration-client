@@ -62,41 +62,33 @@ class _OperationalTasksState extends State<OperationalTasks> {
   Widget _buildRemapBanner(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      child: GestureDetector(
-        onTap: () {},
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFFBE6),
-            border: Border.all(color: const Color(0xFFE6A817), width: 1.5),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                color: const Color(0xFFE6A817),
-                size: isMobileSize ? 22 : 30,
-              ),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.centre_remap_notification,
-                  style: TextStyle(
-                    color: const Color(0xFFE6A817),
-                    fontWeight: FontWeight.bold,
-                    fontSize: isMobileSize ? 13 : 18,
-                  ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFFBE6),
+          border: Border.all(color: const Color(0xFFE6A817), width: 1.5),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.warning_amber_rounded,
+              color: const Color(0xFFE6A817),
+              size: isMobileSize ? 22 : 30,
+            ),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.centre_remap_notification,
+                style: TextStyle(
+                  color: const Color(0xFFE6A817),
+                  fontWeight: FontWeight.bold,
+                  fontSize: isMobileSize ? 13 : 18,
                 ),
               ),
-              Icon(
-                Icons.chevron_right,
-                color: const Color(0xFFE6A817),
-                size: isMobileSize ? 20 : 28,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

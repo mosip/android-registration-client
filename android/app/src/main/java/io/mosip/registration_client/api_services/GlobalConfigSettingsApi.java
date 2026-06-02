@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -88,14 +89,13 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
 
     @Override
     public void getCentreRemapFlag(@NonNull GlobalConfigSettingsPigeon.Result<String> result) {
-        String remapFlag = "";
         try {
             String val = globalParamRepository.getGlobalParamValue(RegistrationConstants.MACHINE_CENTER_CHANGED);
-            if (val != null) remapFlag = val;
+            result.success(val != null ? val : "");
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Error fetching centre remap flag", e);
+            result.error(e);
         }
-        result.success(remapFlag);
     }
 
     @Override
