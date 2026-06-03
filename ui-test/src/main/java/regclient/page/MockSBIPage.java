@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -79,9 +80,9 @@ public class MockSBIPage extends BasePage {
 	public void setAllToNotReadyAndSave() {
 
 		setAllToNotReady("Face", "io.mosip.mock.sbi:id/face_device_status");
-		swipeUp();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/finger_device_status"));
 		setAllToNotReady("Finger", "io.mosip.mock.sbi:id/finger_device_status");
-		swipeUp();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/iris_device_status"));
 		setAllToNotReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
 		clickOnElement(mockSbiSaveButton);
@@ -114,9 +115,9 @@ public class MockSBIPage extends BasePage {
 	public void setAllToReadyAndSave() {
 
 		setAllToReady("Face", "io.mosip.mock.sbi:id/face_device_status");
-		swipeUp();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/finger_device_status"));
 		setAllToReady("Finger", "io.mosip.mock.sbi:id/finger_device_status");
-		swipeUp();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/iris_device_status"));
 		setAllToReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
 		clickOnElement(mockSbiSaveButton);
@@ -230,43 +231,15 @@ public class MockSBIPage extends BasePage {
 	}
 
 	public void setSeekBarPercent(WebElement seekBar, int percent) {
-		if (seekBar == null)
-			throw new IllegalArgumentException("seekBar cannot be null");
-		if (percent < 0)
-			percent = 0;
-		if (percent > 100)
-			percent = 100;
 
-		int startX = seekBar.getLocation().getX();
-		int width = seekBar.getSize().getWidth();
-		int y = seekBar.getLocation().getY() + (seekBar.getSize().getHeight() / 2);
+	    Rectangle rect = seekBar.getRect();
 
-		// 🔸 calibration offsets (approx 4–5% on both sides)
-		double leftOffset = 0.04; // skip a few px from start
-		double rightOffset = 0.96; // stop a bit before end
+	    int targetX = rect.x + (rect.width * percent / 100);
+	    int targetY = rect.y + (rect.height / 2);
 
-		double ratio = percent / 100.0;
-		// Apply left/right correction depending on where target is
-		if (ratio < leftOffset)
-			ratio = leftOffset;
-		if (ratio > rightOffset)
-			ratio = rightOffset;
+	    clickAtCoordinates(targetX, targetY);
 
-		int targetX = startX + (int) (width * ratio);
-
-		try {
-			PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-			Sequence drag = new Sequence(finger, 1);
-			drag.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX + 5, y));
-			drag.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-			drag.addAction(
-					finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), targetX, y));
-			drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-			driver.perform(Collections.singletonList(drag));
-			waitTime(1);
-		} catch (Exception ex) {
-			clickAtCoordinates(targetX, y);
-		}
+	    waitTime(1);
 	}
 
 }

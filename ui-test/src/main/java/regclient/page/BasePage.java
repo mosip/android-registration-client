@@ -216,13 +216,35 @@ public class BasePage {
 
 	protected void cropCaptureImage(WebElement element) {
 		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
+
 		Sequence sequence = new Sequence(finger1, 1)
 				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(),
-						getCenterOfElement(element.getLocation(), element.getSize()))) // ,43,1166
+						getCenterOfElement(element.getLocation(), element.getSize())))
 				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger1, Duration.ofMillis(200)))
-				.addAction(finger1.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 623, 261))
+
+				// move further inside to create small square
+				.addAction(finger1.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 260, 320))
+
 				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+		driver.perform(Collections.singletonList(sequence));
+	}
+
+	protected void cropCaptureImageEnglishFrench(WebElement element) {
+
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+
+		Sequence sequence = new Sequence(finger, 1)
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(),
+						getCenterOfElement(element.getLocation(), element.getSize())))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+				.addAction(new Pause(finger, Duration.ofMillis(200)))
+				.addAction(finger.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 623, 261)) // adjust
+																														// as
+																														// needed
+				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
 		driver.perform(Collections.singletonList(sequence));
 	}
 
@@ -633,14 +655,14 @@ public class BasePage {
 	}
 
 	protected void scrollToTop() {
-		int maxScrolls = 8;
+		int maxScrolls = 5;
 		for (int i = 0; i < maxScrolls; i++) {
 			swipeDown();
 		}
 	}
 
 	protected void scrollToBottom() {
-		int maxScrolls = 15;
+		int maxScrolls = 5;
 		for (int i = 0; i < maxScrolls; i++) {
 			swipeUp();
 		}
@@ -962,6 +984,45 @@ public class BasePage {
 		driver.perform(Collections.singletonList(swipe));
 	}
 
+	protected void scrollHorizontallyUntilVisible(By locator) {
+
+	    for (int i = 0; i < 4; i++) {
+	        try {
+	            if (driver.findElement(locator).isDisplayed()) {
+	                return;
+	            }
+	        } catch (Exception ignored) {
+	        }
+	        swipeLeft();
+	    }
+
+	    for (int i = 0; i < 4; i++) {
+	        try {
+	            if (driver.findElement(locator).isDisplayed()) {
+	                return;
+	            }
+	        } catch (Exception ignored) {
+	        }
+	        swipeRight();
+	    }
+
+	    throw new NoSuchElementException("Element not visible after horizontal scrolling");
+	}
+
+	public void scrollInsidePopup() {
+		Dimension size = driver.manage().window().getSize();
+		int startX = size.width / 2;
+		int startY = (int) (size.height * 0.72);
+		int endY = (int) (size.height * 0.52);
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		Sequence swipe = new Sequence(finger, 1);
+		swipe.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
+		swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+		swipe.addAction(finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), startX, endY));
+		swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+		driver.perform(Collections.singletonList(swipe));
+	}
+
 	protected void scrollHorizontallyUntilVisible(WebElement element) {
 		for (int i = 0; i < 4; i++) {
 			try {
@@ -984,20 +1045,6 @@ public class BasePage {
 		}
 
 		throw new NoSuchElementException("Element not visible after horizontal scrolling");
-	}
-
-	public void scrollInsidePopup() {
-		Dimension size = driver.manage().window().getSize();
-		int startX = size.width / 2;
-		int startY = (int) (size.height * 0.72);
-		int endY = (int) (size.height * 0.52);
-		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-		Sequence swipe = new Sequence(finger, 1);
-		swipe.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
-		swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-		swipe.addAction(finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), startX, endY));
-		swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-		driver.perform(Collections.singletonList(swipe));
 	}
 
 }

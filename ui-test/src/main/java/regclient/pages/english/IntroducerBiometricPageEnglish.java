@@ -162,6 +162,7 @@ public class IntroducerBiometricPageEnglish extends IntroducerBiometricPage {
 	}
 
 	public boolean isExceptionScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(exceptionScanTitle);
 	}
 

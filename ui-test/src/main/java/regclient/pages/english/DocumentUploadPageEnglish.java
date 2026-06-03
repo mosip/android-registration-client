@@ -71,7 +71,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 
 	public void cropCaptureImage() {
 		isElementDisplayed(captureImage);
-		cropCaptureImage(imageleftCorner);
+		cropCaptureImageEnglishFrench(imageleftCorner);
 	}
 
 	public boolean isPacketSizeDisplayed() {

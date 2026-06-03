@@ -124,7 +124,7 @@ import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.utils.TestDataReader;
 
-public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTest{
+public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify adult new registration using multiple Documents")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
 		FetchUiSpec.getUiSpec("newProcess");
@@ -818,6 +818,7 @@ public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTes
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
 		boolean uploadSuccess = false;
 
 		for (int i = 0; i < 3; i++) {
@@ -856,4 +857,3 @@ public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTes
 	}
 
 }
-

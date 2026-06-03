@@ -167,13 +167,23 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	}
 
 	public void clickClientStatusDropdown() {
-		scrollToHorizontalElement(clientStatusDropdown);
-		clickOnElement(clientStatusDropdown);
+
+		WebElement clientStatus = driver.findElement(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+						+ ".setAsHorizontalList()"
+						+ ".scrollIntoView(new UiSelector().description(\"Client Status\"))"));
+
+		clickOnElement(clientStatus);
 	}
 
 	public void clickServerStatusDropdown() {
-		scrollToHorizontalElement(serverStatusDropdown);
-		clickOnElement(serverStatusDropdown);
+
+		WebElement serverStatus = driver.findElement(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+						+ ".setAsHorizontalList()"
+						+ ".scrollIntoView(new UiSelector().description(\"Server Status\"))"));
+
+		clickOnElement(serverStatus);
 	}
 
 	public boolean isCreatedDropdownOptionDisplayed() {
@@ -205,7 +215,12 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 	}
 
 	public void selectApprovedValueDropdown() {
-		scrollToHorizontalElement(clientStatusDropdown);
+		WebElement clientStatus = driver.findElement(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+						+ ".setAsHorizontalList()"
+						+ ".scrollIntoView(new UiSelector().description(\"Client Status\"))"));
+
+		clickOnElement(clientStatus);
 		clickOnElement(approvedOption);
 	}
 
@@ -309,16 +324,6 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 					"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
 							+ ".setAsHorizontalList()" + ".scrollBackward()"));
 		}
-	}
-
-	private void scrollToHorizontalElement(WebElement element) {
-
-		String description = element.getAttribute("contentDescription");
-
-		driver.findElement(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
-						+ ".setAsHorizontalList()" + ".scrollIntoView(new UiSelector().description(\"" + description
-						+ "\"))"));
 	}
 
 }

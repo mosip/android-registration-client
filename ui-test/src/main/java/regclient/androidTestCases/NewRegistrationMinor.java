@@ -131,7 +131,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-		
+
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;
@@ -376,7 +376,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIntroducerIrisScan();
-				
+
 					introducerBiometricPage.clickOnScanButton();
 
 					assertTrue(introducerBiometricPage.isIrisScan(), "Verify if iris scan 1st attempt");
@@ -443,7 +443,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
-		
+
 		String Aid = previewPage.getAID();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
@@ -472,8 +472,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 			}
 		}
 
-		assertTrue(isAuthenticationPageDisplayed,
-				"Authentication page not displayed after retries");
+		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -534,7 +533,7 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		pendingApproval.selectRejectionReasonDropdown();
 
 		pendingApproval.clickOnRejectButton();
-		
+
 		pendingApproval.clickOnClosePopUpButton();
 
 		pendingApproval.clickOnCheckBox();
@@ -545,12 +544,12 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
-		    pendingApproval.clickOnAuthenticateButton();
+			pendingApproval.clickOnAuthenticateButton();
 
-		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-		        isPageDisplayed = true;
-		        break;
-		    }
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
@@ -581,12 +580,12 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 		boolean uploadSuccess = false;
 
 		for (int i = 0; i < 3; i++) {
-		    manageApplicationsPage.clickOnUploadButton();
+			manageApplicationsPage.clickOnUploadButton();
 
-		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-		        uploadSuccess = true;
-		        break;
-		    }
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
+				break;
+			}
 		}
 
 		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
