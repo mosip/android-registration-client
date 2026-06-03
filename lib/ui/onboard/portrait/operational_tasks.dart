@@ -12,7 +12,6 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
-import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
