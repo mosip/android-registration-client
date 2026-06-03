@@ -327,6 +327,7 @@ class SyncResponseServiceImpl implements SyncResponseService {
       return null;
     }
   }
+
 }
 
 SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

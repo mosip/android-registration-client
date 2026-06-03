@@ -36,7 +36,7 @@ class SyncProvider with ChangeNotifier {
   bool _kernelCertsSyncSuccess = false;
   bool isSyncInProgress = false;
   bool _isSyncAndUploadInProgress = false;
-  bool _isCentreRemapped = false;
+  bool _isCenterRemapped = false;
 
   Timer? _jobStatusPollingTimer;
   final Map<String, JobStatus> _jobStatuses = {};
@@ -47,7 +47,7 @@ class SyncProvider with ChangeNotifier {
   bool get isSyncing => _isSyncing;
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
   bool get isSyncAndUploadInProgress => _isSyncAndUploadInProgress;
-  bool get isCentreRemapped => _isCentreRemapped;
+  bool get isCenterRemapped => _isCenterRemapped;
   bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
@@ -69,16 +69,16 @@ class SyncProvider with ChangeNotifier {
   }
 
   void _onRemapDetected() {
-    _isCentreRemapped = true;
+    _isCenterRemapped = true;
     stopJobPolling();
     notifyListeners();
   }
 
-  Future<void> checkCentreRemapState() async {
+  Future<void> checkCenterRemapState() async {
     try {
       if (await _globalConfigService.getCenterRemapFlag()) _onRemapDetected();
     } catch (e) {
-      log('REMAP: checkCentreRemapState error: $e');
+      log('REMAP: checkCenterRemapState error: $e');
     }
   }
 

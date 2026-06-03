@@ -190,6 +190,29 @@
   "center_remap_sync": "ಕೇಂದ್ರ ರೀಮ್ಯಾಪ್ ಸಿಂಕ್.",
   "center_remap_notification": "ನಿಮ್ಮ ಯಂತ್ರವನ್ನು ಇನ್ನೊಂದು ಕೇಂದ್ರಕ್ಕೆ ಮರು-ಮ್ಯಾಪ್ ಮಾಡಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಬಾಕಿ ಇರುವ ಚಟುವಟಿಕೆಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.",
   "remap_operation_blocked": "ಕಾರ್ಯಾಚರಣೆ ಅನುಮತಿಸಲಾಗಿಲ್ಲ. ಯಂತ್ರವನ್ನು ಇನ್ನೊಂದು ಕೇಂದ್ರಕ್ಕೆ ಮರು-ಮ್ಯಾಪ್ ಮಾಡಲಾಗಿದೆ, ದಯವಿಟ್ಟು ಬಾಕಿ ಇರುವ ಚಟುವಟಿಕೆಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.",
+  "complete_pending_activities": "ಪೂರ್ಣಗೊಳಿಸಬೇಕಾದ ಬಾಕಿ ಚಟುವಟಿಕೆಗಳು",
+  "pending_activities_before_remap": "ಕೇಂದ್ರ ರೀಮ್ಯಾಪ್ ಸಿಂಕ್ರೊನೈಸೇಶನ್ ಪ್ರಾರಂಭಿಸುವ ಮೊದಲು ಈ ಕೆಳಗಿನ ಚಟುವಟಿಕೆಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಬೇಕು:",
+  "pending_packets_awaiting_approval": "ಅನುಮೋದನೆಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಪ್ಯಾಕೆಟ್‌ಗಳು",
+  "packets_require_supervisor_approval": "{count} ಪ್ಯಾಕೆಟ್‌ಗಳು ಮೇಲ್ವಿಚಾರಕರ ಅನುಮೋದನೆಗಾಗಿ ಕಾಯುತ್ತಿದ್ದು ಸಿಂಕ್ ಮಾಡುವ ಮೊದಲು ಅನುಮೋದಿಸಬೇಕು.",
+  "@packets_require_supervisor_approval": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pending_packets_awaiting_upload": "ಸಿಂಕ್ರೊನೈಸೇಶನ್ ಮತ್ತು ಅಪ್‌ಲೋಡ್‌ಗಾಗಿ ಬಾಕಿ ಪ್ಯಾಕೆಟ್‌ಗಳು",
+  "packets_queued_locally": "{count} ಪ್ಯಾಕೆಟ್‌ಗಳು ಸ್ಥಳೀಯ ಸಿಂಕ್ರೊನೈಸೇಶನ್‌ಗಾಗಿ ಬಾಕಿ ಇದ್ದು ಕೇಂದ್ರ ರೀಮ್ಯಾಪ್ ಸಿಂಕ್ರೊನೈಸೇಶನ್ ಪ್ರಾರಂಭಿಸುವ ಮೊದಲು ಸರ್ವರ್‌ಗೆ ಅಪ್‌ಲೋಡ್ ಮಾಡಬೇಕು.",
+  "@packets_queued_locally": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sync_button_auto_enabled": "ಎರಡೂ ಚಟುವಟಿಕೆಗಳು ಪೂರ್ಣಗೊಂಡ ನಂತರ ಸಿಂಕ್ ಬಟನ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸಕ್ರಿಯಗೊಳ್ಳುತ್ತದೆ.",
+  "okay_got_it": "ಸರಿ",
+  "center_remap_sync_subtitle": "ಕೇಂದ್ರ ರೀಮ್ಯಾಪ್ ಕ್ಲೀನ್‌ಅಪ್ ಪ್ರಾರಂಭಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
   "sync_activities": "ಸಿಂಕ್ ಮಾಡಿ. ಚಟುವಟಿಕೆಗಳು",
   "pending_approval": "ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾದಿರುವ",
   "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",

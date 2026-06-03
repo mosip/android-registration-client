@@ -80,15 +80,15 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    final bool centreRemapped =
-        context.watch<SyncProvider>().isCentreRemapped;
+    final bool centerRemapped =
+        context.watch<SyncProvider>().isCenterRemapped;
     return SingleChildScrollView(
       child: Column(
         children: [
           SizedBox(
             height: 26.h,
           ),
-          if (centreRemapped) _buildRemapBanner(context),
+          if (centerRemapped) _buildRemapBanner(context),
           isMobileSize
               ? Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),

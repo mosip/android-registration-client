@@ -191,6 +191,29 @@
   "center_remap_sync": "Center Remap Sync.",
   "center_remap_notification": "Your machine has been re-mapped to another center. Kindly complete the pending activities.",
   "remap_operation_blocked": "Operation not permitted. Machine has been re-mapped to another center, kindly complete the pending activities.",
+  "complete_pending_activities": "Pending Activities Requiring Completion",
+  "pending_activities_before_remap": "The following activities must be completed prior to initiating the Center Remap Synchronization:",
+  "pending_packets_awaiting_approval": "Packets Awaiting Approval",
+  "packets_require_supervisor_approval": "{count} packets are pending supervisor approval and must be approved before synchronization can proceed.",
+  "@packets_require_supervisor_approval": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pending_packets_awaiting_upload": "Packets Pending Synchronization and Upload",
+  "packets_queued_locally": "{count} packets remain pending local synchronization and must be uploaded to the server before the Center Remap Synchronization can be initiated.",
+  "@packets_queued_locally": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sync_button_auto_enabled": "The sync button will be enabled automatically once both activities are completed.",
+  "okay_got_it": "OKAY",
+  "center_remap_sync_subtitle": "Tap to initiate center remap cleanup",
   "sync_activities": "Sync. Activities",
   "pending_approval": "Pending Approval",
   "dashboard": "Dashboard",
@@ -304,7 +327,7 @@
   "logout_success": "You have been successfully logged out!",
   "logout_failure": "Something went wrong, please try again after some time",
   "go_to_home": "Go To Home",
-  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{This device has not been onboarded yet. Please reach out to your administrator for assistance!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} REG_LOGIN_LOCKED{Maximum login attempt limit reached. Try again later!} KER_SYN_AUTH_001{Unable to get Authentication Token!} PAK_APPRVL_MAX_TIME{Action required: Pending registered packets have exceeded the allowed approval time. Please clear the backlog to continue.} PAK_UPLOAD_MAX_TIME{Action required: Upload or export the packets to the server before proceeding with registration.} PAK_UPLOAD_MAX_COUNT{Action required: Packet limit reached. Please export or upload existing packets before creating new registrations.} PAK_DISK_SPACE_LOW{Minimum required space is not available to create the packet.} REG_PKT_APPRVL_CNT_EXCEED{Maximum number of registration packets pending approval on client reached. Please approve or reject packets before proceeding with this registration.} OPT_TO_REG_TIME_SYNC_EXCEED{Time since last sync exceeded maximum limit. Please sync from server before proceeding with this registration.} OPT_TO_REG_OUTSIDE_LOCATION{Your client machine location is outside the registration center. Please note that registration can be done only from within the registration centre} other{'Some error occurred!'}}",
+  "errors": "{messages, select, REG_TRY_AGAIN{Login Failed. Try Again!} REG_INVALID_REQUEST{Password incorrect!} REG_MACHINE_NOT_FOUND{This device has not been onboarded yet. Please reach out to your administrator for assistance!} REG_NETWORK_ERROR{Login failed. Check network connection!} REG_CRED_EXPIRED{Credentials not found or are expired. Please try online login!} REG_MACHINE_INACTIVE{Machine is not active!} REG_CENTER_INACTIVE{Center is not active!} REG_LOGIN_LOCKED{Maximum login attempt limit reached. Try again later!} KER_SYN_AUTH_001{Unable to get Authentication Token!} PAK_APPRVL_MAX_TIME{Action required: Pending registered packets have exceeded the allowed approval time. Please clear the backlog to continue.} PAK_UPLOAD_MAX_TIME{Action required: Upload or export the packets to the server before proceeding with registration.} PAK_UPLOAD_MAX_COUNT{Action required: Packet limit reached. Please export or upload existing packets before creating new registrations.} PAK_DISK_SPACE_LOW{Minimum required space is not available to create the packet.} REG_PKT_APPRVL_CNT_EXCEED{Maximum number of registration packets pending approval on client reached. Please approve or reject packets before proceeding with this registration.} OPT_TO_REG_TIME_SYNC_EXCEED{Time since last sync exceeded maximum limit. Please sync from server before proceeding with this registration.} OPT_TO_REG_OUTSIDE_LOCATION{Your client machine location is outside the registration center. Please note that registration can be done only from within the registration center} other{'Some error occurred!'}}",
   "@errors": {
     "description": "Error messages",
     "placeholders": {

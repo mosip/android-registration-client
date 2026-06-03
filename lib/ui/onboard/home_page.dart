@@ -29,6 +29,7 @@ import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biome
 // import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
+import 'package:registration_client/ui/widgets/remap_pending_activities_dialog.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -86,12 +87,16 @@ class _HomePageState extends State<HomePage> {
       _showInSnackBar(appLocalizations.network_error);
       return;
     }
-    if (syncProvider.isCentreRemapped) {
+    if (syncProvider.isCenterRemapped) {
       _showInSnackBar(appLocalizations.remap_operation_blocked);
       return;
     }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
+    if (syncProvider.isCenterRemapped) {
+      _showInSnackBar(appLocalizations.remap_operation_blocked);
+      return;
+    }
     syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
     syncProvider.isSyncAndUploadInProgress = false;
@@ -102,6 +107,24 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.getAudit("REG-SYNC-002", "REG-MOD-102");
     await globalProvider.initializeLanguageDataList(true);
     await globalProvider.initializeLocationHierarchyMap();
+  }
+
+  void onCentreRemapSync(BuildContext context) async {
+    final pendingUpload =
+        await registrationTaskProvider.getPacketUploadedPendingDetails();
+    if (!mounted) return;
+    final pendingApproval =
+        context.read<ApprovePacketsProvider>().totalCreatedPackets;
+
+    if (pendingUpload > 0 || pendingApproval > 0) {
+      showDialog(
+        context: context,
+        builder: (_) => RemapPendingActivitiesDialog(
+          pendingUploadCount: pendingUpload,
+          pendingApprovalCount: pendingApproval,
+        ),
+      );
+    }
   }
 
   String _remapBlockedMessage(String? flow) {
@@ -129,7 +152,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    if (syncProvider.isCentreRemapped) {
+    if (syncProvider.isCenterRemapped) {
       _showInSnackBar(_remapBlockedMessage(process.flow));
       return Container();
     }
@@ -250,7 +273,7 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
-          if (syncProvider.isCentreRemapped) {
+          if (syncProvider.isCenterRemapped) {
             _showInSnackBar(appLocalizations.remap_operation_blocked);
             return;
           }
@@ -290,14 +313,17 @@ class _HomePageState extends State<HomePage> {
       //   "onTap": () {},
       //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       // },
-      // {
-      //   "icon": SvgPicture.asset(
-      //     "assets/svg/Uploading Local - Registration Data.svg",
-      //   ),
-      //   "title": appLocalizations.center_remap_sync,
-      //   "onTap": () {},
-      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      // },
+      if (context.watch<SyncProvider>().isCenterRemapped)
+        {
+          "icon": const Icon(
+            Icons.location_on,
+            color: Color(0xff214FBF),
+            size: 20,
+          ),
+          "title": appLocalizations.center_remap_sync,
+          "onTap": onCentreRemapSync,
+          "subtitle": appLocalizations.center_remap_sync_subtitle,
+        },
       // {
       //   "icon": SvgPicture.asset(
       //     "assets/svg/Uploading Local - Registration Data.svg",

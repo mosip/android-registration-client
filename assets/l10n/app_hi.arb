@@ -190,6 +190,29 @@
   "center_remap_sync": "केंद्र रीमैप सिंक.",
   "center_remap_notification": "आपकी मशीन को किसी अन्य केंद्र पर पुनः मैप किया गया है। कृपया लंबित गतिविधियाँ पूरी करें।",
   "remap_operation_blocked": "ऑपरेशन की अनुमति नहीं है। मशीन को किसी अन्य केंद्र पर पुनः मैप किया गया है, कृपया लंबित गतिविधियाँ पूरी करें।",
+  "complete_pending_activities": "पूर्णता की आवश्यकता वाली लंबित गतिविधियाँ",
+  "pending_activities_before_remap": "सेंटर रीमैप सिंक्रनाइज़ेशन शुरू करने से पहले निम्नलिखित गतिविधियाँ पूरी की जानी चाहिए:",
+  "pending_packets_awaiting_approval": "अनुमोदन की प्रतीक्षा में पैकेट",
+  "packets_require_supervisor_approval": "{count} पैकेट पर्यवेक्षक की अनुमोदन की प्रतीक्षा में हैं और सिंक्रनाइज़ेशन से पहले स्वीकृत होने चाहिए।",
+  "@packets_require_supervisor_approval": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pending_packets_awaiting_upload": "सिंक्रनाइज़ेशन और अपलोड के लिए लंबित पैकेट",
+  "packets_queued_locally": "{count} पैकेट स्थानीय सिंक्रनाइज़ेशन के लिए लंबित हैं और सेंटर रीमैप सिंक्रनाइज़ेशन शुरू करने से पहले सर्वर पर अपलोड होने चाहिए।",
+  "@packets_queued_locally": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sync_button_auto_enabled": "दोनों गतिविधियाँ पूरी होते ही सिंक बटन स्वचालित रूप से सक्षम हो जाएगा।",
+  "okay_got_it": "ठीक है",
+  "center_remap_sync_subtitle": "सेंटर रीमैप सफाई शुरू करने के लिए टैप करें",
   "sync_activities": "साथ-साथ करना। गतिविधियाँ",
   "pending_approval": "लंबित अनुमोदन",
   "dashboard": "डैशबोर्ड",

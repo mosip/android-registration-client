@@ -42,7 +42,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
   int selectedTab = 2;
 
   changeTab(int index) {
-    if (index == 1 && context.read<SyncProvider>().isCentreRemapped) {
+    if (index == 1 && context.read<SyncProvider>().isCenterRemapped) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(AppLocalizations.of(context)!.remap_operation_blocked),
       ));
