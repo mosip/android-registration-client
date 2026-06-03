@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
@@ -48,7 +49,9 @@ class _OperationalTasksState extends State<OperationalTasks> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 12.h),
+        SizedBox(
+          height: 12.h,
+        ),
         _getTasks(),
       ],
     );
