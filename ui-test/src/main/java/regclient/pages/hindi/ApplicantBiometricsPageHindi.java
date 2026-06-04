@@ -8,7 +8,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 
@@ -108,7 +107,7 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 
 	public void enterCommentsInTextBox(String comments) {
 		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
@@ -119,14 +118,14 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 
 	public void clickOnExceptionTypePermanentButton() {
 		if (!isElementDisplayedOnScreen(permanentButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(permanentButton);
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(temporaryButton);
 	}
@@ -261,7 +260,7 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 
 	public boolean isExceptionCountDisplayed() {
 		if (!isElementDisplayedOnScreen(exceptionCount)) {
-			swipeOrScroll();
+			swipeUp();
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
@@ -270,5 +269,17 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
 		return new BiometricDetailsPageHindi(driver);
+	}
+
+	@Override
+	public int getThresholdScore() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int irisAttemptLeft() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

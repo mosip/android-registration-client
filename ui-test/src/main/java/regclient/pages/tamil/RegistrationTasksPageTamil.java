@@ -9,7 +9,6 @@ import regclient.page.OperationalTaskPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.pages.english.SelectLanguagePageEnglish;
 
 public class RegistrationTasksPageTamil extends RegistrationTasksPage {
 
@@ -191,5 +190,11 @@ public class RegistrationTasksPageTamil extends RegistrationTasksPage {
 	        waitTime(5);
 	    }
 	    throw new RuntimeException("Sync popup not displayed");
+	}
+
+	@Override
+	public boolean isClientVersionDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -119,7 +119,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					waitTime(3);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-						swipeOrScroll();
+						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
@@ -132,7 +132,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -148,7 +148,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("")) {
 					if (!isElementDisplayed(maleButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(maleButton);
 					} else
 						clickOnElement(maleButton);
@@ -203,7 +203,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -456,7 +456,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -506,7 +506,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -578,7 +578,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -656,7 +656,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					waitTime(3);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-						swipeOrScroll();
+						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
@@ -669,7 +669,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -703,7 +703,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 			                    System.out.println("⏳ Postal options not visible yet, retrying...");
 			                }
 			            } else {
-			                swipeOrScroll();
+			                swipeUp();
 			            }
 			        } catch (org.openqa.selenium.StaleElementReferenceException e) {
 			            System.out.println("🔄 Postal element went stale, retrying...");
@@ -756,5 +756,23 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 
 	public void clickOnScanButton() {
 		clickOnElement(scanButton);
+	}
+
+	@Override
+	public boolean isApplicationIdDoesNotExistMessageDisplay() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void fetchInvalidPreregApplicationId(String prid) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clickOnOkayButton() {
+		// TODO Auto-generated method stub
+		
 	}
 }

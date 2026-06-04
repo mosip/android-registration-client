@@ -250,4 +250,52 @@ public class SettingsPageHindi extends SettingsPage{
 		click(syncButton);
 	}
 
+	@Override
+	public boolean isMasterDataToastMessageDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isKeyLabelDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isServerValueLabelDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isLocalValueLabelDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isConfigListPresent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isLocalValueBoxDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

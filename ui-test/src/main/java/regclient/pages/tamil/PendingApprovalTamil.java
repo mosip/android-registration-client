@@ -203,7 +203,7 @@ public class PendingApprovalTamil extends PendingApproval {
 	}
 
 	public boolean isPendingApprovalBiometricsInformationDisplayed() {
-		swipeOrScroll();
+		swipeUp();
 		return isElementDisplayed(pendingApprovalBiometricsInformation);
 	}
 

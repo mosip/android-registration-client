@@ -80,7 +80,7 @@ public class DocumentUploadPageKannada extends DocumentUploadPage{
 					clickAndsendKeysToTextBox(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")),"1234567890");
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					}
 					clickOnElement(PopUpCloseButton);
@@ -98,7 +98,7 @@ public class DocumentUploadPageKannada extends DocumentUploadPage{
 				}else {
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					}
 					clickOnElement(PopUpCloseButton);
@@ -118,7 +118,7 @@ public class DocumentUploadPageKannada extends DocumentUploadPage{
 				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					}
 					clickOnElement(PopUpCloseButton);
@@ -144,7 +144,7 @@ public class DocumentUploadPageKannada extends DocumentUploadPage{
 			if(type.equals("all") && !id.equals("proofOfException") && !id.equals("proofOfRelationship")) {
 				clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 				if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-					swipeOrScroll();
+					swipeUp();
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 				}
 				clickOnElement(PopUpCloseButton);
@@ -162,7 +162,7 @@ public class DocumentUploadPageKannada extends DocumentUploadPage{
 				if(age.equals("minor") ||  age.equals("infant") ||  age.equals("currentCalenderDate")) {
 					clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					if(!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""+FetchUiSpec.getValueUsingId(id)+"\")]/parent::android.view.View/parent::android.view.View")));
 					}
 					clickOnElement(PopUpCloseButton);
@@ -180,6 +180,12 @@ public class DocumentUploadPageKannada extends DocumentUploadPage{
 			}
 
 		}
+	}
+
+	@Override
+	public boolean isPacketSizeDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

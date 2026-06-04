@@ -193,4 +193,10 @@ public class RegistrationTasksPageHindi extends RegistrationTasksPage {
 	    throw new RuntimeException("Sync popup not displayed");
 	}
 
+	@Override
+	public boolean isClientVersionDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

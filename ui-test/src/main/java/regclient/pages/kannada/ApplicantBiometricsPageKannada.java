@@ -108,7 +108,7 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	
 	public  void enterCommentsInTextBox(String comments) {
 		if(!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox,comments);
 	}
@@ -119,14 +119,14 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
 	public void clickOnExceptionTypePermanentButton() {
 		if(!isElementDisplayedOnScreen(permanentButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(permanentButton);
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if(!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(temporaryButton);	
 	}
@@ -257,7 +257,7 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
 	public  boolean isExceptionCountDisplayed() {
 		if(!isElementDisplayedOnScreen(exceptionCount)) {
-			swipeOrScroll();
+			swipeUp();
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
@@ -266,5 +266,17 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
 		return new BiometricDetailsPageKannada(driver);
+	}
+
+	@Override
+	public int getThresholdScore() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int irisAttemptLeft() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

@@ -69,7 +69,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 
 	public boolean isApplicationUploadTitleDisplayed() {
 		if (!isElementDisplayedOnScreen(applicationUploadTitle)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		return isElementDisplayed(applicationUploadTitle);
 	}
@@ -80,7 +80,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 
 	public boolean isPendingApprovalTitleDisplayed() {
 		if (!isElementDisplayedOnScreen(pendingApprovalTitle)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
 	}

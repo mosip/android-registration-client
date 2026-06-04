@@ -11,8 +11,6 @@ import regclient.api.FetchUiSpec;
 import regclient.page.AuthenticationPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.PreviewPage;
-import regclient.pages.english.AuthenticationPageEnglish;
-import regclient.pages.english.DemographicDetailsPageEnglish;
 
 public class PreviewPageHindi extends PreviewPage {
 

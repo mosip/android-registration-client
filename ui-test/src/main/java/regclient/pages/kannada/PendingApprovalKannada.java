@@ -203,7 +203,7 @@ public class PendingApprovalKannada extends PendingApproval {
 	}
 
 	public boolean isPendingApprovalBiometricsInformationDisplayed() {
-		swipeOrScroll();
+		swipeUp();
 		return isElementDisplayed(pendingApprovalBiometricsInformation);
 	}
 

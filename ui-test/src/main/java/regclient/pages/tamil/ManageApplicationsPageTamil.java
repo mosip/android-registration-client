@@ -268,4 +268,22 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage{
 				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");
 		click(checkbox);
 	}
+
+	@Override
+	public void clickOnClearFilterButton() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isClientStatusDropdownDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void scrollTillDisplayingApplicationCountVisible() {
+		// TODO Auto-generated method stub
+		
+	}
 }

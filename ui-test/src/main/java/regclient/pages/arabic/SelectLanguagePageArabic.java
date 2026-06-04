@@ -19,7 +19,7 @@ public class SelectLanguagePageArabic extends SelectLanguagePage {
 	@AndroidFindBy(accessibility = "français")
 	private WebElement frenchLanguageButton;
 
-	@AndroidFindBy(accessibility = "عربي")
+	@AndroidFindBy(accessibility = "Arabic")
 	private WebElement arabicLanguageButton;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"ಕನ್ನಡ\"])[1]")
@@ -81,6 +81,7 @@ public class SelectLanguagePageArabic extends SelectLanguagePage {
 	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {
+		scrollInsidePopup();
 		switch (notificationLanguage) {
 		case "eng":
 			clickOnElement(englishLanguageNotificationButton);
