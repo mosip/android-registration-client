@@ -17,6 +17,8 @@ import 'package:registration_client/platform_spi/global_config_service.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
 
+enum RemapSyncStatus { idle, inProgress, success, failed }
+
 class SyncProvider with ChangeNotifier {
   final SyncResponseService syncResponseService = SyncResponseService();
   final GlobalConfigService _globalConfigService = GlobalConfigService();
@@ -38,6 +40,12 @@ class SyncProvider with ChangeNotifier {
   bool _isSyncAndUploadInProgress = false;
   bool _isCenterRemapped = false;
 
+  RemapSyncStatus _step1Status = RemapSyncStatus.idle;
+  RemapSyncStatus _step2Status = RemapSyncStatus.idle;
+  RemapSyncStatus _step3Status = RemapSyncStatus.idle;
+  RemapSyncStatus _step4Status = RemapSyncStatus.idle;
+  DateTime? _remapCompletedAt;
+
   Timer? _jobStatusPollingTimer;
   final Map<String, JobStatus> _jobStatuses = {};
 
@@ -48,6 +56,28 @@ class SyncProvider with ChangeNotifier {
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
   bool get isSyncAndUploadInProgress => _isSyncAndUploadInProgress;
   bool get isCenterRemapped => _isCenterRemapped;
+  RemapSyncStatus get step1Status => _step1Status;
+  RemapSyncStatus get step2Status => _step2Status;
+  RemapSyncStatus get step3Status => _step3Status;
+  RemapSyncStatus get step4Status => _step4Status;
+
+  /// Derived overall status for the remap sync screen.
+  RemapSyncStatus get remapSyncStatus {
+    final steps = [_step1Status, _step2Status, _step3Status, _step4Status];
+    if (steps.every((s) => s == RemapSyncStatus.idle)) return RemapSyncStatus.idle;
+    if (_step4Status == RemapSyncStatus.success) return RemapSyncStatus.success;
+    if (steps.any((s) => s == RemapSyncStatus.failed)) return RemapSyncStatus.failed;
+    return RemapSyncStatus.inProgress;
+  }
+
+  /// Progress percentage (0–100) based on completed steps.
+  int get remapSyncProgress {
+    final steps = [_step1Status, _step2Status, _step3Status, _step4Status];
+    return steps.where((s) => s == RemapSyncStatus.success).length * 25;
+  }
+
+  /// Timestamp recorded when all four steps finish successfully.
+  DateTime? get remapSyncCompletedAt => _remapCompletedAt;
   bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
@@ -79,6 +109,46 @@ class SyncProvider with ChangeNotifier {
       if (await _globalConfigService.getCenterRemapFlag()) _onRemapDetected();
     } catch (e) {
       log('REMAP: checkCenterRemapState error: $e');
+    }
+  }
+
+  void resetRemapSyncState() {
+    _step1Status = RemapSyncStatus.idle;
+    _step2Status = RemapSyncStatus.idle;
+    _step3Status = RemapSyncStatus.idle;
+    _step4Status = RemapSyncStatus.idle;
+    _remapCompletedAt = null;
+    notifyListeners();
+  }
+
+  /// Drives the four-step center remap cleanup via the platform channel.
+  /// Each step's status is updated individually so the UI can show per-step progress.
+  /// Returns [true] when all four steps succeeded.
+  Future<bool> performCenterRemapSync() async {
+    resetRemapSyncState();
+    for (int step = 1; step <= 4; step++) {
+      _setStepStatus(step, RemapSyncStatus.inProgress);
+      notifyListeners();
+
+      final bool ok = await syncResponseService.executeRemapStep(step);
+
+      _setStepStatus(step, ok ? RemapSyncStatus.success : RemapSyncStatus.failed);
+      notifyListeners();
+
+      if (!ok) return false;
+    }
+    _isCenterRemapped = false;
+    _remapCompletedAt = DateTime.now();
+    notifyListeners();
+    return true;
+  }
+
+  void _setStepStatus(int step, RemapSyncStatus status) {
+    switch (step) {
+      case 1: _step1Status = status; break;
+      case 2: _step2Status = status; break;
+      case 3: _step3Status = status; break;
+      case 4: _step4Status = status; break;
     }
   }
 

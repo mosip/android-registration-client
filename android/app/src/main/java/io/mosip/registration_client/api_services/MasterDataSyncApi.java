@@ -67,6 +67,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.CenterRemapService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -115,6 +116,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     PreRegistrationDataSyncService preRegistrationDataSyncService;
     LocalConfigService localConfigService;
     BioSdkProviderFactory bioSdkProviderFactory;
+    CenterRemapService centerRemapService;
     Context context;
     private String regCenterId;
 
@@ -156,7 +158,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              FileSignatureDao fileSignatureDao,
                              PreRegistrationDataSyncService preRegistrationDataSyncService,
                              LocalConfigService localConfigService,
-                             BioSdkProviderFactory bioSdkProviderFactory) {
+                             BioSdkProviderFactory bioSdkProviderFactory,
+                             CenterRemapService centerRemapService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -184,6 +187,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.preRegistrationDataSyncService = preRegistrationDataSyncService;
         this.localConfigService = localConfigService;
         this.bioSdkProviderFactory = bioSdkProviderFactory;
+        this.centerRemapService = centerRemapService;
     }
 
     public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob, BinaryMessenger flutterBinaryMessenger) {
@@ -868,6 +872,19 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             restartHandler.removeCallbacks(pendingRestartPrompt);
             pendingRestartPrompt = null;
         }
+    }
+
+    @Override
+    public void executeRemapStep(@NonNull Long step, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        new Thread(() -> {
+            try {
+                centerRemapService.handleRemapStep(step.intValue());
+                result.success(true);
+            } catch (Exception e) {
+                Log.e(TAG, "executeRemapStep failed for step " + step, e);
+                result.error(e);
+            }
+        }).start();
     }
 
     private static final String SYNC_RESTART_CHANNEL = "io.mosip.registration_client/sync_restart";

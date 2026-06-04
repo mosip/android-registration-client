@@ -328,6 +328,18 @@ class SyncResponseServiceImpl implements SyncResponseService {
     }
   }
 
+  @override
+  Future<bool> executeRemapStep(int step) async {
+    try {
+      return await SyncApi().executeRemapStep(step);
+    } on PlatformException catch (e) {
+      debugPrint('executeRemapStep PlatformException: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('executeRemapStep failed: $e');
+      return false;
+    }
+  }
 }
 
 SyncResponseService getSyncResponseServiceImpl() => SyncResponseServiceImpl();

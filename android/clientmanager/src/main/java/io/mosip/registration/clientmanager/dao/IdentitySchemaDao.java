@@ -18,4 +18,6 @@ public interface IdentitySchemaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertIdentitySchema(IdentitySchema identitySchema);
 
+    @Query("DELETE FROM identity_schema")
+    void deleteAll();
 }

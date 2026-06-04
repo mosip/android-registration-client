@@ -503,4 +503,28 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         errorList.add(errorResponseDto);
         responseDTO.setErrorResponseDTOs(errorList);
     }
+
+    @Override
+    public void deleteAllPreRegRecords() {
+        Log.i(TAG, "Center remap: force-deleting all pre-registration records");
+        List<PreRegistrationList> all = preRegistrationDao.findAll();
+        if (all == null || all.isEmpty()) {
+            Log.i(TAG, "No pre-registration records found to delete");
+            return;
+        }
+        for (PreRegistrationList record : all) {
+            if (record.getPacketPath() != null) {
+                try {
+                    File packetFile = FileUtils.getFile(record.getPacketPath());
+                    if (packetFile.exists()) {
+                        packetFile.delete();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error deleting pre-reg file for id " + record.getPreregId() + ": " + e.getMessage());
+                }
+            }
+        }
+        preRegistrationDao.deleteAll(all);
+        Log.i(TAG, "Center remap: deleted " + all.size() + " pre-registration record(s)");
+    }
 }

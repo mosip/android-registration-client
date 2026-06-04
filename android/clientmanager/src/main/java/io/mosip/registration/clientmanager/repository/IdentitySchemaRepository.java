@@ -391,4 +391,8 @@ public class IdentitySchemaRepository {
         requiredDto.setExpr(expr);
         return requiredDto;
     }
+
+    public void deleteAll() {
+        identitySchemaDao.deleteAll();
+    }
 }

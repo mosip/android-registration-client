@@ -29,6 +29,7 @@ import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biome
 // import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
+import 'package:registration_client/ui/widgets/center_remap_sync_screen.dart';
 import 'package:registration_client/ui/widgets/remap_pending_activities_dialog.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -124,7 +125,16 @@ class _HomePageState extends State<HomePage> {
           pendingApprovalCount: pendingApproval,
         ),
       );
+      return;
     }
+
+    if (!mounted) return;
+    await globalProvider.getAudit("REG-REMAP-001", "REG-MOD-106");
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CenterRemapSyncScreen()),
+    );
   }
 
   String _remapBlockedMessage(String? flow) {

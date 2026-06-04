@@ -349,4 +349,22 @@ public class GlobalParamRepository {
         }
     }
 
+    /**
+     * Returns a global param value without the active-status filter applied by {@link #getGlobalParamValue}.
+     * Used during center remap to read flags that may have status=0.
+     */
+    public String getGlobalParamValueUnfiltered(String id) {
+        return globalParamDao.getGlobalParamValueById(id);
+    }
+
+    /**
+     * Persists a global param value and refreshes the in-memory cache.
+     * Uses INSERT OR REPLACE so this serves as both an insert and an update.
+     */
+    public void saveGlobalParam(String key, String value) {
+        GlobalParam param = new GlobalParam(key, key, value, true);
+        globalParamDao.insertGlobalParam(param);
+        globalParamMap.put(key, value);
+    }
+
 }
