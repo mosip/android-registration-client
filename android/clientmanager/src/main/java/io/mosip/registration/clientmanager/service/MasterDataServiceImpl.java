@@ -297,65 +297,63 @@ public class MasterDataServiceImpl implements MasterDataService {
         call.enqueue(new Callback<ResponseWrapper<ClientSettingDto>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<ClientSettingDto>> call, Response<ResponseWrapper<ClientSettingDto>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if (error == null) {
-                        saveMasterData(response.body().getResponse(), isManualSync);
-                        if (regCenterId != null) {
-                            machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
-                        }
-                        if (centerMachineDto == null) {
-                            if (retryNo < master_data_recursive_sync_max_retry) {
-                                Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
-                                //rerunning master data to sync completed master data
-                                syncMasterData(onFinish, retryNo + 1, isManualSync, jobId);
-                            } else {
-                                result = MASTER_DATA_SYNC_FAILED;
-                                if (isManualSync) {
-                                    Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
-                                }
-                                onFinish.run();
-                            }
-                        } else {
-                            result = "";
-                            if (isManualSync) {
-                                Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
-                            }
-                            onFinish.run();
-                        }
-                        try {
-                            logLastSyncCompletionDateTime(jobId);
-                        } catch (Exception e) {
-                            Log.e(TAG, "Failed to store master data sync last sync time", e);
-                        }
+                if (!response.isSuccessful()) {
+                    result = MASTER_DATA_SYNC_FAILED;
+                    if (isManualSync)
+                        Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    onFinish.run();
+                    return;
+                }
+
+                ServiceError error = SyncRestUtil.getServiceError(response.body());
+                if (error != null) {
+                    if (RegistrationConstants.CENTER_REMAP_ERROR_CODE.equals(error.getErrorCode())) {
+                        globalParamRepository.saveGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED, "true");
+                        result = RegistrationConstants.CENTER_REMAP_ERROR_CODE;
+                        onFinish.run();
+                        return;
+                    }
+                    result = MASTER_DATA_SYNC_FAILED;
+                    if (isManualSync)
+                        Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    onFinish.run();
+                    return;
+                }
+
+                saveMasterData(response.body().getResponse(), isManualSync);
+                if (regCenterId != null)
+                    machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
+
+                if (centerMachineDto == null) {
+                    if (retryNo < master_data_recursive_sync_max_retry) {
+                        Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
+                        syncMasterData(onFinish, retryNo + 1, isManualSync, jobId);
                     } else {
-                        if (RegistrationConstants.CENTRE_REMAP_ERROR_CODE.equals(error.getErrorCode())) {
-                            globalParamRepository.saveGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED, "true");
-                            result = RegistrationConstants.CENTRE_REMAP_ERROR_CODE;
-                            onFinish.run();
-                            return;
-                        }
                         result = MASTER_DATA_SYNC_FAILED;
-                        if (isManualSync) {
-                            Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                        if (isManualSync)
+                            Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
                         onFinish.run();
                     }
-                } else {
-                    result = MASTER_DATA_SYNC_FAILED;
-                    if (isManualSync) {
-                        Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
-                    }
-                    onFinish.run();
+                    return;
+                }
+
+                result = "";
+                if (isManualSync)
+                    Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
+                onFinish.run();
+
+                try {
+                    logLastSyncCompletionDateTime(jobId);
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to store master data sync last sync time", e);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
                 result = MASTER_DATA_SYNC_FAILED;
-                if (isManualSync) {
+                if (isManualSync)
                     Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
-                }
                 onFinish.run();
             }
         });
