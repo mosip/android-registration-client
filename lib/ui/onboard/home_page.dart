@@ -66,6 +66,7 @@ class _HomePageState extends State<HomePage> {
         Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await syncProvider.checkCenterRemapState();
       // Check GPS status to update the indicator in profile
       await connectivityProvider.checkGPSStatus();
       // Fetch location if GPS is enabled
