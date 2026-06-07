@@ -80,6 +80,8 @@ public class TestRunner {
 			XmlClass exportPacket = new XmlClass("regclient.androidTestCases.ExportPacket");
 			XmlClass newRegistrationAdultUploadMultipleDoccuments = new XmlClass(
 					"regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments");
+			XmlClass createPacketWithoutNetwork = new XmlClass(
+					"regclient.androidTestCases.CreatePacketWithoutNetwork");
 
 			List<XmlClass> classes = new ArrayList<>();
 			String[] Scenarionames = ArcConfigManager.gettestcases().split(",");
@@ -148,6 +150,9 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDoccuments"))
 					classes.add(newRegistrationAdultUploadMultipleDoccuments);
+				
+				if (Scenarioname.equalsIgnoreCase("createPacketWithoutNetwork"))
+					classes.add(createPacketWithoutNetwork);
 
 			}
 			XmlTest test = new XmlTest(suite);

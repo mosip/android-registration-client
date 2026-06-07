@@ -69,5 +69,11 @@ public abstract class ManageApplicationsPage extends BasePage {
 	public abstract boolean isNoNetworkFoundDisplayed();
 
 	public abstract void clickCheckboxByAID(String aid);
+	
+	public abstract void clickOnClearFilterButton();
+	
+	public abstract boolean isClientStatusDropdownDisplayed();
+	
+	public abstract void scrollTillDisplayingApplicationCountVisible();
 
 }
