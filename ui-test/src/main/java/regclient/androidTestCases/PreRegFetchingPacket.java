@@ -259,7 +259,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				assertTrue(demographicPage.isPreRegFetchDataTextBoxDisplay(),
 						"Verify if fetchdata button is displayed");
 
-				//These commentouts are Required for Future purpose
+				//These commented-out code are Required for Future purpose
 //				demographicPage.fetchInvalidPreregApplicationId("rtyuio12637393");
 //				
 //				assertTrue(demographicPage.isApplicationIdDoesNotExistMessageDisplay(),

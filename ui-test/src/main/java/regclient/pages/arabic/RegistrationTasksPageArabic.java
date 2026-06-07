@@ -200,8 +200,15 @@ public class RegistrationTasksPageArabic extends RegistrationTasksPage {
 	}
 
 	public boolean isClientVersionDisplayed() {
-		String versionText = clientVersionText.getAttribute("contentDescription");
-		return versionText.contains("Client Version");
+		try {
+			if (!isElementDisplayed(clientVersionText)) {
+				return false;
+			}
+			String versionText = clientVersionText.getAttribute("contentDescription");
+			return versionText != null && versionText.contains("Client Version");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }
