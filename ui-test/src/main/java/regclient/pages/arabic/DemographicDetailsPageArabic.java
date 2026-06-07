@@ -799,7 +799,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 	public void fetchInvalidPreregApplicationId(String prid) {
 		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
-		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
+		By appIdTextbox = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(0)");
 
 		boolean isDisplayed = isElementDisplayed(appIdLabel);
 		assertTrue(isDisplayed, "Verify if Application ID label is displayed");

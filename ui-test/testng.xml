@@ -103,6 +103,11 @@
 					<include name="minorBiometricCorrection" />
 				</methods>
 			</class>
+			<class name="regclient.androidTestCases.CreatePacketWithoutNetwork">
+				<methods>
+					<include name="newRegistrationWithoutNetwork" />
+				</methods>
+			</class>
 		</classes>
 	</test>
 	<listeners>

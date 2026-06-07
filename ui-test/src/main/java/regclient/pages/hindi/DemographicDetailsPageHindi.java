@@ -50,6 +50,12 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage {
 	@AndroidFindBy(accessibility = "Postal/ بريدي")
 	private WebElement postalHeader;
 
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Application ID does not exist')]")
+	private WebElement applicationIdDoesNotExistMsg;
+
+	@AndroidFindBy(accessibility = "OKAY")
+	private WebElement okayButton;
+
 	public DemographicDetailsPageHindi(AppiumDriver driver) {
 		super(driver);
 	}
@@ -759,21 +765,24 @@ public class DemographicDetailsPageHindi extends DemographicDetailsPage {
 		clickOnElement(scanButton);
 	}
 
-	@Override
-	public boolean isApplicationIdDoesNotExistMessageDisplay() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void fetchInvalidPreregApplicationId(String prid) {
-		// TODO Auto-generated method stub
-		
+		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
+		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
+		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
+
+		boolean isDisplayed = isElementDisplayed(appIdLabel);
+		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
+
+		applicationIdTextBox = findElementWithRetry(appIdTextbox);
+		clickAndsendKeysToTextBox(applicationIdTextBox, (prid));
+		clickOnElement(fetchDataButton);
 	}
 
-	@Override
+	public boolean isApplicationIdDoesNotExistMessageDisplay() {
+		return isElementDisplayed(applicationIdDoesNotExistMsg);
+	}
+
 	public void clickOnOkayButton() {
-		// TODO Auto-generated method stub
-		
+		clickOnElement(okayButton);
 	}
 }

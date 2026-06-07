@@ -263,7 +263,7 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 //				demographicPage.fetchInvalidPreregApplicationId("rtyuio12637393");
 //				
 //				assertTrue(demographicPage.isApplicationIdDoesNotExistMessageDisplay(),
-//						"Verify if fetchdata button is displayed");
+//						"Verify if invalid Application ID error message is displayed");
 //				
 //				demographicPage.clickOnOkayButton();
 				

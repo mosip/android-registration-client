@@ -26,7 +26,6 @@ public class AutoLogoutPageHindi extends AutoLogoutPage{
 	
 	public AutoLogoutPageHindi(AppiumDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public boolean isAutoLogoutPopupDisplayed() {

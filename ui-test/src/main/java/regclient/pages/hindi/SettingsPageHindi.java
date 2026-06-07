@@ -88,6 +88,24 @@ public class SettingsPageHindi extends SettingsPage{
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'leftslap_fingerprint_threshold')]//android.widget.EditText")
 	private WebElement leftSlapThresholdField;
+	
+	@AndroidFindBy(accessibility = "key")
+	private WebElement keyLabel;
+
+	@AndroidFindBy(accessibility = "server_value")
+	private WebElement serverValueLabel;
+
+	@AndroidFindBy(accessibility = "local_value")
+	private WebElement localValueLabel;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'mosip.registration.')]")
+	private WebElement configKeys;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'local_value_')]")
+	private WebElement localValueBox;
+
+	@AndroidFindBy(accessibility = "global_config_search")
+	private WebElement searchBox;
 
 	public SettingsPageHindi(AppiumDriver driver) {
 		super(driver);
@@ -250,52 +268,45 @@ public class SettingsPageHindi extends SettingsPage{
 		click(syncButton);
 	}
 
-	@Override
-	public boolean isMasterDataToastMessageDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isKeyLabelDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isServerValueLabelDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isLocalValueLabelDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isConfigListPresent() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isLocalValueBoxDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
+		return isElementDisplayed(searchBox);
+	}
+
+	public boolean isMasterDataToastMessageDisplayed() {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions
+					.presenceOfElementLocated(By.xpath("//android.widget.Toast[@text='Master Data Sync Completed']")));
+			return true;
+		} catch (Exception e) {
+
+			return false;
+		}
+	}
+
+	public boolean isKeyLabelDisplayed() {
+		return isElementDisplayed(keyLabel);
+	}
+
+	public boolean isServerValueLabelDisplayed() {
+		return isElementDisplayed(serverValueLabel);
+	}
+
+	public boolean isLocalValueLabelDisplayed() {
+		return isElementDisplayed(localValueLabel);
+	}
+
+	public boolean isConfigListPresent() {
+		return isElementDisplayed(configKeys);
+	}
+
+	public boolean isLocalValueBoxDisplayed() {
+		return isElementDisplayed(localValueBox);
+	}
+
+	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
+		String actualLabel = deviceSettingsPage.getAttribute("content-desc");
+		return actualLabel.equals("Device Settings");
 	}
 
 }

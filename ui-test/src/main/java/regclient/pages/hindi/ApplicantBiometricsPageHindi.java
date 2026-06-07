@@ -1,5 +1,6 @@
 package regclient.pages.hindi;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -271,15 +272,17 @@ public class ApplicantBiometricsPageHindi extends ApplicantBiometricsPage {
 		return new BiometricDetailsPageHindi(driver);
 	}
 
-	@Override
 	public int getThresholdScore() {
-		// TODO Auto-generated method stub
-		return 0;
+
+		String scoreText = findElement(By.xpath("//android.view.View[@content-desc='95%']"))
+				.getAttribute("contentDescription");
+
+		return Integer.parseInt(scoreText.replace("%", "").trim());
 	}
 
-	@Override
 	public int irisAttemptLeft() {
-		// TODO Auto-generated method stub
-		return 0;
+		String attemptText = irisCapturerHeader.getAttribute("contentDescription");
+		String count = attemptText.replaceAll("\\D+", "");
+		return Integer.parseInt(count);
 	}
 }
