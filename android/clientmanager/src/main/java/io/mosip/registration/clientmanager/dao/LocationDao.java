@@ -31,6 +31,6 @@ public interface LocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Location location);
 
-    @Query("DELETE FROM reg_center_location")
+    @Query("DELETE FROM location")
     void deleteAll();
 }

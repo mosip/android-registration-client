@@ -29,7 +29,6 @@ import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
-import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.CenterRemapService;
@@ -51,6 +50,8 @@ import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 public class CenterRemapServiceImpl implements CenterRemapService {
 
     private static final String TAG = CenterRemapServiceImpl.class.getSimpleName();
+    private static final String SYNC_LAST_UPDATED = "sync.lastupdated";
+    private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
 
     private final Context context;
     private final GlobalParamRepository globalParamRepository;
@@ -64,7 +65,6 @@ public class CenterRemapServiceImpl implements CenterRemapService {
     private final RegistrationCenterRepository registrationCenterRepository;
     private final TemplateRepository templateRepository;
     private final UserBiometricRepository userBiometricRepository;
-    private final UserDetailRepository userDetailRepository;
     private final UserRoleRepository userRoleRepository;
     private final AuditManagerService auditManagerService;
 
@@ -81,7 +81,6 @@ public class CenterRemapServiceImpl implements CenterRemapService {
                                   RegistrationCenterRepository registrationCenterRepository,
                                   TemplateRepository templateRepository,
                                   UserBiometricRepository userBiometricRepository,
-                                  UserDetailRepository userDetailRepository,
                                   UserRoleRepository userRoleRepository,
                                   AuditManagerService auditManagerService) {
         this.context = context;
@@ -96,7 +95,6 @@ public class CenterRemapServiceImpl implements CenterRemapService {
         this.registrationCenterRepository = registrationCenterRepository;
         this.templateRepository = templateRepository;
         this.userBiometricRepository = userBiometricRepository;
-        this.userDetailRepository = userDetailRepository;
         this.userRoleRepository = userRoleRepository;
         this.auditManagerService = auditManagerService;
     }
@@ -191,10 +189,9 @@ public class CenterRemapServiceImpl implements CenterRemapService {
     }
 
     private void purgeAndReset() {
-        // Delete user-related data in FK-safe order (children before parent)
+        // Delete center-specific user data; credentials are preserved so login works after restart
         userRoleRepository.deleteAll();
         userBiometricRepository.deleteAll();
-        userDetailRepository.deleteAll();   // clears user_pwd, user_token, user_detail
 
         // Delete center-specific master data
         registrationCenterRepository.deleteAll();
@@ -203,11 +200,16 @@ public class CenterRemapServiceImpl implements CenterRemapService {
         identitySchemaRepository.deleteAll();
         locationRepository.deleteAll();
 
+        // Clear sync timestamps so getLastSyncTime() returns "LastSyncTimeIsNull" on next login,
+        // which triggers the initial sync that re-downloads all center data for the new center.
+        globalParamRepository.saveGlobalParam(SYNC_LAST_UPDATED, null);
+        globalParamRepository.saveGlobalParam(MASTER_DATA_LAST_UPDATED, null);
+
         // Reset remap flag — UPDATE in place; global_param is never deleted
         globalParamRepository.saveGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED, "false");
 
         auditManagerService.audit(AuditEvent.MACHINE_REMAPPED, Components.CLEAN_UP);
-        Log.i(TAG, "Step 4: center data purged and remap flag reset");
+        Log.i(TAG, "Step 4: center data purged, sync timestamps cleared, remap flag reset");
     }
 
     private boolean isNetworkAvailable() {

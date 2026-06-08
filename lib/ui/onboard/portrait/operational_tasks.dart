@@ -48,9 +48,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 12.h,
-        ),
+        SizedBox(height: 12.h),
         _getTasks(),
       ],
     );
@@ -179,34 +177,28 @@ class _OperationalTasksState extends State<OperationalTasks> {
   _getTasks() {
     return ListView(
       shrinkWrap: true,
-      // scrollDirection: Axis.vertical,
       physics: const NeverScrollableScrollPhysics(),
       children: List.generate(
         widget.operationalTasks.length,
         (index) {
+          final task = widget.operationalTasks[index];
           return isMobileSize
               ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: HomePageCard(
                     index: index,
-                    icon: widget.operationalTasks[index]["icon"],
-                    title: widget.operationalTasks[index]["title"] as String,
-                    ontap: () async {
-                      return widget.operationalTasks[index]["onTap"](context);
-                    },
-                    subtitle: widget.operationalTasks[index]["subtitle"],
+                    icon: task["icon"],
+                    title: task["title"] as String,
+                    ontap: () async => task["onTap"](context),
+                    subtitle: task["subtitle"],
                   ),
                 )
               : TaskCard(
                   index: index,
-                  icon: widget.operationalTasks[index]["icon"],
-                  title: widget.operationalTasks[index]["title"] as String,
-                  ontap: () {
-                    return widget.operationalTasks[index]["onTap"](context);
-                  },
-                  subtitle: widget.operationalTasks[index]["subtitle"],
+                  icon: task["icon"],
+                  title: task["title"] as String,
+                  ontap: () => task["onTap"](context),
+                  subtitle: task["subtitle"],
                 );
         },
       ),

@@ -32,7 +32,6 @@ import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
-import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
@@ -53,7 +52,6 @@ public class CenterRemapServiceImplTest {
     @Mock private RegistrationCenterRepository mockRegistrationCenterRepository;
     @Mock private TemplateRepository mockTemplateRepository;
     @Mock private UserBiometricRepository mockUserBiometricRepository;
-    @Mock private UserDetailRepository mockUserDetailRepository;
     @Mock private UserRoleRepository mockUserRoleRepository;
     @Mock private AuditManagerService mockAuditManagerService;
     @Mock private ConnectivityManager mockConnectivityManager;
@@ -76,7 +74,6 @@ public class CenterRemapServiceImplTest {
                 mockRegistrationCenterRepository,
                 mockTemplateRepository,
                 mockUserBiometricRepository,
-                mockUserDetailRepository,
                 mockUserRoleRepository,
                 mockAuditManagerService);
 
@@ -257,11 +254,10 @@ public class CenterRemapServiceImplTest {
     // -------------------------------------------------------------------------
 
     @Test
-    public void handleRemapStep_step4_deletesAllCenterTablesInOrder() throws Exception {
+    public void handleRemapStep_step4_deletesCenterDataPreservingUserCredentials() throws Exception {
         InOrder inOrder = inOrder(
                 mockUserRoleRepository,
                 mockUserBiometricRepository,
-                mockUserDetailRepository,
                 mockRegistrationCenterRepository,
                 mockTemplateRepository,
                 mockDynamicFieldRepository,
@@ -271,16 +267,29 @@ public class CenterRemapServiceImplTest {
 
         service.handleRemapStep(4);
 
+        // Center-specific data cleared
         inOrder.verify(mockUserRoleRepository).deleteAll();
         inOrder.verify(mockUserBiometricRepository).deleteAll();
-        inOrder.verify(mockUserDetailRepository).deleteAll();
         inOrder.verify(mockRegistrationCenterRepository).deleteAll();
         inOrder.verify(mockTemplateRepository).deleteAll();
         inOrder.verify(mockDynamicFieldRepository).deleteAll();
         inOrder.verify(mockIdentitySchemaRepository).deleteAll();
         inOrder.verify(mockLocationRepository).deleteAll();
+        // Sync timestamps cleared so initial sync triggers on next login
+        inOrder.verify(mockGlobalParamRepository).saveGlobalParam("sync.lastupdated", null);
+        inOrder.verify(mockGlobalParamRepository).saveGlobalParam("masterdata.lastupdated", null);
+        // Remap flag cleared last
         inOrder.verify(mockGlobalParamRepository).saveGlobalParam(
                 RegistrationConstants.MACHINE_CENTER_CHANGED, "false");
+    }
+
+    @Test
+    public void handleRemapStep_step4_doesNotDeleteUserCredentials() throws Exception {
+        // Credentials (user_detail, user_pwd) must survive so login works after restart
+        service.handleRemapStep(4);
+
+        verify(mockGlobalParamRepository).saveGlobalParam("sync.lastupdated", null);
+        verify(mockGlobalParamRepository).saveGlobalParam("masterdata.lastupdated", null);
     }
 
     @Test

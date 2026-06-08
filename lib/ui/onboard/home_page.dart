@@ -5,6 +5,7 @@
  *
 */
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -67,6 +68,7 @@ class _HomePageState extends State<HomePage> {
     _fetchProcessSpec();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await syncProvider.checkCenterRemapState();
+      await syncProvider.loadLastRemapSyncTime();
       // Check GPS status to update the indicator in profile
       await connectivityProvider.checkGPSStatus();
       // Fetch location if GPS is enabled
@@ -130,12 +132,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (!mounted) return;
-    await globalProvider.getAudit("REG-REMAP-001", "REG-MOD-106");
-    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const CenterRemapSyncScreen()),
     );
+    unawaited(globalProvider.getAudit("REG-REMAP-001", "REG-MOD-106"));
   }
 
   String _remapBlockedMessage(String? flow) {
@@ -324,7 +325,6 @@ class _HomePageState extends State<HomePage> {
       //   "onTap": () {},
       //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       // },
-      if (context.watch<SyncProvider>().isCenterRemapped)
         {
           "icon": const Icon(
             Icons.location_on,
@@ -333,7 +333,10 @@ class _HomePageState extends State<HomePage> {
           ),
           "title": appLocalizations.center_remap_sync,
           "onTap": onCentreRemapSync,
-          "subtitle": appLocalizations.center_remap_sync_subtitle,
+          "subtitle": context.watch<SyncProvider>().lastRemapSyncTime != null
+              ? "Last updated on ${DateFormat("EEEE d MMMM, hh:mma").format(context.watch<SyncProvider>().lastRemapSyncTime!.toLocal())}"
+              : "",
+          "isRemapHighlight": true,
         },
       // {
       //   "icon": SvgPicture.asset(

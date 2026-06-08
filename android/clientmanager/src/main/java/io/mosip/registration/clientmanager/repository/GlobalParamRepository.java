@@ -357,14 +357,4 @@ public class GlobalParamRepository {
         return globalParamDao.getGlobalParamValueById(id);
     }
 
-    /**
-     * Persists a global param value and refreshes the in-memory cache.
-     * Uses INSERT OR REPLACE so this serves as both an insert and an update.
-     */
-    public void saveGlobalParam(String key, String value) {
-        GlobalParam param = new GlobalParam(key, key, value, true);
-        globalParamDao.insertGlobalParam(param);
-        globalParamMap.put(key, value);
-    }
-
 }

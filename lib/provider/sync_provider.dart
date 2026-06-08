@@ -11,6 +11,7 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/platform_spi/global_config_service.dart';
@@ -45,6 +46,9 @@ class SyncProvider with ChangeNotifier {
   RemapSyncStatus _step3Status = RemapSyncStatus.idle;
   RemapSyncStatus _step4Status = RemapSyncStatus.idle;
   DateTime? _remapCompletedAt;
+  DateTime? _lastRemapSyncTime;
+
+  static const String _remapSyncTimeKey = 'last_center_remap_sync_time';
 
   Timer? _jobStatusPollingTimer;
   final Map<String, JobStatus> _jobStatuses = {};
@@ -78,6 +82,31 @@ class SyncProvider with ChangeNotifier {
 
   /// Timestamp recorded when all four steps finish successfully.
   DateTime? get remapSyncCompletedAt => _remapCompletedAt;
+
+  /// Timestamp of when the last center remap sync was initiated (persisted across restarts).
+  DateTime? get lastRemapSyncTime => _lastRemapSyncTime;
+
+  Future<void> loadLastRemapSyncTime() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stored = prefs.getString(_remapSyncTimeKey);
+      if (stored != null) {
+        _lastRemapSyncTime = DateTime.tryParse(stored);
+        notifyListeners();
+      }
+    } catch (e) {
+      log('REMAP: loadLastRemapSyncTime error: $e');
+    }
+  }
+
+  Future<void> _saveRemapSyncTime(DateTime time) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_remapSyncTimeKey, time.toIso8601String());
+    } catch (e) {
+      log('REMAP: _saveRemapSyncTime error: $e');
+    }
+  }
   bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
@@ -139,6 +168,8 @@ class SyncProvider with ChangeNotifier {
     }
     _isCenterRemapped = false;
     _remapCompletedAt = DateTime.now();
+    _lastRemapSyncTime = _remapCompletedAt;
+    await _saveRemapSyncTime(_lastRemapSyncTime!);
     notifyListeners();
     return true;
   }

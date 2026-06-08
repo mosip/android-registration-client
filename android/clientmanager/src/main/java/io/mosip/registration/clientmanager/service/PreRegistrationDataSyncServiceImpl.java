@@ -520,7 +520,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                         packetFile.delete();
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "Error deleting pre-reg file for id " + record.getPreregId() + ": " + e.getMessage());
+                    Log.e(TAG, "Error deleting pre-reg file for id " + record.getPreRegId() + ": " + e.getMessage());
                 }
             }
         }

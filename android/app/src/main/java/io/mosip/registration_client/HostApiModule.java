@@ -309,7 +309,6 @@ public class HostApiModule {
             RegistrationCenterRepository registrationCenterRepository,
             TemplateRepository templateRepository,
             UserBiometricRepository userBiometricRepository,
-            UserDetailRepository userDetailRepository,
             UserRoleRepository userRoleRepository,
             AuditManagerService auditManagerService) {
         return new CenterRemapServiceImpl(
@@ -325,7 +324,6 @@ public class HostApiModule {
                 registrationCenterRepository,
                 templateRepository,
                 userBiometricRepository,
-                userDetailRepository,
                 userRoleRepository,
                 auditManagerService
         );
