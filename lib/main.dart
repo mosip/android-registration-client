@@ -25,7 +25,6 @@ import 'package:registration_client/utils/inactivity_tracker.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:registration_client/telemetry/telemetry_service.dart';// Telemetry imports
 import 'package:registration_client/telemetry/telemetry_navigation.dart';// Telemetry imports
-import 'package:firebase_core/firebase_core.dart';// Firebase core for initialization;
 import 'package:registration_client/telemetry/telemetry_manager.dart';// Telemetry manager to initialize and log events
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -38,7 +37,6 @@ const String _syncRestartChannel = 'io.mosip.registration_client/sync_restart';
 void main() async {
   enableFlutterDriverExtension(enableTextEntryEmulation: false);
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();// Initialize Firebase before anything else (especially Telemetry)
   _setupSyncRestartChannel();
   final GlobalProvider appLanguage = GlobalProvider();
   await FlutterConfig.loadEnvVariables();
