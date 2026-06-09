@@ -19,14 +19,15 @@ import java.security.cert.Certificate;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwx.CompactSerializer;
 import org.json.JSONObject;
-import org.spongycastle.crypto.InvalidCipherTextException;
-import org.spongycastle.crypto.digests.SHA256Digest;
-import org.spongycastle.crypto.encodings.OAEPEncoding;
-import org.spongycastle.crypto.engines.RSAEngine;
-import org.spongycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.encodings.OAEPEncoding;
+import org.bouncycastle.crypto.engines.RSAEngine;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
@@ -417,27 +418,37 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
         try {
             byte[] dataToDecrypt = CryptoUtil.base64decoder.decode(cryptoRequestDto.getValue());
             byte[] encryptedSecretKey = Arrays.copyOfRange(dataToDecrypt, 0, KEYGEN_SYMMETRIC_KEY_LENGTH);
-            byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH);
-            byte[] aad = Arrays.copyOfRange(dataToDecrypt,KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH+CRYPTO_SYMMETRIC_AAD_LENGTH);
-            byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH+CRYPTO_SYMMETRIC_IV_LENGTH+CRYPTO_SYMMETRIC_AAD_LENGTH, dataToDecrypt.length);
-
-            // asymmetric decryption of secret key----------------------------------------------------
             byte[] secretKeyBytes = asymmetricDecrypt(encryptedSecretKey);
-
             SecretKey secretKey = new SecretKeySpec(secretKeyBytes, KEYGEN_SYMMETRIC_ALGORITHM);
-            // symmetric decryption of data-----------------------------------------------------
+
+            try {
+                byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH + CRYPTO_SYMMETRIC_IV_LENGTH);
+                byte[] aad = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + CRYPTO_SYMMETRIC_IV_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH + CRYPTO_SYMMETRIC_IV_LENGTH + CRYPTO_SYMMETRIC_AAD_LENGTH);
+                byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + CRYPTO_SYMMETRIC_IV_LENGTH + CRYPTO_SYMMETRIC_AAD_LENGTH, dataToDecrypt.length);
+                final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
+                cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv));
+                cipher_symmetric.updateAAD(aad);
+                cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(cipher_symmetric.doFinal(encrypted_data)));
+                return cryptoResponseDto;
+            } catch (Throwable t) {
+                Log.w(TAG, "decrypt: primary IV/AAD lengths failed, retrying with legacy lengths (IV=16, AAD=12)");
+            }
+
+            // backward-compat with server 1.1.4.4 packets (IV=16 bytes, AAD=12 bytes)
+            byte[] iv = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH, KEYGEN_SYMMETRIC_KEY_LENGTH + 16);
+            byte[] aad = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + 16, KEYGEN_SYMMETRIC_KEY_LENGTH + 16 + 12);
+            byte[] encrypted_data = Arrays.copyOfRange(dataToDecrypt, KEYGEN_SYMMETRIC_KEY_LENGTH + 16 + 12, dataToDecrypt.length);
             final Cipher cipher_symmetric = Cipher.getInstance(CRYPTO_SYMMETRIC_ALGORITHM);
-            final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv);
-            cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
+            cipher_symmetric.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(CRYPTO_GCM_TAG_LENGTH, iv));
             cipher_symmetric.updateAAD(aad);
-            byte[] plainBytes = cipher_symmetric.doFinal(encrypted_data);
-            cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(plainBytes));
+            cryptoResponseDto.setValue(CryptoUtil.base64encoder.encodeToString(cipher_symmetric.doFinal(encrypted_data)));
             return cryptoResponseDto;
+        } catch (Exception e) {
+            Log.e(TAG, "decrypt failed", e);
+            throw new KeymanagerServiceException(
+                    KeyManagerErrorCode.CRYPTO_EXCEPTION.getErrorCode(),
+                    KeyManagerErrorCode.CRYPTO_EXCEPTION.getErrorMessage(), e);
         }
-        catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        return null;
     }
 
     @Override
@@ -494,8 +505,18 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
      * @param keyModulus
      * @return
      */
-    private byte[] unpadOAEPPadding(byte[] paddedPlainText, BigInteger keyModulus) throws InvalidCipherTextException {
-        OAEPEncoding encode = new OAEPEncoding(new RSAEngine(), new SHA256Digest());
+    private byte[] unpadOAEPPadding(byte[] paddedPlainText, BigInteger keyModulus) throws InvalidCipherTextException{
+        try {
+            OAEPEncoding encode = new OAEPEncoding(new RSAEngine(), new SHA256Digest());
+            BigInteger exponent = new BigInteger("1");
+            RSAKeyParameters keyParams = new RSAKeyParameters(false, keyModulus, exponent);
+            encode.init(false, keyParams);
+            return encode.processBlock(paddedPlainText, 0, paddedPlainText.length);
+        } catch (InvalidCipherTextException e) {
+            Log.w(TAG, "unpadOAEPPadding: SHA256+SHA256(MGF1) failed, retrying with SHA256+SHA1(MGF1)");
+        }
+
+        OAEPEncoding encode = new OAEPEncoding(new RSAEngine(), new SHA256Digest(), new SHA1Digest(), null);
         BigInteger exponent = new BigInteger("1");
         RSAKeyParameters keyParams = new RSAKeyParameters(false, keyModulus, exponent);
         encode.init(false, keyParams);

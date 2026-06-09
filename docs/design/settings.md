@@ -161,7 +161,7 @@ Access control is enforced when building the Settings tabs and at render time fo
 - Day of month (1 - 31)
 - Month (1 - 12)
 - Day of week (0 - 7) (Sunday is 0 or 7)
-Example: "0 0 11 * * ?" → At 11:00 AM every day
+- Example: `"0 0 11 * * ?"` → At 11:00 AM every day
 
 ### Sequence Diagram
 ![ScheduledJobs.png](../ScheduledJobsFlow.png)

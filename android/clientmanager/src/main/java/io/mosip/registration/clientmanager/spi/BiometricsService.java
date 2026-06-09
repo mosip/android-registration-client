@@ -28,14 +28,14 @@ public abstract class BiometricsService {
     private int allowedResponseLagMins = 5;
     public static final String BIOMETRIC_SEPARATOR = "(?<=\\.)(.*)(?=\\.)";
     private static final String DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final  Pattern BIOMETRIC_SEPARATOR_PATTERN = Pattern.compile(BIOMETRIC_SEPARATOR);
 
     public String getJWTPayLoad(String jwt) throws BiometricsServiceException {
         if (jwt == null || jwt.isEmpty()) {
             throw new BiometricsServiceException(SBIError.SBI_JWT_INVALID.getErrorCode(),
                     SBIError.SBI_JWT_INVALID.getErrorMessage());
         }
-        Pattern pattern = Pattern.compile(BIOMETRIC_SEPARATOR);
-        Matcher matcher = pattern.matcher(jwt);
+        Matcher matcher = BIOMETRIC_SEPARATOR_PATTERN.matcher(jwt);
         if (matcher.find()) {
             return matcher.group(1);
         }
@@ -48,8 +48,7 @@ public abstract class BiometricsService {
             throw new BiometricsServiceException(SBIError.SBI_JWT_INVALID.getErrorCode(),
                     SBIError.SBI_JWT_INVALID.getErrorMessage());
         }
-        Pattern pattern = Pattern.compile(BIOMETRIC_SEPARATOR);
-        Matcher matcher = pattern.matcher(jwt);
+        Matcher matcher = BIOMETRIC_SEPARATOR_PATTERN.matcher(jwt);
         if(matcher.find()) {
             //returns header..signature
             return jwt.replace(matcher.group(1),"");

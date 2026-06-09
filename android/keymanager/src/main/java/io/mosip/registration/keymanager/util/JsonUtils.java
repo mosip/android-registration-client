@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-
 import java.util.Map;
 
 public class JsonUtils {
@@ -17,7 +15,7 @@ public class JsonUtils {
     private static final String TAG = JsonUtils.class.getSimpleName();
 
     static {
-        objectMapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+        objectMapper = JsonMapper.builder().build();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);

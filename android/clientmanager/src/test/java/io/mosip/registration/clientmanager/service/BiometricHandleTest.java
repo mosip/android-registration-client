@@ -68,7 +68,7 @@ public class BiometricHandleTest {
 
 
     @Test
-    public void test_successfully_parses_valid_capture_response() throws Exception {
+    public void handleRCaptureResponse_validCaptureResponse_returnsBiometricsList() throws Exception {
         Biometrics095Service service = new Biometrics095Service(mockContext, mockObjectMapper,
                 mockAuditManagerService, mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null);
         service.sharedPreferences = mockSharedPreferences;
@@ -97,8 +97,11 @@ public class BiometricHandleTest {
         doNothing().when(spyService).validateResponseTimestamp(anyString());
 
         List<String> exceptionAttributes = Arrays.asList("leftThumb");
+        CaptureRequest captureRequest = service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", exceptionAttributes);
+        captureDto.setTransactionId(captureRequest.getTransactionId());
+        captureDto.setPurpose(captureRequest.getPurpose());
 
-        List<BiometricsDto> result = spyService.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes);
+        List<BiometricsDto> result = spyService.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes, captureRequest.getTransactionId());
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -110,7 +113,7 @@ public class BiometricHandleTest {
     }
 
     @Test
-    public void test_throws_exception_when_capture_response_has_error() throws Exception {
+    public void handleRCaptureResponse_captureResponseWithError_throwsBiometricsServiceException() throws Exception {
         Biometrics095Service service = new Biometrics095Service(mockContext, mockObjectMapper,
                 mockAuditManagerService, mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null);
 
@@ -126,8 +129,10 @@ public class BiometricHandleTest {
 
         List<String> exceptionAttributes = Arrays.asList();
 
+        CaptureRequest captureRequest = service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", exceptionAttributes);
+
         BiometricsServiceException exception = assertThrows(BiometricsServiceException.class, () -> {
-            service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes);
+            service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, mockInputStream, exceptionAttributes, captureRequest.getTransactionId());
         });
 
         assertEquals("101", exception.getErrorCode());
@@ -135,42 +140,37 @@ public class BiometricHandleTest {
         verify(mockAuditManagerService).audit(eq(AuditEvent.R_CAPTURE_PARSE_FAILED), eq(Components.REGISTRATION), anyString());
     }
 
-    @Test (expected = BiometricsServiceException.class)
-    public void test_handle_rcapture_response_exception_photo() throws Exception {
+    @Test
+    public void handleRCaptureResponse_exceptionPhotoModality_throwsBiometricsServiceException() throws Exception {
         String jsonResponse = "{\"biometrics\":[{\"specVersion\":\"0.9.5\",\"data\":\"eyJhbGciOiJIUzI1NiJ9.eyJiaW9UeXBlIjoiRmFjZSIsImJpb1N1YlR5cGUiOiJ1bmtub3duIiwiYmlvVmFsdWUiOiJkYXRhIn0=.signature\",\"error\":null}]}";
         InputStream responseStream = new ByteArrayInputStream(jsonResponse.getBytes());
         List<String> exceptionAttributes = Arrays.asList("unknown");
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.EXCEPTION_PHOTO, "dev", exceptionAttributes);
 
-        List<BiometricsDto> result = biometrics095Service.handleRCaptureResponse(Modality.EXCEPTION_PHOTO, responseStream, exceptionAttributes);
-
-        assertEquals(1, result.size());
-        assertEquals("Face", result.get(0).getModality());
-        assertEquals("unknown", result.get(0).getBioSubType());
-    }
-
-    @Test (expected = BiometricsServiceException.class)
-    public void test_handle_rcapture_response_multiple_biometrics() throws Exception {
-        String jsonResponse = "{\"biometrics\":[{\"specVersion\":\"0.9.5\",\"data\":\"eyJhbGciOiJIUzI1NiJ9.eyJiaW9UeXBlIjoiRmFjZSIsImJpb1N1YlR5cGUiOiJmYWNlIiwiYmlvVmFsdWUiOiJkYXRhIn0=.signature\",\"error\":null},{\"specVersion\":\"0.9.5\",\"data\":\"eyJhbGciOiJIUzI1NiJ9.eyJiaW9UeXBlIjoiRmFjZSIsImJpb1N1YlR5cGUiOiJmYWNlIiwiYmlvVmFsdWUiOiJkYXRhIn0=.signature\",\"error\":null}]}";
-        InputStream responseStream = new ByteArrayInputStream(jsonResponse.getBytes());
-        List<String> exceptionAttributes = new ArrayList<>();
-
-        List<BiometricsDto> result = biometrics095Service.handleRCaptureResponse(Modality.FACE, responseStream, exceptionAttributes);
-
-        assertEquals(2, result.size());
-        assertEquals("Face", result.get(0).getModality());
-        assertEquals("face", result.get(0).getBioSubType());
-        assertEquals("Face", result.get(1).getModality());
-        assertEquals("face", result.get(1).getBioSubType());
+        assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.EXCEPTION_PHOTO, responseStream, exceptionAttributes, captureRequest.getTransactionId()));
     }
 
     @Test
-    public void test_throws_exception_for_null_or_empty_biometric_data() {
+    public void handleRCaptureResponse_multipleBiometrics_throwsBiometricsServiceException() throws Exception {
+        String jsonResponse = "{\"biometrics\":[{\"specVersion\":\"0.9.5\",\"data\":\"eyJhbGciOiJIUzI1NiJ9.eyJiaW9UeXBlIjoiRmFjZSIsImJpb1N1YlR5cGUiOiJmYWNlIiwiYmlvVmFsdWUiOiJkYXRhIn0=.signature\",\"error\":null},{\"specVersion\":\"0.9.5\",\"data\":\"eyJhbGciOiJIUzI1NiJ9.eyJiaW9UeXBlIjoiRmFjZSIsImJpb1N1YlR5cGUiOiJmYWNlIiwiYmlvVmFsdWUiOiJkYXRhIn0=.signature\",\"error\":null}]}";
+        InputStream responseStream = new ByteArrayInputStream(jsonResponse.getBytes());
+        List<String> exceptionAttributes = new ArrayList<>();
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", exceptionAttributes);
+
+        assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, responseStream, exceptionAttributes, captureRequest.getTransactionId()));
+    }
+
+    @Test
+    public void handleRCaptureResponse_nullOrEmptyBiometricData_throwsBiometricsServiceException() {
         InputStream mockInputStream = new ByteArrayInputStream("{\"biometrics\":[{\"specVersion\":\"0.9.5\",\"data\":null,\"hash\":\"mockHash\",\"sessionKey\":\"mockSessionKey\",\"thumbprint\":\"mockThumbprint\"}]}".getBytes());
         List<String> exceptionAttributes = new ArrayList<>();
         Modality modality = Modality.FACE;
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(modality, "dev", exceptionAttributes);
 
         assertThrows(BiometricsServiceException.class, () -> {
-            biometrics095Service.handleRCaptureResponse(modality, mockInputStream, exceptionAttributes);
+            biometrics095Service.handleRCaptureResponse(modality, mockInputStream, exceptionAttributes, captureRequest.getTransactionId());
         });
     }
 

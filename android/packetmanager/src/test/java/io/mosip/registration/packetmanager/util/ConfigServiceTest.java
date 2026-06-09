@@ -3,35 +3,48 @@ package io.mosip.registration.packetmanager.util;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ConfigServiceTest {
 
     private Context mockContext;
     private AssetManager mockAssetManager;
+    private MockedStatic<Log> logMock;
 
     @Before
-    public void setUp() throws Exception {
-        mockContext = Mockito.mock(Context.class);
-        mockAssetManager = Mockito.mock(AssetManager.class);
+    public void setUp() {
+        Properties props = getProperties();
+        props.clear();
+
+        mockContext = mock(Context.class);
+        mockAssetManager = mock(AssetManager.class);
         when(mockContext.getAssets()).thenReturn(mockAssetManager);
+        logMock = Mockito.mockStatic(Log.class);
+    }
+
+    @After
+    public void tearDown() {
+        if (logMock != null) {
+            logMock.close();
+        }
     }
 
     @Test
-    public void getProperty_withValidKey_thenReturnCorrectValue() throws Exception {
-        // Arrange
+    public void getProperty_withValidKey_returnsCorrectValue() throws Exception {
         String key = "packet.manager.account.name";
         String expectedValue = "PACKET_MANAGER_ACCOUNT";
         String propertiesContent = key + "=" + expectedValue + "\n";
@@ -39,29 +52,23 @@ public class ConfigServiceTest {
 
         when(mockAssetManager.open("packetmanagerconfig.properties")).thenReturn(inputStream);
 
-        // Act
         String actualValue = ConfigService.getProperty(key, mockContext);
 
-        // Assert
         assertEquals(expectedValue, actualValue);
     }
 
     @Test
-    public void getProperty_withPropertiesFileNotFound_thenReturnNull() throws Exception {
-        // Arrange
+    public void getProperty_withPropertiesFileNotFound_returnsNull() throws Exception {
         String key = "packet.manager.account.names";
         when(mockAssetManager.open("packetmanagerconfig.properties")).thenThrow(new IOException());
 
-        // Act
         String actualValue = ConfigService.getProperty(key, mockContext);
 
-        // Assert
         assertEquals(null, actualValue);
     }
 
     @Test
-    public void getProperty_withPropertiesAlreadyLoaded_thenReturnCorrectValue() throws Exception {
-        // Arrange
+    public void getProperty_withAlreadyLoadedProperties_returnsCorrectValue() throws Exception {
         String key = "packet.manager.account.name";
         String expectedValue = "PACKET_MANAGER_ACCOUNT";
         String propertiesContent = key + "=" + expectedValue + "\n";
@@ -69,52 +76,44 @@ public class ConfigServiceTest {
 
         when(mockAssetManager.open("packetmanagerconfig.properties")).thenReturn(inputStream);
 
-        // Load properties for the first time
         ConfigService.getProperty(key, mockContext);
-
-        // Act
         String actualValue = ConfigService.getProperty(key, mockContext);
 
-        // Assert
         assertEquals(expectedValue, actualValue);
+        verify(mockAssetManager, times(1)).open("packetmanagerconfig.properties");
     }
 
     @Test
-    public void getProperty_withNonExistentKey_thenReturnNull() throws Exception {
-        // Arrange
+    public void getProperty_withNonExistentKey_returnsNull() throws Exception {
         String key = "non.existent.key";
         String propertiesContent = "packet.manager.account.name=PACKET_MANAGER_ACCOUNT\n";
         InputStream inputStream = new ByteArrayInputStream(propertiesContent.getBytes());
 
         when(mockAssetManager.open("packetmanagerconfig.properties")).thenReturn(inputStream);
 
-        // Act
         String actualValue = ConfigService.getProperty(key, mockContext);
 
-        // Assert
         assertEquals(null, actualValue);
     }
 
     @Test
-    public void getProperty_whenIOExceptionOccurs_thenLogError() throws Exception {
-        // Arrange
+    public void getProperty_whenIOExceptionOccurs_logsErrorAndReturnsNull() throws Exception {
         String key = "packet.manager.account.names";
-        when(mockAssetManager.open("packetmanagerconfig.properties")).thenThrow(new IOException());
+        when(mockAssetManager.open("packetmanagerconfig.properties")).thenThrow(new IOException("Test IO Exception"));
 
-        // Mock Log class to verify logging
-        Log mockLog = Mockito.mock(Log.class);
-        // Use reflection to set the Log class to the mock
-        // Note: This is a workaround and may not work in all environments
-        // You may need to use a logging framework that allows for easier testing
-        // For example, you could use a wrapper around Log that you can mock
-
-        // Act
         String actualValue = ConfigService.getProperty(key, mockContext);
 
-        // Assert
-        assertEquals(null, actualValue);
-        // Verify that Log.e was called
-        // Note: This will not work directly since Log.e is static; consider using a logging wrapper
-        // verify(mockLog).e(eq("Registration-client"), anyString(), any(IOException.class));
+        assertNull(actualValue);
+        logMock.verify(() -> Log.e(eq("Registration-client"), eq("Failed to load properties file"), any(IOException.class)));
+    }
+
+    private Properties getProperties() {
+        try {
+            java.lang.reflect.Field field = ConfigService.class.getDeclaredField("properties");
+            field.setAccessible(true);
+            return (Properties) field.get(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

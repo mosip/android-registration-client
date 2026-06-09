@@ -32,7 +32,9 @@ import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Unit tests for PreCheckValidatorServiceImpl.
@@ -67,6 +69,9 @@ public class PreCheckValidatorServiceImplTest {
     private RegistrationCenterRepository mockRegistrationCenterRepository;
 
     @Mock
+    private AuditManagerService mockAuditManagerService;
+
+    @Mock
     private SharedPreferences mockSharedPreferences;
 
     @Mock
@@ -86,10 +91,10 @@ public class PreCheckValidatorServiceImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(mockContext.getString(R.string.app_name)).thenReturn("RegistrationClient");
-        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
-        when(mockSharedPreferences.edit()).thenReturn(mockEditor);
-        when(mockEditor.putLong(anyString(), anyLong())).thenReturn(mockEditor);
+        lenient().when(mockContext.getString(R.string.app_name)).thenReturn("RegistrationClient");
+        lenient().when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
+        lenient().when(mockSharedPreferences.edit()).thenReturn(mockEditor);
+        lenient().when(mockEditor.putLong(anyString(), anyLong())).thenReturn(mockEditor);
     }
 
     // ========== validateSyncStatus() Tests ==========
@@ -197,19 +202,17 @@ public class PreCheckValidatorServiceImplTest {
     public void testValidateSyncStatus_MultipleJobsOverdue() throws Exception {
         // Setup: Create multiple active jobs
         List<SyncJobDef> activeJobs = new ArrayList<>();
-        SyncJobDef job1 = new SyncJobDef();
-        job1.setId(JOB_ID_1);
+        SyncJobDef job1 = new SyncJobDef(JOB_ID_1);
         job1.setApiName(API_NAME_1);
         job1.setIsActive(true);
-        
-        SyncJobDef job2 = new SyncJobDef();
-        job2.setId(JOB_ID_2);
+
+        SyncJobDef job2 = new SyncJobDef(JOB_ID_2);
         job2.setApiName(API_NAME_2);
         job2.setIsActive(true);
-        
+
         activeJobs.add(job1);
         activeJobs.add(job2);
-        
+
         when(mockSyncJobDefRepository.getActiveSyncJobs()).thenReturn(activeJobs);
 
         // Setup: Configure frequencies (1 day limit)
@@ -244,7 +247,7 @@ public class PreCheckValidatorServiceImplTest {
     @Test
     public void testValidateCenterToMachineDistance_GPSDisabled_Skipped() throws Exception {
         // Setup: GPS validation disabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
 
         // Execute
         preCheckValidatorService.validateCenterToMachineDistance(77.5946, 12.9716);
@@ -269,16 +272,14 @@ public class PreCheckValidatorServiceImplTest {
     @Test
     public void testValidateCenterToMachineDistance_WithinDistance_Success() throws Exception {
         // Setup: GPS enabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Setup: Center details
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId(CENTER_ID);
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
 
-        RegistrationCenter center = new RegistrationCenter();
-        center.setId(CENTER_ID);
-        center.setLangCode("eng");
+        RegistrationCenter center = new RegistrationCenter(CENTER_ID, "eng");
         center.setLatitude("12.9716");
         center.setLongitude("77.5946");
         List<RegistrationCenter> centers = new ArrayList<>();
@@ -302,16 +303,14 @@ public class PreCheckValidatorServiceImplTest {
     @Test(expected = ClientCheckedException.class)
     public void testValidateCenterToMachineDistance_OutsideDistance_ThrowsException() throws Exception {
         // Setup: GPS enabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Setup: Center details
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId(CENTER_ID);
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
 
-        RegistrationCenter center = new RegistrationCenter();
-        center.setId(CENTER_ID);
-        center.setLangCode("eng");
+        RegistrationCenter center = new RegistrationCenter(CENTER_ID, "eng");
         center.setLatitude("12.9716");
         center.setLongitude("77.5946");
         List<RegistrationCenter> centers = new ArrayList<>();
@@ -380,14 +379,14 @@ public class PreCheckValidatorServiceImplTest {
     @Test(expected = ClientCheckedException.class)
     public void testValidateCenterToMachineDistance_CenterCoordinatesMissing_ThrowsException() throws Exception {
         // Setup: GPS enabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Setup: Center details
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId(CENTER_ID);
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
 
-        RegistrationCenter center = new RegistrationCenter();
+        RegistrationCenter center = new RegistrationCenter(CENTER_ID, "eng");
         center.setLatitude(null); // Missing coordinates
         center.setLongitude(null);
         List<RegistrationCenter> centers = new ArrayList<>();
@@ -401,16 +400,14 @@ public class PreCheckValidatorServiceImplTest {
     @Test(expected = ClientCheckedException.class)
     public void testValidateCenterToMachineDistance_MaxDistanceConfigMissing_ThrowsException() throws Exception {
         // Setup: GPS enabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Setup: Center details
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId(CENTER_ID);
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
 
-        RegistrationCenter center = new RegistrationCenter();
-        center.setId(CENTER_ID);
-        center.setLangCode("eng");
+        RegistrationCenter center = new RegistrationCenter(CENTER_ID, "eng");
         center.setLatitude("12.9716");
         center.setLongitude("77.5946");
         List<RegistrationCenter> centers = new ArrayList<>();
@@ -431,16 +428,14 @@ public class PreCheckValidatorServiceImplTest {
     @Test
     public void testValidateCenterToMachineDistance_InvalidCoordinateFormat_ThrowsException() throws Exception {
         // Setup: GPS enabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Setup: Center details
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId(CENTER_ID);
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
 
-        RegistrationCenter center = new RegistrationCenter();
-        center.setId(CENTER_ID);
-        center.setLangCode("eng");
+        RegistrationCenter center = new RegistrationCenter(CENTER_ID, "eng");
         center.setLatitude("invalid"); // Invalid format
         center.setLongitude("77.5946");
         List<RegistrationCenter> centers = new ArrayList<>();
@@ -460,8 +455,8 @@ public class PreCheckValidatorServiceImplTest {
     public void testValidateSyncStatus_JobWithNullId_Skipped() throws Exception {
         // Setup: Create job with null ID
         List<SyncJobDef> activeJobs = new ArrayList<>();
-        SyncJobDef job = new SyncJobDef();
-        job.setId(null);
+        SyncJobDef job = new SyncJobDef("JOB_ID_1");
+        ReflectionTestUtils.setField(job, "id", null);
         job.setApiName(API_NAME_1);
         job.setIsActive(true);
         activeJobs.add(job);
@@ -479,8 +474,7 @@ public class PreCheckValidatorServiceImplTest {
     public void testValidateSyncStatus_JobWithNullApiName_Skipped() throws Exception {
         // Setup: Create job with null apiName
         List<SyncJobDef> activeJobs = new ArrayList<>();
-        SyncJobDef job = new SyncJobDef();
-        job.setId(JOB_ID_1);
+        SyncJobDef job = new SyncJobDef(JOB_ID_1);
         job.setApiName(null);
         job.setIsActive(true);
         activeJobs.add(job);
@@ -512,16 +506,14 @@ public class PreCheckValidatorServiceImplTest {
     @Test
     public void testValidateCenterToMachineDistance_ExactDistanceLimit_Passes() throws Exception {
         // Setup: GPS enabled
-        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("N");
+        when(mockGlobalParamRepository.getCachedStringGpsDeviceEnableFlag()).thenReturn("Y");
 
         // Setup: Center details
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId(CENTER_ID);
         when(mockMasterDataService.getRegistrationCenterMachineDetails()).thenReturn(centerMachineDto);
 
-        RegistrationCenter center = new RegistrationCenter();
-        center.setId(CENTER_ID);
-        center.setLangCode("eng");
+        RegistrationCenter center = new RegistrationCenter(CENTER_ID, "eng");
         center.setLatitude("12.9716");
         center.setLongitude("77.5946");
         List<RegistrationCenter> centers = new ArrayList<>();
@@ -547,14 +539,12 @@ public class PreCheckValidatorServiceImplTest {
     private List<SyncJobDef> createActiveJobs() {
         List<SyncJobDef> jobs = new ArrayList<>();
         
-        SyncJobDef job1 = new SyncJobDef();
-        job1.setId(JOB_ID_1);
+        SyncJobDef job1 = new SyncJobDef(JOB_ID_1);
         job1.setApiName(API_NAME_1);
         job1.setIsActive(true);
         jobs.add(job1);
-        
-        SyncJobDef job2 = new SyncJobDef();
-        job2.setId(JOB_ID_2);
+
+        SyncJobDef job2 = new SyncJobDef(JOB_ID_2);
         job2.setApiName(API_NAME_2);
         job2.setIsActive(true);
         jobs.add(job2);

@@ -37,7 +37,7 @@ dependencies:
   # flutter_html: ^2.2.1
   file_picker: ^5.2.8
   image_picker: ^0.8.7+2
-  document_scanner: ^0.2.1
+  # document_scanner: ^0.2.1 - removed, not used no Dart files import it and incompatible with AGP 8.x 
   #image_cropper: ^3.0.3
   dotted_border: ^2.0.0+2
   flutter_secure_storage: ^9.2.2

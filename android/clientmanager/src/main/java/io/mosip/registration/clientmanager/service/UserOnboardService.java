@@ -11,6 +11,7 @@ import io.mosip.registration.clientmanager.BuildConfig;
 import io.mosip.registration.clientmanager.constant.ClientManagerError;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.R;
+import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.dto.http.OnboardError;
 import io.mosip.registration.clientmanager.dto.http.OnboardResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
@@ -136,6 +137,14 @@ public class UserOnboardService {
         this.idaResponse = idaResponse;
     }
     public void setIsOnboardSuccess(boolean isOnboardSuccess){this.isOnboardSuccess=isOnboardSuccess;}
+
+    public void setCaptureTransactionId(String transactionId) {
+        SessionManager.getSessionManager(context).setOperatorCaptureTransactionId(transactionId);
+    }
+
+    public String getCaptureTransactionId() {
+        return SessionManager.getSessionManager(context).getOperatorCaptureTransactionId();
+    }
 
     @Inject
     public UserOnboardService(Context context, ObjectMapper objectMapper, AuditManagerService auditManagerService,
