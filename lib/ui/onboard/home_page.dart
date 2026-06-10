@@ -94,10 +94,7 @@ class _HomePageState extends State<HomePage> {
     }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
-    if (syncProvider.isCenterRemapped) {
-      _showInSnackBar(appLocalizations.remap_operation_blocked);
-      return;
-    }
+    if (syncProvider.isCenterRemapped) return;
     syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
     syncProvider.isSyncAndUploadInProgress = false;
