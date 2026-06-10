@@ -189,6 +189,7 @@
   "appliction_upload": "Application Upload",
   "check_updates": "Check Updates",
   "center_remap_sync": "Center Remap Sync.",
+  "center_remap_notification": "Your machine has been re-mapped to another center. Kindly complete the pending activities.",
   "sync_activities": "Sync. Activities",
   "pending_approval": "Pending Approval",
   "dashboard": "Dashboard",

@@ -13,11 +13,13 @@ import 'package:flutter/widgets.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/platform_spi/global_config_service.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
 
 class SyncProvider with ChangeNotifier {
   final SyncResponseService syncResponseService = SyncResponseService();
+  final GlobalConfigService _globalConfigService = GlobalConfigService();
 
   String _lastSuccessfulSyncTime = "";
   int _currentSyncProgress = 0;
@@ -34,6 +36,7 @@ class SyncProvider with ChangeNotifier {
   bool _kernelCertsSyncSuccess = false;
   bool isSyncInProgress = false;
   bool _isSyncAndUploadInProgress = false;
+  bool _isCenterRemapped = false;
 
   Timer? _jobStatusPollingTimer;
   final Map<String, JobStatus> _jobStatuses = {};
@@ -44,6 +47,7 @@ class SyncProvider with ChangeNotifier {
   bool get isSyncing => _isSyncing;
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
   bool get isSyncAndUploadInProgress => _isSyncAndUploadInProgress;
+  bool get isCenterRemapped => _isCenterRemapped;
   bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
@@ -62,6 +66,20 @@ class SyncProvider with ChangeNotifier {
   set isSyncAndUploadInProgress(bool value) {
     _isSyncAndUploadInProgress = value;
     notifyListeners();
+  }
+
+  void _onRemapDetected() {
+    _isCenterRemapped = true;
+    stopJobPolling();
+    notifyListeners();
+  }
+
+  Future<void> checkCenterRemapState() async {
+    try {
+      if (await _globalConfigService.getCenterRemapFlag()) _onRemapDetected();
+    } catch (e) {
+      log('REMAP: checkCenterRemapState error: $e');
+    }
   }
 
   getLastSyncTime() async {
@@ -118,21 +136,22 @@ class SyncProvider with ChangeNotifier {
     // Get the job ID finder function
     String Function(String) findJobIdByApiName = await _getJobIdFinder();
 
-    await syncResponseService
-        .getMasterDataSync(false, findJobIdByApiName("masterSyncJob"))
-        .then((Sync getAutoSync) async {
-      setCurrentProgressType(getAutoSync.syncType!);
-      if (getAutoSync.errorCode == "") {
-        _globalParamsSyncSuccess = true;
-        _currentSyncProgress = getAutoSync.syncProgress!;
-        notifyListeners();
-        findJobIdByApiName = await _getJobIdFinder();
-
-      } else {
-        log(AppLocalizations.of(context)!.master_data_sync_failed);
-      }
+    final Sync masterSync = await syncResponseService
+        .getMasterDataSync(false, findJobIdByApiName("masterSyncJob"));
+    if (masterSync.syncType != null) setCurrentProgressType(masterSync.syncType!);
+    if (masterSync.errorCode == 'KER-SNC-149') {
+      _onRemapDetected();
+      return;
+    }
+    if (masterSync.errorCode == "") {
+      _globalParamsSyncSuccess = true;
+      _currentSyncProgress = masterSync.syncProgress!;
       notifyListeners();
-    });
+      findJobIdByApiName = await _getJobIdFinder();
+    } else {
+      log(AppLocalizations.of(context)!.master_data_sync_failed);
+    }
+    notifyListeners();
 
     await syncResponseService
         .getGlobalParamsSync(false, findJobIdByApiName("synchConfigDataJob"))
@@ -236,6 +255,11 @@ class SyncProvider with ChangeNotifier {
     String Function(String) findJobIdByApiName = await _getJobIdFinder();
     
     Sync syncResult = await syncResponseService.getMasterDataSync(true, findJobIdByApiName("masterSyncJob"));
+    if (syncResult.errorCode == 'KER-SNC-149') {
+      isSyncInProgress = false;
+      _onRemapDetected();
+      return;
+    }
     if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {
       syncResult = await syncResponseService.getIDSchemaSync(true, findJobIdByApiName("latestIdSchemaSyncJob"));
       if (syncResult.errorCode != null && syncResult.errorCode!.isEmpty) {

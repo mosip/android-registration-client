@@ -189,6 +189,7 @@
   "appliction_upload": "تحميل التطبيق",
   "check_updates": "تفقد التحديث",
   "center_remap_sync": "مركز إعادة رسم خريطة المزامنة.",
+  "center_remap_notification": "تمت إعادة تعيين جهازك إلى مركز آخر. يرجى إكمال الأنشطة المعلقة.",
   "sync_activities": "مزامنة. أنشطة",
   "pending_approval": "ما زال يحتاج بتصدير",
   "dashboard": "لوحة القيادة",

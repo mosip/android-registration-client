@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
         Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await syncProvider.checkCenterRemapState();
       // Check GPS status to update the indicator in profile
       await connectivityProvider.checkGPSStatus();
       // Fetch location if GPS is enabled
@@ -88,6 +89,7 @@ class _HomePageState extends State<HomePage> {
     }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
+    if (syncProvider.isCenterRemapped) return;
     syncProvider.isSyncAndUploadInProgress = true;
     await syncProvider.batchJob();
     syncProvider.isSyncAndUploadInProgress = false;
