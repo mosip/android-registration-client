@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (syncProvider.isCenterRemapped) {
-      _showInSnackBar(_remapBlockedMessage(process.flow));
+      _showInSnackBar(appLocalizations.remap_operation_blocked);
       return Container();
     }
     List<Screen?> sortedScreens;
