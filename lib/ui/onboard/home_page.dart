@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
       _showInSnackBar(appLocalizations.network_error);
       return;
     }
-    if (syncProvider.isCentreRemapped) {
+    if (syncProvider.isCenterRemapped) {
       _showInSnackBar(appLocalizations.remap_operation_blocked);
       return;
     }
@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
-    if (syncProvider.isCentreRemapped) {
+    if (syncProvider.isCenterRemapped) {
       _showInSnackBar(_remapBlockedMessage(process.flow));
       return Container();
     }
@@ -252,7 +252,7 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
-          if (syncProvider.isCentreRemapped) {
+          if (syncProvider.isCenterRemapped) {
             _showInSnackBar(appLocalizations.remap_operation_blocked);
             return;
           }
