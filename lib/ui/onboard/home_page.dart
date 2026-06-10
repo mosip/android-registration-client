@@ -87,6 +87,10 @@ class _HomePageState extends State<HomePage> {
       _showInSnackBar(appLocalizations.network_error);
       return;
     }
+    if (syncProvider.isCenterRemapped) {
+      _showInSnackBar(appLocalizations.remap_operation_blocked);
+      return;
+    }
     await syncProvider.manualSync();
     log("Manual Sync Completed!");
     if (syncProvider.isCenterRemapped) return;
@@ -101,6 +105,8 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.initializeLanguageDataList(true);
     await globalProvider.initializeLocationHierarchyMap();
   }
+
+
 
   void _fetchProcessSpec() async {
     await registrationTaskProvider.getLastUpdatedTime();
@@ -123,6 +129,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getProcessUI(BuildContext context, Process process) {
+    if (syncProvider.isCenterRemapped) {
+      _showInSnackBar(appLocalizations.remap_operation_blocked);
+      return Container();
+    }
     List<Screen?> sortedScreens;
     sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
     if (process.flow == "NEW" || process.flow == "UPDATE" || process.flow == "LOST" || process.flow == "CORRECTION") {
@@ -240,6 +250,10 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
+          if (syncProvider.isCenterRemapped) {
+            _showInSnackBar(appLocalizations.remap_operation_blocked);
+            return;
+          }
           await BiometricsApi().startOperatorOnboarding();
           globalProvider.onboardingProcessName = "Updation";
           Navigator.push(
