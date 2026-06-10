@@ -106,9 +106,7 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.initializeLocationHierarchyMap();
   }
 
-  String _remapBlockedMessage(String? flow) {
-    return appLocalizations.remap_operation_blocked;
-  }
+
 
   void _fetchProcessSpec() async {
     await registrationTaskProvider.getLastUpdatedTime();
@@ -132,7 +130,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget getProcessUI(BuildContext context, Process process) {
     if (syncProvider.isCenterRemapped) {
-      _showInSnackBar(_remapBlockedMessage(process.flow));
+      _showInSnackBar(appLocalizations.remap_operation_blocked);
       return Container();
     }
     List<Screen?> sortedScreens;
