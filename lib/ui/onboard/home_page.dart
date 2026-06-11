@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.initializeLocationHierarchyMap();
   }
 
-  void onCentreRemapSync(BuildContext context) async {
+  void onCentreRemap(BuildContext context) async {
     final pendingUpload =
         await registrationTaskProvider.getPacketUploadedPendingDetails();
     if (!mounted) return;
@@ -123,10 +123,6 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
-  }
-
-  String _remapBlockedMessage(String? flow) {
-    return appLocalizations.remap_operation_blocked;
   }
 
   void _fetchProcessSpec() async {
@@ -319,7 +315,7 @@ class _HomePageState extends State<HomePage> {
             size: 20,
           ),
           "title": appLocalizations.center_remap_sync,
-          "onTap": onCentreRemapSync,
+          "onTap": onCentreRemap,
           "subtitle": appLocalizations.center_remap_sync_subtitle,
         },
       // {
