@@ -191,6 +191,29 @@
   "center_remap_sync": "مركز إعادة رسم خريطة المزامنة.",
   "center_remap_notification": "تمت إعادة تعيين جهازك إلى مركز آخر. يرجى إكمال الأنشطة المعلقة.",
   "remap_operation_blocked": "العملية غير مسموح بها. تمت إعادة تعيين الجهاز إلى مركز آخر، يرجى إكمال الأنشطة المعلقة.",
+  "complete_pending_activities": "الأنشطة المعلقة التي تتطلب الإكمال",
+  "pending_activities_before_remap": "يجب إكمال الأنشطة التالية قبل بدء مزامنة إعادة تعيين المركز:",
+  "pending_packets_awaiting_approval": "الحزم في انتظار الموافقة",
+  "packets_require_supervisor_approval": "{count} حزم في انتظار موافقة المشرف ويجب اعتمادها قبل المتابعة في المزامنة.",
+  "@packets_require_supervisor_approval": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pending_packets_awaiting_upload": "الحزم المعلقة للمزامنة والتحميل",
+  "packets_queued_locally": "{count} حزم لا تزال معلقة للمزامنة المحلية ويجب تحميلها إلى الخادم قبل بدء مزامنة إعادة تعيين المركز.",
+  "@packets_queued_locally": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sync_button_auto_enabled": "سيتم تمكين زر المزامنة تلقائياً بمجرد إكمال كلا النشاطين.",
+  "okay_got_it": "حسناً",
+  "center_remap_sync_subtitle": "انقر للبدء في تنظيف إعادة تعيين المركز",
   "sync_activities": "مزامنة. أنشطة",
   "pending_approval": "ما زال يحتاج بتصدير",
   "dashboard": "لوحة القيادة",

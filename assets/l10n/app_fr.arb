@@ -190,6 +190,29 @@
   "center_remap_sync": "Synchronisation du remappage central.",
   "center_remap_notification": "Votre machine a été réaffectée à un autre centre. Veuillez compléter les activités en attente.",
   "remap_operation_blocked": "Opération non autorisée. La machine a été réaffectée à un autre centre, veuillez compléter les activités en attente.",
+  "complete_pending_activities": "Activités en attente nécessitant une complétion",
+  "pending_activities_before_remap": "Les activités suivantes doivent être complétées avant d'initier la synchronisation de réaffectation du centre:",
+  "pending_packets_awaiting_approval": "Paquets en attente d'approbation",
+  "packets_require_supervisor_approval": "{count} paquets sont en attente d'approbation du superviseur et doivent être approuvés avant de procéder à la synchronisation.",
+  "@packets_require_supervisor_approval": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pending_packets_awaiting_upload": "Paquets en attente de synchronisation et de téléchargement",
+  "packets_queued_locally": "{count} paquets restent en attente de synchronisation locale et doivent être téléchargés vers le serveur avant d'initier la synchronisation de réaffectation du centre.",
+  "@packets_queued_locally": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sync_button_auto_enabled": "Le bouton de synchronisation sera activé automatiquement une fois les deux activités terminées.",
+  "okay_got_it": "OK",
+  "center_remap_sync_subtitle": "Appuyez pour initier le nettoyage de réaffectation du centre",
   "sync_activities": "Synchronisation. Activités",
   "pending_approval": "En attente de validation",
   "dashboard": "Tableau de bord",

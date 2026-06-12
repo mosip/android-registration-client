@@ -29,6 +29,7 @@ import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biome
 // import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
+import 'package:registration_client/ui/widgets/remap_pending_activities_dialog.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
 
@@ -106,7 +107,23 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.initializeLocationHierarchyMap();
   }
 
+  void onCenterRemap(BuildContext context) async {
+    final pendingUpload =
+        await registrationTaskProvider.getPacketUploadedPendingDetails();
+    if (!mounted) return;
+    final pendingApproval =
+        context.read<ApprovePacketsProvider>().totalCreatedPackets;
 
+    if (pendingUpload > 0 || pendingApproval > 0) {
+      showDialog(
+        context: context,
+        builder: (_) => RemapPendingActivitiesDialog(
+          pendingUploadCount: pendingUpload,
+          pendingApprovalCount: pendingApproval,
+        ),
+      );
+    }
+  }
 
   void _fetchProcessSpec() async {
     await registrationTaskProvider.getLastUpdatedTime();
@@ -290,14 +307,17 @@ class _HomePageState extends State<HomePage> {
       //   "onTap": () {},
       //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       // },
-      // {
-      //   "icon": SvgPicture.asset(
-      //     "assets/svg/Uploading Local - Registration Data.svg",
-      //   ),
-      //   "title": appLocalizations.center_remap_sync,
-      //   "onTap": () {},
-      //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
-      // },
+      if (context.watch<SyncProvider>().isCenterRemapped)
+        {
+          "icon": const Icon(
+            Icons.location_on,
+            color: Color(0xff214FBF),
+            size: 20,
+          ),
+          "title": appLocalizations.center_remap_sync,
+          "onTap": onCenterRemap,
+          "subtitle": appLocalizations.center_remap_sync_subtitle,
+        },
       // {
       //   "icon": SvgPicture.asset(
       //     "assets/svg/Uploading Local - Registration Data.svg",
