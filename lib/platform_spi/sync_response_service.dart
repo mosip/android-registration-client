@@ -37,8 +37,6 @@ abstract class SyncResponseService {
   Future<bool> modifyJobCronExpression(String jobId, String cronExpression);
   Future<String?> getValue(String name);
 
-  /// Executes one step of the center remap cleanup process on the Android side.
-  /// Returns [true] on success, [false] if the step failed.
   Future<bool> executeRemapStep(int step);
 
   factory SyncResponseService() => getSyncResponseServiceImpl();

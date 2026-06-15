@@ -191,6 +191,7 @@
   "center_remap_sync": "Center Remap Sync.",
   "center_remap_notification": "Your machine has been re-mapped to another center. Kindly complete the pending activities.",
   "remap_operation_blocked": "Operation not permitted. Machine has been re-mapped to another center, kindly complete the pending activities.",
+  "no_center_remap_detected": "No changes detected. This machine remains assigned to the current center.",
   "complete_pending_activities": "Pending Activities Requiring Completion",
   "pending_activities_before_remap": "The following activities must be completed prior to initiating the Center Remap Synchronization:",
   "pending_packets_awaiting_approval": "Packets Awaiting Approval",

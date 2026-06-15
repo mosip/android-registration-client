@@ -110,7 +110,12 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.initializeLocationHierarchyMap();
   }
 
-  void onCentreRemapSync(BuildContext context) async {
+  void onCentreRemap(BuildContext context) async {
+    if (!syncProvider.isCenterRemapped) {
+      _showInSnackBar(appLocalizations.no_center_remap_detected);
+      return;
+    }
+
     final pendingUpload =
         await registrationTaskProvider.getPacketUploadedPendingDetails();
     if (!mounted) return;
@@ -329,7 +334,7 @@ class _HomePageState extends State<HomePage> {
             size: 20,
           ),
           "title": appLocalizations.center_remap_sync,
-          "onTap": onCentreRemapSync,
+          "onTap": onCentreRemap,
           "subtitle": context.watch<SyncProvider>().lastRemapSyncTime != null
               ? "Last updated on ${DateFormat("EEEE d MMMM, hh:mma").format(context.watch<SyncProvider>().lastRemapSyncTime!.toLocal())}"
               : "",
