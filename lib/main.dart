@@ -46,7 +46,18 @@ void main() async {
   // await TelemetryManager.initialize();// Initialize telemetry manager (loads user consent and configures Firebase accordingly)
   await TelemetryManager.initialize();
   await TelemetryService.init();
-   //
+
+  // --- DEBUG SECTION ---
+  // Ensure these are outside of any other function calls
+  print("TELEM_CHECK: 1. About to call logEvent");
+  try {
+    TelemetryManager.logEvent("APP_START_TEST_LOG");
+    print("TELEM_CHECK: 2. Call finished successfully");
+  } catch (e) {
+    print("TELEM_CHECK: ERROR during logEvent: $e");
+  }
+  // ---------------------
+  //
   runApp(
     const RestartWidget(child: RegistrationClientApp()),
   );

@@ -274,6 +274,16 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   }
 
   _getLoginAction() async {
+    // --- ADD YOUR CODE HERE ---
+    // 1. This will print in your Android Studio console
+    print("LOGIN_BUTTON: Clicked, attempting to notify backend");
+
+    // 2. This will send a request that appears in your Docker logs
+    await TelemetryManager.logEvent("login_button_pressed", {
+      "timestamp": DateTime.now().toString(),
+      "status": "pre_login_attempt"
+    });
+    // ---------------------------
     TelemetryService.trackEvent("login_clicked");// Telemetry event for login button click
     TelemetryManager.logEvent(
    "login_attempt",

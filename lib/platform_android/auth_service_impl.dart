@@ -16,28 +16,33 @@ import 'package:registration_client/platform_spi/auth_service.dart';
 class AuthServiceImpl implements AuthService {
   @override
   Future<User> validateUser(String username, String langCode) async {
-    late User user;
+    //late User user;
+    User user = User(userId: "", errorCode: "error", isOnboarded: false);
     try {
       user = await UserApi().validateUser(username, langCode);
-    } on PlatformException {
-      debugPrint('UserApi call failed');
-    } catch (e) {
+    }// on PlatformException {
+      //   debugPrint('UserApi call failed');
+      // }
+    catch (e) {
       debugPrint('User not fetched! ${e.toString()}');
     }
-    return user;
-  }
+      return user;
+    }
 
   @override
   Future<AuthResponse> login(
       String username, String password, bool isConnected) async {
-    late AuthResponse authResponse;
+    // late AuthResponse authResponse;
+    AuthResponse authResponse = AuthResponse(response: "", username: "", userId: '', isOfficer: false, userEmail: '', isDefault: false, isSupervisor: false, isOperator: false,);
     try {
       authResponse =
           await AuthResponseApi().login(username, password, isConnected);
-    } on PlatformException {
-      debugPrint('AuthResponseApi call failed');
-    } catch (e) {
-      debugPrint(e.toString());
+    } //on PlatformException {
+    //   debugPrint('AuthResponseApi call failed');
+    // }
+    catch (e) {
+      debugPrint("Login failed: ${e.toString()}");
+      // debugPrint(e.toString());
     }
     return authResponse;
   }
@@ -45,41 +50,45 @@ class AuthServiceImpl implements AuthService {
   @override
   Future<PacketAuth> packetAuthentication(
       String username, String password) async {
-    late PacketAuth packetAuth;
+    PacketAuth packetAuth = PacketAuth(response: "", userId: '');
+    // late PacketAuth packetAuth;
     try {
       packetAuth =
-          await PacketAuthApi().authenticate(username, password);
-    } on PlatformException {
-      debugPrint('PacketAuthenticationApi call failed!');
-    } catch (e) {
-      debugPrint(e.toString());
+      await PacketAuthApi().authenticate(username, password);
+    } //on PlatformException {
+    //   debugPrint('PacketAuthenticationApi call failed!');
+    // }
+    catch (e) {
+      debugPrint("Packet Auth failed: ${e.toString()}");
     }
-
     return packetAuth;
   }
 
   @override
   Future<String> logout() async {
-    late String logoutResponse;
+    // late String logoutResponse;
+    String logoutResponse = "failed"; // ✅ Safe default
     try {
       logoutResponse = await AuthResponseApi().logout();
-    }on PlatformException {
-      debugPrint('Logout Api call failed!');
-    }catch (e) {
+    }//on PlatformException {
+    //  debugPrint('Logout Api call failed!');
+    //}
+    catch (e) {
       debugPrint(e.toString());
     }
-
     return logoutResponse;
   }
 
   @override
   Future<String> stopAlarmService() async{
-    late String stopAlarmServiceResponse;
+    // late String stopAlarmServiceResponse;
+    String stopAlarmServiceResponse = "failed";
     try {
       stopAlarmServiceResponse = await AuthResponseApi().stopAlarmService();
-    }on PlatformException {
-      debugPrint('stopAlarmService Api call failed!');
-    }catch (e) {
+    }//on PlatformException {
+      //debugPrint('stopAlarmService Api call failed!');
+   // }
+    catch (e) {
       debugPrint(e.toString());
     }
     return stopAlarmServiceResponse;
@@ -87,12 +96,14 @@ class AuthServiceImpl implements AuthService {
 
   @override
   Future<String> forgotPasswordUrl() async{
-    late String forgotPasswordResponse;
+    String forgotPasswordResponse = "";// default safe value
+    //late String forgotPasswordResponse;
     try {
       forgotPasswordResponse = await AuthResponseApi().forgotPasswordUrl();
-    } on PlatformException {
-      debugPrint('forgotPassword call failed!');
-    } catch (e) {
+    } //on PlatformException {
+      //debugPrint('forgotPassword call failed!');
+    //}
+    catch (e) {
       debugPrint(e.toString());
     }
     return forgotPasswordResponse;
@@ -103,9 +114,10 @@ class AuthServiceImpl implements AuthService {
     String idleTime = "0"; // ✅ default safe value
     try {
       idleTime = await AuthResponseApi().getIdleTime();
-    } on PlatformException {
-      debugPrint('getIdleTime call failed!');
-    } catch (e) {
+     }// on PlatformException {
+    //   debugPrint('getIdleTime call failed!');
+    // }
+    catch (e) {
       debugPrint(e.toString());
     }
     return idleTime;
@@ -116,9 +128,10 @@ class AuthServiceImpl implements AuthService {
     String refreshLoginTime = "0";
     try {
       refreshLoginTime = await AuthResponseApi().getAutoLogoutPopupTimeout();
-    } on PlatformException {
-      debugPrint('getIdleTime call failed!');
-    } catch (e) {
+    } //on PlatformException {
+      //debugPrint('getIdleTime call failed!');
+    //}
+    catch (e) {
       debugPrint(e.toString());
     }
     return refreshLoginTime;
@@ -129,27 +142,38 @@ class AuthServiceImpl implements AuthService {
     List<String?> rolesList = [];
     try {
       rolesList = await AuthResponseApi().getRolesByUserId(userId);
-    } on PlatformException {
-      debugPrint('getRolesByUserId call failed!');
-    } catch (e) {
+    } //on PlatformException {
+    //  debugPrint('getRolesByUserId call failed!');
+    //}
+    catch (e) {
       debugPrint(e.toString());
     }
     return rolesList;
   }
 
+  // @override
+//   // Future<String> getPasswordLength() async {
+//   //   late String passwordLength;
+//   //   try {
+//   //     passwordLength = await AuthResponseApi().getPasswordLength();
+//   //   } on PlatformException {
+//   //     debugPrint('getPasswordLength call failed!');
+//   //   } catch (e) {
+//   //     debugPrint(e.toString());
+//   //   }
+//   //   return passwordLength;
+//   // }
   @override
   Future<String> getPasswordLength() async {
-    late String passwordLength;
     try {
-      passwordLength = await AuthResponseApi().getPasswordLength();
-    } on PlatformException {
-      debugPrint('getPasswordLength call failed!');
+      // This is currently failing because it's hitting the TUSD server
+      var response = await AuthResponseApi().getPasswordLength();
+      return response.toString();
     } catch (e) {
-      debugPrint(e.toString());
+      print("DEBUG: Failed to get password length, using default: $e");
+      return "8"; // Provide a default value so the app doesn't crash
     }
-    return passwordLength;
   }
-
 }
 
 AuthService getAuthServiceImpl() => AuthServiceImpl();

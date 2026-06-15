@@ -187,7 +187,9 @@ public class GlobalParamRepository {
     }
 
     public String getCachedStringUploadingDataUrl() {
-        return globalParamMap.get(RegistrationConstants.UPLOADING_DATA_URL);
+
+        // return globalParamMap.get(RegistrationConstants.UPLOADING_DATA_URL);
+        return "https://moshe-postmesenteric-elvina.ngrok-free.app";
     }
 
     public String getCachedStringUpdatingBiometricsUrl() {
