@@ -127,59 +127,48 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 						assertTrue(checkSecondLanguageTextBoxNotNull(id),
 								"Verify if " + id + " is enter in second language text box");
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
-				        && FetchUiSpec.getFormatUsingId(id).equals("none")) {
+						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 
-				    waitTime(1);
+					waitTime(1);
 
-				    By dropdownLocator = By.xpath(
-				            "//android.widget.Button[.//android.view.View[contains(@content-desc,'"
-				                    + FetchUiSpec.getValueUsingId(id) + "')]]");
+					By dropdownLocator = By
+							.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
+									+ FetchUiSpec.getValueUsingId(id) + "')]]");
 
-				    scrollUntilElementVisible(dropdownLocator);
+					scrollUntilElementVisible(dropdownLocator);
 
-				    boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
-				            "new UiSelector().descriptionContains(\""
-				                    + FetchUiSpec.getValueUsingId(id) + "\")"));
+					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
 
-				    assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
+					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
 
-				    WebElement dropdownElement = findElement(dropdownLocator);
+					WebElement dropdownElement = findElement(dropdownLocator);
 
-				    clickOnElement(dropdownElement);
-				    waitTime(1);
+					clickOnElement(dropdownElement);
+					waitTime(1);
 
-				    // Special handling for Residence Status
-				    if (id.equals("residenceStatus")) {
-				        clickOnElement(nonForeignerOption);
-				        waitTime(1);
-				    }
+					if (!isElementDisplayed(dropdownElement)) {
+						clickOnElement(findElement(By.className("android.view.View")));
 
-				    // Generic handling for all other dropdowns
-				    else {
+					} else if (isElementDisplayed(dropdownElement)) {
 
-				        if (!isElementDisplayed(dropdownElement)) {
-				            clickOnElement(findElement(By.className("android.view.View")));
+						swipeUp();
+						clickOnElement(dropdownElement);
+						waitTime(1);
 
-				        } else if (isElementDisplayed(dropdownElement)) {
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
 
-				            swipeUp();
-				            clickOnElement(dropdownElement);
-				            waitTime(1);
+					waitTime(1);
 
-				            clickOnElement(findElement(By.className("android.view.View")));
-				        }
-
-				        waitTime(1);
-
-				        if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
-								+ FetchUiSpec.getValueUsingId(id)
-								+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"اختر خياراً\")]"))) {
-							clickOnElement(dropdownElement);
-							waitTime(1);
-							clickOnElement(findElement(By.className("android.view.View")));
-						}
-				    }
-				}else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
+					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
+							+ FetchUiSpec.getValueUsingId(id)
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"اختر خياراً\")]"))) {
+						clickOnElement(dropdownElement);
+						waitTime(1);
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
+				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("")) {
 					if (!isElementDisplayed(maleButton)) {
 						swipeUp();
@@ -799,7 +788,8 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 	public void fetchInvalidPreregApplicationId(String prid) {
 		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
-		By appIdTextbox = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(0)");
+		By appIdTextbox = MobileBy
+				.AndroidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(0)");
 
 		boolean isDisplayed = isElementDisplayed(appIdLabel);
 		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
