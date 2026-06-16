@@ -157,7 +157,6 @@ class SyncProvider with ChangeNotifier {
 
       if (!ok) return false;
     }
-    _isCenterRemapped = false;
     _remapCompletedAt = DateTime.now();
     _lastRemapSyncTime = _remapCompletedAt;
     await _saveRemapSyncTime(_lastRemapSyncTime!);

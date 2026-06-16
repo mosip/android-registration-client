@@ -336,7 +336,7 @@ class _HomePageState extends State<HomePage> {
           "title": appLocalizations.center_remap_sync,
           "onTap": onCentreRemap,
           "subtitle": context.watch<SyncProvider>().lastRemapSyncTime != null
-              ? "Last updated on ${DateFormat("EEEE d MMMM, hh:mma").format(context.watch<SyncProvider>().lastRemapSyncTime!.toLocal())}"
+              ? "${appLocalizations.remap_synced_at} ${DateFormat("EEEE d MMMM, hh:mma").format(context.watch<SyncProvider>().lastRemapSyncTime!.toLocal())}"
               : "",
           "isRemapHighlight": true,
         },

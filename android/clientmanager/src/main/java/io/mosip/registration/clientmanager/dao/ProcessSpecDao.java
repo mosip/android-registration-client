@@ -20,4 +20,7 @@ public interface ProcessSpecDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertProcessSpec(ProcessSpec processSpec);
+
+    @Query("DELETE FROM process_spec")
+    void deleteAll();
 }

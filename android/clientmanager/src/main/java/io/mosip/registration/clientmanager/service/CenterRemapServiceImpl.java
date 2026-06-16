@@ -11,7 +11,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,6 +33,8 @@ import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.clientmanager.spi.CenterRemapService;
@@ -141,12 +146,22 @@ public class CenterRemapServiceImpl implements CenterRemapService {
 
         List<Registration> pending = registrationRepository.getAllPendingForProcessing();
         for (Registration reg : pending) {
-            try {
-                packetService.uploadRegistration(reg.getPacketId());
-            } catch (Exception e) {
-                Log.e(TAG, "Upload failed for packet " + reg.getPacketId() + ": " + e.getMessage());
-                throw e;
-            }
+            CompletableFuture<Void> uploadDone = new CompletableFuture<>();
+            packetService.uploadRegistration(reg.getPacketId(), new AsyncPacketTaskCallBack() {
+                @Override
+                public void inProgress(String RID) {}
+
+                @Override
+                public void onComplete(String RID, PacketTaskStatus status) {
+                    if (status == PacketTaskStatus.UPLOAD_FAILED) {
+                        uploadDone.completeExceptionally(new Exception("Upload failed for packet: " + RID));
+                    } else {
+                        uploadDone.complete(null);
+                    }
+                }
+            });
+            // Block until this packet's upload finishes (or times out after 2 min).
+            uploadDone.get(2, TimeUnit.MINUTES);
         }
         auditManagerService.audit(AuditEvent.MACHINE_REMAPPED, Components.PACKETS_UPLOADED);
         Log.i(TAG, "Step 2: uploaded " + pending.size() + " packet(s)");
@@ -168,7 +183,7 @@ public class CenterRemapServiceImpl implements CenterRemapService {
         registrationCenterRepository.deleteAll();
         templateRepository.deleteAll();
         dynamicFieldRepository.deleteAll();
-        identitySchemaRepository.deleteAll();
+        identitySchemaRepository.deleteAll(context);
         locationRepository.deleteAll();
 
         // Clear all cached certificates so the initial sync after remap fetches fresh

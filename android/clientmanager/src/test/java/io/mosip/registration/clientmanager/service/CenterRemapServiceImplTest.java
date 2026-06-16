@@ -193,7 +193,7 @@ public class CenterRemapServiceImplTest {
         inOrder.verify(mockRegistrationCenterRepository).deleteAll();
         inOrder.verify(mockTemplateRepository).deleteAll();
         inOrder.verify(mockDynamicFieldRepository).deleteAll();
-        inOrder.verify(mockIdentitySchemaRepository).deleteAll();
+        inOrder.verify(mockIdentitySchemaRepository).deleteAll(mockContext);
         inOrder.verify(mockLocationRepository).deleteAll();
         inOrder.verify(mockKeyStoreRepository).deleteAll();
         // Sync timestamps cleared so initial sync triggers on next login

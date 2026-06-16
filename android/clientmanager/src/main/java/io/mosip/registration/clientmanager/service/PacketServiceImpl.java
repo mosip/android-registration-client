@@ -1,6 +1,8 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -317,35 +319,31 @@ public class PacketServiceImpl implements PacketService {
         packetStatusRequest.setRequest(packets);
 
         Call<PacketStatusResponse> call = (serverVersion!=null && serverVersion.startsWith(SERVER_VERSION_1_1_5)) ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
-        call.enqueue(new Callback<PacketStatusResponse>() {
-            @Override
-            public void onResponse(Call<PacketStatusResponse> call, Response<PacketStatusResponse> response) {
-                if (response.isSuccessful()) {
-                    List<PacketStatusDto> packetStatusList = response.body().getResponse();
-                    int packetSyncSuccess = 0;
-
-                    if (packetStatusList != null && packetStatusList.size() > 0) {
-                        long currentTimestamp = System.currentTimeMillis();
-                        for (PacketStatusDto packetStatus : packetStatusList) {
-                            PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getRegistrationId() != null ? packetStatus.getRegistrationId() : packetStatus.getPacketId(), packetStatus.getStatusCode());
-                            // Update server status with timestamp
-                            registrationRepository.updateServerStatusWithTimestamp(updateDto.getRegistrationId(), updateDto.getStatusCode(), currentTimestamp);
-                            packetSyncSuccess++;
-                        }
-                    }
-
-                    Toast.makeText(context, context.getString(R.string.packet_status_sync, packetSyncSuccess), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())), Toast.LENGTH_LONG).show();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        try {
+            Response<PacketStatusResponse> response = call.execute();
+            if (!response.isSuccessful()) {
+                mainHandler.post(() -> Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())), Toast.LENGTH_LONG).show());
+                return;
+            }
+            List<PacketStatusDto> packetStatusList = response.body().getResponse();
+            int packetSyncSuccess = 0;
+            if (packetStatusList != null && packetStatusList.size() > 0) {
+                long currentTimestamp = System.currentTimeMillis();
+                for (PacketStatusDto packetStatus : packetStatusList) {
+                    PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(
+                            packetStatus.getRegistrationId() != null ? packetStatus.getRegistrationId() : packetStatus.getPacketId(),
+                            packetStatus.getStatusCode());
+                    registrationRepository.updateServerStatusWithTimestamp(updateDto.getRegistrationId(), updateDto.getStatusCode(), currentTimestamp);
+                    packetSyncSuccess++;
                 }
             }
-
-            @Override
-            public void onFailure(Call<PacketStatusResponse> call, Throwable t) {
-                Log.e(TAG, "Packet status sync failed", t);
-                Toast.makeText(context, "Packet status sync failed", Toast.LENGTH_LONG).show();
-            }
-        });
+            int finalCount = packetSyncSuccess;
+            mainHandler.post(() -> Toast.makeText(context, context.getString(R.string.packet_status_sync, finalCount), Toast.LENGTH_LONG).show());
+        } catch (Exception e) {
+            Log.e(TAG, "Packet status sync failed", e);
+            mainHandler.post(() -> Toast.makeText(context, "Packet status sync failed", Toast.LENGTH_LONG).show());
+        }
     }
 
     @Override

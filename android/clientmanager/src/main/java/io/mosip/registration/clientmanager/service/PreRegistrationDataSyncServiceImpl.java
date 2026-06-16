@@ -512,19 +512,24 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
             Log.i(TAG, "No pre-registration records found to delete");
             return;
         }
+        List<PreRegistrationList> toDelete = new LinkedList<>();
         for (PreRegistrationList record : all) {
-            if (record.getPacketPath() != null) {
-                try {
-                    File packetFile = FileUtils.getFile(record.getPacketPath());
-                    if (packetFile.exists()) {
-                        packetFile.delete();
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Error deleting pre-reg file for id " + record.getPreRegId() + ": " + e.getMessage());
+            if (record.getPacketPath() == null) {
+                toDelete.add(record);
+                continue;
+            }
+            try {
+                File packetFile = FileUtils.getFile(record.getPacketPath());
+                if (!packetFile.exists() || packetFile.delete()) {
+                    toDelete.add(record);
+                } else {
+                    Log.e(TAG, "Failed to delete pre-reg file for id " + record.getPreRegId());
                 }
+            } catch (Exception e) {
+                Log.e(TAG, "Error deleting pre-reg file for id " + record.getPreRegId(), e);
             }
         }
-        preRegistrationDao.deleteAll(all);
-        Log.i(TAG, "Center remap: deleted " + all.size() + " pre-registration record(s)");
+        preRegistrationDao.deleteAll(toDelete);
+        Log.i(TAG, "Center remap: deleted " + toDelete.size() + " pre-registration record(s)");
     }
 }

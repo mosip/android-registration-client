@@ -76,7 +76,7 @@ public interface RegistrationDao {
     @Query("UPDATE registration SET server_status = :serverStatus, server_status_dtimes = :timestamp WHERE packet_id = :packetId")
     void updateServerStatusWithTimestamp(String packetId, String serverStatus, long timestamp);
 
-    @Query("SELECT * FROM registration WHERE client_status NOT IN ('UPLOADED', 'REJECTED') ORDER BY cr_dtimes DESC")
+    @Query("SELECT * FROM registration WHERE client_status IN ('APPROVED', 'SYNCED', 'EXPORTED') ORDER BY cr_dtimes DESC")
     List<Registration> findAllPendingForProcessing();
 
     @Query("SELECT COUNT(*) FROM registration WHERE client_status = 'CREATED'")

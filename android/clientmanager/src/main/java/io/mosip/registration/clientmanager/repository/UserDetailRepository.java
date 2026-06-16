@@ -242,8 +242,6 @@ public class UserDetailRepository {
      * Deletes passwords and tokens before the parent user_detail record.
      */
     public void deleteAll() {
-        userPasswordDao.deleteAll();
-        userTokenDao.deleteAll();
-        userDetailDao.deleteAllUsers();
+        userDetailDao.deleteAllAuthData();
     }
 }
