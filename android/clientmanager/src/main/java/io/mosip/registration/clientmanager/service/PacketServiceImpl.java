@@ -17,7 +17,9 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -318,6 +320,11 @@ public class PacketServiceImpl implements PacketService {
         }
         packetStatusRequest.setRequest(packets);
 
+        Map<String, String> registrationIdToPacketId = new HashMap<>();
+        for (Registration reg : registrations) {
+            if (reg.getId() != null) registrationIdToPacketId.put(reg.getId(), reg.getPacketId());
+        }
+
         Call<PacketStatusResponse> call = (serverVersion!=null && serverVersion.startsWith(SERVER_VERSION_1_1_5)) ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
         Handler mainHandler = new Handler(Looper.getMainLooper());
         try {
@@ -331,11 +338,17 @@ public class PacketServiceImpl implements PacketService {
             if (packetStatusList != null && packetStatusList.size() > 0) {
                 long currentTimestamp = System.currentTimeMillis();
                 for (PacketStatusDto packetStatus : packetStatusList) {
-                    PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(
-                            packetStatus.getRegistrationId() != null ? packetStatus.getRegistrationId() : packetStatus.getPacketId(),
-                            packetStatus.getStatusCode());
-                    registrationRepository.updateServerStatusWithTimestamp(updateDto.getRegistrationId(), updateDto.getStatusCode(), currentTimestamp);
-                    packetSyncSuccess++;
+                    String packetId = packetStatus.getPacketId();
+                    if (packetId == null && packetStatus.getRegistrationId() != null) {
+                        packetId = registrationIdToPacketId.get(packetStatus.getRegistrationId());
+                    }
+                    if (packetId != null) {
+                        registrationRepository.updateServerStatusWithTimestamp(
+                                packetId, packetStatus.getStatusCode(), currentTimestamp);
+                        packetSyncSuccess++;
+                    } else {
+                        Log.w(TAG, "Skipping packet status update: no matching local packet_id");
+                    }
                 }
             }
             int finalCount = packetSyncSuccess;

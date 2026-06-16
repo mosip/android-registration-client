@@ -170,7 +170,6 @@ subprojects {
 // AGP 8 fixes: set namespace for all com.android.library subprojects that lack one.
 // Must run inside plugins.withId (during evaluation) — afterEvaluate is too late for namespace.
 // Source priority: (1) manifest package= attribute, (2) project.group.
-// The manifest is also stripped of package= so AGP 8 doesn't reject it.
 subprojects {
     plugins.withId("com.android.library") {
         def android = project.extensions.findByName("android")
@@ -184,7 +183,6 @@ subprojects {
             def packageMatcher = manifestContent =~ /package="([^"]+)"/
             if (packageMatcher.find()) {
                 detectedNamespace = packageMatcher.group(1)
-                manifestFile.text = manifestContent.replaceAll(/\s*package="[^"]*"/, '')
             }
         }
 

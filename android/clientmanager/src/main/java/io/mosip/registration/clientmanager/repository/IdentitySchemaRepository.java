@@ -396,13 +396,17 @@ public class IdentitySchemaRepository {
         // Delete on-disk schema/process-spec files before clearing the DB rows that
         // track their filenames; otherwise orphaned files accumulate across remaps.
         List<IdentitySchema> schemas = identitySchemaDao.findAll();
+        List<String> failedDeletes = new ArrayList<>();
         for (IdentitySchema schema : schemas) {
             if (schema.getFileName() != null) {
                 File file = new File(context.getFilesDir(), schema.getFileName());
                 if (file.exists() && !file.delete()) {
-                    Log.w(TAG, "Failed to delete schema file: " + file.getPath());
+                    failedDeletes.add(file.getPath());
                 }
             }
+        }
+        if (!failedDeletes.isEmpty()) {
+            throw new IllegalStateException("Failed to delete remap schema files: " + failedDeletes);
         }
         identitySchemaDao.deleteAll();
         processSpecDao.deleteAll();
