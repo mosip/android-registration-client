@@ -101,7 +101,7 @@ public interface PacketService {
     void deleteRegistrationPackets();
 
     /**
-     * Force-deletes ALL registration packets from the local filesystem and database,
+     * Deletes ALL registration packets from the local filesystem and database,
      * regardless of server status or age. Used exclusively during center remap cleanup.
      */
     void deleteAllRegistrationPackets();

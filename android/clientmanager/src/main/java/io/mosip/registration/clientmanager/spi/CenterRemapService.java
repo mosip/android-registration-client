@@ -14,7 +14,7 @@ package io.mosip.registration.clientmanager.spi;
  * <ol>
  *   <li>Disable all background sync jobs</li>
  *   <li>Sync and upload all pending registration packets</li>
- *   <li>Force-delete all local registration and pre-registration packets</li>
+ *   <li>Delete all local registration and pre-registration packets</li>
  *   <li>Purge all center-specific master data and reset the remap flag</li>
  * </ol>
  */
@@ -28,19 +28,4 @@ public interface CenterRemapService {
      * @throws Exception                if the step fails and cleanup cannot continue
      */
     void handleRemapStep(int step) throws Exception;
-
-    /** Convenience method that runs all four steps in sequence. */
-    void startRemapProcess() throws Exception;
-
-    /** Returns {@code true} when the {@code mosip.registration.machinecenterchanged} flag is set. */
-    boolean isMachineRemapped();
-
-    /** Returns {@code true} when packets are pending upload or server processing. */
-    boolean isPacketsPendingForProcessing();
-
-    /** Returns {@code true} when locally created (EOD-pending) packets exist. */
-    boolean isPacketsPendingForEOD();
-
-    /** Returns {@code true} when packets are flagged for re-registration. */
-    boolean isPacketsPendingForReRegister();
 }

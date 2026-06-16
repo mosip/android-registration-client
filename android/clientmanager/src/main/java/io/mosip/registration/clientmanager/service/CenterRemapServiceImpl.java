@@ -31,6 +31,7 @@ import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.clientmanager.spi.CenterRemapService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
@@ -42,7 +43,7 @@ import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
  * <ol>
  *   <li>Disable background sync jobs so no new data arrives during cleanup</li>
  *   <li>Upload any pending packets so no work is lost</li>
- *   <li>Force-delete all local packets (registration + pre-registration)</li>
+ *   <li>Delete all local packets (registration + pre-registration)</li>
  *   <li>Purge center-specific master data and reset the remap flag</li>
  * </ol>
  */
@@ -67,6 +68,7 @@ public class CenterRemapServiceImpl implements CenterRemapService {
     private final UserBiometricRepository userBiometricRepository;
     private final UserRoleRepository userRoleRepository;
     private final AuditManagerService auditManagerService;
+    private final KeyStoreRepository keyStoreRepository;
 
     @Inject
     public CenterRemapServiceImpl(Context context,
@@ -82,7 +84,8 @@ public class CenterRemapServiceImpl implements CenterRemapService {
                                   TemplateRepository templateRepository,
                                   UserBiometricRepository userBiometricRepository,
                                   UserRoleRepository userRoleRepository,
-                                  AuditManagerService auditManagerService) {
+                                  AuditManagerService auditManagerService,
+                                  KeyStoreRepository keyStoreRepository) {
         this.context = context;
         this.globalParamRepository = globalParamRepository;
         this.registrationRepository = registrationRepository;
@@ -97,6 +100,7 @@ public class CenterRemapServiceImpl implements CenterRemapService {
         this.userBiometricRepository = userBiometricRepository;
         this.userRoleRepository = userRoleRepository;
         this.auditManagerService = auditManagerService;
+        this.keyStoreRepository = keyStoreRepository;
     }
 
     @Override
@@ -121,39 +125,6 @@ public class CenterRemapServiceImpl implements CenterRemapService {
         }
         Log.i(TAG, "Remap step " + step + " completed");
     }
-
-    @Override
-    public void startRemapProcess() throws Exception {
-        for (int step = 1; step <= 4; step++) {
-            handleRemapStep(step);
-        }
-    }
-
-    @Override
-    public boolean isMachineRemapped() {
-        Boolean flag = globalParamRepository.getCachedBooleanGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED);
-        return Boolean.TRUE.equals(flag);
-    }
-
-    @Override
-    public boolean isPacketsPendingForProcessing() {
-        List<Registration> pending = registrationRepository.getAllPendingForProcessing();
-        return pending != null && !pending.isEmpty();
-    }
-
-    @Override
-    public boolean isPacketsPendingForEOD() {
-        return registrationRepository.countByCreatedStatus() > 0;
-    }
-
-    @Override
-    public boolean isPacketsPendingForReRegister() {
-        return registrationRepository.countReRegisterPending() > 0;
-    }
-
-    // -------------------------------------------------------------------------
-    // Private step implementations
-    // -------------------------------------------------------------------------
 
     private void disableAllSyncJobs() {
         syncJobDefRepository.disableAllJobs();
@@ -199,6 +170,10 @@ public class CenterRemapServiceImpl implements CenterRemapService {
         dynamicFieldRepository.deleteAll();
         identitySchemaRepository.deleteAll();
         locationRepository.deleteAll();
+
+        // Clear all cached certificates so the initial sync after remap fetches fresh
+        // policy keys and CA/kernel certs for the new center without conflicts.
+        keyStoreRepository.deleteAll();
 
         // Clear sync timestamps so getLastSyncTime() returns "LastSyncTimeIsNull" on next login,
         // which triggers the initial sync that re-downloads all center data for the new center.

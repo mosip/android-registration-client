@@ -508,7 +508,7 @@ public class PacketServiceImpl implements PacketService {
 
     @Override
     public void deleteAllRegistrationPackets() {
-        Log.i(TAG, "Center remap: force-deleting all registration packets");
+        Log.i(TAG, "Center remap: deleting all registration packets");
         List<Registration> all = registrationRepository.getAllRegistrations();
         if (all == null || all.isEmpty()) {
             Log.i(TAG, "No registration packets found to delete");

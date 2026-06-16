@@ -58,6 +58,7 @@ import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
@@ -310,7 +311,8 @@ public class HostApiModule {
             TemplateRepository templateRepository,
             UserBiometricRepository userBiometricRepository,
             UserRoleRepository userRoleRepository,
-            AuditManagerService auditManagerService) {
+            AuditManagerService auditManagerService,
+            KeyStoreRepository keyStoreRepository) {
         return new CenterRemapServiceImpl(
                 appContext,
                 globalParamRepository,
@@ -325,7 +327,8 @@ public class HostApiModule {
                 templateRepository,
                 userBiometricRepository,
                 userRoleRepository,
-                auditManagerService
+                auditManagerService,
+                keyStoreRepository
         );
     }
 }

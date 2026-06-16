@@ -36,6 +36,7 @@ import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
+import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CenterRemapServiceImplTest {
@@ -54,6 +55,7 @@ public class CenterRemapServiceImplTest {
     @Mock private UserBiometricRepository mockUserBiometricRepository;
     @Mock private UserRoleRepository mockUserRoleRepository;
     @Mock private AuditManagerService mockAuditManagerService;
+    @Mock private KeyStoreRepository mockKeyStoreRepository;
     @Mock private ConnectivityManager mockConnectivityManager;
     @Mock private NetworkInfo mockNetworkInfo;
 
@@ -75,96 +77,13 @@ public class CenterRemapServiceImplTest {
                 mockTemplateRepository,
                 mockUserBiometricRepository,
                 mockUserRoleRepository,
-                mockAuditManagerService);
+                mockAuditManagerService,
+                mockKeyStoreRepository);
 
         when(mockContext.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .thenReturn(mockConnectivityManager);
         when(mockConnectivityManager.getActiveNetworkInfo()).thenReturn(mockNetworkInfo);
         when(mockNetworkInfo.isConnected()).thenReturn(true);
-    }
-
-    // -------------------------------------------------------------------------
-    // isMachineRemapped
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void isMachineRemapped_flagIsTrue_returnsTrue() {
-        when(mockGlobalParamRepository.getCachedBooleanGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED))
-                .thenReturn(true);
-
-        assertTrue(service.isMachineRemapped());
-    }
-
-    @Test
-    public void isMachineRemapped_flagIsFalse_returnsFalse() {
-        when(mockGlobalParamRepository.getCachedBooleanGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED))
-                .thenReturn(false);
-
-        assertFalse(service.isMachineRemapped());
-    }
-
-    @Test
-    public void isMachineRemapped_flagIsNull_returnsFalse() {
-        when(mockGlobalParamRepository.getCachedBooleanGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED))
-                .thenReturn(null);
-
-        assertFalse(service.isMachineRemapped());
-    }
-
-    // -------------------------------------------------------------------------
-    // isPacketsPendingForProcessing
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void isPacketsPendingForProcessing_pendingPacketsExist_returnsTrue() {
-        when(mockRegistrationRepository.getAllPendingForProcessing())
-                .thenReturn(Arrays.asList(new Registration("PKT001")));
-
-        assertTrue(service.isPacketsPendingForProcessing());
-    }
-
-    @Test
-    public void isPacketsPendingForProcessing_noPendingPackets_returnsFalse() {
-        when(mockRegistrationRepository.getAllPendingForProcessing())
-                .thenReturn(new ArrayList<>());
-
-        assertFalse(service.isPacketsPendingForProcessing());
-    }
-
-    // -------------------------------------------------------------------------
-    // isPacketsPendingForEOD
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void isPacketsPendingForEOD_createdPacketsExist_returnsTrue() {
-        when(mockRegistrationRepository.countByCreatedStatus()).thenReturn(3);
-
-        assertTrue(service.isPacketsPendingForEOD());
-    }
-
-    @Test
-    public void isPacketsPendingForEOD_noCreatedPackets_returnsFalse() {
-        when(mockRegistrationRepository.countByCreatedStatus()).thenReturn(0);
-
-        assertFalse(service.isPacketsPendingForEOD());
-    }
-
-    // -------------------------------------------------------------------------
-    // isPacketsPendingForReRegister
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void isPacketsPendingForReRegister_reRegisterPacketsExist_returnsTrue() {
-        when(mockRegistrationRepository.countReRegisterPending()).thenReturn(1);
-
-        assertTrue(service.isPacketsPendingForReRegister());
-    }
-
-    @Test
-    public void isPacketsPendingForReRegister_noReRegisterPackets_returnsFalse() {
-        when(mockRegistrationRepository.countReRegisterPending()).thenReturn(0);
-
-        assertFalse(service.isPacketsPendingForReRegister());
     }
 
     // -------------------------------------------------------------------------
@@ -241,7 +160,7 @@ public class CenterRemapServiceImplTest {
     // -------------------------------------------------------------------------
 
     @Test
-    public void handleRemapStep_step3_forceDeletesAllPacketsAndPreReg() throws Exception {
+    public void handleRemapStep_step3_deletesAllPacketsAndPreReg() throws Exception {
         service.handleRemapStep(3);
 
         verify(mockPacketService).deleteAllRegistrationPackets();
@@ -263,6 +182,7 @@ public class CenterRemapServiceImplTest {
                 mockDynamicFieldRepository,
                 mockIdentitySchemaRepository,
                 mockLocationRepository,
+                mockKeyStoreRepository,
                 mockGlobalParamRepository);
 
         service.handleRemapStep(4);
@@ -275,6 +195,7 @@ public class CenterRemapServiceImplTest {
         inOrder.verify(mockDynamicFieldRepository).deleteAll();
         inOrder.verify(mockIdentitySchemaRepository).deleteAll();
         inOrder.verify(mockLocationRepository).deleteAll();
+        inOrder.verify(mockKeyStoreRepository).deleteAll();
         // Sync timestamps cleared so initial sync triggers on next login
         inOrder.verify(mockGlobalParamRepository).saveGlobalParam("sync.lastupdated", null);
         inOrder.verify(mockGlobalParamRepository).saveGlobalParam("masterdata.lastupdated", null);
@@ -319,31 +240,6 @@ public class CenterRemapServiceImplTest {
     @Test
     public void handleRemapStep_stepZero_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> service.handleRemapStep(0));
-    }
-
-    // -------------------------------------------------------------------------
-    // startRemapProcess — full four-step sequence
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void startRemapProcess_allStepsExecute_inSequentialOrder() throws Exception {
-        when(mockRegistrationRepository.getAllPendingForProcessing())
-                .thenReturn(new ArrayList<>());
-
-        InOrder inOrder = inOrder(
-                mockSyncJobDefRepository,
-                mockPacketService,
-                mockPreRegistrationDataSyncService,
-                mockGlobalParamRepository);
-
-        service.startRemapProcess();
-
-        inOrder.verify(mockSyncJobDefRepository).disableAllJobs();
-        inOrder.verify(mockPacketService).syncAllPacketStatus();
-        inOrder.verify(mockPacketService).deleteAllRegistrationPackets();
-        inOrder.verify(mockPreRegistrationDataSyncService).deleteAllPreRegRecords();
-        inOrder.verify(mockGlobalParamRepository).saveGlobalParam(
-                RegistrationConstants.MACHINE_CENTER_CHANGED, "false");
     }
 
     @Test

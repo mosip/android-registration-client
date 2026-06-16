@@ -41,10 +41,8 @@ class SyncProvider with ChangeNotifier {
   bool _isSyncAndUploadInProgress = false;
   bool _isCenterRemapped = false;
 
-  RemapSyncStatus _step1Status = RemapSyncStatus.idle;
-  RemapSyncStatus _step2Status = RemapSyncStatus.idle;
-  RemapSyncStatus _step3Status = RemapSyncStatus.idle;
-  RemapSyncStatus _step4Status = RemapSyncStatus.idle;
+  final List<RemapSyncStatus> _remapStepStatuses =
+      List.filled(4, RemapSyncStatus.idle);
   DateTime? _remapCompletedAt;
   DateTime? _lastRemapSyncTime;
 
@@ -60,25 +58,21 @@ class SyncProvider with ChangeNotifier {
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
   bool get isSyncAndUploadInProgress => _isSyncAndUploadInProgress;
   bool get isCenterRemapped => _isCenterRemapped;
-  RemapSyncStatus get step1Status => _step1Status;
-  RemapSyncStatus get step2Status => _step2Status;
-  RemapSyncStatus get step3Status => _step3Status;
-  RemapSyncStatus get step4Status => _step4Status;
+
+  /// Per-step status for the remap sync screen (index 0 = step 1 … index 3 = step 4).
+  List<RemapSyncStatus> get remapStepStatuses => List.unmodifiable(_remapStepStatuses);
 
   /// Derived overall status for the remap sync screen.
   RemapSyncStatus get remapSyncStatus {
-    final steps = [_step1Status, _step2Status, _step3Status, _step4Status];
-    if (steps.every((s) => s == RemapSyncStatus.idle)) return RemapSyncStatus.idle;
-    if (_step4Status == RemapSyncStatus.success) return RemapSyncStatus.success;
-    if (steps.any((s) => s == RemapSyncStatus.failed)) return RemapSyncStatus.failed;
+    if (_remapStepStatuses.every((s) => s == RemapSyncStatus.idle)) return RemapSyncStatus.idle;
+    if (_remapStepStatuses.last == RemapSyncStatus.success) return RemapSyncStatus.success;
+    if (_remapStepStatuses.any((s) => s == RemapSyncStatus.failed)) return RemapSyncStatus.failed;
     return RemapSyncStatus.inProgress;
   }
 
   /// Progress percentage (0–100) based on completed steps.
-  int get remapSyncProgress {
-    final steps = [_step1Status, _step2Status, _step3Status, _step4Status];
-    return steps.where((s) => s == RemapSyncStatus.success).length * 25;
-  }
+  int get remapSyncProgress =>
+      _remapStepStatuses.where((s) => s == RemapSyncStatus.success).length * 25;
 
   /// Timestamp recorded when all four steps finish successfully.
   DateTime? get remapSyncCompletedAt => _remapCompletedAt;
@@ -142,10 +136,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   void resetRemapSyncState() {
-    _step1Status = RemapSyncStatus.idle;
-    _step2Status = RemapSyncStatus.idle;
-    _step3Status = RemapSyncStatus.idle;
-    _step4Status = RemapSyncStatus.idle;
+    _remapStepStatuses.fillRange(0, _remapStepStatuses.length, RemapSyncStatus.idle);
     _remapCompletedAt = null;
     notifyListeners();
   }
@@ -175,12 +166,7 @@ class SyncProvider with ChangeNotifier {
   }
 
   void _setStepStatus(int step, RemapSyncStatus status) {
-    switch (step) {
-      case 1: _step1Status = status; break;
-      case 2: _step2Status = status; break;
-      case 3: _step3Status = status; break;
-      case 4: _step4Status = status; break;
-    }
+    _remapStepStatuses[step - 1] = status;
   }
 
   getLastSyncTime() async {

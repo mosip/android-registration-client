@@ -167,24 +167,36 @@ subprojects {
     }
 }
 
-// AGP 8 fixes (separate block)
+// AGP 8 fixes: set namespace for all com.android.library subprojects that lack one.
+// Must run inside plugins.withId (during evaluation) — afterEvaluate is too late for namespace.
+// Source priority: (1) manifest package= attribute, (2) project.group.
+// The manifest is also stripped of package= so AGP 8 doesn't reject it.
 subprojects {
-
     plugins.withId("com.android.library") {
-        def androidExt = project.extensions.findByName("android")
-        if (androidExt != null) {
-            if (androidExt.namespace == null) {
-                androidExt.namespace = "com.auto.${project.name}"
+        def android = project.extensions.findByName("android")
+        if (android == null || android.namespace?.trim()) return
+
+        String detectedNamespace = null
+
+        def manifestFile = new File(project.projectDir, "src/main/AndroidManifest.xml")
+        if (manifestFile.exists()) {
+            def manifestContent = manifestFile.text
+            def packageMatcher = manifestContent =~ /package="([^"]+)"/
+            if (packageMatcher.find()) {
+                detectedNamespace = packageMatcher.group(1)
+                manifestFile.text = manifestContent.replaceAll(/\s*package="[^"]*"/, '')
             }
         }
-    }
 
-    plugins.withId("com.android.application") {
-        def androidExt = project.extensions.findByName("android")
-        if (androidExt != null) {
-            if (androidExt.namespace == null) {
-                androidExt.namespace = "com.auto.${project.name}"
-            }
+        // Fallback: project.group is declared before apply plugin: in many old plugins
+        // so it is already set when this callback fires.
+        if (!detectedNamespace) {
+            def g = project.group?.toString()?.trim()
+            if (g && g != 'unspecified') detectedNamespace = g
+        }
+
+        if (detectedNamespace) {
+            android.namespace = detectedNamespace
         }
     }
 }

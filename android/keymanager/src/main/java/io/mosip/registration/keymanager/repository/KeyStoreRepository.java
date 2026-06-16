@@ -27,4 +27,8 @@ public class KeyStoreRepository {
         keyStore.setIsDeleted(false);
         keyStoreDao.insert(keyStore);
     }
+
+    public void deleteAll() {
+        keyStoreDao.deleteAll();
+    }
 }

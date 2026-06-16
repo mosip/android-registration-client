@@ -506,7 +506,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
 
     @Override
     public void deleteAllPreRegRecords() {
-        Log.i(TAG, "Center remap: force-deleting all pre-registration records");
+        Log.i(TAG, "Center remap: deleting all pre-registration records");
         List<PreRegistrationList> all = preRegistrationDao.findAll();
         if (all == null || all.isEmpty()) {
             Log.i(TAG, "No pre-registration records found to delete");
