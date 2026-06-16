@@ -19,8 +19,6 @@ import regclient.page.BasePage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
-import regclient.pages.english.ConsentPageEnglish;
-import regclient.pages.english.DocumentUploadPageEnglish;
 import regclient.utils.TestDataReader;
 
 public class DemographicDetailsPageKannada extends DemographicDetailsPage {
@@ -42,15 +40,21 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 
 	@AndroidFindBy(accessibility = "FETCH DATA")
 	private WebElement fetchDataButton;
-	
+
 	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.widget.EditText[1]")
 	private WebElement applicationIdTextBox;
 
 	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc='FETCH DATA']/following-sibling::android.widget.Button")
 	private WebElement scanButton;
-	
+
 	@AndroidFindBy(accessibility = "Postal/ بريدي")
 	private WebElement postalHeader;
+
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Application ID does not exist')]")
+	private WebElement applicationIdDoesNotExistMsg;
+
+	@AndroidFindBy(accessibility = "OKAY")
+	private WebElement okayButton;
 
 	public DemographicDetailsPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -119,7 +123,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					waitTime(3);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-						swipeOrScroll();
+						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
@@ -132,7 +136,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -148,7 +152,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("")) {
 					if (!isElementDisplayed(maleButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(maleButton);
 					} else
 						clickOnElement(maleButton);
@@ -203,7 +207,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -412,7 +416,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 			}
 		}
 	}
-	
+
 	public void fetchPreregApplicationId(String age) {
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
 		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
@@ -423,7 +427,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 
 		// Enter prereg ID
 		applicationIdTextBox = findElementWithRetry(appIdTextbox);
-		clickAndsendKeysToTextBox(applicationIdTextBox,AdminTestUtil.getPreRegistrationFlow(age));
+		clickAndsendKeysToTextBox(applicationIdTextBox, AdminTestUtil.getPreRegistrationFlow(age));
 		clickOnElement(fetchDataButton);
 	}
 
@@ -456,7 +460,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -506,7 +510,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -578,7 +582,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -645,18 +649,18 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 			}
 		}
 	}
-	
+
 	public void fillRemainDemographicDetailsPage(String age) {
-		
+
 		List<String> idList = FetchUiSpec.getAllIds("DemographicDetails");
-		for (String id : idList){
+		for (String id : idList) {
 			if (FetchUiSpec.getRequiredTypeUsingId(id) && !id.equals("Postal")) {
-				  if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
+				if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(3);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-						swipeOrScroll();
+						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
@@ -669,7 +673,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -682,36 +686,37 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
 					}
-				  }
-			}else if (FetchUiSpec.getRequiredTypeUsingId(id) && id.equals("Postal")) {
-			    By postalDropdown = By.xpath("//android.view.View[contains(@content-desc, 'Postal')]" +
-			            "/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, 'Select Option')]");
+				}
+			} else if (FetchUiSpec.getRequiredTypeUsingId(id) && id.equals("Postal")) {
+				By postalDropdown = By.xpath("//android.view.View[contains(@content-desc, 'Postal')]"
+						+ "/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, 'Select Option')]");
 
-			    int attempts = 0;
-			    while (attempts < 3) {
-			        try {
-			            if (isElementDisplayed(postalDropdown)) {
-			                WebElement dropdownElement = findElement(postalDropdown);
-			                clickOnElement(dropdownElement);
-			                waitTime(3); // increased wait for Postal data load
+				int attempts = 0;
+				while (attempts < 3) {
+					try {
+						if (isElementDisplayed(postalDropdown)) {
+							WebElement dropdownElement = findElement(postalDropdown);
+							clickOnElement(dropdownElement);
+							waitTime(3); // increased wait for Postal data load
 
-			                if (isElementDisplayed(By.className("android.view.View"))) {
-			                    clickOnElement(findElement(By.className("android.view.View")));
-			                    System.out.println("✅ Postal dropdown handled successfully");
-			                    break; // success
-			                } else {
-			                    System.out.println("⏳ Postal options not visible yet, retrying...");
-			                }
-			            } else {
-			                swipeOrScroll();
-			            }
-			        } catch (org.openqa.selenium.StaleElementReferenceException e) {
-			            System.out.println("🔄 Postal element went stale, retrying...");
-			        }
-			        waitTime(2);
-			        attempts++;
-			    }
-			} if (id.equals("introducerName") && FetchUiSpec.getFlowType().equals("newProcess")) {
+							if (isElementDisplayed(By.className("android.view.View"))) {
+								clickOnElement(findElement(By.className("android.view.View")));
+								System.out.println("✅ Postal dropdown handled successfully");
+								break; // success
+							} else {
+								System.out.println("⏳ Postal options not visible yet, retrying...");
+							}
+						} else {
+							swipeUp();
+						}
+					} catch (org.openqa.selenium.StaleElementReferenceException e) {
+						System.out.println("🔄 Postal element went stale, retrying...");
+					}
+					waitTime(2);
+					attempts++;
+				}
+			}
+			if (id.equals("introducerName") && FetchUiSpec.getFlowType().equals("newProcess")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
 					if (FetchUiSpec.getControlTypeUsingId(id).equals("textbox")) {
 						waitTime(3);
@@ -749,12 +754,33 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 			}
 		}
 	}
-	
+
 	public boolean isApplicationIdTextBoxDisplay() {
 		return isElementDisplayed(applicationIdTextBox);
 	}
 
 	public void clickOnScanButton() {
 		clickOnElement(scanButton);
+	}
+
+	public boolean isApplicationIdDoesNotExistMessageDisplay() {
+		return isElementDisplayed(applicationIdDoesNotExistMsg);
+	}
+
+	public void clickOnOkayButton() {
+		clickOnElement(okayButton);
+	}
+
+	public void fetchInvalidPreregApplicationId(String prid) {
+		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
+		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
+		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
+
+		boolean isDisplayed = isElementDisplayed(appIdLabel);
+		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
+
+		applicationIdTextBox = findElementWithRetry(appIdTextbox);
+		clickAndsendKeysToTextBox(applicationIdTextBox, (prid));
+		clickOnElement(fetchDataButton);
 	}
 }

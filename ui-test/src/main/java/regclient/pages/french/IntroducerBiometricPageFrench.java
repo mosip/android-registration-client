@@ -8,7 +8,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class IntroducerBiometricPageFrench extends IntroducerBiometricPage {
 

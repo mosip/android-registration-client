@@ -7,26 +7,26 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.OperationalTaskPage;
 import regclient.page.SupervisorBiometricVerificationpage;
 
-public class OperationalTaskPageKannada extends OperationalTaskPage{
+public class OperationalTaskPageKannada extends OperationalTaskPage {
 
 	@AndroidFindBy(accessibility = "ಆಪರೇಟರ್ ಬಯೋಮೆಟ್ರಿಕ್ಸ್ ಅನ್ನು ನವೀಕರಿಸಿ")
 	private WebElement updateOperatorBiometricsButton;
-	
+
 	@AndroidFindBy(accessibility = "System Storage Usage")
 	private WebElement systemStorageUsageTitle;
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ\")")
-	private WebElement synchronizeDataButton ;
-	
+	private WebElement synchronizeDataButton;
+
 	@AndroidFindBy(accessibility = "ಅಪ್ಲಿಕೇಶನ್ ಅಪ್ಲೋಡ್")
 	private WebElement applicationUploadTitle;
-	
+
 	@AndroidFindBy(accessibility = "ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾದಿರುವ")
 	private WebElement pendingApprovalTitle;
-	
+
 	@AndroidFindBy(accessibility = "Sync Completed Successfully")
 	private WebElement syncCompletedPopup;
-	
+
 	@AndroidFindBy(accessibility = "Restart")
 	private WebElement restartButton;
 
@@ -34,7 +34,7 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 		super(driver);
 	}
 
-	public  SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
+	public SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
 		clickOnElement(updateOperatorBiometricsButton);
 		return new SupervisorBiometricVerificationpageKannada(driver);
 
@@ -44,51 +44,50 @@ public class OperationalTaskPageKannada extends OperationalTaskPage{
 		return isElementDisplayed(systemStorageUsageTitle);
 	}
 
-
-	public  void clickSynchronizeDataButton() {
+	public void clickSynchronizeDataButton() {
 		clickOnElement(synchronizeDataButton);
 		waitTime(50);
 	}
-	
+
 	public boolean checkLastSyncDate() {
 		String contentDesc = synchronizeDataButton.getAttribute("content-desc");
-		if(contentDesc.contains("ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ\n"+getCurrentDateWord()+","))
+		if (contentDesc.contains("ಡೇಟಾವನ್ನು ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಿ\n" + getCurrentDateWord() + ","))
 			return true;
 		else
 			return false;
 	}
-	
-	public  void clickApplicationUploadTitle() {
+
+	public void clickApplicationUploadTitle() {
 		clickOnElement(applicationUploadTitle);
 	}
-	
+
 	public boolean isApplicationUploadTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(applicationUploadTitle)) {
-			swipeOrScroll();
+		if (!isElementDisplayedOnScreen(applicationUploadTitle)) {
+			swipeUp();
 		}
 		return isElementDisplayed(applicationUploadTitle);
 	}
-	
-	public  void clickPendingApprovalTitle() {
+
+	public void clickPendingApprovalTitle() {
 		clickOnElement(pendingApprovalTitle);
 	}
-	
+
 	public boolean isPendingApprovalTitleDisplayed() {
-		if(!isElementDisplayedOnScreen(pendingApprovalTitle)) {
-			swipeOrScroll();
+		if (!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeUp();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
 	}
-	
+
 	public void handleIfSyncPopUpDisplayed() {
-	    for (int i = 0; i < 120; i++) {
-	        if (isElementDisplayed(syncCompletedPopup)) {
-	            clickOnElement(restartButton);
-	            return;
-	        }
-	        waitTime(5);
-	    }
-	    throw new RuntimeException("Sync popup not displayed");
+		for (int i = 0; i < 120; i++) {
+			if (isElementDisplayed(syncCompletedPopup)) {
+				clickOnElement(restartButton);
+				return;
+			}
+			waitTime(5);
+		}
+		throw new RuntimeException("Sync popup not displayed");
 	}
 
 }

@@ -14,8 +14,6 @@ import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.DocumentUploadPageEnglish;
 
 public class DocumentUploadPageFrench extends DocumentUploadPage {
 
@@ -90,7 +88,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -123,7 +121,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -162,7 +160,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -206,7 +204,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 						By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 								+ "\")]/parent::android.view.View/parent::android.view.View")));
 				if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-					swipeOrScroll();
+					swipeUp();
 					clickOnElement(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -237,7 +235,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -264,6 +262,17 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 				}
 			}
 
+		}
+	}
+
+	public boolean isPacketSizeDisplayed() {
+		try {
+			WebElement packetSize = driver
+					.findElement(By.xpath("//android.view.View[contains(@content-desc,'Size:')]"));
+			String sizeText = packetSize.getAttribute("contentDescription");
+			return sizeText.matches("Size: \\d+(\\.\\d+)?\\s?(KB|MB)");
+		} catch (Exception e) {
+			return false;
 		}
 	}
 

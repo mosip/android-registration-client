@@ -8,7 +8,7 @@ import regclient.page.ConsentPage;
 import regclient.page.SelectLanguagePage;
 import regclient.utils.TestDataReader;
 
-public class SelectLanguagePageKannada extends SelectLanguagePage{
+public class SelectLanguagePageKannada extends SelectLanguagePage {
 
 	@AndroidFindBy(accessibility = "ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ")
 	private WebElement selectLanguageTitle;
@@ -69,12 +69,12 @@ public class SelectLanguagePageKannada extends SelectLanguagePage{
 		return isElementDisplayed(selectLanguageTitle);
 	}
 
-	public  void clickOnSubmitButtonWithoutSelectingLanguage() {
+	public void clickOnSubmitButtonWithoutSelectingLanguage() {
 		clickOnElement(submitButton);
 	}
 
-	public  void selectSecondLanguage() {	
-		if(TestDataReader.readData("defaultlanguage").equalsIgnoreCase("kan"))
+	public void selectSecondLanguage() {
+		if (TestDataReader.readData("defaultlanguage").equalsIgnoreCase("kan"))
 			clickOnElement(englishLanguageButton);
 		else
 			clickOnElement(kannadaLanguageButton);
@@ -108,24 +108,24 @@ public class SelectLanguagePageKannada extends SelectLanguagePage{
 		}
 	}
 
-	public  void selectAllSecondLanguage() {
+	public void selectAllSecondLanguage() {
 		clickOnElement(englishLanguageButton);
 		clickOnElement(frenchLanguageButton);
 		clickOnElement(arabicLanguageButton);
 		clickOnElement(kannadaLanguageButton);
 		clickOnElement(hindiLanguageButton);
-		clickOnElement(tamilLanguageButton);	
+		clickOnElement(tamilLanguageButton);
 	}
 
-	public  boolean isArabicLanguageButtonEnabled() {
+	public boolean isArabicLanguageButtonEnabled() {
 		return isElementEnabled(arabicLanguageButton);
 	}
 
-	public  boolean isSubmitButtonEnabled() {
+	public boolean isSubmitButtonEnabled() {
 		return isElementEnabled(submitButton);
 	}
 
-	public  ConsentPage clickOnSubmitButton() {
+	public ConsentPage clickOnSubmitButton() {
 		clickOnElement(submitButton);
 		return new ConsentPageKannada(driver);
 	}

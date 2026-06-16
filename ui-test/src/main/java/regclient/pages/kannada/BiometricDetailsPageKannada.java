@@ -15,10 +15,6 @@ import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
 import regclient.page.PreviewPage;
-import regclient.pages.english.ApplicantBiometricsPageEnglish;
-import regclient.pages.english.BiometricDetailsPageEnglish;
-import regclient.pages.english.IntroducerBiometricPageEnglish;
-import regclient.pages.english.PreviewPageEnglish;
 
 public class BiometricDetailsPageKannada extends BiometricDetailsPage {
 
@@ -184,6 +180,6 @@ public class BiometricDetailsPageKannada extends BiometricDetailsPage {
 		}
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageEnglish.class);
+	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageKannada.class);
 
 }

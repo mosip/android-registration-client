@@ -9,7 +9,6 @@ import regclient.page.OperationalTaskPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.pages.english.SelectLanguagePageEnglish;
 
 public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 
@@ -63,12 +62,15 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
 	private WebElement dontAllowButton;
-	
+
 	@AndroidFindBy(accessibility = "Sync Completed Successfully")
 	private WebElement syncCompletedPopup;
-	
+
 	@AndroidFindBy(accessibility = "Restart")
 	private WebElement restartButton;
+
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Client Version')]")
+	private WebElement clientVersionText;
 
 	public RegistrationTasksPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -181,15 +183,20 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 	public boolean isSettingsButtonDisplayed() {
 		return isElementDisplayed(settingsButton);
 	}
-	
+
 	public void handleIfSyncPopUpDisplayed() {
-	    for (int i = 0; i < 120; i++) {
-	        if (isElementDisplayed(syncCompletedPopup)) {
-	            clickOnElement(restartButton);
-	            return;
-	        }
-	        waitTime(5);
-	    }
-	    throw new RuntimeException("Sync popup not displayed");
+		for (int i = 0; i < 120; i++) {
+			if (isElementDisplayed(syncCompletedPopup)) {
+				clickOnElement(restartButton);
+				return;
+			}
+			waitTime(5);
+		}
+		throw new RuntimeException("Sync popup not displayed");
+	}
+
+	public boolean isClientVersionDisplayed() {
+		String versionText = clientVersionText.getAttribute("contentDescription");
+		return versionText.contains("Client Version");
 	}
 }

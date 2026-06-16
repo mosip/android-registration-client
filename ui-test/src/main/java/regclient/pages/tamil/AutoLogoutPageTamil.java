@@ -12,15 +12,14 @@ import regclient.page.AutoLogoutPage;
 import regclient.page.LoginPage;
 import regclient.page.RegistrationTasksPage;
 
-public class AutoLogoutPageTamil extends AutoLogoutPage{
-	
+public class AutoLogoutPageTamil extends AutoLogoutPage {
 
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"You have been idle\")")
 	private WebElement autoLogoutPopup;
-	
+
 	@AndroidFindBy(accessibility = "LOG OUT")
 	private WebElement logoutButton;
-	
+
 	@AndroidFindBy(accessibility = "STAY LOGGED IN")
 	private WebElement stayLoggedInButton;
 
@@ -28,22 +27,22 @@ public class AutoLogoutPageTamil extends AutoLogoutPage{
 		super(driver);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public boolean isAutoLogoutPopupDisplayed() {
-	    try {
-	        WebDriverWait wait = new WebDriverWait(driver, Duration.ofMinutes(10));
-	        wait.until(ExpectedConditions.visibilityOf(autoLogoutPopup));
-	        return true;
-	    } catch (Exception e) {
-	        return false;
-	    }
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofMinutes(10));
+			wait.until(ExpectedConditions.visibilityOf(autoLogoutPopup));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
-	
+
 	public RegistrationTasksPage clickOnStayLoggedInButton() {
 		clickOnElement(stayLoggedInButton);
 		return new RegistrationTasksPageTamil(driver);
 	}
-	
+
 	public LoginPage clickOnStayLogoutButton() {
 		clickOnElement(logoutButton);
 		return new LoginPageTamil(driver);
