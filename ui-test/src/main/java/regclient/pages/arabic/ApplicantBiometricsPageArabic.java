@@ -280,10 +280,8 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 	}
 
 	public int getThresholdScore() {
-
-		String scoreText = findElement(By.xpath("//android.view.View[contains(`@content-desc`, '%')]"))
-				.getAttribute("contentDescription");
-
+		String scoreText = findElement(By.xpath("//android.view.View[contains(@content-desc, '%')]"))
+		        .getAttribute("contentDescription");
 		return Integer.parseInt(scoreText.replaceAll("[^0-9]", ""));
 	}
 
