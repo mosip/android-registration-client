@@ -254,7 +254,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(temporaryButton);
 	}
@@ -265,7 +265,7 @@ public class SupervisorBiometricVerificationpageFrench extends SupervisorBiometr
 
 	public void enterCommentsInTextBox(String comments) {
 		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}

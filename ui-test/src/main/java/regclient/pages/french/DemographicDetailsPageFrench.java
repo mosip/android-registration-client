@@ -10,19 +10,15 @@ import java.util.regex.Pattern;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.AdminTestUtil;
-import regclient.api.BaseTestCase;
 import regclient.api.FetchUiSpec;
 import regclient.page.BasePage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.DocumentUploadPage;
-import regclient.pages.english.ConsentPageEnglish;
-import regclient.pages.english.DocumentUploadPageEnglish;
 import regclient.utils.TestDataReader;
 
 public class DemographicDetailsPageFrench extends DemographicDetailsPage {
@@ -54,6 +50,12 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'Non-Foreigner') or "
 			+ "contains(@content-desc,'Non-étranger')]")
 	private WebElement nonForeignerOption;
+
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Application ID does not exist')]")
+	private WebElement applicationIdDoesNotExistMsg;
+
+	@AndroidFindBy(accessibility = "OKAY")
+	private WebElement okayButton;
 
 	public DemographicDetailsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -124,22 +126,20 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					waitTime(1);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-						swipeOrScroll();
+						swipeUp();
 					}
-
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
 					WebElement dropdownElement = findElement(
 							By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
 									+ FetchUiSpec.getValueUsingId(id) + "')]]"));
-
 					clickOnElement(dropdownElement);
 					waitTime(1);
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -155,7 +155,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("")) {
 					if (!isElementDisplayed(maleButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(maleButton);
 					} else
 						clickOnElement(maleButton);
@@ -211,7 +211,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 //						clickOnElement(findElement(By.className("android.view.View")));
 						clickOnElement(nonForeignerOption);
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -462,7 +462,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -512,7 +512,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -584,7 +584,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					int tries = 0;
 					while (tries < 6 && !isElementDisplayed(findElementWithRetry(
 							MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + label + "\")")))) {
-						swipeOrScroll();
+						swipeUp();
 						tries++;
 					}
 				} catch (Exception ignored) {
@@ -662,7 +662,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					waitTime(3);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-						swipeOrScroll();
+						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
@@ -675,7 +675,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -709,7 +709,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 								System.out.println("⏳ Postal options not visible yet, retrying...");
 							}
 						} else {
-							swipeOrScroll();
+							swipeUp();
 						}
 					} catch (org.openqa.selenium.StaleElementReferenceException e) {
 						System.out.println("🔄 Postal element went stale, retrying...");
@@ -763,5 +763,26 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 
 	public void clickOnScanButton() {
 		clickOnElement(scanButton);
+	}
+
+	public boolean isApplicationIdDoesNotExistMessageDisplay() {
+		return isElementDisplayed(applicationIdDoesNotExistMsg);
+	}
+
+	public void clickOnOkayButton() {
+		clickOnElement(okayButton);
+	}
+
+	public void fetchInvalidPreregApplicationId(String prid) {
+		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
+		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
+		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
+
+		boolean isDisplayed = isElementDisplayed(appIdLabel);
+		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
+
+		applicationIdTextBox = findElementWithRetry(appIdTextbox);
+		clickAndsendKeysToTextBox(applicationIdTextBox, (prid));
+		clickOnElement(fetchDataButton);
 	}
 }
