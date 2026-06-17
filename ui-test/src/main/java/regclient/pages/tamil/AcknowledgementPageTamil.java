@@ -18,7 +18,7 @@ public class AcknowledgementPageTamil extends AcknowledgementPage {
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Application ID\"))")
 	private WebElement applicationID;
 
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Image\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.Image\")")
 	private WebElement qrCodeImage;
 
 	@AndroidFindBy(accessibility = "வீட்டிற்கு போ")
@@ -69,7 +69,7 @@ public class AcknowledgementPageTamil extends AcknowledgementPage {
 	@SuppressWarnings("deprecation")
 	public DemographicDetailsPage clickOnDemographicDetailsTitle() {
 		clickOnElement(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\""
 						+ FetchUiSpec.getScreenTitle("DemographicDetails") + "\"))")));
 		return new DemographicDetailsPageTamil(driver);
 	}

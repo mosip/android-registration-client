@@ -62,9 +62,7 @@ public class OperationalTaskPageFrench extends OperationalTaskPage {
 	}
 
 	public boolean isApplicationUploadTitleDisplayed() {
-		if (!isElementDisplayedOnScreen(applicationUploadTitle)) {
-			swipeUp();
-		}
+		swipeUp();
 		return isElementDisplayed(applicationUploadTitle);
 	}
 
@@ -73,9 +71,7 @@ public class OperationalTaskPageFrench extends OperationalTaskPage {
 	}
 
 	public boolean isPendingApprovalTitleDisplayed() {
-		if (!isElementDisplayedOnScreen(pendingApprovalTitle)) {
-			swipeUp();
-		}
+		swipeUp();
 		return isElementDisplayed(pendingApprovalTitle);
 	}
 

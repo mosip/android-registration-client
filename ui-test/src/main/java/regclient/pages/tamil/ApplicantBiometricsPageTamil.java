@@ -273,11 +273,11 @@ public class ApplicantBiometricsPageTamil extends ApplicantBiometricsPage {
 	}
 
 	public int getThresholdScore() {
-		String scoreText = findElement(By.xpath("//android.view.View[@content-desc='95%']"))
+		String scoreText = findElement(By.xpath("//android.view.View[contains(`@content-desc`, '%')]"))
 				.getAttribute("contentDescription");
-		return Integer.parseInt(scoreText.replace("%", "").trim());
+		return Integer.parseInt(scoreText.replaceAll("[^0-9]", ""));
 	}
-
+	
 	public int irisAttemptLeft() {
 		String attemptText = irisCapturerHeader.getAttribute("contentDescription");
 		String count = attemptText.replaceAll("\\D+", "");
