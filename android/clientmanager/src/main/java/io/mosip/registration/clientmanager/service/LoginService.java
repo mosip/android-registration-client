@@ -30,17 +30,12 @@ public class LoginService {
     private static final Logger LOGGER =
             Logger.getLogger(LoginService.class.getName());
 
-    private SessionManager sessionManager;
+    private final SessionManager sessionManager;
+    private final UserDetailRepository userDetailRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final ClientCryptoManagerService clientCryptoManagerService;
 
     @Inject
-    UserDetailRepository userDetailRepository;
-
-    @Inject
-    UserRoleRepository userRoleRepository;
-
-    @Inject
-    ClientCryptoManagerService clientCryptoManagerService;
-
     public LoginService(Context context, ClientCryptoManagerService clientCryptoManagerService, UserDetailRepository userDetailRepository, UserRoleRepository userRoleRepository) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.userDetailRepository = userDetailRepository;

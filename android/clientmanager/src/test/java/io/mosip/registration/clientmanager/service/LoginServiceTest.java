@@ -279,7 +279,6 @@ public class LoginServiceTest {
         Mockito.when(userDetailRepository.isValidPassword(userId, password)).thenReturn(true);
 
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository, userRoleRepository);
-        loginService.userDetailRepository = userDetailRepository;
 
         boolean result = loginService.validatePassword(userId, password);
 
@@ -294,7 +293,6 @@ public class LoginServiceTest {
         Mockito.when(userDetailRepository.isValidPassword(userId, password)).thenReturn(false);
 
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository, userRoleRepository);
-        loginService.userDetailRepository = userDetailRepository;
 
         boolean result = loginService.validatePassword(userId, password);
 
@@ -350,7 +348,6 @@ public class LoginServiceTest {
         Mockito.when(userDetailRepository.getUserDetailByUserId(userId)).thenReturn(expectedUserDetail);
 
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository, userRoleRepository);
-        loginService.userDetailRepository = userDetailRepository;
 
         UserDetail result = loginService.getUserDetailsByUserId(userId);
 
@@ -369,7 +366,6 @@ public class LoginServiceTest {
         Mockito.when(userDetailRepository.getUserDetailByUserId(userId)).thenReturn(null);
 
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository, userRoleRepository);
-        loginService.userDetailRepository = userDetailRepository;
 
         UserDetail result = loginService.getUserDetailsByUserId(userId);
 

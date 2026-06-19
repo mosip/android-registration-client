@@ -342,7 +342,7 @@ public class UserOnboardService {
 
                 @Override
                 public void onFailure(Call<OnboardResponseWrapper<Map<String, Object>>> call, Throwable t) {
-                    t.printStackTrace();
+                    Log.e(TAG, "IDA Response fetch failed", t);
                     setIdaResponse(false);
                     Toast.makeText(context, "IDA Response fetch failed", Toast.LENGTH_LONG).show();
                     onFinish.run();
@@ -384,7 +384,7 @@ public class UserOnboardService {
 
                 @Override
                 public void onFailure(Call<ResponseWrapper<Map<String, Object>>> call, Throwable t) {
-                    t.printStackTrace();
+                    Log.e(TAG, "IDA Internal Certificate fetch failed", t);
                     Toast.makeText(context, "IDA Internal Certificate fetch failed", Toast.LENGTH_LONG).show();
                     onFinish.run();
                 }
