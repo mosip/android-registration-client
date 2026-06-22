@@ -1,8 +1,6 @@
 package io.mosip.registration.clientmanager.service;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,9 +15,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -320,43 +316,36 @@ public class PacketServiceImpl implements PacketService {
         }
         packetStatusRequest.setRequest(packets);
 
-        Map<String, String> registrationIdToPacketId = new HashMap<>();
-        for (Registration reg : registrations) {
-            if (reg.getId() != null) registrationIdToPacketId.put(reg.getId(), reg.getPacketId());
-        }
-
         Call<PacketStatusResponse> call = (serverVersion!=null && serverVersion.startsWith(SERVER_VERSION_1_1_5)) ? this.syncRestService.getV1PacketStatus(packetStatusRequest) : this.syncRestService.getPacketStatus(packetStatusRequest);
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        try {
-            Response<PacketStatusResponse> response = call.execute();
-            if (!response.isSuccessful()) {
-                mainHandler.post(() -> Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())), Toast.LENGTH_LONG).show());
-                return;
-            }
-            List<PacketStatusDto> packetStatusList = response.body().getResponse();
-            int packetSyncSuccess = 0;
-            if (packetStatusList != null && packetStatusList.size() > 0) {
-                long currentTimestamp = System.currentTimeMillis();
-                for (PacketStatusDto packetStatus : packetStatusList) {
-                    String packetId = packetStatus.getPacketId();
-                    if (packetId == null && packetStatus.getRegistrationId() != null) {
-                        packetId = registrationIdToPacketId.get(packetStatus.getRegistrationId());
+        call.enqueue(new Callback<PacketStatusResponse>() {
+            @Override
+            public void onResponse(Call<PacketStatusResponse> call, Response<PacketStatusResponse> response) {
+                if (response.isSuccessful()) {
+                    List<PacketStatusDto> packetStatusList = response.body().getResponse();
+                    int packetSyncSuccess = 0;
+
+                    if (packetStatusList != null && packetStatusList.size() > 0) {
+                        long currentTimestamp = System.currentTimeMillis();
+                        for (PacketStatusDto packetStatus : packetStatusList) {
+                            PacketStatusUpdateDto updateDto = new PacketStatusUpdateDto(packetStatus.getRegistrationId() != null ? packetStatus.getRegistrationId() : packetStatus.getPacketId(), packetStatus.getStatusCode());
+                            // Update server status with timestamp
+                            registrationRepository.updateServerStatusWithTimestamp(updateDto.getRegistrationId(), updateDto.getStatusCode(), currentTimestamp);
+                            packetSyncSuccess++;
+                        }
                     }
-                    if (packetId != null) {
-                        registrationRepository.updateServerStatusWithTimestamp(
-                                packetId, packetStatus.getStatusCode(), currentTimestamp);
-                        packetSyncSuccess++;
-                    } else {
-                        Log.w(TAG, "Skipping packet status update: no matching local packet_id");
-                    }
+
+                    Toast.makeText(context, context.getString(R.string.packet_status_sync, packetSyncSuccess), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, context.getString(R.string.packet_status_sync_failed_with_status_code, String.valueOf(response.code())), Toast.LENGTH_LONG).show();
                 }
             }
-            int finalCount = packetSyncSuccess;
-            mainHandler.post(() -> Toast.makeText(context, context.getString(R.string.packet_status_sync, finalCount), Toast.LENGTH_LONG).show());
-        } catch (Exception e) {
-            Log.e(TAG, "Packet status sync failed", e);
-            mainHandler.post(() -> Toast.makeText(context, "Packet status sync failed", Toast.LENGTH_LONG).show());
-        }
+
+            @Override
+            public void onFailure(Call<PacketStatusResponse> call, Throwable t) {
+                Log.e(TAG, "Packet status sync failed", t);
+                Toast.makeText(context, "Packet status sync failed", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

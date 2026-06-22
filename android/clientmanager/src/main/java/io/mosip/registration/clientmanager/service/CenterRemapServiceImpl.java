@@ -32,6 +32,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
@@ -71,6 +72,7 @@ public class CenterRemapServiceImpl implements CenterRemapService {
     private final RegistrationCenterRepository registrationCenterRepository;
     private final TemplateRepository templateRepository;
     private final UserBiometricRepository userBiometricRepository;
+    private final UserDetailRepository userDetailRepository;
     private final UserRoleRepository userRoleRepository;
     private final AuditManagerService auditManagerService;
     private final KeyStoreRepository keyStoreRepository;
@@ -88,6 +90,7 @@ public class CenterRemapServiceImpl implements CenterRemapService {
                                   RegistrationCenterRepository registrationCenterRepository,
                                   TemplateRepository templateRepository,
                                   UserBiometricRepository userBiometricRepository,
+                                  UserDetailRepository userDetailRepository,
                                   UserRoleRepository userRoleRepository,
                                   AuditManagerService auditManagerService,
                                   KeyStoreRepository keyStoreRepository) {
@@ -103,6 +106,7 @@ public class CenterRemapServiceImpl implements CenterRemapService {
         this.registrationCenterRepository = registrationCenterRepository;
         this.templateRepository = templateRepository;
         this.userBiometricRepository = userBiometricRepository;
+        this.userDetailRepository = userDetailRepository;
         this.userRoleRepository = userRoleRepository;
         this.auditManagerService = auditManagerService;
         this.keyStoreRepository = keyStoreRepository;
@@ -175,9 +179,10 @@ public class CenterRemapServiceImpl implements CenterRemapService {
     }
 
     private void purgeAndReset() {
-        // Delete center-specific user data; credentials are preserved so login works after restart
+        // Wipe all user data so the app behaves like a fresh install after the remap restart.
         userRoleRepository.deleteAll();
         userBiometricRepository.deleteAll();
+        userDetailRepository.deleteAll();
 
         // Delete center-specific master data
         registrationCenterRepository.deleteAll();

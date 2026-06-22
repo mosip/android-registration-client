@@ -50,8 +50,6 @@ import io.mosip.registration.clientmanager.repository.DynamicFieldRepository;
 import io.mosip.registration.clientmanager.repository.LanguageRepository;
 import io.mosip.registration.clientmanager.repository.LocationRepository;
 import io.mosip.registration.clientmanager.repository.MachineRepository;
-import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
-import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
@@ -310,6 +308,7 @@ public class HostApiModule {
             RegistrationCenterRepository registrationCenterRepository,
             TemplateRepository templateRepository,
             UserBiometricRepository userBiometricRepository,
+            UserDetailRepository userDetailRepository,
             UserRoleRepository userRoleRepository,
             AuditManagerService auditManagerService,
             KeyStoreRepository keyStoreRepository) {
@@ -326,6 +325,7 @@ public class HostApiModule {
                 registrationCenterRepository,
                 templateRepository,
                 userBiometricRepository,
+                userDetailRepository,
                 userRoleRepository,
                 auditManagerService,
                 keyStoreRepository

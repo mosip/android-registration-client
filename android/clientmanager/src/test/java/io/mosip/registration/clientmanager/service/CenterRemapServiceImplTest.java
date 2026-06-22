@@ -21,8 +21,10 @@ import java.util.List;
 
 import io.mosip.registration.clientmanager.constant.AuditEvent;
 import io.mosip.registration.clientmanager.constant.Components;
+import io.mosip.registration.clientmanager.constant.PacketTaskStatus;
 import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.entity.Registration;
+import io.mosip.registration.clientmanager.spi.AsyncPacketTaskCallBack;
 import io.mosip.registration.clientmanager.repository.DynamicFieldRepository;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
@@ -32,6 +34,7 @@ import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
 import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
+import io.mosip.registration.clientmanager.repository.UserDetailRepository;
 import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.PacketService;
@@ -53,6 +56,7 @@ public class CenterRemapServiceImplTest {
     @Mock private RegistrationCenterRepository mockRegistrationCenterRepository;
     @Mock private TemplateRepository mockTemplateRepository;
     @Mock private UserBiometricRepository mockUserBiometricRepository;
+    @Mock private UserDetailRepository mockUserDetailRepository;
     @Mock private UserRoleRepository mockUserRoleRepository;
     @Mock private AuditManagerService mockAuditManagerService;
     @Mock private KeyStoreRepository mockKeyStoreRepository;
@@ -76,6 +80,7 @@ public class CenterRemapServiceImplTest {
                 mockRegistrationCenterRepository,
                 mockTemplateRepository,
                 mockUserBiometricRepository,
+                mockUserDetailRepository,
                 mockUserRoleRepository,
                 mockAuditManagerService,
                 mockKeyStoreRepository);
@@ -108,12 +113,18 @@ public class CenterRemapServiceImplTest {
         Registration reg2 = new Registration("PKT002");
         when(mockRegistrationRepository.getAllPendingForProcessing())
                 .thenReturn(Arrays.asList(reg1, reg2));
+        doAnswer(invocation -> {
+            String rid = invocation.getArgument(0);
+            AsyncPacketTaskCallBack callback = invocation.getArgument(1);
+            callback.onComplete(rid, PacketTaskStatus.UPLOAD_COMPLETED);
+            return null;
+        }).when(mockPacketService).uploadRegistration(anyString(), any(AsyncPacketTaskCallBack.class));
 
         service.handleRemapStep(2);
 
         verify(mockPacketService).syncAllPacketStatus();
-        verify(mockPacketService).uploadRegistration("PKT001");
-        verify(mockPacketService).uploadRegistration("PKT002");
+        verify(mockPacketService).uploadRegistration(eq("PKT001"), any(AsyncPacketTaskCallBack.class));
+        verify(mockPacketService).uploadRegistration(eq("PKT002"), any(AsyncPacketTaskCallBack.class));
         verify(mockAuditManagerService).audit(AuditEvent.MACHINE_REMAPPED, Components.PACKET_STATUS_SYNCHED);
         verify(mockAuditManagerService).audit(AuditEvent.MACHINE_REMAPPED, Components.PACKETS_UPLOADED);
     }
@@ -149,8 +160,12 @@ public class CenterRemapServiceImplTest {
         Registration reg = new Registration("PKT001");
         when(mockRegistrationRepository.getAllPendingForProcessing())
                 .thenReturn(Arrays.asList(reg));
-        doThrow(new RuntimeException("Upload failed")).when(mockPacketService)
-                .uploadRegistration("PKT001");
+        doAnswer(invocation -> {
+            String rid = invocation.getArgument(0);
+            AsyncPacketTaskCallBack callback = invocation.getArgument(1);
+            callback.onComplete(rid, PacketTaskStatus.UPLOAD_FAILED);
+            return null;
+        }).when(mockPacketService).uploadRegistration(eq("PKT001"), any(AsyncPacketTaskCallBack.class));
 
         assertThrows(Exception.class, () -> service.handleRemapStep(2));
     }
@@ -173,10 +188,11 @@ public class CenterRemapServiceImplTest {
     // -------------------------------------------------------------------------
 
     @Test
-    public void handleRemapStep_step4_deletesCenterDataPreservingUserCredentials() throws Exception {
+    public void handleRemapStep_step4_deletesAllUserAndCenterData() throws Exception {
         InOrder inOrder = inOrder(
                 mockUserRoleRepository,
                 mockUserBiometricRepository,
+                mockUserDetailRepository,
                 mockRegistrationCenterRepository,
                 mockTemplateRepository,
                 mockDynamicFieldRepository,
@@ -187,9 +203,10 @@ public class CenterRemapServiceImplTest {
 
         service.handleRemapStep(4);
 
-        // Center-specific data cleared
+        // User and center-specific data cleared
         inOrder.verify(mockUserRoleRepository).deleteAll();
         inOrder.verify(mockUserBiometricRepository).deleteAll();
+        inOrder.verify(mockUserDetailRepository).deleteAll();
         inOrder.verify(mockRegistrationCenterRepository).deleteAll();
         inOrder.verify(mockTemplateRepository).deleteAll();
         inOrder.verify(mockDynamicFieldRepository).deleteAll();
@@ -205,10 +222,12 @@ public class CenterRemapServiceImplTest {
     }
 
     @Test
-    public void handleRemapStep_step4_doesNotDeleteUserCredentials() throws Exception {
-        // Credentials (user_detail, user_pwd) must survive so login works after restart
+    public void handleRemapStep_step4_deletesUserCredentials() throws Exception {
+        // Credentials (user_detail, user_pwd, user_token) are wiped so the app behaves
+        // as a fresh install and forces first-time online login after the remap restart.
         service.handleRemapStep(4);
 
+        verify(mockUserDetailRepository).deleteAll();
         verify(mockGlobalParamRepository).saveGlobalParam("sync.lastupdated", null);
         verify(mockGlobalParamRepository).saveGlobalParam("masterdata.lastupdated", null);
     }
