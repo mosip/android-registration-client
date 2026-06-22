@@ -8,8 +8,7 @@ import regclient.page.ConsentPage;
 import regclient.page.SelectLanguagePage;
 import regclient.utils.TestDataReader;
 
-
-public class SelectLanguagePageTamil extends SelectLanguagePage{
+public class SelectLanguagePageTamil extends SelectLanguagePage {
 
 	@AndroidFindBy(accessibility = "மொழியை தேர்ந்தெடுங்கள்")
 	private WebElement selectLanguageTitle;
@@ -70,15 +69,16 @@ public class SelectLanguagePageTamil extends SelectLanguagePage{
 		return isElementDisplayed(selectLanguageTitle);
 	}
 
-	public  void clickOnSubmitButtonWithoutSelectingLanguage() {
+	public void clickOnSubmitButtonWithoutSelectingLanguage() {
 		clickOnElement(submitButton);
 	}
 
-	public  void selectSecondLanguage() {	
-		if(TestDataReader.readData("defaultlanguage").equalsIgnoreCase("tam"))
+	public void selectSecondLanguage() {
+		if (TestDataReader.readData("defaultlanguage").equalsIgnoreCase("tam"))
 			clickOnElement(englishLanguageButton);
 		else
-			clickOnElement(tamilLanguageButton);	}
+			clickOnElement(tamilLanguageButton);
+	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {
 		switch (notificationLanguage) {
@@ -108,25 +108,24 @@ public class SelectLanguagePageTamil extends SelectLanguagePage{
 		}
 	}
 
-	public  void selectAllSecondLanguage() {
+	public void selectAllSecondLanguage() {
 		clickOnElement(englishLanguageButton);
 		clickOnElement(frenchLanguageButton);
 		clickOnElement(arabicLanguageButton);
 		clickOnElement(kannadaLanguageButton);
 		clickOnElement(hindiLanguageButton);
-		clickOnElement(tamilLanguageButton);	
+		clickOnElement(tamilLanguageButton);
 	}
 
-
-	public  boolean isArabicLanguageButtonEnabled() {
+	public boolean isArabicLanguageButtonEnabled() {
 		return isElementEnabled(arabicLanguageButton);
 	}
 
-	public  boolean isSubmitButtonEnabled() {
+	public boolean isSubmitButtonEnabled() {
 		return isElementEnabled(submitButton);
 	}
 
-	public  ConsentPage clickOnSubmitButton() {
+	public ConsentPage clickOnSubmitButton() {
 		clickOnElement(submitButton);
 		return new ConsentPageTamil(driver);
 	}

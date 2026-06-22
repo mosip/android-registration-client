@@ -11,8 +11,6 @@ import regclient.api.FetchUiSpec;
 import regclient.page.AuthenticationPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.PreviewPage;
-import regclient.pages.english.AuthenticationPageEnglish;
-import regclient.pages.english.DemographicDetailsPageEnglish;
 
 public class PreviewPageTamil extends PreviewPage {
 
@@ -45,7 +43,7 @@ public class PreviewPageTamil extends PreviewPage {
 
 	@AndroidFindBy(accessibility = "இழந்த UIN")
 	private WebElement lostUinTitle;
-	
+
 	@AndroidFindBy(accessibility = "பயோமெட்ரிக் திருத்தம்")
 	private WebElement biometricCorrectionTitle;
 
@@ -128,7 +126,7 @@ public class PreviewPageTamil extends PreviewPage {
 	public boolean isLostUinTitleDisplayed() {
 		return isElementDisplayed(lostUinTitle);
 	}
-	
+
 	public boolean isBiometricCorrectionTitleDisplayed() {
 		return isElementDisplayed(biometricCorrectionTitle);
 	}

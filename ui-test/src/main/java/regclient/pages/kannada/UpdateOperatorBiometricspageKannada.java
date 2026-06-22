@@ -276,7 +276,7 @@ public class UpdateOperatorBiometricspageKannada extends UpdateOperatorBiometric
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(temporaryButton);
 	}
@@ -287,7 +287,7 @@ public class UpdateOperatorBiometricspageKannada extends UpdateOperatorBiometric
 
 	public void enterCommentsInTextBox(String comments) {
 		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
