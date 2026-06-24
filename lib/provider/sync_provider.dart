@@ -11,11 +11,14 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:registration_client/pigeon/master_data_sync_pigeon.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/platform_spi/global_config_service.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
+
+enum RemapSyncStatus { idle, inProgress, success, failed }
 
 class SyncProvider with ChangeNotifier {
   final SyncResponseService syncResponseService = SyncResponseService();
@@ -38,6 +41,13 @@ class SyncProvider with ChangeNotifier {
   bool _isSyncAndUploadInProgress = false;
   bool _isCenterRemapped = false;
 
+  final List<RemapSyncStatus> _remapStepStatuses =
+      List.filled(4, RemapSyncStatus.idle);
+  DateTime? _remapCompletedAt;
+  DateTime? _lastRemapSyncTime;
+
+  static const String _remapSyncTimeKey = 'last_center_remap_sync_time';
+
   Timer? _jobStatusPollingTimer;
   final Map<String, JobStatus> _jobStatuses = {};
 
@@ -48,6 +58,49 @@ class SyncProvider with ChangeNotifier {
   bool get isGlobalSyncInProgress => _isGlobalSyncInProgress;
   bool get isSyncAndUploadInProgress => _isSyncAndUploadInProgress;
   bool get isCenterRemapped => _isCenterRemapped;
+
+  /// Per-step status for the remap sync screen (index 0 = step 1 … index 3 = step 4).
+  List<RemapSyncStatus> get remapStepStatuses => List.unmodifiable(_remapStepStatuses);
+
+  /// Derived overall status for the remap sync screen.
+  RemapSyncStatus get remapSyncStatus {
+    if (_remapStepStatuses.every((s) => s == RemapSyncStatus.idle)) return RemapSyncStatus.idle;
+    if (_remapStepStatuses.last == RemapSyncStatus.success) return RemapSyncStatus.success;
+    if (_remapStepStatuses.any((s) => s == RemapSyncStatus.failed)) return RemapSyncStatus.failed;
+    return RemapSyncStatus.inProgress;
+  }
+
+  /// Progress percentage (0–100) based on completed steps.
+  int get remapSyncProgress =>
+      _remapStepStatuses.where((s) => s == RemapSyncStatus.success).length * 25;
+
+  /// Timestamp recorded when all four steps finish successfully.
+  DateTime? get remapSyncCompletedAt => _remapCompletedAt;
+
+  /// Timestamp of when the last center remap sync was initiated (persisted across restarts).
+  DateTime? get lastRemapSyncTime => _lastRemapSyncTime;
+
+  Future<void> loadLastRemapSyncTime() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stored = prefs.getString(_remapSyncTimeKey);
+      if (stored != null) {
+        _lastRemapSyncTime = DateTime.tryParse(stored);
+        notifyListeners();
+      }
+    } catch (e) {
+      log('REMAP: loadLastRemapSyncTime error: $e');
+    }
+  }
+
+  Future<void> _saveRemapSyncTime(DateTime time) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_remapSyncTimeKey, time.toIso8601String());
+    } catch (e) {
+      log('REMAP: _saveRemapSyncTime error: $e');
+    }
+  }
   bool get certificateSyncSuccess => _policyKeySyncSuccess;
   bool get globalParamsSyncSuccess => _globalParamsSyncSuccess;
   bool get userDetailsSyncSuccess => _userDetailsSyncSuccess;
@@ -80,6 +133,39 @@ class SyncProvider with ChangeNotifier {
     } catch (e) {
       log('REMAP: checkCenterRemapState error: $e');
     }
+  }
+
+  void resetRemapSyncState() {
+    _remapStepStatuses.fillRange(0, _remapStepStatuses.length, RemapSyncStatus.idle);
+    _remapCompletedAt = null;
+    notifyListeners();
+  }
+
+  /// Drives the four-step center remap cleanup via the platform channel.
+  /// Each step's status is updated individually so the UI can show per-step progress.
+  /// Returns [true] when all four steps succeeded.
+  Future<bool> performCenterRemapSync() async {
+    resetRemapSyncState();
+    for (int step = 1; step <= 4; step++) {
+      _setStepStatus(step, RemapSyncStatus.inProgress);
+      notifyListeners();
+
+      final bool ok = await syncResponseService.executeRemapStep(step);
+
+      _setStepStatus(step, ok ? RemapSyncStatus.success : RemapSyncStatus.failed);
+      notifyListeners();
+
+      if (!ok) return false;
+    }
+    _remapCompletedAt = DateTime.now();
+    _lastRemapSyncTime = _remapCompletedAt;
+    await _saveRemapSyncTime(_lastRemapSyncTime!);
+    notifyListeners();
+    return true;
+  }
+
+  void _setStepStatus(int step, RemapSyncStatus status) {
+    _remapStepStatuses[step - 1] = status;
   }
 
   getLastSyncTime() async {

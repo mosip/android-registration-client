@@ -27,4 +27,6 @@ public interface GlobalParamDao {
     @Query("SELECT * FROM global_param WHERE name LIKE :pattern AND status = 1 AND value IS NOT NULL")
     List<GlobalParam> findByNameLikeAndIsActiveTrueAndValIsNotNull(String pattern);
 
+    @Query("SELECT value FROM global_param WHERE id = :id")
+    String getGlobalParamValueById(String id);
 }

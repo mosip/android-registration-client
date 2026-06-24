@@ -67,4 +67,8 @@ public class LocationRepository {
                 locationJson.getString("langCode"));
         this.locationHierarchyDao.insert(locationHierarchy);
     }
+
+    public void deleteAll() {
+        locationDao.deleteAll();
+    }
 }

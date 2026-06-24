@@ -5,6 +5,7 @@
  *
 */
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biome
 // import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 
 import 'package:registration_client/ui/process_ui/widgets/language_selector.dart';
+import 'package:registration_client/ui/widgets/center_remap_sync_screen.dart';
 import 'package:registration_client/ui/widgets/remap_pending_activities_dialog.dart';
 
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -66,6 +68,7 @@ class _HomePageState extends State<HomePage> {
     _fetchProcessSpec();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await syncProvider.checkCenterRemapState();
+      await syncProvider.loadLastRemapSyncTime();
       // Check GPS status to update the indicator in profile
       await connectivityProvider.checkGPSStatus();
       // Fetch location if GPS is enabled
@@ -107,7 +110,12 @@ class _HomePageState extends State<HomePage> {
     await globalProvider.initializeLocationHierarchyMap();
   }
 
-  void onCenterRemap(BuildContext context) async {
+  void onCentreRemap(BuildContext context) async {
+    if (!syncProvider.isCenterRemapped) {
+      _showInSnackBar(appLocalizations.no_center_remap_detected);
+      return;
+    }
+
     final pendingUpload =
         await registrationTaskProvider.getPacketUploadedPendingDetails();
     if (!mounted) return;
@@ -122,7 +130,19 @@ class _HomePageState extends State<HomePage> {
           pendingApprovalCount: pendingApproval,
         ),
       );
+      return;
     }
+
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CenterRemapSyncScreen()),
+    );
+    unawaited(globalProvider.getAudit("REG-REMAP-001", "REG-MOD-106"));
+  }
+
+  String _remapBlockedMessage(String? flow) {
+    return appLocalizations.remap_operation_blocked;
   }
 
   void _fetchProcessSpec() async {
@@ -307,7 +327,6 @@ class _HomePageState extends State<HomePage> {
       //   "onTap": () {},
       //   "subtitle": "Last updated on Wednesday 12 Apr, 11:20PM"
       // },
-      if (context.watch<SyncProvider>().isCenterRemapped)
         {
           "icon": const Icon(
             Icons.location_on,
@@ -315,8 +334,11 @@ class _HomePageState extends State<HomePage> {
             size: 20,
           ),
           "title": appLocalizations.center_remap_sync,
-          "onTap": onCenterRemap,
-          "subtitle": appLocalizations.center_remap_sync_subtitle,
+          "onTap": onCentreRemap,
+          "subtitle": context.watch<SyncProvider>().lastRemapSyncTime != null
+              ? "${appLocalizations.remap_synced_at} ${DateFormat("EEEE d MMMM, hh:mma").format(context.watch<SyncProvider>().lastRemapSyncTime!.toLocal())}"
+              : "",
+          "isRemapHighlight": true,
         },
       // {
       //   "icon": SvgPicture.asset(

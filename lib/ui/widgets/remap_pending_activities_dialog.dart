@@ -94,9 +94,9 @@ class RemapPendingActivitiesDialog extends StatelessWidget {
                   subtitle: l10n.packets_require_supervisor_approval(
                       pendingApprovalCount.toString()),
                   onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
+                    final navigator = Navigator.of(context);
+                    navigator.pop();
+                    navigator.push(
                       MaterialPageRoute(
                           builder: (_) => const ApprovePacketsPage()),
                     );
@@ -111,9 +111,9 @@ class RemapPendingActivitiesDialog extends StatelessWidget {
                   subtitle: l10n.packets_queued_locally(
                       pendingUploadCount.toString()),
                   onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
+                    final navigator = Navigator.of(context);
+                    navigator.pop();
+                    navigator.push(
                       MaterialPageRoute(
                           builder: (_) => const ExportPacketsPage()),
                     );

@@ -96,4 +96,9 @@ public class PreRegistrationDataSyncDaoImpl implements PreRegistrationDataSyncDa
         }
         return null;
     }
+
+    @Override
+    public List<PreRegistrationList> findAll() {
+        return this.preRegistrationRepositoryDao.findAll();
+    }
 }

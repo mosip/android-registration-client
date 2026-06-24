@@ -50,4 +50,6 @@ public interface PreRegistrationDataSyncRepositoryDao {
     @Delete
     void deleteAll(List<PreRegistrationList> preRegistrationList);
 
+    @Query("SELECT * FROM pre_registration_list")
+    List<PreRegistrationList> findAll();
 }
