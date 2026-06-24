@@ -477,7 +477,7 @@ public class LocalClientCryptoServiceImpl implements ClientCryptoManagerService 
     public String getMachineName() {
         String name = getAppConf(APP_CONF_KEY_MACHINE_NAME);
         if(name == null) {
-            saveAppConf(APP_CONF_KEY_MACHINE_NAME, RandomStringUtils.random(12, true, true));
+            saveAppConf(APP_CONF_KEY_MACHINE_NAME, RandomStringUtils.random(12, 0, 0, true, true, null, new SecureRandom()));
         }
         return getAppConf(APP_CONF_KEY_MACHINE_NAME);
     }
