@@ -16,7 +16,7 @@ public class OnBoardPageKannada extends OnBoardPage {
 	@AndroidFindBy(accessibility = "ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ")
 	private WebElement getOnBoardTitle;
 
-	@AndroidFindBy(accessibility = "ಮನೆಗೆ ತೆರಳಿ")
+	@AndroidFindBy(accessibility = "ಮುಖಪುಟಕ್ಕೆ ತೆರಳಿ")
 	private WebElement skipToHomeScreenButton;
 
 	@AndroidFindBy(accessibility = "ಆನ್‌ಬೋರ್ಡಿಂಗ್ ಪ್ರಕ್ರಿಯೆಯೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು 'ಆನ್‌ಬೋರ್ಡ್ ಪಡೆಯಿರಿ' ಅನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.")
