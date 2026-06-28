@@ -222,13 +222,6 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
             }
         } catch (Exception e) {
             Log.e(TAG,ERROR_FETCH_PRE_REG_PACKET, e);
-            try {
-                RegistrationDto registrationDto = this.registrationService.getRegistrationDto();
-                registrationDto.getDocuments().clear();
-                registrationDto.getDemographics().clear();
-            } catch (Exception inner) {
-                Log.e(TAG, "No active registration to roll back", inner);
-            }
         }
         return attributeData;
     }
@@ -244,11 +237,9 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
             Log.i(TAG,"Pre-Registration ID is not present downloading {}"+ preRegistrationId);
             try {
                 preRegistration = downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
+            } catch (ExecutionException | InterruptedException e) {
+                this.registrationService.getRegistrationDto().getDocuments().clear();
+                this.registrationService.getRegistrationDto().getDemographics().clear();
             }
             return preRegistration;
         }
@@ -260,11 +251,9 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
             Log.i(TAG,"Pre-Registration ID is not up-to-date downloading {}"+ preRegistrationId);
             try {
                 preRegistration = downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
+            } catch (ExecutionException | InterruptedException e) {
+                this.registrationService.getRegistrationDto().getDocuments().clear();
+                this.registrationService.getRegistrationDto().getDemographics().clear();
             }
         }
         return preRegistration;
