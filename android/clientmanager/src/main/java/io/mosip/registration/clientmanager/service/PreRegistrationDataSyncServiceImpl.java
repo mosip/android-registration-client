@@ -239,11 +239,11 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                 preRegistration = downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
+                throw e;
             } catch (ExecutionException e) {
                 this.registrationService.getRegistrationDto().getDocuments().clear();
                 this.registrationService.getRegistrationDto().getDemographics().clear();
-                throw new RuntimeException(e);
+                throw e;
             }
             return preRegistration;
         }
@@ -257,11 +257,11 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                 preRegistration = downloadAndSavePacket(preRegistrationId, lastUpdatedTimeStamp);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
+                throw e;
             } catch (ExecutionException e) {
                 this.registrationService.getRegistrationDto().getDocuments().clear();
                 this.registrationService.getRegistrationDto().getDemographics().clear();
-                throw new RuntimeException(e);
+                throw e;
             }
         }
         return preRegistration;

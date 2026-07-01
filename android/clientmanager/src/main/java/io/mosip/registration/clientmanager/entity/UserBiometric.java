@@ -46,8 +46,5 @@ public class UserBiometric {
 	private Long delDtimes;
 
     public UserBiometric() {
-        this.usrId = "";
-        this.bioTypeCode = "";
-        this.bioAttributeCode = "";
     }
 }
