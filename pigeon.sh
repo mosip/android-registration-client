@@ -63,3 +63,6 @@ dart run pigeon --input pigeon/global_config_settings.dart --dart_out lib/pigeon
 
 # Generate secure screen files
 dart run pigeon --input pigeon/secure_screen.dart --dart_out lib/pigeon/secure_screen_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/SecureScreenPigeon.java --java_package "io.mosip.registration_client.model"
+
+# Generate telemetry pigeon files
+dart run pigeon --input pigeon/telemetry.dart --dart_out lib/pigeon/telemetry_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/TelemetryPigeon.java --java_package "io.mosip.registration_client.model"
