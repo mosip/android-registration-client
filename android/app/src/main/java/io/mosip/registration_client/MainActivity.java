@@ -113,6 +113,11 @@ import android.net.Uri;
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
+    // ==========================================
+    // TELEMETRY PIPELINE FIELDS
+    // ==========================================
+    private io.mosip.registration_client.telemetry.AndroidMetricCollector telemetryCollector;
+    // ==========================================
 
     ObjectWriter ow;
     @Inject
@@ -313,6 +318,11 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Safely release background execution threads during app destruction
+        if (this.telemetryCollector != null) {
+            this.telemetryCollector.shutdown();
+        }
+        //
         unregisterReceiver(broadcastReceiver);
         try {
             unregisterReceiver(rescheduleReceiver);
@@ -420,6 +430,32 @@ public class MainActivity extends FlutterActivity {
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
         SecureScreenPigeon.SecureScreenApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), secureScreenApi);
         secureScreenApi.setCallbackActivity(this);
+        // ==========================================
+        // TELEMETRY PHASE 1: SMOKE TEST BRIDGE
+        // ==========================================
+        // io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi.setup(
+        //     flutterEngine.getDartExecutor().getBinaryMessenger(),
+        //     new io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi() {
+        //         @Override
+        //         public void logMetric(@NonNull String metricJson) {
+        //             android.util.Log.d("PIGEON_TEST", "🚀 SUCCESS! Received metric payload: " + metricJson);
+        //         }
+        //     }
+        // );
+        //--------------------------------------------
+        // ==========================================
+        // TELEMETRY PHASE 2: LOCAL SECURE METRICS ENGINE
+        // ==========================================
+        // 1. Initialize our decoupled, asynchronous background file collector
+        this.telemetryCollector = new io.mosip.registration_client.telemetry.AndroidMetricCollector(this);
+        
+        // 2. Register the implementation wrapper to bind the platform communication channel
+        io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi.setup(
+            flutterEngine.getDartExecutor().getBinaryMessenger(),
+            new io.mosip.registration_client.telemetry.TelemetryApiImpl(this.telemetryCollector)
+        );
+        //--------------------------------------------
+        //this.telemetryCollector.collectAndLogSystemMetrics();
     }
 
     @Override
