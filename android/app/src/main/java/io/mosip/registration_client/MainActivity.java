@@ -455,7 +455,7 @@ public class MainActivity extends FlutterActivity {
             new io.mosip.registration_client.telemetry.TelemetryApiImpl(this.telemetryCollector)
         );
         //--------------------------------------------
-        //this.telemetryCollector.collectAndLogSystemMetrics();
+        this.telemetryCollector.collectAndLogSystemMetrics();
     }
 
     @Override
