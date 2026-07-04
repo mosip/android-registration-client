@@ -22,6 +22,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -456,6 +461,31 @@ public class MainActivity extends FlutterActivity {
         );
         //--------------------------------------------
         this.telemetryCollector.collectAndLogSystemMetrics();
+        //--------------------------------------------
+
+// ==========================================
+// TELEMETRY PHASE 4: BACKGROUND TUS UPLOAD
+// ==========================================
+    Constraints uploadConstraints = new Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build();
+
+    PeriodicWorkRequest uploadRequest =
+        new PeriodicWorkRequest.Builder(
+            io.mosip.registration_client.telemetry.TelemetryUploadWorker.class,
+            15, TimeUnit.MINUTES)
+        .setConstraints(uploadConstraints)
+        .build();
+
+    WorkManager.getInstance(getApplicationContext())
+        .enqueueUniquePeriodicWork(
+            "TelemetryUpload",
+            ExistingPeriodicWorkPolicy.KEEP,
+            uploadRequest
+        );
+
+    Log.d("MainActivity", "Telemetry upload worker scheduled — every 15 min");
+    //--------------------------------------------
     }
 
     @Override
