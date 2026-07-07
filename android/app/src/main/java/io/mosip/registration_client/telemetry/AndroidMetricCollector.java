@@ -190,4 +190,28 @@ public class AndroidMetricCollector {
             writeExecutor.shutdown();
         }
     }
+
+
+
+
+
+public File prepareFileForUpload() {
+    synchronized (fileLock) {
+        File currentLog = getLogFile();
+        // If file doesn't exist or is empty, nothing to upload
+        if (!currentLog.exists() || currentLog.length() == 0) {
+            return null;
+        }
+       
+        // Create a unique processing file name 
+        File processingFile = new File(currentLog.getParent(), "metrics.log.processing");
+        
+        // Atomically rename the current log so the Collector can create a new one immediately
+        if (currentLog.renameTo(processingFile)) {
+            return processingFile;
+        } else {
+            return null; // Rename failed
+        }
+    }
+}
 }
