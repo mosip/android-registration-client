@@ -112,6 +112,7 @@ import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 import io.mosip.registration_client.utils.BatchJob;
 import io.mosip.registration_client.utils.CustomToast;
+import io.mosip.registration_client.telemetry.AndroidMetricCollector;
 
 import android.net.Uri;
 
@@ -121,7 +122,8 @@ public class MainActivity extends FlutterActivity {
     // ==========================================
     // TELEMETRY PIPELINE FIELDS
     // ==========================================
-    private io.mosip.registration_client.telemetry.AndroidMetricCollector telemetryCollector;
+    private AndroidMetricCollector telemetryCollector;
+
     // ==========================================
 
     ObjectWriter ow;
@@ -452,7 +454,7 @@ public class MainActivity extends FlutterActivity {
         // TELEMETRY PHASE 2: LOCAL SECURE METRICS ENGINE
         // ==========================================
         // 1. Initialize our decoupled, asynchronous background file collector
-        this.telemetryCollector = new io.mosip.registration_client.telemetry.AndroidMetricCollector(this);
+        this.telemetryCollector = new AndroidMetricCollector(this);
         
         // 2. Register the implementation wrapper to bind the platform communication channel
         io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi.setup(
