@@ -183,19 +183,13 @@ public class AndroidMetricCollector {
         String hardwareId = Build.ID != null ? Build.ID : "UNKNOWN";
         return model + "_" + hardwareId.substring(0, Math.min(6, hardwareId.length()));
     }
-
-
     public void shutdown() {
         if (writeExecutor != null && !writeExecutor.isShutdown()) {
             writeExecutor.shutdown();
         }
     }
 
-
-
-
-
-public File prepareFileForUpload() {
+    public File prepareFileForUpload() {
     synchronized (fileLock) {
         File currentLog = getLogFile();
         // If file doesn't exist or is empty, nothing to upload
