@@ -46,6 +46,7 @@ public class AndroidMetricCollector {
     // ─── Called by TelemetryHandler (from Flutter via Pigeon) ───────────────
     public void logRawMetric(String metricJson) {
         writeExecutor.execute(() -> {
+            //Log.d(TAG, "logRawMetric called");//for adb logcat -s AndroidMetricCollector (logs)
             String processedInner = metricJson;
             // Inject inner metadata envelope seamlessly if it is a standard JSON dictionary object
             if (metricJson != null && metricJson.startsWith("{") && metricJson.endsWith("}")) {
@@ -192,20 +193,25 @@ public class AndroidMetricCollector {
     public File prepareFileForUpload() {
     synchronized (fileLock) {
         File currentLog = getLogFile();
-        // If file doesn't exist or is empty, nothing to upload
-        if (!currentLog.exists() || currentLog.length() == 0) {
-            return null;
-        }
-       
-        // Create a unique processing file name 
-        File processingFile = new File(currentLog.getParent(), "metrics.log.processing");
-        
-        // Atomically rename the current log so the Collector can create a new one immediately
-        if (currentLog.renameTo(processingFile)) {
-            return processingFile;
-        } else {
-            return null; // Rename failed
-        }
+            File processingFile = new File(currentLog.getParent(), "metrics.log.processing");
+
+            // CRITICAL FIX: If a previous upload failed, the processing file still exists.
+            // Return it immediately so the worker can finish uploading it FIRST.
+            if (processingFile.exists()) {
+                return processingFile;
+            }
+
+            // If file doesn't exist or is empty, nothing to upload
+            if (!currentLog.exists() || currentLog.length() == 0) {
+                return null;
+            }
+           
+            // Atomically rename the current log so the Collector can create a new one
+            if (currentLog.renameTo(processingFile)) {
+                return processingFile;
+            } else {
+                return null; // Rename failed
+            }
     }
 }
 }

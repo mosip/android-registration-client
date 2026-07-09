@@ -38,7 +38,7 @@ public class TelemetryUploadWorker extends Worker {
 
     //  Replace with your actual TUSD server URL
     // Same URL as mosip.registration.tus.server.url on desktop
-    private static final String TUS_SERVER_URL = "http://your-tusd-server-url/files/";
+    private static final String TUS_SERVER_URL = "/files/";
 
     public TelemetryUploadWorker(
             @NonNull Context context,
@@ -49,34 +49,34 @@ public class TelemetryUploadWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        File logFile = new File(
-            new File(getApplicationContext().getFilesDir(), LOG_DIR_NAME),
-            LOG_FILE_NAME
-        );
+// 1. Instantiate the collector locally to access the atomic handoff file lock
+        AndroidMetricCollector collector = new AndroidMetricCollector(getApplicationContext());
+        
+        // 2. Call your custom handoff method to rotate metrics.log -> metrics.log.processing safely
+        File uploadFile = collector.prepareFileForUpload();
 
-        // Nothing to upload — exit cleanly
-        if (!logFile.exists() || logFile.length() == 0) {
+        // If the handoff returns null, it means the file was empty or didn't exist
+        if (uploadFile == null) {
             Log.d(TAG, "No metrics to upload — skipping");
             return Result.success();
         }
 
-        Log.d(TAG, "Starting TUS upload: " + logFile.getAbsolutePath()
-            + " (" + logFile.length() + " bytes)");
+        Log.d(TAG, "Starting TUS upload: " + uploadFile.getAbsolutePath()
+            + " (" + uploadFile.length() + " bytes)");
 
         try {
             TusClient client = new TusClient();
             client.setUploadCreationURL(new URL(TUS_SERVER_URL));
 
-            // Persist upload URL across app restarts — enables true resumability
             SharedPreferences prefs = getApplicationContext()
                 .getSharedPreferences("tus_telemetry_prefs", Context.MODE_PRIVATE);
             client.enableResuming(new TusPreferencesURLStore(prefs));
 
-            TusUpload upload = new TusUpload(logFile);
+            // 3. Point TUS to the isolated .processing file
+            TusUpload upload = new TusUpload(uploadFile);
             TusUploader uploader = client.resumeOrCreateUpload(upload);
             uploader.setChunkSize(CHUNK_SIZE);
 
-            // Upload chunk by chunk — same as desktop's while loop
             while (uploader.uploadChunk() > -1) {
                 Log.d(TAG, "Uploaded offset: " + uploader.getOffset()
                     + " / " + upload.getSize());
@@ -85,20 +85,18 @@ public class TelemetryUploadWorker extends Worker {
             uploader.finish();
             Log.i(TAG, "Upload complete: " + uploader.getUploadURL());
 
-            //  Delete ONLY after confirmed success
-            // Matches desktop: "Once complete file is uploaded, metrics file is deleted"
-            if (logFile.delete()) {
-                Log.i(TAG, "metrics.log deleted after successful upload");
+            // 4. Delete the .processing staging file explicitly after confirmed success
+            if (uploadFile.delete()) {
+                Log.i(TAG, "metrics.log.processing deleted after successful upload");
             } else {
-                Log.w(TAG, "Could not delete metrics.log — will retry next cycle");
+                Log.w(TAG, "Could not delete metrics.log.processing — will retry next cycle");
             }
 
             return Result.success();
 
         } catch (Exception e) {
-            // Keep file intact — WorkManager retries automatically
             Log.e(TAG, "Upload failed, will retry: " + e.getMessage(), e);
             return Result.retry();
         }
-    }
-}
+     }
+ }
