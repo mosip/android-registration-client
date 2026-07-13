@@ -37,6 +37,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/life_cycle_event_handler.dart';
 import '../utils/location_service.dart';
+import '../utils/telemetry_service.dart';
 
 class LoginPage extends StatefulWidget {
   static const route = "/login-page";
@@ -301,10 +302,19 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
     if (!authProvider.isLoggedIn) {
       authProvider.setIsSyncing(false);
+      //Log login failure
+      TelemetryService.instance.onLoginFailure(
+        authProvider.loginError.isNotEmpty 
+          ? authProvider.loginError 
+          : "unknown_error"
+      );
       _showErrorInSnackbar();
       return;
     }
 
+    // Log login success
+    TelemetryService.instance.onLoginSuccess(username);
+    
     await syncProvider.getLastSyncTime();
     debugPrint(syncProvider.lastSuccessfulSyncTime);
 
