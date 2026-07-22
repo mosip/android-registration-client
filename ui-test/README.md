@@ -22,7 +22,8 @@ It automates **positive and negative scenarios** and supports both **emulators a
 
 3. **For running tests on a device**:  
    Use the shaded JAR with dependencies:
-   ```
+
+   ```text
    uitest-regclient-1.1.1.jar
    ```
 
