@@ -85,4 +85,16 @@ class TelemetryService {
       'unit': 'count',
     });
   }
+
+/// Logs screen navigation events for telemetry (AC2)
+void onScreenView(String screenName, {String? previousScreen}) {
+logEvent('registration.screen.navigated', {
+'value': 1,
+'unit': 'count',
+'screen_name': screenName,
+if (previousScreen != null) 'previous_screen': previousScreen,
+});
+}
+
+
 }
