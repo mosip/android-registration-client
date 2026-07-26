@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../platform_spi/sync_response_service.dart';
 import '../../provider/auth_provider.dart';
 import '../../provider/sync_provider.dart';
+import '../../utils/telemetry_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -33,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // Check GPS status when profile page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       connectivityProvider.checkGPSStatus();
+    TelemetryService.instance.onScreenView('ProfilePage');
     });
   }
 
