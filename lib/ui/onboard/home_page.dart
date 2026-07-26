@@ -38,6 +38,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../model/screen.dart';
+import '../../utils/telemetry_service.dart';
 
 class HomePage extends StatefulWidget {
   static const route = "/home-page";
@@ -66,6 +67,7 @@ class _HomePageState extends State<HomePage> {
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
+    TelemetryService.instance.onScreenView('HomePage');
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await syncProvider.checkCenterRemapState();
       await syncProvider.loadLastRemapSyncTime();
