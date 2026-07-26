@@ -78,6 +78,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         Provider.of<ConnectivityProvider>(context, listen: false);
     _initializeAppData();
     super.initState();
+    TelemetryService.instance.onScreenView('LoginPage');
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
         if (mounted) {
