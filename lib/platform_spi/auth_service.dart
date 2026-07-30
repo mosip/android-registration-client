@@ -12,12 +12,12 @@ import 'package:registration_client/pigeon/user_pigeon.dart';
 import 'package:registration_client/platform_android/auth_service_impl.dart';
 
 abstract class AuthService {
-  Future<User> validateUser(String username, String langCode);
+  Future<User?> validateUser(String username, String langCode);
 
-  Future<AuthResponse> login(
+  Future<AuthResponse?> login(
       String username, String password, bool isConnected);
 
-  Future<PacketAuth> packetAuthentication(String username, String password);
+  Future<PacketAuth?> packetAuthentication(String username, String password);
 
   Future<String> logout();
 

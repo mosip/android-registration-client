@@ -15,8 +15,9 @@ import 'package:registration_client/platform_spi/auth_service.dart';
 
 class AuthServiceImpl implements AuthService {
   @override
-  Future<User> validateUser(String username, String langCode) async {
-    late User user;
+  Future<User?> validateUser(String username, String langCode) async {
+    // late User user;
+    User? user;
     try {
       user = await UserApi().validateUser(username, langCode);
     } on PlatformException {
@@ -28,9 +29,10 @@ class AuthServiceImpl implements AuthService {
   }
 
   @override
-  Future<AuthResponse> login(
+  Future<AuthResponse?> login(
       String username, String password, bool isConnected) async {
-    late AuthResponse authResponse;
+    // late AuthResponse authResponse;
+    AuthResponse? authResponse;
     try {
       authResponse =
           await AuthResponseApi().login(username, password, isConnected);
@@ -43,9 +45,10 @@ class AuthServiceImpl implements AuthService {
   }
 
   @override
-  Future<PacketAuth> packetAuthentication(
+  Future<PacketAuth?> packetAuthentication(
       String username, String password) async {
-    late PacketAuth packetAuth;
+    // late PacketAuth packetAuth;
+    PacketAuth? packetAuth;
     try {
       packetAuth =
           await PacketAuthApi().authenticate(username, password);
