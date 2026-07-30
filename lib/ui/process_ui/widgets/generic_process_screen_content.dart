@@ -206,7 +206,7 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
     return false;
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Column(
       children: [
