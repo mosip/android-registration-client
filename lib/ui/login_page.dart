@@ -378,7 +378,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       }
 
       if (!context.mounted) return;
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => Responsive(
             mobile: DashBoardTabletView(),
