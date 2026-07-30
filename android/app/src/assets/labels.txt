@@ -1,0 +1,7 @@
+aadhar_back
+aadhar_front
+driving_license_back
+driving_license_front
+pan_card_front
+passport
+voter_id

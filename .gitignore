@@ -88,3 +88,22 @@ app.*.map.json
 /ios/Runner/pigeon.h
 /ios/Runner/pigeon.m
 
+
+# FVM Version Cache
+.fvm/
+
+
+# Pigeon-generated OCR bridge (Dart side)
+/lib/core/bridge/ocr_api.g.dart
+
+# Pigeon-generated OCR bridge (Java side)
+/android/app/src/main/java/io/mosip/registration_client/ocr/OcrPluginApi.java
+
+# TFLite document classifier model (binary asset, tracked via LFS or omitted)
+/android/app/src/main/assets/ocr/
+*.tflite
+*.lite
+
+# OCR test-only files
+/android/app/src/main/java/io/mosip/registration_client/ocr/OcrTestDataSeeder.java
+/lib/main_ocr_test.dart
