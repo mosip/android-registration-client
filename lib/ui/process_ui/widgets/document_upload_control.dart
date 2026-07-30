@@ -7,6 +7,8 @@
 
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -560,6 +562,31 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                     ? null
                                     : () async {
                                   _documentScanClickedAudit();
+                                  bool isGranted = false;
+                                  if (Platform.isAndroid) {
+                                    final androidInfo = await DeviceInfoPlugin().androidInfo;
+                                    if (androidInfo.version.sdkInt >= 33) {
+                                      // Android 13+: Granular media permission
+                                      final photosStatus = await Permission.photos.request();
+                                      isGranted = photosStatus.isGranted;
+                                    } else {
+                                      // Android 12 and below: Legacy storage permission
+                                      final storageStatus = await Permission.storage.request();
+                                      isGranted = storageStatus.isGranted;
+                                    }
+                                  } else {
+                                    final storageStatus = await Permission.storage.request();
+                                    isGranted = storageStatus.isGranted;
+                                  }
+                                  if (!isGranted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Storage permission is required to select documents.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   var doc = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -567,7 +594,6 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                             CustomScanner(
                                                 field: widget.field)),
                                   );
-
                                   await addDocument(
                                       doc, widget.field, referenceNumber);
                                   await getScannedDocuments(widget.field);
@@ -828,20 +854,45 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
                                 minimumSize: Size(100.w, 48.h),
                               ),
                               onPressed: (documentController.text == "")
-                                  ? null
-                                  : () async {
-                                _documentScanClickedAudit();
-                                var doc = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CustomScanner(
-                                          field: widget.field)),
-                                );
-                                await addDocument(
-                                    doc, widget.field, referenceNumber);
-
-                                await getScannedDocuments(widget.field);
-                              },
+                                    ? null
+                                    : () async {
+                                  _documentScanClickedAudit();
+                                  bool isGranted = false;
+                                  if (Platform.isAndroid) {
+                                    final androidInfo = await DeviceInfoPlugin().androidInfo;
+                                    if (androidInfo.version.sdkInt >= 33) {
+                                      // Android 13+: Granular media permission
+                                      final photosStatus = await Permission.photos.request();
+                                      isGranted = photosStatus.isGranted;
+                                    } else {
+                                      // Android 12 and below: Legacy storage permission
+                                      final storageStatus = await Permission.storage.request();
+                                      isGranted = storageStatus.isGranted;
+                                    }
+                                  } else {
+                                    final storageStatus = await Permission.storage.request();
+                                    isGranted = storageStatus.isGranted;
+                                  }
+                                  if (!isGranted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Storage permission is required to select documents.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  var doc = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CustomScanner(
+                                                field: widget.field)),
+                                  );
+                                  await addDocument(
+                                      doc, widget.field, referenceNumber);
+                                  await getScannedDocuments(widget.field);
+                                },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
