@@ -38,10 +38,15 @@ class NetworkServiceImpl implements NetworkService {
           .get(Uri.parse(FlutterConfig.get('BASE_URL') +
               FlutterConfig.get('ACTUATOR_INFO_PATH')))
           .timeout(const Duration(seconds: 3));
+      // if (response.statusCode == 200) {
+      //   ActuatorInfo actuatorInfo =
+      //       ActuatorInfo.fromJson(jsonDecode(response.body));
+      //   versionInfo = actuatorInfo.build['version']!;
+      // }
       if (response.statusCode == 200) {
         ActuatorInfo actuatorInfo =
             ActuatorInfo.fromJson(jsonDecode(response.body));
-        versionInfo = actuatorInfo.build['version']!;
+        versionInfo = actuatorInfo.build['version'] ?? 'Unknown';
       }
     } catch (e) {
       debugPrint("Fetch actuator info failed $e");
@@ -83,7 +88,7 @@ class NetworkServiceImpl implements NetworkService {
     } on PlatformException {
       debugPrint('SaveVersionToGlobalParam Api Call Failed');
     } catch (e) {
-      debugPrint('Save version failed: $e');
+      debugPrint('Save screen header failed: $e');
     }
     return response;
   }
