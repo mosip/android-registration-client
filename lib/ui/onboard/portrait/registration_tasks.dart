@@ -90,8 +90,12 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    final bool centerRemapped =
-        context.watch<SyncProvider>().isCenterRemapped;
+    final syncProvider = context.watch<SyncProvider>();
+    final bool centerRemapped = syncProvider.isCenterRemapped;
+    final bool isSyncing = syncProvider.isMasterDataSyncing || syncProvider.isSyncAndUploadInProgress;
+    final int syncProgress = syncProvider.isSyncAndUploadInProgress ? 98 : syncProvider.masterDataSyncProgress;
+    final String? subtitle = isSyncing ? "Syncing... $syncProgress%" : null;
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -109,10 +113,12 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               ),
               title: AppLocalizations.of(context)!.synchronize_data,
               ontap: () => widget.syncData(context),
-              subtitle: null,
+              subtitle: subtitle,
+              isSyncing: isSyncing,
+              syncProgress: syncProgress,
             ),
           )
-              : _getSyncDataProvider(),
+              : _getSyncDataProvider(isSyncing, syncProgress),
           SizedBox(
             height: 16.h,
           ),
@@ -122,20 +128,25 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
     );
   }
 
-  _getSyncDataProvider() {
+  _getSyncDataProvider(bool isSyncing, int syncProgress) {
+    final syncProvider = context.watch<SyncProvider>();
+    final String subtitle = isSyncing
+        ? "Syncing... $syncProgress%"
+        : (syncProvider.lastSuccessfulSyncTime != ""
+            ? DateFormat("EEEE d MMMM, hh:mma")
+                .format(DateTime.parse(syncProvider.lastSuccessfulSyncTime).toLocal())
+                .toString()
+            : "Last Sync time not found");
+
     return InkWell(
       onTap: () {
         widget.syncData(context);
       },
       child: Container(
-        height: 111.h,
-        padding: EdgeInsets.symmetric(
-          horizontal: 15.w,
-          vertical: 16.h,
-        ),
         margin: EdgeInsets.symmetric(
           horizontal: 20.w,
         ),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           border: Border.all(
             color: appWhite,
@@ -153,55 +164,67 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 78.h,
-              width: 78.h,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: appWhite,
-                ),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: iconContainerColor,
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 15.w,
+                vertical: 16.h,
               ),
-              child: Transform.scale(
-                scale: 0.5,
-                child: SvgPicture.asset(
-                  syncDataIcon,
-                ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 78.h,
+                    width: 78.h,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: appWhite,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      color: iconContainerColor,
+                    ),
+                    child: Transform.scale(
+                      scale: 0.5,
+                      child: SvgPicture.asset(
+                        syncDataIcon,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 24.w,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.synchronize_data,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: semiBold,
+                      color: appBlackShade1,
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: isSyncing ? appSolidPrimary : appBlackShade2,
+                      fontWeight: isSyncing ? semiBold : FontWeight.normal,
+                    ),
+                  )
+                ],
               ),
             ),
-            SizedBox(
-              width: 24.w,
-            ),
-            Text(
-              AppLocalizations.of(context)!.synchronize_data,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: semiBold,
-                color: appBlackShade1,
+            if (isSyncing)
+              LinearProgressIndicator(
+                value: syncProgress > 0 ? syncProgress / 100.0 : null,
+                minHeight: 4.h,
+                backgroundColor: greyBorderShade,
+                valueColor: const AlwaysStoppedAnimation<Color>(appSolidPrimary),
               ),
-            ),
-            const Expanded(
-              child: SizedBox(),
-            ),
-            Text(
-              context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
-                  ? DateFormat("EEEE d MMMM, hh:mma")
-                  .format(DateTime.parse(context
-                  .watch<SyncProvider>()
-                  .lastSuccessfulSyncTime)
-                  .toLocal())
-                  .toString()
-                  : "Last Sync time not found",
-              style: const TextStyle(
-                fontSize: 18,
-                color: appBlackShade2,
-              ),
-            )
           ],
         ),
       ),
@@ -215,7 +238,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
           itemCount:
           context.watch<RegistrationTaskProvider>().listOfProcesses.length,
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: (isPortrait) ? 2 : 4,
             mainAxisSpacing: (isPortrait) ? 8.h : 1.h,

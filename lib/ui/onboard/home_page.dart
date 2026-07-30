@@ -6,15 +6,12 @@
 */
 
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
-import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
@@ -67,6 +64,7 @@ class _HomePageState extends State<HomePage> {
         Provider.of<ConnectivityProvider>(context, listen: false);
     _fetchProcessSpec();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await syncProvider.loadLastSyncTimes();
       await syncProvider.checkCenterRemapState();
       await syncProvider.loadLastRemapSyncTime();
       // Check GPS status to update the indicator in profile
@@ -85,8 +83,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void syncData(BuildContext context) async {
+  void syncMasterData(BuildContext context) async {
     await connectivityProvider.checkNetworkConnection();
+    if (!mounted) return;
     if (!connectivityProvider.isConnected) {
       _showInSnackBar(appLocalizations.network_error);
       return;
@@ -95,19 +94,48 @@ class _HomePageState extends State<HomePage> {
       _showInSnackBar(appLocalizations.remap_operation_blocked);
       return;
     }
-    await syncProvider.manualSync();
-    log("Manual Sync Completed!");
-    if (syncProvider.isCenterRemapped) return;
-    syncProvider.isSyncAndUploadInProgress = true;
-    await syncProvider.batchJob();
-    syncProvider.isSyncAndUploadInProgress = false;
-    await syncProvider.getPreRegistrationIds();
-    await registrationTaskProvider.getListOfProcesses();
-    await globalProvider.getRegCenterName(
-        globalProvider.centerId, globalProvider.selectedLanguage);
-    await globalProvider.getAudit("REG-SYNC-002", "REG-MOD-102");
-    await globalProvider.initializeLanguageDataList(true);
-    await globalProvider.initializeLocationHierarchyMap();
+
+    if (syncProvider.isMasterDataSyncing) return;
+
+    final success = await syncProvider.performMasterDataSync(context);
+    if (!mounted) return;
+
+    if (success && !syncProvider.isCenterRemapped) {
+      syncProvider.isSyncAndUploadInProgress = true;
+      await syncProvider.batchJob();
+      syncProvider.isSyncAndUploadInProgress = false;
+      await registrationTaskProvider.getListOfProcesses();
+      await globalProvider.getRegCenterName(globalProvider.centerId, globalProvider.selectedLanguage);
+      await globalProvider.getAudit("REG-SYNC-002", "REG-MOD-102");
+      await globalProvider.initializeLanguageDataList(true);
+      await globalProvider.initializeLocationHierarchyMap();
+    }
+  }
+
+  void syncPreRegData(BuildContext context) async {
+    await connectivityProvider.checkNetworkConnection();
+    if (!mounted) return;
+    if (!connectivityProvider.isConnected) {
+      _showInSnackBar(appLocalizations.network_error);
+      return;
+    }
+    if (syncProvider.isCenterRemapped) {
+      _showInSnackBar(appLocalizations.remap_operation_blocked);
+      return;
+    }
+
+    if (syncProvider.isPreRegSyncing) return;
+
+    final success = await syncProvider.performPreRegDataSync(context);
+    if (!mounted) return;
+
+    if (success) {
+      await globalProvider.getAudit("REG-SYNC-PREREG", "REG-MOD-102");
+    }
+  }
+
+  void syncData(BuildContext context) async {
+    syncMasterData(context);
   }
 
   void onCentreRemap(BuildContext context) async {
@@ -139,10 +167,6 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (_) => const CenterRemapSyncScreen()),
     );
     unawaited(globalProvider.getAudit("REG-REMAP-001", "REG-MOD-106"));
-  }
-
-  String _remapBlockedMessage(String? flow) {
-    return appLocalizations.remap_operation_blocked;
   }
 
   void _fetchProcessSpec() async {
@@ -258,29 +282,43 @@ class _HomePageState extends State<HomePage> {
 
     List<Map<String, dynamic>> operationalTasks = [
       {
+        "syncKey": "masterData",
         "icon": SvgPicture.asset(
           "assets/svg/Synchronising Data.svg",
           width: 20,
           height: 20,
         ),
         "title": appLocalizations.synchronize_data,
-        "onTap": syncData,
-        "subtitle": context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
-            ? DateFormat("EEEE d MMMM, hh:mma")
-                .format(DateTime.parse(
-                        context.watch<SyncProvider>().lastSuccessfulSyncTime)
-                    .toLocal())
-                .toString()
+        "onTap": (context) => syncMasterData(context),
+        "subtitle": context.watch<SyncProvider>().lastMasterDataSyncTime != ""
+            ? (DateTime.tryParse(context.watch<SyncProvider>().lastMasterDataSyncTime) != null
+                ? DateFormat("EEEE d MMMM, hh:mma")
+                    .format(DateTime.parse(
+                            context.watch<SyncProvider>().lastMasterDataSyncTime)
+                        .toLocal())
+                    .toString()
+                : context.watch<SyncProvider>().lastMasterDataSyncTime)
             : "Last Sync time not found",
       },
-      // {
-      //   "icon": SvgPicture.asset(
-      //     "assets/svg/Uploading Local - Registration Data.svg",
-      //   ),
-      //   "title": appLocalizations.download_pre_registration_data,
-      //   "onTap": () {},
-      //   "subtitle": "Last downloaded on Friday 24 Mar, 12:15PM"
-      // },
+      {
+        "syncKey": "preRegData",
+        "icon": SvgPicture.asset(
+          "assets/svg/Uploading Local - Registration Data.svg",
+          width: 20,
+          height: 20,
+        ),
+        "title": appLocalizations.download_pre_registration_data,
+        "onTap": (context) => syncPreRegData(context),
+        "subtitle": context.watch<SyncProvider>().lastPreRegSyncTime != ""
+            ? (DateTime.tryParse(context.watch<SyncProvider>().lastPreRegSyncTime) != null
+                ? DateFormat("EEEE d MMMM, hh:mma")
+                    .format(DateTime.parse(
+                            context.watch<SyncProvider>().lastPreRegSyncTime)
+                        .toLocal())
+                    .toString()
+                : context.watch<SyncProvider>().lastPreRegSyncTime)
+            : "Not downloaded yet",
+      },
       {
         "icon": SvgPicture.asset(
           "assets/svg/Updating Operator Biometrics.svg",

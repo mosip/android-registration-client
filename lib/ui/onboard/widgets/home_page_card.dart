@@ -22,6 +22,8 @@ class HomePageCard extends StatefulWidget {
     required this.index,
     required this.ontap,
     required this.subtitle,
+    this.isSyncing = false,
+    this.syncProgress = 0,
   });
 
   final Widget icon;
@@ -29,71 +31,71 @@ class HomePageCard extends StatefulWidget {
   final int index;
   final String? subtitle;
   final void Function() ontap;
+  final bool isSyncing;
+  final int syncProgress;
 
   @override
   State<HomePageCard> createState() => _HomePageCardState();
 }
 
 class _HomePageCardState extends State<HomePageCard> {
-  String? subtitle;
-
-  void updateSubTitle(int index) {
-    switch (index) {
-      case 0:
-        String syncTime = context.watch<SyncProvider>().lastSuccessfulSyncTime;
-        setState(() {
-          subtitle = syncTime == ""
-              ? null
-              : DateFormat("EEEE d MMMM, hh:mma")
-                  .format(DateTime.parse(syncTime).toLocal())
-                  .toString();
-        });
-        break;
-      default:
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    updateSubTitle(widget.index);
+    String? displaySubtitle = widget.subtitle;
+    if (displaySubtitle == null && widget.index == 0) {
+      String syncTime = context.watch<SyncProvider>().lastSuccessfulSyncTime;
+      if (syncTime.isNotEmpty) {
+        try {
+          displaySubtitle = DateFormat("EEEE d MMMM, hh:mma")
+              .format(DateTime.parse(syncTime).toLocal())
+              .toString();
+        } catch (_) {}
+      }
+    }
 
     return Card(
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 12.h),
-        onTap: widget.ontap,
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              color: const Color(0xffF4F7FF),
-              borderRadius: BorderRadius.circular(8)),
-          child: widget.icon,
-        ),
-        title: Text(
-          widget.title,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: semiBold,
-              fontSize: 15,
-              color: const Color(0xff333333)),
-        ),
-        subtitle: widget.subtitle == null
-            ? (subtitle == null
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 12.h),
+            onTap: widget.ontap,
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: const Color(0xffF4F7FF),
+                  borderRadius: BorderRadius.circular(8)),
+              child: widget.icon,
+            ),
+            title: Text(
+              widget.title,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: semiBold,
+                  fontSize: 15,
+                  color: const Color(0xff333333)),
+            ),
+            subtitle: displaySubtitle == null
                 ? null
                 : Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      subtitle ?? "",
-                      style: const TextStyle(
-                          fontSize: 12, color: Color(0xff6F6E6E)),
+                      displaySubtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: widget.isSyncing ? appSolidPrimary : const Color(0xff6F6E6E),
+                      ),
                     ),
-                  ))
-            : Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  widget.subtitle ?? "",
-                  style:
-                      const TextStyle(fontSize: 12, color: Color(0xff6F6E6E)),
-                ),
-              ),
+                  ),
+          ),
+          if (widget.isSyncing)
+            LinearProgressIndicator(
+              value: widget.syncProgress > 0 ? widget.syncProgress / 100.0 : null,
+              minHeight: 4,
+              backgroundColor: greyBorderShade,
+              valueColor: const AlwaysStoppedAnimation<Color>(appSolidPrimary),
+            ),
+        ],
       ),
     );
   }
