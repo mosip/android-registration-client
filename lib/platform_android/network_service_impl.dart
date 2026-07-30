@@ -39,9 +39,14 @@ class NetworkServiceImpl implements NetworkService {
               FlutterConfig.get('ACTUATOR_INFO_PATH')))
           .timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
-        ActuatorInfo actuatorInfo =
-            ActuatorInfo.fromJson(jsonDecode(response.body));
-        versionInfo = actuatorInfo.build['version']!;
+        try {
+          ActuatorInfo actuatorInfo =
+              ActuatorInfo.fromJson(jsonDecode(response.body));
+          versionInfo = actuatorInfo.build['version'] ?? 'Unknown';
+        } on FormatException catch (e) {
+          debugPrint('Fatal JSON Parsing Error: ${e.message}');
+          versionInfo = 'Unknown'; // Safe fallback prevents crash
+        }
       }
     } catch (e) {
       debugPrint("Fetch actuator info failed $e");
