@@ -20,9 +20,21 @@ class FileStorage {
       await Permission.storage.request();
     }
     Directory directory = Directory("");
+    // if (Platform.isAndroid) {
+    //   // Redirects it to download folder in android
+    //   directory = Directory("/storage/emulated/0/Download");
+    // } else {
+    //   directory = await getApplicationDocumentsDirectory();
+    // }
     if (Platform.isAndroid) {
-      // Redirects it to download folder in android
-      directory = Directory("/storage/emulated/0/Download");
+      // Safely resolves the OS-provided external storage directory
+      final androidDir = await getExternalStorageDirectory();
+      if (androidDir != null) {
+        directory = androidDir;
+      } else {
+        // Fallback if external storage is unavailable
+        directory = await getApplicationDocumentsDirectory();
+      }
     } else {
       directory = await getApplicationDocumentsDirectory();
     }
