@@ -180,12 +180,21 @@ class _InactivityTrackerState extends State<InactivityTracker> with WidgetsBindi
   }
 
   @override
+  // Widget build(BuildContext context) {
+  //   return GestureDetector(
+  //     behavior: HitTestBehavior.translucent,
+  //     onTap: _onUserInteraction,
+  //     onPanDown: (_) => _onUserInteraction(),
+  //     onScaleStart: (_) => _onUserInteraction(),
+  //     child: widget.child,
+  //   );
+  // }
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Listener(
       behavior: HitTestBehavior.translucent,
-      onTap: _onUserInteraction,
-      onPanDown: (_) => _onUserInteraction(),
-      onScaleStart: (_) => _onUserInteraction(),
+      onPointerDown: (_) => _onUserInteraction(),
+      onPointerMove: (_) => _onUserInteraction(),
       child: widget.child,
     );
   }
