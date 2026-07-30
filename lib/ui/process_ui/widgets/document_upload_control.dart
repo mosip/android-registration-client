@@ -154,6 +154,13 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
     _getListOfReferenceNumber();
   }
 
+  @override
+  void dispose() {
+    documentController.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
+
   _getPreRegData(Field e) {
     Map<String?, Object?> value = registrationTaskProvider.preRegistrationData;
     if (value.isNotEmpty) {
