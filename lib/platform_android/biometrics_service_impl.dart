@@ -169,7 +169,7 @@ class BiometricsServiceImpl implements BiometricsService {
 
   @override
   Future<List<DeviceInfo?>> getListOfDevices(String modality) async {
-    List<DeviceInfo?> deviceList = List.empty();
+    List<DeviceInfo?> deviceList = [];
     try {
       deviceList = await BiometricsApi().getListOfDevices(modality);
     } on PlatformException {
