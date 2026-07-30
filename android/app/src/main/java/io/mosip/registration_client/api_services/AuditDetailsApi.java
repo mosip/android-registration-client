@@ -42,9 +42,13 @@ public class AuditDetailsApi implements AuditResponsePigeon.AuditResponseApi {
                     .orElse(null);
             if (matchedEvent != null) {
                 auditEvent(matchedEvent, componentId, arguments);
+            } else {
+                Log.w(getClass().getSimpleName(), "Unknown audit event id/name: " + id);
             }
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Exception in system audit event!", e);
+        } finally {
+            result.success(null);
         }
     }
 
