@@ -47,6 +47,13 @@
     <string name="yyyy_label">YYYY</string>
     <string name="age_label">Age</string>
     <string name="page_label">%d Page(s)</string>
+    <string name="scan">Scan</string>
+    <string name="label">Label</string>
+    <string name="authenticate">Authenticate</string>
+    <string name="dob">DOB</string>
+    <string name="or">OR</string>
+    <string name="delete">Delete</string>
+    <string name="preview">Preview</string>
 
     <!-- Jobs -->
     <string name="scheduled_jobs">Scheduled Jobs</string>

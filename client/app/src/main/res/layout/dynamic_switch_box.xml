@@ -5,29 +5,32 @@
               android:layout_height="wrap_content"
               android:layout_margin="10dp"
     android:orientation="vertical">
-
-    <LinearLayout
+    <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/rounded_corner"
-            android:weightSum="2">
-            <TextView
-                    android:id="@+id/switch_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Label"
-                    android:layout_margin="8dp"
-            />
-            <LinearLayout
-                android:id="@+id/option_holder_panel"
+            android:layout_height="match_parent">
+        <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_margin="15dp"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:background="@drawable/rounded_corner"
+                android:weightSum="2">
+                <TextView
+                        android:id="@+id/switch_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label"
+                        android:layout_margin="8dp"
+                />
+                <LinearLayout
+                    android:id="@+id/option_holder_panel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_margin="15dp"
+                    android:orientation="horizontal">
 
-            </LinearLayout>
-    </LinearLayout>
+                </LinearLayout>
+        </LinearLayout>
+    </HorizontalScrollView>
 </LinearLayout>

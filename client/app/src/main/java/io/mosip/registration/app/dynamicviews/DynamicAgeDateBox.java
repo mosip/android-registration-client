@@ -27,6 +27,7 @@ import java.util.*;
 
 import static io.mosip.registration.app.util.ClientConstants.FIELD_LABEL_TEMPLATE;
 import static io.mosip.registration.app.util.ClientConstants.REQUIRED_FIELD_LABEL_TEMPLATE;
+import static java.util.Calendar.*;
 
 public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
 
@@ -100,7 +101,54 @@ public class DynamicAgeDateBox extends LinearLayout implements DynamicView {
         return !((TextInputLayout) findViewById(R.id.text_input_layout_dd)).isErrorEnabled() &&
                 !((TextInputLayout) findViewById(R.id.text_input_layout_mm)).isErrorEnabled() &&
                 !((TextInputLayout) findViewById(R.id.text_input_layout_yy)).isErrorEnabled() &&
-                !((TextInputLayout) findViewById(R.id.text_input_layout_age)).isErrorEnabled();
+                !((TextInputLayout) findViewById(R.id.text_input_layout_age)).isErrorEnabled() &&
+                isValidData();
+    }
+
+    private boolean isValidData() {
+
+        //getting Date, Month and Year entered by the user
+        int givenAge = Integer.parseInt(ageBox.getText().toString());
+        int givenDate = Integer.parseInt(dateBox.getText().toString());
+        int givenMonth = Integer.parseInt(monthBox.getText().toString());
+        int givenYear = Integer.parseInt(yearBox.getText().toString());
+
+        //getting current Date, Month and Year
+        Calendar rightNow = Calendar.getInstance();
+        int currDate = rightNow.get(DAY_OF_MONTH);
+        int currMonth = rightNow.get(MONTH);
+        int currYear = rightNow.get(YEAR);
+
+        //checking if givenDate, givenMonth and givenYear is valid or not.
+        if(currYear < givenYear){
+            return false;
+        }else if(currYear == givenYear){
+            if(currMonth < givenMonth){
+                return false;
+            }else if(currMonth == givenMonth){
+                if(currDate < givenDate){
+                    return false;
+                }
+            }
+        }
+
+        int actualAge;
+
+        //calculating actual givenAge
+        if(currYear == givenYear){
+            actualAge = 0;
+        }else {
+            actualAge = currYear - givenYear - 1;
+            if(currMonth > givenMonth) {
+                actualAge += 1;
+            }else if(currMonth == givenMonth){
+                if(currDate >= givenDate){
+                    actualAge += 1;
+                }
+            }
+        }
+
+        return (actualAge == givenAge);
     }
 
     @Override

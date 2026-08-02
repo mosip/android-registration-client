@@ -10,50 +10,72 @@
             android:id="@+id/document_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Label"
+            android:text="@string/label"
             android:layout_margin="8dp"
     />
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:gravity="center"
-                  android:orientation="horizontal"
-                  android:background="#FDFCFC">
+    <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:gravity="center"
+                      android:orientation="horizontal"
+                      android:background="#FDFCFC">
 
-        <Spinner
-                android:id="@+id/doctypes_dropdown"
-                android:layout_margin="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:spinnerMode="dropdown"/>
+            <Spinner
+                    android:id="@+id/doctypes_dropdown"
+                    android:layout_margin="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:spinnerMode="dropdown"/>
 
-        <Button
-                android:text="Scan"
-                android:layout_margin="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@drawable/rounded_corner_btn"
-                android:textColor="@color/btn_text_primary_theme1"
-                android:id="@+id/scan_doc"/>
+            <Button
+                    android:text="@string/scan"
+                    android:layout_margin="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_corner_btn"
+                    android:textColor="@color/btn_text_primary_theme1"
+                    android:id="@+id/scan_doc"/>
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="16sp"
-                android:background="@drawable/rounded_text_view"
-                android:textColor="@color/primaryTextColor"
-                android:gravity="center"
-                android:layout_margin="5dp"
-                android:id="@+id/doc_preview"
-                android:clickable="true"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="16sp"
+                    android:background="@drawable/rounded_text_view"
+                    android:textColor="@color/primaryTextColor"
+                    android:gravity="center"
+                    android:layout_margin="5dp"
+                    android:id="@+id/doc_preview"
+                    android:clickable="true"/>
 
-        <EditText android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_margin="5dp"
-                  android:id="@+id/doc_refid"
-                  android:hint="@string/ref_id"
-                  android:ems="10"/>
+            <EditText android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_margin="5dp"
+                      android:id="@+id/doc_refid"
+                      android:hint="@string/ref_id"
+                      android:ems="10"/>
 
-    </LinearLayout>
+            <Button
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/delete_doc"
+                    android:background="@drawable/trash"
+                    android:contentDescription="@string/delete"/>
+
+            <Button
+                    android:text=""
+                    android:layout_margin="5dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/preview_1"
+                    android:id="@+id/preview_doc"
+                    android:contentDescription="@string/preview"/>
+
+        </LinearLayout>
+    </HorizontalScrollView>
 </LinearLayout>

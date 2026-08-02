@@ -66,7 +66,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/rounded_corner_btn"
                     android:textColor="@color/btn_text_primary_theme1"
-                    android:text="Authenticate"
+                    android:text="@string/authenticate"
                     android:layout_weight="1"/>
             <ProgressBar
                     android:id="@+id/auth_loading"
