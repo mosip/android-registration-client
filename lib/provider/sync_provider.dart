@@ -390,48 +390,52 @@ class SyncProvider with ChangeNotifier {
 
   Future<Sync> manualSync() async {
     isSyncInProgress = true;
-    final findJobId = await _getJobIdFinder();
+    try {
+      final findJobId = await _getJobIdFinder();
 
-    final steps = [
-      _SyncStep("masterSyncJob", 15, syncResponseService.getMasterDataSync),
-      _SyncStep("latestIdSchemaSyncJob", 30, syncResponseService.getIDSchemaSync),
-      _SyncStep("userDetailServiceJob", 45, syncResponseService.getUserDetailsSync),
-      _SyncStep("synchConfigDataJob", 60, syncResponseService.getGlobalParamsSync),
-      _SyncStep("publicKeySyncJob", 75, syncResponseService.getKernelCertsSync),
-      _SyncStep("keyPolicySyncJob", 90, syncResponseService.getPolicyKeySync),
-      _SyncStep("syncCertificateJob", 95, syncResponseService.getCaCertsSync),
-    ];
+      final steps = [
+        _SyncStep("masterSyncJob", 15, syncResponseService.getMasterDataSync),
+        _SyncStep("latestIdSchemaSyncJob", 30, syncResponseService.getIDSchemaSync),
+        _SyncStep("userDetailServiceJob", 45, syncResponseService.getUserDetailsSync),
+        _SyncStep("synchConfigDataJob", 60, syncResponseService.getGlobalParamsSync),
+        _SyncStep("publicKeySyncJob", 75, syncResponseService.getKernelCertsSync),
+        _SyncStep("keyPolicySyncJob", 90, syncResponseService.getPolicyKeySync),
+        _SyncStep("syncCertificateJob", 95, syncResponseService.getCaCertsSync),
+      ];
 
-    Sync syncResult = Sync();
-    for (final step in steps) {
-      _masterDataSyncProgress = step.progress;
-      notifyListeners();
+      Sync syncResult = Sync();
+      for (final step in steps) {
+        _masterDataSyncProgress = step.progress;
+        notifyListeners();
 
-      syncResult = await step.syncFn(true, findJobId(step.jobName));
-      if (syncResult.errorCode == 'KER-SNC-149') {
-        _onRemapDetected();
-        break;
+        syncResult = await step.syncFn(true, findJobId(step.jobName));
+        if (syncResult.errorCode == 'KER-SNC-149') {
+          _onRemapDetected();
+          break;
+        }
+        if (syncResult.errorCode != null && syncResult.errorCode!.isNotEmpty) {
+          break;
+        }
       }
-      if (syncResult.errorCode != null && syncResult.errorCode!.isNotEmpty) {
-        break;
-      }
-    }
 
-    if (syncResult.errorCode?.isEmpty ?? false) {
-      await getLastSyncTime();
+      if ((syncResult.errorCode ?? "").isEmpty) {
+        await getLastSyncTime();
+      }
+      return syncResult;
+    } finally {
+      isSyncInProgress = false;
+      _masterDataSyncProgress = 0;
     }
-    isSyncInProgress = false;
-    return syncResult;
   }
 
-  Future<bool> performMasterDataSync(BuildContext context) async {
+  Future<bool> performMasterDataSync() async {
     _isMasterDataSyncing = true;
     _masterDataSyncProgress = 10;
     notifyListeners();
 
     try {
       final syncResult = await manualSync();
-      if (_isCenterRemapped || (syncResult.errorCode?.isNotEmpty ?? false)) return false;
+      if (_isCenterRemapped || (syncResult.errorCode ?? "").isNotEmpty) return false;
 
       _masterDataSyncProgress = 100;
       await saveMasterDataSyncTime(DateTime.now().toIso8601String());
@@ -445,7 +449,7 @@ class SyncProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> performPreRegDataSync(BuildContext context) async {
+  Future<bool> performPreRegDataSync() async {
     _isPreRegSyncing = true;
     _preRegSyncProgress = 20;
     notifyListeners();
@@ -455,7 +459,8 @@ class SyncProvider with ChangeNotifier {
       _preRegSyncProgress = 50;
       notifyListeners();
 
-      await syncResponseService.getPreRegIds(findJobId("preRegistrationDataSyncJob"));
+      final response = await syncResponseService.getPreRegIds(findJobId("preRegistrationDataSyncJob"));
+      if (response.isEmpty) return false;
       _preRegSyncProgress = 100;
       await savePreRegSyncTime(DateTime.now().toIso8601String());
       return true;

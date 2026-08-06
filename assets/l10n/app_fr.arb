@@ -402,6 +402,24 @@
   "select_option": "Sélectionner une option",
   "cron_expression": "Expression Cron",
   "id": "IDENTIFIANT",
-  "name": "Nom"
+  "name": "Nom",
+  "last_sync_time_not_found": "Heure de dernière synchronisation introuvable",
+  "not_downloaded_yet": "Pas encore téléchargé",
+  "syncing_progress": "Synchronisation... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "Téléchargement... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }
 

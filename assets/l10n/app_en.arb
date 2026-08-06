@@ -402,5 +402,23 @@
   "select_option": "Select Option",
   "cron_expression": "Cron Expression",
   "id": "ID",
-  "name": "Name"
+  "name": "Name",
+  "last_sync_time_not_found": "Last Sync time not found",
+  "not_downloaded_yet": "Not downloaded yet",
+  "syncing_progress": "Syncing... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "Downloading... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }

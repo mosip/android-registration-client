@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -177,6 +178,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
 
   _getTasks() {
     final syncProvider = context.watch<SyncProvider>();
+    final appLocalizations = AppLocalizations.of(context)!;
 
     return ListView(
       shrinkWrap: true,
@@ -197,7 +199,9 @@ class _OperationalTasksState extends State<OperationalTasks> {
               : (isPreReg ? syncProvider.preRegSyncProgress : 0);
 
           final String subtitle = isSyncing
-              ? "${isMaster ? "Syncing" : "Downloading"}... $progress%"
+              ? (isMaster
+                  ? appLocalizations.syncing_progress(progress)
+                  : appLocalizations.downloading_progress(progress))
               : (task["subtitle"] ?? "");
 
           return isMobileSize

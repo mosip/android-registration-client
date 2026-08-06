@@ -398,9 +398,11 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             } catch (Exception e) {
                 e.printStackTrace();
                 onSyncJobComplete(jobId, false, false);
+                result.success("");
             }
         } else {
             onSyncJobComplete(jobId, false, false);
+            result.success("");
         }
     }
 

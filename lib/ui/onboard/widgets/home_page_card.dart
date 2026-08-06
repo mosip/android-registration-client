@@ -24,6 +24,7 @@ class HomePageCard extends StatefulWidget {
     required this.subtitle,
     this.isSyncing = false,
     this.syncProgress = 0,
+    this.showLastSyncFallback = false,
   });
 
   final Widget icon;
@@ -33,6 +34,7 @@ class HomePageCard extends StatefulWidget {
   final void Function() ontap;
   final bool isSyncing;
   final int syncProgress;
+  final bool showLastSyncFallback;
 
   @override
   State<HomePageCard> createState() => _HomePageCardState();
@@ -42,14 +44,15 @@ class _HomePageCardState extends State<HomePageCard> {
   @override
   Widget build(BuildContext context) {
     String? displaySubtitle = widget.subtitle;
-    if (displaySubtitle == null && widget.index == 0) {
+    if (displaySubtitle == null && widget.showLastSyncFallback) {
       String syncTime = context.watch<SyncProvider>().lastSuccessfulSyncTime;
       if (syncTime.isNotEmpty) {
-        try {
+        final parsed = DateTime.tryParse(syncTime);
+        if (parsed != null) {
           displaySubtitle = DateFormat("EEEE d MMMM, hh:mma")
-              .format(DateTime.parse(syncTime).toLocal())
+              .format(parsed.toLocal())
               .toString();
-        } catch (_) {}
+        }
       }
     }
 

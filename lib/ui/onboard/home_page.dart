@@ -97,13 +97,16 @@ class _HomePageState extends State<HomePage> {
 
     if (syncProvider.isMasterDataSyncing) return;
 
-    final success = await syncProvider.performMasterDataSync(context);
+    final success = await syncProvider.performMasterDataSync();
     if (!mounted) return;
 
     if (success && !syncProvider.isCenterRemapped) {
       syncProvider.isSyncAndUploadInProgress = true;
-      await syncProvider.batchJob();
-      syncProvider.isSyncAndUploadInProgress = false;
+      try {
+        await syncProvider.batchJob();
+      } finally {
+        syncProvider.isSyncAndUploadInProgress = false;
+      }
       await registrationTaskProvider.getListOfProcesses();
       await globalProvider.getRegCenterName(globalProvider.centerId, globalProvider.selectedLanguage);
       await globalProvider.getAudit("REG-SYNC-002", "REG-MOD-102");
@@ -126,11 +129,11 @@ class _HomePageState extends State<HomePage> {
 
     if (syncProvider.isPreRegSyncing) return;
 
-    final success = await syncProvider.performPreRegDataSync(context);
+    final success = await syncProvider.performPreRegDataSync();
     if (!mounted) return;
 
     if (success) {
-      await globalProvider.getAudit("REG-SYNC-PREREG", "REG-MOD-102");
+      await globalProvider.getAudit("REG-SYNC-007", "REG-MOD-102");
     }
   }
 
@@ -264,10 +267,18 @@ class _HomePageState extends State<HomePage> {
         : AppLocalizations.of(context)!.supervisors_biometric_update;
   }
 
+  String _formatSyncTime(String value, String fallback) {
+    if (value.isEmpty) return fallback;
+    final parsed = DateTime.tryParse(value);
+    if (parsed == null) return value;
+    return DateFormat("EEEE d MMMM, hh:mma").format(parsed.toLocal());
+  }
+
   @override
   Widget build(BuildContext context) {
     isMobile = MediaQuery.of(context).orientation == Orientation.portrait;
     appLocalizations = AppLocalizations.of(context)!;
+    final syncProviderWatch = context.watch<SyncProvider>();
 
     try {
       String dateString =
@@ -290,15 +301,10 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.synchronize_data,
         "onTap": (context) => syncMasterData(context),
-        "subtitle": context.watch<SyncProvider>().lastMasterDataSyncTime != ""
-            ? (DateTime.tryParse(context.watch<SyncProvider>().lastMasterDataSyncTime) != null
-                ? DateFormat("EEEE d MMMM, hh:mma")
-                    .format(DateTime.parse(
-                            context.watch<SyncProvider>().lastMasterDataSyncTime)
-                        .toLocal())
-                    .toString()
-                : context.watch<SyncProvider>().lastMasterDataSyncTime)
-            : "Last Sync time not found",
+        "subtitle": _formatSyncTime(
+          syncProviderWatch.lastMasterDataSyncTime,
+          appLocalizations.last_sync_time_not_found,
+        ),
       },
       {
         "syncKey": "preRegData",
@@ -309,15 +315,10 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.download_pre_registration_data,
         "onTap": (context) => syncPreRegData(context),
-        "subtitle": context.watch<SyncProvider>().lastPreRegSyncTime != ""
-            ? (DateTime.tryParse(context.watch<SyncProvider>().lastPreRegSyncTime) != null
-                ? DateFormat("EEEE d MMMM, hh:mma")
-                    .format(DateTime.parse(
-                            context.watch<SyncProvider>().lastPreRegSyncTime)
-                        .toLocal())
-                    .toString()
-                : context.watch<SyncProvider>().lastPreRegSyncTime)
-            : "Not downloaded yet",
+        "subtitle": _formatSyncTime(
+          syncProviderWatch.lastPreRegSyncTime,
+          appLocalizations.not_downloaded_yet,
+        ),
       },
       {
         "icon": SvgPicture.asset(

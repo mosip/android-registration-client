@@ -90,11 +90,12 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final appLocalizations = AppLocalizations.of(context)!;
     final syncProvider = context.watch<SyncProvider>();
     final bool centerRemapped = syncProvider.isCenterRemapped;
     final bool isSyncing = syncProvider.isMasterDataSyncing || syncProvider.isSyncAndUploadInProgress;
     final int syncProgress = syncProvider.isSyncAndUploadInProgress ? 98 : syncProvider.masterDataSyncProgress;
-    final String? subtitle = isSyncing ? "Syncing... $syncProgress%" : null;
+    final String? subtitle = isSyncing ? appLocalizations.syncing_progress(syncProgress) : null;
 
     return SingleChildScrollView(
       child: Column(
@@ -116,6 +117,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               subtitle: subtitle,
               isSyncing: isSyncing,
               syncProgress: syncProgress,
+              showLastSyncFallback: true,
             ),
           )
               : _getSyncDataProvider(isSyncing, syncProgress),
@@ -130,13 +132,13 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
 
   _getSyncDataProvider(bool isSyncing, int syncProgress) {
     final syncProvider = context.watch<SyncProvider>();
+    final appLocalizations = AppLocalizations.of(context)!;
+    final DateTime? lastSync = DateTime.tryParse(syncProvider.lastSuccessfulSyncTime);
     final String subtitle = isSyncing
-        ? "Syncing... $syncProgress%"
-        : (syncProvider.lastSuccessfulSyncTime != ""
-            ? DateFormat("EEEE d MMMM, hh:mma")
-                .format(DateTime.parse(syncProvider.lastSuccessfulSyncTime).toLocal())
-                .toString()
-            : "Last Sync time not found");
+        ? appLocalizations.syncing_progress(syncProgress)
+        : (lastSync != null
+            ? DateFormat("EEEE d MMMM, hh:mma").format(lastSync.toLocal())
+            : appLocalizations.last_sync_time_not_found);
 
     return InkWell(
       onTap: () {
