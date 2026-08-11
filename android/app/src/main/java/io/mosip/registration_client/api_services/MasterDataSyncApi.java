@@ -371,8 +371,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void batchJob(@NonNull MasterDataSyncPigeon.Result<String> result) {
-        batchJob.syncRegistrationPackets(this.context, null);
-        result.success("Registration Packet Sync Completed.");
+        batchJob.syncRegistrationPackets(this.context, () -> {
+            result.success("Registration Packet Sync Completed.");
+        });
     }
 
     @Override
@@ -396,7 +397,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     onSyncJobComplete(jobId, true, false);
                 }, jobId);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Pre-registration ID sync failed", e);
                 onSyncJobComplete(jobId, false, false);
                 result.success("");
             }

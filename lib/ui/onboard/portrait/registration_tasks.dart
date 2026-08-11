@@ -133,7 +133,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
   _getSyncDataProvider(bool isSyncing, int syncProgress) {
     final syncProvider = context.watch<SyncProvider>();
     final appLocalizations = AppLocalizations.of(context)!;
-    final DateTime? lastSync = DateTime.tryParse(syncProvider.lastSuccessfulSyncTime);
+    final DateTime? lastSync = DateTime.tryParse(syncProvider.lastMasterDataSyncTime);
     final String subtitle = isSyncing
         ? appLocalizations.syncing_progress(syncProgress)
         : (lastSync != null

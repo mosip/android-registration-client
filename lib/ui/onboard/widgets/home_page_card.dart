@@ -45,7 +45,7 @@ class _HomePageCardState extends State<HomePageCard> {
   Widget build(BuildContext context) {
     String? displaySubtitle = widget.subtitle;
     if (displaySubtitle == null && widget.showLastSyncFallback) {
-      String syncTime = context.watch<SyncProvider>().lastSuccessfulSyncTime;
+      String syncTime = context.watch<SyncProvider>().lastMasterDataSyncTime;
       if (syncTime.isNotEmpty) {
         final parsed = DateTime.tryParse(syncTime);
         if (parsed != null) {

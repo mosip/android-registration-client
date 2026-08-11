@@ -295,7 +295,7 @@ class _HomePageState extends State<HomePage> {
       {
         "syncKey": "masterData",
         "icon": SvgPicture.asset(
-          "assets/svg/Synchronising Data.svg",
+          "assets/svg/synchronisingData.svg",
           width: 20,
           height: 20,
         ),
@@ -309,7 +309,7 @@ class _HomePageState extends State<HomePage> {
       {
         "syncKey": "preRegData",
         "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
+          "assets/svg/uploadingLocalRegistrationData.svg",
           width: 20,
           height: 20,
         ),
@@ -322,7 +322,7 @@ class _HomePageState extends State<HomePage> {
       },
       {
         "icon": SvgPicture.asset(
-          "assets/svg/Updating Operator Biometrics.svg",
+          "assets/svg/updatingOperatorBiometrics.svg",
         ),
         "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
@@ -345,7 +345,7 @@ class _HomePageState extends State<HomePage> {
       },
       {
         "icon": SvgPicture.asset(
-          "assets/svg/Uploading Local - Registration Data.svg",
+          "assets/svg/uploadingLocalRegistrationData.svg",
         ),
         "title": appLocalizations.appliction_upload,
         "onTap": (context){
@@ -381,7 +381,7 @@ class _HomePageState extends State<HomePage> {
         },
       // {
       //   "icon": SvgPicture.asset(
-      //     "assets/svg/Uploading Local - Registration Data.svg",
+      //     "assets/svg/uploading_local_registration_data.svg",
       //   ),
       //   "title": appLocalizations.sync_activities,
       //   "onTap": () {},
@@ -390,7 +390,7 @@ class _HomePageState extends State<HomePage> {
       if (Provider.of<AuthProvider>(context, listen: false).isSupervisor)
         {
           "icon": SvgPicture.asset(
-            "assets/svg/Uploading Local - Registration Data.svg",
+            "assets/svg/uploadingLocalRegistrationData.svg",
           ),
           "title": appLocalizations.pending_approval,
           "onTap": (context) {
