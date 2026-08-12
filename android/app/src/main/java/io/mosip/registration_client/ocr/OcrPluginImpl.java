@@ -8,13 +8,21 @@ package io.mosip.registration_client.ocr;
 
 import android.util.Log;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.SurfaceTexture;
+import android.net.Uri;
+import io.flutter.view.TextureRegistry;
 import android.os.Handler;
 import android.os.Looper;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,20 +56,25 @@ public class OcrPluginImpl implements OcrHostApi {
     private final AtomicInteger     scanGeneration = new AtomicInteger(0);
     @Nullable
     private DocumentScanner activeScanner;
-
+    private final TextureRegistry textureRegistry;
+    @Nullable
+    private TextureRegistry.SurfaceTextureEntry textureEntry;
+    private final ExecutorService fileDecodeExecutor = Executors.newSingleThreadExecutor();
 
     private OcrPluginImpl(
             @NonNull Activity activity,
             @NonNull OcrFlutterApi flutterApi,
             @NonNull OcrProvider provider,
             @NonNull OcrConfig config,
-            @NonNull OcrUiSpecProvider uiSpecProvider) {
+            @NonNull OcrUiSpecProvider uiSpecProvider,
+            @NonNull TextureRegistry textureRegistry) {
         this.activity          = activity;
         this.flutterApi        = flutterApi;
         this.provider           = provider;
         this.mainThreadHandler = new Handler(Looper.getMainLooper());
         this.config            = config;
         this.uiSpecProvider    = uiSpecProvider;
+        this.textureRegistry   = textureRegistry;
     }
     public static void register(
             @NonNull FlutterEngine flutterEngine,
@@ -86,34 +99,41 @@ public class OcrPluginImpl implements OcrHostApi {
 
         OcrProvider provider = OcrProviderFactory.create(config, documentClassifier, extractionConfig);
 
+        TextureRegistry textureRegistry = flutterEngine.getRenderer();
+
         OcrHostApi.setup(
                 flutterEngine.getDartExecutor().getBinaryMessenger(),
-                new OcrPluginImpl(activity, flutterApi, provider, config, uiSpecProvider));
+                new OcrPluginImpl(activity, flutterApi, provider, config, uiSpecProvider, textureRegistry));
     }
 
     public void updateActivity(@NonNull Activity activity) {
         this.activity = activity;
     }
 
+    @NonNull
     @Override
-    public void startDocumentScan() {
+    public Long startDocumentScan() {
         if (!config.enabled) {
             Log.w(TAG, "startDocumentScan called while mosip.registration.ocr.enabled=false, ignoring");
-            return;
+            return -1L;
         }
 
         if (activity == null) {
             Log.e(TAG, "startDocumentScan: activity is null (possibly detached), ignoring");
-            return;
+            return -1L;
         }
 
         cancelScan();
+
+        textureEntry = textureRegistry.createSurfaceTexture();
+        SurfaceTexture surfaceTexture = textureEntry.surfaceTexture();
 
         QualityAnalyzer qualityAnalyzer = new QualityAnalyzer(
                 config.qualityBlurVariance, config.qualityBrightnessMin, config.qualityBrightnessMax);
 
         activeScanner = new DocumentScanner(
                 activity,
+                surfaceTexture,
                 qualityAnalyzer,
                 config.qualityMaxRetries,
 
@@ -146,6 +166,7 @@ public class OcrPluginImpl implements OcrHostApi {
         );
 
         activeScanner.start();
+        return textureEntry.id();
     }
 
     @Override
@@ -153,6 +174,10 @@ public class OcrPluginImpl implements OcrHostApi {
         if (activeScanner != null) {
             activeScanner.stop();
             activeScanner = null;
+        }
+        if (textureEntry != null) {
+            textureEntry.release();
+            textureEntry = null;
         }
     }
 
@@ -168,6 +193,11 @@ public class OcrPluginImpl implements OcrHostApi {
             activeScanner.stop();
             activeScanner = null;
         }
+        if (textureEntry != null) {
+            textureEntry.release();
+            textureEntry = null;
+        }
+        fileDecodeExecutor.shutdownNow();
         provider.release();
     }
 
@@ -178,6 +208,77 @@ public class OcrPluginImpl implements OcrHostApi {
         msg.setIsAcceptable(false);
         msg.setGuidanceMessage("No active scan");
         return msg;
+    }
+
+    @Override
+    public void processImageFile(@NonNull String filePath) {
+        if (!config.enabled) {
+            Log.w(TAG, "processImageFile: ocr.enabled=false, ignoring");
+            return;
+        }
+        if (activity == null) {
+            Log.e(TAG, "processImageFile: activity is null, ignoring");
+            return;
+        }
+
+        // Cancel any active camera session first
+        cancelScan();
+
+        fileDecodeExecutor.execute(() -> {
+            Bitmap bitmap = null;
+            try {
+                bitmap = decodeImagePath(filePath);
+            } catch (Exception e) {
+                Log.e(TAG, "processImageFile: decode failed for " + filePath, e);
+            }
+
+            if (bitmap == null || bitmap.isRecycled()) {
+                OcrErrorMessage msg = buildErrorMessage(
+                        "IMAGE_DECODE_FAILED",
+                        "Could not decode the selected image. Please choose a valid JPG, PNG, or WebP file.",
+                        true);
+                mainThreadHandler.post(() -> flutterApi.onOcrError(msg, r -> {}));
+                return;
+            }
+
+            // Downsample very large images (cap longest side at 2048px) before OCR
+            bitmap = downsampleIfNeeded(bitmap, 2048);
+
+            // Feed into the shared OCR pipeline (same as camera capture path)
+            runOcr(bitmap);
+        });
+    }
+
+    /**
+     * Decodes a file-system path or content:// URI to a Bitmap.
+     * Handles both SAF URIs and absolute file paths.
+     */
+    private Bitmap decodeImagePath(@NonNull String filePath) throws IOException {
+        if (filePath.startsWith("content://")) {
+            ContentResolver cr = activity.getContentResolver();
+            try (InputStream is = cr.openInputStream(Uri.parse(filePath))) {
+                if (is == null) throw new IOException("ContentResolver returned null stream for: " + filePath);
+                return BitmapFactory.decodeStream(is);
+            }
+        } else {
+            return BitmapFactory.decodeFile(filePath);
+        }
+    }
+
+    /**
+     * Downsamples a Bitmap so its longest side is at most {@code maxPx}.
+     * Returns the original if already within bounds.
+     */
+    private static Bitmap downsampleIfNeeded(@NonNull Bitmap src, int maxPx) {
+        int w = src.getWidth();
+        int h = src.getHeight();
+        if (w <= maxPx && h <= maxPx) return src;
+        float scale = (float) maxPx / Math.max(w, h);
+        int newW = Math.round(w * scale);
+        int newH = Math.round(h * scale);
+        Bitmap scaled = Bitmap.createScaledBitmap(src, newW, newH, true);
+        src.recycle();
+        return scaled;
     }
 
     private void runOcr(@NonNull Bitmap bitmap) {
