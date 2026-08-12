@@ -25,10 +25,11 @@ class ImageQualityMessage {
 
 @HostApi()
 abstract class OcrHostApi {
-  void startDocumentScan();
+  int startDocumentScan();
   void cancelScan();
   void forceCapture();
   ImageQualityMessage checkImageQuality();
+  void processImageFile(String filePath);
 }
 
 @FlutterApi()

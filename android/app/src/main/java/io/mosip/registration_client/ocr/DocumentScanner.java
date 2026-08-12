@@ -8,13 +8,18 @@ package io.mosip.registration_client.ocr;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
+import android.view.Surface;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraState;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+import androidx.camera.core.SurfaceRequest;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
@@ -52,6 +57,7 @@ public class DocumentScanner {
     private final QualityAnalyzer          qualityAnalyzer;
     private final int                      maxQualityRetries;
     private final ExecutorService          analysisExecutor;
+    private final SurfaceTexture           surfaceTexture;
 
     private ProcessCameraProvider cameraProvider;
     private volatile boolean      isRunning              = false;
@@ -62,6 +68,7 @@ public class DocumentScanner {
 
     public DocumentScanner(
             @NonNull Activity activity,
+            @Nullable SurfaceTexture surfaceTexture,
             @NonNull QualityAnalyzer qualityAnalyzer,
             int maxQualityRetries,
             @NonNull QualityUpdateCallback qualityCallback,
@@ -69,6 +76,7 @@ public class DocumentScanner {
             @NonNull ErrorCallback errorCallback,
             @NonNull QualityExhaustedCallback qualityExhaustedCallback) {
         this.activity                 = activity;
+        this.surfaceTexture           = surfaceTexture;
         this.qualityAnalyzer          = qualityAnalyzer;
         this.maxQualityRetries        = maxQualityRetries;
         this.qualityCallback          = qualityCallback;
@@ -132,10 +140,30 @@ public class DocumentScanner {
 
         imageAnalysis.setAnalyzer(analysisExecutor, this::analyzeFrame);
 
+        Preview preview = null;
+        if (surfaceTexture != null) {
+            preview = new Preview.Builder().build();
+            final android.graphics.SurfaceTexture st = surfaceTexture;
+            preview.setSurfaceProvider(request -> {
+                android.util.Size resolution = request.getResolution();
+                st.setDefaultBufferSize(resolution.getWidth(), resolution.getHeight());
+                Surface surface = new Surface(st);
+                request.provideSurface(surface, ContextCompat.getMainExecutor(activity), result -> {
+                    surface.release();
+                });
+            });
+        }
+
         try {
             provider.unbindAll();
-            Camera camera = provider.bindToLifecycle(
-                    (LifecycleOwner) activity, cameraSelector, imageAnalysis);
+            Camera camera;
+            if (preview != null) {
+                camera = provider.bindToLifecycle(
+                        (LifecycleOwner) activity, cameraSelector, preview, imageAnalysis);
+            } else {
+                camera = provider.bindToLifecycle(
+                        (LifecycleOwner) activity, cameraSelector, imageAnalysis);
+            }
 
             // R-1: observe CameraState for hardware disconnects / errors
             camera.getCameraInfo().getCameraState().observe(

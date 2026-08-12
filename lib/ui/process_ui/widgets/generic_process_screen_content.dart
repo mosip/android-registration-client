@@ -32,6 +32,11 @@ import 'package:registration_client/ui/process_ui/widgets/terms_and_conditions.d
 import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/additional_Info_ReqId_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
+import 'package:registration_client/provider/ocr_scan_provider.dart';
+import 'package:registration_client/ui/scanner/ocr_scan_page.dart';
+import 'package:registration_client/ui/scanner/ocr_upload_page.dart';
+import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'radio_button_control.dart';
 
@@ -223,6 +228,18 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
         if (widget.screen.additionalInfoRequestIdRequired == true) ...[
           const AdditionalInfoReqIdControl(),
         ],
+
+        // OCR action row — only on Demographics tab when OCR is enabled
+        Consumer<OcrScanProvider>(
+          builder: (context, ocrProvider, _) {
+            final isDemographicsTab =
+                context.watch<GlobalProvider>().newProcessTabIndex == 0;
+            if (ocrProvider.isOcrEnabled && isDemographicsTab) {
+              return _buildOcrActionRow(context);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
         
         (context.watch<GlobalProvider>().preRegControllerRefresh)
             ? const CircularProgressIndicator()
@@ -243,4 +260,132 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
       ],
     );
   }
+
+  /// Builds the two-card OCR action row (Scan + Upload).
+  Widget _buildOcrActionRow(BuildContext context) {
+    final bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final EdgeInsets rowMargin = EdgeInsets.symmetric(
+      vertical: 8.h,
+      horizontal: isPortrait ? 16.w : 0,
+    );
+
+    return Padding(
+      padding: rowMargin,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: _buildOcrCard(
+              context: context,
+              icon: Icons.document_scanner_outlined,
+              label: 'Scan Document',
+              description: 'Use camera to auto-fill fields',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OcrScanPage()),
+              ),
+            )),
+            SizedBox(width: 10.w),
+            Expanded(child: _buildOcrCard(
+              context: context,
+              icon: Icons.upload_file_outlined,
+              label: 'Upload Document',
+              description: 'Pick an image to auto-fill fields',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OcrUploadPage()),
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Builds a single OCR action card tile.
+  Widget _buildOcrCard({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String description,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 3,
+      color: pureWhite,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: solidPrimary.withOpacity(0.15),
+          width: 1,
+        ),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              colors: [
+                solidPrimary.withOpacity(0.05),
+                solidPrimary.withOpacity(0.01),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon badge
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: solidPrimary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: solidPrimary, size: 22),
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                label,
+                style: TextStyle(
+                  color: solidPrimary,
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.1,
+                ),
+              ),
+              SizedBox(height: 3.h),
+              Text(
+                description,
+                style: TextStyle(
+                  color: appBlackShade3,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+              SizedBox(height: 10.h),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: solidPrimary.withOpacity(0.45),
+                  size: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
+
