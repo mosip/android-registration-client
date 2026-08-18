@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void syncData(BuildContext context) async {
+    TelemetryService.instance.onTaskSelected('sync_data');
     await connectivityProvider.checkNetworkConnection();
     if (!connectivityProvider.isConnected) {
       _showInSnackBar(appLocalizations.network_error);
@@ -175,6 +176,7 @@ class _HomePageState extends State<HomePage> {
     List<Screen?> sortedScreens;
     sortedScreens = process.screens!.toList()..sort((e1, e2) => e1!.order!.compareTo(e2!.order!));
     if (process.flow == "NEW" || process.flow == "UPDATE" || process.flow == "LOST" || process.flow == "CORRECTION") {
+      TelemetryService.instance.onTaskSelected(process.flow?.toLowerCase() ?? 'registration_process');
       globalProvider.clearRegistrationProcessData();
       globalProvider.setPreRegistrationId("");
       globalProvider.setAdditionalInfoReqId("");
@@ -289,6 +291,7 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": getRoleBasedBiometricTitle(context),
         "onTap": (context) async {
+          TelemetryService.instance.onTaskSelected('update_operator_biometrics');
           if (syncProvider.isCenterRemapped) {
             _showInSnackBar(appLocalizations.remap_operation_blocked);
             return;
@@ -312,6 +315,7 @@ class _HomePageState extends State<HomePage> {
         ),
         "title": appLocalizations.appliction_upload,
         "onTap": (context){
+          TelemetryService.instance.onTaskSelected('export_packets');
           Provider.of<GlobalProvider>(context, listen: false).getAudit("REG-EVT-005", "REG-MOD-102");
           Navigator.push(
               context,
