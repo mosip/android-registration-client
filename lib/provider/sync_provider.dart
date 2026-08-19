@@ -477,11 +477,6 @@ class SyncProvider with ChangeNotifier {
     await syncResponseService.batchJob();
   }
 
-  getPreRegistrationIds() async {
-    String Function(String) findJobIdByApiName = await _getJobIdFinder();
-    await syncResponseService.getPreRegIds(findJobIdByApiName("preRegistrationDataSyncJob"));
-  }
-
   Future<String?> getLastSyncTimeByJobId(String jobId) async {
     try {
       final value = await syncResponseService.getLastSyncTimeByJobId(jobId);

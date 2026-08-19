@@ -392,9 +392,17 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         if (NetworkUtils.isNetworkConnected(this.context)) {
             try {
                 preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
-                    Log.i(TAG, "Application Id's Sync Completed");
-                    result.success("Application Id's Sync Completed.");
-                    onSyncJobComplete(jobId, true, false);
+                    String syncResult = preRegistrationDataSyncService.getLastSyncResult();
+                    boolean isSuccess = syncResult == null || syncResult.isEmpty();
+                    if (isSuccess) {
+                        Log.i(TAG, "Application Id's Sync Completed");
+                        onSyncJobComplete(jobId, true, false);
+                        result.success("Application Id's Sync Completed.");
+                    } else {
+                        Log.e(TAG, "Application Id's Sync Failed: " + syncResult);
+                        onSyncJobComplete(jobId, false, false);
+                        result.success("");
+                    }
                 }, jobId);
             } catch (Exception e) {
                 Log.e(TAG, "Pre-registration ID sync failed", e);
@@ -728,8 +736,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         break;
                     case "preRegistrationDataSyncJob":
                         preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
-                            Log.i(TAG, "Application Id's Sync Completed");
-                            onSyncJobComplete(jobId, true, false);
+                            String syncResult = preRegistrationDataSyncService.getLastSyncResult();
+                            boolean success = syncResult == null || syncResult.isEmpty();
+                            onSyncJobComplete(jobId, success, false);
                         }, jobId);
                         break;
 
