@@ -11,6 +11,7 @@ import '../../utils/app_config.dart';
 import 'widget/approve_table.dart';
 import 'widget/authenticate_dialogbox.dart';
 import 'widget/search_box.dart';
+import '../../utils/telemetry_service.dart';
 
 class ApprovePacketsPage extends StatefulWidget {
   const ApprovePacketsPage({super.key});
@@ -35,6 +36,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
         .getAllReasonList(globalProvider.selectedLanguage);
     globalProvider.getAudit("NAV_APPROVE_REG", "REG-MOD-102");
     super.initState();
+    TelemetryService.instance.onScreenView("ApprovePacketsPage");
   }
 
   void _showInSnackBar(String value) {
@@ -50,6 +52,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
       onPressed: (context.read<ApprovePacketsProvider>().countSelected == 0)
           ? null
           : () async {
+              TelemetryService.instance.onButtonClick("Authenticate Packet Button", screenName: "ApprovePacketsPage");
               await connectivityProvider.checkNetworkConnection();
               if (!connectivityProvider.isConnected) {
                 _showInSnackBar(appLocalizations.network_error);

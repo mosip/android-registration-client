@@ -96,5 +96,23 @@ if (previousScreen != null) 'previous_screen': previousScreen,
 });
 }
 
+/// Logs button click / action events
+  void onButtonClick(String buttonName, {String? screenName}) {
+    logEvent('registration.button.clicked', {
+      'value': 1,
+      'unit': 'count',
+      'button_name': buttonName,
+      if (screenName != null) 'screen_name': screenName,
+    });
+  }
+/// Logs operational task selection events
+  void onTaskSelected(String taskName, {String? category}) {
+    logEvent('registration.task.selected', {
+      'value': 1,
+      'unit': 'count',
+      'task_name': taskName,
+      if (category != null) 'category': category,
+    });
+  }
 
 }

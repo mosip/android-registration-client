@@ -38,6 +38,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/utils/app_style.dart';
 
 import '../../utils/life_cycle_event_handler.dart';
+import '../../utils/telemetry_service.dart';
 
 class GenericProcess extends StatefulWidget {
   final ProcessType processType;
@@ -83,6 +84,7 @@ class _GenericProcessState extends State<GenericProcess>
     connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
     super.initState();
+    TelemetryService.instance.onScreenView("GenericProcessPage");
     WidgetsBinding.instance.addObserver(LifecycleEventHandler(
       resumeCallBack: () async {
         if (mounted) {
@@ -140,6 +142,7 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   _authenticatePacket(BuildContext context) async {
+    TelemetryService.instance.onButtonClick("AUTHENTICATE_BUTTON_CLICKED" , screenName: "GenericProcessPage");
     if (!_validateUsername(context)) {
       return false;
     }
@@ -219,6 +222,7 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   _resetValuesOnRegistrationComplete() {
+    TelemetryService.instance.onButtonClick("SUBMIT_BUTTON_CLICKED" , screenName: "GenericProcessPage");
     Navigator.of(context).pop();
   }
 
@@ -227,6 +231,7 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   _nextButtonClickedAudit(Process process, int size) async {
+    TelemetryService.instance.onButtonClick("NEXT_BUTTON_CLICKED" , screenName: "GenericProcessPage");
     final nextPageName = globalProvider.newProcessTabIndex < size
         ? (process.screens![globalProvider.newProcessTabIndex]!.label?[globalProvider.selectedLanguage] ?? '')
         : postRegistrationTabs[globalProvider.newProcessTabIndex - size];
@@ -243,6 +248,7 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   Future<bool> onWillPop(Process process) async {
+    TelemetryService.instance.onButtonClick("BACK_BUTTON_CLICKED" , screenName: "GenericProcessPage");
     if (globalProvider.newProcessTabIndex > 0 &&
         globalProvider.newProcessTabIndex <
             process.screens!.length + postRegistrationTabs.length - 1) {

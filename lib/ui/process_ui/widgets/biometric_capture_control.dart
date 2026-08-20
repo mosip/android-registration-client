@@ -17,6 +17,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets_mobile/biometric_capture_control_portrait.dart';
 import 'package:registration_client/utils/stateful_wrapper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 class BiometricCaptureControl extends StatelessWidget {
   const BiometricCaptureControl({super.key, required this.e});
@@ -259,6 +260,7 @@ class BiometricCaptureControlInitialization extends StatelessWidget {
     }
     return StatefulWrapper(
         onInit: () {
+          TelemetryService.instance.onScreenView("BiometricCaptureControlPage");
           setInitialBioAttribute()
               .then((value) => debugPrint("State Initialized"));
         },
