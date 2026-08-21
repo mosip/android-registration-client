@@ -222,7 +222,7 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   _resetValuesOnRegistrationComplete() {
-    TelemetryService.instance.onButtonClick("SUBMIT_BUTTON_CLICKED" , screenName: "GenericProcessPage");
+    TelemetryService.instance.onRegistrationCompleted("acknowledged");
     Navigator.of(context).pop();
   }
 
@@ -248,7 +248,6 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   Future<bool> onWillPop(Process process) async {
-    TelemetryService.instance.onButtonClick("BACK_BUTTON_CLICKED" , screenName: "GenericProcessPage");
     if (globalProvider.newProcessTabIndex > 0 &&
         globalProvider.newProcessTabIndex <
             process.screens!.length + postRegistrationTabs.length - 1) {
@@ -260,6 +259,7 @@ class _GenericProcessState extends State<GenericProcess>
         fieldSelectionCompleted = false;
       });
     } else {
+      TelemetryService.instance.onButtonClick("navigation.back", screenName: "GenericProcessPage");
       return true;
     }
     return false;

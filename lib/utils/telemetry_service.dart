@@ -106,12 +106,11 @@ if (previousScreen != null) 'previous_screen': previousScreen,
     });
   }
 /// Logs operational task selection events
-  void onTaskSelected(String taskName, {String? category}) {
+  void onTaskSelected(String taskName) {
     logEvent('registration.task.selected', {
       'value': 1,
       'unit': 'count',
       'task_name': taskName,
-      if (category != null) 'category': category,
     });
   }
 

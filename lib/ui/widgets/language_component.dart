@@ -37,7 +37,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
     return InkWell(
       onTap: () {
         if (!widget.isFreezed && !widget.isDisabled) {
-          TelemetryService.instance.onButtonClick("Language Selection Button", screenName: "LanguageSelectionPage");
+          TelemetryService.instance.onButtonClick("Language Selection Button");
           widget.onTap();
         }
       },
