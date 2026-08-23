@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.SystemClock; 
 import android.app.ActivityManager; 
 import android.util.Log;
+import android.content.pm.PackageManager;
 
 import java.io.File; 
 import java.io.FileOutputStream; 
@@ -105,6 +106,22 @@ public class AndroidMetricCollector {
                         buildInnerMessage("android.battery.level", "gauge", batteryPct, "percent", null)
                     ));
                 }
+            }
+            // 5. android.os.version
+            String osVersion = "Android " + Build.VERSION.RELEASE;
+            appendLine(buildEnvelope(
+                buildInnerMessage("os_version", "gauge", 0, null, osVersion)
+            ));
+
+            // 6. android.app.version
+            try {
+                String appVersion = context.getPackageManager()
+                        .getPackageInfo(context.getPackageName(), 0).versionName;
+                appendLine(buildEnvelope(
+                    buildInnerMessage("app_version", "gauge", 0, null, appVersion)
+                ));
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.e(TAG, "Failed to extract app version", e);
             }
         });
     }
