@@ -55,7 +55,7 @@ public class AndroidMetricCollector {
                 processedInner = "{" +
                     "\"@timestamp\":\"" + generateUtcTimestamp() + "\"" +
                     "," + strip +
-                    ",\"machine\":\"" + getDeviceId() + "\"" +
+                    ",\"device_model\":\"" + getDeviceId() + "\"" +
                     "}";
             }
             appendLine(buildEnvelope(processedInner));
@@ -107,21 +107,35 @@ public class AndroidMetricCollector {
                     ));
                 }
             }
-            // 5. android.os.version
-            String osVersion = "Android " + Build.VERSION.RELEASE;
-            appendLine(buildEnvelope(
-                buildInnerMessage("os_version", "gauge", 0, null, osVersion)
-            ));
-
-            // 6. android.app.version
-            try {
-                String appVersion = context.getPackageManager()
-                        .getPackageInfo(context.getPackageName(), 0).versionName;
-                appendLine(buildEnvelope(
-                    buildInnerMessage("app_version", "gauge", 0, null, appVersion)
-                ));
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.e(TAG, "Failed to extract app version", e);
+            // 5. Single device.info event for static device/app metadata
+            try{
+            String osRelease = Build.VERSION.RELEASE;//release without "android"
+            int sdkInt = Build.VERSION.SDK_INT;
+            PackageManager pm = context.getPackageManager();
+            PackageInfo pInfo;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+               pInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.PackageInfoFlags.of(0));
+            } else {
+             pInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            }
+            String versionName = (pInfo.versionName != null) ? pInfo.versionName : "unknown";
+            long versionCode = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 
+            ? pInfo.getLongVersionCode() 
+            : pInfo.versionCode;
+            String deviceInfoJson = "{" +
+            "\"@timestamp\":\"" + generateUtcTimestamp() + "\"," +
+            "\"name\":\"device.info\"," +
+            "\"type\":\"event\"," +
+            "\"device_model\":\"" + getDeviceId() + "\"," +
+            "\"os_release\":\"" + osRelease + "\"," +
+            "\"sdk_int\":" + sdkInt + "," +
+            "\"app_version_name\":\"" + versionName + "\"," +
+            "\"app_version_code\":" + versionCode +
+            "}";
+            appendLine(buildEnvelope(deviceInfoJson));
+            
+           }catch (PackageManager.NameNotFoundException e) {
+                Log.e(TAG, "Failed to collect device metadata", e);
             }
         });
     }
@@ -132,7 +146,7 @@ public class AndroidMetricCollector {
           .append("\"@timestamp\":\"").append(generateUtcTimestamp()).append("\"")
           .append(",\"name\":\"").append(name).append("\"")
           .append(",\"type\":\"").append(type).append("\"")
-          .append(",\"machine\":\"").append(getDeviceId()).append("\"");
+          .append(",\"device_model\":\"").append(getDeviceId()).append("\"");
 
         if (state != null && !state.isEmpty()) {
             sb.append(",\"state\":\"").append(state).append("\"");
