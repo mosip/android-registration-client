@@ -9,6 +9,8 @@ import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
+import regclient.pages.english.DemographicDetailsPageEnglish;
+import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class ConsentPageFrench extends ConsentPage {
 
@@ -32,7 +34,7 @@ public class ConsentPageFrench extends ConsentPage {
 							+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + screenTitle + "\"))"));
 			return isElementDisplayed(pageElement);
 		} catch (Exception e) {
-			return false;
+			return false; 
 		}
 	}
 

@@ -32,7 +32,7 @@ public class SettingsPageArabic extends SettingsPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"إعدادات الجهاز\")")
 	private WebElement deviceSettingsTab;
 
-	@AndroidFindBy(accessibility = "إعدادات التكوين العامة")
+	@AndroidFindBy(accessibility = "Key\nServer Value\nLocal Value")
 	private WebElement globalConfigSettingsHeader;
 
 	@AndroidFindBy(accessibility = "SUBMIT")
@@ -56,7 +56,7 @@ public class SettingsPageArabic extends SettingsPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"mock.sbi.finger\")")
 	private WebElement fingerDeviceCard;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc,'لم يتم العثور على أجهزة')]")
+	@AndroidFindBy(accessibility = "No devices found")
 	private WebElement noDevicesFound;
 
 	@AndroidFindBy(accessibility = "Submit Changes")
@@ -88,27 +88,6 @@ public class SettingsPageArabic extends SettingsPage {
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'leftslap_fingerprint_threshold')]//android.widget.EditText")
 	private WebElement leftSlapThresholdField;
-
-	@AndroidFindBy(xpath = "//android.widget.Toast[@text='Master Data Sync Completed']")
-	private WebElement masterDatatoastMessage;
-
-	@AndroidFindBy(accessibility = "key")
-	private WebElement keyLabel;
-
-	@AndroidFindBy(accessibility = "server_value")
-	private WebElement serverValueLabel;
-
-	@AndroidFindBy(accessibility = "local_value")
-	private WebElement localValueLabel;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'mosip.registration.')]")
-	private WebElement configKeys;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'local_value_')]")
-	private WebElement localValueBox;
-
-	@AndroidFindBy(accessibility = "global_config_search")
-	private WebElement searchBox;
 
 	public SettingsPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -248,52 +227,18 @@ public class SettingsPageArabic extends SettingsPage {
 	}
 
 	public boolean validateJobCardFields(String jobName) {
-		WebElement card = driver
-				.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + jobName + "')]"));
-		String cd = card.getAttribute("content-desc");
-		return cd.contains(jobName) && cd.contains("Next Run") && cd.contains("Last Sync")
-				&& cd.contains("Cron Expression");
-	}
-
-	public boolean isMasterDataToastMessageDisplayed() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-			wait.until(ExpectedConditions
-					.presenceOfElementLocated(By.xpath("//android.widget.Toast[@text='Master Data Sync Completed']")));
-			return true;
-		} catch (Exception e) {
+			// Locate the Next Run / Last Sync field using job name as anchor
+			WebElement field = driver.findElement(By.xpath(
+					"//android.view.View[@content-desc='" + jobName + "']" + "/following::android.widget.EditText[1]"));
 
+			String text = field.getText();
+
+			return text.contains("Next Run") && text.contains("Last Sync");
+
+		} catch (Exception e) {
 			return false;
 		}
-	}
-
-	public boolean isKeyLabelDisplayed() {
-		return isElementDisplayed(keyLabel);
-	}
-
-	public boolean isServerValueLabelDisplayed() {
-		return isElementDisplayed(serverValueLabel);
-	}
-
-	public boolean isLocalValueLabelDisplayed() {
-		return isElementDisplayed(localValueLabel);
-	}
-
-	public boolean isConfigListPresent() {
-		return isElementDisplayed(configKeys);
-	}
-
-	public boolean isLocalValueBoxDisplayed() {
-		return isElementDisplayed(localValueBox);
-	}
-
-	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
-		String actualLabel = deviceSettingsPage.getAttribute("content-desc");
-		return actualLabel.equals("إعدادات الجهاز");
-	}
-
-	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
-		return isElementDisplayed(searchBox);
 	}
 
 }

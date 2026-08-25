@@ -67,14 +67,8 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc='FETCH DATA']/following-sibling::android.widget.Button")
 	private WebElement scanButton;
 
-	@AndroidFindBy(accessibility = "Non-Foreigner / غير أجنبي")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-Foreigner\")")
 	private WebElement nonForeignerOption;
-
-	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Application ID does not exist')]")
-	private WebElement applicationIdDoesNotExistMsg;
-
-	@AndroidFindBy(accessibility = "OKAY")
-	private WebElement okayButton;
 
 	public DemographicDetailsPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -135,14 +129,6 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 		clickOnElement(scanButton);
 	}
 
-	public boolean isApplicationIdDoesNotExistMessageDisplay() {
-		return isElementDisplayed(applicationIdDoesNotExistMsg);
-	}
-
-	public void clickOnOkayButton() {
-		clickOnElement(okayButton);
-	}
-
 	public void fillDemographicDetailsPage(String age) {
 		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("DemographicDetails");
@@ -162,66 +148,43 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					if (FetchUiSpec.getTransliterateTypeUsingId(id))
 						assertTrue(checkSecondLanguageTextBoxNotNull(id),
 								"Verify if " + id + " is enter in second language text box");
-					
-				}else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
-					        && FetchUiSpec.getFormatUsingId(id).equals("none")) {
+				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
+						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
+					waitTime(1);
+					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+						swipeOrScroll();
+					}
 
-					    waitTime(1);
+					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
+					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
+					WebElement dropdownElement = findElement(
+							By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
+									+ FetchUiSpec.getValueUsingId(id) + "')]]"));
 
-					    By dropdownLocator = By.xpath(
-					            "//android.widget.Button[.//android.view.View[contains(@content-desc,'"
-					                    + FetchUiSpec.getValueUsingId(id) + "')]]");
-
-					    scrollUntilElementVisible(dropdownLocator);
-
-					    boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
-					            "new UiSelector().descriptionContains(\""
-					                    + FetchUiSpec.getValueUsingId(id) + "\")"));
-
-					    assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
-
-					    WebElement dropdownElement = findElement(dropdownLocator);
-
-					    clickOnElement(dropdownElement);
-					    waitTime(1);
-
-					    // Special handling for Residence Status
-					    if (id.equals("residenceStatus")) {
-					        clickOnElement(nonForeignerOption);
-					        waitTime(1);
-					    }
-
-					    // Generic handling for all other dropdowns
-					    else {
-
-					        if (!isElementDisplayed(dropdownElement)) {
-					            clickOnElement(findElement(By.className("android.view.View")));
-
-					        } else if (isElementDisplayed(dropdownElement)) {
-
-					            swipeUp();
-					            clickOnElement(dropdownElement);
-					            waitTime(1);
-
-					            clickOnElement(findElement(By.className("android.view.View")));
-					        }
-
-					        waitTime(1);
-
-					        if (isElementDisplayed(By.xpath(
-					                "//android.view.View[contains(@content-desc,\""
-					                        + FetchUiSpec.getValueUsingId(id)
-					                        + "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc,\"Select Option\")]"))) {
-
-					            clickOnElement(dropdownElement);
-					            waitTime(1);
-					            clickOnElement(findElement(By.className("android.view.View")));
-					        }
-					    }
-					} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
+					clickOnElement(dropdownElement);
+					waitTime(1);
+					if (!isElementDisplayed(dropdownElement)) {
+						clickOnElement(findElement(By.className("android.view.View")));
+					} else if (isElementDisplayed(dropdownElement)) {
+						swipeOrScroll();
+						clickOnElement(dropdownElement);
+						waitTime(1);
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
+					waitTime(1);
+					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
+							+ FetchUiSpec.getValueUsingId(id)
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+						clickOnElement(dropdownElement);
+						waitTime(1);
+						clickOnElement(findElement(By.className("android.view.View")));
+					}
+				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("")) {
 					if (!isElementDisplayed(maleButton)) {
-						swipeUp();
+						swipeOrScroll();
 						clickOnElement(maleButton);
 					} else
 						clickOnElement(maleButton);
@@ -277,7 +240,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 //						clickOnElement(findElement(By.className("android.view.View")));
 						clickOnElement(nonForeignerOption);
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeUp();
+						swipeOrScroll();
 						clickOnElement(dropdownElement);
 						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -487,19 +450,6 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 		}
 	}
 
-	public void fetchInvalidPreregApplicationId(String prid) {
-		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
-		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
-		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
-
-		boolean isDisplayed = isElementDisplayed(appIdLabel);
-		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
-
-		applicationIdTextBox = findElementWithRetry(appIdTextbox);
-		clickAndsendKeysToTextBox(applicationIdTextBox, (prid));
-		clickOnElement(fetchDataButton);
-	}
-
 	public void fetchPreregApplicationId(String age) {
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
 		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
@@ -604,7 +554,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				} catch (Exception ignored) {
 				}
 			}
-			swipeUp();
+			swipeOrScroll();
 		}
 
 		// Fallback: first visible EditText (not recommended but prevents NPE)
@@ -629,7 +579,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					waitTime(3);
 					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
-						swipeUp();
+						swipeOrScroll();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
@@ -642,7 +592,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
 					} else if (isElementDisplayed(dropdownElement)) {
-						swipeUp();
+						swipeOrScroll();
 						clickOnElement(dropdownElement);
 						waitTime(2);
 						clickOnElement(findElement(By.className("android.view.View")));
@@ -676,7 +626,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 								System.out.println("⏳ Postal options not visible yet, retrying...");
 							}
 						} else {
-							swipeUp();
+							swipeOrScroll();
 						}
 					} catch (org.openqa.selenium.StaleElementReferenceException e) {
 						System.out.println("🔄 Postal element went stale, retrying...");

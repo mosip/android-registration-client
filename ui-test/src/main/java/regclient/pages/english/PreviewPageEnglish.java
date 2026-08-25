@@ -120,7 +120,6 @@ public class PreviewPageEnglish extends PreviewPage {
 
 	@SuppressWarnings("deprecation")
 	public boolean isNewRegistrationTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(findElement(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getTitleUsingId("NEW") + "\"))")));

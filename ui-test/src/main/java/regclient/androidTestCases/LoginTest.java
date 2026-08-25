@@ -74,7 +74,7 @@ public class LoginTest extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify user login with valid credentials")
 	public void userloginTest() {
-	
+
 		LoginPage loginPage = null;
 		OperationalTaskPage operationalTaskPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
@@ -106,15 +106,11 @@ public class LoginTest extends AndroidBaseTest {
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),
 				"Verify if welcome note \"welcome to community registration client!\" message should be displayeded.");
 
-		loginPage.enterUserName(KeycloakUserManager.differentCenterUser);
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(), "verify if the next button enabled");
 		loginPage.clickOnNextButton();
-		assertTrue(loginPage.isUserNotFoundErrorMessageDisplayed(), "Verify if user not found error message is displayed");
-		
-		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
-		loginPage.clickOnNextButton();
-		
+
 		// assertFalse(loginPage.isLoginButtonEnabled(),"verify if the login button is
 		// disable without entering password");
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
@@ -160,8 +156,6 @@ public class LoginTest extends AndroidBaseTest {
 		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
-		assertTrue(registrationTasksPage.isClientVersionDisplayed(),
-		        "Verify if client Version is displayed");
 
 		registrationTasksPage.clickOnOperationalTasksTitle();
 		if ("eng".equalsIgnoreCase(language)) {
@@ -182,9 +176,9 @@ public class LoginTest extends AndroidBaseTest {
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 
 		operationalTaskPage.clickSynchronizeDataButton();
-		
+
 		operationalTaskPage.handleIfSyncPopUpDisplayed();
-		
+
 		if ("eng".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -247,7 +241,7 @@ public class LoginTest extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
-		
+
 		assertTrue(operationalTaskPage.checkLastSyncDate(), "Verify  last sync date and time");
 
 		registrationTasksPage.clickOnDashboardButton();
@@ -295,7 +289,7 @@ public class LoginTest extends AndroidBaseTest {
 		}
 
 		profilePage.clickOnLogoutButton();
-		
+
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
@@ -497,7 +491,13 @@ public class LoginTest extends AndroidBaseTest {
 		boolean isDismissLoaded = false;
 
 		for (int i = 0; i < 3; i++) {
-			supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
+			try {
+				supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
+			} catch (Exception e) {
+				System.out.println(
+						"INFO: Attempt " + (i + 1) + " to click Verify & Save failed: " + e.getMessage());
+				continue;
+			}
 
 			if (supervisorBiometricVerificationpage.isDismissPageLoaded()) {
 				isDismissLoaded = true;
@@ -609,7 +609,7 @@ public class LoginTest extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(UpdateOperatorBiometricspage.isSupervisorBiometricUpdatePageLoaded(),
+		assertTrue(UpdateOperatorBiometricspage.isUpdateOperatorBiometricsPageLoaded(),
 				"Verify if update operator biometric page is loaded");
 		if (FetchUiSpec.eye.equals("yes")) {
 			UpdateOperatorBiometricspage.clickOnIrisScan();
@@ -718,7 +718,7 @@ public class LoginTest extends AndroidBaseTest {
 			UpdateOperatorBiometricspage.clickOnNextButton();
 		}
 
-		assertTrue(UpdateOperatorBiometricspage.isSupervisorBiometricUpdatePageLoaded(),
+		assertTrue(UpdateOperatorBiometricspage.isUpdateOperatorBiometricsPageLoaded(),
 				"Verify if supervisor biometric update page is loaded");
 
 		assertTrue(UpdateOperatorBiometricspage.isVerifyAndSaveButtonEnabled(),

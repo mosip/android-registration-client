@@ -185,27 +185,22 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 	}
 
 	public boolean isRightHandScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
 	public boolean isLeftHandScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
 	public boolean isThumbsScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
 	public boolean isFaceScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(faceScanTitle);
 	}
 
 	public boolean isExceptionScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(exceptionScanTitle);
 	}
 
@@ -267,7 +262,7 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickOnElement(temporaryButton);
 	}
@@ -278,7 +273,7 @@ public class UpdateOperatorBiometricspageArabic extends UpdateOperatorBiometrics
 
 	public void enterCommentsInTextBox(String comments) {
 		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}

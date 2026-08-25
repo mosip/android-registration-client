@@ -1,8 +1,10 @@
 package regclient.pages.french;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -13,13 +15,18 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
-import io.mosip.testrig.apirig.testrunner.OTPListener;
 import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
 import regclient.page.PreviewPage;
 import regclient.page.RegistrationTasksPage;
+import regclient.pages.arabic.BiometricDetailsPageArabic;
+import regclient.pages.arabic.RegistrationTasksPageArabic;
+import regclient.pages.english.ApplicantBiometricsPageEnglish;
+import regclient.pages.english.BiometricDetailsPageEnglish;
+import regclient.pages.english.IntroducerBiometricPageEnglish;
+import regclient.pages.english.PreviewPageEnglish;
 
 public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 
@@ -62,9 +69,18 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 
 	@SuppressWarnings("deprecation")
 	public boolean isBiometricDetailsPageDisplayed() {
+		swipeOrScroll();
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
+	}
+
+	@SuppressWarnings("deprecation")
+	public boolean isBiometricDetailsPageDisplayedForCorrection() {
+		swipeOrScroll();
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -171,13 +187,14 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
 		logger.info(emailId);
-		String additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
-		if (additionalInfoReqId == null || additionalInfoReqId.trim().isEmpty()) {
-			throw new IllegalStateException("Additional Info Request ID is missing for email: " + emailId);
-		}
-		additionalInfoReqId = additionalInfoReqId + "-BIOMETRIC_CORRECTION-1";
+	    String additionalInfoReqId = waitForAdditionalReqId(emailId, 8);
+	    if (additionalInfoReqId == null || additionalInfoReqId.trim().isEmpty()) {
+	        throw new IllegalStateException("Additional Info Request ID is missing for email: " + emailId);
+	    }
+	    additionalInfoReqId = additionalInfoReqId + "-BIOMETRIC_CORRECTION-1";
 
-		try {
+	  
+	    try {
 			if (typeAndVerify(additionalInfoRequestIdTextbox, additionalInfoReqId)) {
 				logger.info("typeAndVerify succeeded.");
 				return; // SUCCESS → exit method
@@ -191,12 +208,12 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	}
 
 	private boolean typeAndVerify(WebElement el, String value) {
-		el.click();
-		el.clear();
-		el.sendKeys(value);
-		waitTime(1);
-		String curr = readElementValue(el);
-		return value.equals(curr);
+	    el.click();
+	    el.clear();
+	    el.sendKeys(value);
+	    waitTime(1);
+	    String curr = readElementValue(el);
+	    return value.equals(curr);
 	}
 
 	private String readElementValue(WebElement el) {

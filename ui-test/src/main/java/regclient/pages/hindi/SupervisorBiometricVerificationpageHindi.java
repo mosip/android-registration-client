@@ -268,7 +268,7 @@ public class SupervisorBiometricVerificationpageHindi extends SupervisorBiometri
 	
 	public void clickOnExceptionTypeTemporaryButton() {
 		if(!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickOnElement(temporaryButton);	
 	}
@@ -279,7 +279,7 @@ public class SupervisorBiometricVerificationpageHindi extends SupervisorBiometri
 	
 	public  void enterCommentsInTextBox(String comments) {
 		if(!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox,comments);
 	}

@@ -15,6 +15,10 @@ import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
 import regclient.page.PreviewPage;
+import regclient.pages.english.ApplicantBiometricsPageEnglish;
+import regclient.pages.english.BiometricDetailsPageEnglish;
+import regclient.pages.english.IntroducerBiometricPageEnglish;
+import regclient.pages.english.PreviewPageEnglish;
 
 public class BiometricDetailsPageHindi extends BiometricDetailsPage {
 
@@ -54,6 +58,17 @@ public class BiometricDetailsPageHindi extends BiometricDetailsPage {
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
 						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public boolean isBiometricDetailsPageDisplayedForCorrection() {
+		// The correction screen's section header can render as the untranslated
+		// "Applicant Biometrics" content-desc instead of just the localized label,
+		// so match either form in one locator.
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
 	}
 
 	@SuppressWarnings("deprecation")

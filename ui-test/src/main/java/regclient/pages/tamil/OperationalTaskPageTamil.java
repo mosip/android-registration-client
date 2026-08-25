@@ -63,7 +63,7 @@ public class OperationalTaskPageTamil extends OperationalTaskPage {
 
 	public boolean isApplicationUploadTitleDisplayed() {
 		if (!isElementDisplayedOnScreen(applicationUploadTitle)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		return isElementDisplayed(applicationUploadTitle);
 	}
@@ -74,7 +74,7 @@ public class OperationalTaskPageTamil extends OperationalTaskPage {
 
 	public boolean isPendingApprovalTitleDisplayed() {
 		if (!isElementDisplayedOnScreen(pendingApprovalTitle)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
 	}

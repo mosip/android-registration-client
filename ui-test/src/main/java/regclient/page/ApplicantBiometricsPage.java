@@ -46,6 +46,8 @@ public abstract class ApplicantBiometricsPage extends BasePage {
 
 	public abstract boolean isApplicantBiometricsPageDisplayed();
 
+	public abstract boolean isApplicantBiometricsPageDisplayedForCorrection() ;
+
 	public abstract boolean isExceptionTypeTitleDisplayed();
 
 	public abstract boolean isRightHandScanTitleDisplayed();
@@ -77,10 +79,4 @@ public abstract class ApplicantBiometricsPage extends BasePage {
 	public abstract boolean isAuthenticationBiometricsPageDisplayed();
 	
 	public abstract BiometricDetailsPage clickOnBiometricsMenuButton();
-	
-	public abstract int getThresholdScore();
-	
-	public abstract int irisAttemptLeft();
-	
-	
 }

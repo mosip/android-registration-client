@@ -14,6 +14,8 @@ import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
 import regclient.page.DocumentUploadPage;
+import regclient.pages.english.BiometricDetailsPageEnglish;
+import regclient.pages.english.DocumentUploadPageEnglish;
 
 public class DocumentUploadPageFrench extends DocumentUploadPage {
 
@@ -74,6 +76,24 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 		cropCaptureImage(imageleftCorner);
 	}
 
+	private void openFieldAndDismissPopup(String id) {
+		By fieldLocator = By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
+				+ "\")]/parent::android.view.View/parent::android.view.View");
+		clickOnElement(findElementWithRetry(fieldLocator));
+		waitTime(1);
+		int attempts = 0;
+		while (!isElementDisplayedOnScreen(PopUpCloseButton) && attempts < 3) {
+			swipeOrScroll();
+			clickOnElement(findElementWithRetry(fieldLocator));
+			waitTime(1);
+			attempts++;
+		}
+		assertTrue(isElementDisplayedOnScreen(PopUpCloseButton),
+				"Verify if selection popup is displayed for " + FetchUiSpec.getValueUsingId(id));
+		clickOnElement(PopUpCloseButton);
+		waitTime(1);
+	}
+
 	public void uploadDoccuments(String age, String type) {
 		List<String> idList = FetchUiSpec.getAllIds("Documents");
 		for (String id : idList) {
@@ -84,17 +104,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 									+ FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")),
 							"1234567890");
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -116,19 +126,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 							"Verify if doccumentupload page is displayed after upload of "
 									+ FetchUiSpec.getValueUsingId(id));
 				} else {
-					waitTime(1);
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					waitTime(1);
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -155,19 +153,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 			}
 			if (id.equals("proofOfRelationship")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
-					waitTime(1);
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					waitTime(1);
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -203,8 +189,9 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 				clickOnElement(findElementWithRetry(
 						By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 								+ "\")]/parent::android.view.View/parent::android.view.View")));
+				waitTime(1);
 				if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-					swipeUp();
+					swipeOrScroll();
 					clickOnElement(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -231,17 +218,7 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 			}
 			if (id.equals("proofOfRelationship")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -262,17 +239,6 @@ public class DocumentUploadPageFrench extends DocumentUploadPage {
 				}
 			}
 
-		}
-	}
-
-	public boolean isPacketSizeDisplayed() {
-		try {
-			WebElement packetSize = driver
-					.findElement(By.xpath("//android.view.View[contains(@content-desc,'Size:')]"));
-			String sizeText = packetSize.getAttribute("contentDescription");
-			return sizeText.matches("Size: \\d+(\\.\\d+)?\\s?(KB|MB)");
-		} catch (Exception e) {
-			return false;
 		}
 	}
 

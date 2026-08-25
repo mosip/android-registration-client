@@ -3,10 +3,13 @@ package regclient.pages.french;
 
 import static org.testng.Assert.assertTrue;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -83,10 +86,10 @@ public class PendingApprovalFrench extends PendingApproval {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
 	private WebElement latestAIdCheckBox;
-
+	
 	@AndroidFindBy(accessibility = "Aucun réseau trouvé !")
 	private WebElement noNetworkFound;
-
+	
 	@AndroidFindBy(accessibility = "AUTHENTIFIER")
 	private WebElement authenticateButton;
 
@@ -200,7 +203,7 @@ public class PendingApprovalFrench extends PendingApproval {
 	}
 
 	public boolean isPendingApprovalBiometricsInformationDisplayed() {
-		swipeUp();
+		swipeOrScroll();
 		return isElementDisplayed(pendingApprovalBiometricsInformation);
 	}
 
@@ -216,11 +219,11 @@ public class PendingApprovalFrench extends PendingApproval {
 	public boolean isNoNetworkFoundDisplayed() {
 		return isElementEnabled(noNetworkFound);
 	}
-
+	
 	public void clickOnAuthenticateButton() {
 		clickOnElement(authenticateButton);
 	}
-
+	
 	public boolean isAuthenticateButtonEnabled() {
 		return isElementEnabled(authenticateButton);
 	}

@@ -1,6 +1,5 @@
 package regclient.pages.french;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -9,6 +8,7 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
+import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 
@@ -108,7 +108,7 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 
 	public void enterCommentsInTextBox(String comments) {
 		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
@@ -120,14 +120,14 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 
 	public void clickOnExceptionTypePermanentButton() {
 		if (!isElementDisplayedOnScreen(permanentButton)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickOnElement(permanentButton);
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickOnElement(temporaryButton);
 	}
@@ -201,6 +201,15 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "\"))")));
 	}
 
+
+	@SuppressWarnings("deprecation")
+	public boolean isApplicantBiometricsPageDisplayedForCorrection() {
+		swipeOrScroll();
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+	}
+
 	@SuppressWarnings("deprecation")
 	public boolean isAuthenticationBiometricsPageDisplayed() {
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
@@ -262,7 +271,7 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 
 	public boolean isExceptionCountDisplayed() {
 		if (!isElementDisplayedOnScreen(exceptionCount)) {
-			swipeUp();
+			swipeOrScroll();
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
@@ -271,17 +280,5 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
 		return new BiometricDetailsPageFrench(driver);
-	}
-
-	public int getThresholdScore() {
-		String scoreText = findElement(By.xpath("//android.view.View[contains(@content-desc, '%')]"))
-		        .getAttribute("contentDescription");
-		return Integer.parseInt(scoreText.replaceAll("[^0-9]", ""));
-	}
-
-	public int irisAttemptLeft() {
-		String attemptText = irisCapturerHeader.getAttribute("contentDescription");
-		String count = attemptText.replaceAll("\\D+", "");
-		return Integer.parseInt(count);
 	}
 }

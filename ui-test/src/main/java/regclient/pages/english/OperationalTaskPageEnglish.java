@@ -9,7 +9,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class OperationalTaskPageEnglish extends OperationalTaskPage {
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Supervisor's Biometric Update\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Biometric Update\")")
 	private WebElement updateOperatorBiometricsButton;
 
 	@AndroidFindBy(accessibility = "System Storage Usage")
@@ -61,6 +61,9 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage {
 	}
 
 	public boolean isApplicationUploadTitleDisplayed() {
+		if (!isElementDisplayedOnScreen(applicationUploadTitle)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(applicationUploadTitle);
 	}
 
@@ -69,6 +72,9 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage {
 	}
 
 	public boolean isPendingApprovalTitleDisplayed() {
+		if (!isElementDisplayedOnScreen(pendingApprovalTitle)) {
+			swipeOrScroll();
+		}
 		return isElementDisplayed(pendingApprovalTitle);
 	}
 	

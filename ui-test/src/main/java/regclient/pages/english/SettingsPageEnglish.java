@@ -25,6 +25,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -39,6 +40,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.StartsActivity;
 import regclient.api.FetchUiSpec;
@@ -51,6 +53,7 @@ import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import regclient.api.FetchUiSpec;
 import regclient.page.BasePage;
 import regclient.page.SettingsPage;
 
@@ -67,7 +70,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	@AndroidFindBy(accessibility = "Device Settings\nTab 3 of 3")
 	private WebElement deviceSettingsTab;
 
-	@AndroidFindBy(accessibility = "Global Config Settings")
+	@AndroidFindBy(xpath ="//android.widget.EditText/preceding::android.view.View[contains(@content-desc,'Global Config Settings')][1]")
 	private WebElement globalConfigSettingsHeader;
 
 	@AndroidFindBy(accessibility = "SUBMIT")
@@ -91,7 +94,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"mock.sbi.finger\")")
 	private WebElement fingerDeviceCard;
 
-	@AndroidFindBy(xpath = "//*[contains(@content-desc,'No devices found')]")
+	@AndroidFindBy(accessibility = "No devices found")
 	private WebElement noDevicesFound;
 
 	@AndroidFindBy(accessibility = "Submit Changes")
@@ -123,27 +126,6 @@ public class SettingsPageEnglish extends SettingsPage {
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'leftslap_fingerprint_threshold')]//android.widget.EditText")
 	private WebElement leftSlapThresholdField;
-
-	@AndroidFindBy(xpath = "//android.widget.Toast[@text='Master Data Sync Completed']")
-	private WebElement masterDatatoastMessage;
-
-	@AndroidFindBy(accessibility = "key")
-	private WebElement keyLabel;
-
-	@AndroidFindBy(accessibility = "server_value")
-	private WebElement serverValueLabel;
-
-	@AndroidFindBy(accessibility = "local_value")
-	private WebElement localValueLabel;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'mosip.registration.')]")
-	private WebElement configKeys;
-
-	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'local_value_')]")
-	private WebElement localValueBox;
-
-	@AndroidFindBy(accessibility = "global_config_search")
-	private WebElement searchBox;
 
 	public SettingsPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -201,11 +183,6 @@ public class SettingsPageEnglish extends SettingsPage {
 		}
 	}
 
-	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
-		String actualLabel = deviceSettingsPage.getAttribute("content-desc");
-		return actualLabel.equals("Device Settings");
-	}
-
 	public boolean isFaceDeviceCardDisplayed() {
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
@@ -257,6 +234,19 @@ public class SettingsPageEnglish extends SettingsPage {
 		return isElementDisplayed(scheduledJobSettingsPageHeader);
 	}
 
+	public boolean isToastVisible(String toastMessage) {
+		for (int i = 0; i < 15; i++) { // ~3 seconds
+			if (driver.getPageSource().contains(toastMessage)) {
+				return true;
+			}
+			try {
+				Thread.sleep(200);
+			} catch (Exception ignored) {
+			}
+		}
+		return false;
+	}
+
 	public WebElement getSyncButton(String jobName) {
 		return driver.findElement(
 				By.xpath("//android.view.View[contains(@content-desc,'" + jobName + "')]//*[@clickable='true']"));
@@ -291,41 +281,10 @@ public class SettingsPageEnglish extends SettingsPage {
 		WebElement syncBtn = jobElement.findElement(By.xpath(".//android.widget.Button[1]"));
 		syncBtn.click();
 	}
-
+	
 	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
+		By searchBox = By.xpath("//android.view.View[@content-desc='Global Config Settings']//android.widget.EditText");
 		return isElementDisplayed(searchBox);
-	}
-
-	public boolean isMasterDataToastMessageDisplayed() {
-		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-			wait.until(ExpectedConditions
-					.presenceOfElementLocated(By.xpath("//android.widget.Toast[@text='Master Data Sync Completed']")));
-			return true;
-		} catch (Exception e) {
-
-			return false;
-		}
-	}
-
-	public boolean isKeyLabelDisplayed() {
-		return isElementDisplayed(keyLabel);
-	}
-
-	public boolean isServerValueLabelDisplayed() {
-		return isElementDisplayed(serverValueLabel);
-	}
-
-	public boolean isLocalValueLabelDisplayed() {
-		return isElementDisplayed(localValueLabel);
-	}
-
-	public boolean isConfigListPresent() {
-		return isElementDisplayed(configKeys);
-	}
-
-	public boolean isLocalValueBoxDisplayed() {
-		return isElementDisplayed(localValueBox);
 	}
 
 }

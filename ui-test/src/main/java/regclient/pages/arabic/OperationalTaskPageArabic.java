@@ -11,7 +11,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class OperationalTaskPageArabic extends OperationalTaskPage {
 
-	@AndroidFindBy(accessibility = "تحديث القياسات الحيوية للمشغل")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"تحديث التحقق البيومتري للضابط\")")
 	private WebElement updateOperatorBiometricsButton;
 
 	@AndroidFindBy(accessibility = "System Storage Usage")
@@ -41,7 +41,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 
 	public SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
 		By updateOperatorBiometricsButton = MobileBy
-				.AndroidUIAutomator("new UiSelector().descriptionStartsWith(\"تحديث القياسات الحيوية للمشغل\")");
+				.AndroidUIAutomator("new UiSelector().descriptionContains(\"تحديث التحقق البيومتري للضابط\")");
 		click(updateOperatorBiometricsButton);
 		return new SupervisorBiometricVerificationpageArabic(driver);
 	}
@@ -69,7 +69,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 
 	public boolean isApplicationUploadTitleDisplayed() {
 		if (!isElementDisplayedOnScreen(applicationUploadTitle)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		return isElementDisplayed(applicationUploadTitle);
 	}
@@ -80,7 +80,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 
 	public boolean isPendingApprovalTitleDisplayed() {
 		if (!isElementDisplayedOnScreen(pendingApprovalTitle)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		return isElementDisplayed(pendingApprovalTitle);
 	}

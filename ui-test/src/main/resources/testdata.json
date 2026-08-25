@@ -1,12 +1,12 @@
 {
-  "UIN": "2153672893",
+  "UIN": "7597289501",
   "UINinfant": "5074162518",
   "UINminor": "2312798573",
   "language": "eng",
   "defaultlanguage": "eng",
   "notificationLanguage": "eng",
   "orientation": "portrait",
-  "RID": "10001142850000120251130090022",
+  "RID": "10004122461003120260824125340",
   "id": "com.motorola.camera3:id/capture_bar_shutter_button",
   "fingerprint_threshold": "45"
 }

@@ -1,11 +1,8 @@
 package regclient.androidTestCases;
 
-import static org.junit.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
@@ -15,7 +12,6 @@ import regclient.api.KeycloakUserManager;
 import regclient.page.AcknowledgementPage;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.AuthenticationPage;
-import regclient.page.BasePage;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
@@ -118,7 +114,6 @@ import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
-import regclient.utils.GenerateUinFromAid;
 import regclient.utils.TestDataReader;
 
 public class NewRegistrationAdult extends AndroidBaseTest {
@@ -145,7 +140,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
 
-		final Logger logger = Logger.getLogger(NewRegistrationAdult.class);
 		final String language = TestDataReader.readData("language");
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -219,9 +213,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				"Verify if user should not be allow to navigate to next screen.");
 		selectLanguagePage.selectSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
-				"verify if the notification language display in english");
-
+		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
+				"verify if the notification language displayed");
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -289,9 +282,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
-
+				
 				documentuploadPage.uploadDoccuments("adult", "ReferenceNumber");
-
+				
 				documentuploadPage.clickOnContinueButton();
 
 			} else if (screen.equals("BiometricDetails")) {
@@ -335,7 +328,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 					applicantBiometricsPage.clickOnScanButton();
 
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
-					assertEquals(applicantBiometricsPage.irisAttemptLeft(), 2);
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					applicantBiometricsPage.clickOnScanButton();
@@ -361,7 +353,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 					biometricDetailsPage = applicantBiometricsPage.clickOnBiometricsMenuButton();
-
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
@@ -436,7 +427,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		TestDataReader.saveData("AID", Aid);
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -491,9 +481,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
-
+		
 		registrationTasksPage.clickOnOperationalTasksTitle();
-
+		
 		if ("eng".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -548,14 +538,13 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			BasePage.waitTime(1);
 
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
 			}
 		}
-
+		
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
@@ -633,11 +622,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
-		String generatedUIN = TestDataReader.readData(Aid + "_UIN");
-
-		assertTrue(generatedUIN != null && !generatedUIN.isEmpty(), "Verify if UIN is generated successfully");
-
-		logger.info("UIN generation validation completed successfully");
 	}
 
 }

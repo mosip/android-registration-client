@@ -17,7 +17,7 @@ import regclient.page.DocumentUploadPage;
 
 public class DocumentUploadPageEnglish extends DocumentUploadPage {
 
-	@AndroidFindBy(xpath = "//android.view.View[@content-desc='Clear']/following-sibling::android.view.View[2]")
+	@AndroidFindBy(accessibility = "Scrim")
 	private WebElement PopUpCloseButton;
 
 	@AndroidFindBy(accessibility = "Back")
@@ -71,19 +71,25 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 
 	public void cropCaptureImage() {
 		isElementDisplayed(captureImage);
-		cropCaptureImageEnglishFrench(imageleftCorner);
+		cropCaptureImage(imageleftCorner);
 	}
 
-	public boolean isPacketSizeDisplayed() {
-		try {
-			WebElement packetSize = driver
-					.findElement(By.xpath("//android.view.View[contains(@content-desc,'Size:')]"));
-
-			String sizeText = packetSize.getAttribute("contentDescription");
-			return sizeText.matches("Size: \\d+(\\.\\d+)?\\s?(KB|MB)");
-		} catch (Exception e) {
-			return false;
+	private void openFieldAndDismissPopup(String id) {
+		By fieldLocator = By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
+				+ "\")]/parent::android.view.View/parent::android.view.View");
+		clickOnElement(findElementWithRetry(fieldLocator));
+		waitTime(1);
+		int attempts = 0;
+		while (!isElementDisplayedOnScreen(PopUpCloseButton) && attempts < 3) {
+			swipeOrScroll();
+			clickOnElement(findElementWithRetry(fieldLocator));
+			waitTime(1);
+			attempts++;
 		}
+		assertTrue(isElementDisplayedOnScreen(PopUpCloseButton),
+				"Verify if selection popup is displayed for " + FetchUiSpec.getValueUsingId(id));
+		clickOnElement(PopUpCloseButton);
+		waitTime(1);
 	}
 
 	public void uploadDoccuments(String age, String type) {
@@ -97,17 +103,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 									+ FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.EditText")),
 							"1234567890");
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -129,18 +125,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 							"Verify if doccumentupload page is displayed after upload of "
 									+ FetchUiSpec.getValueUsingId(id));
 				} else {
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
-					swipeUp();
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -165,17 +150,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 			}
 			if (id.equals("proofOfRelationship")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -211,14 +186,13 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 						By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 								+ "\")]/parent::android.view.View/parent::android.view.View")));
 				if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-					swipeUp();
+					swipeOrScroll();
 					clickOnElement(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 				}
 				clickOnElement(PopUpCloseButton);
 				waitTime(1);
-				swipeUp();
 				boolean isEnabled = isElementEnabled(findElementWithRetry(
 						By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 								+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));
@@ -238,18 +212,7 @@ public class DocumentUploadPageEnglish extends DocumentUploadPage {
 			}
 			if (id.equals("proofOfRelationship")) {
 				if (age.equals("minor") || age.equals("infant") || age.equals("currentCalenderDate")) {
-					clickOnElement(findElementWithRetry(
-							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-									+ "\")]/parent::android.view.View/parent::android.view.View")));
-					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeUp();
-						clickOnElement(findElementWithRetry(By.xpath(
-								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
-										+ "\")]/parent::android.view.View/parent::android.view.View")));
-					}
-					clickOnElement(PopUpCloseButton);
-					waitTime(1);
-					swipeUp();
+					openFieldAndDismissPopup(id);
 					boolean isEnabled = isElementEnabled(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View/following-sibling::android.widget.Button")));

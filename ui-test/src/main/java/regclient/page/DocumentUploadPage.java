@@ -22,7 +22,5 @@ public abstract class DocumentUploadPage extends BasePage {
 
 	public abstract void uploadDoccumentsUpdate(String age, String type);
 	
-	public abstract boolean isPacketSizeDisplayed();
-	
 	
 }

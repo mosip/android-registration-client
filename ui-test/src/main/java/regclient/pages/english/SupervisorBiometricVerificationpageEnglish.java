@@ -178,22 +178,18 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 	}
 
 	public boolean isRightHandScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
 	public boolean isLeftHandScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
 	public boolean isThumbsScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
 	public boolean isFaceScanTitleDisplayed() {
-		scrollToTop();
 		return isElementDisplayed(faceScanTitle);
 	}
 
@@ -263,7 +259,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickOnElement(temporaryButton);
 	}
@@ -274,7 +270,7 @@ public class SupervisorBiometricVerificationpageEnglish extends SupervisorBiomet
 
 	public void enterCommentsInTextBox(String comments) {
 		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeUp();
+			swipeOrScroll();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}

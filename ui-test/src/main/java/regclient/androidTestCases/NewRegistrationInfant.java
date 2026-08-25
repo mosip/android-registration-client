@@ -4,7 +4,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
@@ -132,7 +131,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-
+	
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;
@@ -150,7 +149,6 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
 
-		final Logger logger = Logger.getLogger(NewRegistrationInfant.class);
 		final String language = TestDataReader.readData("language");
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -305,9 +303,9 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				} else {
 					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
-
+				
 				if (FetchUiSpec.face.equals("yes")) {
-
+					
 					biometricDetailsPage.clickOnFaceScanIcon();
 					assertTrue(applicantBiometricsPage.isFaceScanTitleDisplayed(),
 							"Verify if applicant face scan title is displayed");
@@ -342,9 +340,9 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				FetchUiSpec.face = "no";
 				FetchUiSpec.getBiometricDetails("introducerBiometrics");
 				if (FetchUiSpec.eye.equals("yes")) {
-
+					
 					biometricDetailsPage.clickOnIntroducerIrisScan();
-
+				
 					introducerBiometricPage.clickOnScanButton();
 
 					assertTrue(introducerBiometricPage.isIrisScan(), "Verify if iris scan 1st attempt");
@@ -439,7 +437,8 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				break;
 			}
 		}
-		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
+		assertTrue(isAuthenticationPageDisplayed,
+				"Authentication page not displayed after retries");
 
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -507,12 +506,12 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
-			pendingApproval.clickOnAuthenticateButton();
+		    pendingApproval.clickOnAuthenticateButton();
 
-			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-				isPageDisplayed = true;
-				break;
-			}
+		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+		        isPageDisplayed = true;
+		        break;
+		    }
 		}
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
@@ -538,7 +537,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
 		manageApplicationsPage.clickServerStatusDropdown();
-
+		
 		manageApplicationsPage.clickServerStatusDropdown();
 
 		manageApplicationsPage.enterAID(Aid);
@@ -547,12 +546,12 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		boolean uploadSuccess = false;
 
 		for (int i = 0; i < 3; i++) {
-			manageApplicationsPage.clickOnUploadButton();
+		    manageApplicationsPage.clickOnUploadButton();
 
-			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-				uploadSuccess = true;
-				break;
-			}
+		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+		        uploadSuccess = true;
+		        break;
+		    }
 		}
 
 		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
@@ -578,7 +577,6 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		}
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
-
 	}
 
 }

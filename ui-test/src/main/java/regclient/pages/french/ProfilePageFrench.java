@@ -6,6 +6,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.LoginPage;
 import regclient.page.ProfilePage;
+import regclient.pages.english.LoginPageEnglish;
 
 public class ProfilePageFrench extends ProfilePage {
 

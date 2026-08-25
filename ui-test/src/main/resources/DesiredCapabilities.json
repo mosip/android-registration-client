@@ -2,9 +2,9 @@
   {
     "name": "androidDevice",
     "caps": {
-      "appium:udid": "ADNKCP3523400513",
+      "appium:udid": "M01JPG1004392102744",
       "appium:automationName": "UiAutomator2",
-      "appium:app": "D:/ARC/qa-base/apk-output/app-release.apk",
+      "appium:app": "D:/ARC/qajava21/apk-output/app-release.apk",
       "platformName": "android",
       "appium:appPackage": "io.mosip.registration_client",
       "appium:appActivity": "io.mosip.registration_client.MainActivity",

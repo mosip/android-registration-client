@@ -10,6 +10,8 @@ public abstract class BiometricDetailsPage extends BasePage {
 
 	public abstract boolean isBiometricDetailsPageDisplayed();
 
+	public abstract boolean isBiometricDetailsPageDisplayedForCorrection();
+
 	public abstract ApplicantBiometricsPage clickOnIrisScan();
 
 	public abstract IntroducerBiometricPage clickOnIntroducerIrisScan();
