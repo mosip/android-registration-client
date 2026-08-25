@@ -9,6 +9,7 @@ import android.os.SystemClock;
 import android.app.ActivityManager; 
 import android.util.Log;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageInfo;
 
 import java.io.File; 
 import java.io.FileOutputStream; 
