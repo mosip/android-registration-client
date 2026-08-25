@@ -460,7 +460,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
 
       final response = await syncResponseService.getPreRegIds(findJobId("preRegistrationDataSyncJob"));
-      if (response.isEmpty) return false;
+      if (response != "SUCCESS") return false;
       _preRegSyncProgress = 100;
       await savePreRegSyncTime(DateTime.now().toIso8601String());
       return true;

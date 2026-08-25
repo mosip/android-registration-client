@@ -89,6 +89,8 @@ import io.mosip.registration.clientmanager.constant.Components;
 public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
     private static final String SYNC_LAST_UPDATED = "sync.lastupdated";
+    public static final String PRE_REG_ID_SYNC_SUCCESS = "SUCCESS";
+    public static final String PRE_REG_ID_SYNC_FAILED = "pre-registartion_id_sync_failed";
     private final int master_data_recursive_sync_max_retry = 3;
     SyncRestService syncRestService;
     CertificateManagerService certificateManagerService;
@@ -397,21 +399,21 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                     if (isSuccess) {
                         Log.i(TAG, "Application Id's Sync Completed");
                         onSyncJobComplete(jobId, true, false);
-                        result.success("Application Id's Sync Completed.");
+                        result.success(PRE_REG_ID_SYNC_SUCCESS);
                     } else {
                         Log.e(TAG, "Application Id's Sync Failed: " + syncResult);
                         onSyncJobComplete(jobId, false, false);
-                        result.success("");
+                        result.success(syncResult);
                     }
                 }, jobId);
             } catch (Exception e) {
                 Log.e(TAG, "Pre-registration ID sync failed", e);
                 onSyncJobComplete(jobId, false, false);
-                result.success("");
+                result.success(PRE_REG_ID_SYNC_FAILED);
             }
         } else {
             onSyncJobComplete(jobId, false, false);
-            result.success("");
+            result.success(PRE_REG_ID_SYNC_FAILED);
         }
     }
 
