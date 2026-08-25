@@ -42,7 +42,7 @@ class SyncAlertDialog extends StatelessWidget {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    TelemetryService.instance.onButtonClick("Cancel Sync Alert Button", screenName: "SyncAlertDialog");
+                    TelemetryService.instance.onButtonClick("cancel_sync_alert", screenName: "SyncAlertDialog");
                     Navigator.of(context).pop();
                   },
                   child: SizedBox(

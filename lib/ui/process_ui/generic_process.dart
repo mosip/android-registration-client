@@ -142,7 +142,7 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   _authenticatePacket(BuildContext context) async {
-    TelemetryService.instance.onButtonClick("AUTHENTICATE_BUTTON_CLICKED" , screenName: "GenericProcessPage");
+    TelemetryService.instance.onButtonClick("authenticate_packet", screenName: "GenericProcessPage");
     if (!_validateUsername(context)) {
       return false;
     }
@@ -231,7 +231,7 @@ class _GenericProcessState extends State<GenericProcess>
   }
 
   _nextButtonClickedAudit(Process process, int size) async {
-    TelemetryService.instance.onButtonClick("NEXT_BUTTON_CLICKED" , screenName: "GenericProcessPage");
+    TelemetryService.instance.onButtonClick("next", screenName: "GenericProcessPage");
     final nextPageName = globalProvider.newProcessTabIndex < size
         ? (process.screens![globalProvider.newProcessTabIndex]!.label?[globalProvider.selectedLanguage] ?? '')
         : postRegistrationTabs[globalProvider.newProcessTabIndex - size];
@@ -259,7 +259,7 @@ class _GenericProcessState extends State<GenericProcess>
         fieldSelectionCompleted = false;
       });
     } else {
-      TelemetryService.instance.onButtonClick("navigation.back", screenName: "GenericProcessPage");
+      TelemetryService.instance.navigationBack(screenName: "GenericProcessPage");
       return true;
     }
     return false;

@@ -22,7 +22,7 @@ class ApproveTable extends StatefulWidget {
 
 class _ApproveTableState extends State<ApproveTable> {
   void showTemplate() {
-    TelemetryService.instance.onButtonClick("View Packet Button", screenName: "ApprovePacketsPage");
+    TelemetryService.instance.onButtonClick("view_packet", screenName: "ApprovePacketsPage");
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -151,7 +151,7 @@ class _ApproveTableState extends State<ApproveTable> {
                   .watch<ApprovePacketsProvider>()
                   .matchingSelected[index - 1],
               onChanged: (bool? value) {
-                TelemetryService.instance.onButtonClick("Select Packet Checkbox", screenName: "ApprovePacketsPage");
+                TelemetryService.instance.onButtonClick("select_packet_checkbox", screenName: "ApprovePacketsPage");
                 context
                     .read<ApprovePacketsProvider>()
                     .setSelected(index - 1, value);

@@ -332,7 +332,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   _documentScanClickedAudit()  {
-    TelemetryService.instance.onButtonClick("UPLOAD_DOCUMENT_BUTTON_CLICKED", screenName: "DocumentUploadControlPage");
+    TelemetryService.instance.onButtonClick("upload_document", screenName: "DocumentUploadControlPage");
     _documentAudit("SCAN");
   }
 
@@ -378,7 +378,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   void _deleteImage(Field e, Uint8List? item) async {
-    TelemetryService.instance.onButtonClick("DELETE_DOCUMENT_BUTTON_CLICKED", screenName: "DocumentUploadControlPage");
+    TelemetryService.instance.onButtonClick("delete_document", screenName: "DocumentUploadControlPage");
     for (int i = 0; i < imageBytesList.length; i++) {
       if (imageBytesList[i] == item) {
         setState(() {

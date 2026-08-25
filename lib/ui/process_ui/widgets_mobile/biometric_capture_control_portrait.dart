@@ -55,9 +55,8 @@ class _BiometricCaptureControlPortraitState
       BiometricAttributeData biometricAttributeData) {
     return InkWell(
         onTap: () {
-          TelemetryService.instance.onButtonClick("Scan Biometric Button", screenName: "BiometricCaptureControlPage");
-              
-          context.read<BiometricCaptureControlProvider>().biometricAttribute =
+          TelemetryService.instance.onButtonClick("scan_biometric", screenName: "BiometricCaptureControlPage");
+              context.read<BiometricCaptureControlProvider>().biometricAttribute =
               biometricAttributeData.title;
           final providerCopy = Provider.of<BiometricCaptureControlProvider>(
               context,

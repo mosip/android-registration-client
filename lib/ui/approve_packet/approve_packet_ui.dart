@@ -52,7 +52,7 @@ class _ApprovePacketsPageState extends State<ApprovePacketsPage> {
       onPressed: (context.read<ApprovePacketsProvider>().countSelected == 0)
           ? null
           : () async {
-              TelemetryService.instance.onButtonClick("Authenticate Packet Button", screenName: "ApprovePacketsPage");
+              TelemetryService.instance.onButtonClick("authenticate_packet", screenName: "ApprovePacketsPage");
               await connectivityProvider.checkNetworkConnection();
               if (!connectivityProvider.isConnected) {
                 _showInSnackBar(appLocalizations.network_error);

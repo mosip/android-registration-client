@@ -595,7 +595,7 @@ class _BiometricCaptureScanBlockPortraitState
         ),
         ElevatedButton.icon(
           onPressed: () async {
-            TelemetryService.instance.onButtonClick("Scan Biometric Button", screenName: "BiometricCaptureScanBlockPortraitPage");
+            TelemetryService.instance.onButtonClick("scan_biometric", screenName: "BiometricCaptureScanBlockPortraitPage");
             if (biometricAttributeData.exceptions.contains(false)) {
               if (biometricAttributeData.attemptNo <
                   biometricAttributeData.noOfCapturesAllowed) {

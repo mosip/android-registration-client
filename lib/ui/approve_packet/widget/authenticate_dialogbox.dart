@@ -63,7 +63,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
   }
 
   Future<bool> _authenticatePacketPassword() async {
-    TelemetryService.instance.onButtonClick('confirm_packet_authentication_btn',screenName: 'AuthenticateDialogBox');
+    TelemetryService.instance.onButtonClick('confirm_packet_authentication',screenName: 'AuthenticateDialogBox');
     if (_formKey.currentState!.validate()) {
       await authProvider.authenticatePacket(username.text, password.text);
       if (!authProvider.isPacketAuthenticated) {

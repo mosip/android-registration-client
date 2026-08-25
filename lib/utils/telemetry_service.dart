@@ -114,4 +114,13 @@ if (previousScreen != null) 'previous_screen': previousScreen,
     });
   }
 
+  /// Logs navigation back actions
+  void navigationBack({String? screenName}) {
+    logEvent('navigation.back', {
+      'value': 1,
+      'unit': 'count',
+      if (screenName != null) 'screen_name': screenName,
+    });
+  }
+
 }
