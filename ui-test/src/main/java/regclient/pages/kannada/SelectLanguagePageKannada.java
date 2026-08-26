@@ -130,7 +130,7 @@ public class SelectLanguagePageKannada extends SelectLanguagePage {
 		return new ConsentPageKannada(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishDisplayed() {
+	public boolean isNotificationLanguageDisplayed() {
 		return isElementDisplayed(notificationLanguageHeaderInKannada);
 	}
 

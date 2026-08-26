@@ -185,7 +185,7 @@ public class MockSBIPage extends BasePage {
 				throw new RuntimeException("SeekBar not found for modality: " + modality);
 			}
 
-			setSeekBarPercent(seekBar, score);
+			setSeekBarPercent(seekBar, modLower, score);
 			waitTime(1);
 			System.out.println("Set " + modality + " -> " + score);
 		} catch (Exception e) {
@@ -230,16 +230,56 @@ public class MockSBIPage extends BasePage {
 		}
 	}
 
-	public void setSeekBarPercent(WebElement seekBar, int percent) {
+	public void setSeekBarPercent(WebElement seekBar, String modLower, int percent) {
+		if (seekBar == null)
+			throw new IllegalArgumentException("seekBar cannot be null");
+		if (percent < 0)
+			percent = 0;
+		if (percent > 100)
+			percent = 100;
 
-	    Rectangle rect = seekBar.getRect();
+		int startX = seekBar.getLocation().getX();
+		int width = seekBar.getSize().getWidth();
+		int y = seekBar.getLocation().getY() + (seekBar.getSize().getHeight() / 2);
 
-	    int targetX = rect.x + (rect.width * percent / 100);
-	    int targetY = rect.y + (rect.height / 2);
+		// 🔸 calibration offsets (approx 4–5% on both sides)
+		double leftOffset = 0.04; // skip a few px from start
+		double rightOffset = 0.96; // stop a bit before end
 
-	    clickAtCoordinates(targetX, targetY);
+		// Grab the thumb where it currently is, not at a fixed left edge — the
+		// widget may already be at a non-zero value left over from a previous run.
+		double currentRatio = clamp(getCurrentScorePercent(modLower), leftOffset, rightOffset);
+		double targetRatio = clamp(percent / 100.0, leftOffset, rightOffset);
 
-	    waitTime(1);
+		int currentX = startX + (int) (width * currentRatio);
+		int targetX = startX + (int) (width * targetRatio);
+
+		try {
+			PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+			Sequence drag = new Sequence(finger, 1);
+			drag.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), currentX, y));
+			drag.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+			drag.addAction(
+					finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), targetX, y));
+			drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+			driver.perform(Collections.singletonList(drag));
+			waitTime(1);
+		} catch (Exception ex) {
+			clickAtCoordinates(targetX, y);
+		}
+	}
+
+	private double clamp(double v, double min, double max) {
+		return Math.max(min, Math.min(max, v));
+	}
+
+	private double getCurrentScorePercent(String modLower) {
+		try {
+			WebElement scoreText = driver.findElement(By.id("io.mosip.mock.sbi:id/tx_" + modLower + "_score"));
+			return Double.parseDouble(scoreText.getText().trim()) / 100.0;
+		} catch (Exception e) {
+			return 0.0; // fallback: assume left edge if we can't read it
+		}
 	}
 
 }

@@ -219,6 +219,12 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 		return value.equals(curr);
 	}
 
+	public boolean isBiometricDetailsPageDisplayedForCorrection() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+	}
+
 	private String readElementValue(WebElement el) {
 		try {
 			String ctx = "";

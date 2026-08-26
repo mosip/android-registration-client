@@ -130,7 +130,7 @@ public class SelectLanguagePageTamil extends SelectLanguagePage {
 		return new ConsentPageTamil(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishDisplayed() {
+	public boolean isNotificationLanguageDisplayed() {
 		return isElementDisplayed(notificationLanguageHeaderInEnglish);
 	}
 

@@ -497,7 +497,13 @@ public class LoginTest extends AndroidBaseTest {
 		boolean isDismissLoaded = false;
 
 		for (int i = 0; i < 3; i++) {
-			supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
+			try {
+				supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
+			} catch (Exception e) {
+				System.out.println(
+						"INFO: Attempt " + (i + 1) + " to click Verify & Save failed: " + e.getMessage());
+				continue;
+			}
 
 			if (supervisorBiometricVerificationpage.isDismissPageLoaded()) {
 				isDismissLoaded = true;

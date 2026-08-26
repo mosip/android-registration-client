@@ -9,7 +9,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class OperationalTaskPageEnglish extends OperationalTaskPage {
 
-	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Supervisor's Biometric Update\")")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Biometric Update\")")
 	private WebElement updateOperatorBiometricsButton;
 
 	@AndroidFindBy(accessibility = "System Storage Usage")

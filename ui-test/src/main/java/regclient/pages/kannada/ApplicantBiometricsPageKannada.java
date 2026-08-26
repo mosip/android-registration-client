@@ -283,4 +283,10 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 		String count = attemptText.replaceAll("\\D+", "");
 		return Integer.parseInt(count);
 	}
+
+	public boolean isApplicantBiometricsPageDisplayedForCorrection() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+	}
 }

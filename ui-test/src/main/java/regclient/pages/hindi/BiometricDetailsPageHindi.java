@@ -143,6 +143,12 @@ public class BiometricDetailsPageHindi extends BiometricDetailsPage {
 		return isElementDisplayed(additionalInfoRequestIdTextbox);
 	}
 
+	public boolean isBiometricDetailsPageDisplayedForCorrection() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+	}
+
 	public void enterAdditionalInfoUsingEmail(String emailId) {
 		int retries = 20, waitSeconds = 10;
 		final String SUFFIX = "-BIOMETRIC_CORRECTION-1";

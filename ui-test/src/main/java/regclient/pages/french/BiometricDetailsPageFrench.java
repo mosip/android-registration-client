@@ -190,6 +190,12 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 
 	}
 
+	public boolean isBiometricDetailsPageDisplayedForCorrection() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+	}
+
 	private boolean typeAndVerify(WebElement el, String value) {
 		el.click();
 		el.clear();

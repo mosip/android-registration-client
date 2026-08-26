@@ -11,7 +11,7 @@ import regclient.page.SupervisorBiometricVerificationpage;
 
 public class OperationalTaskPageArabic extends OperationalTaskPage {
 
-	@AndroidFindBy(accessibility = "تحديث القياسات الحيوية للمشغل")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionMatches(\".*(تحديث التحقق البيومتري للضابط|تحديث المشرف الحيوي).*\")")
 	private WebElement updateOperatorBiometricsButton;
 
 	@AndroidFindBy(accessibility = "System Storage Usage")
@@ -40,8 +40,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 	}
 
 	public SupervisorBiometricVerificationpage clickOnUpdateOperatorBiometricsButton() {
-		By updateOperatorBiometricsButton = MobileBy
-				.AndroidUIAutomator("new UiSelector().descriptionStartsWith(\"تحديث القياسات الحيوية للمشغل\")");
+		By updateOperatorBiometricsButton = MobileBy.AndroidUIAutomator("new UiSelector().descriptionMatches(\".*(تحديث التحقق البيومتري للضابط|تحديث المشرف الحيوي).*\")");
 		click(updateOperatorBiometricsButton);
 		return new SupervisorBiometricVerificationpageArabic(driver);
 	}

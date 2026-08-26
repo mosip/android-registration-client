@@ -237,6 +237,13 @@ public class BiometricDetailsPageArabic extends BiometricDetailsPage {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	public boolean isBiometricDetailsPageDisplayedForCorrection() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(BiometricDetailsPageArabic.class);
 
 	// Below comment-out code required in future

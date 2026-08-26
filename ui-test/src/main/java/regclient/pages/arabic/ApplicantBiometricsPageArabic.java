@@ -291,4 +291,11 @@ public class ApplicantBiometricsPageArabic extends ApplicantBiometricsPage {
 		return Integer.parseInt(count);
 	}
 
+	@SuppressWarnings("deprecation")
+	public boolean isApplicantBiometricsPageDisplayedForCorrection() {
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+	}
+
 }

@@ -13,6 +13,7 @@ import io.appium.java_client.remote.SupportsContextSwitching;
 import io.appium.java_client.remote.SupportsRotation;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import io.mosip.testrig.apirig.testrunner.OTPListener;
 import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.utils.TestDataReader;
 
@@ -261,8 +262,7 @@ public class BasePage {
 
 	protected boolean isElementDisplayedOnScreen(WebElement element) {
 		try {
-			element.isDisplayed();
-			return true;
+			return element.isDisplayed();
 		} catch (Exception e) {
 			return false;
 		}
@@ -1045,6 +1045,22 @@ public class BasePage {
 		}
 
 		throw new NoSuchElementException("Element not visible after horizontal scrolling");
+	}
+
+	protected static String waitForAdditionalReqId(String emailId, int maxOuterAttempts) {
+		String additionalInfoReqId = "";
+		for (int attempt = 1; attempt <= maxOuterAttempts; attempt++) {
+			additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
+			if (additionalInfoReqId != null && !additionalInfoReqId.trim().isEmpty()) {
+				return additionalInfoReqId;
+			}
+			logger.info("AdditionalInfoRequestId not yet available for " + emailId + " after attempt " + attempt
+					+ " of " + maxOuterAttempts + " (packet creation may still be in progress). Retrying...");
+			if (attempt < maxOuterAttempts) {
+				waitTime(5);
+			}
+		}
+		return additionalInfoReqId;
 	}
 
 }

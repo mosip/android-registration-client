@@ -38,6 +38,11 @@ public class TestRunner {
 		BaseTestCase.ApplnURI = ArcConfigManager.getiam_apiinternalendpoint();
 		OTPListener otpListener = new OTPListener();
 		otpListener.run();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 		FetchUiSpec.getUiSpec("newProcess");
 		io.mosip.testrig.apirig.testrunner.BaseTestCase.setRunContext(checkRunType(), jarUrl);
 		io.mosip.testrig.apirig.testrunner.BaseTestCase.copymoduleSpecificAndConfigFile("config");

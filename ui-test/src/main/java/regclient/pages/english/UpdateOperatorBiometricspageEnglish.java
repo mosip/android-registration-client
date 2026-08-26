@@ -140,7 +140,7 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	@AndroidFindBy(accessibility = "HOME")
 	private WebElement homeButton;
 
-	@AndroidFindBy(accessibility = "Update Operator Biometrics")
+	@AndroidFindBy(accessibility = "Supervisor's Biometric Update")
 	private WebElement updateOperatorBiometrics;
 
 	public void clickOnIrisScan() {

@@ -1,5 +1,6 @@
 package regclient.pages.arabic;
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -138,7 +139,12 @@ public class SelectLanguagePageArabic extends SelectLanguagePage {
 		return new ConsentPageArabic(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishDisplayed() {
+	public boolean isNotificationLanguageDisplayed() {
+		try {
+			scrollUntilElementVisible(notificationLanguageHeaderInArabic);
+		} catch (NoSuchElementException e) {
+			return false;
+		}
 		return isElementDisplayed(notificationLanguageHeaderInArabic);
 	}
 

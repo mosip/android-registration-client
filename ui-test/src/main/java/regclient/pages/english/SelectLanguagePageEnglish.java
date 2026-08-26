@@ -145,7 +145,7 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage {
 		return new ConsentPageEnglish(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishDisplayed() {
+	public boolean isNotificationLanguageDisplayed() {
 	    return isElementDisplayed(notificationLanguageHeaderInEnglish);
 	}
 	

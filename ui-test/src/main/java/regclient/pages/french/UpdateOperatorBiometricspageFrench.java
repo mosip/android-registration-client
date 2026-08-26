@@ -136,7 +136,7 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 	@AndroidFindBy(accessibility = "MAISON")
 	private WebElement homeButton;
 
-	@AndroidFindBy(accessibility = "Mettre à jour les données biométriques de l'opérateur")
+	@AndroidFindBy(accessibility = "Mise à jour biométrique du superviseur")
 	private WebElement updateOperatorBiometrics;
 
 	public void clickOnIrisScan() {

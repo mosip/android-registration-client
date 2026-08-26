@@ -18,12 +18,12 @@ It automates **positive and negative scenarios** and supports both **emulators a
    mvn clean package -DskipTests=true
    ```
 
-2. The generated JAR file (`uitest-regclient-1.0.0.jar`) will be located in the `target` directory.
+2. The generated JAR file (`uitest-regclient-1.2.0.jar`) will be located in the `target` directory.
 
 3. **For running tests on a device**:  
    Use the shaded JAR with dependencies:
    ```
-   uitest-regclient-1.0.0.jar
+   uitest-regclient-1.2.0.jar
    ```
 
 ---
@@ -136,7 +136,7 @@ Import the project into **Eclipse / IntelliJ** if needed.
 
 ```bash
 cd android-registration-client/ui-test/target
-java -jar uitest-regclient-1.0.0.jar
+java -jar uitest-regclient-1.2.0.jar
 ```
 
 Alternatively, run the provided batch script (if present):

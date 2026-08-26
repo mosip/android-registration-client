@@ -81,6 +81,6 @@ public abstract class ApplicantBiometricsPage extends BasePage {
 	public abstract int getThresholdScore();
 	
 	public abstract int irisAttemptLeft();
-	
-	
+
+	public abstract boolean isApplicantBiometricsPageDisplayedForCorrection();
 }
