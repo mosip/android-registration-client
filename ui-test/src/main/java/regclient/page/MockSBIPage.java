@@ -17,6 +17,8 @@ import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
@@ -29,6 +31,7 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.touch.offset.PointOption;
 
 public class MockSBIPage extends BasePage {
+	private static final Logger logger = LoggerFactory.getLogger(MockSBIPage.class);
 	private WebDriverWait wait;
 
 	@AndroidFindBy(id = "io.mosip.mock.sbi:id/settingBtn")
@@ -265,6 +268,7 @@ public class MockSBIPage extends BasePage {
 			driver.perform(Collections.singletonList(drag));
 			waitTime(1);
 		} catch (Exception ex) {
+			logger.warn("Drag gesture failed, falling back to click at coordinates", ex);
 			clickAtCoordinates(targetX, y);
 		}
 	}
@@ -278,6 +282,7 @@ public class MockSBIPage extends BasePage {
 			WebElement scoreText = driver.findElement(By.id("io.mosip.mock.sbi:id/tx_" + modLower + "_score"));
 			return Double.parseDouble(scoreText.getText().trim()) / 100.0;
 		} catch (Exception e) {
+			logger.warn("Failed to read current score, assuming left edge", e);
 			return 0.0; // fallback: assume left edge if we can't read it
 		}
 	}

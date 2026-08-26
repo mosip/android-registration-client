@@ -1,5 +1,7 @@
 package regclient.pages.french;
 
+import java.util.regex.Pattern;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -286,8 +288,11 @@ public class ApplicantBiometricsPageFrench extends ApplicantBiometricsPage {
 	}
 
 	public boolean isApplicantBiometricsPageDisplayedForCorrection() {
+		String label = FetchUiSpec.getValueUsingId("individualBiometrics");
+		String pattern = (label == null || label.trim().isEmpty()) ? Pattern.quote("Applicant Biometrics")
+				: Pattern.quote(label) + "|" + Pattern.quote("Applicant Biometrics");
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
-						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+						+ pattern + ").*\"))")));
 	}
 }

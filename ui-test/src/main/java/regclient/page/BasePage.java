@@ -1051,7 +1051,8 @@ public class BasePage {
 		String additionalInfoReqId = "";
 		for (int attempt = 1; attempt <= maxOuterAttempts; attempt++) {
 			additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
-			if (additionalInfoReqId != null && !additionalInfoReqId.trim().isEmpty()) {
+			if (additionalInfoReqId != null && !additionalInfoReqId.trim().isEmpty()
+					&& !additionalInfoReqId.equals("{Failed}")) {
 				return additionalInfoReqId;
 			}
 			logger.info("AdditionalInfoRequestId not yet available for " + emailId + " after attempt " + attempt
@@ -1060,7 +1061,7 @@ public class BasePage {
 				waitTime(5);
 			}
 		}
-		return additionalInfoReqId;
+		return "{Failed}".equals(additionalInfoReqId) ? "" : additionalInfoReqId;
 	}
 
 }
