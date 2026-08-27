@@ -127,6 +127,7 @@ public class AndroidMetricCollector {
             "\"@timestamp\":\"" + generateUtcTimestamp() + "\"," +
             "\"name\":\"device.info\"," +
             "\"type\":\"event\"," +
+            "\"machine\":\"" + getMachineId() + "\"," +
             "\"device_model\":\"" + getDeviceId() + "\"," +
             "\"os_release\":\"" + osRelease + "\"," +
             "\"sdk_int\":" + sdkInt + "," +
@@ -211,11 +212,9 @@ public class AndroidMetricCollector {
     }
 
     private String getDeviceId() {
-        // Safe, non-privileged hardware identity computation pattern that works on all API levels
-        String model = Build.MODEL != null ? Build.MODEL.replace(" ", "_") : "Android_Device";
-        String hardwareId = Build.ID != null ? Build.ID : "UNKNOWN";
-        return model + "_" + hardwareId.substring(0, Math.min(6, hardwareId.length()));
+        return Build.MODEL != null ? Build.MODEL.replace(" ", "_") : "Android_Device";
     }
+    
     public void shutdown() {
         if (writeExecutor != null && !writeExecutor.isShutdown()) {
             writeExecutor.shutdown();
