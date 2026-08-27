@@ -123,4 +123,13 @@ if (previousScreen != null) 'previous_screen': previousScreen,
     });
   }
 
+  void logPerformanceMetric(String metricName, double value, String unit, {Map<String, dynamic>? attributes}) {
+    logEvent(metricName, {
+      'value': value,
+      'unit': unit,
+      'type': 'gauge',
+      if (attributes != null) ...attributes,
+    });
+  }
+
 }

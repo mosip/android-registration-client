@@ -36,7 +36,7 @@ void main() async {
 final double appInitTimestamp = DateTime.now().millisecondsSinceEpoch.toDouble();
 
 enableFlutterDriverExtension(enableTextEntryEmulation: false);
-WidgetsBinding.ensureInitialized();
+WidgetsFlutterBinding.ensureInitialized();
 
 // Log startup metric once the first frame renders
 WidgetsBinding.instance.addPostFrameCallback((_) {
