@@ -1047,21 +1047,25 @@ public class BasePage {
 		throw new NoSuchElementException("Element not visible after horizontal scrolling");
 	}
 
-	protected static String waitForAdditionalReqId(String emailId, int maxOuterAttempts) {
+	// Sentinel returned by OTPListener.getAdditionalReqId while packet creation hasn't produced an id yet.
+	protected static final String Additional_Req_Id_Failed = "{Failed}";
+
+	protected static String waitForAdditionalReqId(String emailId, int maxOuterAttempts, int waitSecondsBetweenAttempts) {
 		String additionalInfoReqId = "";
 		for (int attempt = 1; attempt <= maxOuterAttempts; attempt++) {
 			additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
 			if (additionalInfoReqId != null && !additionalInfoReqId.trim().isEmpty()
-					&& !additionalInfoReqId.equals("{Failed}")) {
+					&& !additionalInfoReqId.equals(Additional_Req_Id_Failed)) {
 				return additionalInfoReqId;
 			}
-			logger.info("AdditionalInfoRequestId not yet available for " + emailId + " after attempt " + attempt
-					+ " of " + maxOuterAttempts + " (packet creation may still be in progress). Retrying...");
+			logger.info("AdditionalInfoRequestId not ready for {}, attempt {}/{}. Retrying...", emailId, attempt,
+					maxOuterAttempts);
 			if (attempt < maxOuterAttempts) {
-				waitTime(5);
+				waitTime(waitSecondsBetweenAttempts);
 			}
 		}
-		return "{Failed}".equals(additionalInfoReqId) ? "" : additionalInfoReqId;
+		throw new IllegalStateException(
+				"AdditionalInfoRequestId not available for " + emailId + " after " + maxOuterAttempts + " attempts");
 	}
 
 }

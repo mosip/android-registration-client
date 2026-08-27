@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -19,7 +20,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
-import io.mosip.testrig.apirig.testrunner.OTPListener;
 import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.AutoLogoutPage;
@@ -186,11 +186,7 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 
 	public void enterAdditionalInfoUsingEmail(String emailId) {
 		logger.info(emailId);
-	    String additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
-	    if (additionalInfoReqId == null || additionalInfoReqId.trim().isEmpty()) {
-	        throw new IllegalStateException("Additional Info Request ID is missing for email: " + emailId);
-	    }
-	    additionalInfoReqId = additionalInfoReqId + "-BIOMETRIC_CORRECTION-1";
+	    String additionalInfoReqId = waitForAdditionalReqId(emailId, 20, 10) + "-BIOMETRIC_CORRECTION-1";
 
 	  
 	    try {
@@ -220,9 +216,12 @@ public class BiometricDetailsPageEnglish extends BiometricDetailsPage {
 	}
 
 	public boolean isBiometricDetailsPageDisplayedForCorrection() {
+		String label = FetchUiSpec.getValueUsingId("individualBiometrics");
+		String pattern = (label == null || label.trim().isEmpty()) ? Pattern.quote("Applicant Biometrics")
+				: Pattern.quote(label) + "|" + Pattern.quote("Applicant Biometrics");
 		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
 				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
-						+ FetchUiSpec.getValueUsingId("individualBiometrics") + "|Applicant Biometrics).*\"))")));
+						+ pattern + ").*\"))")));
 	}
 
 	private String readElementValue(WebElement el) {

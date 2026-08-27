@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -164,36 +163,32 @@ public class MockSBIPage extends BasePage {
 	}
 
 	private void setModalityScore(String modality, int score) {
-		try {
-			scrollToText(modality);
+		scrollToText(modality);
 
-			String modLower = modality.toLowerCase();
-			String xpath = String.format(
-					"//android.widget.SeekBar[contains(@resource-id, 'slider_%s_score') or contains(@content-desc, '%s Score')]",
-					modLower, modality);
+		String modLower = modality.toLowerCase();
+		String xpath = String.format(
+				"//android.widget.SeekBar[contains(@resource-id, 'slider_%s_score') or contains(@content-desc, '%s Score')]",
+				modLower, modality);
 
-			WebElement seekBar = findElementIfExists(By.xpath(xpath)); // non-throwing
-			// fallback: a few swipes + re-checks
-			for (int i = 0; i < 5 && seekBar == null; i++) {
-				swipeUp();
-				waitTime(1);
-				seekBar = findElementIfExists(By.xpath(xpath));
-			}
-			// final attempt using retry (may throw) — catch below
-			if (seekBar == null) {
-				seekBar = findElementWithRetry(By.xpath(xpath));
-			}
-
-			if (seekBar == null) {
-				throw new RuntimeException("SeekBar not found for modality: " + modality);
-			}
-
-			setSeekBarPercent(seekBar, modLower, score);
+		WebElement seekBar = findElementIfExists(By.xpath(xpath)); // non-throwing
+		// fallback: a few swipes + re-checks
+		for (int i = 0; i < 5 && seekBar == null; i++) {
+			swipeUp();
 			waitTime(1);
-			System.out.println("Set " + modality + " -> " + score);
-		} catch (Exception e) {
-			System.err.println("Failed to set modality '" + modality + "': " + e.getMessage());
+			seekBar = findElementIfExists(By.xpath(xpath));
 		}
+		// final attempt using retry (may throw) — propagates if still not found
+		if (seekBar == null) {
+			seekBar = findElementWithRetry(By.xpath(xpath));
+		}
+
+		if (seekBar == null) {
+			throw new RuntimeException("SeekBar not found for modality: " + modality);
+		}
+
+		double verifiedScore = setSeekBarPercent(seekBar, modLower, score);
+		waitTime(1);
+		logger.info("Set {} -> requested {}, verified {}", modality, score, verifiedScore);
 	}
 
 	private void scrollToText(String text) {
@@ -233,7 +228,9 @@ public class MockSBIPage extends BasePage {
 		}
 	}
 
-	public void setSeekBarPercent(WebElement seekBar, String modLower, int percent) {
+	private static final double SEEKBAR_TOLERANCE_PERCENT = 5.0;
+
+	public double setSeekBarPercent(WebElement seekBar, String modLower, int percent) {
 		if (seekBar == null)
 			throw new IllegalArgumentException("seekBar cannot be null");
 		if (percent < 0)
@@ -241,36 +238,50 @@ public class MockSBIPage extends BasePage {
 		if (percent > 100)
 			percent = 100;
 
-		int startX = seekBar.getLocation().getX();
-		int width = seekBar.getSize().getWidth();
-		int y = seekBar.getLocation().getY() + (seekBar.getSize().getHeight() / 2);
+		double actualPercent = -1;
 
-		// 🔸 calibration offsets (approx 4–5% on both sides)
-		double leftOffset = 0.04; // skip a few px from start
-		double rightOffset = 0.96; // stop a bit before end
+		for (int attempt = 1; attempt <= 2; attempt++) {
+			int startX = seekBar.getLocation().getX();
+			int width = seekBar.getSize().getWidth();
+			int y = seekBar.getLocation().getY() + (seekBar.getSize().getHeight() / 2);
 
-		// Grab the thumb where it currently is, not at a fixed left edge — the
-		// widget may already be at a non-zero value left over from a previous run.
-		double currentRatio = clamp(getCurrentScorePercent(modLower), leftOffset, rightOffset);
-		double targetRatio = clamp(percent / 100.0, leftOffset, rightOffset);
+			// 🔸 calibration offsets (approx 4–5% on both sides)
+			double leftOffset = 0.04; // skip a few px from start
+			double rightOffset = 0.96; // stop a bit before end
 
-		int currentX = startX + (int) (width * currentRatio);
-		int targetX = startX + (int) (width * targetRatio);
+			// Grab the thumb where it currently is, not at a fixed left edge — the
+			// widget may already be at a non-zero value left over from a previous run.
+			double currentRatio = clamp(getCurrentScorePercent(modLower), leftOffset, rightOffset);
+			double targetRatio = clamp(percent / 100.0, leftOffset, rightOffset);
 
-		try {
-			PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-			Sequence drag = new Sequence(finger, 1);
-			drag.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), currentX, y));
-			drag.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-			drag.addAction(
-					finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), targetX, y));
-			drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-			driver.perform(Collections.singletonList(drag));
-			waitTime(1);
-		} catch (Exception ex) {
-			logger.warn("Drag gesture failed, falling back to click at coordinates", ex);
-			clickAtCoordinates(targetX, y);
+			int currentX = startX + (int) (width * currentRatio);
+			int targetX = startX + (int) (width * targetRatio);
+
+			try {
+				PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+				Sequence drag = new Sequence(finger, 1);
+				drag.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), currentX, y));
+				drag.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+				drag.addAction(
+						finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), targetX, y));
+				drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+				driver.perform(Collections.singletonList(drag));
+				waitTime(1);
+			} catch (Exception ex) {
+				logger.warn("Drag gesture failed, falling back to click at coordinates", ex);
+				clickAtCoordinates(targetX, y);
+			}
+
+			actualPercent = getCurrentScorePercent(modLower) * 100.0;
+			if (Math.abs(actualPercent - percent) <= SEEKBAR_TOLERANCE_PERCENT) {
+				return actualPercent;
+			}
+			logger.warn("Seekbar '{}' attempt {} landed at {} instead of requested {}", modLower, attempt,
+					actualPercent, percent);
 		}
+
+		throw new RuntimeException("Failed to set '" + modLower + "' seekbar to " + percent
+				+ "% after retry; last observed value was " + actualPercent + "%");
 	}
 
 	private double clamp(double v, double min, double max) {

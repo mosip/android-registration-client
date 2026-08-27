@@ -1,5 +1,6 @@
 package regclient.androidTestCases;
 
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
@@ -1352,6 +1353,9 @@ public class BiometricCorrection extends AndroidBaseTest {
 				biometricDetailsPage.clickOnContinueButton();
 			}
 		}
+
+		assertNotNull(applicantEmail,
+				"applicantEmail was not captured during DemographicDetails screen - biometric correction email lookup will fail");
 
 		if ("eng".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageEnglish(driver);
