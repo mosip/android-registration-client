@@ -1,8 +1,6 @@
 package regclient.pages.french;
 
 import java.time.Duration;
-import java.util.regex.Pattern;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -187,12 +185,7 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	}
 
 	public boolean isBiometricDetailsPageDisplayedForCorrection() {
-		String label = FetchUiSpec.getValueUsingId("individualBiometrics");
-		String pattern = (label == null || label.trim().isEmpty()) ? Pattern.quote("Applicant Biometrics")
-				: Pattern.quote(label) + "|" + Pattern.quote("Applicant Biometrics");
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
-						+ pattern + ").*\"))")));
+		return isDisplayedForCorrectionByLabel("individualBiometrics", "Applicant Biometrics");
 	}
 
 	private boolean typeAndVerify(WebElement el, String value) {
