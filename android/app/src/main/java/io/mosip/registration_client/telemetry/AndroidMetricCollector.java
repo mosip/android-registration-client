@@ -210,6 +210,14 @@ public class AndroidMetricCollector {
         sdf.setTimeZone(TimeZone.getDefault());
         return sdf.format(new Date());
     }
+    
+    private String getMachineId() {
+        String androidId = android.provider.Settings.Secure.getString(
+            context.getContentResolver(),
+            android.provider.Settings.Secure.ANDROID_ID
+        );
+        return androidId != null ? androidId : "unknown_machine";
+    }
 
     private String getDeviceId() {
         return Build.MODEL != null ? Build.MODEL.replace(" ", "_") : "Android_Device";
