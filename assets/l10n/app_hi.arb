@@ -402,5 +402,23 @@
   "select_option": "विकल्प चुनें",
   "cron_expression": "क्रोन एक्सप्रेशन",
   "id": "आईडी",
-  "name": "नाम"
+  "name": "नाम",
+  "last_sync_time_not_found": "अंतिम सिंक समय नहीं मिला",
+  "not_downloaded_yet": "अभी तक डाउनलोड नहीं हुआ",
+  "syncing_progress": "सिंक हो रहा है... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "डाउनलोड हो रहा है... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }

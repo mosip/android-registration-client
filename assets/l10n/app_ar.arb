@@ -402,6 +402,24 @@
   "select_option": "اختر خياراً",
   "cron_expression": "تعبير كرون",
   "id": "بطاقة تعريف",
-  "name": "اسم"
+  "name": "اسم",
+  "last_sync_time_not_found": "لم يتم العثور على وقت المزامنة الأخير",
+  "not_downloaded_yet": "لم يتم التنزيل بعد",
+  "syncing_progress": "جارٍ المزامنة... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "جارٍ التنزيل... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }
 
