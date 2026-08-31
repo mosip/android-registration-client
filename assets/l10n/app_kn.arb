@@ -402,5 +402,23 @@
   "select_option": "ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ",
   "cron_expression": "ಕ್ರಾನ್ ಎಕ್ಸ್‌ಪ್ರೆಶನ್",
   "id": "ID",
-  "name": "ಹೆಸರು"
+  "name": "ಹೆಸರು",
+  "last_sync_time_not_found": "ಕೊನೆಯ ಸಿಂಕ್ ಸಮಯ ಕಂಡುಬಂದಿಲ್ಲ",
+  "not_downloaded_yet": "ಇನ್ನೂ ಡೌನ್‌ಲೋಡ್ ಮಾಡಲಾಗಿಲ್ಲ",
+  "syncing_progress": "ಸಿಂಕ್ ಮಾಡಲಾಗುತ್ತಿದೆ... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "ಡೌನ್‌ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }

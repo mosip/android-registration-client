@@ -411,5 +411,23 @@
   "select_option": "விருப்பத்தைத் தேர்ந்தெடுக்கவும்",
   "cron_expression": "கிரான் வெளிப்பாடு",
   "id": "ஐடி",
-  "name": "பெயர்"
+  "name": "பெயர்",
+  "last_sync_time_not_found": "கடைசி ஒத்திசைவு நேரம் கிடைக்கவில்லை",
+  "not_downloaded_yet": "இன்னும் பதிவிறக்கப்படவில்லை",
+  "syncing_progress": "ஒத்திசைக்கப்படுகிறது... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "பதிவிறக்கப்படுகிறது... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }
