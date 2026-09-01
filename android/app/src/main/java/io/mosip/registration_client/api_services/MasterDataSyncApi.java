@@ -67,6 +67,7 @@ import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
+import io.mosip.registration.clientmanager.spi.CenterRemapService;
 import io.mosip.registration.clientmanager.spi.PacketService;
 import io.mosip.registration.clientmanager.spi.PreRegistrationDataSyncService;
 import io.mosip.registration.clientmanager.spi.SyncRestService;
@@ -88,6 +89,8 @@ import io.mosip.registration.clientmanager.constant.Components;
 public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     private static final String MASTER_DATA_LAST_UPDATED = "masterdata.lastupdated";
     private static final String SYNC_LAST_UPDATED = "sync.lastupdated";
+    public static final String PRE_REG_ID_SYNC_SUCCESS = "SUCCESS";
+    public static final String PRE_REG_ID_SYNC_FAILED = "pre-registartion_id_sync_failed";
     private final int master_data_recursive_sync_max_retry = 3;
     SyncRestService syncRestService;
     CertificateManagerService certificateManagerService;
@@ -115,6 +118,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
     PreRegistrationDataSyncService preRegistrationDataSyncService;
     LocalConfigService localConfigService;
     BioSdkProviderFactory bioSdkProviderFactory;
+    CenterRemapService centerRemapService;
     Context context;
     private String regCenterId;
 
@@ -156,7 +160,8 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                              FileSignatureDao fileSignatureDao,
                              PreRegistrationDataSyncService preRegistrationDataSyncService,
                              LocalConfigService localConfigService,
-                             BioSdkProviderFactory bioSdkProviderFactory) {
+                             BioSdkProviderFactory bioSdkProviderFactory,
+                             CenterRemapService centerRemapService) {
         this.clientCryptoManagerService = clientCryptoManagerService;
         this.machineRepository = machineRepository;
         this.registrationCenterRepository = registrationCenterRepository;
@@ -184,6 +189,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         this.preRegistrationDataSyncService = preRegistrationDataSyncService;
         this.localConfigService = localConfigService;
         this.bioSdkProviderFactory = bioSdkProviderFactory;
+        this.centerRemapService = centerRemapService;
     }
 
     public void setCallbackActivity(MainActivity mainActivity, BatchJob batchJob, BinaryMessenger flutterBinaryMessenger) {
@@ -228,7 +234,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("PolicyKeySync", 5, errorCode));
             }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), isManualSync, jobId);
         } catch (Exception e) {
-            Log.e(TAG, "Policy Key Sync Failed.", e);
+            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }
@@ -255,7 +261,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("GlobalParamsSync", 1, errorCode));
             }, isManualSync, jobId);
         } catch (Exception e) {
-            Log.e(TAG, "Global Params Sync Failed.", e);
+            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }
@@ -280,7 +286,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("UserDetailsSync", 3, errorCode));
             }, isManualSync, jobId);
         } catch (Exception e) {
-            Log.e(TAG, "User Details Sync Failed.", e);
+            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }
@@ -302,6 +308,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }, isManualSync);
         } catch (Exception e) {
             Log.e(TAG, "ID Schema Sync Failed.", e);
+            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
             result.error(e);
         }
@@ -326,6 +333,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }, 0, isManualSync, jobId);
         } catch (Exception e) {
             Log.e(TAG, "Master Data Sync Failed.", e);
+            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
         }
 
@@ -357,6 +365,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }, isManualSync, jobId);
         } catch (Exception e) {
             Log.e(TAG, "CA Certificate Sync Failed.", e);
+            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
             result.error(e);
         }
@@ -364,8 +373,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
 
     @Override
     public void batchJob(@NonNull MasterDataSyncPigeon.Result<String> result) {
-        batchJob.syncRegistrationPackets(this.context, null);
-        result.success("Registration Packet Sync Completed.");
+        batchJob.syncRegistrationPackets(this.context, () -> {
+            result.success("Registration Packet Sync Completed.");
+        });
     }
 
     @Override
@@ -384,16 +394,26 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
         if (NetworkUtils.isNetworkConnected(this.context)) {
             try {
                 preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
-                    Log.i(TAG, "Application Id's Sync Completed");
-                    result.success("Application Id's Sync Completed.");
-                    onSyncJobComplete(jobId, true, false);
+                    String syncResult = preRegistrationDataSyncService.getLastSyncResult();
+                    boolean isSuccess = syncResult == null || syncResult.isEmpty();
+                    if (isSuccess) {
+                        Log.i(TAG, "Application Id's Sync Completed");
+                        onSyncJobComplete(jobId, true, false);
+                        result.success(PRE_REG_ID_SYNC_SUCCESS);
+                    } else {
+                        Log.e(TAG, "Application Id's Sync Failed: " + syncResult);
+                        onSyncJobComplete(jobId, false, false);
+                        result.success(syncResult);
+                    }
                 }, jobId);
             } catch (Exception e) {
-                Log.e(TAG, "Pre-Reg IDs Sync Failed.", e);
+                Log.e(TAG, "Pre-registration ID sync failed", e);
                 onSyncJobComplete(jobId, false, false);
+                result.success(PRE_REG_ID_SYNC_FAILED);
             }
         } else {
             onSyncJobComplete(jobId, false, false);
+            result.success(PRE_REG_ID_SYNC_FAILED);
         }
     }
 
@@ -414,7 +434,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("KernelCertsSync", 7, errorCode));
             }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync, jobId);
         } catch (Exception e) {
-            Log.e(TAG, "Kernel Certs Sync Failed.", e);
+            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }
@@ -718,8 +738,9 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                         break;
                     case "preRegistrationDataSyncJob":
                         preRegistrationDataSyncService.fetchPreRegistrationIds(() -> {
-                            Log.i(TAG, "Application Id's Sync Completed");
-                            onSyncJobComplete(jobId, true, false);
+                            String syncResult = preRegistrationDataSyncService.getLastSyncResult();
+                            boolean success = syncResult == null || syncResult.isEmpty();
+                            onSyncJobComplete(jobId, success, false);
                         }, jobId);
                         break;
 
@@ -865,6 +886,19 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             restartHandler.removeCallbacks(pendingRestartPrompt);
             pendingRestartPrompt = null;
         }
+    }
+
+    @Override
+    public void executeRemapStep(@NonNull Long step, @NonNull MasterDataSyncPigeon.Result<Boolean> result) {
+        new Thread(() -> {
+            try {
+                centerRemapService.handleRemapStep(step.intValue());
+                result.success(true);
+            } catch (Exception e) {
+                Log.e(TAG, "executeRemapStep failed for step " + step, e);
+                result.error(e);
+            }
+        }).start();
     }
 
     private static final String SYNC_RESTART_CHANNEL = "io.mosip.registration_client/sync_restart";

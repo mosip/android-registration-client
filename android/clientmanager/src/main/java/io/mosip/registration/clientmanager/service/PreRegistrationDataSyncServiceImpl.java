@@ -99,6 +99,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     @Override
     public void fetchPreRegistrationIds(Runnable onFinish, String jobId) {
         Log.i(TAG,"Fetching Pre-Registration Id's started {}");
+        this.result = "";
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
@@ -178,6 +179,11 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                 onFinish.run();
             }
         });
+    }
+
+    @Override
+    public String getLastSyncResult() {
+        return this.result;
     }
 
     private void getPreRegistrationPackets(Map<String, String> preRegIds) {
@@ -508,5 +514,34 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
         List<ErrorResponseDto> errorList = new LinkedList<>();
         errorList.add(errorResponseDto);
         responseDTO.setErrorResponseDTOs(errorList);
+    }
+
+    @Override
+    public void deleteAllPreRegRecords() {
+        Log.i(TAG, "Center remap: deleting all pre-registration records");
+        List<PreRegistrationList> all = preRegistrationDao.findAll();
+        if (all == null || all.isEmpty()) {
+            Log.i(TAG, "No pre-registration records found to delete");
+            return;
+        }
+        List<PreRegistrationList> toDelete = new LinkedList<>();
+        for (PreRegistrationList record : all) {
+            if (record.getPacketPath() == null) {
+                toDelete.add(record);
+                continue;
+            }
+            try {
+                File packetFile = FileUtils.getFile(record.getPacketPath());
+                if (!packetFile.exists() || packetFile.delete()) {
+                    toDelete.add(record);
+                } else {
+                    Log.e(TAG, "Failed to delete pre-reg file for id " + record.getPreRegId());
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error deleting pre-reg file for id " + record.getPreRegId(), e);
+            }
+        }
+        preRegistrationDao.deleteAll(toDelete);
+        Log.i(TAG, "Center remap: deleted " + toDelete.size() + " pre-registration record(s)");
     }
 }

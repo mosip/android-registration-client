@@ -17,6 +17,8 @@ class TaskCard extends StatefulWidget {
     required this.index,
     required this.ontap,
     required this.subtitle,
+    this.isSyncing = false,
+    this.syncProgress = 0,
   });
 
   final Widget icon;
@@ -24,6 +26,8 @@ class TaskCard extends StatefulWidget {
   final int index;
   final Function ontap;
   final String subtitle;
+  final bool isSyncing;
+  final int syncProgress;
 
   @override
   State<TaskCard> createState() => _TaskCardState();
@@ -35,49 +39,61 @@ class _TaskCardState extends State<TaskCard> {
     return Card(
       elevation: 10.0,
       color: appWhite,
+      clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.symmetric(
         horizontal: 20.w,
         vertical: 10.h,
       ),
-      child: SizedBox(
-        height: 110.h,
-        child: ListTile(
-          onTap: (){widget.ontap();},
-          contentPadding: EdgeInsets.only(
-            top: 15.h,
-            bottom: 17.h,
-            left: 15.w,
-            right: 15.w,
-          ),
-          leading: Container(
-            padding: EdgeInsets.all(10.w),
-            height: 78.h,
-            width: 78.h,
-            decoration: BoxDecoration(
-                color: const Color(0xffF4F7FF),
-                borderRadius: BorderRadius.circular(8)),
-            child: widget.icon,
-            // child: const Text("Y"),
-          ),
-          title: Text(
-            widget.title,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: semiBold,
-                  fontSize: 24,
-                  color: appBlackShade1,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 110.h,
+            child: ListTile(
+              onTap: (){widget.ontap();},
+              contentPadding: EdgeInsets.only(
+                top: 15.h,
+                bottom: 17.h,
+                left: 15.w,
+                right: 15.w,
+              ),
+              leading: Container(
+                padding: EdgeInsets.all(10.w),
+                height: 78.h,
+                width: 78.h,
+                decoration: BoxDecoration(
+                    color: const Color(0xffF4F7FF),
+                    borderRadius: BorderRadius.circular(8)),
+                child: widget.icon,
+              ),
+              title: Text(
+                widget.title,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: semiBold,
+                      fontSize: 24,
+                      color: appBlackShade1,
+                    ),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  widget.subtitle,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: appBlackShade2,
+                  ),
                 ),
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              widget.subtitle,
-              style: const TextStyle(
-                fontSize: 18,
-                color: appBlackShade2,
               ),
             ),
           ),
-        ),
+          if (widget.isSyncing)
+            LinearProgressIndicator(
+              value: widget.syncProgress > 0 ? widget.syncProgress / 100.0 : null,
+              minHeight: 4.h,
+              backgroundColor: greyBorderShade,
+              valueColor: const AlwaysStoppedAnimation<Color>(appSolidPrimary),
+            ),
+        ],
       ),
     );
   }

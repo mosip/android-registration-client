@@ -19,4 +19,7 @@ public interface DynamicFieldDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(DynamicField dynamicField);
+
+    @Query("DELETE FROM dynamic_field")
+    void deleteAll();
 }
