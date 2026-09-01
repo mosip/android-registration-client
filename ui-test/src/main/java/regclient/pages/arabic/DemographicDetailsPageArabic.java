@@ -128,39 +128,26 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 								"Verify if " + id + " is enter in second language text box");
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
-
 					waitTime(1);
-
-					By dropdownLocator = By
-							.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
-									+ FetchUiSpec.getValueUsingId(id) + "')]]");
-
+					By dropdownLocator = By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'" + FetchUiSpec.getValueUsingId(id) + "')]]");
 					scrollUntilElementVisible(dropdownLocator);
 
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
-
 					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
-
 					WebElement dropdownElement = findElement(dropdownLocator);
 
 					clickOnElement(dropdownElement);
 					waitTime(1);
-
 					if (!isElementDisplayed(dropdownElement)) {
 						clickOnElement(findElement(By.className("android.view.View")));
-
 					} else if (isElementDisplayed(dropdownElement)) {
-
 						swipeUp();
 						clickOnElement(dropdownElement);
 						waitTime(1);
-
 						clickOnElement(findElement(By.className("android.view.View")));
 					}
-
 					waitTime(1);
-
 					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
 							+ FetchUiSpec.getValueUsingId(id)
 							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"اختر خياراً\")]"))) {
@@ -443,8 +430,7 @@ public class DemographicDetailsPageArabic extends DemographicDetailsPage {
 
 	public void fetchPreregApplicationId(String age) {
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
-		By appIdTextbox = MobileBy
-				.AndroidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(0)");
+		By appIdTextbox = MobileBy.AndroidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(0)");
 
 		// Verify label is displayed
 		boolean isDisplayed = isElementDisplayed(appIdLabel);

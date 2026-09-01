@@ -67,7 +67,7 @@ public class SettingsPageTamil extends SettingsPage {
 
 	@AndroidFindBy(accessibility = "CANCEL")
 	private WebElement changesCancelButton;
-
+	
 	@AndroidFindBy(accessibility = "Scheduled Job Settings")
 	private WebElement scheduledJobSettingsPageHeader;
 
@@ -216,7 +216,7 @@ public class SettingsPageTamil extends SettingsPage {
 	public void clickOnChangesConfirmButton() {
 		clickOnElement(changesConfirmButton);
 	}
-
+	
 	public boolean isScheduledJobSettingsPageHeaderDisplayed() {
 		return isElementDisplayed(scheduledJobSettingsPageHeader);
 	}
@@ -254,14 +254,14 @@ public class SettingsPageTamil extends SettingsPage {
 		return cd.contains(jobName) && cd.contains("Next Run") && cd.contains("Last Sync")
 				&& cd.contains("Cron Expression");
 	}
-
+	
 	public boolean isJobDisplayed(String jobName) {
 		driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
 				+ ".scrollIntoView(new UiSelector().className(\"android.widget.EditText\"))"));
 		By job = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
 		return isElementDisplayed(job);
 	}
-
+	
 	public void clickOnSyncButton(String jobName) {
 		By syncButton = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
 		click(syncButton);

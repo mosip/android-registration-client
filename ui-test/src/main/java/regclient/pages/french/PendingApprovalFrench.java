@@ -83,10 +83,10 @@ public class PendingApprovalFrench extends PendingApproval {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
 	private WebElement latestAIdCheckBox;
-
+	
 	@AndroidFindBy(accessibility = "Aucun réseau trouvé !")
 	private WebElement noNetworkFound;
-
+	
 	@AndroidFindBy(accessibility = "AUTHENTIFIER")
 	private WebElement authenticateButton;
 
@@ -216,11 +216,11 @@ public class PendingApprovalFrench extends PendingApproval {
 	public boolean isNoNetworkFoundDisplayed() {
 		return isElementEnabled(noNetworkFound);
 	}
-
+	
 	public void clickOnAuthenticateButton() {
 		clickOnElement(authenticateButton);
 	}
-
+	
 	public boolean isAuthenticateButtonEnabled() {
 		return isElementEnabled(authenticateButton);
 	}

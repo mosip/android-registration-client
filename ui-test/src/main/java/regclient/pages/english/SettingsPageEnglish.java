@@ -291,7 +291,7 @@ public class SettingsPageEnglish extends SettingsPage {
 		WebElement syncBtn = jobElement.findElement(By.xpath(".//android.widget.Button[1]"));
 		syncBtn.click();
 	}
-
+	
 	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
 		return isElementDisplayed(searchBox);
 	}
@@ -327,5 +327,4 @@ public class SettingsPageEnglish extends SettingsPage {
 	public boolean isLocalValueBoxDisplayed() {
 		return isElementDisplayed(localValueBox);
 	}
-
 }
