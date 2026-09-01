@@ -32,4 +32,8 @@ public class UserRoleRepository {
         }
         return codes;
     }
+
+    public void deleteAll() {
+        userRoleDao.deleteAll();
+    }
 }

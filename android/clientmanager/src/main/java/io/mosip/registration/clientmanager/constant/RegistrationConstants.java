@@ -69,6 +69,8 @@ public class RegistrationConstants {
     public static final String DEFAULT_APP_TYPE_CODE = "mosip.registration.default-app-type-code";
     public static final String IDLE_TIME = "mosip.registration.idle_time";
     public static final String REFRESHED_LOGIN_TIME = "mosip.registration.refreshed_login_time";
+    public static final String MACHINE_CENTER_CHANGED = "mosip.registration.machinecenterchanged";
+    public static final String CENTER_REMAP_ERROR_CODE = "KER-SNC-149";
 
     public static final String RESPONSE = "response";
     public static final String ERRORS = "errors";

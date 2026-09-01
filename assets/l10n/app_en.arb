@@ -189,6 +189,41 @@
   "appliction_upload": "Application Upload",
   "check_updates": "Check Updates",
   "center_remap_sync": "Center Remap Sync.",
+  "center_remap_notification": "Your machine has been re-mapped to another center. Kindly complete the pending activities.",
+  "remap_operation_blocked": "Operation not permitted. Machine has been re-mapped to another center, kindly complete the pending activities.",
+  "no_center_remap_detected": "No changes detected. This machine remains assigned to the current center.",
+  "complete_pending_activities": "Pending Activities Requiring Completion",
+  "pending_activities_before_remap": "The following activities must be completed prior to initiating the Center Remap Synchronization:",
+  "pending_packets_awaiting_approval": "Packets Awaiting Approval",
+  "packets_require_supervisor_approval": "{count} packets are pending supervisor approval and must be approved before synchronization can proceed.",
+  "@packets_require_supervisor_approval": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pending_packets_awaiting_upload": "Packets Pending Synchronization and Upload",
+  "packets_queued_locally": "{count} packets remain pending local synchronization and must be uploaded to the server before the Center Remap Synchronization can be initiated.",
+  "@packets_queued_locally": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sync_button_auto_enabled": "The sync button will be enabled automatically once both activities are completed.",
+  "okay_got_it": "OKAY",
+  "center_remap_sync_subtitle": "Tap to initiate center remap cleanup",
+  "remap_sync_screen_title": "Center Remap Sync",
+  "remap_syncing_message": "Syncing Remapped Center",
+  "remap_sync_in_progress_warning": "Sync in progress. Please do not close the application.",
+  "remap_sync_completed_title": "Center Remap Sync Completed Successfully",
+  "remap_sync_completed_subtitle": "Please click the Restart button below. Synchronization will complete automatically after the restart, and you may then continue with the registration process.",
+  "remap_synced_at": "Synced at",
+  "remap_sync_failed_title": "Sync Failed!",
+  "remap_sync_failed_subtitle": "Synchronization failed due to a network issue. Click Retry to continue.",
+  "restart": "RESTART",
   "sync_activities": "Sync. Activities",
   "pending_approval": "Pending Approval",
   "dashboard": "Dashboard",
@@ -361,12 +396,29 @@
   "search_for_key": "Search for Key",
   "no_devices_found": "No devices found",
   "connect_devices_and_scan": "Please connect your devices and tap 'Scan' to detect them",
-  "search_for_key": "Search for Key",
   "sync_restart_dialog_message": "The app will restart once you click Restart, and you will be redirected to the login page.",
   "sync_restart_button": "Restart",
   "app_restart_message": "Configuration saved successfully. Restarting app...",
   "select_option": "Select Option",
   "cron_expression": "Cron Expression",
   "id": "ID",
-  "name": "Name"
+  "name": "Name",
+  "last_sync_time_not_found": "Last Sync time not found",
+  "not_downloaded_yet": "Not downloaded yet",
+  "syncing_progress": "Syncing... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "Downloading... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }

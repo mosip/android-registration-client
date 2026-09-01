@@ -13,6 +13,8 @@ abstract class GlobalConfigSettingsApi {
   @async
   String getGpsEnableFlag();
   @async
+  bool getCenterRemapFlag();
+  @async
   int getPRIDLength();
   @async
   int getUINLength();

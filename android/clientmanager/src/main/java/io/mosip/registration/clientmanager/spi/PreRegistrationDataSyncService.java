@@ -10,8 +10,15 @@ import io.mosip.registration.clientmanager.entity.PreRegistrationList;
 public interface PreRegistrationDataSyncService {
     Map<String, Object> getPreRegistration(String preRegistrationId, boolean forceDownload);
     void fetchPreRegistrationIds(Runnable onFinish, String jobId);
+    String getLastSyncResult();
     ResponseDto fetchAndDeleteRecords();
     void deletePreRegRecords(ResponseDto responseDTO, List<PreRegistrationList> preRegList);
     PreRegistrationList getPreRegistrationRecordForDeletion(String preRegistrationId);
     Timestamp getLastPreRegPacketDownloadedTime();
+
+    /**
+     * Deletes ALL pre-registration records from the local filesystem and database,
+     * regardless of appointment date. Used exclusively during center remap cleanup.
+     */
+    void deleteAllPreRegRecords();
 }

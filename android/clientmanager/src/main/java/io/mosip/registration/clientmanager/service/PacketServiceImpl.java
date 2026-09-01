@@ -506,6 +506,20 @@ public class PacketServiceImpl implements PacketService {
         }
     }
 
+    @Override
+    public void deleteAllRegistrationPackets() {
+        Log.i(TAG, "Center remap: deleting all registration packets");
+        List<Registration> all = registrationRepository.getAllRegistrations();
+        if (all == null || all.isEmpty()) {
+            Log.i(TAG, "No registration packets found to delete");
+            return;
+        }
+        for (Registration registration : all) {
+            delete(registration);
+        }
+        Log.i(TAG, "Center remap: deleted " + all.size() + " registration packet(s)");
+    }
+
     private void delete(Registration registration) {
         try {
             String filePath = registration.getFilePath();
