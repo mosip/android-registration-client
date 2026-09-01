@@ -99,6 +99,7 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
     @Override
     public void fetchPreRegistrationIds(Runnable onFinish, String jobId) {
         Log.i(TAG,"Fetching Pre-Registration Id's started {}");
+        this.result = "";
 
         CenterMachineDto centerMachineDto = this.masterDataService.getRegistrationCenterMachineDetails();
         if (centerMachineDto == null) {
@@ -178,6 +179,11 @@ public class PreRegistrationDataSyncServiceImpl implements PreRegistrationDataSy
                 onFinish.run();
             }
         });
+    }
+
+    @Override
+    public String getLastSyncResult() {
+        return this.result;
     }
 
     private void getPreRegistrationPackets(Map<String, String> preRegIds) {
