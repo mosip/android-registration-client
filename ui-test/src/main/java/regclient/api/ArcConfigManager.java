@@ -73,6 +73,10 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		return getProperty("iam-users-to-create-onboarder", "");
 	}
 	
+	public static String getIAMUsersToCreateDifferentCenterUser(){
+		return getProperty("iam-users-to-create-differentCenterUser", "");
+	}
+	
 	public static String getiam_apienvuser() {
 		return getProperty("apiEnvUser", "");
 	}

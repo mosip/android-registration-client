@@ -132,7 +132,7 @@ public class SelectLanguagePageHindi extends SelectLanguagePage{
 		return new ConsentPageHindi(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishDisplayed() {
+	public boolean isNotificationLanguageDisplayed() {
 		return isElementDisplayed(notificationLanguageHeaderInHindi);
 	}
 

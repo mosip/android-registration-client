@@ -1,5 +1,6 @@
 package regclient.androidTestCases;
 
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
@@ -228,8 +229,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 				"Verify if user should not be allow to navigate to next screen.");
 		selectLanguagePage.selectSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
-				"verify if the notification language display in english");
+		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
+				"verify if the notification language displayed");
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -661,8 +662,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 				"Verify if user should not be allow to navigate to next screen.");
 		selectLanguagePage.selectSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
-				"verify if the notification language display in english");
+		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
+				"verify if the notification language displayed");
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -1007,6 +1008,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
 		IntroducerBiometricPage introducerBiometricPage = null;
+		String applicantEmail = null;
 
 		// Navigate to mocksbi page
 		MockSBIPage mockSBIPage = new MockSBIPage(driver);
@@ -1086,8 +1088,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 				"Verify if user should not be allow to navigate to next screen.");
 		selectLanguagePage.selectSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
-				"verify if the notification language display in english");
+		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
+				"verify if the notification language displayed");
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -1131,6 +1133,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 						"Verify if demographic details page is displayed");
 
 				demographicPage.fillDemographicDetailsPage("minor");
+				applicantEmail = BasePage.email;
 
 				demographicPage.clickOnContinueButton();
 			} else if (screen.equals("Documents")) {
@@ -1351,6 +1354,9 @@ public class BiometricCorrection extends AndroidBaseTest {
 			}
 		}
 
+		assertNotNull(applicantEmail,
+				"applicantEmail was not captured during DemographicDetails screen - biometric correction email lookup will fail");
+
 		if ("eng".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -1570,8 +1576,8 @@ public class BiometricCorrection extends AndroidBaseTest {
 				"Verify if user should not be allow to navigate to next screen.");
 		selectLanguagePage.selectSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
-				"verify if the notification language display in english");
+		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
+				"verify if the notification language displayed");
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -1627,17 +1633,17 @@ public class BiometricCorrection extends AndroidBaseTest {
 				} else {
 					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
-				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayedForCorrection(),
 						"Verify if biometric details page is displayed");
 
 				assertTrue(biometricDetailsPage.isAdditionalInfoRequestIdTextboxDisplayed(),
 						"Additional info Request ID textbox should be displayed");
-				biometricDetailsPage.enterAdditionalInfoUsingEmail(BasePage.email);
+				biometricDetailsPage.enterAdditionalInfoUsingEmail(applicantEmail);
 
 				if (FetchUiSpec.eye.equals("yes")) {
 					biometricDetailsPage.clickOnIrisScan();
 
-					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayed(),
+					assertTrue(applicantBiometricsPage.isApplicantBiometricsPageDisplayedForCorrection(),
 							"Verify if applicant biometric page is displayed");
 					applicantBiometricsPage.clickOnScanButton();
 
@@ -1682,7 +1688,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 					applicantBiometricsPage.closeScanCapturePopUp();
 					applicantBiometricsPage.clickOnNextButton();
 				}
-				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
+				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayedForCorrection(),
 						"Verify if biometric details page is displayed");
 				((HidesKeyboard) driver).hideKeyboard();
 				biometricDetailsPage.clickOnContinueButton();

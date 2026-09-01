@@ -38,6 +38,11 @@ public class TestRunner {
 		BaseTestCase.ApplnURI = ArcConfigManager.getiam_apiinternalendpoint();
 		OTPListener otpListener = new OTPListener();
 		otpListener.run();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 		FetchUiSpec.getUiSpec("newProcess");
 		io.mosip.testrig.apirig.testrunner.BaseTestCase.setRunContext(checkRunType(), jarUrl);
 		io.mosip.testrig.apirig.testrunner.BaseTestCase.copymoduleSpecificAndConfigFile("config");
@@ -80,6 +85,8 @@ public class TestRunner {
 			XmlClass exportPacket = new XmlClass("regclient.androidTestCases.ExportPacket");
 			XmlClass newRegistrationAdultUploadMultipleDoccuments = new XmlClass(
 					"regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments");
+			XmlClass createPacketWithoutNetwork = new XmlClass(
+					"regclient.androidTestCases.CreatePacketWithoutNetwork");
 
 			List<XmlClass> classes = new ArrayList<>();
 			String[] Scenarionames = ArcConfigManager.gettestcases().split(",");
@@ -148,6 +155,9 @@ public class TestRunner {
 
 				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDoccuments"))
 					classes.add(newRegistrationAdultUploadMultipleDoccuments);
+				
+				if (Scenarioname.equalsIgnoreCase("createPacketWithoutNetwork"))
+					classes.add(createPacketWithoutNetwork);
 
 			}
 			XmlTest test = new XmlTest(suite);

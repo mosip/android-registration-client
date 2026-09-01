@@ -39,5 +39,11 @@ public abstract class DemographicDetailsPage extends BasePage {
 	public abstract void validateFetchedDemographicData();
 
 	public abstract void fillRemainDemographicDetailsPage(String age);
+	
+	public abstract boolean isApplicationIdDoesNotExistMessageDisplay();
+	
+	public abstract void fetchInvalidPreregApplicationId(String prid);
+	
+	public abstract void clickOnOkayButton();
 
 }

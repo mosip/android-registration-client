@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ManageApplicationsPage;
 
@@ -83,9 +84,12 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
 	private WebElement latestAidCheckBox;
-	
+
 	@AndroidFindBy(accessibility = "manage_application_back_button")
 	private WebElement backButton;
+
+	@AndroidFindBy(accessibility = "Effacer le filtre")
+	private WebElement clearFilterButton;
 
 	public ManageApplicationsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -265,11 +269,46 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 	public void selectLatestAidCheckBox() {
 		clickOnElement(latestAidCheckBox);
 	}
-	
+
 	public void clickCheckboxByAID(String aid) {
 		By checkbox = By
 				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");
 		click(checkbox);
+	}
+
+	public void clickOnClearFilterButton() {
+
+		driver.findElement(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+						+ ".setAsHorizontalList().scrollToEnd(5)"));
+
+		clickOnElement(clearFilterButton);
+	}
+
+	public boolean isClientStatusDropdownDisplayed() {
+		try {
+			driver.findElement(MobileBy.AndroidUIAutomator(
+					"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+							+ ".setAsHorizontalList()"
+							+ ".scrollIntoView(new UiSelector().description(\"Statut du client\"))"));
+
+			return isElementDisplayed(clientStatusDropdown);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public void scrollTillDisplayingApplicationCountVisible() {
+		for (int i = 0; i < 3; i++) {
+
+			if (driver.findElements(MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"Affichage\")"))
+					.size() > 0) {
+				return;
+			}
+			driver.findElement(MobileBy.AndroidUIAutomator(
+					"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+							+ ".setAsHorizontalList()" + ".scrollBackward()"));
+		}
 	}
 
 }

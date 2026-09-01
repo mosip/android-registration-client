@@ -1,5 +1,6 @@
 package regclient.pages.arabic;
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -19,7 +20,7 @@ public class SelectLanguagePageArabic extends SelectLanguagePage {
 	@AndroidFindBy(accessibility = "français")
 	private WebElement frenchLanguageButton;
 
-	@AndroidFindBy(accessibility = "عربي")
+	@AndroidFindBy(accessibility = "Arabic")
 	private WebElement arabicLanguageButton;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"ಕನ್ನಡ\"])[1]")
@@ -81,6 +82,7 @@ public class SelectLanguagePageArabic extends SelectLanguagePage {
 	}
 
 	public void selectNotificationlanguage(String notificationLanguage) {
+		scrollInsidePopup();
 		switch (notificationLanguage) {
 		case "eng":
 			clickOnElement(englishLanguageNotificationButton);
@@ -137,7 +139,12 @@ public class SelectLanguagePageArabic extends SelectLanguagePage {
 		return new ConsentPageArabic(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishDisplayed() {
+	public boolean isNotificationLanguageDisplayed() {
+		try {
+			scrollUntilElementVisible(notificationLanguageHeaderInArabic);
+		} catch (NoSuchElementException e) {
+			return false;
+		}
 		return isElementDisplayed(notificationLanguageHeaderInArabic);
 	}
 

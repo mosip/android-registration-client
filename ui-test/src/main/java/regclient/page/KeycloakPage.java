@@ -80,8 +80,8 @@ public class KeycloakPage extends BasePage {
 
 		scrollToTopSafe();
 
-		By nativePwd = By.xpath("//android.widget.TextView[@text='Password']");
-
+		By nativePwd = By.xpath("//*[@text='Password']");
+		scrollHorizontallyUntilVisible(nativePwd);
 		try {
 			((SupportsContextSwitching) driver).context("NATIVE_APP");
 			new WebDriverWait(driver, Duration.ofSeconds(8))
@@ -118,21 +118,23 @@ public class KeycloakPage extends BasePage {
 	}
 
 	By usernameTextBox1 = By.id("username");
+
 	public void enterUserName(String username) {
-	    sendKeys(usernameTextBox1, username);
+		sendKeys(usernameTextBox1, username);
 	}
 
 	By passwordTextBox1 = By.id("password");
-	public void enterPassword(String password) {
-	    sendKeys(passwordTextBox1, password);
-	}
 
+	public void enterPassword(String password) {
+		sendKeys(passwordTextBox1, password);
+	}
 
 	public void clickOnLoginButton() {
 		clickOnElement(loginButton);
 	}
 
 	public void clickOnPasswordOption() {
+		scrollHorizontallyUntilVisible(passwordOption);
 		clickOnElement(passwordOption);
 	}
 
@@ -164,25 +166,25 @@ public class KeycloakPage extends BasePage {
 	public void resumeArcApplication() {
 		openArcApplication();
 	}
-	
+
 	public void openKeycloakPage() {
 		openKeycloakWebView();
-	    waitForLoginPage();
+		waitForLoginPage();
 	}
 
 	public void waitForLoginPage() {
-	    for (int i = 0; i < 15; i++) {
-	        try {
-	            driver.findElement(By.id("username"));
-	            return;
-	        } catch (Exception e) {
-	            try {
-	                Thread.sleep(1000);
-	            } catch (InterruptedException ignored) {}
-	        }
-	    }
-	    throw new RuntimeException("Login page not loaded");
+		for (int i = 0; i < 15; i++) {
+			try {
+				driver.findElement(By.id("username"));
+				return;
+			} catch (Exception e) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ignored) {
+				}
+			}
+		}
+		throw new RuntimeException("Login page not loaded");
 	}
-
 
 }

@@ -3,6 +3,9 @@ package regclient.androidTestCases;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import org.openqa.selenium.WebDriverException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
@@ -72,6 +75,8 @@ import regclient.utils.TestDataReader;
 @Test
 public class LoginTest extends AndroidBaseTest {
 
+	private static final Logger logger = LoggerFactory.getLogger(LoginTest.class);
+
 	@Test(priority = 0, description = "Verify user login with valid credentials")
 	public void userloginTest() {
 	
@@ -106,11 +111,15 @@ public class LoginTest extends AndroidBaseTest {
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),
 				"Verify if welcome note \"welcome to community registration client!\" message should be displayeded.");
 
-		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		loginPage.enterUserName(KeycloakUserManager.differentCenterUser);
 
 		assertTrue(loginPage.isNextButtonEnabled(), "verify if the next button enabled");
 		loginPage.clickOnNextButton();
-
+		assertTrue(loginPage.isUserNotFoundErrorMessageDisplayed(), "Verify if user not found error message is displayed");
+		
+		loginPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
+		loginPage.clickOnNextButton();
+		
 		// assertFalse(loginPage.isLoginButtonEnabled(),"verify if the login button is
 		// disable without entering password");
 		assertTrue(loginPage.isBackButtonDisplayed(), "Verify if back button is displayed");
@@ -156,6 +165,8 @@ public class LoginTest extends AndroidBaseTest {
 		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
+		assertTrue(registrationTasksPage.isClientVersionDisplayed(),
+		        "Verify if client Version is displayed");
 
 		registrationTasksPage.clickOnOperationalTasksTitle();
 		if ("eng".equalsIgnoreCase(language)) {
@@ -491,7 +502,12 @@ public class LoginTest extends AndroidBaseTest {
 		boolean isDismissLoaded = false;
 
 		for (int i = 0; i < 3; i++) {
-			supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
+			try {
+				supervisorBiometricVerificationpage.clickOnVerifyAndSaveButton();
+			} catch (WebDriverException e) {
+				logger.warn("Attempt {} to click Verify & Save failed", i + 1, e);
+				continue;
+			}
 
 			if (supervisorBiometricVerificationpage.isDismissPageLoaded()) {
 				isDismissLoaded = true;
@@ -603,7 +619,7 @@ public class LoginTest extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
-		assertTrue(UpdateOperatorBiometricspage.isUpdateOperatorBiometricsPageLoaded(),
+		assertTrue(UpdateOperatorBiometricspage.isSupervisorBiometricUpdatePageLoaded(),
 				"Verify if update operator biometric page is loaded");
 		if (FetchUiSpec.eye.equals("yes")) {
 			UpdateOperatorBiometricspage.clickOnIrisScan();
@@ -712,7 +728,7 @@ public class LoginTest extends AndroidBaseTest {
 			UpdateOperatorBiometricspage.clickOnNextButton();
 		}
 
-		assertTrue(UpdateOperatorBiometricspage.isUpdateOperatorBiometricsPageLoaded(),
+		assertTrue(UpdateOperatorBiometricspage.isSupervisorBiometricUpdatePageLoaded(),
 				"Verify if supervisor biometric update page is loaded");
 
 		assertTrue(UpdateOperatorBiometricspage.isVerifyAndSaveButtonEnabled(),

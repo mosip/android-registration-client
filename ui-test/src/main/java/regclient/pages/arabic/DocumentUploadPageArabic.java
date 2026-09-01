@@ -3,17 +3,28 @@ package regclient.pages.arabic;
 import static org.testng.Assert.assertTrue;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
+import io.appium.java_client.PerformsTouchActions;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.CameraPage;
@@ -21,7 +32,7 @@ import regclient.page.DocumentUploadPage;
 
 public class DocumentUploadPageArabic extends DocumentUploadPage {
 
-	@AndroidFindBy(accessibility = "تمويه")
+	@AndroidFindBy(accessibility = "يزيل")
 	private WebElement PopUpCloseButton;
 
 	@AndroidFindBy(accessibility = "رجوع")
@@ -61,9 +72,10 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 
 	@SuppressWarnings("deprecation")
 	public boolean isDoccumentUploadPageDisplayed() {
-		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
-				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\""
-						+ FetchUiSpec.getScreenTitle("Documents") + "\"))")));
+		scrollToTop();
+		swipeRightUntilTabDisplayed("تحميل المستندات");
+
+		return driver.findElements(MobileBy.AccessibilityId(FetchUiSpec.getScreenTitle("Documents"))).size() > 0;
 	}
 
 	public DocumentUploadPage clickOnSaveButton() {
@@ -94,7 +106,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -126,7 +138,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -163,7 +175,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -206,7 +218,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 						By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 								+ "\")]/parent::android.view.View/parent::android.view.View")));
 				if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-					swipeOrScroll();
+					swipeUp();
 					clickOnElement(findElementWithRetry(
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -237,7 +249,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 							By.xpath("//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 									+ "\")]/parent::android.view.View/parent::android.view.View")));
 					if (!isElementDisplayedOnScreen(PopUpCloseButton)) {
-						swipeOrScroll();
+						swipeUp();
 						clickOnElement(findElementWithRetry(By.xpath(
 								"//android.view.View[contains(@content-desc, \"" + FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/parent::android.view.View")));
@@ -264,6 +276,58 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 				}
 			}
 
+		}
+	}
+
+	public boolean isPacketSizeDisplayed() {
+		try {
+			WebElement packetSize = driver
+					.findElement(By.xpath("//android.view.View[contains(@content-desc,'Size:')]"));
+
+			String sizeText = packetSize.getAttribute("contentDescription");
+			return sizeText.matches("Size: \\d+(\\.\\d+)?\\s?(KB|MB)");
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public void swipeRightUntilTabDisplayed(String tabContentDesc) {
+		// If already displayed, no need to swipe
+		if (!driver.findElements(By.xpath("//android.view.View[@content-desc='" + tabContentDesc + "']")).isEmpty()) {
+			return;
+		}
+
+		for (int i = 0; i < 10; i++) {
+			if (!driver.findElements(By.xpath("//android.view.View[@content-desc='" + tabContentDesc + "']")).isEmpty())
+				break;
+
+			// Check if swipe anchor tab exists before using it
+			List<WebElement> anchorList = driver
+					.findElements(By.xpath("//android.view.View[@content-desc='التفاصيل الديموغرافية']"));
+
+			if (anchorList.isEmpty())
+				break;
+
+			WebElement startElement = anchorList.get(0);
+			int startX = startElement.getLocation().getX() + startElement.getSize().getWidth() / 2;
+			int startY = startElement.getLocation().getY() + startElement.getSize().getHeight() / 2;
+
+			PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+			Sequence swipe = new Sequence(finger, 1);
+
+			swipe.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
+			swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+			swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000), PointerInput.Origin.viewport(),
+					startX + 500, startY));
+			swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+			driver.perform(Arrays.asList(swipe));
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

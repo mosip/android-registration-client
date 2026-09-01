@@ -140,7 +140,7 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	@AndroidFindBy(accessibility = "HOME")
 	private WebElement homeButton;
 
-	@AndroidFindBy(accessibility = "Update Operator Biometrics")
+	@AndroidFindBy(accessibility = "Supervisor's Biometric Update")
 	private WebElement updateOperatorBiometrics;
 
 	public void clickOnIrisScan() {
@@ -185,18 +185,22 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	}
 
 	public boolean isRightHandScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
 	public boolean isLeftHandScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
 	public boolean isThumbsScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
 	public boolean isFaceScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(faceScanTitle);
 	}
 
@@ -265,9 +269,6 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
-		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
-		}
 		clickOnElement(temporaryButton);
 	}
 
@@ -276,9 +277,6 @@ public class UpdateOperatorBiometricspageEnglish extends UpdateOperatorBiometric
 	}
 
 	public void enterCommentsInTextBox(String comments) {
-		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
-		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
 

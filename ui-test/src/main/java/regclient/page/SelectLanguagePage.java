@@ -24,6 +24,6 @@ public abstract class SelectLanguagePage extends BasePage {
 
 	public abstract ConsentPage clickOnSubmitButton();
 
-	public abstract boolean isNotificationLanguageEnglishDisplayed();
+	public abstract boolean isNotificationLanguageDisplayed();
 
 }

@@ -9,8 +9,6 @@ import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
-import regclient.pages.english.DemographicDetailsPageEnglish;
-import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class ConsentPageHindi extends ConsentPage {
 

@@ -68,6 +68,9 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 	
 	@AndroidFindBy(accessibility = "Restart")
 	private WebElement restartButton;
+	
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Client Version')]")
+	private WebElement clientVersionText;
 
 	public RegistrationTasksPageEnglish(AppiumDriver driver) {
 		super(driver);
@@ -194,6 +197,11 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 	    }
 
 	    throw new RuntimeException("Sync popup not displayed");
+	}
+	
+	public boolean isClientVersionDisplayed() {
+	    String versionText = clientVersionText.getAttribute("contentDescription");
+	    return versionText.contains("Client Version");
 	}
 
 }

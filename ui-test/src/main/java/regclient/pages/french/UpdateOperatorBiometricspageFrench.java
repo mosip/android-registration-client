@@ -1,10 +1,6 @@
 package regclient.pages.french;
 
-import java.time.Duration;
-
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -140,7 +136,7 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 	@AndroidFindBy(accessibility = "MAISON")
 	private WebElement homeButton;
 
-	@AndroidFindBy(accessibility = "Mettre à jour les données biométriques de l'opérateur")
+	@AndroidFindBy(accessibility = "Mise à jour biométrique du superviseur")
 	private WebElement updateOperatorBiometrics;
 
 	public void clickOnIrisScan() {
@@ -262,7 +258,7 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(temporaryButton);
 	}
@@ -273,7 +269,7 @@ public class UpdateOperatorBiometricspageFrench extends UpdateOperatorBiometrics
 
 	public void enterCommentsInTextBox(String comments) {
 		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}

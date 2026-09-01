@@ -1,58 +1,35 @@
 package regclient.androidTestCases;
 
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
 
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
 import regclient.api.ArcConfigManager;
-import regclient.api.FetchUiSpec;
 import regclient.api.KeycloakUserManager;
 import regclient.page.BasePage;
 import regclient.page.LoginPage;
 import regclient.page.MockSBIPage;
-import regclient.page.OperationalTaskPage;
-import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SettingsPage;
-import regclient.page.UpdateOperatorBiometricspage;
 import regclient.pages.arabic.LoginPageArabic;
-import regclient.pages.arabic.OperationalTaskPageArabic;
-import regclient.pages.arabic.ProfilePageArabic;
 import regclient.pages.arabic.RegistrationTasksPageArabic;
 import regclient.pages.arabic.SettingsPageArabic;
-import regclient.pages.arabic.UpdateOperatorBiometricspageArabic;
 import regclient.pages.english.LoginPageEnglish;
-import regclient.pages.english.OperationalTaskPageEnglish;
-import regclient.pages.english.ProfilePageEnglish;
 import regclient.pages.english.RegistrationTasksPageEnglish;
 import regclient.pages.english.SettingsPageEnglish;
-import regclient.pages.english.UpdateOperatorBiometricspageEnglish;
 import regclient.pages.french.LoginPageFrench;
-import regclient.pages.french.OperationalTaskPageFrench;
-import regclient.pages.french.ProfilePageFrench;
 import regclient.pages.french.RegistrationTasksPageFrench;
 import regclient.pages.french.SettingsPageFrench;
-import regclient.pages.french.UpdateOperatorBiometricspageFrench;
 import regclient.pages.hindi.LoginPageHindi;
-import regclient.pages.hindi.OperationalTaskPageHindi;
-import regclient.pages.hindi.ProfilePageHindi;
 import regclient.pages.hindi.RegistrationTasksPageHindi;
 import regclient.pages.hindi.SettingsPageHindi;
-import regclient.pages.hindi.UpdateOperatorBiometricspageHindi;
 import regclient.pages.kannada.LoginPageKannada;
-import regclient.pages.kannada.OperationalTaskPageKannada;
-import regclient.pages.kannada.ProfilePageKannada;
 import regclient.pages.kannada.RegistrationTasksPageKannada;
 import regclient.pages.kannada.SettingsPageKannada;
-import regclient.pages.kannada.UpdateOperatorBiometricspageKannada;
 import regclient.pages.tamil.LoginPageTamil;
-import regclient.pages.tamil.OperationalTaskPageTamil;
-import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SettingsPageTamil;
-import regclient.pages.tamil.UpdateOperatorBiometricspageTamil;
 import regclient.utils.TestDataReader;
 
 public class Settings extends AndroidBaseTest {
@@ -138,6 +115,9 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isDeviceSettingsPageDisplayed(), "Verify if device settings page displayed");
 
+		assertTrue(settingsPage.isDeviceSettingsLabelDisplayedInLoggedLanguage(),
+				"Verify if device settings label displayed in logged language");
+
 		assertTrue(settingsPage.isScanNowButtonDisplayed(), "Verify if scan now button displayed");
 
 		settingsPage.clickOnScanNowButton();
@@ -165,8 +145,7 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isScanNowButtonDisplayed(), "Verify if scan now button displayed");
 
-//		Now we not getting NoDevicesFound message so comment out
-//		assertTrue(settingsPage.isNoDevicesFoundDisplayed(), "Verify if no devices found displayed");
+		assertTrue(settingsPage.isNoDevicesFoundDisplayed(), "Verify if no devices found displayed");
 
 		settingsPage.clickOnGlobalConfigSettingsTab();
 
@@ -188,12 +167,28 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isJobDisplayed("Master Data Sync"), "Verify if Masterdata Sync Card Displayed");
 
-//	current build after added submit button this scenario failing
-//		assertTrue(settingsPage.validateJobCardFields("Master Data Sync"), "Validate job card fields");
+		assertTrue(settingsPage.validateJobCardFields("Master Data Sync"), "Validate job card fields");
 
+		BasePage.waitTime(10);
 		settingsPage.clickOnSyncButton("Master Data Sync");
 
-//		assertTrue(settingsPage.isToastVisible("Master Data Sync Completed"), "Toast not found!");
+		assertTrue(settingsPage.isMasterDataToastMessageDisplayed(), "Verify if masterdata toast message Displayed");
+
+		// Verify Global config Settings Tab
+		settingsPage.clickOnGlobalConfigSettingsTab();
+		assertTrue(settingsPage.isGlobalConfigSettingsHeaderDisplayed(),
+				"Verify if global config settings header Displayed");
+		assertTrue(settingsPage.isKeyLabelDisplayed(), "Verify if key label Displayed");
+		assertTrue(settingsPage.isLocalValueLabelDisplayed(), "Verify if local value label Displayed");
+		assertTrue(settingsPage.isServerValueLabelDisplayed(), "Verify if server value label Displayed");
+
+		assertTrue(settingsPage.isConfigListPresent(), "Verify config keys are present under Global Config Settings");
+
+		assertTrue(settingsPage.isLocalValueBoxDisplayed(), "Verify local value box is displayed");
+
+		assertTrue(settingsPage.isGlobalConfigSettingsSearchBoxDisplayed(),
+				"Verify if global config settings search box is displayed");
 
 	}
+
 }

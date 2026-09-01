@@ -32,7 +32,7 @@ public class SettingsPageFrench extends SettingsPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Réglages de l'appareil\")")
 	private WebElement deviceSettingsTab;
 
-	@AndroidFindBy(accessibility = "Key\nServer Value\nLocal Value")
+	@AndroidFindBy(accessibility = "Paramètres de configuration globale")
 	private WebElement globalConfigSettingsHeader;
 
 	@AndroidFindBy(accessibility = "SUBMIT")
@@ -56,7 +56,7 @@ public class SettingsPageFrench extends SettingsPage {
 	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"mock.sbi.finger\")")
 	private WebElement fingerDeviceCard;
 
-	@AndroidFindBy(accessibility = "No devices found")
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Aucun appareil trouvé')]")
 	private WebElement noDevicesFound;
 
 	@AndroidFindBy(accessibility = "Submit Changes")
@@ -88,6 +88,27 @@ public class SettingsPageFrench extends SettingsPage {
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'leftslap_fingerprint_threshold')]//android.widget.EditText")
 	private WebElement leftSlapThresholdField;
+
+	@AndroidFindBy(xpath = "//android.widget.Toast[@text='Master Data Sync Completed']")
+	private WebElement masterDatatoastMessage;
+
+	@AndroidFindBy(accessibility = "key")
+	private WebElement keyLabel;
+
+	@AndroidFindBy(accessibility = "server_value")
+	private WebElement serverValueLabel;
+
+	@AndroidFindBy(accessibility = "local_value")
+	private WebElement localValueLabel;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'mosip.registration.')]")
+	private WebElement configKeys;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'local_value_')]")
+	private WebElement localValueBox;
+
+	@AndroidFindBy(accessibility = "global_config_search")
+	private WebElement searchBox;
 
 	public SettingsPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -250,5 +271,46 @@ public class SettingsPageFrench extends SettingsPage {
 		WebElement jobElement = driver.findElement(job);
 		WebElement syncBtn = jobElement.findElement(By.xpath(".//android.widget.Button[1]"));
 		syncBtn.click();
+	}
+
+	public boolean isMasterDataToastMessageDisplayed() {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions
+					.presenceOfElementLocated(By.xpath("//android.widget.Toast[@text='Master Data Sync Completed']")));
+			return true;
+		} catch (Exception e) {
+
+			return false;
+		}
+	}
+
+	public boolean isKeyLabelDisplayed() {
+		return isElementDisplayed(keyLabel);
+	}
+
+	public boolean isServerValueLabelDisplayed() {
+		return isElementDisplayed(serverValueLabel);
+	}
+
+	public boolean isLocalValueLabelDisplayed() {
+		return isElementDisplayed(localValueLabel);
+	}
+
+	public boolean isConfigListPresent() {
+		return isElementDisplayed(configKeys);
+	}
+
+	public boolean isLocalValueBoxDisplayed() {
+		return isElementDisplayed(localValueBox);
+	}
+
+	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
+		String actualLabel = deviceSettingsPage.getAttribute("content-desc");
+		return actualLabel.equals("Réglages de l'appareil");
+	}
+
+	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
+		return isElementDisplayed(searchBox);
 	}
 }
