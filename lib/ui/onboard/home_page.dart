@@ -85,9 +85,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void syncData(BuildContext context) async {
-    TelemetryService.instance.onTaskSelected('sync_data');
   void syncMasterData(BuildContext context) async {
+    TelemetryService.instance.onTaskSelected('sync_data');
     await connectivityProvider.checkNetworkConnection();
     if (!mounted) return;
     if (!connectivityProvider.isConnected) {
