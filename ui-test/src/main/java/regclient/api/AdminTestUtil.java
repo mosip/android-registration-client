@@ -132,6 +132,7 @@ public class AdminTestUtil extends BaseTestCase {
 			mapUserToCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-operator"),
 					propsKernel.getProperty("regCenterId"));
 			mapCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-operator"));
+			// user zone and center mapping
 			KeycloakUserManager.createOnboardingUser();
 			mapUserToZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-onboarder"),
 					propsKernel.getProperty("zone"));
@@ -139,7 +140,14 @@ public class AdminTestUtil extends BaseTestCase {
 			mapUserToCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-onboarder"),
 					propsKernel.getProperty("regCenterId"));
 			mapCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-onboarder"));
-
+			// user zone and center mapping
+			KeycloakUserManager.createUserForDifferentCenter();
+			mapUserToZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-differentCenterUser"),
+					propsKernel.getProperty("zone"));
+			mapZone(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-differentCenterUser"));
+			mapUserToCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-differentCenterUser"),
+					propsKernel.getProperty("diffRegCenterId"));
+			mapCenter(BaseTestCase.currentModule + "-" + propsKernel.getProperty("iam-users-to-create-differentCenterUser"));
 			initialized = true;
 		}
 	}

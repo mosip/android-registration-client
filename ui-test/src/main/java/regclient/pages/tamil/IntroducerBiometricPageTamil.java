@@ -8,7 +8,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.FetchUiSpec;
 import regclient.page.BiometricDetailsPage;
 import regclient.page.IntroducerBiometricPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
 	
@@ -44,7 +43,7 @@ public class IntroducerBiometricPageTamil extends IntroducerBiometricPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"ஊடுகதிர்\"))")
 	private WebElement scanButton;
-	
+
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'Iris பிடிப்பு')]")
 	private WebElement irisCapturerHeader;
 	

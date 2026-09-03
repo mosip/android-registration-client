@@ -9,7 +9,6 @@ import regclient.page.OperationalTaskPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.pages.english.SelectLanguagePageEnglish;
 
 public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 
@@ -73,6 +72,9 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 	
 	@AndroidFindBy(accessibility = "Redémarrer")
 	private WebElement restartButton;
+
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Client Version')]")
+	private WebElement clientVersionText;
 
 	public SelectLanguagePage clickOnNewRegistrationButton() {
 		clickOnElement(newRegistrationButton);
@@ -191,5 +193,10 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 	        waitTime(5);
 	    }
 	    throw new RuntimeException("Sync popup not displayed");
+	}
+
+	public boolean isClientVersionDisplayed() {
+		String versionText = clientVersionText.getAttribute("contentDescription");
+		return versionText.contains("Client Version");
 	}
 }

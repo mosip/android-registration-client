@@ -13,7 +13,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.FetchUiSpec;
 import regclient.page.ConsentPage;
 import regclient.page.UpdateUINPage;
-import regclient.pages.english.ConsentPageEnglish;
 
 public class UpdateUINPageTamil extends UpdateUINPage{
 	

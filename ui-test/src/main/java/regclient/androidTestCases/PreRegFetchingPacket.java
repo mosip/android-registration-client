@@ -259,6 +259,14 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				assertTrue(demographicPage.isPreRegFetchDataTextBoxDisplay(),
 						"Verify if fetchdata button is displayed");
 
+				//These commented-out code are Required for Future purpose
+//				demographicPage.fetchInvalidPreregApplicationId("rtyuio12637393");
+//
+//				assertTrue(demographicPage.isApplicationIdDoesNotExistMessageDisplay(),
+//						"Verify if invalid Application ID error message is displayed");
+//
+//				demographicPage.clickOnOkayButton();
+
 				demographicPage.fetchPreregApplicationId("adult");
 
 //				demographicPage.validateFetchedDemographicData();
@@ -700,8 +708,8 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 
 		selectLanguagePage.selectSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
-				"verify if the notification language display in english");
+		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
+				"verify if the notification language displayed");
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -1279,8 +1287,8 @@ public class PreRegFetchingPacket extends AndroidBaseTest {
 				"Verify if user should not be allow to navigate to next screen.");
 		selectLanguagePage.selectSecondLanguage();
 
-		assertTrue(selectLanguagePage.isNotificationLanguageEnglishDisplayed(),
-				"verify if the notification language display in english");
+		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
+				"verify if the notification language displayed");
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");

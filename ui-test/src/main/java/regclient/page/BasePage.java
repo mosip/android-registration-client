@@ -13,6 +13,8 @@ import io.appium.java_client.remote.SupportsContextSwitching;
 import io.appium.java_client.remote.SupportsRotation;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import io.mosip.testrig.apirig.testrunner.OTPListener;
+import regclient.api.FetchUiSpec;
 import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.utils.TestDataReader;
 
@@ -60,6 +62,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class BasePage {
 	protected AppiumDriver driver;
@@ -158,7 +161,7 @@ public class BasePage {
 		waitTime(1);
 		((HidesKeyboard) driver).hideKeyboard();
 	}
-	
+
 	protected void clickAndsendKeysToTextBox4(WebElement element, String text) {
 		this.waitForElementToBeVisible(element);
 		element.click();
@@ -216,13 +219,35 @@ public class BasePage {
 
 	protected void cropCaptureImage(WebElement element) {
 		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
+
 		Sequence sequence = new Sequence(finger1, 1)
 				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(),
-						getCenterOfElement(element.getLocation(), element.getSize()))) // ,43,1166
+						getCenterOfElement(element.getLocation(), element.getSize())))
 				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
 				.addAction(new Pause(finger1, Duration.ofMillis(200)))
-				.addAction(finger1.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 623, 261))
+
+				// move further inside to create small square
+				.addAction(finger1.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 260, 320))
+
 				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+		driver.perform(Collections.singletonList(sequence));
+	}
+
+	protected void cropCaptureImageEnglishFrench(WebElement element) {
+
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+
+		Sequence sequence = new Sequence(finger, 1)
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(),
+						getCenterOfElement(element.getLocation(), element.getSize())))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+				.addAction(new Pause(finger, Duration.ofMillis(200)))
+				.addAction(finger.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), 623, 261)) // adjust
+																														// as
+																														// needed
+				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
 		driver.perform(Collections.singletonList(sequence));
 	}
 
@@ -237,28 +262,9 @@ public class BasePage {
 		wait.until(ExpectedConditions.visibilityOf(element));
 	}
 
-	protected void swipeOrScroll() {
-		Dimension size = driver.manage().window().getSize();
-		int startX = size.getWidth() / 2;
-		int startY = size.getHeight() / 2;
-		int endX = startX;
-		int endY = (int) (size.getHeight() * 0.28);
-		PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
-		Sequence sequence = new Sequence(finger1, 1)
-				.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-				.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-				.addAction(new Pause(finger1, Duration.ofMillis(200)))
-				.addAction(
-						finger1.createPointerMove(Duration.ofMillis(100), PointerInput.Origin.viewport(), endX, endY))
-				.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-
-		driver.perform(Collections.singletonList(sequence));
-	}
-
 	protected boolean isElementDisplayedOnScreen(WebElement element) {
 		try {
-			element.isDisplayed();
-			return true;
+			return element.isDisplayed();
 		} catch (Exception e) {
 			return false;
 		}
@@ -288,7 +294,6 @@ public class BasePage {
 	public WebElement retryFindElement(WebElement element, Duration timeout) {
 		int attempts = 0;
 		int maxAttempts = 5;
-
 		while (attempts < maxAttempts) {
 			try {
 				WebDriverWait wait = new WebDriverWait(driver, timeout);
@@ -345,37 +350,38 @@ public class BasePage {
 	}
 
 	public WebElement findElementWithRetry(By by) {
+
 		int MAX_RETRIES = 10;
 		int RETRY_DELAY_MS = 2000;
-		WebElement element = null;
 
 		for (int i = 0; i < MAX_RETRIES; i++) {
+
 			try {
-				element = driver.findElement(by);
 
-				element.isDisplayed();
+				WebElement element = driver.findElement(by);
 
-				return element;
+				if (element.isDisplayed()) {
+					return element;
+				}
 
 			} catch (NoSuchElementException | StaleElementReferenceException e) {
 
-				if (i < MAX_RETRIES - 1) {
-					try {
-						Thread.sleep(RETRY_DELAY_MS);
-					} catch (InterruptedException ie) {
-						Thread.currentThread().interrupt();
-					}
-
-					// scroll and retry
-					swipeOrScroll();
-
-				} else {
-					throw new NoSuchElementException(
-							"Element not found or stale after " + MAX_RETRIES + " attempts: " + by);
+				try {
+					Thread.sleep(RETRY_DELAY_MS);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
 				}
 			}
+
+			// Scroll and retry
+			if (i < 5) {
+				swipeUp();
+			} else {
+				swipeDown();
+			}
 		}
-		return element;
+
+		throw new NoSuchElementException("Element not found after " + MAX_RETRIES + " attempts: " + by);
 	}
 
 	public WebElement findElement(By by) {
@@ -386,13 +392,13 @@ public class BasePage {
 		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
 				element = driver.findElement(by);
-				break; // Exit loop if the element is found
+				break;
 			} catch (NoSuchElementException e) {
 				if (i < MAX_RETRIES - 1) {
 					try {
-						Thread.sleep(RETRY_DELAY_MS); // Wait before retrying
+						Thread.sleep(RETRY_DELAY_MS);
 					} catch (InterruptedException ie) {
-						Thread.currentThread().interrupt(); // Restore interrupted status
+						Thread.currentThread().interrupt();
 					}
 				} else {
 					throw new NoSuchElementException("Element not found after " + MAX_RETRIES + " attempts.");
@@ -502,7 +508,7 @@ public class BasePage {
 			} catch (Exception ignored) {
 			}
 		}
-		return false; // no webview
+		return false;
 	}
 
 	public static void enableWifiAndData() throws IOException {
@@ -536,9 +542,8 @@ public class BasePage {
 		try {
 			return findElementWithRetry(locator); // reuse your existing retry logic
 		} catch (Exception e) {
-			// Optional: log for debugging
 			logger.info("Element not found after retries: " + locator);
-			return null; // prevents NoSuchElementException / NPE
+			return null;
 		}
 	}
 
@@ -652,39 +657,16 @@ public class BasePage {
 	}
 
 	protected void scrollToTop() {
-		Dimension size = driver.manage().window().getSize();
-		int startX = size.getWidth() / 2;
-		int startY = (int) (size.getHeight() * 0.25);
-		int endX = startX;
-		int endY = (int) (size.getHeight() * 0.75);
-
-		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-		Sequence scrollUp = new Sequence(finger, 1)
-				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
-				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-				.addAction(new Pause(finger, Duration.ofMillis(200)))
-				.addAction(finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), endX, endY))
-				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-		for (int i = 0; i < 5; i++) {
-			driver.perform(Collections.singletonList(scrollUp));
+		int maxScrolls = 5;
+		for (int i = 0; i < maxScrolls; i++) {
+			swipeDown();
 		}
 	}
 
-	protected void ensureVisibleBySwiping(By fullId, By shortId) {
-		AndroidDriver ad = (AndroidDriver) driver;
-		int tries = 0;
-		while (tries++ < 6 && ad.findElements(fullId).isEmpty() && ad.findElements(shortId).isEmpty()) {
-			Dimension d = ad.manage().window().getSize();
-			int x = d.width / 2;
-			int startY = (int) (d.height * 0.65);
-			int endY = (int) (d.height * 0.35);
-			new TouchAction<>(ad).press(PointOption.point(x, startY))
-					.waitAction(WaitOptions.waitOptions(Duration.ofMillis(300))).moveTo(PointOption.point(x, endY))
-					.release().perform();
-			try {
-				Thread.sleep(300);
-			} catch (InterruptedException ignored) {
-			}
+	protected void scrollToBottom() {
+		int maxScrolls = 5;
+		for (int i = 0; i < maxScrolls; i++) {
+			swipeUp();
 		}
 	}
 
@@ -764,8 +746,7 @@ public class BasePage {
 	}
 
 	protected void swipeUp() {
-		hideKeyboardIfVisible(); // ⭐ EXTRA SAFETY
-
+		hideKeyboardIfVisible();
 		Dimension size = driver.manage().window().getSize();
 		int startX = size.width / 2;
 		int startY = (int) (size.height * 0.85);
@@ -782,44 +763,44 @@ public class BasePage {
 		driver.perform(Collections.singletonList(swipe));
 	}
 
+	protected void swipeDown() {
+		hideKeyboardIfVisible();
+		Dimension size = driver.manage().window().getSize();
+		int startX = size.width / 2;
+		int startY = (int) (size.height * 0.40);
+		int endY = (int) (size.height * 0.85);
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		Sequence swipe = new Sequence(finger, 1)
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+				.addAction(
+						finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), startX, endY))
+				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+		driver.perform(Collections.singletonList(swipe));
+	}
+
 	protected void scrollUntilElementVisible(By locator) {
-
 		hideKeyboardIfVisible();
-
-		try {
-			WebElement el = driver.findElement(locator);
-			if (el.isDisplayed()) {
-				return;
-			}
-		} catch (Exception ignored) {
-
-		}
-
 		for (int i = 0; i < 6; i++) {
-			swipeUp();
 			try {
-				WebElement el = driver.findElement(locator);
-				if (el.isDisplayed()) {
+				WebElement element = driver.findElement(locator);
+				if (element.isDisplayed()) {
 					return;
 				}
 			} catch (Exception ignored) {
 			}
-		}
-
-		scrollToTopSafe();
-		hideKeyboardIfVisible();
-
-		for (int i = 0; i < 6; i++) {
 			swipeUp();
+		}
+		for (int i = 0; i < 6; i++) {
 			try {
-				WebElement el = driver.findElement(locator);
-				if (el.isDisplayed()) {
+				WebElement element = driver.findElement(locator);
+				if (element.isDisplayed()) {
 					return;
 				}
 			} catch (Exception ignored) {
 			}
+			swipeDown();
 		}
-
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
 	}
 
@@ -827,7 +808,6 @@ public class BasePage {
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 			wait.ignoring(StaleElementReferenceException.class);
-
 			return wait.until(Webdriver -> {
 				WebElement element = Webdriver.findElement(locator);
 				return element.isEnabled();
@@ -840,12 +820,9 @@ public class BasePage {
 
 	public void hideKeyboardAndClick(By locator) {
 		hideKeyboardIfVisible();
-
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.ignoring(StaleElementReferenceException.class);
-
 		WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
-
 		el.click();
 	}
 
@@ -853,42 +830,22 @@ public class BasePage {
 		try {
 			((HidesKeyboard) driver).hideKeyboard();
 		} catch (Exception e) {
-			// Keyboard not visible – ignore
 		}
-	}
-
-	public void scrollUntilVisible(By locator, int maxScrolls) {
-		int count = 0;
-		while (count < maxScrolls) {
-			if (isElementDisplayed(locator)) {
-				return;
-			}
-			swipeOrScroll();
-			count++;
-		}
-		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
 	}
 
 	protected void clickAndSendKeysToTextBox(By locator, String text) {
-
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
 		for (int i = 0; i < 2; i++) {
 			try {
 				WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
-
 				element.click();
 				element.clear();
 				element.sendKeys(text);
-
 				hideKeyboardIfVisible();
 				return;
-
 			} catch (StaleElementReferenceException e) {
-
 			}
 		}
-
 		throw new RuntimeException("Unable to interact with textbox");
 	}
 
@@ -937,22 +894,15 @@ public class BasePage {
 		try {
 			ProcessBuilder processBuilder = new ProcessBuilder(command);
 			processBuilder.redirectErrorStream(true);
-
 			Process process = processBuilder.start();
-
-			// Read output (important to prevent stream blocking)
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 				while (reader.readLine() != null) {
-					// optionally log output
 				}
 			}
-
 			int exitCode = process.waitFor();
-
 			if (exitCode != 0) {
 				System.out.println("ADB command failed with exit code: " + exitCode);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -966,49 +916,170 @@ public class BasePage {
 			}
 		} catch (Exception ignored) {
 		}
-
-		for (int i = 0; i < 6; i++) {
-			swipeUp();
+		for (int i = 0; i < 4; i++) {
 			try {
 				if (element.isDisplayed()) {
 					return;
 				}
 			} catch (Exception ignored) {
 			}
+			swipeUp();
 		}
+		for (int i = 0; i < 4; i++) {
 
-		scrollToTopSafe();
-		hideKeyboardIfVisible();
-
-		for (int i = 0; i < 6; i++) {
-			swipeUp();
 			try {
 				if (element.isDisplayed()) {
 					return;
 				}
 			} catch (Exception ignored) {
 			}
+
+			swipeDown();
 		}
 
 		throw new NoSuchElementException("Element not visible after scrolling: " + element);
 	}
-	
+
 	protected void tapScreenCenter() {
+		Dimension size = driver.manage().window().getSize();
+		int x = size.width / 2;
+		int y = size.height / 2;
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		Sequence tap = new Sequence(finger, 1);
+		tap.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y));
+		tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+		tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
-	    Dimension size = driver.manage().window().getSize();
+		driver.perform(Arrays.asList(tap));
+	}
 
-	    int x = size.width / 2;
-	    int y = size.height / 2;
+	protected void swipeLeft() {
+		Dimension size = driver.manage().window().getSize();
+		int startX = (int) (size.width * 0.85);
+		int endX = (int) (size.width * 0.20);
+		int startY = size.height / 2;
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		Sequence swipe = new Sequence(finger, 1)
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+				.addAction(
+						finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), endX, startY))
+				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
-	    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		driver.perform(Collections.singletonList(swipe));
+	}
 
-	    Sequence tap = new Sequence(finger, 1);
-	    tap.addAction(finger.createPointerMove(Duration.ZERO,
-	            PointerInput.Origin.viewport(), x, y));
-	    tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-	    tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+	protected void swipeRight() {
 
-	    driver.perform(Arrays.asList(tap));
+		Dimension size = driver.manage().window().getSize();
+		int startX = (int) (size.width * 0.20);
+		int endX = (int) (size.width * 0.85);
+		int startY = size.height / 2;
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		Sequence swipe = new Sequence(finger, 1)
+				.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+				.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+				.addAction(
+						finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), endX, startY))
+				.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+		driver.perform(Collections.singletonList(swipe));
+	}
+
+	protected void scrollHorizontallyUntilVisible(By locator) {
+
+	    for (int i = 0; i < 4; i++) {
+	        try {
+	            if (driver.findElement(locator).isDisplayed()) {
+	                return;
+	            }
+	        } catch (Exception ignored) {
+	        }
+	        swipeLeft();
+	    }
+
+	    for (int i = 0; i < 4; i++) {
+	        try {
+	            if (driver.findElement(locator).isDisplayed()) {
+	                return;
+	            }
+	        } catch (Exception ignored) {
+	        }
+	        swipeRight();
+	    }
+
+	    throw new NoSuchElementException("Element not visible after horizontal scrolling");
+	}
+
+	public void scrollInsidePopup() {
+		Dimension size = driver.manage().window().getSize();
+		int startX = size.width / 2;
+		int startY = (int) (size.height * 0.72);
+		int endY = (int) (size.height * 0.52);
+		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+		Sequence swipe = new Sequence(finger, 1);
+		swipe.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
+		swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+		swipe.addAction(finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), startX, endY));
+		swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+		driver.perform(Collections.singletonList(swipe));
+	}
+
+	protected void scrollHorizontallyUntilVisible(WebElement element) {
+		for (int i = 0; i < 4; i++) {
+			try {
+				if (element.isDisplayed()) {
+					return;
+				}
+			} catch (Exception ignored) {
+			}
+			swipeLeft();
+		}
+		for (int i = 0; i < 4; i++) {
+
+			try {
+				if (element.isDisplayed()) {
+					return;
+				}
+			} catch (Exception ignored) {
+			}
+			swipeRight();
+		}
+
+		throw new NoSuchElementException("Element not visible after horizontal scrolling");
+	}
+
+	// Shared by ApplicantBiometricsPage*/BiometricDetailsPage* isXxxDisplayedForCorrection() checks across all
+	// locales: the spec label may be null/empty/contain regex metacharacters, so it's guarded and quoted, with
+	// fallbackLabel offered as an alternate match.
+	protected boolean isDisplayedForCorrectionByLabel(String specId, String fallbackLabel) {
+		String label = FetchUiSpec.getValueUsingId(specId);
+		String pattern = (label == null || label.trim().isEmpty()) ? Pattern.quote(fallbackLabel)
+				: Pattern.quote(label) + "|" + Pattern.quote(fallbackLabel);
+		return isElementDisplayed(findElementWithRetry(MobileBy.AndroidUIAutomator(
+				"new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionMatches(\".*("
+						+ pattern + ").*\"))")));
+	}
+
+	// Sentinel returned by OTPListener.getAdditionalReqId while packet creation hasn't produced an id yet.
+	protected static final String Additional_Req_Id_Failed = "{Failed}";
+
+	protected static String waitForAdditionalReqId(String emailId, int maxOuterAttempts, int waitSecondsBetweenAttempts) {
+		String additionalInfoReqId = "";
+		for (int attempt = 1; attempt <= maxOuterAttempts; attempt++) {
+			additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
+			if (additionalInfoReqId != null && !additionalInfoReqId.trim().isEmpty()
+					&& !additionalInfoReqId.equals(Additional_Req_Id_Failed)) {
+				return additionalInfoReqId;
+			}
+			logger.info("AdditionalInfoRequestId not ready for {}, attempt {}/{}. Retrying...", emailId, attempt,
+					maxOuterAttempts);
+			if (attempt < maxOuterAttempts) {
+				waitTime(waitSecondsBetweenAttempts);
+			}
+		}
+		throw new IllegalStateException(
+				"AdditionalInfoRequestId not available for " + emailId + " after " + maxOuterAttempts + " attempts");
 	}
 
 }

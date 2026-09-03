@@ -205,7 +205,6 @@ public class PendingApprovalEnglish extends PendingApproval {
 	}
 
 	public boolean isPendingApprovalBiometricsInformationDisplayed() {
-		swipeOrScroll();
 		return isElementDisplayed(pendingApprovalBiometricsInformation);
 	}
 

@@ -9,7 +9,6 @@ import regclient.page.OperationalTaskPage;
 import regclient.page.ProfilePage;
 import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
-import regclient.pages.english.SelectLanguagePageEnglish;
 
 public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 
@@ -69,6 +68,9 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 	
 	@AndroidFindBy(accessibility = "Restart")
 	private WebElement restartButton;
+
+	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Client Version')]")
+	private WebElement clientVersionText;
 
 	public RegistrationTasksPageKannada(AppiumDriver driver) {
 		super(driver);
@@ -191,5 +193,10 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 	        waitTime(5);
 	    }
 	    throw new RuntimeException("Sync popup not displayed");
+	}
+
+	public boolean isClientVersionDisplayed() {
+		String versionText = clientVersionText.getAttribute("contentDescription");
+		return versionText.contains("Client Version");
 	}
 }

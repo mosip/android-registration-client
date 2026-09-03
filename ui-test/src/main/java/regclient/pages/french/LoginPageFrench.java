@@ -57,7 +57,7 @@ public class LoginPageFrench extends LoginPage {
 	@AndroidFindBy(accessibility = "Mot de passe incorrect!")
 	private WebElement passwordIncorrectErrorMessage;
 
-	@AndroidFindBy(accessibility = "français")
+	@AndroidFindBy(accessibility = "French")
 	private WebElement frenchButton;
 
 	@AndroidFindBy(accessibility = "PASSEZ À LA MAISON")

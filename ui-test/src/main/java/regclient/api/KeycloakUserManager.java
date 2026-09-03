@@ -29,6 +29,7 @@ public class KeycloakUserManager {
 	public static String onboardUser = getDateTime();
 	public static String onlyOperatorRoleUser = null;
 	public static String onboardingUser = null;
+	public static String differentCenterUser = null;
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(KeycloakUserManager.class);
 
@@ -294,6 +295,68 @@ public class KeycloakUserManager {
 			userResource.roles().realmLevel() //
 					.add((availableRoles.isEmpty() ? allRoles : availableRoles));
 
+		}
+	}
+	
+	public static void createUserForDifferentCenter() {
+		List<String> needsToBeCreatedUsers = List.of(ArcConfigManager.getIAMUsersToCreateDifferentCenterUser().split(","));
+		Keycloak keycloakInstance = getKeycloakInstance();
+		for (String needsToBeCreatedUser : needsToBeCreatedUsers) {
+			UserRepresentation user = new UserRepresentation();
+
+			if (needsToBeCreatedUser.equals("globaladmin")) {
+				differentCenterUser = needsToBeCreatedUser;
+			} else if (needsToBeCreatedUser.equals("masterdata-220005")) {
+				differentCenterUser = needsToBeCreatedUser;
+			} else {
+				differentCenterUser = BaseTestCase.currentModule + "-" + needsToBeCreatedUser;
+			}
+			logger.info(differentCenterUser);
+			user.setEnabled(true);
+			user.setUsername(differentCenterUser);
+			user.setFirstName(differentCenterUser);
+			user.setLastName(differentCenterUser);
+			user.setEmail("automation" + differentCenterUser + "@automationlabs.com");
+			// Get realm
+			RealmResource realmResource = keycloakInstance.realm(ArcConfigManager.getIAMRealmId());
+			UsersResource usersRessource = realmResource.users();
+			// Create user (requires manage-users role)
+			
+			var response = usersRessource.create(user);
+			logger.info("Response: {} {}", response.getStatus(), response.getStatusInfo());
+			if (response.getStatus() == 409) {
+				continue;
+			}
+			String userId = CreatedResponseUtil.getCreatedId(response);
+			logger.info("User created with userId: %s%n" + userId);
+
+			// Define password credential
+			CredentialRepresentation passwordCred = new CredentialRepresentation();
+
+			passwordCred.setTemporary(false);
+			passwordCred.setType(CredentialRepresentation.PASSWORD);
+
+			// passwordCred.setValue(userPassword.get(passwordIndex));
+			passwordCred.setValue(ArcConfigManager.getIAMUsersPassword());
+
+			UserResource userResource = usersRessource.get(userId);
+
+			// Set password credential
+			userResource.resetPassword(passwordCred);
+
+			// Getting all the roles
+			List<RoleRepresentation> allRoles = realmResource.roles().list();
+			List<RoleRepresentation> availableRoles = new ArrayList<>();
+			List<String> toBeAssignedRoles = List.of(ArcConfigManager.getRolesForUser().split(","));
+			for (String role : toBeAssignedRoles) {
+				if (allRoles.stream().anyMatch(r -> r.getName().equalsIgnoreCase(role))) {
+					availableRoles
+							.add(allRoles.stream().filter(r -> r.getName().equalsIgnoreCase(role)).findFirst().get());
+				}
+			}
+			// Assign realm role tester to user
+			userResource.roles().realmLevel() //
+					.add((availableRoles.isEmpty() ? allRoles : availableRoles));
 		}
 	}
 

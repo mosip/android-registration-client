@@ -1,5 +1,6 @@
 package regclient.pages.kannada;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -8,7 +9,6 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.api.FetchUiSpec;
 import regclient.page.ApplicantBiometricsPage;
 import regclient.page.BiometricDetailsPage;
-import regclient.pages.english.BiometricDetailsPageEnglish;
 
 public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
@@ -108,7 +108,7 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	
 	public  void enterCommentsInTextBox(String comments) {
 		if(!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox,comments);
 	}
@@ -119,14 +119,14 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
 	public void clickOnExceptionTypePermanentButton() {
 		if(!isElementDisplayedOnScreen(permanentButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(permanentButton);
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
 		if(!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(temporaryButton);	
 	}
@@ -257,7 +257,7 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 
 	public  boolean isExceptionCountDisplayed() {
 		if(!isElementDisplayedOnScreen(exceptionCount)) {
-			swipeOrScroll();
+			swipeUp();
 			isElementDisplayed(exceptionCount);
 		}
 		return isElementDisplayed(exceptionCount);
@@ -266,5 +266,21 @@ public class ApplicantBiometricsPageKannada extends ApplicantBiometricsPage {
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
 		return new BiometricDetailsPageKannada(driver);
+	}
+
+	public int getThresholdScore() {
+		String scoreText = findElement(By.xpath("//android.view.View[contains(@content-desc, '%')]"))
+		        .getAttribute("contentDescription");
+		return Integer.parseInt(scoreText.replaceAll("[^0-9]", ""));
+	}
+
+	public int irisAttemptLeft() {
+		String attemptText = irisCapturerHeader.getAttribute("contentDescription");
+		String count = attemptText.replaceAll("\\D+", "");
+		return Integer.parseInt(count);
+	}
+
+	public boolean isApplicantBiometricsPageDisplayedForCorrection() {
+		return isDisplayedForCorrectionByLabel("individualBiometrics", "Applicant Biometrics");
 	}
 }

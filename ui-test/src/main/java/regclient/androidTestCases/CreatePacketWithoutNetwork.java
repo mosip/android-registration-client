@@ -1,10 +1,10 @@
 package regclient.androidTestCases;
 
-import static org.junit.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
-import org.apache.log4j.Logger;
+
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
@@ -117,13 +117,11 @@ import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
-import regclient.utils.GenerateUinFromAid;
 import regclient.utils.TestDataReader;
 
-public class NewRegistrationAdult extends AndroidBaseTest {
-
+public class CreatePacketWithoutNetwork extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify adult new registration")
-	public void newRegistrationAdult() throws InterruptedException {
+	public void newRegistrationWithoutNetwork() throws IOException {
 
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
@@ -144,7 +142,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
 
-		final Logger logger = Logger.getLogger(NewRegistrationAdult.class);
 		final String language = TestDataReader.readData("language");
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -162,6 +159,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else {
 			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 		}
+
+		BasePage.disableWifiAndData();
 
 		loginPage.selectLanguage();
 
@@ -290,6 +289,8 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 				documentuploadPage.uploadDoccuments("adult", "ReferenceNumber");
 
+				assertTrue(documentuploadPage.isPacketSizeDisplayed(), "Verify packet size is displayed");
+
 				documentuploadPage.clickOnContinueButton();
 
 			} else if (screen.equals("BiometricDetails")) {
@@ -333,15 +334,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 					applicantBiometricsPage.clickOnScanButton();
 
 					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 1st attempt");
-					assertEquals(applicantBiometricsPage.irisAttemptLeft(), 2);
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 2nd attempt");
-					applicantBiometricsPage.closeScanCapturePopUp();
-
-					applicantBiometricsPage.clickOnScanButton();
-					assertTrue(applicantBiometricsPage.isIrisScan(), "Verify if iris scan 3rd attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 
 					biometricDetailsPage = applicantBiometricsPage.clickOnBackButton();
@@ -359,6 +351,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 					biometricDetailsPage = applicantBiometricsPage.clickOnBiometricsMenuButton();
+
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
@@ -433,7 +426,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		TestDataReader.saveData("AID", Aid);
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -488,9 +480,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
-		
+
 		registrationTasksPage.clickOnOperationalTasksTitle();
-		
+
 		if ("eng".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -541,24 +533,25 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(pendingApproval.isAuthenticateButtonEnabled(),
 				"Verify if authenticate button is enable after selecting packet");
 
+		pendingApproval.clickOnAuthenticateButton();
+		assertTrue(pendingApproval.isNoNetworkFoundDisplayed(), "Verify if no network found displayed");
+
+		BasePage.enableWifiAndData();
+		BasePage.waitTime(10);
+
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
 			pendingApproval.clickOnAuthenticateButton();
-			BasePage.waitTime(1);
 
 			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
 				isPageDisplayed = true;
 				break;
 			}
 		}
-		
+
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
-		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
-
-		assertTrue(pendingApproval.isInvalidUsernameMessageDisplayed(),
-				"Verify if invalid username messgae is displayed");
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser);
 
 		pendingApproval.enterPassword(ArcConfigManager.getIAMUsersPassword());
@@ -585,15 +578,20 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
-		manageApplicationsPage.enterWrongAID(Aid + 123);
-
-		assertTrue(manageApplicationsPage.isZeroApplicationDisplayed(), "Verify if wrong Aid should not display");
 		manageApplicationsPage.enterAID(Aid);
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 		manageApplicationsPage.selectApprovedValueDropdown();
 
 		assertTrue(manageApplicationsPage.isPacketApproved(Aid), "Verify if Filtre packet is approved ");
+
+		manageApplicationsPage.clickOnClearFilterButton();
+		manageApplicationsPage.scrollTillDisplayingApplicationCountVisible();
+		assertTrue(manageApplicationsPage.isClientStatusDropdownDisplayed(),
+				"Verify if client status dropdown displayed");
+
+		manageApplicationsPage.enterAID(Aid);
+
 		manageApplicationsPage.clickOnSearchCheckBox();
 
 		boolean uploadSuccess = false;
@@ -630,9 +628,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
-		String generatedUIN = TestDataReader.readData(Aid + "_UIN");
-		assertTrue(generatedUIN != null && !generatedUIN.isEmpty(), "Verify if UIN is generated successfully");
-		logger.info("UIN generation validation completed successfully");
 	}
 
 }

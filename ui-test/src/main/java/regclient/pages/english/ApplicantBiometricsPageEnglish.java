@@ -1,5 +1,6 @@
 package regclient.pages.english;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -101,14 +102,14 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	@AndroidFindBy(accessibility = "menu_back_button")
 	private WebElement biometricsMenuButton;
 
+	@AndroidFindBy(xpath = "//android.widget.ImageView[contains(@content-desc,'%')]")
+	WebElement thresholdScore;
+
 	public ApplicantBiometricsPageEnglish(AppiumDriver driver) {
 		super(driver);
 	}
 
 	public void enterCommentsInTextBox(String comments) {
-		if (!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
-		}
 		clickAndsendKeysToTextBox(commentsTextBox, comments);
 	}
 
@@ -118,16 +119,10 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public void clickOnExceptionTypePermanentButton() {
-		if (!isElementDisplayedOnScreen(permanentButton)) {
-			swipeOrScroll();
-		}
 		clickOnElement(permanentButton);
 	}
 
 	public void clickOnExceptionTypeTemporaryButton() {
-		if (!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
-		}
 		clickOnElement(temporaryButton);
 	}
 
@@ -212,22 +207,27 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public boolean isRightHandScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(rightHandScanTitle);
 	}
 
 	public boolean isLeftHandScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(leftHandScanTitle);
 	}
 
 	public boolean isThumbsScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(thumbsScanTitle);
 	}
 
 	public boolean isFaceScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(faceScanTitle);
 	}
 
 	public boolean isExceptionScanTitleDisplayed() {
+		scrollToTop();
 		return isElementDisplayed(exceptionScanTitle);
 	}
 
@@ -260,15 +260,29 @@ public class ApplicantBiometricsPageEnglish extends ApplicantBiometricsPage {
 	}
 
 	public boolean isExceptionCountDisplayed() {
-		if (!isElementDisplayedOnScreen(exceptionCount)) {
-			swipeOrScroll();
-			isElementDisplayed(exceptionCount);
-		}
 		return isElementDisplayed(exceptionCount);
 	}
 
 	public BiometricDetailsPage clickOnBiometricsMenuButton() {
 		clickOnElement(biometricsMenuButton);
 		return new BiometricDetailsPageEnglish(driver);
+	}
+
+	public int getThresholdScore() {
+
+		String scoreText = findElement(By.xpath("//android.view.View[@content-desc='95%']"))
+				.getAttribute("contentDescription");
+
+		return Integer.parseInt(scoreText.replace("%", "").trim());
+	}
+
+	public int irisAttemptLeft() {
+		String attemptText = irisCapturerHeader.getAttribute("contentDescription");
+		String count = attemptText.replaceAll("\\D+", "");
+		return Integer.parseInt(count);
+	}
+
+	public boolean isApplicantBiometricsPageDisplayedForCorrection() {
+		return isDisplayedForCorrectionByLabel("individualBiometrics", "Applicant Biometrics");
 	}
 }

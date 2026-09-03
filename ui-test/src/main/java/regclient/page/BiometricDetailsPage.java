@@ -39,6 +39,8 @@ public abstract class BiometricDetailsPage extends BasePage {
 	public abstract boolean isAdditionalInfoRequestIdTextboxDisplayed();
 
 	public abstract void enterAdditionalInfoUsingEmail(String emailId);
+
+	public abstract boolean isBiometricDetailsPageDisplayedForCorrection();
 	
 //	Below commentout method may be required in future
 //	public abstract void handleBiometricDetails();

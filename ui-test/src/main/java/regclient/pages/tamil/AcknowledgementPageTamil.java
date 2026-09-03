@@ -9,8 +9,6 @@ import regclient.api.FetchUiSpec;
 import regclient.page.AcknowledgementPage;
 import regclient.page.DemographicDetailsPage;
 import regclient.page.RegistrationTasksPage;
-import regclient.pages.english.DemographicDetailsPageEnglish;
-import regclient.pages.english.RegistrationTasksPageEnglish;
 
 public class AcknowledgementPageTamil extends AcknowledgementPage {
 
@@ -19,8 +17,8 @@ public class AcknowledgementPageTamil extends AcknowledgementPage {
 	
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Application ID\"))")
 	private WebElement applicationID;
-	
-	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.Image\")")
+
+	@AndroidFindBy(uiAutomator = "new UiSelector().className(\"android.widget.Image\")")
 	private WebElement qrCodeImage;
 	
 	@AndroidFindBy(accessibility = "வீட்டிற்கு போ")

@@ -89,6 +89,27 @@ public class SettingsPageTamil extends SettingsPage {
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'leftslap_fingerprint_threshold')]//android.widget.EditText")
 	private WebElement leftSlapThresholdField;
 
+	@AndroidFindBy(xpath = "//android.widget.Toast[@text='Master Data Sync Completed']")
+	private WebElement masterDatatoastMessage;
+
+	@AndroidFindBy(accessibility = "key")
+	private WebElement keyLabel;
+
+	@AndroidFindBy(accessibility = "server_value")
+	private WebElement serverValueLabel;
+
+	@AndroidFindBy(accessibility = "local_value")
+	private WebElement localValueLabel;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'mosip.registration.')]")
+	private WebElement configKeys;
+
+	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc,'local_value_')]")
+	private WebElement localValueBox;
+
+	@AndroidFindBy(accessibility = "global_config_search")
+	private WebElement searchBox;
+
 	public SettingsPageTamil(AppiumDriver driver) {
 		super(driver);
 		this.driver = driver;
@@ -235,19 +256,56 @@ public class SettingsPageTamil extends SettingsPage {
 	}
 	
 	public boolean isJobDisplayed(String jobName) {
-
-		// Scroll to jobs list (safe for long lists)
 		driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
 				+ ".scrollIntoView(new UiSelector().className(\"android.widget.EditText\"))"));
-
 		By job = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
-
 		return isElementDisplayed(job);
 	}
 	
 	public void clickOnSyncButton(String jobName) {
 		By syncButton = By.xpath("//android.widget.EditText[contains(@hint,'" + jobName + "')]");
 		click(syncButton);
+	}
+
+	public boolean isMasterDataToastMessageDisplayed() {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions
+					.presenceOfElementLocated(By.xpath("//android.widget.Toast[@text='Master Data Sync Completed']")));
+			return true;
+		} catch (Exception e) {
+
+			return false;
+		}
+	}
+
+	public boolean isKeyLabelDisplayed() {
+		return isElementDisplayed(keyLabel);
+	}
+
+	public boolean isServerValueLabelDisplayed() {
+		return isElementDisplayed(serverValueLabel);
+	}
+
+	public boolean isLocalValueLabelDisplayed() {
+		return isElementDisplayed(localValueLabel);
+	}
+
+	public boolean isConfigListPresent() {
+		return isElementDisplayed(configKeys);
+	}
+
+	public boolean isLocalValueBoxDisplayed() {
+		return isElementDisplayed(localValueBox);
+	}
+
+	public boolean isDeviceSettingsLabelDisplayedInLoggedLanguage() {
+		String actualLabel = deviceSettingsPage.getAttribute("content-desc");
+		return actualLabel.equals("Device Settings");
+	}
+
+	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
+		return isElementDisplayed(searchBox);
 	}
 
 }

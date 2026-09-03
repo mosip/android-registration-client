@@ -10,49 +10,49 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 
 	@AndroidFindBy(accessibility = "Supervisor's Biometric Verification")
 	private WebElement operatorBiometricVerificationPageTitle;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ಐರಿಸ್ ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement irisScanIcon;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ಬಲ ಕೈ ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement rightHandScanIcon;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ಎಡ ಕೈ ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement leftHandScanIcon;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ಬೆರಳುಗಳು ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement thumbsScanIcon;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ಮುಖ ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement faceScanIcon;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)) .scrollIntoView(new UiSelector().descriptionContains(\"ವಿನಾಯಿತಿ ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement exceptionScanIcon;
-	
+
 	@AndroidFindBy(accessibility = "ಐರಿಸ್ ಸ್ಕ್ಯಾನ್")
 	private WebElement irisScanButton;
-	
+
 	@AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().descriptionContains(\"ಐರಿಸ್ ಸ್ಕ್ಯಾನ್\"))")
 	private WebElement irisScanButtonTitle;
-	
+
 	@AndroidFindBy(accessibility = "ಸ್ಥಾಯಿ")
 	private WebElement permanentButton;
-	
+
 	@AndroidFindBy(accessibility = "ಕ್ಷಣಿಕ")
 	private WebElement temporaryButton;
-	
+
 	@AndroidFindBy(accessibility = "ಅಂಶಗೊಳಿಸಲು ಅನುಮತಿಸಿ")
 	private WebElement markExceptionButton;
-	
+
 	@AndroidFindBy(accessibility = "ಅಂಶಗೊಳಿಸಲು ಅನುಮತಿಸಿ")
 	private WebElement exceptionTypeTitle;
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement oneEyeException;
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(2)")
 	private WebElement firstFingureExceptionImage;
-	
+
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.ImageView\").instance(1)")
 	private WebElement secondFingureExceptionImage;
 	
@@ -268,7 +268,7 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	
 	public void clickOnExceptionTypeTemporaryButton() {
 		if(!isElementDisplayedOnScreen(temporaryButton)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickOnElement(temporaryButton);	
 	}
@@ -279,7 +279,7 @@ public class SupervisorBiometricVerificationpageKannada extends SupervisorBiomet
 	
 	public  void enterCommentsInTextBox(String comments) {
 		if(!isElementDisplayedOnScreen(commentsTextBox)) {
-			swipeOrScroll();
+			swipeUp();
 		}
 		clickAndsendKeysToTextBox(commentsTextBox,comments);
 	}

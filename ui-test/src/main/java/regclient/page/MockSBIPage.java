@@ -16,6 +16,8 @@ import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
@@ -28,6 +30,7 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.touch.offset.PointOption;
 
 public class MockSBIPage extends BasePage {
+	private static final Logger logger = LoggerFactory.getLogger(MockSBIPage.class);
 	private WebDriverWait wait;
 
 	@AndroidFindBy(id = "io.mosip.mock.sbi:id/settingBtn")
@@ -79,9 +82,9 @@ public class MockSBIPage extends BasePage {
 	public void setAllToNotReadyAndSave() {
 
 		setAllToNotReady("Face", "io.mosip.mock.sbi:id/face_device_status");
-		swipeOrScroll();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/finger_device_status"));
 		setAllToNotReady("Finger", "io.mosip.mock.sbi:id/finger_device_status");
-		swipeOrScroll();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/iris_device_status"));
 		setAllToNotReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
 		clickOnElement(mockSbiSaveButton);
@@ -114,9 +117,9 @@ public class MockSBIPage extends BasePage {
 	public void setAllToReadyAndSave() {
 
 		setAllToReady("Face", "io.mosip.mock.sbi:id/face_device_status");
-		swipeOrScroll();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/finger_device_status"));
 		setAllToReady("Finger", "io.mosip.mock.sbi:id/finger_device_status");
-		swipeOrScroll();
+		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/iris_device_status"));
 		setAllToReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
 		clickOnElement(mockSbiSaveButton);
@@ -125,7 +128,7 @@ public class MockSBIPage extends BasePage {
 	public void setAllModalityLowScore() {
 		// ModalityScore should be (20-5=15)
 		setModalityScore("Iris", 20);
-		swipeOrScroll();
+		swipeUp();
 		clickOnElement(mockSbiSaveButton);
 	}
 
@@ -160,36 +163,32 @@ public class MockSBIPage extends BasePage {
 	}
 
 	private void setModalityScore(String modality, int score) {
-		try {
-			scrollToText(modality);
+		scrollToText(modality);
 
-			String modLower = modality.toLowerCase();
-			String xpath = String.format(
-					"//android.widget.SeekBar[contains(@resource-id, 'slider_%s_score') or contains(@content-desc, '%s Score')]",
-					modLower, modality);
+		String modLower = modality.toLowerCase();
+		String xpath = String.format(
+				"//android.widget.SeekBar[contains(@resource-id, 'slider_%s_score') or contains(@content-desc, '%s Score')]",
+				modLower, modality);
 
-			WebElement seekBar = findElementIfExists(By.xpath(xpath)); // non-throwing
-			// fallback: a few swipes + re-checks
-			for (int i = 0; i < 5 && seekBar == null; i++) {
-				swipeOrScroll();
-				waitTime(1);
-				seekBar = findElementIfExists(By.xpath(xpath));
-			}
-			// final attempt using retry (may throw) — catch below
-			if (seekBar == null) {
-				seekBar = findElementWithRetry(By.xpath(xpath));
-			}
-
-			if (seekBar == null) {
-				throw new RuntimeException("SeekBar not found for modality: " + modality);
-			}
-
-			setSeekBarPercent(seekBar, score);
+		WebElement seekBar = findElementIfExists(By.xpath(xpath)); // non-throwing
+		// fallback: a few swipes + re-checks
+		for (int i = 0; i < 5 && seekBar == null; i++) {
+			swipeUp();
 			waitTime(1);
-			System.out.println("Set " + modality + " -> " + score);
-		} catch (Exception e) {
-			System.err.println("Failed to set modality '" + modality + "': " + e.getMessage());
+			seekBar = findElementIfExists(By.xpath(xpath));
 		}
+		// final attempt using retry (may throw) — propagates if still not found
+		if (seekBar == null) {
+			seekBar = findElementWithRetry(By.xpath(xpath));
+		}
+
+		if (seekBar == null) {
+			throw new RuntimeException("SeekBar not found for modality: " + modality);
+		}
+
+		double verifiedScore = setSeekBarPercent(seekBar, modLower, score);
+		waitTime(1);
+		logger.info("Set {} -> requested {}, verified {}", modality, score, verifiedScore);
 	}
 
 	private void scrollToText(String text) {
@@ -224,12 +223,14 @@ public class MockSBIPage extends BasePage {
 				}
 			} catch (Exception ignored) {
 			}
-			swipeOrScroll();
+			swipeUp();
 			waitTime(1);
 		}
 	}
 
-	public void setSeekBarPercent(WebElement seekBar, int percent) {
+	private static final double SEEKBAR_TOLERANCE_PERCENT = 5.0;
+
+	public double setSeekBarPercent(WebElement seekBar, String modLower, int percent) {
 		if (seekBar == null)
 			throw new IllegalArgumentException("seekBar cannot be null");
 		if (percent < 0)
@@ -237,6 +238,8 @@ public class MockSBIPage extends BasePage {
 		if (percent > 100)
 			percent = 100;
 
+		double actualPercent = -1;
+		for (int attempt = 1; attempt <= 2; attempt++) {
 		int startX = seekBar.getLocation().getX();
 		int width = seekBar.getSize().getWidth();
 		int y = seekBar.getLocation().getY() + (seekBar.getSize().getHeight() / 2);
@@ -245,27 +248,52 @@ public class MockSBIPage extends BasePage {
 		double leftOffset = 0.04; // skip a few px from start
 		double rightOffset = 0.96; // stop a bit before end
 
-		double ratio = percent / 100.0;
-		// Apply left/right correction depending on where target is
-		if (ratio < leftOffset)
-			ratio = leftOffset;
-		if (ratio > rightOffset)
-			ratio = rightOffset;
+			// Grab the thumb where it currently is, not at a fixed left edge — the
+			// widget may already be at a non-zero value left over from a previous run.
+			double currentRatio = clamp(getCurrentScorePercent(modLower), leftOffset, rightOffset);
+			double targetRatio = clamp(percent / 100.0, leftOffset, rightOffset);
 
-		int targetX = startX + (int) (width * ratio);
+			int currentX = startX + (int) (width * currentRatio);
+			int targetX = startX + (int) (width * targetRatio);
 
+			try {
+				PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+				Sequence drag = new Sequence(finger, 1);
+				drag.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), currentX, y));
+				drag.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+				drag.addAction(
+						finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), targetX, y));
+				drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+				driver.perform(Collections.singletonList(drag));
+				waitTime(1);
+			} catch (Exception ex){
+				logger.warn("Drag gesture failed, falling back to click at coordinates", ex);
+				clickAtCoordinates(targetX, y);
+			}
+
+			actualPercent = getCurrentScorePercent(modLower) * 100.0;
+			if (Math.abs(actualPercent - percent) <= SEEKBAR_TOLERANCE_PERCENT) {
+				return actualPercent;
+			}
+			logger.warn("Seekbar '{}' attempt {} landed at {} instead of requested {}", modLower, attempt,
+					actualPercent, percent);
+		}
+
+		throw new RuntimeException("Failed to set '" + modLower + "' seekbar to " + percent
+				+ "% after retry; last observed value was " + actualPercent + "%");
+	}
+
+	private double clamp(double v, double min, double max) {
+		return Math.max(min, Math.min(max, v));
+	}
+
+	private double getCurrentScorePercent(String modLower) {
 		try {
-			PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-			Sequence drag = new Sequence(finger, 1);
-			drag.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX + 5, y));
-			drag.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-			drag.addAction(
-					finger.createPointerMove(Duration.ofMillis(400), PointerInput.Origin.viewport(), targetX, y));
-			drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-			driver.perform(Collections.singletonList(drag));
-			waitTime(1);
-		} catch (Exception ex) {
-			clickAtCoordinates(targetX, y);
+			WebElement scoreText = driver.findElement(By.id("io.mosip.mock.sbi:id/tx_" + modLower + "_score"));
+			return Double.parseDouble(scoreText.getText().trim()) / 100.0;
+		} catch (Exception e) {
+			logger.warn("Failed to read current score, assuming left edge", e);
+			return 0.0; // fallback: assume left edge if we can't read it
 		}
 	}
 

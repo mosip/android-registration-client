@@ -4,6 +4,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 
 import regclient.BaseTest.AndroidBaseTest;
@@ -149,6 +150,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 		ManageApplicationsPage manageApplicationsPage = null;
 		ProfilePage profilePage = null;
 
+		final Logger logger = Logger.getLogger(NewRegistrationInfant.class);
 		final String language = TestDataReader.readData("language");
 
 		if ("eng".equalsIgnoreCase(language)) {

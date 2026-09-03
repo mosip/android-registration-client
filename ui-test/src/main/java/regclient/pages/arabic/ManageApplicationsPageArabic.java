@@ -1,9 +1,14 @@
 package regclient.pages.arabic;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ManageApplicationsPage;
 
@@ -83,6 +88,12 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	
 	@AndroidFindBy(accessibility = "manage_application_back_button")
 	private WebElement backButton;
+	
+	@AndroidFindBy(accessibility = "مرشح واضح")
+	private WebElement clearFilterButton;
+	
+	@AndroidFindBy(accessibility = "عرض 1 تطبيقات")
+	private WebElement displayingApplicationCount;
 
 	public ManageApplicationsPageArabic(AppiumDriver driver) {
 		super(driver);
@@ -162,6 +173,7 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 	}
 
 	public void clickServerStatusDropdown() {
+		scrollTillServerStatusDropdownVisible();
 		clickOnElement(serverStatusDropdown);
 	}
 
@@ -264,5 +276,49 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");
 		click(checkbox);
 	}
+
+	public void clickOnClearFilterButton() {
+			driver.findElement(MobileBy.AndroidUIAutomator(
+					"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+							+ ".setAsHorizontalList().scrollToBeginning(5)"));
+
+		clickOnElement(clearFilterButton);
+	}
+	
+	public boolean isClientStatusDropdownDisplayed() {	
+		return isElementDisplayed(clientStatusDropdown);
+	}
+
+	@Override
+	public void scrollTillDisplayingApplicationCountVisible() {
+
+		for (int i = 0; i < 3; i++) {
+
+			if (isElementDisplayed(displayingApplicationCount)) {
+				return;
+			}
+
+			driver.findElement(MobileBy.AndroidUIAutomator(
+					"new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+							+ ".setAsHorizontalList()"
+							+ ".scrollForward()"));
+		}
+	}
+	
+	public void scrollTillServerStatusDropdownVisible() {
+
+	    for (int i = 0; i < 5; i++) {
+
+	        if (isElementDisplayed(serverStatusDropdown)) {
+	            return;
+	        }
+
+	        driver.findElement(MobileBy.AndroidUIAutomator(
+	                "new UiScrollable(new UiSelector().className(\"android.widget.HorizontalScrollView\"))"
+	                        + ".setAsHorizontalList()"
+	                        + ".scrollBackward()"));
+	    }
+	}
+
 
 }
