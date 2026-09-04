@@ -34,6 +34,11 @@ public class AndroidMetricCollector {
     private final Context context;
     private final ExecutorService writeExecutor = Executors.newSingleThreadExecutor();
     private final Object fileLock = new Object();
+    private static volatile String cachedMachineId = null;
+
+    public static void setMachineId(String machineId) {
+    cachedMachineId = machineId;
+    }
 
     public AndroidMetricCollector(Context context) {
         this.context = context.getApplicationContext();
@@ -123,11 +128,12 @@ public class AndroidMetricCollector {
             long versionCode = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 
             ? pInfo.getLongVersionCode() 
             : pInfo.versionCode;
+            String machineId = (getMachineId() != null) ? getMachineId() : "";
             String deviceInfoJson = "{" +
             "\"@timestamp\":\"" + generateUtcTimestamp() + "\"," +
             "\"name\":\"device.info\"," +
             "\"type\":\"event\"," +
-            "\"machine\":\"" + getMachineId() + "\"," +
+            "\"machine\":\"" + machineId + "\"," +
             "\"device_model\":\"" + getDeviceId() + "\"," +
             "\"os_release\":\"" + osRelease + "\"," +
             "\"sdk_int\":" + sdkInt + "," +
@@ -212,11 +218,7 @@ public class AndroidMetricCollector {
     }
     
     private String getMachineId() {
-        String androidId = android.provider.Settings.Secure.getString(
-            context.getContentResolver(),
-            android.provider.Settings.Secure.ANDROID_ID
-        );
-        return androidId != null ? androidId : "unknown_machine";
+        return cachedMachineId;
     }
 
     private String getDeviceId() {

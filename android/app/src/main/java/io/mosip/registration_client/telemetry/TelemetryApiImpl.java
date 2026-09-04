@@ -19,4 +19,9 @@ public class TelemetryApiImpl implements TelemetryPigeon.TelemetryApi {
         // which wraps it in the Logstash envelope and writes it asynchronously.
         collector.logRawMetric(metricJson);
     }
+
+    @Override
+    public void setMachineId(@NonNull String machineId) {
+        AndroidMetricCollector.setMachineId(machineId);
+    }
 }
