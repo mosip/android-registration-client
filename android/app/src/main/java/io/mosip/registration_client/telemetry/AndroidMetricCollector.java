@@ -31,17 +31,32 @@ public class AndroidMetricCollector {
     private static final String LOGGER_NAME = "io.mosip.registration_client.telemetry.AndroidMetricCollector";
     private static final String THREAD_NAME = "android-metrics-publisher";
 
+    private static final String PREFS_NAME = "telemetry_prefs";
+    private static final String KEY_MACHINE_ID = "cached_machine_id";
+    private static Context appContext;
+
     private final Context context;
     private final ExecutorService writeExecutor = Executors.newSingleThreadExecutor();
     private final Object fileLock = new Object();
     private static volatile String cachedMachineId = null;
 
     public static void setMachineId(String machineId) {
-    cachedMachineId = machineId;
+        if (machineId != null && !machineId.trim().isEmpty()){
+            cachedMachineId = machineId;
+            if (appContext != null) {
+                appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                    .edit()
+                    .putString(KEY_MACHINE_ID, machineId)
+                    .apply();
+            }
+        }
     }
 
     public AndroidMetricCollector(Context context) {
         this.context = context.getApplicationContext();
+        if (appContext == null) {
+            appContext = this.context;
+        }
     }
 
     public File getLogFile() {
@@ -218,6 +233,10 @@ public class AndroidMetricCollector {
     }
     
     private String getMachineId() {
+        if (cachedMachineId == null && appContext != null) {
+            cachedMachineId = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                                    .getString(KEY_MACHINE_ID, null);
+        }
         return cachedMachineId;
     }
 
