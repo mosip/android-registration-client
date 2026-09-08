@@ -108,13 +108,21 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
       return;
     }
 
-    if (fieldVal is! String || fieldVal.isEmpty) return;
+    String resolvedValue = "";
+    if (fieldVal is String) {
+      resolvedValue = fieldVal;
+    } else if (fieldVal is Map) {
+      final String lang = globalProvider.selectedLanguage;
+      final dynamic langVal = fieldVal[lang] ?? (fieldVal.isNotEmpty ? fieldVal.values.first : null);
+      if (langVal != null) resolvedValue = langVal.toString();
+    }
+    if (resolvedValue.isEmpty) return;
 
+    if (selectedOption != null && selectedOption == resolvedValue.toLowerCase()) return;
+    if (resolvedValue == _pendingFieldVal) return;
 
-    if (selectedOption != null || fieldVal == _pendingFieldVal) return;
-
-    _pendingFieldVal = fieldVal;
-    _applyPreRegValue(fieldVal);
+    _pendingFieldVal = resolvedValue;
+    _applyPreRegValue(resolvedValue);
   }
 
 
@@ -128,7 +136,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
     for (final element in data) {
       if (element != null &&
-          (element.code == fieldVal ||
+          (element.code.toLowerCase() == fieldVal.toLowerCase() ||
               element.name.toLowerCase() == fieldVal.toLowerCase())) {
         handleOptionChange(element.code, element.name);
         break;
@@ -138,7 +146,15 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
 
   void _getSelectedValueFromMap(String lang) async {
     final dynamic raw = globalProvider.fieldInputValue[widget.field.id];
-    final String response = raw?.toString() ?? "";
+    String response = "";
+    if (raw is String) {
+      response = raw;
+    } else if (raw is Map) {
+      final dynamic langVal = raw[lang] ?? (raw.isNotEmpty ? raw.values.first : null);
+      if (langVal != null) response = langVal.toString();
+    } else if (raw != null) {
+      response = raw.toString();
+    }
     if (response.isEmpty) return;
 
     final List<DynamicFieldData?> data =
@@ -146,7 +162,7 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     String updatedValue = "";
     for (final element in data) {
       if (element != null &&
-          (element.code == response ||
+          (element.code.toLowerCase() == response.toLowerCase() ||
               element.name.toLowerCase() == response.toLowerCase())) {
         updatedValue = element.name;
         break;

@@ -31,7 +31,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DocumentScanner {
-    private static final long GOOD_QUALITY_HOLD_DURATION_MS = 1500L;
+    private static final long GOOD_QUALITY_HOLD_DURATION_MS = 4000L;
+    private static final long UPDATE_THROTTLE_MS            = 200L;
+    private static final long BAD_QUALITY_GRACE_MS         = 200L;
 
     public interface QualityUpdateCallback {
         void onQualityUpdate(QualityAnalyzer.QualityResult result);
@@ -59,12 +61,16 @@ public class DocumentScanner {
     private final ExecutorService          analysisExecutor;
     private final SurfaceTexture           surfaceTexture;
 
-    private ProcessCameraProvider cameraProvider;
-    private volatile boolean      isRunning              = false;
-    private volatile boolean      hasCaptured            = false;
-    private long                  goodQualityStart       = 0L;
-    private int                   badQualityStreak       = 0;
-    private volatile boolean      forceCaptureRequested  = false;
+    private ProcessCameraProvider                     cameraProvider;
+    private androidx.camera.core.CameraInfo           cameraInfo;
+    private androidx.lifecycle.Observer<CameraState>  cameraStateObserver;
+    private volatile boolean                          isRunning              = false;
+    private volatile boolean                          hasCaptured            = false;
+    private long                                      goodQualityStart       = 0L;
+    private int                                       badQualityStreak       = 0;
+    private volatile boolean                          forceCaptureRequested  = false;
+    private long                                      lastUpdateSentTime     = 0L;
+    private QualityAnalyzer.QualityResult             lastSentQuality        = null;
 
     public DocumentScanner(
             @NonNull Activity activity,
@@ -91,17 +97,25 @@ public class DocumentScanner {
         isRunning             = true;
         hasCaptured           = false;
         badQualityStreak       = 0;
+        goodQualityStart      = 0L;
         forceCaptureRequested = false;
+        lastUpdateSentTime    = 0L;
+        lastSentQuality       = null;
+        qualityAnalyzer.resetFrameTracking();
 
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
                 ProcessCameraProvider.getInstance(activity);
 
         cameraProviderFuture.addListener(() -> {
+            if (!isRunning) return;
             try {
                 cameraProvider = cameraProviderFuture.get();
                 bindCamera(cameraProvider);
             } catch (ExecutionException | InterruptedException e) {
-                errorCallback.onError("Camera provider failed: " + e.getMessage());
+                if (isRunning) {
+                    isRunning = false;
+                    errorCallback.onError("Camera provider failed: " + e.getMessage());
+                }
             }
         }, ContextCompat.getMainExecutor(activity));
     }
@@ -109,6 +123,18 @@ public class DocumentScanner {
     public void stop() {
         boolean wasExhausted = badQualityStreak >= maxQualityRetries;
         isRunning = false;
+        if (cameraInfo != null && cameraStateObserver != null) {
+            final androidx.camera.core.CameraInfo info = cameraInfo;
+            final androidx.lifecycle.Observer<CameraState> observer = cameraStateObserver;
+            ContextCompat.getMainExecutor(activity).execute(() -> {
+                try {
+                    info.getCameraState().removeObserver(observer);
+                } catch (Exception ignored) {}
+            });
+            cameraStateObserver = null;
+            cameraInfo = null;
+        }
+
         if (cameraProvider != null) {
             cameraProvider.unbindAll();
             cameraProvider = null;
@@ -125,7 +151,9 @@ public class DocumentScanner {
     }
 
     private void bindCamera(@NonNull ProcessCameraProvider provider) {
+        if (!isRunning) return;
         if (!(activity instanceof LifecycleOwner)) {
+            isRunning = false;
             errorCallback.onError("Activity must be a LifecycleOwner to use CameraX");
             return;
         }
@@ -165,41 +193,41 @@ public class DocumentScanner {
                         (LifecycleOwner) activity, cameraSelector, imageAnalysis);
             }
 
-            // R-1: observe CameraState for hardware disconnects / errors
-            camera.getCameraInfo().getCameraState().observe(
-                    (LifecycleOwner) activity, cameraState -> {
-                        if (cameraState == null) return;
+            this.cameraInfo = camera.getCameraInfo();
+            this.cameraStateObserver = cameraState -> {
+                if (!isRunning || cameraState == null) return;
 
-                        CameraState.StateError error = cameraState.getError();
-                        if (error != null) {
-                            String reason;
-                            switch (error.getCode()) {
-                                case CameraState.ERROR_CAMERA_IN_USE:
-                                    reason = "Camera is in use by another application";
-                                    break;
-                                case CameraState.ERROR_CAMERA_FATAL_ERROR:
-                                    reason = "Fatal camera error — device may need restart";
-                                    break;
-                                case CameraState.ERROR_DO_NOT_DISTURB_MODE_ENABLED:
-                                    reason = "Do-not-disturb mode is blocking camera";
-                                    break;
-                                default:
-                                    reason = "Camera error (code " + error.getCode() + ")";
-                                    break;
-                            }
-                            if (isRunning) {
-                                isRunning = false;
-                                errorCallback.onError(reason);
-                            }
-                        }
+                CameraState.StateError error = cameraState.getError();
+                if (error != null) {
+                    String reason;
+                    switch (error.getCode()) {
+                        case CameraState.ERROR_CAMERA_IN_USE:
+                            reason = "Camera is in use by another application";
+                            break;
+                        case CameraState.ERROR_CAMERA_FATAL_ERROR:
+                            reason = "Fatal camera error — device may need restart";
+                            break;
+                        case CameraState.ERROR_DO_NOT_DISTURB_MODE_ENABLED:
+                            reason = "Do-not-disturb mode is blocking camera";
+                            break;
+                        default:
+                            reason = "Camera error (code " + error.getCode() + ")";
+                            break;
+                    }
+                    if (isRunning) {
+                        isRunning = false;
+                        errorCallback.onError(reason);
+                    }
+                }
+            };
 
-                        if (cameraState.getType() == CameraState.Type.CLOSED && isRunning) {
-                            isRunning = false;
-                            errorCallback.onError("Camera was unexpectedly closed");
-                        }
-                    });
+            cameraInfo.getCameraState().observe(
+                    (LifecycleOwner) activity, cameraStateObserver);
         } catch (Exception e) {
-            errorCallback.onError("Failed to bind camera: " + e.getMessage());
+            if (isRunning) {
+                isRunning = false;
+                errorCallback.onError("Failed to bind camera: " + e.getMessage());
+            }
         }
     }
 
@@ -217,13 +245,14 @@ public class DocumentScanner {
         }
 
         QualityAnalyzer.QualityResult quality = qualityAnalyzer.analyze(imageProxy);
+        long now = System.currentTimeMillis();
 
-        qualityCallback.onQualityUpdate(quality);
+        // Dispatch throttled / state-change updates to Flutter
+        dispatchQualityUpdateIfNeeded(quality, now);
 
         if (quality.isAcceptable) {
             badQualityStreak = 0;
 
-            long now = System.currentTimeMillis();
             if (goodQualityStart == 0L) {
                 goodQualityStart = now;
             } else if (now - goodQualityStart >= GOOD_QUALITY_HOLD_DURATION_MS) {
@@ -232,20 +261,37 @@ public class DocumentScanner {
                 return;
             }
         } else {
-            goodQualityStart = 0L;
-            badQualityStreak++;
-            OcrAuditLogger.logClientFailure("quality_check_failed",
-                    quality.guidanceMessage + " (attempt " + badQualityStreak + "/" + maxQualityRetries + ")");
+            // Grace window for momentary sensor fluctuations while holding steady
+            if (goodQualityStart != 0L) {
+                if (now - goodQualityStart > BAD_QUALITY_GRACE_MS) {
+                    goodQualityStart = 0L;
+                }
+            } else {
+                badQualityStreak++;
+                OcrAuditLogger.logClientFailure("quality_check_failed",
+                        quality.guidanceMessage + " (attempt " + badQualityStreak + "/" + maxQualityRetries + ")");
 
-            if (badQualityStreak == maxQualityRetries) {
-                // Notify once per streak, then wait for the operator
-                // (forceCapture() or stop()) — don't keep re-firing every
-                // frame or auto-fail/auto-capture on their behalf.
-                qualityExhaustedCallback.onQualityRetriesExhausted();
+                if (badQualityStreak == maxQualityRetries) {
+                    qualityExhaustedCallback.onQualityRetriesExhausted();
+                }
             }
         }
 
         imageProxy.close();
+    }
+
+    private void dispatchQualityUpdateIfNeeded(@NonNull QualityAnalyzer.QualityResult quality, long now) {
+        boolean isStateChange = lastSentQuality == null
+                || lastSentQuality.isAcceptable != quality.isAcceptable
+                || !lastSentQuality.guidanceMessage.equals(quality.guidanceMessage);
+
+        boolean isTimeElapsed = (now - lastUpdateSentTime) >= UPDATE_THROTTLE_MS;
+
+        if (isStateChange || isTimeElapsed) {
+            lastSentQuality = quality;
+            lastUpdateSentTime = now;
+            qualityCallback.onQualityUpdate(quality);
+        }
     }
 
     private void capture(@NonNull ImageProxy imageProxy) {

@@ -16,15 +16,16 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
-import io.mosip.registration_client.ocr.engine.OcrEngine;
-
 public class MlKitEngine implements OcrEngine {
 
+    public interface RichTextCallback {
+        void onSuccess(@NonNull Text visionText, float avgConfidence);
+        void onFailure(@NonNull String errorCode, @NonNull String message, boolean isRetryable);
+    }
     private TextRecognizer recognizer;
 
     public MlKitEngine() {
-        this.recognizer = TextRecognition.getClient(
-                TextRecognizerOptions.DEFAULT_OPTIONS);
+        this.recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
     }
 
     @Override
@@ -33,6 +34,22 @@ public class MlKitEngine implements OcrEngine {
             @NonNull String fileType,
             @NonNull OcrEngineCallback callback) {
 
+        extractRich(bitmap, new RichTextCallback() {
+            @Override
+            public void onSuccess(@NonNull Text visionText, float avgConfidence) {
+                callback.onSuccess(visionText.getText().trim(), avgConfidence);
+            }
+
+            @Override
+            public void onFailure(@NonNull String errorCode,
+                                  @NonNull String message,
+                                  boolean isRetryable) {
+                callback.onFailure(errorCode, message, isRetryable);
+            }
+        });
+    }
+
+    public void extractRich(@NonNull Bitmap bitmap, @NonNull RichTextCallback callback) {
         if (bitmap.isRecycled()) {
             callback.onFailure(
                     "IMAGE_NULL",
@@ -55,7 +72,6 @@ public class MlKitEngine implements OcrEngine {
         localRecognizer.process(image)
                 .addOnSuccessListener(visionText -> {
                     String rawText = visionText.getText();
-
                     if (rawText == null || rawText.trim().isEmpty()) {
                         callback.onFailure(
                                 "NO_TEXT_FOUND",
@@ -63,16 +79,14 @@ public class MlKitEngine implements OcrEngine {
                                 true);
                         return;
                     }
-
                     float confidence = calculateAverageConfidence(visionText);
-                    callback.onSuccess(rawText.trim(), confidence);
+                    callback.onSuccess(visionText, confidence);
                 })
                 .addOnFailureListener(e -> callback.onFailure(
                         "ML_KIT_FAILURE",
                         "ML Kit threw an exception: " + e.getMessage(),
                         false));
     }
-
     @Override
     public void release() {
         if (recognizer != null) {
@@ -80,7 +94,6 @@ public class MlKitEngine implements OcrEngine {
             recognizer = null;
         }
     }
-
     private float calculateAverageConfidence(@NonNull Text visionText) {
         float total = 0f;
         int   count = 0;

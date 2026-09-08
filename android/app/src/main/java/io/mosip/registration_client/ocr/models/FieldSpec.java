@@ -9,12 +9,6 @@ package io.mosip.registration_client.ocr.models;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/**
- * Internal representation of one Demographic Details field, as sent by the
- * client in the scan request (HLD §6.1). Kept separate from the
- * pigeon-generated {@code FieldSpecMessage} so the extraction pipeline
- * doesn't take a compile-time dependency on generated wire types.
- */
 public class FieldSpec {
 
     private final String id;

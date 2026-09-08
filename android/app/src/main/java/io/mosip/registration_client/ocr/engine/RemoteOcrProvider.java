@@ -30,18 +30,8 @@ import java.util.concurrent.Executors;
 
 import io.mosip.registration_client.ocr.models.FieldSpec;
 import io.mosip.registration_client.ocr.models.OcrError;
+import io.mosip.registration_client.ocr.models.OcrErrorCode;
 
-/**
- * Remote provider (mosip.registration.ocr.provider = "remote"). Unlike the
- * on-device provider, a purpose-built OCR service is expected to return
- * already spec-matched id:value pairs per §6.2 — so this class does no
- * local field extraction, just request building (§6.1) and response
- * parsing (§6.2).
- *
- * Connection/read timeouts are left generous here; the authoritative
- * response.timeout is enforced uniformly by
- * {@link TimeoutEnforcingOcrProvider} regardless of provider.
- */
 public class RemoteOcrProvider implements OcrProvider {
 
     private static final String SCREEN_NAME = "DemographicDetails";
@@ -140,6 +130,19 @@ public class RemoteOcrProvider implements OcrProvider {
         }
 
         if (hasError) {
+            OcrErrorCode standardCode = OcrErrorCode.fromString(errorCode);
+            if (standardCode == null) {
+                boolean isCustom = false;
+                try {
+                    isCustom = OcrErrorCode.isCustomRange(Integer.parseInt(errorCode.trim()));
+                } catch (NumberFormatException ignored) { }
+                if (!isCustom) {
+                    callback.onProviderError(
+                            OcrErrorCode.TECHNICAL_ERROR.asString(),
+                            "Server returned unrecognized errorCode '" + errorCode + "': " + errorInfo);
+                    return;
+                }
+            }
             callback.onProviderError(errorCode, errorInfo);
             return;
         }

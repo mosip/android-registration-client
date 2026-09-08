@@ -84,7 +84,7 @@ public class OcrPluginImpl implements OcrHostApi {
         OcrFlutterApi flutterApi = new OcrFlutterApi(
                 flutterEngine.getDartExecutor().getBinaryMessenger());
 
-        OcrTestDataSeeder.seedIfEmpty(globalParamRepository);  //ONLY FOR TESTING
+        // OcrTestDataSeeder.seedIfEmpty(globalParamRepository);  //ONLY FOR TESTING
 
         OcrConfig config = OcrConfig.from(globalParamRepository);
         OcrUiSpecProvider uiSpecProvider = new OcrUiSpecProvider(globalParamRepository);
@@ -101,9 +101,16 @@ public class OcrPluginImpl implements OcrHostApi {
 
         TextureRegistry textureRegistry = flutterEngine.getRenderer();
 
-        OcrHostApi.setup(
-                flutterEngine.getDartExecutor().getBinaryMessenger(),
-                new OcrPluginImpl(activity, flutterApi, provider, config, uiSpecProvider, textureRegistry));
+        OcrPluginImpl impl = new OcrPluginImpl(activity, flutterApi, provider, config, uiSpecProvider, textureRegistry);
+        OcrHostApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), impl);
+
+        // Log UiSpec once on app startup
+        List<FieldSpec> startupSpec = uiSpecProvider.getSpec();
+        Log.i(TAG, "OCR UiSpec at startup: " + startupSpec.size() + " fields");
+        for (FieldSpec f : startupSpec) {
+            Log.d(TAG, "  field: id=" + f.getId() + " type=" + f.getType()
+                    + " controlType=" + f.getControlType() + " subType=" + f.getSubType());
+        }
     }
 
     public void updateActivity(@NonNull Activity activity) {
@@ -148,6 +155,7 @@ public class OcrPluginImpl implements OcrHostApi {
                 bitmap -> runOcr(bitmap),
 
                 errorMessage -> {
+                    OcrAuditLogger.logClientFailure("camera_error", errorMessage);
                     OcrErrorMessage msg = buildErrorMessage(
                             OcrError.ErrorCode.CAMERA_ERROR.name(),
                             errorMessage,
@@ -233,6 +241,8 @@ public class OcrPluginImpl implements OcrHostApi {
             }
 
             if (bitmap == null || bitmap.isRecycled()) {
+                OcrAuditLogger.logClientFailure("image_decode_failed",
+                        "Could not decode image: " + filePath);
                 OcrErrorMessage msg = buildErrorMessage(
                         "IMAGE_DECODE_FAILED",
                         "Could not decode the selected image. Please choose a valid JPG, PNG, or WebP file.",

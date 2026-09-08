@@ -163,10 +163,18 @@ class _TextBoxControlState extends State<TextBoxControl>
               verticalGridSpacing: 12,
               children: choosenLang.map((code) {
                 String lang = globalProvider.langToCode(code);
-                  setState(() {
-                    controllerMap.putIfAbsent(lang,
-                        () => TextEditingController(text: _getDataFromMap(lang)));
-                  });
+                String mapValue = _getDataFromMap(lang);
+                if (controllerMap.containsKey(lang)) {
+                  if (controllerMap[lang]!.text != mapValue) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        controllerMap[lang]!.text = mapValue;
+                      }
+                    });
+                  }
+                } else {
+                  controllerMap[lang] = TextEditingController(text: mapValue);
+                }
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: TextFormField(

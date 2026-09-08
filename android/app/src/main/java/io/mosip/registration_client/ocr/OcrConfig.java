@@ -18,10 +18,10 @@ public final class OcrConfig {
     private static final int DEFAULT_TIMEOUT_MS = 10000;
     private static final String DEFAULT_PROVIDER = "mlkit";
 
-    private static final int DEFAULT_QUALITY_MAX_RETRIES = 5;
-    private static final float DEFAULT_BRIGHTNESS_MIN = 40f;
-    private static final float DEFAULT_BRIGHTNESS_MAX = 220f;
-    private static final double DEFAULT_BLUR_VARIANCE = 80.0;
+    private static final int DEFAULT_QUALITY_MAX_RETRIES = 8;
+    private static final float DEFAULT_BRIGHTNESS_MIN = 80f;
+    private static final float DEFAULT_BRIGHTNESS_MAX = 180f;
+    private static final double DEFAULT_BLUR_VARIANCE = 300.0;
 
     public final boolean enabled;
     @NonNull public final String provider;
