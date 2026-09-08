@@ -27,5 +27,11 @@ public final class OcrParamKeys {
     public static final String OCR_EXTRACTION_HEADER_PATTERNS = "mosip.registration.ocr.extraction.header_patterns";
     public static final String OCR_EXTRACTION_NOISE_CHARS = "mosip.registration.ocr.extraction.noise_chars";
 
+    public static final String OCR_EXTRACTION_FUZZY_THRESHOLD =
+            "mosip.registration.ocr.extraction.fuzzy_threshold";
+
+    public static final String OCR_EXTRACTION_FIELD_REGEXES =
+            "mosip.registration.ocr.extraction.field_regexes";
+
     private OcrParamKeys() { }
 }

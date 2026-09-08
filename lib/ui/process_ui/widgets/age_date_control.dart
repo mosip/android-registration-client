@@ -260,6 +260,32 @@ class _AgeDateControlState extends State<AgeDateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+
+    // Re-sync date from fieldInputValue (handles external updates like OCR)
+    if (globalProvider.fieldInputValue.containsKey(widget.field.id) &&
+        dateController.text !=
+            globalProvider.fieldInputValue[widget.field.id].toString()) {
+      String savedDate =
+          globalProvider.fieldInputValue[widget.field.id].toString();
+      try {
+        DateTime parsedDate = DateFormat(widget.field.format == null ||
+                    widget.field.format!.toLowerCase() == "none"
+                ? "yyyy/MM/dd"
+                : widget.field.format)
+            .parse(savedDate);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              dateController.text = savedDate;
+              ageController.text = calculateYearDifference(parsedDate, DateTime.now()).abs().toString();
+            });
+          }
+        });
+      } catch (_) {
+        // Date parsing failed, skip sync
+      }
+    }
+
     return Card(
       elevation: 5,
       color: pureWhite,

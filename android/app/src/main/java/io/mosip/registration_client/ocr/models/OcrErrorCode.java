@@ -8,24 +8,6 @@ package io.mosip.registration_client.ocr.models;
 
 import androidx.annotation.NonNull;
 
-/**
- * Standardized in-band provider error codes (HLD §6.2.1). Every OCR
- * provider implementation — remote or on-device (§4.1) — must return one
- * of these where applicable; a provider must not repurpose a standard
- * code for a different meaning. 5xx is reserved for provider-defined
- * custom conditions not covered below.
- *
- * The wire format is a string (e.g. {@code "errorCode": "101"}), not a
- * number — kept as int here for readable constants/switches, converted
- * at the boundary.
- *
- * Distinct from {@link OcrError.ErrorCode}: these are reasons the
- * *provider* gives after receiving a request and returning a response.
- * {@code OcrError.ErrorCode} covers cases where the client never got a
- * well-formed response at all, or rejected the frame/result before or
- * after the fact (§8) — e.g. TIMEOUT, MALFORMED_RESPONSE,
- * NO_FIELDS_EXTRACTED, quality_check_failed/exhausted.
- */
 public enum OcrErrorCode {
     SUCCESS(0, "Success"),
     DOCUMENT_NOT_DETECTED(101, "Document not detected in frame"),
@@ -57,9 +39,17 @@ public enum OcrErrorCode {
         return code >= 500 && code < 600;
     }
 
-    /** Whether a rescan is worth offering for this code. Accepts the raw
-     *  wire string; an unparsable/unknown code defaults to retryable
-     *  (favor letting the operator try again over a dead end). */
+    public static OcrErrorCode fromString(String code) {
+        if (code == null) return null;
+        try {
+            int intCode = Integer.parseInt(code.trim());
+            for (OcrErrorCode e : values()) {
+                if (e.code == intCode) return e;
+            }
+        } catch (NumberFormatException ignored) { }
+        return null;
+    }
+
     public static boolean isRetryable(@NonNull String errorCode) {
         int code;
         try {
@@ -84,7 +74,6 @@ public enum OcrErrorCode {
                 return false;
             default:
                 // 5xx custom codes are provider-defined; default to retryable
-                // since we don't know what they mean.
                 return isCustomRange(code);
         }
     }

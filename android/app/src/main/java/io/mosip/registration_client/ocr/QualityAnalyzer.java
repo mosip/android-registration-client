@@ -12,16 +12,23 @@ import java.nio.ByteBuffer;
 
 public class QualityAnalyzer {
 
-    private static final int SAMPLE_STEP = 4;
+    private static final int SAMPLE_STEP = 2;
+    private static final double MAX_FRAME_TO_FRAME_DELTA_RATIO = 0.15;
 
     private final double blurThreshold;
     private final float  brightnessMin;
     private final float  brightnessMax;
 
+    private double previousBlurVariance = Double.NaN;
+
     public QualityAnalyzer(double blurThreshold, float brightnessMin, float brightnessMax) {
         this.blurThreshold = blurThreshold;
         this.brightnessMin = brightnessMin;
         this.brightnessMax = brightnessMax;
+    }
+
+    public void resetFrameTracking() {
+        previousBlurVariance = Double.NaN;
     }
 
     public static class QualityResult {
@@ -105,9 +112,22 @@ public class QualityAnalyzer {
         double mean = sum / count;
         double variance = (sumSq / count) - (mean * mean);
 
+        // Check 1: Absolute sharpness threshold
         if (variance < blurThreshold) {
+            previousBlurVariance = variance;
             return new QualityResult(false, "Hold steady — image is blurry", brightness, variance);
         }
+
+        // Check 2: Frame-to-frame stability — reject if variance fluctuates (camera motion)
+        if (!Double.isNaN(previousBlurVariance) && previousBlurVariance > 0) {
+            double delta = Math.abs(variance - previousBlurVariance) / Math.max(variance, previousBlurVariance);
+            if (delta > MAX_FRAME_TO_FRAME_DELTA_RATIO) {
+                previousBlurVariance = variance;
+                return new QualityResult(false, "Hold steady — camera is moving", brightness, variance);
+            }
+        }
+
+        previousBlurVariance = variance;
         return new QualityResult(true, "Good", brightness, variance);
     }
 

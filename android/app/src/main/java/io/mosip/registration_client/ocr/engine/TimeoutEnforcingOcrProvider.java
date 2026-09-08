@@ -20,14 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.mosip.registration_client.ocr.models.FieldSpec;
 import io.mosip.registration_client.ocr.models.OcrError;
 
-/**
- * Applies mosip.registration.ocr.response.timeout uniformly to whichever
- * provider is active — "response within timeout?" in the flow. Wraps
- * either provider so neither implements its own timeout.
- *
- * Guards against the delegate calling back after the timeout has already
- * fired (AtomicBoolean latch) — a late result is simply dropped.
- */
 public class TimeoutEnforcingOcrProvider implements OcrProvider {
 
     private final OcrProvider delegate;

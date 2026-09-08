@@ -39,6 +39,7 @@ public class OcrUiSpecProvider {
         String rawJson;
         try {
             rawJson = globalParamRepository.getCachedStringGlobalParam(OcrParamKeys.OCR_UI_SPEC);
+            Log.d(TAG, OcrParamKeys.OCR_UI_SPEC + " from local DB: " + rawJson);
         } catch (Exception e) {
             Log.e(TAG, "Failed reading " + OcrParamKeys.OCR_UI_SPEC + " from global param cache", e);
             return result;

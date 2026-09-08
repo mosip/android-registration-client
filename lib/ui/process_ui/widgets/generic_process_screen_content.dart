@@ -37,6 +37,7 @@ import 'package:registration_client/ui/scanner/ocr_scan_page.dart';
 import 'package:registration_client/ui/scanner/ocr_upload_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'radio_button_control.dart';
 
@@ -229,12 +230,12 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
           const AdditionalInfoReqIdControl(),
         ],
 
-        // OCR action row — only on Demographics tab when OCR is enabled
+        // OCR action row — only on Demographics screen when OCR is enabled
         Consumer<OcrScanProvider>(
           builder: (context, ocrProvider, _) {
-            final isDemographicsTab =
-                context.watch<GlobalProvider>().newProcessTabIndex == 0;
-            if (ocrProvider.isOcrEnabled && isDemographicsTab) {
+            final isDemographicsScreen =
+                widget.screen.preRegFetchRequired == true;
+            if (ocrProvider.isOcrEnabled && isDemographicsScreen) {
               return _buildOcrActionRow(context);
             }
             return const SizedBox.shrink();
@@ -261,128 +262,147 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
     );
   }
 
-  /// Builds the two-card OCR action row (Scan + Upload).
+  /// Builds a compact single-row OCR action bar (Scan + Upload).
   Widget _buildOcrActionRow(BuildContext context) {
-    final bool isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
-    final EdgeInsets rowMargin = EdgeInsets.symmetric(
-      vertical: 8.h,
-      horizontal: isPortrait ? 16.w : 0,
-    );
-
     return Padding(
-      padding: rowMargin,
-      child: IntrinsicHeight(
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: solidPrimary.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: solidPrimary.withOpacity(0.12),
+            width: 1,
+          ),
+        ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(child: _buildOcrCard(
-              context: context,
-              icon: Icons.document_scanner_outlined,
-              label: 'Scan Document',
-              description: 'Use camera to auto-fill fields',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const OcrScanPage()),
+            // Label
+            Icon(Icons.auto_fix_high_rounded,
+                color: solidPrimary, size: 16),
+            SizedBox(width: 6.w),
+            Text(
+              'Auto-fill',
+              style: TextStyle(
+                color: solidPrimary,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
-            )),
-            SizedBox(width: 10.w),
-            Expanded(child: _buildOcrCard(
-              context: context,
-              icon: Icons.upload_file_outlined,
-              label: 'Upload Document',
-              description: 'Pick an image to auto-fill fields',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const OcrUploadPage()),
-              ),
-            )),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Builds a single OCR action card tile.
-  Widget _buildOcrCard({
-    required BuildContext context,
-    required IconData icon,
-    required String label,
-    required String description,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      elevation: 3,
-      color: pureWhite,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: solidPrimary.withOpacity(0.15),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            gradient: LinearGradient(
-              colors: [
-                solidPrimary.withOpacity(0.05),
-                solidPrimary.withOpacity(0.01),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Icon badge
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: solidPrimary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
+            SizedBox(width: 12.w),
+            // Scan button
+            Expanded(
+              child: SizedBox(
+                height: 34,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    context.read<GlobalProvider>().getAudit("REG-EVT-106", "REG-MOD-103");
+                    final status = await Permission.camera.status;
+                    if (status.isPermanentlyDenied) {
+                      if (context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Camera Permission Required'),
+                            content: const Text(
+                              'Camera access is needed to scan documents. '
+                              'Please enable it in app Settings.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  openAppSettings();
+                                },
+                                child: const Text('Open Settings'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return;
+                    }
+                    if (context.mounted) {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => OcrScanPage(
+                                screenFields: widget.screen.fields)),
+                      );
+                      if (context.mounted) {
+                        context.read<GlobalProvider>().preRegControllerRefresh = true;
+                        await Future.delayed(const Duration(milliseconds: 30));
+                        if (context.mounted) {
+                          context.read<GlobalProvider>().preRegControllerRefresh = false;
+                        }
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.document_scanner_outlined,
+                      size: 16),
+                  label: const Text('Scan'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: solidPrimary,
+                    side: BorderSide(
+                        color: solidPrimary.withOpacity(0.4), width: 1),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w),
+                    textStyle: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-                child: Icon(icon, color: solidPrimary, size: 22),
               ),
-              SizedBox(height: 12.h),
-              Text(
-                label,
-                style: TextStyle(
-                  color: solidPrimary,
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.1,
+            ),
+            SizedBox(width: 8.w),
+            // Upload button
+            Expanded(
+              child: SizedBox(
+                height: 34,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => OcrUploadPage(
+                              screenFields: widget.screen.fields)),
+                    );
+                    if (context.mounted) {
+                      context.read<GlobalProvider>().preRegControllerRefresh = true;
+                      await Future.delayed(const Duration(milliseconds: 30));
+                      if (context.mounted) {
+                        context.read<GlobalProvider>().preRegControllerRefresh = false;
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.upload_file_outlined,
+                      size: 16),
+                  label: const Text('Upload'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: solidPrimary,
+                    side: BorderSide(
+                        color: solidPrimary.withOpacity(0.4), width: 1),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w),
+                    textStyle: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(height: 3.h),
-              Text(
-                description,
-                style: TextStyle(
-                  color: appBlackShade3,
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w400,
-                  height: 1.4,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: solidPrimary.withOpacity(0.45),
-                  size: 14,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

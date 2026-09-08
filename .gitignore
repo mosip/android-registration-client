@@ -101,7 +101,7 @@ app.*.map.json
 
 # TFLite document classifier model (binary asset, tracked via LFS or omitted)
 /android/app/src/main/assets/ocr/
-*.tflite
+*.tflite+
 *.lite
 
 # OCR test-only files
