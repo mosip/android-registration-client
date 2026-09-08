@@ -143,12 +143,10 @@ public class AndroidMetricCollector {
             long versionCode = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 
             ? pInfo.getLongVersionCode() 
             : pInfo.versionCode;
-            String machineId = (getMachineId() != null) ? getMachineId() : "";
             String deviceInfoJson = "{" +
             "\"@timestamp\":\"" + generateUtcTimestamp() + "\"," +
             "\"name\":\"device.info\"," +
             "\"type\":\"event\"," +
-            "\"machine\":\"" + machineId + "\"," +
             "\"device_model\":\"" + getDeviceId() + "\"," +
             "\"os_release\":\"" + osRelease + "\"," +
             "\"sdk_int\":" + sdkInt + "," +
@@ -187,15 +185,23 @@ public class AndroidMetricCollector {
             .replace("\\", "\\\\")
             .replace("\"", "\\\"");
 
-        return "{" +
-            "\"@timestamp\":\"" + generateLocalTimestamp() + "\"" +
-            ",\"@version\":\"1\"" +
-            ",\"message\":\"" + escapedInner + "\"" +
-            ",\"logger_name\":\"" + LOGGER_NAME + "\"" +
-            ",\"thread_name\":\"" + THREAD_NAME + "\"" +
-            ",\"level\":\"INFO\"" +
-            ",\"level_value\":20000" +
-            "}";
+        String machineId = getMachineId();
+        StringBuilder envelopeBuilder = new StringBuilder();
+
+        envelopeBuilder.append("{")
+        .append("\"@timestamp\":\"").append(generateLocalTimestamp()).append("\"")
+        .append(",\"@version\":\"1\"")
+        .append(",\"message\":\"").append(escapedInner).append("\"")
+        .append(",\"logger_name\":\"").append(LOGGER_NAME).append("\"")
+        .append(",\"thread_name\":\"").append(THREAD_NAME).append("\"")
+        .append(",\"level\":\"INFO\"")
+        .append(",\"level_value\":20000");
+
+        if (machineId != null && !machineId.trim().isEmpty()) {
+            envelopeBuilder.append(",\"machine\":\"").append(machineId).append("\"");
+        }
+        envelopeBuilder.append("}");
+        return envelopeBuilder.toString();
     }
 
     private void appendLine(String jsonLine) {
