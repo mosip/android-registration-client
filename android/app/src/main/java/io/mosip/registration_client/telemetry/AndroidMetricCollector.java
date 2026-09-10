@@ -89,6 +89,71 @@ public class AndroidMetricCollector {
         writeExecutor.execute(() -> appendLine(buildEnvelope(innerJson)));
     }
 
+public static void writeSyncCrash(Context context, String errorType, String message,
+                                   String stackTrace, String screen, boolean fatal) {
+    try {
+        String escMessage = message == null ? "" : message
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"");
+        String escStack = stackTrace == null ? "" : stackTrace
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n");
+        String escErrorType = errorType == null ? "" : errorType
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"");
+        String escScreen = screen == null ? "" : screen
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"");
+
+        String inner = "{" +
+            "\"@timestamp\":\"" + generateUtcTimestamp() + "\"," +          // CHANGED (dropped "Static")
+            "\"name\":\"app.crash\"," +
+            "\"type\":\"event\"," +
+            "\"device_model\":\"" + getDeviceId() + "\"," +                 // CHANGED
+            "\"error_type\":\"" + escErrorType + "\"," +
+            "\"message\":\"" + escMessage + "\"," +
+            "\"stack_trace\":\"" + escStack + "\"," +
+            "\"screen\":\"" + escScreen + "\"," +
+            "\"fatal\":" + fatal +
+            "}";
+
+        String escapedInner = inner
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"");
+
+        String machineId = cachedMachineId != null ? cachedMachineId
+            : (appContext != null
+                ? appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                    .getString(KEY_MACHINE_ID, null)
+                : null);
+
+        StringBuilder envelope = new StringBuilder();
+        envelope.append("{")
+            .append("\"@timestamp\":\"").append(generateLocalTimestamp()).append("\"")  // CHANGED
+            .append(",\"@version\":\"1\"")
+            .append(",\"message\":\"").append(escapedInner).append("\"")
+            .append(",\"logger_name\":\"").append(LOGGER_NAME).append("\"")
+            .append(",\"thread_name\":\"").append(THREAD_NAME).append("\"")
+            .append(",\"level\":\"INFO\"")
+            .append(",\"level_value\":20000");
+        if (machineId != null && !machineId.trim().isEmpty()) {
+            envelope.append(",\"machine\":\"").append(machineId).append("\"");
+        }
+        envelope.append("}");
+
+        File dir = new File(context.getFilesDir(), LOG_DIR_NAME);
+        if (!dir.exists()) dir.mkdirs();
+        File logFile = new File(dir, LOG_FILE_NAME);
+
+        try (FileOutputStream fos = new FileOutputStream(logFile, true)) {
+            fos.write((envelope.toString() + "\n").getBytes(StandardCharsets.UTF_8));
+            fos.flush();
+            fos.getFD().sync();
+        }
+    } catch (Throwable ignored) {
+    }
+}
     // ─── Collect system metrics (mirrors desktop JVM metrics) ───────────────
     public void collectAndLogSystemMetrics() {
         writeExecutor.execute(() -> {
@@ -226,13 +291,13 @@ public class AndroidMetricCollector {
         }
     }
 
-    private String generateUtcTimestamp() {
+    private static String generateUtcTimestamp() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(new Date());
     }
 
-    private String generateLocalTimestamp() {
+    private static String generateLocalTimestamp() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US);
         sdf.setTimeZone(TimeZone.getDefault());
         return sdf.format(new Date());
@@ -246,7 +311,7 @@ public class AndroidMetricCollector {
         return cachedMachineId;
     }
 
-    private String getDeviceId() {
+    private static String getDeviceId() {
         return Build.MODEL != null ? Build.MODEL.replace(" ", "_") : "Android_Device";
     }
     

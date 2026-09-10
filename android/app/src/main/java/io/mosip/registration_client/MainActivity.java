@@ -6,6 +6,8 @@
 */
 
 package io.mosip.registration_client;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -123,6 +125,7 @@ public class MainActivity extends FlutterActivity {
     // TELEMETRY PIPELINE FIELDS
     // ==========================================
     private AndroidMetricCollector telemetryCollector;
+    private boolean crashHandlerInstalled = false;
 
     // ==========================================
 
@@ -394,6 +397,37 @@ public class MainActivity extends FlutterActivity {
             Log.e(getClass().getSimpleName(), "Error scheduling job: " + api, e);
         }
     }
+    
+    private void installUncaughtExceptionHandler() {
+    if (crashHandlerInstalled) return;   // configureFlutterEngine can run more than once
+    crashHandlerInstalled = true;
+
+    Thread.UncaughtExceptionHandler previous = Thread.getDefaultUncaughtExceptionHandler();
+
+    Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+        try {
+            StringWriter sw = new StringWriter();
+            throwable.printStackTrace(new PrintWriter(sw));
+
+            AndroidMetricCollector.writeSyncCrash(
+                getApplicationContext(),
+                throwable.getClass().getName(),
+                throwable.getClass().getSimpleName(),  // not getMessage() — avoid PII
+                sw.toString(),
+                "native",
+                true
+            );
+        } catch (Throwable ignored) {
+            // must never throw inside an uncaught exception handler
+        } finally {
+            if (previous != null) {
+                previous.uncaughtException(thread, throwable);
+            } else {
+                System.exit(1);
+            }
+        }
+    });
+    }
 
     public void initializeAppComponent() {
         AppComponent appComponent = DaggerAppComponent.builder()
@@ -455,6 +489,8 @@ public class MainActivity extends FlutterActivity {
         // ==========================================
         // 1. Initialize our decoupled, asynchronous background file collector
         this.telemetryCollector = new AndroidMetricCollector(this);
+        
+        installUncaughtExceptionHandler();
         
         // 2. Register the implementation wrapper to bind the platform communication channel
         io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi.setup(

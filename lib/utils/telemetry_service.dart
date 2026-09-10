@@ -9,6 +9,13 @@ class TelemetryService {
   static final TelemetryService instance = TelemetryService._internal();
 
   final TelemetryApi _api = TelemetryApi();
+  String activeScreen = 'unknown';                   
+
+  void _updateActiveScreen(String screenName) {        
+    if (screenName.isNotEmpty) {
+      activeScreen = screenName;
+    }
+  }
 
   // ─── Core event logger ────────────────────────────────────────────
   void logEvent(String name, Map<String, dynamic> properties) {
@@ -87,14 +94,15 @@ class TelemetryService {
   }
 
 /// Logs screen navigation events for telemetry (AC2)
-void onScreenView(String screenName, {String? previousScreen}) {
-logEvent('registration.screen.navigated', {
-'value': 1,
-'unit': 'count',
-'screen_name': screenName,
-if (previousScreen != null) 'previous_screen': previousScreen,
-});
-}
+  void onScreenView(String screenName, {String? previousScreen}) {
+    _updateActiveScreen(screenName); 
+    logEvent('registration.screen.navigated', {
+    'value': 1,
+    'unit': 'count',
+    'screen_name': screenName,
+    if (previousScreen != null) 'previous_screen': previousScreen,
+    });
+  }
 
 /// Logs button click / action events
   void onButtonClick(String buttonName, {String? screenName}) {
@@ -129,6 +137,22 @@ if (previousScreen != null) 'previous_screen': previousScreen,
       'unit': unit,
       'type': 'gauge',
       if (attributes != null) ...attributes,
+    });
+  }
+
+  void logCrash({                                       
+    required String errorType,
+    required String message,
+    required String stackTrace,
+    required bool fatal,
+  }) {
+    logEvent('app.crash', {
+      'type': 'event',
+      'error_type': errorType,
+      'message': message,
+      'stack_trace': stackTrace,
+      'screen': activeScreen,
+      'fatal': fatal,
     });
   }
 
