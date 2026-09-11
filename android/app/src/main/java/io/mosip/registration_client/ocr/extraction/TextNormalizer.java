@@ -27,8 +27,10 @@ public final class TextNormalizer {
             Pattern.compile("[|\\\\]");
     private static final Pattern LINE_ENDINGS_PATTERN =
             Pattern.compile("\\r\\n|\\r");
-    private static final Pattern SMART_QUOTES_PATTERN =
-            Pattern.compile("[\u201C\u201D\u201E\u201F\u2018\u2019]");
+    private static final Pattern SINGLE_QUOTES_PATTERN =
+            Pattern.compile("[\u2018\u2019\u201A\u201B\u0060\u00B4\u2032]");
+    private static final Pattern DOUBLE_QUOTES_PATTERN =
+            Pattern.compile("[\u201C\u201D\u201E\u201F\u00AB\u00BB]");
 
     @NonNull
     public static String normalize(@NonNull String rawText) {
@@ -38,7 +40,8 @@ public final class TextNormalizer {
         s = TAB_PATTERN.matcher(s).replaceAll(" ");
         s = MULTIPLE_SPACES_PATTERN.matcher(s).replaceAll(" ");
         s = NOISE_CHARS_PATTERN.matcher(s).replaceAll("");
-        s = SMART_QUOTES_PATTERN.matcher(s).replaceAll("\"");
+        s = SINGLE_QUOTES_PATTERN.matcher(s).replaceAll("'");
+        s = DOUBLE_QUOTES_PATTERN.matcher(s).replaceAll("\"");
         s = STRAY_UNDERSCORE_START_PATTERN.matcher(s).replaceAll("");
         s = STRAY_UNDERSCORE_END_PATTERN.matcher(s).replaceAll("");
 
