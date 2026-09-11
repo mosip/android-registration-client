@@ -10,15 +10,39 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DashBoardData;
+@class UpdatedTimeData;
 
-/// The codec used by SecureScreenApi.
-NSObject<FlutterMessageCodec> *SecureScreenApiGetCodec(void);
-
-@protocol SecureScreenApi
-- (void)addFlagSecureWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
-- (void)clearFlagSecureWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+@interface DashBoardData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithUserId:(NSString *)userId
+    userName:(NSString *)userName
+    userStatus:(NSNumber *)userStatus
+    userIsOnboarded:(NSNumber *)userIsOnboarded;
+@property(nonatomic, copy) NSString * userId;
+@property(nonatomic, copy) NSString * userName;
+@property(nonatomic, strong) NSNumber * userStatus;
+@property(nonatomic, strong) NSNumber * userIsOnboarded;
 @end
 
-extern void SecureScreenApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<SecureScreenApi> *_Nullable api);
+@interface UpdatedTimeData : NSObject
++ (instancetype)makeWithUpdatedTime:(nullable NSString *)updatedTime;
+@property(nonatomic, copy, nullable) NSString * updatedTime;
+@end
+
+/// The codec used by DashBoardApi.
+NSObject<FlutterMessageCodec> *DashBoardApiGetCodec(void);
+
+@protocol DashBoardApi
+- (void)getDashBoardDetailsWithCompletion:(void (^)(NSArray<DashBoardData *> *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getPacketUploadedPendingDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getCreatedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getSyncedPacketDetailsWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)getUpdatedTimeWithCompletion:(void (^)(UpdatedTimeData *_Nullable, FlutterError *_Nullable))completion;
+@end
+
+extern void DashBoardApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DashBoardApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
