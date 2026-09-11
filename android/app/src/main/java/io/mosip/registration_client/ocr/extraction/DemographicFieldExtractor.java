@@ -28,7 +28,7 @@ public final class DemographicFieldExtractor {
     private static final String TAG = "DemFieldExtractor";
 
     private static final Pattern SEPARATOR =
-            Pattern.compile("[;:—–\\-]\\s*");
+            Pattern.compile("[:;—–/|\\-]\\s*");
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}");
@@ -37,6 +37,13 @@ public final class DemographicFieldExtractor {
     private static final Pattern NON_DIGIT   = Pattern.compile("\\D");
     private static final Pattern LABEL_TOKEN_BOUNDARY =
             Pattern.compile("(?<![\\p{L}\\p{N}])%s(?![\\p{L}\\p{N}])");
+
+    private static final Pattern PAN_PATTERN =
+            Pattern.compile("\\b[A-Z]{5}[0-9]{4}[A-Z]\\b");
+    private static final Pattern AADHAAR_PATTERN =
+            Pattern.compile("\\b\\d{4}\\s?\\d{4}\\s?\\d{4}\\b");
+    private static final Pattern APOSTROPHE_OR_SUFFIX_REMAINDER =
+            Pattern.compile("^(?:['\"’]|'s\\b|s\\b|s'\\b|\\/|\\|).*");
 
     private final ExtractionConfig config;
 
@@ -89,21 +96,47 @@ public final class DemographicFieldExtractor {
         double threshold = config.getFuzzyThreshold();
         List<String> allLabels = collectAllLabels(spec);
 
+        boolean isPanCard = isPanCardContent(flatLines, rows)
+                || (documentType != null && documentType.toLowerCase(Locale.US).contains("pan"));
+
         for (FieldSpec field : spec) {
+            String fieldId = field.getId();
+            String subType = field.getSubType() != null ? field.getSubType() : fieldId;
+            String key = subType.toLowerCase(Locale.US).replaceAll("[^a-z]", "");
+
+            // On a PAN card, postalCode, address, phone, email, gender do NOT exist.
+            // Suppress them to prevent hallucinated dump values.
+            if (isPanCard) {
+                if (key.contains("postal") || key.contains("pin") || key.contains("zip")
+                        || key.contains("address")
+                        || key.contains("phone") || key.contains("mobile")
+                        || key.contains("email")
+                        || key.contains("gender") || key.equals("sex")) {
+                    continue;
+                }
+            }
+
             List<String> labels = collectLabels(field);
             String normalized = null;
             if (!labels.isEmpty()) {
                 normalized = normalizeCandidate(
-                        pass1GeometryColonSplit(labels, rows, allLabels, threshold), field);
+                        pass1GeometryColonSplit(labels, rows, allLabels, threshold, field), field);
                 if (normalized != null) {
                     result.put(field.getId(), normalized);
                     continue;
                 }
 
                 normalized = normalizeCandidate(
-                        pass2FuzzyNextLine(labels, flatLines, allLabels, threshold), field);
+                        pass2FuzzyNextLine(labels, flatLines, allLabels, threshold, field), field);
                 if (normalized != null) {
                     result.put(field.getId(), normalized);
+                    continue;
+                }
+            }
+
+            // For postalCode, only allow pass3 regex if text actually contains a postal/PIN indicator
+            if (key.contains("postal") || key.contains("pin") || key.contains("zip")) {
+                if (!hasPostalLabelInText(flatLines)) {
                     continue;
                 }
             }
@@ -115,15 +148,19 @@ public final class DemographicFieldExtractor {
         }
 
         Log.d(TAG, "Extracted " + result.size() + "/" + spec.size()
-                + " fields (docType=" + documentType + ")");
+                + " fields (docType=" + documentType + ", isPanCard=" + isPanCard + ")");
         return result;
     }
+
     @Nullable
     private String pass1GeometryColonSplit(
             @NonNull List<String> labels,
             @NonNull List<BlockGeometryParser.LayoutRow> rows,
             @NonNull List<String> allLabels,
-            double threshold) {
+            double threshold,
+            @NonNull FieldSpec field) {
+
+        boolean isSingleLine = isSingleLineField(field);
 
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
             BlockGeometryParser.LayoutRow row = rows.get(rowIndex);
@@ -143,15 +180,29 @@ public final class DemographicFieldExtractor {
                 String afterLabel = row.fullText.substring(
                         Math.min(idx + label.length(), row.fullText.length())).trim();
 
+                // Suffix check: if afterLabel starts with an apostrophe suffix (e.g. 's Name),
+                // this was an incomplete label match, not a field value!
+                if (APOSTROPHE_OR_SUFFIX_REMAINDER.matcher(afterLabel).matches()) {
+                    continue;
+                }
+
                 Matcher sep = SEPARATOR.matcher(afterLabel);
                 if (sep.lookingAt()) {
                     String value = afterLabel.substring(sep.end()).trim();
                     if (!value.isEmpty()) {
-                        return collectContinuation(trimAtEmbeddedFieldLabel(value, allLabels), rows, rowIndex + 1, allLabels,
+                        String cleanVal = trimAtEmbeddedFieldLabel(value, allLabels);
+                        if (isSingleLine) {
+                            return cleanVal;
+                        }
+                        return collectContinuation(cleanVal, rows, rowIndex + 1, allLabels,
                                 threshold);
                     }
-                } else if (!afterLabel.isEmpty() && !isLikelyAnotherLabel(afterLabel)) {
-                    return collectContinuation(trimAtEmbeddedFieldLabel(afterLabel, allLabels), rows, rowIndex + 1, allLabels,
+                } else if (!afterLabel.isEmpty() && !isLikelyAnotherLabel(afterLabel) && !isHeaderOrIdPattern(afterLabel)) {
+                    String cleanVal = trimAtEmbeddedFieldLabel(afterLabel, allLabels);
+                    if (isSingleLine) {
+                        return cleanVal;
+                    }
+                    return collectContinuation(cleanVal, rows, rowIndex + 1, allLabels,
                             threshold);
                 }
             }
@@ -164,7 +215,10 @@ public final class DemographicFieldExtractor {
             @NonNull List<String> labels,
             @NonNull String[] lines,
             @NonNull List<String> allLabels,
-            double threshold) {
+            double threshold,
+            @NonNull FieldSpec field) {
+
+        boolean isSingleLine = isSingleLineField(field);
 
         for (int i = 0; i < lines.length; i++) {
             String line      = lines[i].trim();
@@ -184,33 +238,50 @@ public final class DemographicFieldExtractor {
                 }
                 String afterLabel = line.substring(
                         Math.min(idx + label.length(), line.length())).trim();
+
+                if (APOSTROPHE_OR_SUFFIX_REMAINDER.matcher(afterLabel).matches()) {
+                    continue;
+                }
+
                 Matcher sep = SEPARATOR.matcher(afterLabel);
                 if (sep.lookingAt()) {
                     String sameLineValue = trimAtEmbeddedFieldLabel(
                             afterLabel.substring(sep.end()).trim(), allLabels);
                     if (!sameLineValue.isEmpty()) {
+                        if (isSingleLine) {
+                            return sameLineValue;
+                        }
                         StringBuilder value = new StringBuilder(sameLineValue);
                         for (int j = i + 1; j < lines.length; j++) {
                             String nextLine = lines[j].trim();
                             if (nextLine.isEmpty()) break;
-                            if (isFieldLabel(nextLine, allLabels, threshold)) break;
+                            if (shouldStopContinuation(nextLine, allLabels, threshold)) break;
                             value.append(' ').append(trimAtEmbeddedFieldLabel(nextLine, allLabels));
                         }
                         return value.toString();
                     }
                 }
 
-                StringBuilder value = new StringBuilder();
-                for (int j = i + 1; j < lines.length; j++) {
-                    String nextLine = lines[j].trim();
-                    if (nextLine.isEmpty()) break;
-                    if (value.length() > 0 && isFieldLabel(nextLine, allLabels, threshold)) {
-                        break;
+                if (isSingleLine) {
+                    for (int j = i + 1; j < lines.length && j <= i + 3; j++) {
+                        String nextLine = lines[j].trim();
+                        if (nextLine.isEmpty()) continue;
+                        if (shouldStopContinuation(nextLine, allLabels, threshold)) break;
+                        return trimAtEmbeddedFieldLabel(nextLine, allLabels);
                     }
-                    if (value.length() > 0) value.append(' ');
-                    value.append(trimAtEmbeddedFieldLabel(nextLine, allLabels));
+                } else {
+                    StringBuilder value = new StringBuilder();
+                    for (int j = i + 1; j < lines.length; j++) {
+                        String nextLine = lines[j].trim();
+                        if (nextLine.isEmpty()) break;
+                        if (shouldStopContinuation(nextLine, allLabels, threshold)) {
+                            break;
+                        }
+                        if (value.length() > 0) value.append(' ');
+                        value.append(trimAtEmbeddedFieldLabel(nextLine, allLabels));
+                    }
+                    if (value.length() > 0) return value.toString();
                 }
-                if (value.length() > 0) return value.toString();
             }
         }
         return null;
@@ -269,6 +340,7 @@ public final class DemographicFieldExtractor {
     @NonNull
     private List<String> collectLabels(@NonNull FieldSpec field) {
         String subType = field.getSubType();
+        List<String> rawLabels;
         if (subType != null && !subType.isEmpty()) {
             List<String> subTypeLabels = config.labelsForSubType(subType);
             if (!subTypeLabels.isEmpty()) {
@@ -278,12 +350,19 @@ public final class DemographicFieldExtractor {
                     for (String l : idLabels) {
                         if (!merged.contains(l)) merged.add(l);
                     }
-                    return merged;
+                    rawLabels = merged;
+                } else {
+                    rawLabels = subTypeLabels;
                 }
-                return subTypeLabels;
+            } else {
+                rawLabels = config.labelsForSubType(field.getId());
             }
+        } else {
+            rawLabels = config.labelsForSubType(field.getId());
         }
-        return config.labelsForSubType(field.getId());
+        java.util.ArrayList<String> sorted = new java.util.ArrayList<>(rawLabels);
+        sorted.sort((a, b) -> Integer.compare(b.length(), a.length()));
+        return sorted;
     }
 
     @NonNull
@@ -308,7 +387,7 @@ public final class DemographicFieldExtractor {
     }
 
     @NonNull
-    private static String collectContinuation(
+    private String collectContinuation(
             @NonNull String firstLine,
             @NonNull List<BlockGeometryParser.LayoutRow> rows,
             int start,
@@ -318,7 +397,7 @@ public final class DemographicFieldExtractor {
         for (int i = start; i < rows.size(); i++) {
             String line = rows.get(i).fullText.trim();
             if (line.isEmpty()) break;
-            if (isFieldLabel(line, allLabels, threshold)) break;
+            if (shouldStopContinuation(line, allLabels, threshold)) break;
             String continuation = trimAtEmbeddedFieldLabel(line, allLabels);
             if (continuation.isEmpty()) break;
             value.append(' ').append(continuation);
@@ -447,7 +526,86 @@ public final class DemographicFieldExtractor {
         // Contains digits → likely a value (DOB, phone, etc.)
         if (s.matches(".*\\d.*")) return false;
         // Contains separator → might be another label:value pair
-        return s.contains(":") || s.contains("—");
+        return s.contains(":") || s.contains("—") || s.contains("/") || s.contains("|");
+    }
+
+    private boolean shouldStopContinuation(
+            @NonNull String line,
+            @NonNull List<String> allLabels,
+            double threshold) {
+        if (line.isEmpty()) return true;
+        if (isFieldLabel(line, allLabels, threshold)) return true;
+        if (isHeaderOrIdPattern(line)) return true;
+        return false;
+    }
+
+    private boolean isHeaderOrIdPattern(@NonNull String line) {
+        String lower = line.toLowerCase(Locale.US).trim();
+        for (String header : config.headerPatterns()) {
+            if (lower.contains(header.toLowerCase(Locale.US))) {
+                return true;
+            }
+        }
+        if (PAN_PATTERN.matcher(line.trim()).matches()) {
+            return true;
+        }
+        if (AADHAAR_PATTERN.matcher(line.trim()).matches()) {
+            return true;
+        }
+        if (lower.contains("signature") || lower.contains("हस्ताक्षर")) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isSingleLineField(@NonNull FieldSpec field) {
+        String subType = field.getSubType();
+        if (subType == null || subType.isEmpty()) subType = field.getId();
+        String lower = subType.toLowerCase(Locale.US);
+        String idLower = field.getId() != null ? field.getId().toLowerCase(Locale.US) : "";
+        if (lower.contains("address") || idLower.contains("address")) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isPanCardContent(
+            @NonNull String[] lines,
+            @NonNull List<BlockGeometryParser.LayoutRow> rows) {
+        for (String line : lines) {
+            String lower = line.toLowerCase(Locale.US);
+            if (lower.contains("income tax")
+                    || lower.contains("permanent account number")
+                    || lower.contains("permanent account")) {
+                return true;
+            }
+            if (PAN_PATTERN.matcher(line.trim()).find()) {
+                return true;
+            }
+        }
+        for (BlockGeometryParser.LayoutRow row : rows) {
+            String lower = row.fullText.toLowerCase(Locale.US);
+            if (lower.contains("income tax")
+                    || lower.contains("permanent account number")
+                    || lower.contains("permanent account")) {
+                return true;
+            }
+            if (PAN_PATTERN.matcher(row.fullText.trim()).find()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasPostalLabelInText(@NonNull String[] lines) {
+        for (String line : lines) {
+            String lower = line.toLowerCase(Locale.US);
+            if (lower.contains("pin") || lower.contains("pincode") || lower.contains("postal")
+                    || lower.contains("zip")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -469,7 +627,8 @@ public final class DemographicFieldExtractor {
         }
 
         if (lower.contains("name") || lower.contains("father") || lower.contains("mother")) {
-            return toTitleCase(rawValue.trim());
+            String cleaned = rawValue.replaceAll("^[:;—–/|\\-\\s]+", "").replaceAll("[:;—–/|\\-\\s]+$", "").trim();
+            return toTitleCase(cleaned);
         }
 
         if (lower.contains("gender") || lower.equals("sex")) {

@@ -2,15 +2,15 @@ package io.mosip.registration_client.ocr.extraction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration_client.ocr.models.FieldSpec;
 
 /** Regression tests for flat-text parsing; geometry uses the same core parser. */
@@ -20,8 +20,7 @@ public class DemographicFieldExtractorTest {
 
     @Before
     public void setUp() {
-        extractor = new DemographicFieldExtractor(
-                new ExtractionConfig(mock(GlobalParamRepository.class)));
+        extractor = new DemographicFieldExtractor(new ExtractionConfig());
     }
 
     @Test
@@ -63,6 +62,45 @@ public class DemographicFieldExtractorTest {
                 Arrays.asList(new FieldSpec("date_of_birth", "string", "textbox", "DATE_OF_BIRTH")));
 
         assertEquals("2000/01/01", result.get("date_of_birth"));
+    }
+
+    @Test
+    public void extractsPanCardPreciseFieldsWithoutLeakingOrHallucinating() {
+        String rawOcrText =
+                "INCOME TAX DEPARTMENT\n"
+                + "T4 Name\n"
+                + "RAHUL MISHRA\n"
+                + "Permanent Account Number Card\n"
+                + "ELWPM8089J\n"
+                + "fyar T4| Father's Name\n"
+                + "SATENDRA MISHRA\n"
+                + "GOVT. OF INDIA\n"
+                + "H 5 arta/ Date of Birth\n"
+                + "30/01/1997\n"
+                + "BEHTAT/ Signature\n"
+                + "17022018";
+
+        List<FieldSpec> spec = Arrays.asList(
+                new FieldSpec("fullName", "simpleType", "textbox", "name"),
+                new FieldSpec("dateOfBirth", "string", "ageDate", "dateOfBirth"),
+                new FieldSpec("gender", "simpleType", "dropdown", "gender"),
+                new FieldSpec("addressLine1", "simpleType", "textbox", "address"),
+                new FieldSpec("postalCode", "string", "textbox", "postalCode"),
+                new FieldSpec("phone", "string", "textbox", "phone"),
+                new FieldSpec("email", "string", "textbox", "email"),
+                new FieldSpec("introducerName", "simpleType", "textbox", "fatherName"),
+                new FieldSpec("documentNumber", "string", "textbox", "documentNumber")
+        );
+
+        Map<String, String> result = extractor.extract(rawOcrText, "UNKNOWN", spec);
+
+        assertEquals("Rahul Mishra", result.get("fullName"));
+        assertEquals("Satendra Mishra", result.get("introducerName"));
+        assertEquals("1997/01/30", result.get("dateOfBirth"));
+        assertEquals("ELWPM8089J", result.get("documentNumber"));
+        assertNull(result.get("postalCode"));
+        assertNull(result.get("addressLine1"));
+        assertNull(result.get("gender"));
     }
 
     private static FieldSpec field(String id) {

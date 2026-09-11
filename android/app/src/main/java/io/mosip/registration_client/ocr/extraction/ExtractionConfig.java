@@ -41,7 +41,11 @@ public final class ExtractionConfig {
     private final Map<String, String>       fieldRegexMap;
 
 
-    public ExtractionConfig(@NonNull GlobalParamRepository repo) {
+    public ExtractionConfig() {
+        this(null);
+    }
+
+    public ExtractionConfig(@androidx.annotation.Nullable GlobalParamRepository repo) {
         this.labelsMap      = loadLabels(repo);
         this.genderValues   = loadGenderValues(repo);
         this.monthNames     = loadMonthNames(repo);
@@ -109,7 +113,7 @@ public final class ExtractionConfig {
                 "id no", "card number", "serial no", "reg no",
                 "registration no", "enrollment no"));
         defaults.put("fatherName", Arrays.asList(
-                "father", "father's name", "father name",
+                "father's name", "father name", "father",
                 "s/o", "d/o", "w/o", "c/o", "guardian"));
         defaults.put("motherName", Arrays.asList(
                 "mother", "mother's name", "mother name"));
@@ -117,33 +121,35 @@ public final class ExtractionConfig {
                 "blood group", "blood type", "blood", "b.g", "b/g",
                 "blood grp", "bg"));
 
-        try {
-            String param = repo.getCachedStringGlobalParam(OcrParamKeys.OCR_EXTRACTION_LABELS);
-            if (param != null && !param.trim().isEmpty()) {
-                JSONObject json = new JSONObject(param);
-                Map<String, List<String>> parsed = new HashMap<>();
-                JSONArray names = json.names();
-                if (names != null) {
-                    for (int i = 0; i < names.length(); i++) {
-                        String key = names.getString(i);
-                        JSONArray arr = json.getJSONArray(key);
-                        List<String> list = new ArrayList<>();
-                        for (int j = 0; j < arr.length(); j++) {
-                            list.add(arr.getString(j));
+        if (repo != null) {
+            try {
+                String param = repo.getCachedStringGlobalParam(OcrParamKeys.OCR_EXTRACTION_LABELS);
+                if (param != null && !param.trim().isEmpty()) {
+                    JSONObject json = new JSONObject(param);
+                    Map<String, List<String>> parsed = new HashMap<>();
+                    JSONArray names = json.names();
+                    if (names != null) {
+                        for (int i = 0; i < names.length(); i++) {
+                            String key = names.getString(i);
+                            JSONArray arr = json.getJSONArray(key);
+                            List<String> list = new ArrayList<>();
+                            for (int j = 0; j < arr.length(); j++) {
+                                list.add(arr.getString(j));
+                            }
+                            parsed.put(key, Collections.unmodifiableList(list));
                         }
-                        parsed.put(key, Collections.unmodifiableList(list));
                     }
-                }
-                for (Map.Entry<String, List<String>> e : defaults.entrySet()) {
-                    if (!parsed.containsKey(e.getKey())) {
-                        parsed.put(e.getKey(), e.getValue());
+                    for (Map.Entry<String, List<String>> e : defaults.entrySet()) {
+                        if (!parsed.containsKey(e.getKey())) {
+                            parsed.put(e.getKey(), e.getValue());
+                        }
                     }
+                    return Collections.unmodifiableMap(parsed);
                 }
-                return Collections.unmodifiableMap(parsed);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to parse " + OcrParamKeys.OCR_EXTRACTION_LABELS
+                        + ", using built-in defaults", e);
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to parse " + OcrParamKeys.OCR_EXTRACTION_LABELS
-                    + ", using built-in defaults", e);
         }
 
         // Return immutable defaults
@@ -172,9 +178,11 @@ public final class ExtractionConfig {
 
     private Set<String> loadHeaderPatterns(GlobalParamRepository repo) {
         Set<String> defaults = new HashSet<>(Arrays.asList(
-                "government of", "republic of", "income tax",
+                "government of", "republic of", "income tax", "income tax department",
                 "election commission", "dept of", "ministry of",
-                "id card", "identity card", "voter id"
+                "id card", "identity card", "voter id",
+                "permanent account number", "permanent account number card",
+                "govt. of india", "govt of india", "signature"
         ));
         return loadSetFromParam(repo, OcrParamKeys.OCR_EXTRACTION_HEADER_PATTERNS, defaults);
     }
@@ -182,40 +190,46 @@ public final class ExtractionConfig {
     private Set<String> loadSetFromParam(GlobalParamRepository repo,
                                           String key,
                                           Set<String> defaults) {
-        try {
-            String param = repo.getCachedStringGlobalParam(key);
-            if (param != null && !param.trim().isEmpty()) {
-                JSONArray arr = new JSONArray(param);
-                Set<String> result = new HashSet<>();
-                for (int i = 0; i < arr.length(); i++) result.add(arr.getString(i));
-                return Collections.unmodifiableSet(result);
+        if (repo != null) {
+            try {
+                String param = repo.getCachedStringGlobalParam(key);
+                if (param != null && !param.trim().isEmpty()) {
+                    JSONArray arr = new JSONArray(param);
+                    Set<String> result = new HashSet<>();
+                    for (int i = 0; i < arr.length(); i++) result.add(arr.getString(i));
+                    return Collections.unmodifiableSet(result);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to parse " + key + ", using defaults", e);
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to parse " + key + ", using defaults", e);
         }
         return Collections.unmodifiableSet(defaults);
     }
 
     private String loadNoiseChars(GlobalParamRepository repo) {
-        try {
-            String param = repo.getCachedStringGlobalParam(OcrParamKeys.OCR_EXTRACTION_NOISE_CHARS);
-            if (param != null && !param.isEmpty()) return param;
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to get " + OcrParamKeys.OCR_EXTRACTION_NOISE_CHARS, e);
+        if (repo != null) {
+            try {
+                String param = repo.getCachedStringGlobalParam(OcrParamKeys.OCR_EXTRACTION_NOISE_CHARS);
+                if (param != null && !param.isEmpty()) return param;
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to get " + OcrParamKeys.OCR_EXTRACTION_NOISE_CHARS, e);
+            }
         }
         return "|\\";  // default noise chars
     }
 
     private float loadFuzzyThreshold(GlobalParamRepository repo) {
-        try {
-            String param = repo.getCachedStringGlobalParam(
-                    OcrParamKeys.OCR_EXTRACTION_FUZZY_THRESHOLD);
-            if (param != null && !param.isEmpty()) {
-                return Float.parseFloat(param.trim());
+        if (repo != null) {
+            try {
+                String param = repo.getCachedStringGlobalParam(
+                        OcrParamKeys.OCR_EXTRACTION_FUZZY_THRESHOLD);
+                if (param != null && !param.isEmpty()) {
+                    return Float.parseFloat(param.trim());
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to parse " + OcrParamKeys.OCR_EXTRACTION_FUZZY_THRESHOLD
+                        + ", using default " + DEFAULT_FUZZY_THRESHOLD, e);
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to parse " + OcrParamKeys.OCR_EXTRACTION_FUZZY_THRESHOLD
-                    + ", using default " + DEFAULT_FUZZY_THRESHOLD, e);
         }
         return DEFAULT_FUZZY_THRESHOLD;
     }
@@ -228,24 +242,28 @@ public final class ExtractionConfig {
         defaults.put("mobile",       "\\+?[\\d][\\d\\-\\s]{7,14}");
         defaults.put("email",        "[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}");
         defaults.put("bloodgroup",   "[AaBoO]{1,2}[+\\-]?(\\s*\\(\\s*[Vv][Ee]\\s*\\))?");
-        defaults.put("postalcode",   "\\b\\d{4,10}\\b");
+        defaults.put("postalcode",   "\\b[1-9][0-9]{5}\\b");
+        defaults.put("pannumber",    "\\b[A-Z]{5}[0-9]{4}[A-Z]\\b");
+        defaults.put("documentnumber", "\\b[A-Z]{5}[0-9]{4}[A-Z]\\b|\\b\\d{4}\\s?\\d{4}\\s?\\d{4}\\b|\\b[A-Z]{3}[0-9]{7}\\b");
 
-        try {
-            String param = repo.getCachedStringGlobalParam(
-                    OcrParamKeys.OCR_EXTRACTION_FIELD_REGEXES);
-            if (param != null && !param.trim().isEmpty()) {
-                JSONObject json = new JSONObject(param);
-                JSONArray names = json.names();
-                if (names != null) {
-                    for (int i = 0; i < names.length(); i++) {
-                        String key = names.getString(i);
-                        defaults.put(key.toLowerCase(), json.getString(key));
+        if (repo != null) {
+            try {
+                String param = repo.getCachedStringGlobalParam(
+                        OcrParamKeys.OCR_EXTRACTION_FIELD_REGEXES);
+                if (param != null && !param.trim().isEmpty()) {
+                    JSONObject json = new JSONObject(param);
+                    JSONArray names = json.names();
+                    if (names != null) {
+                        for (int i = 0; i < names.length(); i++) {
+                            String key = names.getString(i);
+                            defaults.put(key.toLowerCase(), json.getString(key));
+                        }
                     }
                 }
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to parse " + OcrParamKeys.OCR_EXTRACTION_FIELD_REGEXES
+                        + ", using defaults", e);
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to parse " + OcrParamKeys.OCR_EXTRACTION_FIELD_REGEXES
-                    + ", using defaults", e);
         }
 
         return Collections.unmodifiableMap(defaults);
