@@ -17,12 +17,25 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/platform_spi/global_config_service.dart';
 import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'package:registration_client/utils/sync_job_def.dart';
+import 'package:registration_client/pigeon/machine_pigeon.dart';
+import 'package:registration_client/pigeon/telemetry_pigeon.dart';
 
 enum RemapSyncStatus { idle, inProgress, success, failed }
 
 class SyncProvider with ChangeNotifier {
   final SyncResponseService syncResponseService = SyncResponseService();
   final GlobalConfigService _globalConfigService = GlobalConfigService();
+  Future _updateTelemetryMachineId() async {
+  try {
+    final Machine machine = await MachineApi().getMachineDetails();
+    final String? machineId = machine.map['id'] ?? machine.map['name'];
+    if (machineId != null && machineId.isNotEmpty) {
+    await TelemetryApi().setMachineId(machineId);
+    }
+  } catch (e) {
+    debugPrint('Failed to set telemetry machine ID: $e');
+  }
+}
 
   String _lastSuccessfulSyncTime = "";
   int _currentSyncProgress = 0;
@@ -118,6 +131,7 @@ class SyncProvider with ChangeNotifier {
       final preRegTime = prefs.getString(_preRegSyncTimeKey);
       if (masterTime != null) _lastMasterDataSyncTime = masterTime;
       if (preRegTime != null) _lastPreRegSyncTime = preRegTime;
+      await _updateTelemetryMachineId();
       notifyListeners();
     } catch (e) {
       log('SyncProvider: loadLastSyncTimes error: $e');
@@ -372,6 +386,7 @@ class SyncProvider with ChangeNotifier {
       notifyListeners();
     });
     await getLastSyncTime();
+    await _updateTelemetryMachineId();
   }
 
   bool isAllSyncSuccessful() {
@@ -439,6 +454,7 @@ class SyncProvider with ChangeNotifier {
 
       _masterDataSyncProgress = 100;
       await saveMasterDataSyncTime(DateTime.now().toIso8601String());
+      await _updateTelemetryMachineId();
       return true;
     } catch (e) {
       log('SyncProvider: performMasterDataSync error: $e');

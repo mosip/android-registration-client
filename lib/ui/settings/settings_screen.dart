@@ -12,6 +12,7 @@ import 'package:registration_client/platform_spi/sync_response_service.dart';
 import 'widgets/scheduled_jobs_settings.dart';
 
 import 'widgets/global_config_settings_tab.dart';
+import '../../utils/telemetry_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -40,6 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     syncResponseService = SyncResponseService();
     _loadUiSpec();
     _loadActiveJobs();
+    TelemetryService.instance.onScreenView('SettingsScreen');
   }
 
   Future<void> _loadUiSpec() async {

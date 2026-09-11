@@ -6,6 +6,8 @@
 */
 
 package io.mosip.registration_client;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -22,6 +24,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -107,12 +114,20 @@ import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 import io.mosip.registration_client.utils.BatchJob;
 import io.mosip.registration_client.utils.CustomToast;
+import io.mosip.registration_client.telemetry.AndroidMetricCollector;
 
 import android.net.Uri;
 
 
 public class MainActivity extends FlutterActivity {
     private static final String REG_CLIENT_CHANNEL = "com.flutter.dev/io.mosip.get-package-instance";
+    // ==========================================
+    // TELEMETRY PIPELINE FIELDS
+    // ==========================================
+    private AndroidMetricCollector telemetryCollector;
+    private boolean crashHandlerInstalled = false;
+
+    // ==========================================
 
     ObjectWriter ow;
     @Inject
@@ -313,6 +328,11 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Safely release background execution threads during app destruction
+        if (this.telemetryCollector != null) {
+            this.telemetryCollector.shutdown();
+        }
+        //
         unregisterReceiver(broadcastReceiver);
         try {
             unregisterReceiver(rescheduleReceiver);
@@ -377,6 +397,37 @@ public class MainActivity extends FlutterActivity {
             Log.e(getClass().getSimpleName(), "Error scheduling job: " + api, e);
         }
     }
+    
+    private void installUncaughtExceptionHandler() {
+    if (crashHandlerInstalled) return;   // configureFlutterEngine can run more than once
+    crashHandlerInstalled = true;
+
+    Thread.UncaughtExceptionHandler previous = Thread.getDefaultUncaughtExceptionHandler();
+
+    Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+        try {
+            StringWriter sw = new StringWriter();
+            throwable.printStackTrace(new PrintWriter(sw));
+
+            AndroidMetricCollector.writeSyncCrash(
+                getApplicationContext(),
+                throwable.getClass().getName(),
+                throwable.getClass().getSimpleName(),  // not getMessage() — avoid PII
+                sw.toString(),
+                "native",
+                true
+            );
+        } catch (Throwable ignored) {
+            // must never throw inside an uncaught exception handler
+        } finally {
+            if (previous != null) {
+                previous.uncaughtException(thread, throwable);
+            } else {
+                System.exit(1);
+            }
+        }
+    });
+    }
 
     public void initializeAppComponent() {
         AppComponent appComponent = DaggerAppComponent.builder()
@@ -420,6 +471,59 @@ public class MainActivity extends FlutterActivity {
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
         SecureScreenPigeon.SecureScreenApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), secureScreenApi);
         secureScreenApi.setCallbackActivity(this);
+        // ==========================================
+        // TELEMETRY PHASE 1: SMOKE TEST BRIDGE
+        // ==========================================
+        // io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi.setup(
+        //     flutterEngine.getDartExecutor().getBinaryMessenger(),
+        //     new io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi() {
+        //         @Override
+        //         public void logMetric(@NonNull String metricJson) {
+        //             android.util.Log.d("PIGEON_TEST", "🚀 SUCCESS! Received metric payload: " + metricJson);
+        //         }
+        //     }
+        // );
+        //--------------------------------------------
+        // ==========================================
+        // TELEMETRY PHASE 2: LOCAL SECURE METRICS ENGINE
+        // ==========================================
+        // 1. Initialize our decoupled, asynchronous background file collector
+        this.telemetryCollector = new AndroidMetricCollector(this);
+        
+        installUncaughtExceptionHandler();
+        
+        // 2. Register the implementation wrapper to bind the platform communication channel
+        io.mosip.registration_client.model.TelemetryPigeon.TelemetryApi.setup(
+            flutterEngine.getDartExecutor().getBinaryMessenger(),
+            new io.mosip.registration_client.telemetry.TelemetryApiImpl(this.telemetryCollector)
+        );
+        //--------------------------------------------
+        this.telemetryCollector.collectAndLogSystemMetrics();
+        //--------------------------------------------
+
+// ==========================================
+// TELEMETRY PHASE 4: BACKGROUND TUS UPLOAD
+// ==========================================
+    Constraints uploadConstraints = new Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build();
+
+    PeriodicWorkRequest uploadRequest =
+        new PeriodicWorkRequest.Builder(
+            io.mosip.registration_client.telemetry.TelemetryUploadWorker.class,
+            15, TimeUnit.MINUTES)
+        .setConstraints(uploadConstraints)
+        .build();
+
+    WorkManager.getInstance(getApplicationContext())
+        .enqueueUniquePeriodicWork(
+            "TelemetryUpload",
+            ExistingPeriodicWorkPolicy.KEEP,
+            uploadRequest
+        );
+
+    Log.d("MainActivity", "Telemetry upload worker scheduled — every 15 min");
+    //--------------------------------------------
     }
 
     @Override

@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 class CenterRemapSyncScreen extends StatefulWidget {
   const CenterRemapSyncScreen({super.key});
@@ -28,6 +29,7 @@ class _CenterRemapSyncScreenState extends State<CenterRemapSyncScreen>
   @override
   void initState() {
     super.initState();
+    TelemetryService.instance.onScreenView("CenterRemapSyncScreen");
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),

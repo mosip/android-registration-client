@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 
 class SyncAlertDialog extends StatelessWidget {
@@ -41,6 +42,7 @@ class SyncAlertDialog extends StatelessWidget {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
+                    TelemetryService.instance.onButtonClick("cancel_sync_alert", screenName: "SyncAlertDialog");
                     Navigator.of(context).pop();
                   },
                   child: SizedBox(

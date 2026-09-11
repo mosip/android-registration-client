@@ -6,6 +6,7 @@ import 'package:registration_client/pigeon/dash_board_pigeon.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../utils/telemetry_service.dart';
 
 class UserDashBoard extends StatefulWidget {
   const UserDashBoard({super.key});
@@ -17,6 +18,12 @@ class UserDashBoard extends StatefulWidget {
 class _UserDashBoardState extends State<UserDashBoard> {
   late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
+  @override
+  void initState() {
+    super.initState();
+    TelemetryService.instance.onScreenView('DashboardPage');
+  }
+  
   Future<List<DashBoardData?>> _getDashBoardList() async {
     return await context.read<RegistrationTaskProvider>().getDashBoardDetails();
   }

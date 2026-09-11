@@ -17,6 +17,7 @@ import 'package:registration_client/provider/registration_task_provider.dart';
 
 import 'package:registration_client/ui/onboard/widgets/onboard_landing_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -161,6 +162,7 @@ class OnboardLandingPage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         debugPrint(MediaQuery.of(context).size.width.toString());
+                        TelemetryService.instance.onRegistrationStarted('new_registration_flow');// Log registration started event
                         context.read<GlobalProvider>().setCurrentIndex(1);
                       },
                       style: ButtonStyle(

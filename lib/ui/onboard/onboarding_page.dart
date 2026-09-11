@@ -13,6 +13,7 @@ import 'package:registration_client/provider/auth_provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/onboard/widgets/operator_onboarding_biometrics_capture_control.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -104,6 +105,8 @@ class OnboardingPage extends StatelessWidget {
                     _getButton(
                       title: AppLocalizations.of(context)!.get_onboard,
                       onTap: () async{
+                        TelemetryService.instance.onRegistrationStarted("Onboarding");// Log registration started event
+
                         await BiometricsApi().startOperatorOnboarding();
                         globalProvider.onboardingProcessName="Onboarding";
                         Navigator.push(

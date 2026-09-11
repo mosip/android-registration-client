@@ -4,8 +4,10 @@
  * LICENSE file in the root directory of this source tree.
  *
 */
-
+import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';    
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/app_router.dart';
@@ -23,6 +25,7 @@ import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter/services.dart';
 import 'package:registration_client/utils/inactivity_tracker.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -31,18 +34,66 @@ GlobalKey<ScaffoldMessengerState>();
 /// MethodChannel name used by Android to request showing the sync-complete restart dialog.
 const String _syncRestartChannel = 'io.mosip.registration_client/sync_restart';
 
-void main() async {
+void main() {
+  runZonedGuarded(() async {
+  final double appInitTimestamp = DateTime.now().millisecondsSinceEpoch.toDouble();
+
   enableFlutterDriverExtension(enableTextEntryEmulation: false);
   WidgetsFlutterBinding.ensureInitialized();
-  _setupSyncRestartChannel();
-  final GlobalProvider appLanguage = GlobalProvider();
-  await FlutterConfig.loadEnvVariables();
-  await appLanguage.fetchLocale();
-  runApp(
-    const RestartWidget(child: RegistrationClientApp()),
-  );
+      // ── AC5: Framework/UI errors (widget build, layout, paint) ──
+    FlutterError.onError = (FlutterErrorDetails details) {
+      TelemetryService.instance.logCrash(
+        errorType: details.exception.runtimeType.toString(),
+        message: _safeMessage(details.exception),
+        stackTrace: details.stack?.toString() ?? '',
+        fatal: false,
+      );
+      FlutterError.presentError(details);
+    };
+  // ── AC5: Uncaught errors anywhere else in the Flutter engine ──
+    PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+      TelemetryService.instance.logCrash(
+        errorType: error.runtimeType.toString(),
+        message: _safeMessage(error),
+        stackTrace: stack.toString(),
+        fatal: true,
+      );
+      return true;
+    };
+
+  // Log startup metric once the first frame renders
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final double renderCompleteTimestamp = DateTime.now().millisecondsSinceEpoch.toDouble();
+    final double startupTimeMs = renderCompleteTimestamp - appInitTimestamp;
+
+TelemetryService.instance.logPerformanceMetric(
+  'registration.app.startup_time',
+  startupTimeMs,
+  'ms',
+);
+});
+
+_setupSyncRestartChannel();
+final GlobalProvider appLanguage = GlobalProvider();
+await FlutterConfig.loadEnvVariables();
+await appLanguage.fetchLocale();
+runApp(
+const RestartWidget(child: RegistrationClientApp()),
+);
+},(Object error, StackTrace stack) {
+    // ── AC5: catches errors outside the two hooks above ──
+    TelemetryService.instance.logCrash(
+      errorType: error.runtimeType.toString(),
+      message: _safeMessage(error),
+      stackTrace: stack.toString(),
+      fatal: true,
+    );
+  });
 }
 
+String _safeMessage(Object error) {
+  return error.runtimeType.toString();
+}
 /// Max retries when showing the sync-restart dialog if context/localizations
 /// are not ready yet (e.g. native call before widget tree is mounted).
 const int _syncRestartDialogMaxRetries = 10;
