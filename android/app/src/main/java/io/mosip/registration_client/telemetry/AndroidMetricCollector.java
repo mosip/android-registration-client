@@ -37,7 +37,7 @@ public class AndroidMetricCollector {
 
     private final Context context;
     private final ExecutorService writeExecutor = Executors.newSingleThreadExecutor();
-    private final Object fileLock = new Object();
+    private static final Object fileLock = new Object();
     private static volatile String cachedMachineId = null;
 
     public static void setMachineId(String machineId) {
@@ -107,10 +107,10 @@ public static void writeSyncCrash(Context context, String errorType, String mess
             .replace("\"", "\\\"");
 
         String inner = "{" +
-            "\"@timestamp\":\"" + generateUtcTimestamp() + "\"," +          // CHANGED (dropped "Static")
+            "\"@timestamp\":\"" + generateUtcTimestamp() + "\"," +          
             "\"name\":\"app.crash\"," +
             "\"type\":\"event\"," +
-            "\"device_model\":\"" + getDeviceId() + "\"," +                 // CHANGED
+            "\"device_model\":\"" + getDeviceId() + "\"," +                
             "\"error_type\":\"" + escErrorType + "\"," +
             "\"message\":\"" + escMessage + "\"," +
             "\"stack_trace\":\"" + escStack + "\"," +
@@ -128,6 +128,9 @@ public static void writeSyncCrash(Context context, String errorType, String mess
                     .getString(KEY_MACHINE_ID, null)
                 : null);
 
+        String level = fatal ? "ERROR" : "WARN";
+        int levelValue = fatal ? 40000 : 30000;
+
         StringBuilder envelope = new StringBuilder();
         envelope.append("{")
             .append("\"@timestamp\":\"").append(generateLocalTimestamp()).append("\"")  // CHANGED
@@ -135,8 +138,8 @@ public static void writeSyncCrash(Context context, String errorType, String mess
             .append(",\"message\":\"").append(escapedInner).append("\"")
             .append(",\"logger_name\":\"").append(LOGGER_NAME).append("\"")
             .append(",\"thread_name\":\"").append(THREAD_NAME).append("\"")
-            .append(",\"level\":\"INFO\"")
-            .append(",\"level_value\":20000");
+            .append(",\"level\":\"").append(level).append("\"")
+            .append(",\"level_value\":").append(levelValue);
         if (machineId != null && !machineId.trim().isEmpty()) {
             envelope.append(",\"machine\":\"").append(machineId).append("\"");
         }
@@ -146,12 +149,14 @@ public static void writeSyncCrash(Context context, String errorType, String mess
         if (!dir.exists()) dir.mkdirs();
         File logFile = new File(dir, LOG_FILE_NAME);
 
-        try (FileOutputStream fos = new FileOutputStream(logFile, true)) {
-            fos.write((envelope.toString() + "\n").getBytes(StandardCharsets.UTF_8));
-            fos.flush();
-            fos.getFD().sync();
+        synchronized (fileLock) {
+            try (FileOutputStream fos = new FileOutputStream(logFile, true)) {
+                fos.write((envelope.toString() + "\n").getBytes(StandardCharsets.UTF_8));
+                fos.flush();
+                fos.getFD().sync();
+            }
         }
-    } catch (Throwable ignored) {
+        } catch (Throwable ignored) {
     }
 }
     // ─── Collect system metrics (mirrors desktop JVM metrics) ───────────────

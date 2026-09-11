@@ -92,9 +92,6 @@ const RestartWidget(child: RegistrationClientApp()),
 }
 
 String _safeMessage(Object error) {
-  if (error is FlutterError && error.diagnostics.isNotEmpty) {
-    return error.diagnostics.first.toString();
-  }
   return error.runtimeType.toString();
 }
 /// Max retries when showing the sync-restart dialog if context/localizations
