@@ -100,8 +100,37 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
   String? _documentType;
   String? get documentType => _documentType;
 
+  String get formattedDocumentType {
+    if (_documentType == null || _documentType!.isEmpty || _documentType == 'UNKNOWN') {
+      return 'document';
+    }
+    switch (_documentType!.toLowerCase()) {
+      case 'aadhar_front':
+        return 'Aadhaar (Front)';
+      case 'aadhar_back':
+        return 'Aadhaar (Back)';
+      case 'driving_license_front':
+        return 'Driving License (Front)';
+      case 'driving_license_back':
+        return 'Driving License (Back)';
+      case 'pan_card_front':
+        return 'PAN Card';
+      case 'passport':
+        return 'Passport';
+      case 'voter_id':
+        return 'Voter ID';
+      default:
+        return _documentType!.replaceAll('_', ' ');
+    }
+  }
+
   double? _confidence;
   double? get confidence => _confidence;
+
+  double? get confidencePercentage {
+    if (_confidence == null) return null;
+    return _confidence! <= 1.0 ? _confidence! * 100 : _confidence!;
+  }
 
   // ---------------------------------------------------------------------------
   // Error data
@@ -336,8 +365,11 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
       });
     }
 
+    final confText = confidencePercentage != null
+        ? '${confidencePercentage!.toStringAsFixed(1)}%'
+        : 'N/A';
     log('OcrScanProvider: OCR success — ${_extractedData.length} fields extracted '
-        'from $_documentType (confidence: ${_confidence?.toStringAsFixed(1)}%)');
+        'from $formattedDocumentType (confidence: $confText)');
     notifyListeners();
   }
 

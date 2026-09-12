@@ -96,8 +96,8 @@ class _OcrScanPageState extends State<OcrScanPage>
     );
 
     if (appliedCount > 0 && mounted) {
-      final docType = ocrProvider.documentType ?? 'document';
-      final confidencePct = ocrProvider.confidence;
+      final docType = ocrProvider.formattedDocumentType;
+      final confidencePct = ocrProvider.confidencePercentage;
       final confidenceText = confidencePct != null
           ? ' (${confidencePct.toStringAsFixed(1)}% confidence)'
           : '';
@@ -143,7 +143,7 @@ class _OcrScanPageState extends State<OcrScanPage>
                     [
                       provider.documentType ?? 'unknown',
                       '${provider.extractedData.length}',
-                      provider.confidence?.toStringAsFixed(1) ?? 'N/A',
+                      provider.confidencePercentage?.toStringAsFixed(1) ?? 'N/A',
                     ],
                   );
             } catch (_) {}

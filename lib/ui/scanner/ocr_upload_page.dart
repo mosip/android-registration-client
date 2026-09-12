@@ -169,7 +169,11 @@ class _OcrUploadPageState extends State<OcrUploadPage>
     );
 
     if (appliedCount > 0 && mounted) {
-      final docType = ocrProvider.documentType ?? 'document';
+      final docType = ocrProvider.formattedDocumentType;
+      final confidencePct = ocrProvider.confidencePercentage;
+      final confidenceText = confidencePct != null
+          ? ' (${confidencePct.toStringAsFixed(1)}% confidence)'
+          : '';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -179,7 +183,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
-                  '$appliedCount field${appliedCount > 1 ? 's' : ''} auto-filled from $docType',
+                  '$appliedCount field${appliedCount > 1 ? 's' : ''} auto-filled from $docType$confidenceText',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 13.sp,
@@ -217,7 +221,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                     [
                       provider.documentType ?? 'unknown',
                       '${provider.extractedData.length}',
-                      provider.confidence?.toStringAsFixed(1) ?? 'N/A',
+                      provider.confidencePercentage?.toStringAsFixed(1) ?? 'N/A',
                     ],
                   );
             } catch (_) {}

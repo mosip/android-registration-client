@@ -11,7 +11,9 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
+import android.media.ExifInterface;
 import android.net.Uri;
 import io.flutter.view.TextureRegistry;
 import android.os.Handler;
@@ -264,15 +266,69 @@ public class OcrPluginImpl implements OcrHostApi {
      * Handles both SAF URIs and absolute file paths.
      */
     private Bitmap decodeImagePath(@NonNull String filePath) throws IOException {
+        Bitmap bitmap;
         if (filePath.startsWith("content://")) {
             ContentResolver cr = activity.getContentResolver();
             try (InputStream is = cr.openInputStream(Uri.parse(filePath))) {
                 if (is == null) throw new IOException("ContentResolver returned null stream for: " + filePath);
-                return BitmapFactory.decodeStream(is);
+                bitmap = BitmapFactory.decodeStream(is);
             }
         } else {
-            return BitmapFactory.decodeFile(filePath);
+            bitmap = BitmapFactory.decodeFile(filePath);
         }
+
+        if (bitmap == null) return null;
+
+        return rotateByExifIfNeeded(filePath, bitmap);
+    }
+
+    private Bitmap rotateByExifIfNeeded(@NonNull String filePath, @NonNull Bitmap bitmap) {
+        try {
+            int orientation = ExifInterface.ORIENTATION_NORMAL;
+            if (filePath.startsWith("content://")) {
+                ContentResolver cr = activity.getContentResolver();
+                try (InputStream is = cr.openInputStream(Uri.parse(filePath))) {
+                    if (is != null) {
+                        ExifInterface exif = new ExifInterface(is);
+                        orientation = exif.getAttributeInt(
+                                ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_NORMAL);
+                    }
+                }
+            } else {
+                ExifInterface exif = new ExifInterface(filePath);
+                orientation = exif.getAttributeInt(
+                        ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_NORMAL);
+            }
+
+            int rotationDegrees = 0;
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotationDegrees = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotationDegrees = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotationDegrees = 270;
+                    break;
+            }
+
+            if (rotationDegrees != 0) {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(rotationDegrees);
+                Bitmap rotated = Bitmap.createBitmap(
+                        bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                if (rotated != bitmap) {
+                    bitmap.recycle();
+                }
+                return rotated;
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Failed reading EXIF orientation for " + filePath, e);
+        }
+        return bitmap;
     }
 
     /**
