@@ -73,6 +73,12 @@ android {
         buildConfigField("String", "ACTUATOR_INFO_PATH", rootProject.ext.serverActuatorInfoPath)
     }
 
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+        }
+    }
+
     signingConfigs {
         release {
             keyAlias = localProperties['keyAlias']

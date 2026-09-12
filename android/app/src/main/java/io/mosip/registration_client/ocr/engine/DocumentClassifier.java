@@ -26,8 +26,8 @@ public class DocumentClassifier {
     private static final String TAG = "DocumentClassifier";
     private static final String MODEL_PATH = "Id_Classifier.tflite";
     private static final String LABELS_PATH = "labels.txt";
-    private static final int INPUT_SIZE = 224;
-    private static final float CONFIDENCE_THRESHOLD = 0.7f;
+    private static final int DEFAULT_INPUT_SIZE = 640;
+    private static final float CONFIDENCE_THRESHOLD = 0.6f;
 
     /**
      * Plain classification outcome — label + confidence, nothing more.
@@ -60,8 +60,22 @@ public class DocumentClassifier {
         
         this.interpreter = new Interpreter(modelBuffer, options);
         this.labels = FileUtil.loadLabels(context, LABELS_PATH);
+
+        int inputHeight = DEFAULT_INPUT_SIZE;
+        int inputWidth = DEFAULT_INPUT_SIZE;
+        try {
+            int[] inputShape = interpreter.getInputTensor(0).shape(); // e.g. [1, 640, 640, 3]
+            if (inputShape != null && inputShape.length >= 3 && inputShape[1] > 0 && inputShape[2] > 0) {
+                inputHeight = inputShape[1];
+                inputWidth = inputShape[2];
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Could not inspect model input shape, falling back to " + DEFAULT_INPUT_SIZE, e);
+        }
+        Log.i(TAG, "DocumentClassifier initialized with input size: " + inputWidth + "x" + inputHeight);
+
         this.imageProcessor = new ImageProcessor.Builder()
-                .add(new ResizeOp(INPUT_SIZE, INPUT_SIZE, ResizeOp.ResizeMethod.BILINEAR))
+                .add(new ResizeOp(inputHeight, inputWidth, ResizeOp.ResizeMethod.BILINEAR))
                 .add(new NormalizeOp(0.0f, 255.0f))
                 .build();
     }
@@ -85,10 +99,8 @@ public class DocumentClassifier {
             Map<String, Float> labeledProbability =
                     new TensorLabel(labels, probabilityBuffer).getMapWithFloatValue();
 
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                for (Map.Entry<String, Float> entry : labeledProbability.entrySet()) {
-                    Log.d(TAG, "Class: " + entry.getKey() + " -> Confidence: " + entry.getValue());
-                }
+            for (Map.Entry<String, Float> entry : labeledProbability.entrySet()) {
+                Log.d(TAG, "Class: " + entry.getKey() + " -> Confidence: " + entry.getValue());
             }
 
             String bestLabel = null;
@@ -106,6 +118,7 @@ public class DocumentClassifier {
                 return new ClassificationResult("UNKNOWN", highestConfidence);
             }
 
+            Log.i(TAG, "Classified document as [" + bestLabel + "] with confidence " + highestConfidence);
             return new ClassificationResult(bestLabel, highestConfidence);
 
         } catch (Exception e) {
@@ -113,20 +126,11 @@ public class DocumentClassifier {
             return null;
         }
     }
+
     public void close() {
         if (interpreter != null) {
             interpreter.close();
             interpreter = null;
         }
     }
-    private Bitmap rotateBitmap(Bitmap source, float angle) {
-    if (angle == 0) return source;
-    Matrix matrix = new Matrix();
-    matrix.postRotate(angle);
-    Bitmap rotated = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-    if (source != rotated && !source.isRecycled()) {
-        source.recycle(); // Prevent memory leaks by freeing the old unrotated bitmap
-    }
-    return rotated;
-}
 }
