@@ -87,11 +87,16 @@ public final class ExtractionConfig {
     private Map<String, List<String>> loadLabels(GlobalParamRepository repo) {
         Map<String, List<String>> defaults = new HashMap<>();
 
+        defaults.put("name", Arrays.asList(
+                "name", "first name", "given name", "given names", "given name(s)", "given name (s)",
+                "full name", "nom", "surname", "surname(s)", "last name", "family name",
+                "applicant name", "holder name", "cardholder", "name(s)"));
+        defaults.put("fullName", defaults.get("name"));
         defaults.put("firstName",  Arrays.asList(
-                "name", "first name", "given name", "given names", "full name",
-                "applicant name", "holder name", "cardholder"));
+                "name", "first name", "given name", "given names", "given name(s)", "given name (s)",
+                "full name", "applicant name", "holder name", "cardholder", "name(s)"));
         defaults.put("lastName",   Arrays.asList(
-                "surname", "last name", "family name", "last"));
+                "surname", "surname(s)", "last name", "family name", "last"));
         defaults.put("dateOfBirth", Arrays.asList(
                 "date of birth", "dob", "d.o.b", "d.o.b.", "birth date",
                 "born", "birthdate", "date de naissance", "birth"));

@@ -53,7 +53,7 @@ public final class BlockGeometryParser {
         @NonNull public final String text;
         @NonNull public final Rect   box;
 
-        LineFragment(@NonNull String text, @NonNull Rect box) {
+        public LineFragment(@NonNull String text, @NonNull Rect box) {
             this.text = text;
             this.box  = box;
         }
@@ -93,27 +93,78 @@ public final class BlockGeometryParser {
             @NonNull List<LineFragment> sortedFragments) {
 
         List<List<LineFragment>> groups = new ArrayList<>();
-        List<LineFragment> current = new ArrayList<>();
-        current.add(sortedFragments.get(0));
 
-        for (int i = 1; i < sortedFragments.size(); i++) {
-            LineFragment frag  = sortedFragments.get(i);
-            int          fragCY = centerY(frag.box);
-            int          rowCY  = centerY(current.get(0).box);
-            int          rowH   = averageHeight(current);
-            // Threshold: half the average row height, minimum 8 px
-            int threshold = Math.max(rowH / 2, 8);
+        for (LineFragment frag : sortedFragments) {
+            List<LineFragment> bestGroup = null;
+            int bestOverlap = 0;
+            int fragCY = centerY(frag.box);
+            int fragH = Math.max(frag.box.bottom - frag.box.top, 1);
 
-            if (Math.abs(fragCY - rowCY) <= threshold) {
-                current.add(frag);
+            for (List<LineFragment> group : groups) {
+                // Do not merge if frag horizontally overlaps significantly with an existing fragment
+                // in the same row group (meaning they are stacked in the same column).
+                if (hasColumnCollision(group, frag)) {
+                    continue;
+                }
+
+                Rect rowBounds = getRowBounds(group);
+                int rowH = averageHeight(group);
+                int rowCY = centerY(rowBounds);
+
+                int overlapY = Math.max(0, Math.min(rowBounds.bottom, frag.box.bottom)
+                        - Math.max(rowBounds.top, frag.box.top));
+                int minH = Math.min(rowH, fragH);
+
+                // Significant vertical overlap OR vertical centers very close
+                boolean isMatch = (overlapY >= 0.35f * minH)
+                        || (Math.abs(fragCY - rowCY) <= Math.max((int) (minH * 0.55f), 10));
+
+                if (isMatch) {
+                    if (overlapY > bestOverlap || bestGroup == null) {
+                        bestOverlap = overlapY;
+                        bestGroup = group;
+                    }
+                }
+            }
+
+            if (bestGroup != null) {
+                bestGroup.add(frag);
             } else {
-                groups.add(new ArrayList<>(current));
-                current.clear();
-                current.add(frag);
+                List<LineFragment> newGroup = new ArrayList<>();
+                newGroup.add(frag);
+                groups.add(newGroup);
             }
         }
-        groups.add(current);
+
+        // Sort rows vertically by top coordinate
+        groups.sort(Comparator.comparingInt(g -> getRowBounds(g).top));
         return groups;
+    }
+
+    private static boolean hasColumnCollision(
+            @NonNull List<LineFragment> group,
+            @NonNull LineFragment frag) {
+        int fragW = Math.max(frag.box.right - frag.box.left, 1);
+        for (LineFragment other : group) {
+            int overlapX = Math.max(0, Math.min(frag.box.right, other.box.right)
+                    - Math.max(frag.box.left, other.box.left));
+            int otherW = Math.max(other.box.right - other.box.left, 1);
+            int minW = Math.min(fragW, otherW);
+            if (overlapX >= 0.50f * minW) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NonNull
+    private static Rect getRowBounds(@NonNull List<LineFragment> group) {
+        if (group.isEmpty()) return new Rect();
+        Rect r = new Rect(group.get(0).box);
+        for (int i = 1; i < group.size(); i++) {
+            r = union(r, group.get(i).box);
+        }
+        return r;
     }
 
     @NonNull

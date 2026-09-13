@@ -42,8 +42,12 @@ public final class DemographicFieldExtractor {
             Pattern.compile("\\b[A-Z]{5}[0-9]{4}[A-Z]\\b");
     private static final Pattern AADHAAR_PATTERN =
             Pattern.compile("\\b\\d{4}\\s?\\d{4}\\s?\\d{4}\\b");
-    private static final Pattern APOSTROPHE_OR_SUFFIX_REMAINDER =
+    private static final Pattern APOSTROPHE_SUFFIX_REMAINDER =
             Pattern.compile("^(?:['\"’]|'s\\b|s\\b|s'\\b|\\/|\\|).*");
+    private static final Pattern PARENTHETICAL_PREFIX =
+            Pattern.compile("^(?:\\([a-zA-Z0-9\\s/.]+\\)|\\[[a-zA-Z0-9\\s/.]+\\])\\s*");
+    private static final Pattern DATE_PATTERN_CANDIDATE =
+            Pattern.compile("^\\d{1,4}[-/.]\\d{1,2}[-/.]\\d{2,4}$");
 
     private final ExtractionConfig config;
 
@@ -116,6 +120,14 @@ public final class DemographicFieldExtractor {
                 }
             }
 
+            if (key.equals("fullname") || key.equals("name")) {
+                String composite = resolveCompositeFullName(rows, flatLines, allLabels, threshold);
+                if (composite != null) {
+                    result.put(field.getId(), composite);
+                    continue;
+                }
+            }
+
             List<String> labels = collectLabels(field);
             String normalized = null;
             if (!labels.isEmpty()) {
@@ -182,7 +194,13 @@ public final class DemographicFieldExtractor {
 
                 // Suffix check: if afterLabel starts with an apostrophe suffix (e.g. 's Name),
                 // this was an incomplete label match, not a field value!
-                if (APOSTROPHE_OR_SUFFIX_REMAINDER.matcher(afterLabel).matches()) {
+                if (APOSTROPHE_SUFFIX_REMAINDER.matcher(afterLabel).matches()) {
+                    continue;
+                }
+
+                // Strip leading parenthetical annotation like (s) or (DOB)
+                afterLabel = PARENTHETICAL_PREFIX.matcher(afterLabel).replaceFirst("").trim();
+                if (afterLabel.isEmpty()) {
                     continue;
                 }
 
@@ -191,19 +209,23 @@ public final class DemographicFieldExtractor {
                     String value = afterLabel.substring(sep.end()).trim();
                     if (!value.isEmpty()) {
                         String cleanVal = trimAtEmbeddedFieldLabel(value, allLabels);
+                        if (isValidCandidateForField(cleanVal, field)) {
+                            if (isSingleLine) {
+                                return cleanVal;
+                            }
+                            return collectContinuation(cleanVal, rows, rowIndex + 1, allLabels,
+                                    threshold);
+                        }
+                    }
+                } else if (!afterLabel.isEmpty() && !isLikelyAnotherLabel(afterLabel) && !isHeaderOrIdPattern(afterLabel)) {
+                    String cleanVal = trimAtEmbeddedFieldLabel(afterLabel, allLabels);
+                    if (isValidCandidateForField(cleanVal, field)) {
                         if (isSingleLine) {
                             return cleanVal;
                         }
                         return collectContinuation(cleanVal, rows, rowIndex + 1, allLabels,
                                 threshold);
                     }
-                } else if (!afterLabel.isEmpty() && !isLikelyAnotherLabel(afterLabel) && !isHeaderOrIdPattern(afterLabel)) {
-                    String cleanVal = trimAtEmbeddedFieldLabel(afterLabel, allLabels);
-                    if (isSingleLine) {
-                        return cleanVal;
-                    }
-                    return collectContinuation(cleanVal, rows, rowIndex + 1, allLabels,
-                            threshold);
                 }
             }
         }
@@ -239,27 +261,33 @@ public final class DemographicFieldExtractor {
                 String afterLabel = line.substring(
                         Math.min(idx + label.length(), line.length())).trim();
 
-                if (APOSTROPHE_OR_SUFFIX_REMAINDER.matcher(afterLabel).matches()) {
+                if (APOSTROPHE_SUFFIX_REMAINDER.matcher(afterLabel).matches()) {
                     continue;
                 }
 
+                afterLabel = PARENTHETICAL_PREFIX.matcher(afterLabel).replaceFirst("").trim();
+
                 Matcher sep = SEPARATOR.matcher(afterLabel);
+                String sameLineValue = null;
                 if (sep.lookingAt()) {
-                    String sameLineValue = trimAtEmbeddedFieldLabel(
+                    sameLineValue = trimAtEmbeddedFieldLabel(
                             afterLabel.substring(sep.end()).trim(), allLabels);
-                    if (!sameLineValue.isEmpty()) {
-                        if (isSingleLine) {
-                            return sameLineValue;
-                        }
-                        StringBuilder value = new StringBuilder(sameLineValue);
-                        for (int j = i + 1; j < lines.length; j++) {
-                            String nextLine = lines[j].trim();
-                            if (nextLine.isEmpty()) break;
-                            if (shouldStopContinuation(nextLine, allLabels, threshold)) break;
-                            value.append(' ').append(trimAtEmbeddedFieldLabel(nextLine, allLabels));
-                        }
-                        return value.toString();
+                } else if (!afterLabel.isEmpty() && !isLikelyAnotherLabel(afterLabel) && !isHeaderOrIdPattern(afterLabel)) {
+                    sameLineValue = trimAtEmbeddedFieldLabel(afterLabel, allLabels);
+                }
+
+                if (sameLineValue != null && !sameLineValue.isEmpty() && isValidCandidateForField(sameLineValue, field)) {
+                    if (isSingleLine) {
+                        return sameLineValue;
                     }
+                    StringBuilder value = new StringBuilder(sameLineValue);
+                    for (int j = i + 1; j < lines.length; j++) {
+                        String nextLine = lines[j].trim();
+                        if (nextLine.isEmpty()) break;
+                        if (shouldStopContinuation(nextLine, allLabels, threshold)) break;
+                        value.append(' ').append(trimAtEmbeddedFieldLabel(nextLine, allLabels));
+                    }
+                    return value.toString();
                 }
 
                 if (isSingleLine) {
@@ -267,7 +295,10 @@ public final class DemographicFieldExtractor {
                         String nextLine = lines[j].trim();
                         if (nextLine.isEmpty()) continue;
                         if (shouldStopContinuation(nextLine, allLabels, threshold)) break;
-                        return trimAtEmbeddedFieldLabel(nextLine, allLabels);
+                        String candidate = trimAtEmbeddedFieldLabel(nextLine, allLabels);
+                        if (isValidCandidateForField(candidate, field)) {
+                            return candidate;
+                        }
                     }
                 } else {
                     StringBuilder value = new StringBuilder();
@@ -325,12 +356,22 @@ public final class DemographicFieldExtractor {
 
         for (BlockGeometryParser.LayoutRow row : rows) {
             Matcher m = pattern.matcher(row.fullText);
-            if (m.find()) return m.group().trim();
+            while (m.find()) {
+                String candidate = m.group().trim();
+                if (isValidCandidateForField(candidate, field)) {
+                    return candidate;
+                }
+            }
         }
 
         for (String line : flatLines) {
             Matcher m = pattern.matcher(line.trim());
-            if (m.find()) return m.group().trim();
+            while (m.find()) {
+                String candidate = m.group().trim();
+                if (isValidCandidateForField(candidate, field)) {
+                    return candidate;
+                }
+            }
         }
 
         return null;
@@ -529,6 +570,13 @@ public final class DemographicFieldExtractor {
         return s.contains(":") || s.contains("—") || s.contains("/") || s.contains("|");
     }
 
+    private static final List<String> COMMON_SECTION_STOP_LABELS = java.util.Arrays.asList(
+            "post", "occupation", "profession", "designation", "nationality",
+            "place of birth", "date of issue", "date of expiry", "issuing authority",
+            "signature", "photo", "thumb impression", "fingerprint", "remarks",
+            "marital status", "qualification", "education"
+    );
+
     private boolean shouldStopContinuation(
             @NonNull String line,
             @NonNull List<String> allLabels,
@@ -536,6 +584,20 @@ public final class DemographicFieldExtractor {
         if (line.isEmpty()) return true;
         if (isFieldLabel(line, allLabels, threshold)) return true;
         if (isHeaderOrIdPattern(line)) return true;
+        if (isCommonStopLabel(line)) return true;
+        return false;
+    }
+
+    private static boolean isCommonStopLabel(@NonNull String line) {
+        String lower = line.trim().toLowerCase(Locale.US);
+        // Remove leading numbers or bullets like "6 " or "6. "
+        lower = lower.replaceAll("^\\d+[\\s.)\\-]+", "").trim();
+        for (String stop : COMMON_SECTION_STOP_LABELS) {
+            if (lower.equals(stop) || lower.startsWith(stop + ":") || lower.startsWith(stop + "  ")
+                    || lower.startsWith(stop + " -") || lower.startsWith(stop + " /")) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -628,6 +690,9 @@ public final class DemographicFieldExtractor {
 
         if (lower.contains("name") || lower.contains("father") || lower.contains("mother")) {
             String cleaned = rawValue.replaceAll("^[:;—–/|\\-\\s]+", "").replaceAll("[:;—–/|\\-\\s]+$", "").trim();
+            if (cleaned.matches(".*\\d.*") || !cleaned.matches(".*\\p{L}.*") || cleaned.length() < 2) {
+                return null;
+            }
             return toTitleCase(cleaned);
         }
 
@@ -640,6 +705,9 @@ public final class DemographicFieldExtractor {
         }
 
         if (lower.contains("phone") || lower.contains("mobile") || lower.contains("tel")) {
+            if (DATE_PATTERN_CANDIDATE.matcher(rawValue.trim()).matches()) {
+                return null;
+            }
             return normalizePhone(rawValue.trim());
         }
 
@@ -653,6 +721,97 @@ public final class DemographicFieldExtractor {
         }
 
         return rawValue.trim();
+    }
+
+    private static boolean isValidCandidateForField(
+            @Nullable String value,
+            @NonNull FieldSpec field) {
+        if (value == null) return false;
+        String trimmed = value.trim();
+        if (trimmed.isEmpty()) return false;
+
+        // Parentheses, brackets, or leading noise punctuation are label remnants or noise
+        if (trimmed.startsWith("(") || trimmed.startsWith("[") || trimmed.startsWith(")")
+                || trimmed.startsWith("]") || trimmed.startsWith("/") || trimmed.startsWith("|")) {
+            return false;
+        }
+
+        String subType = field.getSubType() != null ? field.getSubType() : field.getId();
+        String lower = subType.toLowerCase(Locale.US);
+
+        // Name fields must contain letters and NO digits, min length 2
+        if (lower.contains("name") || lower.contains("father") || lower.contains("mother")) {
+            if (trimmed.matches(".*\\d.*")) {
+                return false;
+            }
+            if (!trimmed.matches(".*\\p{L}.*")) {
+                return false;
+            }
+            if (trimmed.length() < 2) {
+                return false;
+            }
+        }
+
+        // Date fields must contain digits
+        if (lower.contains("date") || lower.contains("dob") || lower.equals("agedate")) {
+            if (!trimmed.matches(".*\\d.*")) {
+                return false;
+            }
+        }
+
+        // Postal code must contain digits
+        if (lower.contains("postal") || lower.contains("pin") || lower.contains("zip")) {
+            if (!trimmed.matches(".*\\d.*")) {
+                return false;
+            }
+        }
+
+        // Phone fields must NOT look like a date (e.g. 16-05-2009 or 2009/05/16) and must have valid digit count
+        if (lower.contains("phone") || lower.contains("mobile") || lower.contains("tel")) {
+            if (DATE_PATTERN_CANDIDATE.matcher(trimmed).matches()) {
+                return false;
+            }
+            String digits = trimmed.replaceAll("\\D", "");
+            if (digits.length() < 7 || digits.length() > 15) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Nullable
+    private String resolveCompositeFullName(
+            @NonNull List<BlockGeometryParser.LayoutRow> rows,
+            @NonNull String[] flatLines,
+            @NonNull List<String> allLabels,
+            double threshold) {
+        List<String> givenLabels = java.util.Arrays.asList(
+                "given name(s)", "given name (s)", "given names", "given name", "first name", "prenom", "prenoms");
+        List<String> surnameLabels = java.util.Arrays.asList(
+                "surname(s)", "surname", "last name", "family name", "nom");
+
+        FieldSpec nameSpec = new FieldSpec("namePart", "string", "textbox", "name");
+
+        String given = pass1GeometryColonSplit(givenLabels, rows, allLabels, threshold, nameSpec);
+        if (given == null) {
+            given = pass2FuzzyNextLine(givenLabels, flatLines, allLabels, threshold, nameSpec);
+        }
+
+        String surname = pass1GeometryColonSplit(surnameLabels, rows, allLabels, threshold, nameSpec);
+        if (surname == null) {
+            surname = pass2FuzzyNextLine(surnameLabels, flatLines, allLabels, threshold, nameSpec);
+        }
+
+        given = normalizeCandidate(given, nameSpec);
+        surname = normalizeCandidate(surname, nameSpec);
+
+        if (given != null && surname != null) {
+            if (!given.equalsIgnoreCase(surname)) {
+                return given + " " + surname;
+            }
+        }
+        return null;
     }
 
     @NonNull
