@@ -79,7 +79,14 @@ public class AndroidMetricCollector {
                     ",\"device_model\":\"" + getDeviceId() + "\"" +
                     "}";
             }
-            appendLine(buildEnvelope(processedInner));
+            if (processedInner != null && processedInner.contains("\"name\":\"app.crash\"")) {
+                boolean fatal = processedInner.contains("\"fatal\":true");
+                String level = fatal ? "ERROR" : "WARN";
+                int levelValue = fatal ? 40000 : 30000;
+                appendLine(buildEnvelope(processedInner, level, levelValue));
+            } else {
+                appendLine(buildEnvelope(processedInner));
+            }
         });
     }
 
@@ -251,6 +258,10 @@ public static void writeSyncCrash(Context context, String errorType, String mess
     }
 
     private String buildEnvelope(String innerJson) {
+        return buildEnvelope(innerJson, "INFO", 20000);
+    }
+
+    private String buildEnvelope(String innerJson, String level, int levelValue) {
         String escapedInner = innerJson
             .replace("\\", "\\\\")
             .replace("\"", "\\\"");
@@ -264,8 +275,8 @@ public static void writeSyncCrash(Context context, String errorType, String mess
         .append(",\"message\":\"").append(escapedInner).append("\"")
         .append(",\"logger_name\":\"").append(LOGGER_NAME).append("\"")
         .append(",\"thread_name\":\"").append(THREAD_NAME).append("\"")
-        .append(",\"level\":\"INFO\"")
-        .append(",\"level_value\":20000");
+        .append(",\"level\":\"").append(level).append("\"")
+        .append(",\"level_value\":").append(levelValue);
 
         if (machineId != null && !machineId.trim().isEmpty()) {
             envelopeBuilder.append(",\"machine\":\"").append(machineId).append("\"");
