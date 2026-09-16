@@ -252,6 +252,7 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //AndroidMetricCollector.setTelemetryEnabled(this, false);// Disable telemetry for testing
 //        createBackgroundTask("registrationPacketUploadJob");
         IntentFilter intentFilterUpload = new IntentFilter("SYNC_JOB_TRIGGER");
         registerReceiver(broadcastReceiver, intentFilterUpload);
@@ -488,6 +489,7 @@ public class MainActivity extends FlutterActivity {
         // TELEMETRY PHASE 2: LOCAL SECURE METRICS ENGINE
         // ==========================================
         // 1. Initialize our decoupled, asynchronous background file collector
+        if (AndroidMetricCollector.isTelemetryEnabled(this)) {
         this.telemetryCollector = new AndroidMetricCollector(this);
         
         installUncaughtExceptionHandler();
@@ -525,6 +527,11 @@ public class MainActivity extends FlutterActivity {
     Log.d("MainActivity", "Telemetry upload worker scheduled — every 15 min");
     //--------------------------------------------
     }
+    else {
+            WorkManager.getInstance(getApplicationContext()).cancelUniqueWork("TelemetryUpload");
+            Log.d("MainActivity", "Telemetry disabled via local settings — skipping initialization");
+        }
+    }    
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

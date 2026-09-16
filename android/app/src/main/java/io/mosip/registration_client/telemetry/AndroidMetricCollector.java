@@ -33,6 +33,7 @@ public class AndroidMetricCollector {
 
     private static final String PREFS_NAME = "telemetry_prefs";
     private static final String KEY_MACHINE_ID = "cached_machine_id";
+    private static final String KEY_TELEMETRY_ENABLED = "telemetry_enabled";
     private static Context appContext;
 
     private final Context context;
@@ -50,6 +51,20 @@ public class AndroidMetricCollector {
                     .apply();
             }
         }
+    }
+
+    public static boolean isTelemetryEnabled(Context context) {
+        return context.getApplicationContext()
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_TELEMETRY_ENABLED, true); // default ON if never set
+    }
+
+    public static void setTelemetryEnabled(Context context, boolean enabled) {
+        context.getApplicationContext()
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_TELEMETRY_ENABLED, enabled)
+            .apply();
     }
 
     public AndroidMetricCollector(Context context) {
