@@ -46,7 +46,7 @@ class _OcrScanPageState extends State<OcrScanPage>
 
     _countdownController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      duration: const Duration(milliseconds: 4000),
     );
     _countdownAnimation = CurvedAnimation(
       parent: _countdownController,
@@ -76,7 +76,7 @@ class _OcrScanPageState extends State<OcrScanPage>
       _wasQualityGood = false;
     });
     _countdownController.reset();
-    _alignmentTimer = Timer(const Duration(seconds: 5), () {
+    _alignmentTimer = Timer(const Duration(seconds: 4), () {
       if (mounted) {
         setState(() => _isAlignmentPhase = false);
       }
@@ -560,15 +560,10 @@ class _OcrScanPageState extends State<OcrScanPage>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Pop-up camera guidance in white bg rounded corner box with good font
+                // Pop-up camera guidance in white bg rounded corner box with smooth transitions
                 SizedBox(
                   height: 56.h,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    child: _buildGuidanceCard(provider),
-                  ),
+                  child: _buildGuidanceCard(provider),
                 ),
                 SizedBox(height: 20.h),
 
@@ -594,7 +589,7 @@ class _OcrScanPageState extends State<OcrScanPage>
     );
   }
 
-  /// White rounded-corner guidance card directly above the shutter button
+  /// White rounded-corner guidance card directly above the shutter button with smooth fade transition
   Widget _buildGuidanceCard(OcrScanProvider provider) {
     final isGood = _isAlignmentPhase ? false : provider.isQualityAcceptable;
     final message = _isAlignmentPhase
@@ -617,51 +612,66 @@ class _OcrScanPageState extends State<OcrScanPage>
                 ? Icons.brightness_high_rounded
                 : Icons.center_focus_strong_rounded);
 
-    return Container(
-      key: ValueKey('${provider.guidanceMessage}_$isGood$_isAlignmentPhase'),
-      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.22),
-            blurRadius: 18,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 32.w,
-            height: 32.w,
-            decoration: BoxDecoration(
-              color: badgeBg,
-              shape: BoxShape.circle,
+    final String displayText = isGood && message == 'Hold steady'
+        ? 'Hold steady — capturing...'
+        : message;
+
+    return Center(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.22),
+              blurRadius: 18,
+              offset: const Offset(0, 4),
             ),
-            child: Icon(
-              icon,
-              color: badgeIconColor,
-              size: 18.sp,
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Flexible(
-            child: Text(
-              isGood && message == 'Hold steady'
-                  ? 'Hold steady — capturing...'
-                  : message,
-              style: TextStyle(
-                color: const Color(0xFF1E293B),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.1,
+          ],
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          switchInCurve: Curves.easeInOut,
+          switchOutCurve: Curves.easeInOut,
+          transitionBuilder: (child, animation) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          child: Row(
+            key: ValueKey('${displayText}_$isGood'),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 32.w,
+                height: 32.w,
+                decoration: BoxDecoration(
+                  color: badgeBg,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: badgeIconColor,
+                  size: 18.sp,
+                ),
               ),
-            ),
+              SizedBox(width: 12.w),
+              Flexible(
+                child: Text(
+                  displayText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: const Color(0xFF1E293B),
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -769,7 +779,7 @@ class _CountdownRingPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final sweepAngle = 2 * 3.14159265 * progress;
-    final startAngle = -3.14159265 / 2; // Start from top
+    const startAngle = -3.14159265 / 2; // Start from top
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       startAngle,

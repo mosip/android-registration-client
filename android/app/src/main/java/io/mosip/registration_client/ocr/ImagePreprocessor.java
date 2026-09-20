@@ -18,8 +18,8 @@ import androidx.annotation.NonNull;
 public final class ImagePreprocessor {
 
     private static final int   MIN_SHORT_SIDE    = 800;
-    private static final float CONTRAST_BOOST    = 1.35f;
-    private static final float BRIGHTNESS_ADJUST = -12f;
+    private static final float CONTRAST_BOOST    = 1.15f;
+    private static final float BRIGHTNESS_ADJUST = 0f;
     private static final float MAX_DESKEW_ANGLE  = 10f;
     private static final float ANGLE_STEP        = 0.5f;
     private static final int   STRIPE_HEIGHT     = 300;
@@ -88,7 +88,7 @@ public final class ImagePreprocessor {
     @NonNull
     private static Bitmap deskew(@NonNull Bitmap src) {
         float angle = detectSkewAngle(src);
-        if (Math.abs(angle) < 0.5f) return src; // skip trivial rotation
+        if (Math.abs(angle) < 1.0f) return src; // skip trivial rotation under 1 degree
 
         Matrix matrix = new Matrix();
         matrix.postRotate(-angle, src.getWidth() / 2f, src.getHeight() / 2f);
@@ -102,10 +102,15 @@ public final class ImagePreprocessor {
         int w = src.getWidth();
         int h = src.getHeight();
 
-        int stripeH  = Math.min(h, STRIPE_HEIGHT);
-        int startY   = (h - stripeH) / 2;
-        int[] pixels = new int[w * stripeH];
-        src.getPixels(pixels, 0, w, 0, startY, w, stripeH);
+        int sampleW = Math.min(w, 320);
+        float scale = (float) sampleW / w;
+        int sampleH = Math.max(10, Math.round(Math.min(h, STRIPE_HEIGHT) * scale));
+
+        Bitmap stripe = Bitmap.createScaledBitmap(src, sampleW, Math.max(10, Math.round(h * scale)), true);
+        int startY = Math.max(0, (stripe.getHeight() - sampleH) / 2);
+        int[] pixels = new int[sampleW * sampleH];
+        stripe.getPixels(pixels, 0, sampleW, 0, startY, sampleW, sampleH);
+        if (stripe != src) stripe.recycle();
 
         float  bestAngle    = 0f;
         double bestVariance = -1.0;
@@ -114,7 +119,7 @@ public final class ImagePreprocessor {
              angle <= MAX_DESKEW_ANGLE;
              angle += ANGLE_STEP) {
 
-            double var = projectionVariance(pixels, w, stripeH, angle);
+            double var = projectionVariance(pixels, sampleW, sampleH, angle);
             if (var > bestVariance) {
                 bestVariance = var;
                 bestAngle    = angle;

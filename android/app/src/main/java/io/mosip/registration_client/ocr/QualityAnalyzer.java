@@ -13,7 +13,8 @@ import java.nio.ByteBuffer;
 public class QualityAnalyzer {
 
     private static final int SAMPLE_STEP = 2;
-    private static final double MAX_FRAME_TO_FRAME_DELTA_RATIO = 0.15;
+    private static final double MAX_FRAME_TO_FRAME_DELTA_RATIO = 0.35;
+    private static final double EMA_ALPHA = 0.3;
 
     private final double blurThreshold;
     private final float  brightnessMin;
@@ -65,8 +66,13 @@ public class QualityAnalyzer {
         float total = 0f;
         int count = 0;
 
-        for (int y = 0; y < height; y += SAMPLE_STEP) {
-            for (int x = 0; x < width; x += SAMPLE_STEP) {
+        int roiStartX = (int) (width * 0.15f);
+        int roiEndX   = (int) (width * 0.85f);
+        int roiStartY = (int) (height * 0.175f);
+        int roiEndY   = (int) (height * 0.825f);
+
+        for (int y = roiStartY; y < roiEndY; y += SAMPLE_STEP) {
+            for (int x = roiStartX; x < roiEndX; x += SAMPLE_STEP) {
                 int index = (y * rowStride) + (x * pixelStride);
                 int luminance = buffer.get(index) & 0xFF;
                 total += luminance;
@@ -93,8 +99,18 @@ public class QualityAnalyzer {
         double sumSq = 0.0;
         int count = 0;
 
-        for (int y = 1; y < height - 1; y += SAMPLE_STEP) {
-            for (int x = 1; x < width - 1; x += SAMPLE_STEP) {
+        int roiStartX = (int) (width * 0.15f);
+        int roiEndX   = (int) (width * 0.85f);
+        int roiStartY = (int) (height * 0.175f);
+        int roiEndY   = (int) (height * 0.825f);
+
+        int startY = Math.max(1, roiStartY);
+        int endY   = Math.min(height - 1, roiEndY);
+        int startX = Math.max(1, roiStartX);
+        int endX   = Math.min(width - 1, roiEndX);
+
+        for (int y = startY; y < endY; y += SAMPLE_STEP) {
+            for (int x = startX; x < endX; x += SAMPLE_STEP) {
                 // Laplacian kernel
                 int center = getLuminance(buffer, x, y, rowStride, pixelStride);
                 int top    = getLuminance(buffer, x, y - 1, rowStride, pixelStride);
@@ -118,16 +134,17 @@ public class QualityAnalyzer {
             return new QualityResult(false, "Hold steady — image is blurry", brightness, variance);
         }
 
-        // Check 2: Frame-to-frame stability — reject if variance fluctuates (camera motion)
+        // Check 2: Frame-to-frame stability with Exponential Moving Average (EMA)
         if (!Double.isNaN(previousBlurVariance) && previousBlurVariance > 0) {
             double delta = Math.abs(variance - previousBlurVariance) / Math.max(variance, previousBlurVariance);
+            previousBlurVariance = (1.0 - EMA_ALPHA) * previousBlurVariance + EMA_ALPHA * variance;
             if (delta > MAX_FRAME_TO_FRAME_DELTA_RATIO) {
-                previousBlurVariance = variance;
                 return new QualityResult(false, "Hold steady — camera is moving", brightness, variance);
             }
+        } else {
+            previousBlurVariance = variance;
         }
 
-        previousBlurVariance = variance;
         return new QualityResult(true, "Good", brightness, variance);
     }
 

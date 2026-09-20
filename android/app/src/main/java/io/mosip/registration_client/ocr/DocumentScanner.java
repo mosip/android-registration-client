@@ -31,9 +31,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DocumentScanner {
+    private static final long INITIAL_ALIGNMENT_DELAY_MS    = 4000L;
     private static final long GOOD_QUALITY_HOLD_DURATION_MS = 4000L;
     private static final long UPDATE_THROTTLE_MS            = 200L;
-    private static final long BAD_QUALITY_GRACE_MS         = 200L;
 
     public interface QualityUpdateCallback {
         void onQualityUpdate(QualityAnalyzer.QualityResult result);
@@ -71,6 +71,9 @@ public class DocumentScanner {
     private volatile boolean                          forceCaptureRequested  = false;
     private long                                      lastUpdateSentTime     = 0L;
     private QualityAnalyzer.QualityResult             lastSentQuality        = null;
+    private long                                      lastBadQualityLogTime  = 0L;
+    private boolean                                   exhaustionFired        = false;
+    private long                                      scanStartTime          = 0L;
 
     public DocumentScanner(
             @NonNull Activity activity,
@@ -101,6 +104,9 @@ public class DocumentScanner {
         forceCaptureRequested = false;
         lastUpdateSentTime    = 0L;
         lastSentQuality       = null;
+        lastBadQualityLogTime = 0L;
+        exhaustionFired       = false;
+        scanStartTime         = 0L;
         qualityAnalyzer.resetFrameTracking();
 
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
@@ -237,6 +243,11 @@ public class DocumentScanner {
             return;
         }
 
+        long now = System.currentTimeMillis();
+        if (scanStartTime == 0L) {
+            scanStartTime = now;
+        }
+
         if (forceCaptureRequested) {
             QualityAnalyzer.QualityResult quality = qualityAnalyzer.analyze(imageProxy);
             OcrAuditLogger.logQualityAttempt(badQualityStreak + 1, quality, true);
@@ -244,8 +255,19 @@ public class DocumentScanner {
             return;
         }
 
+        // 1. Initial 4-second alignment hold: no quality analyzer runs during this period
+        boolean isAligning = (now - scanStartTime) < INITIAL_ALIGNMENT_DELAY_MS;
+        if (isAligning) {
+            goodQualityStart = 0L;
+            QualityAnalyzer.QualityResult aligningResult = new QualityAnalyzer.QualityResult(
+                    false, "Align document within the frame", 0f, Double.NaN);
+            dispatchQualityUpdateIfNeeded(aligningResult, now);
+            imageProxy.close();
+            return;
+        }
+
+        // 2. After initial 4-second hold: quality analyzer activates
         QualityAnalyzer.QualityResult quality = qualityAnalyzer.analyze(imageProxy);
-        long now = System.currentTimeMillis();
 
         // Dispatch throttled / state-change updates to Flutter
         dispatchQualityUpdateIfNeeded(quality, now);
@@ -261,17 +283,17 @@ public class DocumentScanner {
                 return;
             }
         } else {
-            // Grace window for momentary sensor fluctuations while holding steady
-            if (goodQualityStart != 0L) {
-                if (now - goodQualityStart > BAD_QUALITY_GRACE_MS) {
-                    goodQualityStart = 0L;
-                }
-            } else {
+            // 3. If at any point an error occurs (blur, lighting, etc.), restart the 4-second hold timer immediately
+            goodQualityStart = 0L;
+
+            if (now - lastBadQualityLogTime >= 1000L) {
+                lastBadQualityLogTime = now;
                 badQualityStreak++;
                 OcrAuditLogger.logClientFailure("quality_check_failed",
                         quality.guidanceMessage + " (attempt " + badQualityStreak + "/" + maxQualityRetries + ")");
 
-                if (badQualityStreak == maxQualityRetries) {
+                if (badQualityStreak >= maxQualityRetries && !exhaustionFired) {
+                    exhaustionFired = true;
                     qualityExhaustedCallback.onQualityRetriesExhausted();
                 }
             }
