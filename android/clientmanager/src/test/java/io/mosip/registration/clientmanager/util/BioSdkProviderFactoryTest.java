@@ -388,6 +388,17 @@ public class BioSdkProviderFactoryTest {
     }
 
     @Test
+    public void testGetProviderForMatch_exceptionPhoto_resolvesFaceProvider() {
+        // An exception photo is a face image: no SDK advertises EXCEPTION_PHOTO under MATCH
+        setUpSuccessfulRegistration("face", BiometricType.FACE, BiometricFunction.MATCH);
+
+        factory.initialize();
+        IBioApiV2 result = factory.getProviderForMatch(Modality.EXCEPTION_PHOTO);
+
+        assertSame(mockProvider, result);
+    }
+
+    @Test
     public void testGetProviderForFunction_registeredFingerProvider_matchingFunction_returnsProvider() {
         setUpSuccessfulRegistration("finger", BiometricType.FINGER, BiometricFunction.MATCH);
 

@@ -469,14 +469,37 @@ public class MatchUtilTest {
         dto.setQualityScore(80.0f);
         biometricsDtoList.add(dto);
 
-        // EXCEPTION_PHOTO modality uses getSingleType().value() → BiometricType.EXCEPTION_PHOTO
-        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("EXCEPTION_PHOTO"))
+        // An exception photo is matched against the operators' FACE records
+        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("FACE"))
                 .thenReturn(new ArrayList<>());
 
         boolean result = MatchUtil.validateBiometricDataForRegistration(
                 Modality.EXCEPTION_PHOTO, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
 
         assertFalse(result);
+        Mockito.verify(userBiometricRepository).findAllOperatorBiometrics("FACE");
+    }
+
+    @Test
+    public void test_validate_biometric_data_exception_photo_queries_face_records() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("ExceptionPhoto");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto biometricsDto = new BiometricsDto();
+        biometricsDto.setBioValue("base64EncodedExceptionPhoto");
+        biometricsDto.setBioSubType("ExceptionPhoto");
+        biometricsDto.setQualityScore(80.0f);
+        biometricsDtoList.add(biometricsDto);
+
+        Mockito.when(userBiometricRepository.findAllOperatorBiometricsExceptCurrent("FACE", "testUser"))
+                .thenReturn(new ArrayList<>());
+
+        boolean result = matchUtil.validateBiometricData(Modality.EXCEPTION_PHOTO, captureDto,
+                biometricsDtoList, userBiometricRepository, iBioApiV2, "testUser");
+
+        assertFalse(result);
+        Mockito.verify(userBiometricRepository).findAllOperatorBiometricsExceptCurrent("FACE", "testUser");
     }
 
 }
