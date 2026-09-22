@@ -908,6 +908,28 @@ public class Biometrics095ServiceTest {
         assertTrue(ex.getErrorText().contains("Purpose"));
     }
 
+    @Test
+    public void handleRCaptureResponse_dedupeProviderUnavailable_returnsCaptureWithoutException() throws Exception {
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), "0.9.5", "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+        // the constructor resolved sharedPreferences before setUp() stubbed the Context
+        ReflectionTestUtils.setField(biometrics095Service, "sharedPreferences", mockSharedPreferences);
+
+        when(mockSharedPreferences.getString(RegistrationConstants.DEDUPLICATION_ENABLE_FLAG, ""))
+                .thenReturn(RegistrationConstants.ENABLE);
+        when(mockBioSdkProviderFactory.getProviderForMatch(Modality.FACE)).thenReturn(null);
+
+        // An unusable dedupe SDK is logged, not thrown: the capture must still be returned
+        List<BiometricsDto> result = biometrics095Service.handleRCaptureResponse(
+                Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId());
+
+        assertEquals(1, result.size());
+        verify(mockBioSdkProviderFactory).getProviderForMatch(Modality.FACE);
+        verifyNoInteractions(mockUserBiometricRepository);
+    }
+
     // helpers for MOSIP-44993 validation tests
 
     private CaptureRespDetail buildRespDetail(String transactionId, String specVersion, String purpose) throws Exception {

@@ -203,26 +203,26 @@ public class Biometrics095Service extends BiometricsService {
                     IBioApiV2 matchProvider = bioSdkProviderFactory != null ? bioSdkProviderFactory.getProviderForMatch(modality) : null;
 
                     if (matchProvider == null) {
-                        throw new BiometricsServiceException(SBIError.SBI_DEDUPE_SDK_UNAVAILABLE.getErrorCode(),
-                                SBIError.SBI_DEDUPE_SDK_UNAVAILABLE.getErrorMessage());
+                        // Follows Desktop reg-client logic which logs an unusable dedupe SDK and continues (BaseController.matchBiometrics)
+                        Log.e(TAG, SBIError.SBI_DEDUPE_SDK_UNAVAILABLE.getErrorMessage() + " for modality: " + modality);
+                        return biometricsDtoList;
                     }
-
-                   boolean isMatched;
-                   if (isOperatorOnboarding) {
-                       String currentUserId = sharedPreferences.getString(SessionManager.USER_ID, "");
-                       isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList,
-                               userBiometricRepository, matchProvider, currentUserId);
-                   } else {
-                       isMatched = MatchUtil.validateBiometricDataForRegistration(modality, captureDto, biometricsDtoList,
-                               userBiometricRepository, matchProvider);
-                   }
-                   if(isMatched){
-                       Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
-                       auditManagerService.audit(AuditEvent.BIO_SDK_DEDUPE_MATCH, Components.REGISTRATION,
-                               SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
-                       throw new BiometricsServiceException(SBIError.SBI_DEDUPE_MATCH.getErrorCode(),
-                               SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
-                   }
+                    boolean isMatched;
+                    if (isOperatorOnboarding) {
+                        String currentUserId = sharedPreferences.getString(SessionManager.USER_ID, "");
+                        isMatched = MatchUtil.validateBiometricData(modality, captureDto, biometricsDtoList,
+                                userBiometricRepository, matchProvider, currentUserId);
+                    } else {
+                        isMatched = MatchUtil.validateBiometricDataForRegistration(modality, captureDto, biometricsDtoList,
+                                userBiometricRepository, matchProvider);
+                    }
+                    if (isMatched) {
+                        Log.i(TAG, "Biometrics Matched With Operator Biometrics, Please Try Again");
+                        auditManagerService.audit(AuditEvent.BIO_SDK_DEDUPE_MATCH, Components.REGISTRATION,
+                                SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
+                        throw new BiometricsServiceException(SBIError.SBI_DEDUPE_MATCH.getErrorCode(),
+                                SBIError.SBI_DEDUPE_MATCH.getErrorMessage());
+                    }
                }
             }
         } catch (BiometricsServiceException e) {
