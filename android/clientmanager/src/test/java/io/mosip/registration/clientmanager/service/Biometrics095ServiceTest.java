@@ -909,7 +909,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void handleRCaptureResponse_dedupeProviderUnavailable_continuesWithoutException() throws Exception {
+    public void handleRCaptureResponse_dedupeProviderUnavailable_returnsCaptureWithoutException() throws Exception {
         CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
         CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), "0.9.5", "Registration");
         InputStream is = buildCaptureResponseStream(respDetail);

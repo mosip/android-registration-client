@@ -143,7 +143,7 @@ public class BioSdkProviderFactory {
             initialize();
         }
 
-        // Desktop resolves an exception photo as FACE (GenericBiometricsController:607)
+        // follows Desktop reg-client logic which resolves an exception photo as FACE (GenericBiometricsController:607)
         BiometricType type = Modality.modalityToBiometricType(
                 modality == Modality.EXCEPTION_PHOTO ? Modality.FACE : modality);
         if (type == null) return null;
