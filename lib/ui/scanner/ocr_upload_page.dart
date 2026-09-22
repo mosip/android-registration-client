@@ -68,8 +68,53 @@ class _OcrUploadPageState extends State<OcrUploadPage>
 
   @override
   void dispose() {
+    _cleanupSelectedFileSync();
     _fadeController.dispose();
     super.dispose();
+  }
+
+  /// Deletes the cached file at [path] asynchronously if it exists.
+  Future<void> _deleteFileAtPath(String path) async {
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (e) {
+      debugPrint('OcrUploadPage: Failed to delete cached file: $e');
+    }
+  }
+
+  /// Deletes the cached file at [path] synchronously (used during [dispose]).
+  void _deleteFileAtPathSync(String path) {
+    try {
+      final file = File(path);
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+    } catch (e) {
+      debugPrint('OcrUploadPage: Failed to sync delete cached file: $e');
+    }
+  }
+
+  /// Cleans up the currently selected cached file and clears state references.
+  Future<void> _cleanupSelectedFile() async {
+    final path = _selectedFilePath;
+    _selectedFilePath = null;
+    _selectedFile = null;
+    if (path != null) {
+      await _deleteFileAtPath(path);
+    }
+  }
+
+  /// Synchronously cleans up the currently selected cached file (for dispose).
+  void _cleanupSelectedFileSync() {
+    final path = _selectedFilePath;
+    _selectedFilePath = null;
+    _selectedFile = null;
+    if (path != null) {
+      _deleteFileAtPathSync(path);
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -86,11 +131,21 @@ class _OcrUploadPageState extends State<OcrUploadPage>
         imageQuality: 95,
       );
 
-      if (!mounted) return;
+      if (!mounted) {
+        if (picked != null) {
+          _deleteFileAtPathSync(picked.path);
+        }
+        return;
+      }
 
       if (picked == null) {
         setState(() => _pickerActive = false);
         return;
+      }
+
+      // If a file was previously selected and differs, delete the old cached copy
+      if (_selectedFilePath != null && _selectedFilePath != picked.path) {
+        await _deleteFileAtPath(_selectedFilePath!);
       }
 
       final File file = File(picked.path);
@@ -102,6 +157,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
         _fileName = picked.name;
         _fileSize = _formatBytes(bytes);
         _pickerActive = false;
+        _hasAuditedError = false;
       });
 
       _fadeController.forward(from: 0);
@@ -213,7 +269,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
       builder: (context, provider, _) {
         if (provider.state == OcrScanState.success && !_hasPopped) {
           _hasPopped = true;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
             try {
               context.read<GlobalProvider>().getAudit(
                     "REG-EVT-117",
@@ -230,6 +286,9 @@ class _OcrUploadPageState extends State<OcrUploadPage>
               _applyExtractedFields();
             } catch (_) {}
 
+            // AC7: Clean up cached ID document after successful processing
+            await _cleanupSelectedFile();
+
             provider.reset();
 
             if (mounted) {
@@ -242,7 +301,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
             provider.inputSource == OcrInputSource.upload &&
             !_hasAuditedError) {
           _hasAuditedError = true;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
             context.read<GlobalProvider>().getAudit(
                   "REG-EVT-050",
                   "REG-MOD-103",
@@ -251,16 +310,29 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                     provider.errorMessage ?? 'No message',
                   ],
                 );
+            // AC7: Clean up cached ID document on processing error
+            await _cleanupSelectedFile();
           });
         }
 
-        return Scaffold(
-          backgroundColor: backgroundColor,
-          body: Column(
-            children: [
-              _buildTopBar(provider),
-              Expanded(child: _buildBody(provider)),
-            ],
+        return WillPopScope(
+          onWillPop: () async {
+            final isProcessing = provider.state == OcrScanState.processing &&
+                provider.inputSource == OcrInputSource.upload;
+            if (isProcessing) return false;
+            // AC7: Clean up cached ID document on cancel
+            await _cleanupSelectedFile();
+            provider.reset();
+            return true;
+          },
+          child: Scaffold(
+            backgroundColor: backgroundColor,
+            body: Column(
+              children: [
+                _buildTopBar(provider),
+                Expanded(child: _buildBody(provider)),
+              ],
+            ),
           ),
         );
       },
@@ -308,10 +380,14 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(8.r),
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
                     if (isProcessing) return;
+                    // AC7: Clean up cached file on cancel
+                    await _cleanupSelectedFile();
                     provider.reset();
-                    Navigator.of(context).pop();
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
                   },
                   borderRadius: BorderRadius.circular(8.r),
                   child: Padding(
@@ -512,7 +588,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
       ),
       decoration: BoxDecoration(
         color: pureWhite,
-        border: Border(
+        border: const Border(
           top: BorderSide(color: greyBorderShade, width: 1),
         ),
       ),
@@ -754,7 +830,10 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                   width: double.infinity,
                   height: 44.h,
                   child: ElevatedButton.icon(
-                    onPressed: _processDocument,
+                    onPressed: () {
+                      provider.reset();
+                      _openPicker();
+                    },
                     icon: Icon(Icons.refresh_rounded, size: 18.sp),
                     label: Text(
                       'Try Again',
@@ -778,7 +857,10 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                   width: double.infinity,
                   height: 44.h,
                   child: OutlinedButton.icon(
-                    onPressed: _openPicker,
+                    onPressed: () {
+                      provider.reset();
+                      _openPicker();
+                    },
                     icon: Icon(Icons.photo_library_outlined, size: 18.sp),
                     label: Text(
                       'Choose Different Image',
@@ -804,9 +886,13 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                 width: double.infinity,
                 height: 44.h,
                 child: TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    // AC7: Clean up cached file on cancel / manual entry
+                    await _cleanupSelectedFile();
                     provider.reset();
-                    Navigator.of(context).pop();
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: appBlackShade2,
