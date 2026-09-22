@@ -71,4 +71,7 @@ abstract class SyncApi {
   bool modifyJobCronExpression(String jobId, String cronExpression);
   @async
   String? getValue(String name);
+
+  @async
+  bool executeRemapStep(int step);
 }

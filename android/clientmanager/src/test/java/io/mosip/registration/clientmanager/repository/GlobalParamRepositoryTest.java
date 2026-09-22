@@ -91,7 +91,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void saveGlobal() {
+    public void saveGlobalParam_withStringValue_persistsAndReturnsCachedValue() {
         globalParamRepository.saveGlobalParam(GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_VALUE);
 
         String globalParamValue = globalParamRepository.getGlobalParamValue(GLOBAL_PARAM_STRING_ID);
@@ -102,7 +102,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void saveGlobalParamList() {
+    public void saveGlobalParams_withParamList_persistsAllParams() {
         List<GlobalParam> globalParamList = new ArrayList<>();
         globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_VALUE.toString(), true));
         globalParamList.add(new GlobalParam(GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_VALUE, true));
@@ -114,8 +114,12 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void getCachedValues() {
-        saveGlobalParamList();
+    public void getCachedGlobalParams_afterSavingList_returnsCachedValues() {
+        List<GlobalParam> globalParamList = new ArrayList<>();
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_ID, GLOBAL_PARAM_BOOLEAN_VALUE.toString(), true));
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_ID, GLOBAL_PARAM_STRING_VALUE, true));
+        globalParamList.add(new GlobalParam(GLOBAL_PARAM_INT_ID, GLOBAL_PARAM_INT_ID, String.valueOf(GLOBAL_PARAM_INT_VALUE), true));
+        globalParamRepository.saveGlobalParams(globalParamList);
 
         assertEquals(GLOBAL_PARAM_STRING_VALUE, globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID));
         assertEquals(GLOBAL_PARAM_BOOLEAN_VALUE, globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_BOOLEAN_ID));
@@ -123,65 +127,65 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void getCachedValuesNotFoundTest() {
+    public void getCachedGlobalParams_withUnknownKey_returnsNullOrZero() {
         assertNull(globalParamRepository.getCachedStringGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED));
         assertNull(globalParamRepository.getCachedBooleanGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED));
         assertEquals(0, globalParamRepository.getCachedIntegerGlobalParam(GLOBAL_PARAM_STRING_ID_NOT_CACHED));
     }
 
     @Test
-    public void getMandatoryLanguageCodesTest() {
+    public void getMandatoryLanguageCodes_withDuplicatesAndMixedCase_returnsDedupedList() {
         globalParamRepository.saveGlobalParam(RegistrationConstants.MANDATORY_LANGUAGES_KEY, "ENG, eng, hin , , HIN");
         List<String> codes = globalParamRepository.getMandatoryLanguageCodes();
         assertEquals(Arrays.asList("eng", "hin"), codes);
     }
 
     @Test
-    public void getOptionalLanguageCodesTest() {
+    public void getOptionalLanguageCodes_withDuplicatesAndMixedCase_returnsDedupedList() {
         globalParamRepository.saveGlobalParam(RegistrationConstants.OPTIONAL_LANGUAGES_KEY, "kan, tam, KAN");
         List<String> codes = globalParamRepository.getOptionalLanguageCodes();
         assertEquals(Arrays.asList("kan", "tam"), codes);
     }
 
     @Test
-    public void getMaxLanguageCountTest() {
+    public void getMaxLanguageCount_withValidPositiveValue_returnsConfiguredCount() {
         globalParamRepository.saveGlobalParam(RegistrationConstants.MAX_LANGUAGES_COUNT_KEY, "5");
         assertEquals(5, globalParamRepository.getMaxLanguageCount());
     }
 
     @Test
-    public void getMaxLanguageCountDefaultTest() {
+    public void getMaxLanguageCount_withZeroValue_returnsDefaultOne() {
         globalParamRepository.saveGlobalParam(RegistrationConstants.MAX_LANGUAGES_COUNT_KEY, "0");
         assertEquals(1, globalParamRepository.getMaxLanguageCount());
     }
 
     @Test
-    public void getMinLanguageCountTest() {
+    public void getMinLanguageCount_withValidPositiveValue_returnsConfiguredCount() {
         globalParamRepository.saveGlobalParam(RegistrationConstants.MIN_LANGUAGES_COUNT_KEY, "2");
         assertEquals(2, globalParamRepository.getMinLanguageCount());
     }
 
     @Test
-    public void getMinLanguageCountDefaultTest() {
+    public void getMinLanguageCount_withNegativeValue_returnsDefaultOne() {
         globalParamRepository.saveGlobalParam(RegistrationConstants.MIN_LANGUAGES_COUNT_KEY, "-1");
         assertEquals(1, globalParamRepository.getMinLanguageCount());
     }
 
     @Test
-    public void getSelectedHandlesTest() {
+    public void getSelectedHandles_withDuplicateEntries_returnsDedupedList() {
         globalParamRepository.saveGlobalParam(RegistrationConstants.SELECTED_HANDLES, "phone, email , phone");
         List<String> handles = globalParamRepository.getSelectedHandles();
         assertEquals(Arrays.asList("phone", "email"), handles);
     }
 
     @Test
-    public void getCachedStringDefaults() {
+    public void getCachedStringDefaults_whenNotConfigured_returnsPredefinedDefaults() {
         assertEquals("applicanttype.mvel", globalParamRepository.getCachedStringMAVELScript());
         assertNull(globalParamRepository.getCachedStringPreRegPacketLocation());
     }
 
     @Test
-    public void refreshConfigurationCacheMergesLocalOverrides() {
+    public void refreshConfigurationCache_withLocalOverrides_overridesRemoteValues() {
         globalParamRepository.saveGlobalParam("param1", "remote");
         Map<String, String> overrides = new HashMap<>();
         overrides.put("param1", "local");
@@ -197,7 +201,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void refreshConfigurationCacheHandlesException() {
+    public void refreshConfigurationCache_whenDaoThrowsException_completesWithoutThrowing() {
         // Test that refreshConfigurationCache handles exceptions gracefully:
         // 1. Method completes without throwing
         // 2. Exception is logged
@@ -231,7 +235,7 @@ public class GlobalParamRepositoryTest {
     }
 
     @Test
-    public void getGlobalParamsByPatternTrimsValues() {
+    public void getGlobalParamsByPattern_withValueHavingSpaces_returnsTrimmedValue() {
         GlobalParamDao mockDao = mock(GlobalParamDao.class);
         LocalConfigDAO mockLocal = mock(LocalConfigDAO.class);
         when(mockDao.getGlobalParams()).thenReturn(Collections.emptyList());
@@ -244,5 +248,135 @@ public class GlobalParamRepositoryTest {
 
         Map<String, Object> result = repositoryWithMocks.getGlobalParamsByPattern("demo");
         assertEquals("value", result.get("demo"));
+    }
+
+    @Test
+    public void getCachedStringAgeGroup_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringAgeGroup());
+    }
+
+    @Test
+    public void getCachedStringForgotPassword_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringForgotPassword());
+    }
+
+    @Test
+    public void getCachedStringIdleTime_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringIdleTime());
+    }
+
+    @Test
+    public void getCachedStringRefreshedLoginTime_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringRefreshedLoginTime());
+    }
+
+    @Test
+    public void getCachedStringGpsDeviceEnableFlag_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringGpsDeviceEnableFlag());
+    }
+
+    @Test
+    public void getCachedStringMachineToCenterDistance_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringMachineToCenterDistance());
+    }
+
+    @Test
+    public void getCachedStringOperatorOnboardingBioAttributes_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringOperatorOnboardingBioAttributes());
+    }
+
+    @Test
+    public void getCachedStringOnboardYourselfUrl_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringOnboardYourselfUrl());
+    }
+
+    @Test
+    public void getCachedStringRegisteringIndividualUrl_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringRegisteringIndividualUrl());
+    }
+
+    @Test
+    public void getCachedStringSyncDataUrl_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringSyncDataUrl());
+    }
+
+    @Test
+    public void getCachedStringMappingDevicesUrl_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringMappingDevicesUrl());
+    }
+
+    @Test
+    public void getCachedStringUploadingDataUrl_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringUploadingDataUrl());
+    }
+
+    @Test
+    public void getCachedStringUpdatingBiometricsUrl_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringUpdatingBiometricsUrl());
+    }
+
+    @Test
+    public void getCachedStringPasswordLength_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringPasswordLength());
+    }
+
+    @Test
+    public void getCachedStringDocumentSize_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringDocumentSize());
+    }
+
+    @Test
+    public void getCachedStringDOBAgeLimit_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringDOBAgeLimit());
+    }
+
+    @Test
+    public void getCachedStringDocType_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringDocType());
+    }
+
+    @Test
+    public void getCachedStringAppName_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringAppName());
+    }
+
+    @Test
+    public void getCachedStringAppId_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringAppId());
+    }
+
+    @Test
+    public void getCachedStringDefaultHostIp_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringDefaultHostIp());
+    }
+
+    @Test
+    public void getCachedStringDefaultHostName_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringDefaultHostName());
+    }
+
+    @Test
+    public void getCachedStringFieldsToRetainOnPridFetch_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringFieldsToRetainOnPridFetch());
+    }
+
+    @Test
+    public void getCachedStringPacketStoreLocation_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringPacketStoreLocation());
+    }
+
+    @Test
+    public void getCachedStringJobsOffline_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringJobsOffline());
+    }
+
+    @Test
+    public void getCachedStringJobsUntagged_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringJobsUntagged());
+    }
+
+    @Test
+    public void getCachedStringJobsRestart_whenNotSet_returnsNull() {
+        assertNull(globalParamRepository.getCachedStringJobsRestart());
     }
 }

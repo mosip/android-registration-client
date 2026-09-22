@@ -17,6 +17,7 @@ import io.mosip.registration.clientmanager.dto.registration.GenericValueDto;
 import io.mosip.registration.clientmanager.dto.uispec.ProcessSpecDto;
 import io.mosip.registration.clientmanager.entity.*;
 import io.mosip.registration.clientmanager.repository.*;
+import io.mosip.registration.clientmanager.spi.AuditManagerService;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
 import io.mosip.registration.clientmanager.spi.JobTransactionService;
 import io.mosip.registration.keymanager.dto.*;
@@ -93,6 +94,7 @@ public class MasterDataServiceImplTest {
     @Mock private PermittedLocalConfigRepository mockPermittedLocalConfigRepository;
     @Mock private LocalConfigDAO mockLocalConfigDao;
     @Mock private JobTransactionService mockJobTransactionService;
+    @Mock private AuditManagerService mockAuditManagerService;
 
     private final String TEST_APP_NAME = "MockAppName";
 
@@ -2156,7 +2158,8 @@ public class MasterDataServiceImplTest {
                 mockFileSignatureDao,
                 mockJobTransactionService,
                 mockPermittedLocalConfigRepository,
-                mockLocalConfigDao
+                mockLocalConfigDao,
+                mockAuditManagerService
         );
         assertNotNull(service);
     }

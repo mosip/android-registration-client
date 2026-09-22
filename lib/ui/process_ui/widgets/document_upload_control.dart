@@ -20,6 +20,7 @@ import 'package:registration_client/ui/scanner/custom_scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/ui/scanner/preview_screen.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 import '../../../model/field.dart';
 import '../../../pigeon/document_category_pigeon.dart';
@@ -134,6 +135,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
           context.read<GlobalProvider>().fieldInputValue[widget.field.id].title;
     }
     super.initState();
+    TelemetryService.instance.onScreenView("DocumentUploadControlPage");
 
     myGetDocumentCategoryFuture.then((List<DocumentType?> list) {
       if (!mounted) return;
@@ -330,6 +332,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   _documentScanClickedAudit()  {
+    TelemetryService.instance.onButtonClick("upload_document", screenName: "DocumentUploadControlPage");
     _documentAudit("SCAN");
   }
 
@@ -375,6 +378,7 @@ class _DocumentUploadControlState extends State<DocumentUploadControl> {
   }
 
   void _deleteImage(Field e, Uint8List? item) async {
+    TelemetryService.instance.onButtonClick("delete_document", screenName: "DocumentUploadControlPage");
     for (int i = 0; i < imageBytesList.length; i++) {
       if (imageBytesList[i] == item) {
         setState(() {

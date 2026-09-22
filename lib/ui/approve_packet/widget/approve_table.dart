@@ -10,6 +10,7 @@ import 'package:registration_client/utils/constants.dart';
 import '../../../model/registration.dart';
 import '../../../utils/app_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 class ApproveTable extends StatefulWidget {
   const ApproveTable({super.key, required this.matchingPackets});
@@ -21,6 +22,7 @@ class ApproveTable extends StatefulWidget {
 
 class _ApproveTableState extends State<ApproveTable> {
   void showTemplate() {
+    TelemetryService.instance.onButtonClick("view_packet", screenName: "ApprovePacketsPage");
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -149,6 +151,7 @@ class _ApproveTableState extends State<ApproveTable> {
                   .watch<ApprovePacketsProvider>()
                   .matchingSelected[index - 1],
               onChanged: (bool? value) {
+                TelemetryService.instance.onButtonClick("select_packet_checkbox", screenName: "ApprovePacketsPage");
                 context
                     .read<ApprovePacketsProvider>()
                     .setSelected(index - 1, value);

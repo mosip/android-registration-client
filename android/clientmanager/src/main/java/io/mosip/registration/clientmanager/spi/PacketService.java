@@ -99,4 +99,10 @@ public interface PacketService {
     boolean isMaxNotApprovedPacketCountLimitReached();
 
     void deleteRegistrationPackets();
+
+    /**
+     * Deletes ALL registration packets from the local filesystem and database,
+     * regardless of server status or age. Used exclusively during center remap cleanup.
+     */
+    void deleteAllRegistrationPackets();
 }

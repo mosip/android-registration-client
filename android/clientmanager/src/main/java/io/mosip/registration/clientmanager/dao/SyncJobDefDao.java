@@ -69,4 +69,6 @@ public interface SyncJobDefDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(SyncJobDef syncJobDef);
 
+    @Query("UPDATE sync_job_def SET is_active = 0")
+    void disableAllJobs();
 }

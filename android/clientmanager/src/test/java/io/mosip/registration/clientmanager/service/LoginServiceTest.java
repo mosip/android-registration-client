@@ -48,13 +48,13 @@ public class LoginServiceTest {
     }
 
     @Test(expected = InvalidMachineSpecIDException.class)
-    public void saveAuthToken_throwException() throws Exception {
+    public void saveAuthToken_withNullDecryptResponse_throwsInvalidMachineSpecIdException() throws Exception {
         when(this.clientCryptoManagerService.decrypt(any())).thenReturn(null);
         loginService.saveAuthToken(null, "");
     }
 
     @Test
-    public void isValidUserId_WithActiveUser_Test() {
+    public void isValidUserId_withActiveUser_returnsTrue() {
         String userId = "9343";
         when(userDetailRepository.getUserDetailCount()).thenReturn(1);
         when(userDetailRepository.isActiveUser(userId)).thenReturn(true);
@@ -63,7 +63,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void isValidUserId_WithInactiveUser_Test() {
+    public void isValidUserId_withInactiveUser_returnsFalse() {
         String userId = "9343";
         when(userDetailRepository.getUserDetailCount()).thenReturn(1);
         when(userDetailRepository.isActiveUser(userId)).thenReturn(false);
@@ -72,7 +72,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_save_valid_auth_token_successfully() throws Exception {
+    public void saveUserAuthTokenOffline_withValidStoredToken_returnsToken() throws Exception {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
 
         Field userDetailRepositoryField = LoginService.class.getDeclaredField("userDetailRepository");
@@ -98,7 +98,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_handle_null_token_from_repository() throws Exception {
+    public void saveUserAuthTokenOffline_withNullStoredToken_returnsNull() throws Exception {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
 
         Field userDetailRepositoryField = LoginService.class.getDeclaredField("userDetailRepository");
@@ -121,7 +121,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_handles_empty_token_from_repository() throws Exception {
+    public void saveUserAuthTokenOffline_withEmptyStoredToken_returnsEmpty() throws Exception {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
         String userId = "testUser";
 
@@ -134,7 +134,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_handles_exceptions_from_session_manager() {
+    public void saveUserAuthTokenOffline_whenSessionManagerThrows_propagatesException() {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
         String userId = "testUser";
         String token = "validToken";
@@ -147,7 +147,7 @@ public class LoginServiceTest {
     }
 
     @Test (expected = InvalidMachineSpecIDException.class)
-    public void test_successful_auth_token_save() throws Exception {
+    public void saveAuthToken_withEncodedJsonResponse_throwsDecodeException() throws Exception {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
 
         ClientCryptoManagerService mockCryptoService = mock(ClientCryptoManagerService.class);
@@ -175,7 +175,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_null_crypto_response_throws_exception() {
+    public void saveAuthToken_withNullDecryptResult_throwsInvalidMachineSpecIdException() {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
 
         String authResponse = "encryptedAuthResponse";
@@ -193,7 +193,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_clear_auth_token_successful() {
+    public void clearAuthToken_withValidSessionManager_callsClearAuthToken() {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
 
         try {
@@ -212,7 +212,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_clear_auth_token_throws_exception() {
+    public void clearAuthToken_whenSessionManagerThrows_propagatesException() {
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository,userRoleRepository);
 
         try {
@@ -235,8 +235,16 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_session_manager_null() {
-        LoginService loginService = new LoginService(context, null, null,null);
+    public void clearAuthToken_withNullSessionManager_throwsException() {
+        LoginService loginService = new LoginService(context, null, null, null);
+
+        try {
+            Field sessionManagerField = LoginService.class.getDeclaredField("sessionManager");
+            sessionManagerField.setAccessible(true);
+            sessionManagerField.set(loginService, null);
+        } catch (Exception e) {
+            fail("Failed to set sessionManager field: " + e.getMessage());
+        }
 
         Exception exception = assertThrows(Exception.class, () -> {
             loginService.clearAuthToken(context);
@@ -246,20 +254,26 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_session_manager_returns_non_null_value() {
-        LoginService loginService = new LoginService(context, null, null,null);
+    public void clearAuthToken_whenSessionManagerReturnsNonNull_completesSuccessfully() {
+        LoginService loginService = new LoginService(context, null, null, null);
 
-        lenient().when(sessionManager.clearAuthToken()).thenReturn("non-null-token");
+        try {
+            Field sessionManagerField = LoginService.class.getDeclaredField("sessionManager");
+            sessionManagerField.setAccessible(true);
+            sessionManagerField.set(loginService, sessionManager);
+        } catch (Exception e) {
+            fail("Failed to set sessionManager field: " + e.getMessage());
+        }
 
-        Exception exception = assertThrows(Exception.class, () -> {
-            loginService.clearAuthToken(context);
-        });
+        when(sessionManager.clearAuthToken()).thenReturn("non-null-token");
 
-        assertNotNull(exception);
+        loginService.clearAuthToken(context);
+
+        verify(sessionManager, times(1)).clearAuthToken();
     }
 
     @Test
-    public void test_validate_password_returns_true_for_valid_credentials() {
+    public void validatePassword_withValidCredentials_returnsTrue() {
         String userId = "testUser";
         String password = "validPassword";
         Mockito.when(userDetailRepository.isValidPassword(userId, password)).thenReturn(true);
@@ -274,7 +288,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_validate_password_handles_null_userid() {
+    public void validatePassword_withNullUserId_returnsFalse() {
         String userId = null;
         String password = "somePassword";
         Mockito.when(userDetailRepository.isValidPassword(userId, password)).thenReturn(false);
@@ -289,7 +303,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_password_hash_stored_successfully() {
+    public void setPasswordHash_withValidUserAndPassword_storesHashInRepository() {
         String userId = "testUser";
         String password = "testPassword";
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository, userRoleRepository);
@@ -300,7 +314,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_returns_true_when_password_exists_for_valid_user() {
+    public void isPasswordPresent_withValidUser_returnsTrue() {
         String validUserId = "validUser";
         Mockito.when(userDetailRepository.isPasswordPresent(validUserId)).thenReturn(true);
 
@@ -313,7 +327,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_returns_false_when_user_id_is_null() {
+    public void isPasswordPresent_withNullUserId_returnsFalse() {
         String nullUserId = null;
         Mockito.when(userDetailRepository.isPasswordPresent(nullUserId)).thenReturn(false);
 
@@ -327,7 +341,7 @@ public class LoginServiceTest {
 
 
     @Test
-    public void test_get_user_details_returns_user_when_valid_userid() {
+    public void getUserDetailsByUserId_withValidUserId_returnsUserDetail() {
         String userId = "testUser";
         UserDetail expectedUserDetail = new UserDetail(userId);
         expectedUserDetail.setName("Test User");
@@ -349,7 +363,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_get_user_details_with_null_userid() {
+    public void getUserDetailsByUserId_withNullUserId_returnsNull() {
         String userId = null;
 
         Mockito.when(userDetailRepository.getUserDetailByUserId(userId)).thenReturn(null);
@@ -365,7 +379,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_returns_true_when_user_detail_count_is_zero() {
+    public void isValidUserId_withZeroUserDetailCount_returnsTrue() {
         Mockito.when(userDetailRepository.getUserDetailCount()).thenReturn(0);
         LoginService loginService = new LoginService(context, clientCryptoManagerService, userDetailRepository, userRoleRepository);
 
@@ -377,7 +391,7 @@ public class LoginServiceTest {
     }
 
     @Test (expected = DecodeException.class)
-     public void test_saveAuthToken_success() throws Exception {
+     public void saveAuthToken_withBase64EncodedJsonResponse_throwsDecodeException() throws Exception {
         String authResponse = "dummyAuth";
         String userId = "user1";
         String token = "token123";
@@ -407,7 +421,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_saveAuthToken_nullCryptoResponse_throwsException() {
+    public void saveAuthToken_withNullCryptoResponseDto_throwsInvalidMachineSpecIdException() {
         String authResponse = "dummyAuth";
         String userId = "user1";
         when(clientCryptoManagerService.decrypt(any(CryptoRequestDto.class))).thenReturn(null);
@@ -419,7 +433,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void test_saveAuthToken_jsonParseException() {
+    public void saveAuthToken_withInvalidBase64Response_throwsException() {
         String authResponse = "dummyAuth";
         String userId = "user1";
         CryptoResponseDto cryptoResponseDto = new CryptoResponseDto();

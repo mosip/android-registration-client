@@ -21,9 +21,6 @@ public interface UserTokenDao {
     @Query("SELECT * FROM user_token WHERE username = :userId")
     public UserToken findByUsername(String userId);
 
-    @Query("delete from user_token")
-    public void removeAllUsers();
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insert(UserToken users);
 

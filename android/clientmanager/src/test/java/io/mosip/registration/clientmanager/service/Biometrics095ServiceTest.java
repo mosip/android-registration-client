@@ -33,7 +33,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Map;
 
 public class Biometrics095ServiceTest {
 
@@ -74,7 +77,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testGetRCaptureRequest() {
+    public void getRCaptureRequest_withFaceModality_returnsConfiguredRequest() {
         Modality modality = Modality.FACE;
         String deviceId = "testDevice";
         List<String> exceptionAttributes = new ArrayList<>();
@@ -82,30 +85,41 @@ public class Biometrics095ServiceTest {
         CaptureRequest request = biometrics095Service.getRCaptureRequest(modality, deviceId, exceptionAttributes);
 
         assertNotNull(request);
-        assertEquals("Developer", request.getEnv());
+        assertEquals("Staging", request.getEnv());
         assertEquals("Registration", request.getPurpose());
         assertFalse("Bio list should not be empty", request.getBio().isEmpty());
         assertEquals(deviceId, request.getBio().get(0).getDeviceId());
+        assertNotNull("transactionId must not be null", request.getTransactionId());
+        assertNotNull("captureTime must not be null", request.getCaptureTime());
     }
 
     @Test
-    public void testHandleRCaptureResponse_errorResponse() throws Exception {
+    public void getRCaptureRequest_multipleConsecutiveCalls_generatesUniqueTransactionIds() {
+        CaptureRequest first = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev1", new ArrayList<>());
+        CaptureRequest second = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev1", new ArrayList<>());
+        assertNotEquals("Each request must have a unique transactionId",
+                first.getTransactionId(), second.getTransactionId());
+    }
+
+    @Test
+    public void handleRCaptureResponse_withParsingError_throwsBiometricsServiceException() throws Exception {
         Modality modality = Modality.FACE;
         List<String> exceptionAttributes = new ArrayList<>();
         InputStream responseStream = new ByteArrayInputStream("{}".getBytes());
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(modality, "dev", exceptionAttributes);
 
         when(mockObjectMapper.readValue(any(InputStream.class), ArgumentMatchers.<TypeReference<CaptureResponse>>any()))
                 .thenThrow(new RuntimeException("Parsing error"));
 
         BiometricsServiceException exception = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(modality, responseStream, exceptionAttributes));
+                biometrics095Service.handleRCaptureResponse(modality, responseStream, exceptionAttributes, captureRequest.getTransactionId()));
 
         assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), exception.getErrorCode());
         verify(mockAuditManagerService).audit(eq(AuditEvent.R_CAPTURE_PARSE_FAILED), eq(Components.REGISTRATION), anyString());
     }
 
     @Test
-    public void testHandleDeviceInfoResponse_invalidResponse() throws Exception {
+    public void handleDeviceInfoResponse_withInvalidResponse_throwsBiometricsServiceException() throws Exception {
         Modality modality = Modality.FACE;
         byte[] response = "{}".getBytes();
 
@@ -119,7 +133,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testHandleDiscoveryResponse_success() throws Exception {
+    public void handleDiscoveryResponse_withSingleDevice_returnsCallbackId() throws Exception {
         Modality modality = Modality.FACE;
         byte[] response = "[{\"callbackId\":\"device_123\"}]".getBytes();
 
@@ -137,7 +151,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testHandleDiscoveryResponse_error() throws Exception {
+    public void handleDiscoveryResponse_withParsingError_throwsBiometricsServiceException() throws Exception {
         Modality modality = Modality.FACE;
         byte[] response = "{}".getBytes();
 
@@ -151,7 +165,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testGetModalityThreshold() {
+    public void getModalityThreshold_withFaceModality_returnsGlobalParamValue() {
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(anyString())).thenReturn(50);
 
         int threshold = biometrics095Service.getModalityThreshold(Modality.FACE);
@@ -160,7 +174,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void testValidateJWTResponse_invalidSignature() throws Exception {
+    public void validateJWTResponse_withCryptoServiceException_throwsBiometricsServiceException() throws Exception {
         when(mockCryptoManagerService.jwtVerify(any())).thenThrow(new BiometricsServiceException(SBIError.SBI_INVALID_SIGNATURE.getErrorCode(), "Invalid signature"));
 
         BiometricsServiceException exception = assertThrows(BiometricsServiceException.class, () ->
@@ -170,9 +184,11 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_creates_capture_request_with_standard_environment_settings() {
+    public void getRCaptureRequest_withDeveloperProfile_setsEnvironmentFromProfile() {
         when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         when(mockContext.getString(anyInt())).thenReturn("app_name");
+        when(mockGlobalParamRepository.getCachedStringGlobalParam(RegistrationConstants.SERVER_ACTIVE_PROFILE)).thenReturn("Developer");
+        when(mockGlobalParamRepository.getCachedIntCaptureTimeout()).thenReturn(10000);
 
         Biometrics095Service biometrics095Service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService,
@@ -188,10 +204,12 @@ public class Biometrics095ServiceTest {
         assertEquals("Registration", result.getPurpose());
         assertEquals(10000, result.getTimeout());
         assertEquals("0.9.5", result.getSpecVersion());
+        assertNotNull("transactionId must not be null", result.getTransactionId());
+        assertNotNull("captureTime must not be null", result.getCaptureTime());
     }
 
     @Test
-    public void test_handles_null_modality_parameter() {
+    public void getRCaptureRequest_withNullModality_throwsNullPointerException() {
         when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockSharedPreferences);
         when(mockContext.getString(anyInt())).thenReturn("app_name");
 
@@ -208,7 +226,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_biometric_type_based_on_modality() {
+    public void getRCaptureRequest_biometricTypeBasedOnModality_returnsBioType() {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, new ObjectMapper(), mockAuditManagerService, mockGlobalParamRepository,
                 mockCryptoManagerService, mockUserBiometricRepository, null
@@ -222,7 +240,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_exception_attributes_conversion() {
+    public void getRCaptureRequest_withExceptionAttributes_convertsToSpecBioSubType() {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, new ObjectMapper(), mockAuditManagerService, mockGlobalParamRepository,
                 mockCryptoManagerService, mockUserBiometricRepository, null
@@ -236,7 +254,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_count_setting_based_on_modality() {
+    public void getRCaptureRequest_countSettingBasedOnModality_returnsCorrectCount() {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, new ObjectMapper(), mockAuditManagerService, mockGlobalParamRepository,
                 mockCryptoManagerService, mockUserBiometricRepository, null
@@ -254,7 +272,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_threshold_score_retrieval() {
+    public void getModalityThreshold_thresholdScoreRetrieval_returnsRequestedScore() {
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(RegistrationConstants.LEFT_SLAP_THRESHOLD_KEY)).thenReturn(50);
 
         Biometrics095Service service = new Biometrics095Service(
@@ -274,7 +292,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test(expected = BiometricsServiceException.class)
-    public void test_validate_jwt_response_with_trust_domain() throws Exception {
+    public void validateJWTResponse_withTrustDomain_throwsBiometricsServiceException() throws Exception {
         Biometrics095Service serviceSpy = Mockito.spy(
                 new Biometrics095Service(mockContext, mockObjectMapper, mockAuditManagerService,
                         mockGlobalParamRepository, mockCryptoManagerService, mockUserBiometricRepository, null)
@@ -283,16 +301,17 @@ public class Biometrics095ServiceTest {
         InputStream mockResponse = new ByteArrayInputStream("{\"biometrics\":[{\"specVersion\":\"0.9.5\",\"data\":\"mockData\",\"error\":null}]}".getBytes());
         List<String> exceptionAttributes = new ArrayList<>();
         Modality modality = Modality.FACE;
+        CaptureRequest captureRequest = serviceSpy.getRCaptureRequest(modality, "dev", exceptionAttributes);
 
         doNothing().when(serviceSpy).validateJWTResponse(anyString(), eq("DEVICE"));
 
-        serviceSpy.handleRCaptureResponse(modality, mockResponse, exceptionAttributes);
+        serviceSpy.handleRCaptureResponse(modality, mockResponse, exceptionAttributes, captureRequest.getTransactionId());
 
         verify(serviceSpy).validateJWTResponse(anyString(), eq("DEVICE"));
     }
 
     @Test
-    public void test_handle_device_info_response_with_invalid_response_throws_exception() throws Exception {
+    public void handleDeviceInfoResponse_invalidJwtResponse_throwsBiometricsServiceException() throws Exception {
         Biometrics095Service service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService, mockGlobalParamRepository,
                 mockCryptoManagerService, mockUserBiometricRepository, null);
@@ -314,7 +333,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test(expected = BiometricsServiceException.class)
-    public void test_unsuccessful_device_info_response_parsing_invalid_jwt_payload() throws Exception {
+    public void handleDeviceInfoResponse_invalidJwtPayload_throwsBiometricsServiceException() throws Exception {
         Biometrics095Service biometrics095Service = new Biometrics095Service(
                 mockContext, mockObjectMapper, mockAuditManagerService, mockGlobalParamRepository,
                 mockCryptoManagerService, mockUserBiometricRepository, null);
@@ -337,7 +356,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getModalityThreshold_fingerprintSlabLeft() {
+    public void getModalityThreshold_fingerprintSlabLeft_returnsThresholdValue() {
         int expectedThreshold = 100;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.LEFT_SLAP_THRESHOLD_KEY)))
                 .thenReturn(expectedThreshold);
@@ -348,7 +367,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getModalityThreshold_fingerprintSlabRight() {
+    public void getModalityThreshold_fingerprintSlabRight_returnsThresholdValue() {
         int expectedThreshold = 150;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.RIGHT_SLAP_THRESHOLD_KEY)))
                 .thenReturn(expectedThreshold);
@@ -359,7 +378,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getModalityThreshold_fingerprintSlabThumbs() {
+    public void getModalityThreshold_fingerprintSlabThumbs_returnsThresholdValue() {
         int expectedThreshold = 200;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.THUMBS_THRESHOLD_KEY)))
                 .thenReturn(expectedThreshold);
@@ -370,7 +389,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getModalityThreshold_irisDouble() {
+    public void getModalityThreshold_irisDouble_returnsThresholdValue() {
         int expectedThreshold = 250;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.IRIS_THRESHOLD_KEY)))
                 .thenReturn(expectedThreshold);
@@ -381,7 +400,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getModalityThreshold_face() {
+    public void getModalityThreshold_face_returnsThresholdValue() {
         int expectedThreshold = 300;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.FACE_THRESHOLD_KEY)))
                 .thenReturn(expectedThreshold);
@@ -392,7 +411,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getModalityThreshold_unhandledModality() {
+    public void getModalityThreshold_unhandledModality_returnsZero() {
         Modality unhandledModality = Modality.EXCEPTION_PHOTO;
 
         int actualAttempts = biometrics095Service.getModalityThreshold(unhandledModality);
@@ -401,7 +420,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getAttemptsCount_fingerprintSlabLeft() {
+    public void getAttemptsCount_fingerprintSlabLeft_returnsAttemptsCount() {
         int expectedAttempts = 3;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.LEFT_SLAP_ATTEMPTS_KEY)))
                 .thenReturn(expectedAttempts);
@@ -412,7 +431,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getAttemptsCount_fingerprintSlabRight() {
+    public void getAttemptsCount_fingerprintSlabRight_returnsAttemptsCount() {
         int expectedAttempts = 4;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.RIGHT_SLAP_ATTEMPTS_KEY)))
                 .thenReturn(expectedAttempts);
@@ -423,7 +442,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getAttemptsCount_fingerprintSlabThumbs() {
+    public void getAttemptsCount_fingerprintSlabThumbs_returnsAttemptsCount() {
         int expectedAttempts = 5;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.THUMBS_ATTEMPTS_KEY)))
                 .thenReturn(expectedAttempts);
@@ -434,7 +453,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getAttemptsCount_irisDouble() {
+    public void getAttemptsCount_irisDouble_returnsAttemptsCount() {
         int expectedAttempts = 2;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.IRIS_ATTEMPTS_KEY)))
                 .thenReturn(expectedAttempts);
@@ -445,7 +464,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getAttemptsCount_face() {
+    public void getAttemptsCount_face_returnsAttemptsCount() {
         int expectedAttempts = 1;
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(eq(RegistrationConstants.FACE_ATTEMPTS_KEY)))
                 .thenReturn(expectedAttempts);
@@ -456,7 +475,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getAttemptsCount_unhandledModality_returnsZero() {
+    public void getAttemptsCount_unhandledModality_returnsZero() {
         Modality unhandledModality = Modality.EXCEPTION_PHOTO;
 
         int actualAttempts = biometrics095Service.getAttemptsCount(unhandledModality);
@@ -465,7 +484,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_validates_jwt_signature_successfully_when_valid() throws Exception {
+    public void validateJWTResponse_validSignatureAndTrust_completesWithoutException() throws Exception {
         String signedData = "valid.jwt.token";
         String domain = "test-domain";
 
@@ -486,7 +505,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_throws_exception_when_signature_invalid() throws Exception {
+    public void validateJWTResponse_invalidSignature_throwsBiometricsServiceException() throws Exception {
         String signedData = "invalid.jwt.token";
         String domain = "test-domain";
 
@@ -506,7 +525,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_successfully_parses_valid_json_response_and_returns_callback_id() throws Exception {
+    public void handleDiscoveryResponse_validJsonResponse_returnsCallbackId() throws Exception {
         ReflectionTestUtils.setField(biometrics095Service, "objectMapper", mockObjectMapper);
         ReflectionTestUtils.setField(biometrics095Service, "auditManagerService", mockAuditManagerService);
 
@@ -528,7 +547,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_throws_exception_when_device_list_is_empty() throws Exception {
+    public void handleDiscoveryResponse_emptyDeviceList_throwsBiometricsServiceException() throws Exception {
         ReflectionTestUtils.setField(biometrics095Service, "objectMapper", mockObjectMapper);
         ReflectionTestUtils.setField(biometrics095Service, "auditManagerService", mockAuditManagerService);
 
@@ -547,7 +566,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getRCaptureRequest_exceptionPhoto() {
+    public void getRCaptureRequest_exceptionPhoto_returnsConfiguredRequest() {
         List<String> exceptionAttrs = Arrays.asList("attr1");
         CaptureRequest req = biometrics095Service.getRCaptureRequest(Modality.EXCEPTION_PHOTO, "dev1", exceptionAttrs);
         assertEquals("Registration", req.getPurpose());
@@ -556,7 +575,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getRCaptureRequest_normalModality() {
+    public void getRCaptureRequest_normalModality_returnsBioType() {
         List<String> exceptionAttrs = Arrays.asList("LEFT_INDEX");
         CaptureRequest req = biometrics095Service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev2", exceptionAttrs);
         assertEquals("Finger", req.getBio().get(0).getType());
@@ -564,7 +583,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test (expected = BiometricsServiceException.class)
-    public void test_handleRCaptureResponse_success() throws Exception {
+    public void handleRCaptureResponse_validResponse_throwsBiometricsServiceException() throws Exception {
         CaptureRespDetail respDetail = new CaptureRespDetail();
         respDetail.setError(null);
         respDetail.setData(Base64.getUrlEncoder().encodeToString("{\"bioType\":\"FINGERPRINT\",\"bioSubType\":\"LEFT_INDEX\",\"bioValue\":\"val\",\"timestamp\":\"2023-01-01T00:00:00Z\",\"qualityScore\":90}".getBytes()));
@@ -572,18 +591,17 @@ public class Biometrics095ServiceTest {
         CaptureResponse captureResponse = new CaptureResponse();
         captureResponse.setBiometrics(Collections.singletonList(respDetail));
         InputStream is = new ByteArrayInputStream("dummy".getBytes());
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", Collections.emptyList());
 
         when(mockObjectMapper.readValue(any(InputStream.class), any(TypeReference.class))).thenReturn(captureResponse);
-        when(mockObjectMapper.readValue(any(byte[].class), any(TypeReference.class))).thenReturn(
-                new CaptureDto()
-        );
+        when(mockObjectMapper.readValue(any(byte[].class), any(TypeReference.class))).thenReturn(new CaptureDto());
         when(mockSharedPreferences.getString(anyString(), anyString())).thenReturn("DISABLE");
 
-        biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList());
+        biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList(), captureRequest.getTransactionId());
     }
 
     @Test
-    public void test_handleRCaptureResponse_bioError() throws Exception {
+    public void handleRCaptureResponse_bioError_throwsBiometricsServiceException() throws Exception {
         CaptureRespDetail respDetail = new CaptureRespDetail();
         ErrorDto error = new ErrorDto();
         error.setErrorCode("123");
@@ -592,45 +610,48 @@ public class Biometrics095ServiceTest {
         CaptureResponse captureResponse = new CaptureResponse();
         captureResponse.setBiometrics(Collections.singletonList(respDetail));
         InputStream is = new ByteArrayInputStream("dummy".getBytes());
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", Collections.emptyList());
 
         when(mockObjectMapper.readValue(any(InputStream.class), any(TypeReference.class))).thenReturn(captureResponse);
 
         BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList()));
+                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList(), captureRequest.getTransactionId()));
         assertEquals("123", ex.getErrorCode());
         verify(mockAuditManagerService).audit(eq(AuditEvent.R_CAPTURE_PARSE_FAILED), eq(Components.REGISTRATION), anyString());
     }
 
     @Test
-    public void test_handleRCaptureResponse_bioDataNull() throws Exception {
+    public void handleRCaptureResponse_bioDataNull_throwsBiometricsServiceException() throws Exception {
         CaptureRespDetail respDetail = new CaptureRespDetail();
         respDetail.setError(null);
         respDetail.setData(null);
         CaptureResponse captureResponse = new CaptureResponse();
         captureResponse.setBiometrics(Collections.singletonList(respDetail));
         InputStream is = new ByteArrayInputStream("dummy".getBytes());
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", Collections.emptyList());
 
         when(mockObjectMapper.readValue(any(InputStream.class), any(TypeReference.class))).thenReturn(captureResponse);
 
         BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList()));
+                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList(), captureRequest.getTransactionId()));
         assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
         verify(mockAuditManagerService).audit(eq(AuditEvent.R_CAPTURE_PARSE_FAILED), eq(Components.REGISTRATION), anyString());
     }
 
     @Test
-    public void test_handleRCaptureResponse_generalException() throws Exception {
+    public void handleRCaptureResponse_generalException_throwsBiometricsServiceException() throws Exception {
         InputStream is = new ByteArrayInputStream("dummy".getBytes());
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", Collections.emptyList());
         when(mockObjectMapper.readValue(any(InputStream.class), any(TypeReference.class))).thenThrow(new RuntimeException("fail"));
 
         BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList()));
+                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList(), captureRequest.getTransactionId()));
         assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
         verify(mockAuditManagerService).audit(eq(AuditEvent.R_CAPTURE_PARSE_FAILED), eq(Components.REGISTRATION), anyString());
     }
 
     @Test (expected = BiometricsServiceException.class)
-    public void test_handleDeviceInfoResponse_success() throws Exception {
+    public void handleDeviceInfoResponse_validResponse_throwsBiometricsServiceException() throws Exception {
         InfoResponse info = new InfoResponse();
         info.setError(null);
         info.setDeviceInfo(Base64.getUrlEncoder().encodeToString("{\"callbackId\":\"cb.info\",\"digitalId\":\"eyJzZXJpYWxObyI6InMyMTAifQ==\"}".getBytes()));
@@ -645,7 +666,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handleDeviceInfoResponse_emptyList() throws Exception {
+    public void handleDeviceInfoResponse_emptyList_throwsException() throws Exception {
         List<InfoResponse> list = Collections.emptyList();
         byte[] respBytes = "dummy".getBytes();
 
@@ -657,7 +678,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handleDeviceInfoResponse_generalException() throws Exception {
+    public void handleDeviceInfoResponse_generalException_throwsBiometricsServiceException() throws Exception {
         byte[] respBytes = "dummy".getBytes();
         when(mockObjectMapper.readValue(any(byte[].class), any(TypeReference.class))).thenThrow(new RuntimeException("fail"));
 
@@ -668,7 +689,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handleDiscoveryResponse_success() throws Exception {
+    public void handleDiscoveryResponse_singleDevice_returnsCallbackId() throws Exception {
         DeviceDto device = new DeviceDto();
         device.setCallbackId("cb-123");
         device.setDeviceStatus("Ready");
@@ -683,7 +704,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handleDiscoveryResponse_deviceError() throws Exception {
+    public void handleDiscoveryResponse_deviceError_throwsBiometricsServiceException() throws Exception {
         DeviceDto device = new DeviceDto();
         ErrorDto error = new ErrorDto();
         error.setErrorCode("123");
@@ -701,7 +722,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handleDiscoveryResponse_emptyList() throws Exception {
+    public void handleDiscoveryResponse_emptyList_throwsBiometricsServiceException() throws Exception {
         List<DeviceDto> list = Collections.emptyList();
         byte[] respBytes = "dummy".getBytes();
 
@@ -714,7 +735,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handleDiscoveryResponse_generalException() throws Exception {
+    public void handleDiscoveryResponse_generalException_throwsBiometricsServiceException() throws Exception {
         byte[] respBytes = "dummy".getBytes();
         when(mockObjectMapper.readValue(any(byte[].class), any(TypeReference.class))).thenThrow(new RuntimeException("fail"));
 
@@ -725,7 +746,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getModalityThreshold_allCases() {
+    public void getModalityThreshold_allModalities_returnsConfiguredThresholds() {
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(anyString())).thenReturn(10);
         assertEquals(10, biometrics095Service.getModalityThreshold(Modality.FINGERPRINT_SLAB_LEFT));
         assertEquals(10, biometrics095Service.getModalityThreshold(Modality.FINGERPRINT_SLAB_RIGHT));
@@ -736,7 +757,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getAttemptsCount_allCases() {
+    public void getAttemptsCount_allModalities_returnsConfiguredAttempts() {
         when(mockGlobalParamRepository.getCachedIntegerGlobalParam(anyString())).thenReturn(5);
         assertEquals(5, biometrics095Service.getAttemptsCount(Modality.FINGERPRINT_SLAB_LEFT));
         assertEquals(5, biometrics095Service.getAttemptsCount(Modality.FINGERPRINT_SLAB_RIGHT));
@@ -747,7 +768,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_validateJWTResponse_signatureValidAndTrustValid() throws Exception {
+    public void validateJWTResponse_signatureValidAndTrustValid_completesWithoutException() throws Exception {
         JWTSignatureVerifyResponseDto resp = new JWTSignatureVerifyResponseDto();
         resp.setSignatureValid(true);
         resp.setTrustValid(KeyManagerConstant.TRUST_VALID);
@@ -757,7 +778,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_validateJWTResponse_signatureInvalid() throws Exception {
+    public void validateJWTResponse_signatureInvalid_throwsBiometricsServiceException() throws Exception {
         JWTSignatureVerifyResponseDto resp = new JWTSignatureVerifyResponseDto();
         resp.setSignatureValid(false);
         resp.setTrustValid(KeyManagerConstant.TRUST_VALID);
@@ -769,7 +790,7 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_validateJWTResponse_trustInvalid() throws Exception {
+    public void validateJWTResponse_trustInvalid_throwsBiometricsServiceException() throws Exception {
         JWTSignatureVerifyResponseDto resp = new JWTSignatureVerifyResponseDto();
         resp.setSignatureValid(true);
         resp.setTrustValid("INVALID");
@@ -781,20 +802,21 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_handleRCaptureResponse_nullBiometricsList() throws Exception {
+    public void handleRCaptureResponse_nullBiometricsList_throwsBiometricsServiceException() throws Exception {
         CaptureResponse captureResponse = new CaptureResponse();
         captureResponse.setBiometrics(null);
         InputStream is = new ByteArrayInputStream("dummy".getBytes());
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FINGERPRINT_SLAB_LEFT, "dev", Collections.emptyList());
 
         when(mockObjectMapper.readValue(any(InputStream.class), any(TypeReference.class))).thenReturn(captureResponse);
 
         BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList()));
+                biometrics095Service.handleRCaptureResponse(Modality.FINGERPRINT_SLAB_LEFT, is, Collections.emptyList(), captureRequest.getTransactionId()));
         assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
     }
 
     @Test
-    public void test_handleDiscoveryResponse_nullCallbackId() throws Exception {
+    public void handleDiscoveryResponse_nullCallbackId_returnsNull() throws Exception {
         DeviceDto device = new DeviceDto();
         device.setCallbackId(null);
         device.setDeviceStatus("Ready");
@@ -808,35 +830,137 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void test_getRCaptureRequest_nullDeviceId() {
+    public void getRCaptureRequest_nullDeviceId_returnsRequestWithNullDeviceId() {
         List<String> exceptionAttrs = Arrays.asList("attr1");
         CaptureRequest req = biometrics095Service.getRCaptureRequest(Modality.FACE, null, exceptionAttrs);
         assertNull(req.getBio().get(0).getDeviceId());
     }
 
     @Test (expected = NullPointerException.class)
-    public void test_getRCaptureRequest_nullExceptionAttributes() {
+    public void getRCaptureRequest_nullExceptionAttributes_throwsNullPointerException() {
         biometrics095Service.getRCaptureRequest(Modality.FACE, "dev1", null);
     }
 
+    // --- transactionId / specVersion / purpose validation ---
+
     @Test
-    public void test_validateJWTResponse_nullResponse() throws Exception {
+    public void handleRCaptureResponse_nullTransactionId_throwsException() throws Exception {
+        CaptureRespDetail respDetail = buildRespDetail(null, "0.9.5", "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        setupJwtValidationBypass(respDetail);
+
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
+        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
+        assertTrue(ex.getErrorText().contains("TransactionId"));
+    }
+
+    @Test
+    public void handleRCaptureResponse_transactionIdMismatch_throwsException() throws Exception {
+        CaptureRespDetail respDetail = buildRespDetail("WRONG-TXN-ID", "0.9.5", "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        setupJwtValidationBypass(respDetail);
+
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
+        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
+        assertTrue(ex.getErrorText().contains("TransactionId"));
+    }
+
+    @Test
+    public void handleRCaptureResponse_nullSpecVersion_throwsException() throws Exception {
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), null, "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
+        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
+        assertTrue(ex.getErrorText().contains("SpecVersion"));
+    }
+
+    @Test
+    public void handleRCaptureResponse_specVersionMismatch_throwsException() throws Exception {
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), "1.0.0", "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
+        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
+        assertTrue(ex.getErrorText().contains("SpecVersion"));
+    }
+
+    @Test
+    public void handleRCaptureResponse_purposeMismatch_throwsException() throws Exception {
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), captureRequest.getSpecVersion(), "Auth");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
+        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
+        assertTrue(ex.getErrorText().contains("Purpose"));
+    }
+
+    // helpers for MOSIP-44993 validation tests
+
+    private CaptureRespDetail buildRespDetail(String transactionId, String specVersion, String purpose) throws Exception {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setTransactionId(transactionId);
+        captureDto.setPurpose(purpose);
+        captureDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        String payload = Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(new ObjectMapper().writeValueAsBytes(captureDto));
+        CaptureRespDetail detail = new CaptureRespDetail();
+        detail.setData("header." + payload + ".sig");
+        detail.setSpecVersion(specVersion);
+        detail.setError(null);
+        return detail;
+    }
+
+    private InputStream buildCaptureResponseStream(CaptureRespDetail detail) throws Exception {
+        CaptureResponse resp = new CaptureResponse();
+        resp.setBiometrics(Collections.singletonList(detail));
+        return new ByteArrayInputStream(new ObjectMapper().writeValueAsBytes(resp));
+    }
+
+    private void setupJwtValidationBypass(CaptureRespDetail detail) throws Exception {
+        biometrics095Service = Mockito.spy(biometrics095Service);
+        ReflectionTestUtils.setField(biometrics095Service, "objectMapper", new ObjectMapper());
+        doNothing().when(biometrics095Service).validateJWTResponse(anyString(), anyString());
+        doNothing().when(biometrics095Service).validateResponseTimestamp(anyString());
+    }
+
+    @Test
+    public void validateJWTResponse_nullResponse_throwsNullPointerException() throws Exception {
         when(mockCryptoManagerService.jwtVerify(any(JWTSignatureVerifyRequestDto.class))).thenReturn(null);
         assertThrows(NullPointerException.class, () ->
                 biometrics095Service.validateJWTResponse("jwt", "domain"));
     }
 
     @Test
-    public void test_handleDeviceInfoResponse_successful() throws Exception {
+    public void handleDeviceInfoResponse_successfulParsing_returnsCallbackIdAndSerialNo() throws Exception {
         InfoResponse info = new InfoResponse();
         info.setError(null);
 
         String deviceInfoJWT = "header.payload.signature";
         info.setDeviceInfo(deviceInfoJWT);
 
+        // Must satisfy isDeviceValid: specVersion contains "0.9.5", status "Ready", cert "L0"
         DeviceDto deviceDto = new DeviceDto();
         deviceDto.setCallbackId("cb.info");
         deviceDto.setDigitalId("header2.payload2.signature2");
+        deviceDto.setSpecVersion(new String[]{"0.9.5"});
+        deviceDto.setDeviceStatus("Ready");
+        deviceDto.setCertification("L0");
+        deviceDto.setDeviceCode("device-code-001");
+        deviceDto.setDeviceId("device-id-001");
 
         DigitalId digitalId = new DigitalId();
         digitalId.setSerialNo("serial123");
@@ -858,6 +982,128 @@ public class Biometrics095ServiceTest {
 
         assertEquals("cb", result[0]);
         assertEquals("serial123", result[1]);
+    }
+
+    // --- isDeviceValid tests via handleDeviceInfoResponse ---
+
+    @Test
+    public void handleDeviceInfoResponse_nullSpecVersion_throwsInvalidResponseException() throws Exception {
+        DeviceDto deviceDto = buildValidDeviceDto();
+        deviceDto.setSpecVersion(null);
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class,
+                () -> runHandleDeviceInfo(deviceDto));
+        assertEquals(SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorCode(), ex.getErrorCode());
+    }
+
+    @Test
+    public void handleDeviceInfoResponse_wrongSpecVersion_throwsInvalidResponseException() throws Exception {
+        DeviceDto deviceDto = buildValidDeviceDto();
+        deviceDto.setSpecVersion(new String[]{"1.0.0"});
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class,
+                () -> runHandleDeviceInfo(deviceDto));
+        assertEquals(SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorCode(), ex.getErrorCode());
+    }
+
+    @Test
+    public void handleDeviceInfoResponse_deviceStatusNotReady_throwsInvalidResponseException() throws Exception {
+        DeviceDto deviceDto = buildValidDeviceDto();
+        deviceDto.setDeviceStatus("Busy");
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class,
+                () -> runHandleDeviceInfo(deviceDto));
+        assertEquals(SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorCode(), ex.getErrorCode());
+    }
+
+    @Test
+    public void handleDeviceInfoResponse_wrongCertification_throwsInvalidResponseException() throws Exception {
+        DeviceDto deviceDto = buildValidDeviceDto();
+        deviceDto.setCertification("L1");
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class,
+                () -> runHandleDeviceInfo(deviceDto));
+        assertEquals(SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorCode(), ex.getErrorCode());
+    }
+
+    @Test
+    public void handleDeviceInfoResponse_nullCertification_throwsInvalidResponseException() throws Exception {
+        DeviceDto deviceDto = buildValidDeviceDto();
+        deviceDto.setCertification(null);
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class,
+                () -> runHandleDeviceInfo(deviceDto));
+        assertEquals(SBIError.SBI_DINFO_INVALID_REPSONSE.getErrorCode(), ex.getErrorCode());
+    }
+
+    // --- merged transactionId null check ---
+
+    @Test
+    public void handleRCaptureResponse_nullRequestTransactionId_throwsMismatchException() throws Exception {
+        CaptureRespDetail respDetail = buildRespDetail("SOME-TXN-ID", "0.9.5", "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+
+        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
+                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), null));
+        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
+        assertTrue(ex.getErrorText().contains("TransactionId"));
+    }
+
+    // --- addBioDevice DEFAULT_PURPOSE fallback ---
+
+    @Test
+    public void addBioDevice_nullPurpose_storesDefaultPurpose() {
+        DigitalId digitalId = new DigitalId();
+        biometrics095Service.addBioDevice(Modality.FACE, "deviceCode1", digitalId, null, "0.9.5");
+
+        Map<String, Object> stored = (Map<String, Object>) biometrics095Service.BIO_DEVICES.get(Modality.FACE);
+        assertNotNull(stored);
+        assertEquals("Registration", stored.get("purpose"));
+    }
+
+    @Test
+    public void addBioDevice_validPurpose_storesProvidedPurpose() {
+        DigitalId digitalId = new DigitalId();
+        biometrics095Service.addBioDevice(Modality.FACE, "deviceCode1", digitalId, "Auth", "0.9.5");
+
+        Map<String, Object> stored = (Map<String, Object>) biometrics095Service.BIO_DEVICES.get(Modality.FACE);
+        assertEquals("Auth", stored.get("purpose"));
+    }
+
+    @Test
+    public void addBioDevice_specVersionStored_matchesPassedValue() {
+        DigitalId digitalId = new DigitalId();
+        biometrics095Service.addBioDevice(Modality.FACE, "deviceCode1", digitalId, "Registration", "0.9.5");
+
+        Map<String, Object> stored = (Map<String, Object>) biometrics095Service.BIO_DEVICES.get(Modality.FACE);
+        assertEquals("0.9.5", stored.get("specVersion"));
+    }
+
+    // --- helpers ---
+
+    private DeviceDto buildValidDeviceDto() {
+        DeviceDto deviceDto = new DeviceDto();
+        deviceDto.setCallbackId("cb.info");
+        deviceDto.setDigitalId("header.payload.sig");
+        deviceDto.setSpecVersion(new String[]{"0.9.5"});
+        deviceDto.setDeviceStatus("Ready");
+        deviceDto.setCertification("L0");
+        deviceDto.setDeviceCode("device-code-001");
+        deviceDto.setDeviceId("device-id-001");
+        return deviceDto;
+    }
+
+    private void runHandleDeviceInfo(DeviceDto deviceDto) throws Exception {
+        InfoResponse infoResponse = new InfoResponse();
+        infoResponse.setDeviceInfo("header.payload.sig");
+        List<InfoResponse> infoList = Collections.singletonList(infoResponse);
+        String validBase64 = Base64.getUrlEncoder().withoutPadding().encodeToString("{}".getBytes());
+
+        Biometrics095Service spyService = Mockito.spy(biometrics095Service);
+        doNothing().when(spyService).validateJWTResponse(anyString(), anyString());
+        doReturn(validBase64).when(spyService).getJWTPayLoad(anyString());
+
+        when(mockObjectMapper.readValue(any(byte[].class), ArgumentMatchers.<TypeReference<List<InfoResponse>>>any()))
+                .thenReturn(infoList);
+        when(mockObjectMapper.readValue(any(byte[].class), eq(DeviceDto.class))).thenReturn(deviceDto);
+
+        spyService.handleDeviceInfoResponse(Modality.FACE, "dummy".getBytes());
     }
 
 }

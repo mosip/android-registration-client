@@ -35,6 +35,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -125,12 +126,12 @@ public class MatchUtilTest {
         biometricsDto.setQualityScore(85.0f);
         biometricsDtoList.add(biometricsDto);
 
-        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("Face")).thenReturn(new ArrayList<>());
+        Mockito.when(userBiometricRepository.findAllOperatorBiometricsExceptCurrent("FACE", "testUser")).thenReturn(new ArrayList<>());
 
-        boolean result = matchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+        boolean result = matchUtil.validateBiometricData(modality, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2, "testUser");
 
         assertFalse(result);
-        Mockito.verify(userBiometricRepository).findAllOperatorBiometrics("Face");
+        Mockito.verify(userBiometricRepository).findAllOperatorBiometricsExceptCurrent("FACE", "testUser");
         Mockito.verify(iBioApiV2, Mockito.never()).match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
@@ -200,6 +201,282 @@ public class MatchUtilTest {
         ArgumentCaptor<BiometricRecord[]> recordsCaptor = ArgumentCaptor.forClass(BiometricRecord[].class);
         Mockito.verify(iBioApiV2).match(Mockito.any(BiometricRecord.class), recordsCaptor.capture(), Mockito.any(), Mockito.any());
         assertEquals(0, recordsCaptor.getValue().length);
+    }
+
+    @Test
+    public void testValidateBiometricDataForRegistration_emptyUserBiometrics_returnsFalse() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto dto = new BiometricsDto();
+        dto.setBioValue(Base64.getUrlEncoder().encodeToString("face".getBytes()));
+        dto.setBioSubType("Face");
+        dto.setQualityScore(90.0f);
+        biometricsDtoList.add(dto);
+
+        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("FACE"))
+                .thenReturn(new ArrayList<>());
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertFalse(result);
+        Mockito.verify(userBiometricRepository).findAllOperatorBiometrics("FACE");
+        Mockito.verify(iBioApiV2, Mockito.never()).match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void testValidateBiometricDataForRegistration_withBiometrics_callsMatchApi() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto dto = new BiometricsDto();
+        dto.setBioValue(Base64.getUrlEncoder().encodeToString("face".getBytes()));
+        dto.setBioSubType("Face");
+        dto.setQualityScore(90.0f);
+        biometricsDtoList.add(dto);
+
+        UserBiometric ub = new UserBiometric();
+        ub.setUsrId("officer1");
+        ub.setBioAttributeCode("Face");
+        ub.setQualityScore(85);
+        ub.setBioTemplate("stored_face".getBytes());
+        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("FACE"))
+                .thenReturn(Arrays.asList(ub));
+
+        Response<MatchDecision[]> response = new Response<>();
+        response.setResponse(null);
+        Mockito.when(iBioApiV2.match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(response);
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertFalse(result);
+        Mockito.verify(iBioApiV2).match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void testValidateBiometricData_nullCurrentUserId_returnsFalse() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+
+        boolean result = MatchUtil.validateBiometricData(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2, null);
+
+        assertFalse(result);
+        Mockito.verify(userBiometricRepository, Mockito.never())
+                .findAllOperatorBiometricsExceptCurrent(Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    public void testValidateBiometricData_emptyCurrentUserId_returnsFalse() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+
+        boolean result = MatchUtil.validateBiometricData(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2, "  ");
+
+        assertFalse(result);
+        Mockito.verify(userBiometricRepository, Mockito.never())
+                .findAllOperatorBiometricsExceptCurrent(Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    public void testGetSubTypes_iris_right_returnsRightSubtype() {
+        List<String> subtypes = MatchUtil.getSubTypes(BiometricType.IRIS, "RightIris", false);
+        assertEquals(1, subtypes.size());
+        assertEquals(SingleAnySubtypeType.RIGHT.value(), subtypes.get(0));
+    }
+
+    @Test
+    public void testGetSubTypes_finger_rightThumb_notUserBiometric() {
+        List<String> subtypes = MatchUtil.getSubTypes(BiometricType.FINGER, "RightThumb", false);
+        assertEquals(2, subtypes.size());
+        assertEquals(SingleAnySubtypeType.RIGHT.value(), subtypes.get(0));
+        assertEquals(SingleAnySubtypeType.THUMB.value(), subtypes.get(1));
+    }
+
+    @Test
+    public void testGetSubTypes_finger_leftIndex_isUserBiometric_true() {
+        List<String> subtypes = MatchUtil.getSubTypes(BiometricType.FINGER, "LeftIndex", true);
+        assertEquals(2, subtypes.size());
+        assertEquals(SingleAnySubtypeType.LEFT.value(), subtypes.get(0));
+        assertEquals("IndexFinger", subtypes.get(1));
+    }
+
+    @Test
+    public void testGetSubTypes_finger_rightMiddle_isUserBiometric_true() {
+        List<String> subtypes = MatchUtil.getSubTypes(BiometricType.FINGER, "RightMiddle", true);
+        assertEquals(2, subtypes.size());
+        assertEquals(SingleAnySubtypeType.RIGHT.value(), subtypes.get(0));
+        assertEquals("MiddleFinger", subtypes.get(1));
+    }
+
+    @Test
+    public void testValidateBiometricDataForRegistration_matchedDecision_returnsTrue() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto dto = new BiometricsDto();
+        dto.setBioValue(Base64.getUrlEncoder().encodeToString("face_data".getBytes()));
+        dto.setBioSubType("Face");
+        dto.setQualityScore(90.0f);
+        biometricsDtoList.add(dto);
+
+        UserBiometric ub = new UserBiometric();
+        ub.setUsrId("officer1");
+        ub.setBioAttributeCode("Face");
+        ub.setQualityScore(85);
+        ub.setBioTemplate("stored_face".getBytes());
+        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("FACE"))
+                .thenReturn(Arrays.asList(ub));
+
+        Response<MatchDecision[]> response = new Response<>();
+        MatchDecision matchDecision = Mockito.mock(MatchDecision.class);
+        Decision decision = new Decision();
+        decision.setMatch(Match.MATCHED);
+        Map<BiometricType, Decision> decisionMap = new HashMap<>();
+        decisionMap.put(BiometricType.FACE, decision);
+        Mockito.when(matchDecision.getDecisions()).thenReturn(decisionMap);
+        response.setResponse(new MatchDecision[]{matchDecision});
+        Mockito.when(iBioApiV2.match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(response);
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testValidateBiometricDataForRegistration_notMatchedDecision_returnsFalse() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto dto = new BiometricsDto();
+        dto.setBioValue(Base64.getUrlEncoder().encodeToString("face_data".getBytes()));
+        dto.setBioSubType("Face");
+        dto.setQualityScore(90.0f);
+        biometricsDtoList.add(dto);
+
+        UserBiometric ub = new UserBiometric();
+        ub.setUsrId("officer1");
+        ub.setBioAttributeCode("Face");
+        ub.setQualityScore(85);
+        ub.setBioTemplate("stored_face".getBytes());
+        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("FACE"))
+                .thenReturn(Arrays.asList(ub));
+
+        Response<MatchDecision[]> response = new Response<>();
+        MatchDecision matchDecision = Mockito.mock(MatchDecision.class);
+        Decision decision = new Decision();
+        decision.setMatch(Match.NOT_MATCHED);
+        Map<BiometricType, Decision> decisionMap = new HashMap<>();
+        decisionMap.put(BiometricType.FACE, decision);
+        Mockito.when(matchDecision.getDecisions()).thenReturn(decisionMap);
+        response.setResponse(new MatchDecision[]{matchDecision});
+        Mockito.when(iBioApiV2.match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(response);
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testValidateBiometricDataForRegistration_matchThrowsException_returnsFalse() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto dto = new BiometricsDto();
+        dto.setBioValue(Base64.getUrlEncoder().encodeToString("face_data".getBytes()));
+        dto.setBioSubType("Face");
+        dto.setQualityScore(90.0f);
+        biometricsDtoList.add(dto);
+
+        UserBiometric ub = new UserBiometric();
+        ub.setUsrId("officer1");
+        ub.setBioAttributeCode("Face");
+        ub.setQualityScore(85);
+        ub.setBioTemplate("stored_face".getBytes());
+        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("FACE"))
+                .thenReturn(Arrays.asList(ub));
+
+        Mockito.when(iBioApiV2.match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenThrow(new RuntimeException("SDK error"));
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testValidateBiometricData_withBiometrics_matchedDecision_returnsTrue() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("Face");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto dto = new BiometricsDto();
+        dto.setBioValue(Base64.getUrlEncoder().encodeToString("face_data".getBytes()));
+        dto.setBioSubType("Face");
+        dto.setQualityScore(90.0f);
+        biometricsDtoList.add(dto);
+
+        UserBiometric ub = new UserBiometric();
+        ub.setUsrId("officer1");
+        ub.setBioAttributeCode("Face");
+        ub.setQualityScore(85);
+        ub.setBioTemplate("stored_face".getBytes());
+        Mockito.when(userBiometricRepository.findAllOperatorBiometricsExceptCurrent("FACE", "currentUser"))
+                .thenReturn(Arrays.asList(ub));
+
+        Response<MatchDecision[]> response = new Response<>();
+        MatchDecision matchDecision = Mockito.mock(MatchDecision.class);
+        Decision decision = new Decision();
+        decision.setMatch(Match.MATCHED);
+        Map<BiometricType, Decision> decisionMap = new HashMap<>();
+        decisionMap.put(BiometricType.FACE, decision);
+        Mockito.when(matchDecision.getDecisions()).thenReturn(decisionMap);
+        response.setResponse(new MatchDecision[]{matchDecision});
+        Mockito.when(iBioApiV2.match(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(response);
+
+        boolean result = MatchUtil.validateBiometricData(
+                Modality.FACE, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2, "currentUser");
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testValidateBiometricDataForRegistration_exceptionPhotoModality_emptyBiometrics_returnsFalse() {
+        CaptureDto captureDto = new CaptureDto();
+        captureDto.setBioType("ExceptionPhoto");
+
+        List<BiometricsDto> biometricsDtoList = new ArrayList<>();
+        BiometricsDto dto = new BiometricsDto();
+        dto.setBioValue(Base64.getUrlEncoder().encodeToString("photo_data".getBytes()));
+        dto.setBioSubType("ExceptionPhoto");
+        dto.setQualityScore(80.0f);
+        biometricsDtoList.add(dto);
+
+        // EXCEPTION_PHOTO modality uses getSingleType().value() → BiometricType.EXCEPTION_PHOTO
+        Mockito.when(userBiometricRepository.findAllOperatorBiometrics("EXCEPTION_PHOTO"))
+                .thenReturn(new ArrayList<>());
+
+        boolean result = MatchUtil.validateBiometricDataForRegistration(
+                Modality.EXCEPTION_PHOTO, captureDto, biometricsDtoList, userBiometricRepository, iBioApiV2);
+
+        assertFalse(result);
     }
 
 }

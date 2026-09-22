@@ -111,4 +111,16 @@ public class RegistrationRepository {
     public void updateServerStatusWithTimestamp(String packetId, String serverStatus, long timestamp) {
         this.registrationDao.updateServerStatusWithTimestamp(packetId, serverStatus, timestamp);
     }
+
+    public List<Registration> getAllPendingForProcessing() {
+        return this.registrationDao.findAllPendingForProcessing();
+    }
+
+    public int countByCreatedStatus() {
+        return this.registrationDao.countByCreatedStatus();
+    }
+
+    public int countReRegisterPending() {
+        return this.registrationDao.countReRegisterPending();
+    }
 }

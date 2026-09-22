@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration.clientmanager.constant.ClientManagerError;
 import io.mosip.registration.clientmanager.dto.http.OnboardResponseWrapper;
 import io.mosip.registration.clientmanager.dto.http.ResponseWrapper;
@@ -783,6 +784,44 @@ public class UserOnboardServiceTest {
             final boolean[] called = {false};
             ReflectionTestUtils.invokeMethod(userOnboardService, "getCertificate", (Runnable) () -> called[0] = true);
             assertTrue(called[0]);
+        }
+    }
+
+    @Test
+    public void setCaptureTransactionId_delegatesToSessionManager() {
+        try (MockedStatic<SessionManager> sessionManagerMock = Mockito.mockStatic(SessionManager.class)) {
+            SessionManager mockSessionManager = mock(SessionManager.class);
+            sessionManagerMock.when(() -> SessionManager.getSessionManager(context)).thenReturn(mockSessionManager);
+
+            userOnboardService.setCaptureTransactionId("TXN-001");
+
+            verify(mockSessionManager).setOperatorCaptureTransactionId("TXN-001");
+        }
+    }
+
+    @Test
+    public void getCaptureTransactionId_withStoredId_returnsTransactionId() {
+        try (MockedStatic<SessionManager> sessionManagerMock = Mockito.mockStatic(SessionManager.class)) {
+            SessionManager mockSessionManager = mock(SessionManager.class);
+            sessionManagerMock.when(() -> SessionManager.getSessionManager(context)).thenReturn(mockSessionManager);
+            when(mockSessionManager.getOperatorCaptureTransactionId()).thenReturn("TXN-001");
+
+            String result = userOnboardService.getCaptureTransactionId();
+
+            assertEquals("TXN-001", result);
+        }
+    }
+
+    @Test
+    public void getCaptureTransactionId_withNoStoredId_returnsNull() {
+        try (MockedStatic<SessionManager> sessionManagerMock = Mockito.mockStatic(SessionManager.class)) {
+            SessionManager mockSessionManager = mock(SessionManager.class);
+            sessionManagerMock.when(() -> SessionManager.getSessionManager(context)).thenReturn(mockSessionManager);
+            when(mockSessionManager.getOperatorCaptureTransactionId()).thenReturn(null);
+
+            String result = userOnboardService.getCaptureTransactionId();
+
+            assertNull(result);
         }
     }
 

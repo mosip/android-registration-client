@@ -284,21 +284,16 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_init_prereg_adapter_when_external_storage_not_mounted() {
-        MockedStatic<Environment> mockedEnvironment = Mockito.mockStatic(Environment.class);
-        mockedEnvironment.when(Environment::getExternalStorageState).thenReturn("unmounted");
-
-        MockedStatic<Log> mockedLog = Mockito.mockStatic(Log.class);
-
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
-
         assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
+        // BASE_LOCATION is not set by initPreRegAdapter; storage path comes from appContext.getFilesDir()
         assertNull(ReflectionTestUtils.getField(service, "BASE_LOCATION"));
-
-        mockedLog.verify(() -> Log.e(anyString(), eq("External Storage not mounted")));
-        mockedLog.verify(() -> Log.i(anyString(), eq("initLocalClientCryptoService: Initialization call successful")));
-
-        mockedEnvironment.close();
-        mockedLog.close();
+        // Verify storage-path logic: when storage is not mounted getFilesDir() is unavailable;
+        // storePreRegPacketToDisk must propagate the failure
+        when(mockContext.getFilesDir()).thenThrow(new RuntimeException("External storage not mounted"));
+        assertThrows(Exception.class, () ->
+            service.storePreRegPacketToDisk("id", new byte[]{1, 2, 3}, new CenterMachineDto())
+        );
     }
 
     @Test
@@ -330,7 +325,6 @@ public class PreRegZipHandlingServiceImplTest {
 
         ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", validJson);
 
-        verify(mockRegistrationDto).getDocuments();
         verify(mockRegistrationDto).addWithoutDocument(eq("proofOfIdentity"), eq("passport"), eq("pdf"), eq("doc1"), eq("ABC123"));
         verify(mockIdentitySchemaRepository).getAllFieldSpec(any(Context.class), eq(1.0));
     }
@@ -647,7 +641,6 @@ public class PreRegZipHandlingServiceImplTest {
         RegistrationDto dto = mock(RegistrationDto.class);
         when(regService.getRegistrationDto()).thenReturn(dto);
         when(dto.getSchemaVersion()).thenReturn(1.0);
-        when(dto.getDocuments()).thenReturn(new HashMap<>());
         when(dto.getDemographics()).thenReturn(new HashMap<>());
         List<FieldSpecDto> fields = new ArrayList<>();
         FieldSpecDto f1 = new FieldSpecDto(); f1.setId("fullName"); f1.setType("string"); f1.setControlType("textbox"); fields.add(f1);
@@ -657,7 +650,7 @@ public class PreRegZipHandlingServiceImplTest {
         ReflectionTestUtils.setField(service, "identitySchemaService", mockIdentitySchemaRepository);
         String json = "{ \"identity\": { \"fullName\": \"John Doe\", \"proofOfIdentity\": { \"type\": \"passport\", \"format\": \"pdf\", \"value\": \"doc1\", \"refNumber\": \"ABC123\" } } }";
         ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", json);
-        verify(dto).getDocuments();
+        verify(dto).addWithoutDocument(eq("proofOfIdentity"), eq("passport"), eq("pdf"), eq("doc1"), eq("ABC123"));
     }
 
     @Test
@@ -676,10 +669,14 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_initPreRegAdapter_externalStorageNotMounted() {
-        MockedStatic<Environment> mockedEnv = Mockito.mockStatic(Environment.class);
-        mockedEnv.when(Environment::getExternalStorageState).thenReturn("unmounted");
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
-        mockedEnv.close();
+        assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
+        // Verify storage-path logic: when storage is not mounted getFilesDir() is unavailable;
+        // storePreRegPacketToDisk must propagate the failure
+        when(mockContext.getFilesDir()).thenThrow(new RuntimeException("External storage not mounted"));
+        assertThrows(Exception.class, () ->
+            service.storePreRegPacketToDisk("id", new byte[]{1, 2, 3}, new CenterMachineDto())
+        );
     }
 
     @Test
@@ -687,7 +684,6 @@ public class PreRegZipHandlingServiceImplTest {
         RegistrationDto dto = mock(RegistrationDto.class);
         when(regService.getRegistrationDto()).thenReturn(dto);
         when(dto.getSchemaVersion()).thenReturn(1.0);
-        when(dto.getDocuments()).thenReturn(new HashMap<>());
         when(dto.getDemographics()).thenReturn(new HashMap<>());
         List<FieldSpecDto> fields = new ArrayList<>();
         FieldSpecDto docField = new FieldSpecDto();
@@ -703,7 +699,7 @@ public class PreRegZipHandlingServiceImplTest {
         ReflectionTestUtils.setField(service, "identitySchemaService", mockIdentitySchemaRepository);
         String json = "{ \"identity\": { \"proofOfIdentity\": { \"type\": \"passport\", \"format\": \"pdf\", \"value\": \"doc1\", \"refNumber\": \"ABC123\" }, \"face\": \"faceData\" } }";
         ReflectionTestUtils.invokeMethod(service, "parseDemographicJson", json);
-        verify(dto).getDocuments();
+        verify(dto).addWithoutDocument(eq("proofOfIdentity"), eq("passport"), eq("pdf"), eq("doc1"), eq("ABC123"));
     }
 
     @Test
@@ -910,22 +906,24 @@ public class PreRegZipHandlingServiceImplTest {
 
     @Test
     public void test_initPreRegAdapter_externalStorageMounted() {
-        MockedStatic<Environment> mockedEnv = Mockito.mockStatic(Environment.class);
-        MockedStatic<ConfigService> mockedConfig = Mockito.mockStatic(ConfigService.class);
-        MockedStatic<Log> mockedLog = Mockito.mockStatic(Log.class);
-
-        mockedEnv.when(Environment::getExternalStorageState).thenReturn(Environment.MEDIA_MOUNTED);
-        mockedConfig.when(() -> ConfigService.getProperty(anyString(), any())).thenReturn("testLocation");
-        File mockFile = mock(File.class);
-        when(mockFile.exists()).thenReturn(false);
-        when(mockFile.mkdirs()).thenReturn(true);
+        File validStorage = new File(System.getProperty("java.io.tmpdir"));
+        when(mockContext.getFilesDir()).thenReturn(validStorage);
+        when(mockGlobalParamRepository.getCachedStringPreRegPacketLocation()).thenReturn("prereg-mounted-test");
 
         ReflectionTestUtils.invokeMethod(service, "initPreRegAdapter", mockContext);
-
-        mockedLog.verify(() -> Log.i(anyString(), eq("initLocalClientCryptoService: Initialization call successful")));
-        mockedEnv.close();
-        mockedConfig.close();
-        mockedLog.close();
+        assertEquals(mockContext, ReflectionTestUtils.getField(service, "appContext"));
+        // Verify storage-path logic: when the context provides a valid writable directory
+        // (simulating storage mounted), storePreRegPacketToDisk must succeed
+        try {
+            String path = service.storePreRegPacketToDisk("mountedId", new byte[]{1, 2, 3}, new CenterMachineDto());
+            assertNotNull(path);
+            assertTrue(path.contains("mountedId.zip"));
+        } catch (Exception e) {
+            fail("storePreRegPacketToDisk should succeed when storage is mounted: " + e.getMessage());
+        } finally {
+            new File(validStorage, "prereg-mounted-test/mountedId.zip").delete();
+            new File(validStorage, "prereg-mounted-test").delete();
+        }
     }
 
     @Test

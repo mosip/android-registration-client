@@ -21,6 +21,7 @@ import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/ui/process_ui/widgets_mobile/biometric_capture_scan_block_portrait.dart';
 
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -54,7 +55,8 @@ class _BiometricCaptureControlPortraitState
       BiometricAttributeData biometricAttributeData) {
     return InkWell(
         onTap: () {
-          context.read<BiometricCaptureControlProvider>().biometricAttribute =
+          TelemetryService.instance.onButtonClick("scan_biometric", screenName: "BiometricCaptureControlPage");
+              context.read<BiometricCaptureControlProvider>().biometricAttribute =
               biometricAttributeData.title;
           final providerCopy = Provider.of<BiometricCaptureControlProvider>(
               context,

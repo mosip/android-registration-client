@@ -11,6 +11,8 @@ abstract class GlobalConfigService {
 
   Future<String> getGpsEnableFlag();
 
+  Future<bool> getCenterRemapFlag();
+
   Future<int> getPRIDLength();
 
   Future<int> getUINLength();

@@ -44,4 +44,6 @@ public interface PreRegistrationDataSyncDao {
     public PreRegistrationList getById(String id);
 
     public Timestamp getLastPreRegPacketDownloadedTimeAsTimestamp();
+
+    public List<PreRegistrationList> findAll();
 }

@@ -40,4 +40,7 @@ public interface UserBiometricDao {
 
     @Query("delete from user_biometric where usr_id=:userId")
     void deleteByUsrId(String userId);
+
+    @Query("DELETE FROM user_biometric")
+    void deleteAll();
 }

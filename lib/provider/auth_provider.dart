@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:registration_client/pigeon/user_pigeon.dart';
 
 import 'package:registration_client/platform_spi/auth_service.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService auth = AuthService();
@@ -170,7 +171,19 @@ class AuthProvider with ChangeNotifier {
     }
 
   validateUser(String username, String langCode) async {
-    final user = await auth.validateUser(username, langCode);
+    final stopwatch = Stopwatch()..start();
+    final user = await auth. validateUser (username, langCode);
+    stopwatch.stop();
+
+    TelemetryService.instance.logPerformanceMetric(
+      'registration.api.latency',
+      stopwatch.elapsedMilliseconds.toDouble(),
+      'ms',
+    attributes: {
+    'endpoint': 'auth.validateUser',
+    'success': user.errorCode == null,
+  },
+);
 
     if (user.errorCode != null) {
       _isValidUser = false;
@@ -186,7 +199,19 @@ class AuthProvider with ChangeNotifier {
   }
 
   authenticateUser(String username, String password, bool isConnected) async {
-    final authResponse = await auth.login(username, password, isConnected);
+    final stopwatch = Stopwatch()..start();
+    final authResponse = await auth. login (username, password, isConnected);
+    stopwatch.stop();
+
+TelemetryService.instance.logPerformanceMetric(
+  'registration.api.latency',
+  stopwatch.elapsedMilliseconds.toDouble(),
+  'ms',
+  attributes: {
+    'endpoint': 'auth.login',
+    'success': authResponse.errorCode == null,
+  },
+);
     setIsLoggingIn(true);
     if (authResponse.errorCode != null) {
       _loginError = authResponse.errorCode!;

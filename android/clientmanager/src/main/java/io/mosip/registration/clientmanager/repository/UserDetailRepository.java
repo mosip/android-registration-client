@@ -235,4 +235,13 @@ public class UserDetailRepository {
         }
         userDetailDao.updateLoginAttemptCount(userId, 0, null);
     }
+
+    /**
+     * Removes all user credentials and sessions during center remap cleanup.
+     * Biometrics are cleared separately via UserBiometricRepository.
+     * Deletes passwords and tokens before the parent user_detail record.
+     */
+    public void deleteAll() {
+        userDetailDao.deleteAllAuthData();
+    }
 }

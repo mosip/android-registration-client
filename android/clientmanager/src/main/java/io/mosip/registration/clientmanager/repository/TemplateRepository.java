@@ -46,4 +46,8 @@ public class TemplateRepository {
         template.setIsActive(templateJson.getBoolean("isActive"));
         templateDao.insert(template);
     }
+
+    public void deleteAll() {
+        templateDao.deleteAll();
+    }
 }

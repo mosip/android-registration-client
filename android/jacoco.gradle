@@ -1,14 +1,17 @@
 apply plugin: 'jacoco'
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "0.8.12"
 }
 
 android {
+    jacoco {
+        version = "0.8.12"
+    }
     testOptions {
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
-                excludes = ['jdk.internal.*']
+                excludes = ['jdk.internal.*', 'android.*', 'com.android.*', 'androidx.*']
             }
         }
     }
@@ -69,16 +72,17 @@ ext.excludes = [
 ]
 def createVariantCoverage(variant) {
     def variantName = variant.name
-    def testTaskName = "test${variantName.capitalize()}UnitTest"
+    def capitalizedVariantName = variantName.capitalize()
+    def testTaskName = "test${capitalizedVariantName}UnitTest"
 
     // Add unit test coverage tasks
     tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
         group = "Reporting"
-        description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
+        description = "Generate Jacoco coverage reports for the ${capitalizedVariantName} build."
 
         reports {
-            html.enabled = true
-            xml.enabled = true
+            html.required = true
+            xml.required = true
         }
 
         def javaClasses = fileTree(dir: variant.javaCompileProvider.get().destinationDir, excludes: project.excludes)
@@ -106,7 +110,7 @@ def createVariantCoverage(variant) {
     // Add unit test coverage verification tasks
     tasks.create(name: "${testTaskName}CoverageVerification", type: JacocoCoverageVerification, dependsOn: "${testTaskName}Coverage") {
         group = "Reporting"
-        description = "Verifies Jacoco coverage for the ${variantName.capitalize()} build."
+        description = "Verifies Jacoco coverage for the ${capitalizedVariantName} build."
         violationRules {
             rule {
                 limit {

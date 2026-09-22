@@ -31,7 +31,7 @@ public class SyncJobDefRepositoryTest {
     }
 
     @Test
-    public void testSaveSyncJobDef() {
+    public void saveSyncJobDef_validJob_insertsViaDao() {
         // Using the correct constructor
         SyncJobDef syncJobDef = new SyncJobDef("RC_001");
         syncJobDef.setName("Test Job");
@@ -48,7 +48,7 @@ public class SyncJobDefRepositoryTest {
     }
 
     @Test
-    public void testGetAllSyncJobDefList() {
+    public void getAllSyncJobDefList_jobsExist_returnsAllJobs() {
         // Using the correct constructor
         SyncJobDef job1 = new SyncJobDef("RC_001");
         job1.setName("Job One");
@@ -66,5 +66,12 @@ public class SyncJobDefRepositoryTest {
         assertEquals("Job One", result.get(0).getName());
         assertEquals("RC_002", result.get(1).getId());
         assertEquals("Job Two", result.get(1).getName());
+    }
+
+    @Test
+    public void disableAllJobs_called_delegatesToDao() {
+        syncJobDefRepository.disableAllJobs();
+
+        verify(syncJobDefDao, times(1)).disableAllJobs();
     }
 }

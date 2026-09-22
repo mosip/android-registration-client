@@ -40,6 +40,92 @@ class _TasksPageState extends State<TasksPage> {
         .getAudit("NAV_DASHBOARD", "REG-MOD-102");
   }
 
+  void _showRemapSpotlight() {
+    final remapTask = widget.operationalTasks.firstWhere(
+      (t) => t["isRemapHighlight"] == true,
+      orElse: () => {},
+    );
+    if (remapTask.isEmpty) return;
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      transitionDuration: Duration.zero,
+      pageBuilder: (ctx, _, __) {
+        return Material(
+          color: Colors.transparent,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                // X button — top right corner
+                Positioned(
+                  top: 40.h,
+                  right: 28.w,
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(ctx).pop(),
+                    child: Container(
+                      width: isMobileSize ? 28 : 36,
+                      height: isMobileSize ? 28 : 36,
+                      decoration: const BoxDecoration(
+                        color: appWhite,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: appSolidPrimary,
+                        size: isMobileSize ? 16 : 22,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Center Remap Sync card — centred vertically
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: appWhite,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: greyBorderShade, width: 1.5),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 12,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: remapTask["icon"] as Widget,
+                        title: Text(
+                          remapTask["title"] as String,
+                          style: TextStyle(
+                            fontSize: isMobileSize ? 14 : 20,
+                            fontWeight: semiBold,
+                            color: appBlackShade1,
+                          ),
+                        ),
+                        subtitle: Text(
+                          remapTask["subtitle"] as String,
+                          style: TextStyle(
+                            fontSize: isMobileSize ? 12 : 16,
+                            color: appBlackShade2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -52,14 +138,10 @@ class _TasksPageState extends State<TasksPage> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        currentIndex = 0;
-                      });
+                      setState(() => currentIndex = 0);
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 28.h,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 28.h),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: currentIndex == 0
@@ -90,14 +172,10 @@ class _TasksPageState extends State<TasksPage> {
                     onTap: () {
                       Provider.of<GlobalProvider>(context, listen: false)
                           .getAudit("NAV_OPERATIONAL_TASKS", "REG-MOD-102");
-                      setState(() {
-                        currentIndex = 1;
-                      });
+                      setState(() => currentIndex = 1);
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 28.h,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: 28.h),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: currentIndex == 1
@@ -139,13 +217,18 @@ class _TasksPageState extends State<TasksPage> {
                   syncData: (BuildContext context) {
                     widget.syncData(context);
                   },
+                  onRemapBannerTap: () {
+                    Provider.of<GlobalProvider>(context, listen: false)
+                        .getAudit("NAV_OPERATIONAL_TASKS", "REG-MOD-102");
+                    setState(() => currentIndex = 1);
+                    _showRemapSpotlight();
+                  },
                 )
               : OperationalTasks(
                   operationalTasks: widget.operationalTasks,
                 ),
-          SizedBox(
-            height: 125.h,
-          ),
+
+          SizedBox(height: 125.h),
         ],
       ),
     );

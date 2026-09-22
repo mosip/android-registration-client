@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../provider/auth_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../utils/telemetry_service.dart';
 
 class AuthenticateDialogBox extends StatefulWidget {
   const AuthenticateDialogBox({super.key});
@@ -62,6 +63,7 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
   }
 
   Future<bool> _authenticatePacketPassword() async {
+    TelemetryService.instance.onButtonClick('confirm_packet_authentication',screenName: 'AuthenticateDialogBox');
     if (_formKey.currentState!.validate()) {
       await authProvider.authenticatePacket(username.text, password.text);
       if (!authProvider.isPacketAuthenticated) {

@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:registration_client/utils/app_config.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 class LanguageComponent extends StatefulWidget {
   const LanguageComponent({
@@ -36,6 +37,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
     return InkWell(
       onTap: () {
         if (!widget.isFreezed && !widget.isDisabled) {
+          TelemetryService.instance.onButtonClick("language_selection");
           widget.onTap();
         }
       },

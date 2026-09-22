@@ -20,4 +20,7 @@ public interface RegistrationCenterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(RegistrationCenter registrationCenter);
+
+    @Query("DELETE FROM registration_center")
+    void deleteAll();
 }

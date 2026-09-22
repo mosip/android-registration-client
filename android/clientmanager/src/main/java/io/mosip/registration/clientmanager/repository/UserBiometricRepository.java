@@ -92,4 +92,8 @@ public class UserBiometricRepository {
     private void clearUserBiometrics(String userId) {
         userBiometricDao.deleteByUsrId(userId);
     }
+
+    public void deleteAll() {
+        userBiometricDao.deleteAll();
+    }
 }

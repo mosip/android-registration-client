@@ -4,6 +4,9 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+
+import java.util.List;
+
 import io.mosip.registration.clientmanager.entity.IdentitySchema;
 
 @Dao
@@ -18,4 +21,9 @@ public interface IdentitySchemaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertIdentitySchema(IdentitySchema identitySchema);
 
+    @Query("SELECT * FROM identity_schema")
+    List<IdentitySchema> findAll();
+
+    @Query("DELETE FROM identity_schema")
+    void deleteAll();
 }

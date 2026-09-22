@@ -25,10 +25,12 @@ class RegistrationTasks extends StatefulWidget {
     super.key,
     required this.getProcessUI,
     required this.syncData,
+    this.onRemapBannerTap,
   });
 
   final Function getProcessUI;
   final Function syncData;
+  final VoidCallback? onRemapBannerTap;
 
   @override
   State<RegistrationTasks> createState() => _RegistrationTasksState();
@@ -42,15 +44,66 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
     super.initState();
   }
 
+  Widget _buildRemapBanner(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onRemapBannerTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFFBE6),
+            border: Border.all(color: const Color(0xFFE6A817), width: 1.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: const Color(0xFFE6A817),
+                size: isMobileSize ? 22 : 30,
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.center_remap_notification,
+                  style: TextStyle(
+                    color: const Color(0xFFE6A817),
+                    fontWeight: FontWeight.bold,
+                    fontSize: isMobileSize ? 13 : 18,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: const Color(0xFFE6A817),
+                size: isMobileSize ? 20 : 28,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final appLocalizations = AppLocalizations.of(context)!;
+    final syncProvider = context.watch<SyncProvider>();
+    final bool centerRemapped = syncProvider.isCenterRemapped;
+    final bool isSyncing = syncProvider.isMasterDataSyncing || syncProvider.isSyncAndUploadInProgress;
+    final int syncProgress = syncProvider.isSyncAndUploadInProgress ? 98 : syncProvider.masterDataSyncProgress;
+    final String? subtitle = isSyncing ? appLocalizations.syncing_progress(syncProgress) : null;
+
     return SingleChildScrollView(
       child: Column(
         children: [
           SizedBox(
             height: 26.h,
           ),
+          if (centerRemapped) _buildRemapBanner(context),
           isMobileSize
               ? Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -61,10 +114,13 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
               ),
               title: AppLocalizations.of(context)!.synchronize_data,
               ontap: () => widget.syncData(context),
-              subtitle: null,
+              subtitle: subtitle,
+              isSyncing: isSyncing,
+              syncProgress: syncProgress,
+              showLastSyncFallback: true,
             ),
           )
-              : _getSyncDataProvider(),
+              : _getSyncDataProvider(isSyncing, syncProgress),
           SizedBox(
             height: 16.h,
           ),
@@ -74,20 +130,25 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
     );
   }
 
-  _getSyncDataProvider() {
+  _getSyncDataProvider(bool isSyncing, int syncProgress) {
+    final syncProvider = context.watch<SyncProvider>();
+    final appLocalizations = AppLocalizations.of(context)!;
+    final DateTime? lastSync = DateTime.tryParse(syncProvider.lastMasterDataSyncTime);
+    final String subtitle = isSyncing
+        ? appLocalizations.syncing_progress(syncProgress)
+        : (lastSync != null
+            ? DateFormat("EEEE d MMMM, hh:mma").format(lastSync.toLocal())
+            : appLocalizations.last_sync_time_not_found);
+
     return InkWell(
       onTap: () {
         widget.syncData(context);
       },
       child: Container(
-        height: 111.h,
-        padding: EdgeInsets.symmetric(
-          horizontal: 15.w,
-          vertical: 16.h,
-        ),
         margin: EdgeInsets.symmetric(
           horizontal: 20.w,
         ),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           border: Border.all(
             color: appWhite,
@@ -105,55 +166,67 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 78.h,
-              width: 78.h,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: appWhite,
-                ),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: iconContainerColor,
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 15.w,
+                vertical: 16.h,
               ),
-              child: Transform.scale(
-                scale: 0.5,
-                child: SvgPicture.asset(
-                  syncDataIcon,
-                ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 78.h,
+                    width: 78.h,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: appWhite,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      color: iconContainerColor,
+                    ),
+                    child: Transform.scale(
+                      scale: 0.5,
+                      child: SvgPicture.asset(
+                        syncDataIcon,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 24.w,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.synchronize_data,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: semiBold,
+                      color: appBlackShade1,
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: isSyncing ? appSolidPrimary : appBlackShade2,
+                      fontWeight: isSyncing ? semiBold : FontWeight.normal,
+                    ),
+                  )
+                ],
               ),
             ),
-            SizedBox(
-              width: 24.w,
-            ),
-            Text(
-              AppLocalizations.of(context)!.synchronize_data,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: semiBold,
-                color: appBlackShade1,
+            if (isSyncing)
+              LinearProgressIndicator(
+                value: syncProgress > 0 ? syncProgress / 100.0 : null,
+                minHeight: 4.h,
+                backgroundColor: greyBorderShade,
+                valueColor: const AlwaysStoppedAnimation<Color>(appSolidPrimary),
               ),
-            ),
-            const Expanded(
-              child: SizedBox(),
-            ),
-            Text(
-              context.watch<SyncProvider>().lastSuccessfulSyncTime != ""
-                  ? DateFormat("EEEE d MMMM, hh:mma")
-                  .format(DateTime.parse(context
-                  .watch<SyncProvider>()
-                  .lastSuccessfulSyncTime)
-                  .toLocal())
-                  .toString()
-                  : "Last Sync time not found",
-              style: const TextStyle(
-                fontSize: 18,
-                color: appBlackShade2,
-              ),
-            )
           ],
         ),
       ),
@@ -167,7 +240,7 @@ class _RegistrationTasksState extends State<RegistrationTasks> {
           itemCount:
           context.watch<RegistrationTaskProvider>().listOfProcesses.length,
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: (isPortrait) ? 2 : 4,
             mainAxisSpacing: (isPortrait) ? 8.h : 1.h,

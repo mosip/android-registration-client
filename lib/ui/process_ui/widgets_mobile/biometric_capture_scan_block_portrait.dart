@@ -25,6 +25,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:registration_client/utils/app_config.dart';
 import 'package:registration_client/utils/biometrics_utils.dart';
+import 'package:registration_client/utils/telemetry_service.dart';
 
 class BiometricCaptureScanBlockPortrait extends StatefulWidget {
   const BiometricCaptureScanBlockPortrait({super.key, required this.field});
@@ -53,6 +54,7 @@ class _BiometricCaptureScanBlockPortraitState
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
 
     super.initState();
+    TelemetryService.instance.onScreenView("BiometricCaptureScanBlockPortraitPage");
   }
 
   setInitialState() {
@@ -593,6 +595,7 @@ class _BiometricCaptureScanBlockPortraitState
         ),
         ElevatedButton.icon(
           onPressed: () async {
+            TelemetryService.instance.onButtonClick("scan_biometric", screenName: "BiometricCaptureScanBlockPortraitPage");
             if (biometricAttributeData.exceptions.contains(false)) {
               if (biometricAttributeData.attemptNo <
                   biometricAttributeData.noOfCapturesAllowed) {

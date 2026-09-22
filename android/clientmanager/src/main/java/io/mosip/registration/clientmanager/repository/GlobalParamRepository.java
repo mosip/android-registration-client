@@ -349,4 +349,12 @@ public class GlobalParamRepository {
         }
     }
 
+    /**
+     * Returns a global param value without the active-status filter applied by {@link #getGlobalParamValue}.
+     * Used during center remap to read flags that may have status=0.
+     */
+    public String getGlobalParamValueUnfiltered(String id) {
+        return globalParamDao.getGlobalParamValueById(id);
+    }
+
 }

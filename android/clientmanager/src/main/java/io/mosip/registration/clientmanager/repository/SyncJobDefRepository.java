@@ -56,4 +56,8 @@ public class SyncJobDefRepository {
     public SyncJobDef getSyncJobDefByApiName(String apiName) {
         return this.syncJobDefDao.findOneByApiName(apiName);
     }
+
+    public void disableAllJobs() {
+        syncJobDefDao.disableAllJobs();
+    }
 }

@@ -20,6 +20,19 @@ public abstract class UserDetailDao {
     @Query("delete from user_detail")
     public abstract void deleteAllUsers();
 
+    @Query("DELETE FROM user_pwd")
+    public abstract void deleteAllPasswords();
+
+    @Query("DELETE FROM user_token")
+    public abstract void deleteAllTokens();
+
+    @Transaction
+    public void deleteAllAuthData() {
+        deleteAllPasswords();
+        deleteAllTokens();
+        deleteAllUsers();
+    }
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertAllUsers(List<UserDetail> users);
 

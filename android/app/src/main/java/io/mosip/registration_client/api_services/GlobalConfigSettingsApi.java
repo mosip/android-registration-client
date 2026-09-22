@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.mosip.registration.clientmanager.constant.RegistrationConstants;
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -84,6 +85,17 @@ public class GlobalConfigSettingsApi implements GlobalConfigSettingsPigeon.Globa
             Log.e(getClass().getSimpleName(), "Error fetching GPS enable flag", e);
         }
         result.success(gpsFlag);
+    }
+
+    @Override
+    public void getCenterRemapFlag(@NonNull GlobalConfigSettingsPigeon.Result<Boolean> result) {
+        Boolean remapFlag = false;
+        try {
+            remapFlag = globalParamRepository.getCachedBooleanGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error fetching center remap flag", e);
+        }
+        result.success(Boolean.TRUE.equals(remapFlag));
     }
 
     @Override

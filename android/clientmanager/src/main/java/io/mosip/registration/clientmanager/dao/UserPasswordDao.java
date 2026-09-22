@@ -17,4 +17,7 @@ public abstract class UserPasswordDao {
 
     @Query("delete from user_pwd where usr_id= :id")
     public abstract void deleteUserPassword(String id);
+
+    @Query("DELETE FROM user_pwd")
+    public abstract void deleteAll();
 }

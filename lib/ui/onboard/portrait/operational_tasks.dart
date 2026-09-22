@@ -12,6 +12,8 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/approve_packets_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/ui/onboard/portrait/task_card.dart';
 import 'package:registration_client/ui/onboard/widgets/home_page_card.dart';
 import 'package:registration_client/utils/app_config.dart';
@@ -48,9 +50,7 @@ class _OperationalTasksState extends State<OperationalTasks> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 12.h,
-        ),
+        SizedBox(height: 12.h),
         _getTasks(),
       ],
     );
@@ -177,36 +177,54 @@ class _OperationalTasksState extends State<OperationalTasks> {
   }
 
   _getTasks() {
+    final syncProvider = context.watch<SyncProvider>();
+    final appLocalizations = AppLocalizations.of(context)!;
+
     return ListView(
       shrinkWrap: true,
-      // scrollDirection: Axis.vertical,
       physics: const NeverScrollableScrollPhysics(),
       children: List.generate(
         widget.operationalTasks.length,
         (index) {
+          final task = widget.operationalTasks[index];
+          final isMaster = task["syncKey"] == "masterData";
+          final isPreReg = task["syncKey"] == "preRegData";
+
+          final bool isSyncing = isMaster
+              ? (syncProvider.isMasterDataSyncing || syncProvider.isSyncAndUploadInProgress)
+              : (isPreReg && syncProvider.isPreRegSyncing);
+
+          final int progress = isMaster
+              ? (syncProvider.isSyncAndUploadInProgress ? 98 : syncProvider.masterDataSyncProgress)
+              : (isPreReg ? syncProvider.preRegSyncProgress : 0);
+
+          final String subtitle = isSyncing
+              ? (isMaster
+                  ? appLocalizations.syncing_progress(progress)
+                  : appLocalizations.downloading_progress(progress))
+              : (task["subtitle"] ?? "");
+
           return isMobileSize
               ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: HomePageCard(
                     index: index,
-                    icon: widget.operationalTasks[index]["icon"],
-                    title: widget.operationalTasks[index]["title"] as String,
-                    ontap: () async {
-                      return widget.operationalTasks[index]["onTap"](context);
-                    },
-                    subtitle: widget.operationalTasks[index]["subtitle"],
+                    icon: task["icon"],
+                    title: task["title"],
+                    ontap: () async => task["onTap"](context),
+                    subtitle: subtitle,
+                    isSyncing: isSyncing,
+                    syncProgress: progress,
                   ),
                 )
               : TaskCard(
                   index: index,
-                  icon: widget.operationalTasks[index]["icon"],
-                  title: widget.operationalTasks[index]["title"] as String,
-                  ontap: () {
-                    return widget.operationalTasks[index]["onTap"](context);
-                  },
-                  subtitle: widget.operationalTasks[index]["subtitle"],
+                  icon: task["icon"],
+                  title: task["title"],
+                  ontap: () => task["onTap"](context),
+                  subtitle: subtitle,
+                  isSyncing: isSyncing,
+                  syncProgress: progress,
                 );
         },
       ),

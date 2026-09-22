@@ -89,6 +89,7 @@ public class RegistrationDto extends Observable {
 
     private String applicationId;
     private String additionalInfoRequestId;
+    private String captureTransactionId;
 
     public RegistrationDto(@NonNull String rid, @NonNull String flowType, @NonNull String process,
                            @NonNull Double schemaVersion, @NonNull List<String> languages,

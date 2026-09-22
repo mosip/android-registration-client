@@ -273,12 +273,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         try {
             queryParams.put("keyindex", this.clientCryptoManagerService.getClientKeyIndex());
         } catch (Exception e) {
-            result = MASTER_DATA_SYNC_FAILED;
             Log.e(TAG, "MasterData : not able to get client key index", e);
-            if (isManualSync) {
-                Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
-            }
-            onFinish.run();
+            handleSyncFailure(MASTER_DATA_SYNC_FAILED, "Master Sync failed", isManualSync, onFinish);
             return;
         }
 
@@ -292,67 +288,68 @@ public class MasterDataServiceImpl implements MasterDataService {
             queryParams.put("lastUpdated", delta);
 
         String serverVersion = getServerVersionFromConfigs();
-        Call<ResponseWrapper<ClientSettingDto>> call = serverVersion.startsWith(SERVER_VERSION_1_1_5) ? syncRestService.fetchV1MasterData(queryParams) : syncRestService.fetchMasterData(queryParams);
+        Call<ResponseWrapper<ClientSettingDto>> call = serverVersion.startsWith(SERVER_VERSION_1_1_5)
+                ? syncRestService.fetchV1MasterData(queryParams)
+                : syncRestService.fetchMasterData(queryParams);
 
         call.enqueue(new Callback<ResponseWrapper<ClientSettingDto>>() {
             @Override
             public void onResponse(Call<ResponseWrapper<ClientSettingDto>> call, Response<ResponseWrapper<ClientSettingDto>> response) {
-                if (response.isSuccessful()) {
-                    ServiceError error = SyncRestUtil.getServiceError(response.body());
-                    if (error == null) {
-                        saveMasterData(response.body().getResponse(), isManualSync);
-                        if (regCenterId != null) {
-                            machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
-                        }
-                        if (centerMachineDto == null) {
-                            if (retryNo < master_data_recursive_sync_max_retry) {
-                                Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
-                                //rerunning master data to sync completed master data
-                                syncMasterData(onFinish, retryNo + 1, isManualSync, jobId);
-                            } else {
-                                result = MASTER_DATA_SYNC_FAILED;
-                                if (isManualSync) {
-                                    Toast.makeText(context, "Master Data Sync failed! Please try again in some time", Toast.LENGTH_LONG).show();
-                                }
-                                onFinish.run();
-                            }
-                        } else {
-                            result = "";
-                            if (isManualSync) {
-                                Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
-                            }
-                            onFinish.run();
-                        }
-                        try {
-                            logLastSyncCompletionDateTime(jobId);
-                        } catch (Exception e) {
-                            Log.e(TAG, "Failed to store master data sync last sync time", e);
-                        }
-                    } else {
-                        result = MASTER_DATA_SYNC_FAILED;
-                        if (isManualSync) {
-                            Toast.makeText(context, "Master Data Sync failed " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                if (!response.isSuccessful()) {
+                    handleSyncFailure(MASTER_DATA_SYNC_FAILED, "Master Data Sync failed with status code : " + response.code(), isManualSync, onFinish);
+                    return;
+                }
+
+                ServiceError error = SyncRestUtil.getServiceError(response.body());
+                if (error != null) {
+                    if (RegistrationConstants.CENTER_REMAP_ERROR_CODE.equals(error.getErrorCode())) {
+                        globalParamRepository.saveGlobalParam(RegistrationConstants.MACHINE_CENTER_CHANGED, "true");
+                        result = RegistrationConstants.CENTER_REMAP_ERROR_CODE;
                         onFinish.run();
+                        return;
                     }
-                } else {
-                    result = MASTER_DATA_SYNC_FAILED;
-                    if (isManualSync) {
-                        Toast.makeText(context, "Master Data Sync failed with status code : " + response.code(), Toast.LENGTH_LONG).show();
+                    handleSyncFailure(MASTER_DATA_SYNC_FAILED, "Master Data Sync failed " + error.getMessage(), isManualSync, onFinish);
+                    return;
+                }
+
+                saveMasterData(response.body().getResponse(), isManualSync);
+                if (regCenterId != null)
+                    machineRepository.updateMachine(clientCryptoManagerService.getMachineName(), regCenterId);
+
+                if (centerMachineDto == null) {
+                    if (retryNo < master_data_recursive_sync_max_retry) {
+                        Log.i(TAG, "onResponse: MasterData Sync Recursive call : " + retryNo);
+                        syncMasterData(onFinish, retryNo + 1, isManualSync, jobId);
+                    } else {
+                        handleSyncFailure(MASTER_DATA_SYNC_FAILED, "Master Data Sync failed! Please try again in some time", isManualSync, onFinish);
                     }
-                    onFinish.run();
+                    return;
+                }
+
+                result = "";
+                if (isManualSync)
+                    Toast.makeText(context, "Master Data Sync Completed", Toast.LENGTH_LONG).show();
+                onFinish.run();
+
+                try {
+                    logLastSyncCompletionDateTime(jobId);
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to store master data sync last sync time", e);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseWrapper<ClientSettingDto>> call, Throwable t) {
-                result = MASTER_DATA_SYNC_FAILED;
-                if (isManualSync) {
-                    Toast.makeText(context, "Master Sync failed", Toast.LENGTH_LONG).show();
-                }
-                onFinish.run();
+                handleSyncFailure(MASTER_DATA_SYNC_FAILED, "Master Sync failed", isManualSync, onFinish);
             }
         });
+    }
+
+    private void handleSyncFailure(String resultCode, String message, boolean isManualSync, Runnable onFinish) {
+        result = resultCode;
+        if (isManualSync && message != null)
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        onFinish.run();
     }
 
     @Override

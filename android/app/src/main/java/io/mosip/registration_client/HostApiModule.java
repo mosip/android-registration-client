@@ -27,12 +27,14 @@ import io.mosip.registration.clientmanager.repository.IdentitySchemaRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationCenterRepository;
 import io.mosip.registration.clientmanager.repository.RegistrationRepository;
 import io.mosip.registration.clientmanager.service.Biometrics095Service;
+import io.mosip.registration.clientmanager.service.CenterRemapServiceImpl;
 import io.mosip.registration.clientmanager.service.LoginService;
 import io.mosip.registration.clientmanager.service.TemplateService;
 import io.mosip.registration.clientmanager.service.UserOnboardService;
 import io.mosip.registration.clientmanager.service.LocalConfigServiceImpl;
 import io.mosip.registration.clientmanager.service.LocationValidationServiceImpl;
 import io.mosip.registration.clientmanager.spi.AuditManagerService;
+import io.mosip.registration.clientmanager.spi.CenterRemapService;
 import io.mosip.registration.clientmanager.spi.LocalConfigService;
 import io.mosip.registration.clientmanager.spi.LocationValidationService;
 import io.mosip.registration.clientmanager.spi.MasterDataService;
@@ -50,8 +52,11 @@ import io.mosip.registration.clientmanager.repository.LocationRepository;
 import io.mosip.registration.clientmanager.repository.MachineRepository;
 import io.mosip.registration.clientmanager.repository.SyncJobDefRepository;
 import io.mosip.registration.clientmanager.repository.TemplateRepository;
+import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
 import io.mosip.registration.clientmanager.repository.UserDetailRepository;
+import io.mosip.registration.clientmanager.repository.UserRoleRepository;
 import io.mosip.registration.clientmanager.spi.JobManagerService;
+import io.mosip.registration.keymanager.repository.KeyStoreRepository;
 import io.mosip.registration.keymanager.spi.CertificateManagerService;
 import io.mosip.registration.keymanager.spi.ClientCryptoManagerService;
 import io.mosip.registration.keymanager.spi.CryptoManagerService;
@@ -212,7 +217,8 @@ public class HostApiModule {
             FileSignatureDao fileSignatureDao,
             PreRegistrationDataSyncService preRegistrationDataSyncService,
             LocalConfigService localConfigService,
-            BioSdkProviderFactory bioSdkProviderFactory) {
+            BioSdkProviderFactory bioSdkProviderFactory,
+            CenterRemapService centerRemapService) {
         return new MasterDataSyncApi(
                 clientCryptoManagerService,
                 machineRepository,
@@ -240,7 +246,8 @@ public class HostApiModule {
                 fileSignatureDao,
                 preRegistrationDataSyncService,
                 localConfigService,
-                bioSdkProviderFactory
+                bioSdkProviderFactory,
+                centerRemapService
         );
     }
 
@@ -285,6 +292,44 @@ public class HostApiModule {
     @Singleton
     SecureScreenApi getSecureScreenApi() {
         return new SecureScreenApi();
+    }
+
+    @Provides
+    @Singleton
+    CenterRemapService getCenterRemapService(
+            GlobalParamRepository globalParamRepository,
+            RegistrationRepository registrationRepository,
+            PacketService packetService,
+            PreRegistrationDataSyncService preRegistrationDataSyncService,
+            SyncJobDefRepository syncJobDefRepository,
+            DynamicFieldRepository dynamicFieldRepository,
+            IdentitySchemaRepository identitySchemaRepository,
+            LocationRepository locationRepository,
+            RegistrationCenterRepository registrationCenterRepository,
+            TemplateRepository templateRepository,
+            UserBiometricRepository userBiometricRepository,
+            UserDetailRepository userDetailRepository,
+            UserRoleRepository userRoleRepository,
+            AuditManagerService auditManagerService,
+            KeyStoreRepository keyStoreRepository) {
+        return new CenterRemapServiceImpl(
+                appContext,
+                globalParamRepository,
+                registrationRepository,
+                packetService,
+                preRegistrationDataSyncService,
+                syncJobDefRepository,
+                dynamicFieldRepository,
+                identitySchemaRepository,
+                locationRepository,
+                registrationCenterRepository,
+                templateRepository,
+                userBiometricRepository,
+                userDetailRepository,
+                userRoleRepository,
+                auditManagerService,
+                keyStoreRepository
+        );
     }
 }
 
