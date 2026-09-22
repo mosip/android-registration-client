@@ -481,7 +481,7 @@ public class MatchUtilTest {
     }
 
     @Test
-    public void test_validate_biometric_data_exception_photo_queries_face_records() {
+    public void testValidateBiometricData_exceptionPhotoModality_queriesOperatorFaceRecords() {
         CaptureDto captureDto = new CaptureDto();
         captureDto.setBioType("ExceptionPhoto");
 
