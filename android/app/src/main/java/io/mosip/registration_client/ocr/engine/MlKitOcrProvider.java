@@ -76,9 +76,9 @@ public class MlKitOcrProvider implements OcrProvider {
             processed = bitmap;
         }
 
-        final String finalDocumentType   = documentType;
-        final float  finalConfidence     = classificationConfidence;
-        final Bitmap finalProcessed      = processed;
+        final String finalDocumentType             = documentType;
+        final float  finalClassificationConfidence = classificationConfidence;
+        final Bitmap finalProcessed                = processed;
 
         // ML Kit text recognition
         mlKitEngine.extractRich(finalProcessed, new MlKitEngine.RichTextCallback() {
@@ -114,7 +114,9 @@ public class MlKitOcrProvider implements OcrProvider {
 
                 Log.d(TAG, "Extraction complete: " + data.size() + " fields from "
                         + visionText.getTextBlocks().size() + " blocks");
-                callback.onSuccess(finalDocumentType, finalConfidence, data);
+                // Pass ML Kit OCR recognition confidence (AC4); fallback to doc-type confidence if 0
+                float ocrConfidence = avgConfidence > 0f ? avgConfidence : finalClassificationConfidence;
+                callback.onSuccess(finalDocumentType, ocrConfidence, data);
             }
 
             @Override

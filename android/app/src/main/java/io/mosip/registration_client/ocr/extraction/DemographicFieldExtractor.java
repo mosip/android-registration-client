@@ -608,13 +608,29 @@ public final class DemographicFieldExtractor {
                 return true;
             }
         }
+        String docRegex = config.getFieldRegexMap().get("documentnumber");
+        if (docRegex != null && !docRegex.isEmpty()) {
+            try {
+                if (Pattern.compile(docRegex, Pattern.CASE_INSENSITIVE).matcher(line.trim()).matches()) {
+                    return true;
+                }
+            } catch (Exception ignored) { }
+        }
+        String panRegex = config.getFieldRegexMap().get("pannumber");
+        if (panRegex != null && !panRegex.isEmpty()) {
+            try {
+                if (Pattern.compile(panRegex, Pattern.CASE_INSENSITIVE).matcher(line.trim()).matches()) {
+                    return true;
+                }
+            } catch (Exception ignored) { }
+        }
         if (PAN_PATTERN.matcher(line.trim()).matches()) {
             return true;
         }
         if (AADHAAR_PATTERN.matcher(line.trim()).matches()) {
             return true;
         }
-        if (lower.contains("signature") || lower.contains("हस्ताक्षर")) {
+        if (lower.contains("signature")) {
             return true;
         }
         return false;

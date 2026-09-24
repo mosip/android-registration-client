@@ -49,13 +49,17 @@ public class OcrPluginImpl implements OcrHostApi {
 
     private static final String TAG = "OCR_DEBUG";
 
-    private volatile Activity       activity;
-    private final OcrFlutterApi     flutterApi;
-    private final OcrProvider       provider;
-    private final Handler           mainThreadHandler;
-    private final OcrConfig         config;
-    private final OcrUiSpecProvider uiSpecProvider;
-    private final AtomicInteger     scanGeneration = new AtomicInteger(0);
+    private volatile Activity              activity;
+    private final OcrFlutterApi            flutterApi;
+    private final GlobalParamRepository    globalParamRepository;
+    @Nullable
+    private final DocumentClassifier       documentClassifier;
+    private volatile OcrProvider           provider;
+    private final Handler                  mainThreadHandler;
+    private volatile OcrConfig             config;
+    private volatile ExtractionConfig      extractionConfig;
+    private final OcrUiSpecProvider        uiSpecProvider;
+    private final AtomicInteger            scanGeneration = new AtomicInteger(0);
     @Nullable
     private DocumentScanner activeScanner;
     private final TextureRegistry textureRegistry;
@@ -66,31 +70,26 @@ public class OcrPluginImpl implements OcrHostApi {
     private OcrPluginImpl(
             @NonNull Activity activity,
             @NonNull OcrFlutterApi flutterApi,
-            @NonNull OcrProvider provider,
-            @NonNull OcrConfig config,
-            @NonNull OcrUiSpecProvider uiSpecProvider,
+            @NonNull GlobalParamRepository globalParamRepository,
+            @Nullable DocumentClassifier documentClassifier,
             @NonNull TextureRegistry textureRegistry) {
-        this.activity          = activity;
-        this.flutterApi        = flutterApi;
-        this.provider           = provider;
-        this.mainThreadHandler = new Handler(Looper.getMainLooper());
-        this.config            = config;
-        this.uiSpecProvider    = uiSpecProvider;
-        this.textureRegistry   = textureRegistry;
+        this.activity               = activity;
+        this.flutterApi             = flutterApi;
+        this.globalParamRepository  = globalParamRepository;
+        this.documentClassifier     = documentClassifier;
+        this.textureRegistry        = textureRegistry;
+        this.mainThreadHandler      = new Handler(Looper.getMainLooper());
+        this.uiSpecProvider         = new OcrUiSpecProvider(globalParamRepository);
+        refreshConfigAndProvider();
     }
-    public static void register(
+
+    public static OcrPluginImpl register(
             @NonNull FlutterEngine flutterEngine,
             @NonNull Activity activity,
             @NonNull GlobalParamRepository globalParamRepository) {
 
         OcrFlutterApi flutterApi = new OcrFlutterApi(
                 flutterEngine.getDartExecutor().getBinaryMessenger());
-
-        // OcrTestDataSeeder.seedIfEmpty(globalParamRepository);  //ONLY FOR TESTING
-
-        OcrConfig config = OcrConfig.from(globalParamRepository);
-        OcrUiSpecProvider uiSpecProvider = new OcrUiSpecProvider(globalParamRepository);
-        ExtractionConfig extractionConfig = new ExtractionConfig(globalParamRepository);
 
         DocumentClassifier documentClassifier = null;
         try {
@@ -99,19 +98,59 @@ public class OcrPluginImpl implements OcrHostApi {
             Log.e(TAG, "Failed initializing DocumentClassifier (only affects mlkit provider)", e);
         }
 
-        OcrProvider provider = OcrProviderFactory.create(config, documentClassifier, extractionConfig);
-
         TextureRegistry textureRegistry = flutterEngine.getRenderer();
 
-        OcrPluginImpl impl = new OcrPluginImpl(activity, flutterApi, provider, config, uiSpecProvider, textureRegistry);
+        OcrPluginImpl impl = new OcrPluginImpl(
+                activity, flutterApi, globalParamRepository, documentClassifier, textureRegistry);
         OcrHostApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), impl);
 
         // Log UiSpec once on app startup
-        List<FieldSpec> startupSpec = uiSpecProvider.getSpec();
+        List<FieldSpec> startupSpec = impl.uiSpecProvider.getSpec();
         Log.i(TAG, "OCR UiSpec at startup: " + startupSpec.size() + " fields");
         for (FieldSpec f : startupSpec) {
             Log.d(TAG, "  field: id=" + f.getId() + " type=" + f.getType()
                     + " controlType=" + f.getControlType() + " subType=" + f.getSubType());
+        }
+        return impl;
+    }
+
+    /**
+     * Reloads OCR configuration and re-initializes the provider if needed.
+     * Can be invoked after global params sync or before starting a scan.
+     */
+    public synchronized void reloadConfig() {
+        refreshConfigAndProvider();
+    }
+
+    private synchronized void refreshConfigAndProvider() {
+        try {
+            this.config = OcrConfig.from(globalParamRepository);
+            this.extractionConfig = new ExtractionConfig(globalParamRepository);
+
+            if (this.config.enabled) {
+                if (this.provider != null) {
+                    try {
+                        this.provider.release();
+                    } catch (Exception e) {
+                        Log.w(TAG, "Error releasing previous OCR provider", e);
+                    }
+                }
+                this.provider = OcrProviderFactory.create(this.config, documentClassifier, this.extractionConfig);
+                Log.i(TAG, "OCR provider initialized: " + this.config.provider
+                        + " (timeout=" + this.config.responseTimeoutMs + "ms)");
+            } else {
+                if (this.provider != null) {
+                    try {
+                        this.provider.release();
+                    } catch (Exception e) {
+                        Log.w(TAG, "Error releasing OCR provider after disable", e);
+                    }
+                    this.provider = null;
+                }
+                Log.i(TAG, "OCR is currently disabled (mosip.registration.ocr.enabled=false)");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed refreshing OCR config and provider", e);
         }
     }
 
@@ -122,7 +161,10 @@ public class OcrPluginImpl implements OcrHostApi {
     @NonNull
     @Override
     public Long startDocumentScan() {
-        if (!config.enabled) {
+        refreshConfigAndProvider();
+
+        OcrConfig currentConfig = this.config;
+        if (currentConfig == null || !currentConfig.enabled) {
             Log.w(TAG, "startDocumentScan called while mosip.registration.ocr.enabled=false, ignoring");
             return -1L;
         }
@@ -138,13 +180,13 @@ public class OcrPluginImpl implements OcrHostApi {
         SurfaceTexture surfaceTexture = textureEntry.surfaceTexture();
 
         QualityAnalyzer qualityAnalyzer = new QualityAnalyzer(
-                config.qualityBlurVariance, config.qualityBrightnessMin, config.qualityBrightnessMax);
+                currentConfig.qualityBlurVariance, currentConfig.qualityBrightnessMin, currentConfig.qualityBrightnessMax);
 
         activeScanner = new DocumentScanner(
                 activity,
                 surfaceTexture,
                 qualityAnalyzer,
-                config.qualityMaxRetries,
+                currentConfig.qualityMaxRetries,
 
                 quality -> {
                     ImageQualityMessage msg = new ImageQualityMessage();
@@ -208,7 +250,10 @@ public class OcrPluginImpl implements OcrHostApi {
             textureEntry = null;
         }
         fileDecodeExecutor.shutdownNow();
-        provider.release();
+        if (provider != null) {
+            provider.release();
+            provider = null;
+        }
     }
 
     @NonNull
@@ -222,7 +267,10 @@ public class OcrPluginImpl implements OcrHostApi {
 
     @Override
     public void processImageFile(@NonNull String filePath) {
-        if (!config.enabled) {
+        refreshConfigAndProvider();
+
+        OcrConfig currentConfig = this.config;
+        if (currentConfig == null || !currentConfig.enabled) {
             Log.w(TAG, "processImageFile: ocr.enabled=false, ignoring");
             return;
         }
@@ -366,7 +414,19 @@ public class OcrPluginImpl implements OcrHostApi {
 
         List<FieldSpec> spec = uiSpecProvider.getSpec();
 
-        provider.extract(bitmap, spec, new OcrProvider.OcrProviderCallback() {
+        OcrProvider currentProvider = this.provider;
+        if (currentProvider == null) {
+            Log.e(TAG, "runOcr: OCR provider is null");
+            mainThreadHandler.post(bitmap::recycle);
+            OcrErrorMessage msg = buildErrorMessage(
+                    OcrError.ErrorCode.UNKNOWN_ERROR.name(),
+                    "OCR provider not initialized",
+                    false);
+            mainThreadHandler.post(() -> flutterApi.onOcrError(msg, r -> {}));
+            return;
+        }
+
+        currentProvider.extract(bitmap, spec, new OcrProvider.OcrProviderCallback() {
 
             @Override
             public void onSuccess(@NonNull String documentType, float confidence, @NonNull Map<String, String> data) {

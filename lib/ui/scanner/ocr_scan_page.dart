@@ -99,7 +99,7 @@ class _OcrScanPageState extends State<OcrScanPage>
       final docType = ocrProvider.formattedDocumentType;
       final confidencePct = ocrProvider.confidencePercentage;
       final confidenceText = confidencePct != null
-          ? ' (${confidencePct.toStringAsFixed(1)}% confidence)'
+          ? ' (${confidencePct.toStringAsFixed(1)}% extraction confidence)'
           : '';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
