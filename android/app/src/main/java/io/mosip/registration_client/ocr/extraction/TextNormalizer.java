@@ -7,6 +7,7 @@
 package io.mosip.registration_client.ocr.extraction;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.text.Normalizer;
 import java.util.regex.Pattern;
@@ -34,12 +35,22 @@ public final class TextNormalizer {
 
     @NonNull
     public static String normalize(@NonNull String rawText) {
+        return normalize(rawText, null);
+    }
+
+    @NonNull
+    public static String normalize(@NonNull String rawText, @Nullable String customNoiseChars) {
         String s = Normalizer.normalize(rawText, Normalizer.Form.NFKC);
 
         s = LINE_ENDINGS_PATTERN.matcher(s).replaceAll("\n");
         s = TAB_PATTERN.matcher(s).replaceAll(" ");
+
+        Pattern noisePattern = (customNoiseChars != null && !customNoiseChars.isEmpty())
+                ? Pattern.compile("[" + Pattern.quote(customNoiseChars) + "]")
+                : NOISE_CHARS_PATTERN;
+        s = noisePattern.matcher(s).replaceAll("");
+
         s = MULTIPLE_SPACES_PATTERN.matcher(s).replaceAll(" ");
-        s = NOISE_CHARS_PATTERN.matcher(s).replaceAll("");
         s = SINGLE_QUOTES_PATTERN.matcher(s).replaceAll("'");
         s = DOUBLE_QUOTES_PATTERN.matcher(s).replaceAll("\"");
         s = STRAY_UNDERSCORE_START_PATTERN.matcher(s).replaceAll("");

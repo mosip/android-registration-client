@@ -28,7 +28,6 @@ import io.mosip.registration_client.ocr.models.OcrErrorCode;
 public class MlKitOcrProvider implements OcrProvider {
 
     private static final String TAG         = "MlKitOcrProvider";
-    private static final String RAW_LOG_TAG = "OCR_RAW_TEXT";
 
     @Nullable
     private final DocumentClassifier     documentClassifier;
@@ -76,51 +75,55 @@ public class MlKitOcrProvider implements OcrProvider {
             processed = bitmap;
         }
 
-        final String finalDocumentType   = documentType;
-        final float  finalConfidence     = classificationConfidence;
-        final Bitmap finalProcessed      = processed;
+        final String finalDocumentType             = documentType;
+        final float  finalClassificationConfidence = classificationConfidence;
+        final Bitmap finalProcessed                = processed;
 
         // ML Kit text recognition
         mlKitEngine.extractRich(finalProcessed, new MlKitEngine.RichTextCallback() {
 
             @Override
             public void onSuccess(@NonNull Text visionText, float avgConfidence) {
-
-                // ── RAW TEXT DEBUG ────────────────────────────────────────────
-                Log.d(RAW_LOG_TAG,
-                        "══════════ RAW OCR TEXT (avgConf=" + avgConfidence + ") ══════════\n"
-                        + visionText.getText()
-                        + "\n══════════════════════════════════════════════════════");
-
-                Map<String, String> data;
                 try {
-                    data = fieldExtractor.extract(visionText, finalDocumentType, spec);
-                } catch (Exception e) {
-                    Log.e(TAG, "Field extraction threw unexpectedly", e);
-                    callback.onFailure(
-                            OcrError.ErrorCode.NO_FIELDS_EXTRACTED.name(),
-                            "Extraction pipeline error: " + e.getMessage(),
-                            true);
-                    return;
-                }
+                    Map<String, String> data;
+                    try {
+                        data = fieldExtractor.extract(visionText, finalDocumentType, spec);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Field extraction threw unexpectedly", e);
+                        callback.onFailure(
+                                OcrError.ErrorCode.NO_FIELDS_EXTRACTED.name(),
+                                "Extraction pipeline error: " + e.getMessage(),
+                                true);
+                        return;
+                    }
 
-                if (data.isEmpty()) {
-                    callback.onFailure(
-                            OcrError.ErrorCode.NO_FIELDS_EXTRACTED.name(),
-                            "OCR text was read but no spec fields could be matched",
-                            true);
-                    return;
-                }
+                    if (data.isEmpty()) {
+                        callback.onFailure(
+                                OcrError.ErrorCode.NO_FIELDS_EXTRACTED.name(),
+                                "OCR text was read but no spec fields could be matched",
+                                true);
+                        return;
+                    }
 
-                Log.d(TAG, "Extraction complete: " + data.size() + " fields from "
-                        + visionText.getTextBlocks().size() + " blocks");
-                callback.onSuccess(finalDocumentType, finalConfidence, data);
+                    Log.d(TAG, "Extraction complete: " + data.size() + " fields from "
+                            + visionText.getTextBlocks().size() + " blocks");
+                    // Pass ML Kit OCR recognition confidence (AC4); fallback to doc-type confidence if 0
+                    float ocrConfidence = avgConfidence > 0f ? avgConfidence : finalClassificationConfidence;
+                    callback.onSuccess(finalDocumentType, ocrConfidence, data);
+                } finally {
+                    if (finalProcessed != bitmap && !finalProcessed.isRecycled()) {
+                        finalProcessed.recycle();
+                    }
+                }
             }
 
             @Override
             public void onFailure(@NonNull String errorCode,
                                   @NonNull String message,
                                   boolean isRetryable) {
+                if (finalProcessed != bitmap && !finalProcessed.isRecycled()) {
+                    finalProcessed.recycle();
+                }
                 int mappedCode = mapMlKitFailureToProviderCode(errorCode);
                 callback.onProviderError(String.valueOf(mappedCode), message);
             }

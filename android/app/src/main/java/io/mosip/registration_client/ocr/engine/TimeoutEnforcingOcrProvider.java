@@ -28,7 +28,7 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
 
     public TimeoutEnforcingOcrProvider(@NonNull OcrProvider delegate, int timeoutMs) {
         this.delegate = delegate;
-        this.timeoutMs = timeoutMs;
+        this.timeoutMs = timeoutMs > 0 ? timeoutMs : 10000;
     }
 
     @Override

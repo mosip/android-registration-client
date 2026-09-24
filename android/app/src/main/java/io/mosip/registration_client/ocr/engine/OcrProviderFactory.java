@@ -38,10 +38,11 @@ public final class OcrProviderFactory {
 
         if (PROVIDER_REMOTE.equalsIgnoreCase(config.provider)) {
             if (config.serviceUrl == null || config.serviceUrl.trim().isEmpty()) {
-                throw new IllegalStateException(
-                        "mosip.registration.ocr.service.url must be set when ocr.provider = remote");
+                Log.w(TAG, "mosip.registration.ocr.service.url is empty but ocr.provider=remote; falling back to mlkit");
+                provider = new MlKitOcrProvider(documentClassifier, extractionConfig);
+            } else {
+                provider = new RemoteOcrProvider(config.serviceUrl, config.responseTimeoutMs);
             }
-            provider = new RemoteOcrProvider(config.serviceUrl, config.responseTimeoutMs);
         } else {
             if (!PROVIDER_MLKIT.equalsIgnoreCase(config.provider)) {
                 Log.w(TAG, "Unrecognized ocr.provider '" + config.provider + "', defaulting to mlkit");

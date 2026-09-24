@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
@@ -22,6 +23,8 @@ public class MlKitEngine implements OcrEngine {
         void onSuccess(@NonNull Text visionText, float avgConfidence);
         void onFailure(@NonNull String errorCode, @NonNull String message, boolean isRetryable);
     }
+
+    private final Object recognizerLock = new Object();
     private TextRecognizer recognizer;
 
     public MlKitEngine() {
@@ -58,19 +61,30 @@ public class MlKitEngine implements OcrEngine {
             return;
         }
 
-        TextRecognizer localRecognizer = recognizer;
-        if (localRecognizer == null) {
-            callback.onFailure(
-                    "ML_KIT_FAILURE",
-                    "ML Kit recognizer has been released",
-                    false);
-            return;
-        }
-
         InputImage image = InputImage.fromBitmap(bitmap, 0);
 
-        localRecognizer.process(image)
-                .addOnSuccessListener(visionText -> {
+        final Task<Text> task;
+        synchronized (recognizerLock) {
+            TextRecognizer localRecognizer = recognizer;
+            if (localRecognizer == null) {
+                callback.onFailure(
+                        "ML_KIT_FAILURE",
+                        "ML Kit recognizer has been released",
+                        false);
+                return;
+            }
+            try {
+                task = localRecognizer.process(image);
+            } catch (Exception e) {
+                callback.onFailure(
+                        "ML_KIT_FAILURE",
+                        "ML Kit process failed: " + e.getMessage(),
+                        false);
+                return;
+            }
+        }
+
+        task.addOnSuccessListener(visionText -> {
                     String rawText = visionText.getText();
                     if (rawText == null || rawText.trim().isEmpty()) {
                         callback.onFailure(
@@ -87,11 +101,14 @@ public class MlKitEngine implements OcrEngine {
                         "ML Kit threw an exception: " + e.getMessage(),
                         false));
     }
+
     @Override
     public void release() {
-        if (recognizer != null) {
-            recognizer.close();
-            recognizer = null;
+        synchronized (recognizerLock) {
+            if (recognizer != null) {
+                recognizer.close();
+                recognizer = null;
+            }
         }
     }
     private float calculateAverageConfidence(@NonNull Text visionText) {

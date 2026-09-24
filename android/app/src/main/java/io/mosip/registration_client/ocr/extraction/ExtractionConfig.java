@@ -183,11 +183,9 @@ public final class ExtractionConfig {
 
     private Set<String> loadHeaderPatterns(GlobalParamRepository repo) {
         Set<String> defaults = new HashSet<>(Arrays.asList(
-                "government of", "republic of", "income tax", "income tax department",
-                "election commission", "dept of", "ministry of",
-                "id card", "identity card", "voter id",
-                "permanent account number", "permanent account number card",
-                "govt. of india", "govt of india", "signature"
+                "government of", "republic of", "dept of", "department of",
+                "ministry of", "id card", "identity card", "national id",
+                "signature"
         ));
         return loadSetFromParam(repo, OcrParamKeys.OCR_EXTRACTION_HEADER_PATTERNS, defaults);
     }
@@ -247,9 +245,8 @@ public final class ExtractionConfig {
         defaults.put("mobile",       "\\+?[\\d][\\d\\-\\s]{7,14}");
         defaults.put("email",        "[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}");
         defaults.put("bloodgroup",   "[AaBoO]{1,2}[+\\-]?(\\s*\\(\\s*[Vv][Ee]\\s*\\))?");
-        defaults.put("postalcode",   "\\b[1-9][0-9]{5}\\b");
-        defaults.put("pannumber",    "\\b[A-Z]{5}[0-9]{4}[A-Z]\\b");
-        defaults.put("documentnumber", "\\b[A-Z]{5}[0-9]{4}[A-Z]\\b|\\b\\d{4}\\s?\\d{4}\\s?\\d{4}\\b|\\b[A-Z]{3}[0-9]{7}\\b");
+        defaults.put("postalcode",   "[a-zA-Z0-9\\s\\-]{3,10}");
+        defaults.put("documentnumber", "[a-zA-Z0-9\\-\\s]{4,30}");
 
         if (repo != null) {
             try {

@@ -28,11 +28,24 @@ public final class ImagePreprocessor {
 
     @NonNull
     public static Bitmap prepare(@NonNull Bitmap src) {
-        Bitmap result = upscaleIfNeeded(src);
-        result = toGrayscale(result);
-        result = boostContrast(result);
-        result = deskew(result);
-        return result;
+        Bitmap current = upscaleIfNeeded(src);
+
+        Bitmap gray = toGrayscale(current);
+        if (current != src && current != gray) {
+            current.recycle();
+        }
+
+        Bitmap contrast = boostContrast(gray);
+        if (gray != src && gray != contrast) {
+            gray.recycle();
+        }
+
+        Bitmap deskewed = deskew(contrast);
+        if (contrast != src && contrast != deskewed) {
+            contrast.recycle();
+        }
+
+        return deskewed;
     }
 
 
@@ -43,9 +56,7 @@ public final class ImagePreprocessor {
         float scale = (float) MIN_SHORT_SIDE / shortSide;
         int newW = Math.round(src.getWidth()  * scale);
         int newH = Math.round(src.getHeight() * scale);
-        Bitmap scaled = Bitmap.createScaledBitmap(src, newW, newH, true);
-        if (scaled != src) src.recycle();
-        return scaled;
+        return Bitmap.createScaledBitmap(src, newW, newH, true);
     }
 
 
@@ -59,7 +70,6 @@ public final class ImagePreprocessor {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColorFilter(new ColorMatrixColorFilter(cm));
         canvas.drawBitmap(src, 0, 0, paint);
-        if (result != src) src.recycle();
         return result;
     }
 
@@ -80,7 +90,6 @@ public final class ImagePreprocessor {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColorFilter(new ColorMatrixColorFilter(cm));
         canvas.drawBitmap(src, 0, 0, paint);
-        if (result != src) src.recycle();
         return result;
     }
 
@@ -92,10 +101,8 @@ public final class ImagePreprocessor {
 
         Matrix matrix = new Matrix();
         matrix.postRotate(-angle, src.getWidth() / 2f, src.getHeight() / 2f);
-        Bitmap rotated = Bitmap.createBitmap(
+        return Bitmap.createBitmap(
                 src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-        if (rotated != src) src.recycle();
-        return rotated;
     }
 
     private static float detectSkewAngle(@NonNull Bitmap src) {

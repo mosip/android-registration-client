@@ -62,10 +62,10 @@ public final class DemographicFieldExtractor {
             @NonNull List<FieldSpec> spec) {
 
         // Reconstruct geometry-aware rows
-        List<BlockGeometryParser.LayoutRow> rows = normalizeRows(BlockGeometryParser.parse(visionText));
+        List<BlockGeometryParser.LayoutRow> rows = normalizeRows(BlockGeometryParser.parse(visionText), config.noiseChars());
 
         // Also keep the flat normalized lines for Pass 2 / Pass 3
-        String normalizedText = TextNormalizer.normalize(visionText.getText());
+        String normalizedText = TextNormalizer.normalize(visionText.getText(), config.noiseChars());
         String[] flatLines    = normalizedText.split("\n", -1);
 
         return extractFromRows(rows, flatLines, documentType, spec);
@@ -77,7 +77,7 @@ public final class DemographicFieldExtractor {
             @Nullable String documentType,
             @NonNull List<FieldSpec> spec) {
 
-        String normalized = TextNormalizer.normalize(rawText);
+        String normalized = TextNormalizer.normalize(rawText, config.noiseChars());
         String[] lines    = normalized.split("\n", -1);
 
         // Build synthetic LayoutRows from flat lines (no geometry)
@@ -551,10 +551,11 @@ public final class DemographicFieldExtractor {
 
     @NonNull
     private static List<BlockGeometryParser.LayoutRow> normalizeRows(
-            @NonNull List<BlockGeometryParser.LayoutRow> rows) {
+            @NonNull List<BlockGeometryParser.LayoutRow> rows,
+            @Nullable String noiseChars) {
         java.util.ArrayList<BlockGeometryParser.LayoutRow> normalized = new java.util.ArrayList<>();
         for (BlockGeometryParser.LayoutRow row : rows) {
-            String text = TextNormalizer.normalize(row.fullText).replace('\n', ' ').trim();
+            String text = TextNormalizer.normalize(row.fullText, noiseChars).replace('\n', ' ').trim();
             if (!text.isEmpty()) {
                 normalized.add(new BlockGeometryParser.LayoutRow(text, row.fragments, row.bounds));
             }
@@ -608,13 +609,29 @@ public final class DemographicFieldExtractor {
                 return true;
             }
         }
+        String docRegex = config.getFieldRegexMap().get("documentnumber");
+        if (docRegex != null && !docRegex.isEmpty()) {
+            try {
+                if (Pattern.compile(docRegex, Pattern.CASE_INSENSITIVE).matcher(line.trim()).matches()) {
+                    return true;
+                }
+            } catch (Exception ignored) { }
+        }
+        String panRegex = config.getFieldRegexMap().get("pannumber");
+        if (panRegex != null && !panRegex.isEmpty()) {
+            try {
+                if (Pattern.compile(panRegex, Pattern.CASE_INSENSITIVE).matcher(line.trim()).matches()) {
+                    return true;
+                }
+            } catch (Exception ignored) { }
+        }
         if (PAN_PATTERN.matcher(line.trim()).matches()) {
             return true;
         }
         if (AADHAAR_PATTERN.matcher(line.trim()).matches()) {
             return true;
         }
-        if (lower.contains("signature") || lower.contains("हस्ताक्षर")) {
+        if (lower.contains("signature")) {
             return true;
         }
         return false;

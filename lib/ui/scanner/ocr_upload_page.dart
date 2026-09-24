@@ -151,6 +151,11 @@ class _OcrUploadPageState extends State<OcrUploadPage>
       final File file = File(picked.path);
       final int bytes = await file.length();
 
+      if (!mounted) {
+        _deleteFileAtPathSync(picked.path);
+        return;
+      }
+
       setState(() {
         _selectedFile = file;
         _selectedFilePath = picked.path;
@@ -228,7 +233,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
       final docType = ocrProvider.formattedDocumentType;
       final confidencePct = ocrProvider.confidencePercentage;
       final confidenceText = confidencePct != null
-          ? ' (${confidencePct.toStringAsFixed(1)}% confidence)'
+          ? ' (${confidencePct.toStringAsFixed(1)}% extraction confidence)'
           : '';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
