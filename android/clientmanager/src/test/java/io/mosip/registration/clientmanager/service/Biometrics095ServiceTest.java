@@ -9,6 +9,7 @@ import static org.mockito.Mockito.*;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -870,45 +871,6 @@ public class Biometrics095ServiceTest {
     }
 
     @Test
-    public void handleRCaptureResponse_nullSpecVersion_throwsException() throws Exception {
-        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
-        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), null, "Registration");
-        InputStream is = buildCaptureResponseStream(respDetail);
-        setupJwtValidationBypass(respDetail);
-
-        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
-        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
-        assertTrue(ex.getErrorText().contains("SpecVersion"));
-    }
-
-    @Test
-    public void handleRCaptureResponse_specVersionMismatch_throwsException() throws Exception {
-        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
-        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), "1.0.0", "Registration");
-        InputStream is = buildCaptureResponseStream(respDetail);
-        setupJwtValidationBypass(respDetail);
-
-        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
-        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
-        assertTrue(ex.getErrorText().contains("SpecVersion"));
-    }
-
-    @Test
-    public void handleRCaptureResponse_purposeMismatch_throwsException() throws Exception {
-        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
-        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), captureRequest.getSpecVersion(), "Auth");
-        InputStream is = buildCaptureResponseStream(respDetail);
-        setupJwtValidationBypass(respDetail);
-
-        BiometricsServiceException ex = assertThrows(BiometricsServiceException.class, () ->
-                biometrics095Service.handleRCaptureResponse(Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId()));
-        assertEquals(SBIError.SBI_RCAPTURE_ERROR.getErrorCode(), ex.getErrorCode());
-        assertTrue(ex.getErrorText().contains("Purpose"));
-    }
-
-    @Test
     public void handleRCaptureResponse_dedupeProviderUnavailable_returnsCaptureWithoutException() throws Exception {
         CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
         CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), "0.9.5", "Registration");
@@ -928,6 +890,53 @@ public class Biometrics095ServiceTest {
         assertEquals(1, result.size());
         verify(mockBioSdkProviderFactory).getProviderForMatch(Modality.FACE);
         verifyNoInteractions(mockUserBiometricRepository);
+    }
+
+    // MOSIP-44993 validates only TransactionId and timestamp on RCapture; SpecVersion and Purpose pass through as-is
+
+    @Test
+    public void handleRCaptureResponse_nullSpecVersion_returnsCaptureWithNullSpecVersion() throws Exception {
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), null, "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+        ReflectionTestUtils.setField(biometrics095Service, "sharedPreferences", mockSharedPreferences);
+
+        List<BiometricsDto> result = biometrics095Service.handleRCaptureResponse(
+                Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId());
+
+        assertEquals(1, result.size());
+        assertNull(result.get(0).getSpecVersion());
+    }
+
+    @Test
+    public void handleRCaptureResponse_specVersionMismatch_returnsCaptureWithResponseSpecVersion() throws Exception {
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), "1.0.0", "Registration");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+        ReflectionTestUtils.setField(biometrics095Service, "sharedPreferences", mockSharedPreferences);
+
+        List<BiometricsDto> result = biometrics095Service.handleRCaptureResponse(
+                Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId());
+
+        assertEquals(1, result.size());
+        assertEquals("1.0.0", result.get(0).getSpecVersion());
+    }
+
+    @Test
+    public void handleRCaptureResponse_purposeMismatch_returnsCapture() throws Exception {
+        CaptureRequest captureRequest = biometrics095Service.getRCaptureRequest(Modality.FACE, "dev", Collections.emptyList());
+        CaptureRespDetail respDetail = buildRespDetail(captureRequest.getTransactionId(), captureRequest.getSpecVersion(), "Auth");
+        InputStream is = buildCaptureResponseStream(respDetail);
+        setupJwtValidationBypass(respDetail);
+        ReflectionTestUtils.setField(biometrics095Service, "sharedPreferences", mockSharedPreferences);
+
+        List<BiometricsDto> result = biometrics095Service.handleRCaptureResponse(
+                Modality.FACE, is, Collections.emptyList(), captureRequest.getTransactionId());
+
+        assertEquals(1, result.size());
+        assertEquals(captureRequest.getSpecVersion(), result.get(0).getSpecVersion());
     }
 
     // helpers for MOSIP-44993 validation tests
@@ -974,13 +983,14 @@ public class Biometrics095ServiceTest {
         String deviceInfoJWT = "header.payload.signature";
         info.setDeviceInfo(deviceInfoJWT);
 
-        // Must satisfy isDeviceValid: specVersion contains "0.9.5", status "Ready", cert "L0"
+        // Must satisfy isDeviceValid: specVersion contains "0.9.5", status "Ready", cert "L0", purpose "Registration"
         DeviceDto deviceDto = new DeviceDto();
         deviceDto.setCallbackId("cb.info");
         deviceDto.setDigitalId("header2.payload2.signature2");
         deviceDto.setSpecVersion(new String[]{"0.9.5"});
         deviceDto.setDeviceStatus("Ready");
         deviceDto.setCertification("L0");
+        deviceDto.setPurpose("Registration");
         deviceDto.setDeviceCode("device-code-001");
         deviceDto.setDeviceId("device-id-001");
 
@@ -1106,6 +1116,7 @@ public class Biometrics095ServiceTest {
         deviceDto.setSpecVersion(new String[]{"0.9.5"});
         deviceDto.setDeviceStatus("Ready");
         deviceDto.setCertification("L0");
+        deviceDto.setPurpose("Registration");
         deviceDto.setDeviceCode("device-code-001");
         deviceDto.setDeviceId("device-id-001");
         return deviceDto;
@@ -1125,7 +1136,11 @@ public class Biometrics095ServiceTest {
                 .thenReturn(infoList);
         when(mockObjectMapper.readValue(any(byte[].class), eq(DeviceDto.class))).thenReturn(deviceDto);
 
-        spyService.handleDeviceInfoResponse(Modality.FACE, "dummy".getBytes());
+        // An invalid device shows a Toast before rethrowing; the android.jar stub would return null
+        try (MockedStatic<Toast> toastMock = mockStatic(Toast.class)) {
+            toastMock.when(() -> Toast.makeText(any(), any(CharSequence.class), anyInt())).thenReturn(mock(Toast.class));
+            spyService.handleDeviceInfoResponse(Modality.FACE, "dummy".getBytes());
+        }
     }
 
 }

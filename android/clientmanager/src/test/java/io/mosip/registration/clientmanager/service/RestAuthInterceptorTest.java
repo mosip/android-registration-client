@@ -6,6 +6,7 @@ import io.mosip.registration.clientmanager.interceptor.RestAuthInterceptor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,11 +37,18 @@ public class RestAuthInterceptorTest {
     @Mock
     Response mockResponse;
 
+    private MockedStatic<SessionManager> sessionManagerMock;
+
     @Before
     public void setUp() {
-        Mockito.mockStatic(SessionManager.class)
-                .when(() -> SessionManager.getSessionManager(mockContext))
+        sessionManagerMock = Mockito.mockStatic(SessionManager.class);
+        sessionManagerMock.when(() -> SessionManager.getSessionManager(mockContext))
                 .thenReturn(mockSessionManager);
+    }
+
+    @After
+    public void tearDown() {
+        sessionManagerMock.close();
     }
 
     @Test
