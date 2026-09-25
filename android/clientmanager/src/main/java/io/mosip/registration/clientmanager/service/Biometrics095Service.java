@@ -112,7 +112,8 @@ public class Biometrics095Service extends BiometricsService {
         Map<String, Object> deviceInfo = (Map<String, Object>) BIO_DEVICES.get(modality);
         captureRequest.setEnv(getServerActiveProfile());
         captureRequest.setPurpose(deviceInfo != null ? (String) deviceInfo.get("purpose") : DEFAULT_PURPOSE);
-        int timeout = globalParamRepository.getCachedIntCaptureTimeout();
+        int timeout = globalParamRepository != null ? globalParamRepository.getCachedIntCaptureTimeout()
+                : Integer.parseInt(RegistrationConstants.DEFAULT_CAPTURE_TIMEOUT);
 
         captureRequest.setTimeout(timeout);
         captureRequest.setSpecVersion(deviceInfo != null ? (String) deviceInfo.get("specVersion") : SPEC_VERSION);
