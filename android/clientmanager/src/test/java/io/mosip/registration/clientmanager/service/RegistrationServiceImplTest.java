@@ -1832,7 +1832,7 @@ public class RegistrationServiceImplTest {
     }
 
     @Test
-    public void testStartRegistration_WithGPS_LatitudeNull_SkipsValidation() throws Exception {
+    public void testStartRegistration_WithGPS_LatitudeNull_ThrowsIllegalArgumentException() throws Exception {
         // Setup
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("10001");
@@ -1846,17 +1846,16 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
 
         // Execute with null latitude (partial GPS)
-        RegistrationDto result = registrationService.startRegistration(
-                Arrays.asList("eng"), "NEW", "NEW", null, 77.5946);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                registrationService.startRegistration(Arrays.asList("eng"), "NEW", "NEW", null, 77.5946));
 
-        // Verify: Registration succeeds, no GPS set, no validation called
-        assertNotNull(result);
-        assertNull(result.getGeoLocationDto());
+        // Verify: partial GPS is rejected before any distance validation
+        assertEquals("Latitude and longitude must be provided together", ex.getMessage());
         verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
     }
 
     @Test
-    public void testStartRegistration_WithGPS_LongitudeNull_SkipsValidation() throws Exception {
+    public void testStartRegistration_WithGPS_LongitudeNull_ThrowsIllegalArgumentException() throws Exception {
         // Setup
         CenterMachineDto centerMachineDto = new CenterMachineDto();
         centerMachineDto.setCenterId("10001");
@@ -1870,12 +1869,11 @@ public class RegistrationServiceImplTest {
         when(globalParamRepository.getCachedIntegerGlobalParam(Mockito.anyString())).thenReturn(3);
 
         // Execute with null longitude (partial GPS)
-        RegistrationDto result = registrationService.startRegistration(
-                Arrays.asList("eng"), "NEW", "NEW", 12.9716, null);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                registrationService.startRegistration(Arrays.asList("eng"), "NEW", "NEW", 12.9716, null));
 
-        // Verify: Registration succeeds, no GPS set, no validation called
-        assertNotNull(result);
-        assertNull(result.getGeoLocationDto());
+        // Verify: partial GPS is rejected before any distance validation
+        assertEquals("Latitude and longitude must be provided together", ex.getMessage());
         verify(preCheckValidatorService, never()).validateCenterToMachineDistance(any(), any());
     }
 }

@@ -186,22 +186,37 @@ public class PacketKeeperTest {
         assertEquals("packed", result);
     }
 
-    @Test
-    public void testGetAdapter_NonPosix() {
-        configServiceMockedStatic.when(() -> ConfigService.getProperty(eq("objectstore.adapter.name"), any()))
-                .thenReturn("OtherAdapter");
-        PacketKeeper keeper = new PacketKeeper(mockContext, mockCryptoService, mockAdapterService);
-        assertNull(getAdapterViaReflection(keeper));
+    @Test(expected = IllegalStateException.class)
+    public void testPack_NonPosixAdapter_throwsIllegalStateException() {
+        nonPosixPacketKeeper().pack("id", "src", "proc", "refId");
     }
 
-    // Helper to access private getAdapter
-    private ObjectAdapterService getAdapterViaReflection(PacketKeeper keeper) {
+    @Test(expected = IllegalStateException.class)
+    public void testDeletePacket_NonPosixAdapter_throwsIllegalStateException() {
+        nonPosixPacketKeeper().deletePacket("id", "src", "proc");
+    }
+
+    @Test
+    public void testPutPacket_NonPosixAdapter_throwsPutError() throws Exception {
+        PacketKeeper keeper = nonPosixPacketKeeper();
+        Packet packet = new Packet();
+        packet.setPacketInfo(new PacketInfo());
+        packet.setPacket(new byte[]{1});
+        when(mockCryptoService.encrypt(any(), any())).thenReturn(new byte[]{2});
+
         try {
-            java.lang.reflect.Method m = PacketKeeper.class.getDeclaredMethod("getAdapter");
-            m.setAccessible(true);
-            return (ObjectAdapterService) m.invoke(keeper);
-        } catch (Exception e) {
-            return null;
+            keeper.putPacket(packet);
+            fail("Expected PacketKeeperException");
+        } catch (PacketKeeperException e) {
+            assertEquals(PacketManagerErrorCode.PACKET_KEEPER_PUT_ERROR.getErrorCode(), e.getErrorCode());
+            assertTrue(e.getMessage().contains(PacketManagerErrorCode.OS_ADAPTER_EXCEPTION.getErrorCode()));
         }
+        verifyNoInteractions(mockAdapterService);
+    }
+
+    private PacketKeeper nonPosixPacketKeeper() {
+        configServiceMockedStatic.when(() -> ConfigService.getProperty(eq("objectstore.adapter.name"), any()))
+                .thenReturn("OtherAdapter");
+        return new PacketKeeper(mockContext, mockCryptoService, mockAdapterService);
     }
 }
