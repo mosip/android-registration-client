@@ -126,6 +126,7 @@ import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.utils.TestDataReader;
+import regclient.utils.UinRidGenerator;
 
 public class BiometricCorrection extends AndroidBaseTest {
 
@@ -1869,7 +1870,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 
 		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
-		
+
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 

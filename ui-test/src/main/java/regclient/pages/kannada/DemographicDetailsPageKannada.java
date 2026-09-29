@@ -251,7 +251,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -343,7 +343,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -745,7 +745,7 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");

@@ -124,11 +124,14 @@ import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.utils.TestDataReader;
+import regclient.utils.UinRidGenerator;
 
 public class NewRegistrationInfant extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify infant new registration")
 	public void newRegistrationInfant() throws InterruptedException {
+		UinRidGenerator.ensureValidIntroducer(driver);
+
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -250,7 +253,7 @@ public class NewRegistrationInfant extends AndroidBaseTest {
 				} else {
 					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
 				}
-				demographicPage.fillDemographicDetailsPage("currentCalenderDate");
+				demographicPage.fillDemographicDetailsPage("infant");
 
 				demographicPage.clickOnContinueButton();
 			} else if (screen.equals("Documents")) {

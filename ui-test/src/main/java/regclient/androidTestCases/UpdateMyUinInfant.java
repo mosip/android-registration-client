@@ -131,11 +131,17 @@ import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.pages.tamil.UpdateUINPageTamil;
 import regclient.utils.TestDataReader;
+import regclient.utils.UinRidGenerator;
 
 public class UpdateMyUinInfant extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify infant UIN update")
 	public void updateMyUinInfant() throws InterruptedException {
+		// Covers the RID this test reads via fillDemographicDetailsPage("infant")'s
+		// introducerRID field. The separate fillIntroducerDetailsInDemographicDetailsPage("minor")
+		// call further down reads "UINminor", which nothing currently generates - unaddressed.
+		UinRidGenerator.ensureValidIntroducer(driver);
+
 		FetchUiSpec.getUiSpec("updateProcess");
 	
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

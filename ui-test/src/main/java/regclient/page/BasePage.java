@@ -1049,9 +1049,6 @@ public class BasePage {
 		throw new NoSuchElementException("Element not visible after horizontal scrolling");
 	}
 
-	// Shared by ApplicantBiometricsPage*/BiometricDetailsPage* isXxxDisplayedForCorrection() checks across all
-	// locales: the spec label may be null/empty/contain regex metacharacters, so it's guarded and quoted, with
-	// fallbackLabel offered as an alternate match.
 	protected boolean isDisplayedForCorrectionByLabel(String specId, String fallbackLabel) {
 		String label = FetchUiSpec.getValueUsingId(specId);
 		String pattern = (label == null || label.trim().isEmpty()) ? Pattern.quote(fallbackLabel)

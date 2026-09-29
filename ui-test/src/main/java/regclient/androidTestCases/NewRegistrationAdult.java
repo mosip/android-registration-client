@@ -118,8 +118,8 @@ import regclient.pages.tamil.PreviewPageTamil;
 import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
-import regclient.utils.GenerateUinFromAid;
 import regclient.utils.TestDataReader;
+import regclient.utils.UinRidGenerator;
 
 public class NewRegistrationAdult extends AndroidBaseTest {
 
@@ -436,7 +436,6 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
 				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
-		TestDataReader.saveData("AID", Aid);
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -633,7 +632,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
-		String generatedUIN = TestDataReader.readData(Aid + "_UIN");
+		String generatedUIN = UinRidGenerator.fetchAndPersistUin(Aid);
 
 		assertTrue(generatedUIN != null && !generatedUIN.isEmpty(), "Verify if UIN is generated successfully");
 

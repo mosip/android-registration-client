@@ -131,11 +131,14 @@ import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.pages.tamil.UpdateUINPageTamil;
 import regclient.utils.TestDataReader;
+import regclient.utils.UinRidGenerator;
 
 public class UpdateMyUinMinor extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify minor UIN update")
 	public void updateMyUinMinor() throws InterruptedException {
+		UinRidGenerator.ensureValidIntroducer(driver);
+
 		FetchUiSpec.getUiSpec("updateProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

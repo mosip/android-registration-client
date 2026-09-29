@@ -89,7 +89,7 @@
 			</class>
 			<class name="regclient.androidTestCases.Settings">
 				<methods>
-					<include name="Settings" />
+					<include name="settings" />
 				</methods>
 			</class>
 			<class name="regclient.androidTestCases.ExportPacket">
