@@ -9,17 +9,22 @@ import regclient.utils.CapabilitiesReader;
 import regclient.utils.PropertiesReader;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class DriverManager {
 	private static ThreadLocal<AppiumDriver> appiumDriver = new ThreadLocal<>();
 	private static AppiumDriverLocalService service = null;
 	private static final int MAX_SESSION_ATTEMPTS = 2;
+	private static final long ADB_TIMEOUT_SECONDS = 30;
+	private static final Logger logger = LoggerFactory.getLogger(DriverManager.class);
 
 	private static AppiumDriver getAndroidDriver() {
 		DesiredCapabilities desiredCapabilities = CapabilitiesReader.getDesiredCapabilities("androidDevice",
@@ -37,8 +42,8 @@ public class DriverManager {
 			} catch (RuntimeException e) {
 				lastFailure = e;
 				if (attempt < MAX_SESSION_ATTEMPTS) {
-					System.out.println("Appium session creation failed (attempt " + attempt + "/"
-							+ MAX_SESSION_ATTEMPTS + "), cleaning up device state and retrying: " + e.getMessage());
+					logger.warn("Appium session creation failed (attempt {}/{}), cleaning up device state and retrying: {}",
+							attempt, MAX_SESSION_ATTEMPTS, e.getMessage());
 					prepareDeviceForSession(udid);
 				}
 			}
@@ -62,10 +67,16 @@ public class DriverManager {
 		try {
 			List<String> command = new ArrayList<>(Arrays.asList("adb", "-s", udid));
 			command.addAll(Arrays.asList(args));
-			new ProcessBuilder(command).start().waitFor();
+			Process process = new ProcessBuilder(command).start();
+			if (!process.waitFor(ADB_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+				process.destroyForcibly();
+				logger.warn("Device cleanup step timed out after {}s (continuing anyway): adb {}", ADB_TIMEOUT_SECONDS,
+						String.join(" ", args));
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		} catch (Exception e) {
-			System.out.println("Device cleanup step failed (continuing anyway): adb " + String.join(" ", args)
-					+ " - " + e.getMessage());
+			logger.warn("Device cleanup step failed (continuing anyway): adb {}", String.join(" ", args), e);
 		}
 	}
 

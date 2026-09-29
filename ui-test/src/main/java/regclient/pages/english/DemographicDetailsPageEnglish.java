@@ -37,6 +37,8 @@ import regclient.utils.TestDataReader;
 
 public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 
+	private static final int MAX_HEADER_SWIPES = 10;
+
 	@AndroidFindBy(accessibility = "Male")
 	private WebElement maleButton;
 
@@ -157,8 +159,10 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(1);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 
@@ -583,8 +587,10 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(3);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
