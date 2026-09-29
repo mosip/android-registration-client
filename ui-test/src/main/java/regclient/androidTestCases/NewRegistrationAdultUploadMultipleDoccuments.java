@@ -128,8 +128,8 @@ import regclient.utils.UinRidGenerator;
 public class NewRegistrationAdultUploadMultipleDoccuments extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify adult new registration using multiple Documents")
 	public void newRegistrationAdultUploadMultipleDoccuments() throws InterruptedException {
-		UinRidGenerator.ensureValidIntroducer(driver);
 
+		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

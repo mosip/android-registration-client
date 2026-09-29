@@ -13,12 +13,6 @@ import regclient.api.BaseTestCase;
 import regclient.api.KernelAuthentication;
 import regclient.api.RestClient;
 
-/**
- * Checks whether the RID/UIN already in testdata.json is still valid for the current
- * environment, and (only when it isn't) fetches the UIN generated for a freshly created
- * RID and persists both to testdata.json - so they never need to be updated by hand when
- * tests are pointed at a new environment.
- */
 public class UinRidGenerator {
 
 	private static final Logger logger = Logger.getLogger(UinRidGenerator.class);
@@ -26,11 +20,6 @@ public class UinRidGenerator {
 	private UinRidGenerator() {
 	}
 
-	/**
-	 * Ensures testdata.json's RID/UIN are valid for the current environment - reusing them if
-	 * so, or generating a fresh pair via RidGenerator's registration flow if not. Call this at
-	 * the top of any test that needs a valid introducer RID.
-	 */
 	public static void ensureValidIntroducer(AppiumDriver driver) throws InterruptedException {
 		String existingRid = TestDataReader.readData("AID");
 		if (existingRid == null || existingRid.isBlank() || !isRidValidForEnvironment(existingRid)) {
@@ -39,9 +28,6 @@ public class UinRidGenerator {
 		}
 	}
 
-	/**
-	 * @return true if this RID still resolves to a real identity in the current environment.
-	 */
 	public static boolean isRidValidForEnvironment(String rid) {
 		try {
 			String token = new KernelAuthentication().getTokenByRole("idrepo");

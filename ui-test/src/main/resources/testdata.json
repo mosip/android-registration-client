@@ -1,1 +1,12 @@
-{"notificationLanguage":"eng","orientation":"portrait","defaultlanguage":"eng","language":"eng","UIN":"7584056103","id":"com.motorola.camera3:id\/capture_bar_shutter_button","AID":"10004102381003120260927171313","fingerprint_threshold":"45","UINminor":"2312798573","UINinfant":"5074162518"}
+{
+  "notificationLanguage": "eng",
+  "orientation": "portrait",
+  "defaultlanguage": "eng",
+  "language": "eng",
+  "UIN": "7584056103",
+  "id": "com.motorola.camera3:id/capture_bar_shutter_button",
+  "AID": "10004102381003120260927171313",
+  "fingerprint_threshold": "45",
+  "UINminor": "2312798573",
+  "UINinfant": "5074162518"
+}

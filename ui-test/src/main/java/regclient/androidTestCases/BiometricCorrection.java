@@ -990,6 +990,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 	@Test(priority = 1, description = "Verify minor biometric correction")
 	public void minorBiometricCorrection() throws InterruptedException {
 
+		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -1870,7 +1871,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 		}
 
 		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
-
+		
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 

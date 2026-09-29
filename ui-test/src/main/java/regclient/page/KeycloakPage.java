@@ -59,8 +59,6 @@ public class KeycloakPage extends BasePage {
 	@FindBy(xpath = "//android.widget.TextView[@text='Sign Out']")
 	private WebElement signoutButton;
 
-	// xpath, not id: a native By.id lookup makes Selenium remember "id" for all By.id
-	// lookups, which the Chrome web view then rejects as an invalid locator
 	@FindBy(xpath = "//*[@resource-id='com.android.chrome:id/negative_button']")
 	private WebElement formResubmissionCancelButton;
 
@@ -85,8 +83,6 @@ public class KeycloakPage extends BasePage {
 		return isElementDisplayed(keycloakPageTitle);
 	}
 
-	// Chrome keeps tabs from earlier runs, and the web view context can attach to a
-	// background tab. Use the tab the user sees and close the rest.
 	private void switchToVisibleTabAndCloseOthers() {
 		switchToVisibleTab(true);
 	}
@@ -120,8 +116,6 @@ public class KeycloakPage extends BasePage {
 		}
 	}
 
-	// Chrome does not always expose the Keycloak page to the native (accessibility)
-	// tree, so the account steps look in the web view first and fall back to native.
 	private static final By WEB_PASSWORD_LINK = By
 			.xpath("//a[normalize-space()='Password' or contains(@href,'/account/password')]");
 	private static final By WEB_SAVE_BUTTON = By
@@ -130,8 +124,6 @@ public class KeycloakPage extends BasePage {
 			.xpath("//*[contains(@class,'alert-success')] | //*[contains(text(),'password has been updated')]");
 	private static final By WEB_SIGN_OUT = By.xpath("//a[normalize-space()='Sign Out']");
 
-	// A run that stopped midway leaves Chrome signed in, so Keycloak opens the Account
-	// page instead of the login page. Sign out first (web view: the native tree is empty).
 	private void signOutIfStillLoggedIn() {
 		try {
 			By loginTitle = By.cssSelector("#kc-page-title");
@@ -178,7 +170,6 @@ public class KeycloakPage extends BasePage {
 		return true;
 	}
 
-	// Presence, not visibility: fields can be in the DOM but off screen or under the keyboard
 	private WebElement findPresentInWeb(By locator, int seconds) {
 		try {
 			String webCtx = findWebViewContext(Duration.ofSeconds(3));
@@ -209,8 +200,6 @@ public class KeycloakPage extends BasePage {
 	}
 
 	public boolean openKeycloakPassword() {
-		// Keycloak may open straight on the password page (it remembers the last account
-		// page), and the page can reload after login, so retry a few times
 		for (int attempt = 1; attempt <= 3; attempt++) {
 			if (isPasswordPageOpen(3)) {
 				return true;
@@ -417,8 +406,6 @@ public class KeycloakPage extends BasePage {
 		waitForNativeLoginForm();
 	}
 
-	// Returns null if there is no Sign Out link in the web view, otherwise whether the
-	// login page came back. Tries a normal click, a JavaScript click, then the link's address.
 	private Boolean signOutInWeb() {
 		WebElement signOut = findInWeb(WEB_SIGN_OUT, 5);
 		if (signOut == null) {

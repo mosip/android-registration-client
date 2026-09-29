@@ -129,8 +129,8 @@ public class NewRegistrationMinor extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify minor new registration")
 	public void newRegistrationMinor() throws InterruptedException {
-		UinRidGenerator.ensureValidIntroducer(driver);
 
+		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

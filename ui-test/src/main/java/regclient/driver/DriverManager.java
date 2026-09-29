@@ -46,11 +46,6 @@ public class DriverManager {
 		throw lastFailure;
 	}
 
-	/**
-	 * Recovers from a stale UiAutomator2 instrumentation still holding the device's UiAutomation
-	 * connection, and wakes/unlocks the screen - the two most common causes of
-	 * "UiAutomation not connected" on session creation.
-	 */
 	private static void prepareDeviceForSession(String udid) {
 		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.uiautomator2.server.test");
 		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.settings");
