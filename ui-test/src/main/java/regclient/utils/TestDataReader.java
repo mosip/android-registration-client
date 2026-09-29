@@ -4,6 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Collections;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -46,8 +53,14 @@ public class TestDataReader {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void saveData(String key, String value) {
+		saveData(Collections.singletonMap(key, value));
+	}
+
+	// Saves all keys in one write. The JSON goes to a temp file that then replaces
+	// testdata.json, so the file is never left half-written or with only some keys updated.
+	@SuppressWarnings("unchecked")
+	public static void saveData(Map<String, String> values) {
 
 		JSONParser parser = new JSONParser();
 		String filePath = getTestDataPath();
@@ -62,14 +75,21 @@ public class TestDataReader {
 				jsonObject = (JSONObject) obj;
 			}
 
-			jsonObject.put(key, value);
+			jsonObject.putAll(values);
 
-			try (FileWriter fw = new FileWriter(filePath)) {
+			Path target = Paths.get(filePath);
+			Path temp = Paths.get(filePath + ".tmp");
+			try (FileWriter fw = new FileWriter(temp.toFile())) {
 				fw.write(jsonObject.toJSONString());
+			}
+			try {
+				Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+			} catch (AtomicMoveNotSupportedException e) {
+				Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING);
 			}
 
 		} catch (IOException | ParseException e) {
-			throw new IllegalStateException("Failed to persist key '" + key + "' to file: " + filePath, e);
+			throw new IllegalStateException("Failed to persist keys " + values.keySet() + " to file: " + filePath, e);
 		}
 	}
 
