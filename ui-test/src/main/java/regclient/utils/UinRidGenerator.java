@@ -19,6 +19,8 @@ import regclient.api.RestClient;
 public class UinRidGenerator {
 
 	private static final Logger logger = Logger.getLogger(UinRidGenerator.class);
+	private static final int LOOKUP_ATTEMPTS = 3;
+	private static final long LOOKUP_RETRY_DELAY_MILLIS = 5000;
 
 	private UinRidGenerator() {
 	}
@@ -34,7 +36,7 @@ public class UinRidGenerator {
 		// Repair a stored UIN that does not belong to the stored AID
 		if (!uin.equals(TestDataReader.readData("UIN"))) {
 			persistIntroducer(existingRid, uin);
-			logger.info("Stored UIN did not match AID [" + mask(existingRid) + "], repaired to [" + mask(uin) + "]");
+			logger.info("Stored UIN did not match AID [" + mask(existingRid) + "], repaired");
 		}
 	}
 
@@ -43,16 +45,30 @@ public class UinRidGenerator {
 		return lookupUin(rid) != null;
 	}
 
-	// Returns the UIN for the RID, or null if it has none or the lookup fails
+	// Returns the UIN for the RID, or null if IDREPO has no UIN for it. A failed lookup is
+	// retried and then fails the test, so a valid stored introducer is never discarded.
 	private static String lookupUin(String rid) {
-		try {
-			String token = new KernelAuthentication().getTokenByRole("idrepo");
-			String uin = fetchUinByRid(rid, token);
-			return (uin == null || uin.isEmpty()) ? null : uin;
-		} catch (Exception e) {
-			logger.warn("Could not verify existing RID [" + mask(rid) + "], treating it as invalid: " + e.getMessage());
-			return null;
+		IllegalStateException lastFailure = null;
+		for (int attempt = 1; attempt <= LOOKUP_ATTEMPTS; attempt++) {
+			try {
+				String token = new KernelAuthentication().getTokenByRole("idrepo");
+				String uin = fetchUinByRid(rid, token);
+				return (uin == null || uin.isEmpty()) ? null : uin;
+			} catch (IllegalStateException e) {
+				lastFailure = e;
+				logger.warn("IDREPO lookup failed for RID [" + mask(rid) + "], attempt " + attempt + "/"
+						+ LOOKUP_ATTEMPTS + ": " + e.getMessage());
+				if (attempt < LOOKUP_ATTEMPTS) {
+					try {
+						Thread.sleep(LOOKUP_RETRY_DELAY_MILLIS);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
 		}
+		throw new IllegalStateException("Could not verify introducer RID [" + mask(rid) + "] in IDREPO", lastFailure);
 	}
 
 	// AID and UIN are saved in one write so testdata.json never holds a mismatched pair
@@ -69,8 +85,14 @@ public class UinRidGenerator {
 
 		String uin = null;
 		for (int attempt = 1; attempt <= maxRetries && (uin == null || uin.isEmpty()); attempt++) {
-			String token = new KernelAuthentication().getTokenByRole("idrepo");
-			uin = fetchUinByRid(rid, token);
+			try {
+				String token = new KernelAuthentication().getTokenByRole("idrepo");
+				uin = fetchUinByRid(rid, token);
+			} catch (IllegalStateException e) {
+				// A failed lookup while polling just means "not available yet"
+				logger.warn("IDREPO lookup failed for RID [" + mask(rid) + "]: " + e.getMessage());
+				uin = null;
+			}
 			if ((uin == null || uin.isEmpty()) && attempt < maxRetries) {
 				logger.warn("UIN not yet generated for RID [" + mask(rid) + "], attempt " + attempt + "/" + maxRetries);
 				try {
@@ -88,29 +110,47 @@ public class UinRidGenerator {
 		}
 
 		persistIntroducer(rid, uin);
-		logger.info("Persisted fresh UIN [" + mask(uin) + "] and RID [" + mask(rid) + "] to testdata.json");
+		logger.info("Persisted fresh introducer for RID [" + mask(rid) + "] to testdata.json");
 
 		return uin;
 	}
 
+	// Returns the UIN, or null if IDREPO answered without one (e.g. no record yet).
+	// Throws IllegalStateException when the lookup itself fails (network, HTTP, auth).
 	private static String fetchUinByRid(String rid, String token) {
+		Response response;
+		JSONObject responseJson;
 		try {
-			Response response = RestClient.getRequestWithCookie(
+			response = RestClient.getRequestWithCookie(
 					BaseTestCase.ApplnURI + BaseTestCase.props.getProperty("retrieveIdByUin") + rid,
 					MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, BaseTestCase.COOKIENAME, token);
-
-			JSONObject responseJson = new JSONObject(response.asString());
-			JSONArray errors = responseJson.optJSONArray("errors");
-			if ((errors != null && errors.length() > 0) || responseJson.isNull("response")) {
-				return null;
-			}
-
-			JSONObject identity = responseJson.getJSONObject("response").optJSONObject("identity");
-			return identity == null ? null : identity.optString("UIN", null);
+			responseJson = new JSONObject(response.asString());
 		} catch (Exception e) {
-			logger.error("Error fetching UIN for RID [" + mask(rid) + "]: " + e.getMessage());
+			throw new IllegalStateException("IDREPO request failed: " + e.getMessage(), e);
+		}
+
+		int status = response.getStatusCode();
+		if (status == 401 || status == 403 || status >= 500) {
+			throw new IllegalStateException("IDREPO returned HTTP " + status);
+		}
+
+		JSONArray errors = responseJson.optJSONArray("errors");
+		if (errors != null && errors.length() > 0) {
+			for (int i = 0; i < errors.length(); i++) {
+				JSONObject error = errors.optJSONObject(i);
+				String code = error == null ? "" : error.optString("errorCode", "");
+				if (code.startsWith("KER-ATH")) {
+					throw new IllegalStateException("IDREPO authentication failed: " + code);
+				}
+			}
 			return null;
 		}
+		if (responseJson.isNull("response")) {
+			return null;
+		}
+
+		JSONObject identity = responseJson.getJSONObject("response").optJSONObject("identity");
+		return identity == null ? null : identity.optString("UIN", null);
 	}
 
 	// Show only the last 4 characters of a RID/UIN in logs
