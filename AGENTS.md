@@ -19,11 +19,12 @@ transliteration). Flutter talks to these modules through generated
 
 ## Technology Stack
 
-- **App/UI**: Flutter/Dart, `pubspec.yaml` pins `sdk: ">=2.19.6 <3.0.0"`,
-  Flutter SDK `3.10.4` per `README.md`. Flutter 3.10.x ships Dart 3.0.x,
-  above that `<3.0.0` bound — a pre-existing repo inconsistency, not a
-  typo here. Use a Dart-2-era Flutter SDK to satisfy the constraint, or
-  expect to raise it if installing 3.10.4.
+- **App/UI**: Flutter/Dart — use Flutter SDK `3.10.4` (Dart `3.0.x`), as
+  pinned by `README.md` and CI (`build-android.yml`'s `flutter-version`).
+  `pubspec.yaml`'s `sdk: ">=2.19.6 <3.0.0"` is not a conflict: Dart 3
+  treats a `<3.0.0` upper bound (with lower bound ≥2.12) as `<4.0.0`.
+  Don't use a Dart-2-era Flutter SDK — `pubspec.lock` requires
+  `dart >=3.0.0` / `flutter >=3.10.0`.
 - **Native Android modules**: Kotlin/Java, Gradle (AGP `8.3.2`, Kotlin
   `1.9.24`, `compileSdkVersion`/`targetSdkVersion` 34, `minSdkVersion`
   28) — see `android/build.gradle` and `android/app/build.gradle`.
@@ -82,19 +83,16 @@ cd target && java -jar uitest-regclient-1.0.1.jar   # run tests
   build time from the `JKS_PRIVATE_SECRET`/`KEY_PROPERTIES` secrets into
   `android/app/arc-local-keystore.jks` and `android/key.properties`.
   Locally, create your own dev keystore and never commit it.
-- **Committed secrets (unresolved)**: `android/build.gradle`'s and
-  `android/app/build.gradle`'s `sonarqube`/`sonar` blocks each hardcode
-  the same real, live-looking `sonar.login` token; `android/build.gradle`
-  also sets a real `debugPassword` (consumed by
-  `android/clientmanager/build.gradle`'s `DEBUG_PASSWORD` field) and a
-  contributor's personal Windows path in
-  `sonar.coverage.jacoco.xmlReportPaths`. All are committed secrets in a
-  public repo — treat as compromised, do not extend the pattern. CI's
-  only token substitution (`build_client.yml` `sed`s `sqp_19c9702e…` in
-  `*gradle.properties`) does **not** cover any of these — that pattern
-  doesn't exist in the tree. See `android/AGENTS.md` — removing them
-  requires a maintainer/deployment-owner decision (CI secret vs. local
-  file), not a drive-by fix.
+- **Sonar & debug password (placeholders)**: the only `sonarqube` block
+  is in `android/build.gradle`, with placeholder `sonar.projectKey`/
+  `sonar.organization`/`sonar.token` (`your-sonar-…`) and
+  `sonar.coverage.jacoco.xmlReportPaths` built from
+  `${rootProject.rootDir}`. `debugPassword` (consumed by
+  `android/clientmanager/build.gradle`'s `DEBUG_PASSWORD` field) is also a
+  placeholder. Hardcoded real values were removed in #1095 but remain in
+  git history — treat those as compromised. Supply real values locally
+  or via CI secrets; never commit them. `build_client.yml`'s
+  `sqp_19c9702e…` `sed` substitution matches nothing in the tree.
 
 ## Project Structure Notes
 
@@ -124,7 +122,7 @@ cd target && java -jar uitest-regclient-1.0.1.jar   # run tests
 
 ## Development Workflow
 
-- Active branch (per `README.md`): `develop`; `release-1.1.x` is also an
+- Active branch (per `README.md`): `develop`; `release-1.2.x` is also an
   active developer-release branch. Verify the default branch yourself —
   MOSIP repos vary.
 - After cloning: `flutter pub get` → `sh pigeon.sh` → set
@@ -141,8 +139,9 @@ cd target && java -jar uitest-regclient-1.0.1.jar   # run tests
   `dco-check` job enforces this and gates the rest of that workflow as
   a chain (`codeql` → `prebuild` → `build-apk`), so a missing sign-off
   blocks the whole build.
-- Reference the tracking issue in the PR/commit body — this repo has no
-  PR-linker workflow, so linking is by convention, not automation.
+- Reference the tracking issue in the PR/commit body —
+  `use-pr-linker.yml` (on `pull_request_target`) calls MOSIP's shared
+  `mosip/kattu` `link-pr-to-issue.yml` workflow to link PRs to issues.
 - Follow MOSIP's contribution guide:
   <https://docs.mosip.io/1.2.0/community/code-contributions>.
 - Keep generated files (Pigeon output, Freezed/`*.g.dart`) out of PRs
