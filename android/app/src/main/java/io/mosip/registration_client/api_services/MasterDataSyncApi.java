@@ -234,7 +234,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("PolicyKeySync", 5, errorCode));
             }, REG_APP_ID, centerMachineDto.getMachineRefId(), REG_APP_ID, centerMachineDto.getMachineRefId(), isManualSync, jobId);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Policy Key Sync Failed.", e);
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }
@@ -261,7 +261,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("GlobalParamsSync", 1, errorCode));
             }, isManualSync, jobId);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Global Params Sync Failed.", e);
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }
@@ -286,7 +286,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("UserDetailsSync", 3, errorCode));
             }, isManualSync, jobId);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "User Details Sync Failed.", e);
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }
@@ -308,7 +308,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }, isManualSync);
         } catch (Exception e) {
             Log.e(TAG, "ID Schema Sync Failed.", e);
-            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
             result.error(e);
         }
@@ -333,7 +332,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }, 0, isManualSync, jobId);
         } catch (Exception e) {
             Log.e(TAG, "Master Data Sync Failed.", e);
-            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
         }
 
@@ -365,7 +363,6 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
             }, isManualSync, jobId);
         } catch (Exception e) {
             Log.e(TAG, "CA Certificate Sync Failed.", e);
-            e.printStackTrace();
             onSyncJobComplete(jobId, false, isManualSync);
             result.error(e);
         }
@@ -434,7 +431,7 @@ public class MasterDataSyncApi implements MasterDataSyncPigeon.SyncApi {
                 result.success(syncResult("KernelCertsSync", 7, errorCode));
             }, KERNEL_APP_ID, "SIGN", "SERVER-RESPONSE", "SIGN-VERIFY", isManualSync, jobId);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Kernel Certs Sync Failed.", e);
             onSyncJobComplete(jobId, false, isManualSync);
         }
     }

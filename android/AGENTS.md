@@ -49,9 +49,9 @@ Centralizes almost every version number in one `ext {}` block — module
 `build.gradle` files reference `rootProject.ext.*` rather than
 hardcoding. Includes AGP `8.3.2`, Kotlin `1.9.24`, `compileSdk`/
 `targetSdk` 34, `minSdk` 28, `serverBaseURL`/`serverHealthCheckPath`/
-`serverActuatorInfoPath` (see root `AGENTS.md`), a committed-secret
-`debugPassword` (see root `AGENTS.md`'s Configuration for the full
-warning — do not re-add or extend this pattern), and ~50 dependency
+`serverActuatorInfoPath` (see root `AGENTS.md`), a placeholder
+`debugPassword` (see root `AGENTS.md`'s Configuration — never commit a
+real value), and ~50 dependency
 version properties (Dagger, OkHttp/Retrofit, Jackson, BouncyCastle, jose4j,
 SQLCipher, PDFBox, ICU4J, `biometrics-util`, `kernel-biometrics-api`,
 etc.).
