@@ -64,8 +64,44 @@ public class KeycloakPage extends BasePage {
 	@FindBy(xpath = "//android.widget.TextView[@text='Sign Out']")
 	private WebElement signoutButton;
 
-	@FindBy(xpath = "//*[@resource-id='com.android.chrome:id/negative_button']")
+	@FindBy(xpath = "//android.widget.Button[@resource-id='com.android.chrome:id/negative_button']")
 	private WebElement formResubmissionCancelButton;
+
+	@FindBy(xpath = "//android.widget.EditText[@resource-id='username']")
+	private WebElement nativeUsernameField;
+
+	@FindBy(css = "#kc-page-title")
+	private WebElement webLoginTitle;
+
+	@FindBy(css = "#username")
+	private WebElement webUsernameField;
+
+	@FindBy(xpath = "//a[normalize-space()='Password' or contains(@href,'/account/password')]")
+	private WebElement webPasswordLink;
+
+	@FindBy(css = "#password")
+	private WebElement webPasswordField;
+
+	@FindBy(css = "#password-new")
+	private WebElement webNewPasswordField;
+
+	@FindBy(css = "#password-confirm")
+	private WebElement webConfirmPasswordField;
+
+	@FindBy(xpath = "//button[normalize-space()='Save'] | //input[@type='submit' and @value='Save']")
+	private WebElement webSaveButton;
+
+	@FindBy(css = ".alert")
+	private WebElement webAlert;
+
+	@FindBy(xpath = "//div[contains(@class,'alert-success')] | //span[contains(text(),'password has been updated')]")
+	private WebElement webPasswordUpdatedMessage;
+
+	@FindBy(xpath = "//a[normalize-space()='Sign Out']")
+	private WebElement webSignOutLink;
+
+	@FindBy(css = "#kc-logout")
+	private WebElement webLogoutConfirmButton;
 
 	public boolean openKeycloakWebView() {
 		String webCtx = findWebViewContext(Duration.ofSeconds(5));
@@ -121,21 +157,11 @@ public class KeycloakPage extends BasePage {
 		}
 	}
 
-	private static final By WEB_PASSWORD_LINK = By
-			.xpath("//a[normalize-space()='Password' or contains(@href,'/account/password')]");
-	private static final By WEB_SAVE_BUTTON = By
-			.xpath("//button[normalize-space()='Save'] | //input[@type='submit' and @value='Save']");
-	private static final By WEB_PASSWORD_UPDATED = By
-			.xpath("//*[contains(@class,'alert-success')] | //*[contains(text(),'password has been updated')]");
-	private static final By WEB_SIGN_OUT = By.xpath("//a[normalize-space()='Sign Out']");
-
 	private void signOutIfStillLoggedIn() {
 		try {
-			By loginTitle = By.cssSelector("#kc-page-title");
-			new WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions
-					.or(ExpectedConditions.presenceOfElementLocated(loginTitle),
-							ExpectedConditions.presenceOfElementLocated(WEB_SIGN_OUT)));
-			if (!driver.findElements(loginTitle).isEmpty()) {
+			new WebDriverWait(driver, Duration.ofSeconds(20))
+					.until(d -> isPresent(webLoginTitle) || isPresent(webSignOutLink));
+			if (isPresent(webLoginTitle)) {
 				return;
 			}
 			logger.info("Keycloak session still active, signing out first.");
@@ -147,24 +173,41 @@ public class KeycloakPage extends BasePage {
 		}
 	}
 
-	private WebElement findInWeb(By locator, int seconds) {
+	private boolean switchToKeycloakWebView() {
+		String webCtx = findWebViewContext(Duration.ofSeconds(3));
+		if (webCtx == null) {
+			return false;
+		}
+		((SupportsContextSwitching) driver).context(webCtx);
+		switchToVisibleTab(false);
+		return true;
+	}
+
+	// PageFactory re-locates the element on every call, so this reflects the current page
+	private static boolean isPresent(WebElement element) {
 		try {
-			String webCtx = findWebViewContext(Duration.ofSeconds(3));
-			if (webCtx == null) {
+			element.getTagName();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private WebElement findInWeb(WebElement element, String name, int seconds) {
+		try {
+			if (!switchToKeycloakWebView()) {
 				return null;
 			}
-			((SupportsContextSwitching) driver).context(webCtx);
-			switchToVisibleTab(false);
 			return new WebDriverWait(driver, Duration.ofSeconds(seconds))
-					.until(ExpectedConditions.visibilityOfElementLocated(locator));
+					.until(ExpectedConditions.visibilityOf(element));
 		} catch (Exception e) {
-			logger.info("Not found in web view: {} ({})", locator, firstLine(e));
+			logger.info("Not found in web view: {} ({})", name, firstLine(e));
 			return null;
 		}
 	}
 
-	private boolean typeInWeb(String cssSelector, String text) {
-		WebElement field = findPresentInWeb(By.cssSelector(cssSelector), 15);
+	private boolean typeInWeb(WebElement element, String name, String text) {
+		WebElement field = findPresentInWeb(element, name, 15);
 		if (field == null) {
 			logWebPage();
 			return false;
@@ -175,18 +218,15 @@ public class KeycloakPage extends BasePage {
 		return true;
 	}
 
-	private WebElement findPresentInWeb(By locator, int seconds) {
+	private WebElement findPresentInWeb(WebElement element, String name, int seconds) {
 		try {
-			String webCtx = findWebViewContext(Duration.ofSeconds(3));
-			if (webCtx == null) {
+			if (!switchToKeycloakWebView()) {
 				return null;
 			}
-			((SupportsContextSwitching) driver).context(webCtx);
-			switchToVisibleTab(false);
 			return new WebDriverWait(driver, Duration.ofSeconds(seconds))
-					.until(ExpectedConditions.presenceOfElementLocated(locator));
+					.until(d -> isPresent(element) ? element : null);
 		} catch (Exception e) {
-			logger.info("Not present in web view: {} ({})", locator, firstLine(e));
+			logger.info("Not present in web view: {} ({})", name, firstLine(e));
 			return null;
 		}
 	}
@@ -224,7 +264,7 @@ public class KeycloakPage extends BasePage {
 			if (isPasswordPageOpen(3)) {
 				return true;
 			}
-			if (findInWeb(WEB_PASSWORD_LINK, 10) != null) {
+			if (findInWeb(webPasswordLink, "Password link", 10) != null) {
 				return true;
 			}
 			logger.info("Keycloak account page not ready, attempt {}", attempt);
@@ -232,7 +272,7 @@ public class KeycloakPage extends BasePage {
 		}
 
 		scrollToTopSafe();
-		By nativePwd = By.xpath("//*[@text='Password']");
+		By nativePwd = By.xpath("//android.widget.TextView[@text='Password']");
 		try {
 			scrollHorizontallyUntilVisible(nativePwd);
 			((SupportsContextSwitching) driver).context("NATIVE_APP");
@@ -277,7 +317,7 @@ public class KeycloakPage extends BasePage {
 		if (isPasswordPageOpen(2)) {
 			return;
 		}
-		WebElement link = findInWeb(WEB_PASSWORD_LINK, 10);
+		WebElement link = findInWeb(webPasswordLink, "Password link", 10);
 		if (link == null) {
 			logWebPage();
 			switchToNativeContext();
@@ -300,7 +340,7 @@ public class KeycloakPage extends BasePage {
 		// 2. JavaScript click
 		logger.info("Password link click did not open the page, trying JavaScript click.");
 		try {
-			js.executeScript("arguments[0].click();", driver.findElement(WEB_PASSWORD_LINK));
+			js.executeScript("arguments[0].click();", webPasswordLink);
 		} catch (Exception e) {
 			logger.warn("JavaScript click failed: {}", e.getMessage());
 		}
@@ -322,7 +362,7 @@ public class KeycloakPage extends BasePage {
 	}
 
 	private boolean isPasswordPageOpen(int seconds) {
-		boolean open = findPresentInWeb(By.cssSelector("#password-new"), seconds) != null;
+		boolean open = findPresentInWeb(webNewPasswordField, "New password field", seconds) != null;
 		if (open) {
 			logger.info("Keycloak password page opened.");
 		}
@@ -330,28 +370,28 @@ public class KeycloakPage extends BasePage {
 	}
 
 	public void enterExistPassword(String password) {
-		if (!typeInWeb("#password", password)) {
+		if (!typeInWeb(webPasswordField, "Password field", password)) {
 			switchToNativeContext();
 			sendKeysToTextBox(passwordField, password);
 		}
 	}
 
 	public void enterNewPassword(String password) {
-		if (!typeInWeb("#password-new", password)) {
+		if (!typeInWeb(webNewPasswordField, "New password field", password)) {
 			switchToNativeContext();
 			clickAndsendKeysToTextBox(newPasswordField, password);
 		}
 	}
 
 	public void enterConfirmPassword(String password) {
-		if (!typeInWeb("#password-confirm", password)) {
+		if (!typeInWeb(webConfirmPasswordField, "Confirm password field", password)) {
 			switchToNativeContext();
 			clickAndsendKeysToTextBox(confirmPasswordField, password);
 		}
 	}
 
 	public void clickOnSaveButton() {
-		WebElement save = findInWeb(WEB_SAVE_BUTTON, 5);
+		WebElement save = findInWeb(webSaveButton, "Save button", 5);
 		if (save == null) {
 			switchToNativeContext();
 			clickOnElement(saveButton);
@@ -369,7 +409,7 @@ public class KeycloakPage extends BasePage {
 		// 2. JavaScript click
 		logger.info("Save click did not submit, trying JavaScript click.");
 		try {
-			js.executeScript("arguments[0].click();", driver.findElement(WEB_SAVE_BUTTON));
+			js.executeScript("arguments[0].click();", webSaveButton);
 		} catch (Exception e) {
 			logger.warn("JavaScript click on Save failed: {}", e.getMessage());
 		}
@@ -381,7 +421,7 @@ public class KeycloakPage extends BasePage {
 		logger.info("Submitting Keycloak password form directly.");
 		try {
 			js.executeScript("var b = arguments[0]; if (b.form.requestSubmit) { b.form.requestSubmit(b); } else { b.form.submit(); }",
-					driver.findElement(WEB_SAVE_BUTTON));
+					webSaveButton);
 		} catch (Exception e) {
 			logger.warn("Form submit failed: {}", e.getMessage());
 		}
@@ -393,7 +433,7 @@ public class KeycloakPage extends BasePage {
 
 	// Keycloak shows the result (success or error) in an .alert box
 	private boolean isKeycloakMessageShown(int seconds) {
-		WebElement alert = findPresentInWeb(By.cssSelector(".alert"), seconds);
+		WebElement alert = findPresentInWeb(webAlert, "Keycloak message", seconds);
 		if (alert == null) {
 			return false;
 		}
@@ -402,7 +442,7 @@ public class KeycloakPage extends BasePage {
 	}
 
 	public boolean isPasswordUpdatedMessageDisplayed() {
-		if (findInWeb(WEB_PASSWORD_UPDATED, 20) != null) {
+		if (findInWeb(webPasswordUpdatedMessage, "Password updated message", 20) != null) {
 			return true;
 		}
 		logWebPage();
@@ -431,7 +471,7 @@ public class KeycloakPage extends BasePage {
 	}
 
 	private Boolean signOutInWeb() {
-		WebElement signOut = findInWeb(WEB_SIGN_OUT, 5);
+		WebElement signOut = findInWeb(webSignOutLink, "Sign Out link", 5);
 		if (signOut == null) {
 			return null;
 		}
@@ -449,7 +489,7 @@ public class KeycloakPage extends BasePage {
 		// 2. JavaScript click
 		logger.info("Sign Out click did not sign out, trying JavaScript click.");
 		try {
-			js.executeScript("arguments[0].click();", driver.findElement(WEB_SIGN_OUT));
+			js.executeScript("arguments[0].click();", webSignOutLink);
 		} catch (Exception e) {
 			logger.warn("JavaScript click on Sign Out failed: {}", firstLine(e));
 		}
@@ -471,18 +511,13 @@ public class KeycloakPage extends BasePage {
 
 	// Newer Keycloak shows a "Do you want to log out?" page first; confirm it if shown
 	private boolean isLoginPageBack(int seconds) {
-		By username = By.cssSelector("#username");
-		By logoutConfirm = By.cssSelector("#kc-logout");
 		try {
-			new WebDriverWait(driver, Duration.ofSeconds(seconds)).until(ExpectedConditions.or(
-					ExpectedConditions.presenceOfElementLocated(username),
-					ExpectedConditions.presenceOfElementLocated(logoutConfirm)));
-			if (driver.findElements(username).isEmpty()) {
+			new WebDriverWait(driver, Duration.ofSeconds(seconds))
+					.until(d -> isPresent(webUsernameField) || isPresent(webLogoutConfirmButton));
+			if (!isPresent(webUsernameField)) {
 				logger.info("Confirming Keycloak logout.");
-				((JavascriptExecutor) driver).executeScript("arguments[0].click();",
-						driver.findElement(logoutConfirm));
-				new WebDriverWait(driver, Duration.ofSeconds(15))
-						.until(ExpectedConditions.presenceOfElementLocated(username));
+				((JavascriptExecutor) driver).executeScript("arguments[0].click();", webLogoutConfirmButton);
+				new WebDriverWait(driver, Duration.ofSeconds(15)).until(d -> isPresent(webUsernameField));
 			}
 			logger.info("Keycloak login page is back after sign out.");
 			return true;
@@ -534,8 +569,7 @@ public class KeycloakPage extends BasePage {
 
 	private void waitForNativeLoginForm() {
 		try {
-			new WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions
-					.visibilityOfElementLocated(By.xpath("//android.widget.EditText[@resource-id='username']")));
+			new WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions.visibilityOf(nativeUsernameField));
 		} catch (Exception e) {
 			throw new RuntimeException("Keycloak login page not shown after sign out", e);
 		}
