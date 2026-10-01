@@ -32,6 +32,12 @@ import 'package:registration_client/ui/process_ui/widgets/terms_and_conditions.d
 import 'package:registration_client/ui/process_ui/widgets/pre_reg_data_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/additional_Info_ReqId_control.dart';
 import 'package:registration_client/ui/process_ui/widgets/textbox_control.dart';
+import 'package:registration_client/provider/ocr_scan_provider.dart';
+import 'package:registration_client/ui/scanner/ocr_scan_page.dart';
+import 'package:registration_client/ui/scanner/ocr_upload_page.dart';
+import 'package:registration_client/utils/app_config.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'radio_button_control.dart';
 
@@ -206,7 +212,7 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
     return false;
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -223,6 +229,18 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
         if (widget.screen.additionalInfoRequestIdRequired == true) ...[
           const AdditionalInfoReqIdControl(),
         ],
+
+        // OCR action row — only on Demographics screen when OCR is enabled
+        Consumer<OcrScanProvider>(
+          builder: (context, ocrProvider, _) {
+            final isDemographicsScreen =
+                widget.screen.preRegFetchRequired == true;
+            if (ocrProvider.isOcrEnabled && isDemographicsScreen) {
+              return _buildOcrActionRow(context);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
         
         (context.watch<GlobalProvider>().preRegControllerRefresh)
             ? const CircularProgressIndicator()
@@ -243,4 +261,151 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
       ],
     );
   }
+
+  /// Builds a compact single-row OCR action bar (Scan + Upload).
+  Widget _buildOcrActionRow(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: solidPrimary.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: solidPrimary.withOpacity(0.12),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Label
+            Icon(Icons.auto_fix_high_rounded,
+                color: solidPrimary, size: 16),
+            SizedBox(width: 6.w),
+            Text(
+              'Auto-fill',
+              style: TextStyle(
+                color: solidPrimary,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            // Scan button
+            Expanded(
+              child: SizedBox(
+                height: 34,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    context.read<GlobalProvider>().getAudit("REG-EVT-106", "REG-MOD-103");
+                    final status = await Permission.camera.status;
+                    if (status.isPermanentlyDenied) {
+                      if (context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Camera Permission Required'),
+                            content: const Text(
+                              'Camera access is needed to scan documents. '
+                              'Please enable it in app Settings.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  openAppSettings();
+                                },
+                                child: const Text('Open Settings'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return;
+                    }
+                    if (context.mounted) {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => OcrScanPage(
+                                screenFields: widget.screen.fields)),
+                      );
+                      if (context.mounted) {
+                        context.read<GlobalProvider>().preRegControllerRefresh = true;
+                        await Future.delayed(const Duration(milliseconds: 30));
+                        if (context.mounted) {
+                          context.read<GlobalProvider>().preRegControllerRefresh = false;
+                        }
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.document_scanner_outlined,
+                      size: 16),
+                  label: const Text('Scan'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: solidPrimary,
+                    side: BorderSide(
+                        color: solidPrimary.withOpacity(0.4), width: 1),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w),
+                    textStyle: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            // Upload button
+            Expanded(
+              child: SizedBox(
+                height: 34,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => OcrUploadPage(
+                              screenFields: widget.screen.fields)),
+                    );
+                    if (context.mounted) {
+                      context.read<GlobalProvider>().preRegControllerRefresh = true;
+                      await Future.delayed(const Duration(milliseconds: 30));
+                      if (context.mounted) {
+                        context.read<GlobalProvider>().preRegControllerRefresh = false;
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.upload_file_outlined,
+                      size: 16),
+                  label: const Text('Upload'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: solidPrimary,
+                    side: BorderSide(
+                        color: solidPrimary.withOpacity(0.4), width: 1),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w),
+                    textStyle: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
+

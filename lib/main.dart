@@ -17,6 +17,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
 import 'package:registration_client/provider/sync_provider.dart';
+import 'package:registration_client/provider/ocr_scan_provider.dart';
 import 'package:registration_client/ui/login_page.dart';
 import 'package:registration_client/utils/app_config.dart';
 import 'package:flutter_driver/driver_extension.dart';
@@ -173,6 +174,10 @@ class RegistrationClientApp extends StatelessWidget {
         ChangeNotifierProvider(
           lazy: false,
           create: (_) => ApprovePacketsProvider(),
+        ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => OcrScanProvider(),
         ),
       ],
       child: const BuildApp(),
