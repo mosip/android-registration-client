@@ -17,4 +17,7 @@ public interface ReasonListDao {
     @Insert(entity = ReasonList.class, onConflict = OnConflictStrategy.REPLACE)
     void insert(ReasonList reasonList);
 
+    @Query("DELETE FROM reason_list WHERE code = :code AND lang_code = :langCode")
+    void deleteByCodeAndLangCode(String code, String langCode);
+
 }
