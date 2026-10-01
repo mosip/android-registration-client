@@ -84,7 +84,7 @@ public class PendingApprovalFrench extends PendingApproval {
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(1)")
 	private WebElement latestAIdCheckBox;
 
-	@AndroidFindBy(accessibility = "Aucun réseau trouvé !")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Aucun réseau trouvé\")")
 	private WebElement noNetworkFound;
 
 	@AndroidFindBy(accessibility = "AUTHENTIFIER")

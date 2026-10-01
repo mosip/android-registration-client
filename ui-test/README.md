@@ -151,7 +151,7 @@ run_regclient.bat
 Update these files before execution:
 
 * `resources/config/kernal.properties` — Environment details
-* `resources/testdata.json` — Test data (uin, language, rid, camera id)
+* `resources/testdata.json` — Test data (uin, language, aid, camera id). The `AID` and `UIN` values are managed automatically — see [Introducer AID Handling](#introducer-aid-handling) below; you don't need to maintain them by hand.
 * `resources/config.properties` — `nodePath`, `appiumServerExecutable`
 * `resources/DesiredCapabilies.json` — `udid`, app path
 * `camera.java` — Update camera & retake button coordinates
@@ -161,6 +161,34 @@ Update these files before execution:
 src/main/resources/config
 ```
 (Maven will copy them to `target/classes/config`)
+
+---
+
+## Introducer AID Handling
+
+Infant/minor registration (and biometric correction, UIN update) flows need an existing, real identity with a confirmed UIN to enter as the **introducer**. This is managed automatically — no manual RID/AID lookup required.
+
+**How it works:**
+
+1. At the start of these flows, `UinRidGenerator.ensureValidIntroducer(driver)` runs:
+   * `regclient.androidTestCases.NewRegistrationInfant`
+   * `regclient.androidTestCases.NewRegistrationMinor`
+   * `regclient.androidTestCases.NewRegistrationMinorException`
+   * `regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments`
+   * `regclient.androidTestCases.BiometricCorrection`
+   * `regclient.androidTestCases.UpdateMyUinInfant`
+   * `regclient.androidTestCases.UpdateMyUinMinor`
+
+2. It reads the `AID` value already saved in `testdata.json` and checks whether it's still valid **for the current environment** (`UinRidGenerator.isRidValidForEnvironment`, which queries idrepo).
+   * **Valid** → reused as-is. No new registration is performed.
+   * **Missing / blank / invalid** (e.g. first run, or `testdata.json` pointed at a different environment) → `RidGenerator.generateNewRid(driver)` runs a full new-adult-registration flow end to end (login → demographic details → biometrics → submit → supervisor approval → upload) to create a fresh identity.
+
+3. Once a fresh identity is created, `UinRidGenerator.fetchAndPersistUin(rid)` polls idrepo until the UIN is actually generated, then persists **both** `AID` and `UIN` back to `testdata.json`. This is also the same method `NewRegistrationAdult` calls after every successful adult registration, so whichever adult registration most recently succeeded in a run becomes the introducer candidate for later infant/minor tests.
+
+4. The six language-specific `DemographicDetailsPage*.java` classes (`English`, `Hindi`, `Arabic`, `French`, `Tamil`, `Kannada`) read `testdata.json`'s `AID` value and type it into the introducer-RID field during infant/minor registration.
+
+**Config knobs** (`resources/config/application.properties`):
+* `uinGenMaxLoopCount` / `uinGenDelayTime` — how many times, and how far apart, to poll idrepo before giving up on UIN generation. Increase these if your environment's registration-processor pause/resume rules (e.g. non-resident applicant auto-pause) add extra latency beyond steady-state processing time.
 
 ---
 
