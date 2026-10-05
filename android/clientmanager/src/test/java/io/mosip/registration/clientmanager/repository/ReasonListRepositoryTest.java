@@ -67,9 +67,10 @@ public class ReasonListRepositoryTest {
         // Perform save operation
         reasonListRepository.saveReasonList(mockJson);
 
-        // Capture the saved ReasonList object
+        // Saved through the code+lang upsert, so a re-sync updates the row instead of duplicating it
         ArgumentCaptor<ReasonList> captor = ArgumentCaptor.forClass(ReasonList.class);
-        verify(reasonListDao, times(1)).insert(captor.capture());
+        verify(reasonListDao, times(1)).upsert(captor.capture());
+        verify(reasonListDao, never()).insert(any());
 
         // Retrieve captured value
         ReasonList capturedReason = captor.getValue();

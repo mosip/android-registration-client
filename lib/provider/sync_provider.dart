@@ -62,8 +62,17 @@ class SyncProvider with ChangeNotifier {
   final Map<String, JobStatus> _jobStatuses = {};
 
   String get lastSuccessfulSyncTime => _lastSuccessfulSyncTime;
-  String get lastMasterDataSyncTime =>
-      _lastMasterDataSyncTime.isNotEmpty ? _lastMasterDataSyncTime : _lastSuccessfulSyncTime;
+  /// Newer of the manual "Synchronise Data" time and the native last-sync time,
+  /// so auto/background syncs also update the tile.
+  String get lastMasterDataSyncTime {
+    final manual = DateTime.tryParse(_lastMasterDataSyncTime);
+    final native = DateTime.tryParse(_lastSuccessfulSyncTime);
+    if (manual == null) {
+      return native != null ? _lastSuccessfulSyncTime : _lastMasterDataSyncTime;
+    }
+    if (native != null && native.isAfter(manual)) return _lastSuccessfulSyncTime;
+    return _lastMasterDataSyncTime;
+  }
   String get lastPreRegSyncTime => _lastPreRegSyncTime;
   bool get isMasterDataSyncing => _isMasterDataSyncing;
   bool get isPreRegSyncing => _isPreRegSyncing;
