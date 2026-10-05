@@ -1,8 +1,6 @@
 package io.mosip.registration.clientmanager.repository;
 
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,9 +30,6 @@ public class ReasonListRepository {
         reasonList.setName(reasonListJson.getString("name"));
         reasonList.setLangCode(reasonListJson.getString("langCode"));
         reasonList.setDescription(reasonListJson.getString("description"));
-        Log.i(getClass().getSimpleName(), reasonList.toString());
-        // id is auto-generated, so REPLACE never conflicts; drop existing rows for this code+lang to avoid duplicates on re-sync
-        reasonListDao.deleteByCodeAndLangCode(reasonList.getCode(), reasonList.getLangCode());
-        reasonListDao.insert(reasonList);
+        reasonListDao.upsert(reasonList);
     }
 }

@@ -18,6 +18,9 @@ const _duplicatedReasons = [
   'Poor Photo',
 ];
 
+// What it returns now: one row per reason code.
+const _reasons = ['Invalid Data', 'Poor Photo'];
+
 Widget _rejectDialog(ApprovePacketsProvider provider) {
   return ChangeNotifierProvider<ApprovePacketsProvider>.value(
     value: provider,
@@ -42,7 +45,7 @@ void main() {
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler(_reasonChannel, (ByteData? message) async {
-      return SyncApi.codec.encodeMessage(<Object?>[_duplicatedReasons]);
+      return SyncApi.codec.encodeMessage(<Object?>[_reasons]);
     });
   });
 

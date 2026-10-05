@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -68,13 +67,10 @@ public class ReasonListRepositoryTest {
         // Perform save operation
         reasonListRepository.saveReasonList(mockJson);
 
-        // Existing rows for the same code+lang are removed before insert, so re-sync can't duplicate
-        InOrder inOrder = inOrder(reasonListDao);
-        inOrder.verify(reasonListDao).deleteByCodeAndLangCode("DEMO", "en");
-
-        // Capture the saved ReasonList object
+        // Saved through the code+lang upsert, so a re-sync updates the row instead of duplicating it
         ArgumentCaptor<ReasonList> captor = ArgumentCaptor.forClass(ReasonList.class);
-        inOrder.verify(reasonListDao, times(1)).insert(captor.capture());
+        verify(reasonListDao, times(1)).upsert(captor.capture());
+        verify(reasonListDao, never()).insert(any());
 
         // Retrieve captured value
         ReasonList capturedReason = captor.getValue();

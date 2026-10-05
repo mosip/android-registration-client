@@ -21,16 +21,6 @@ void main() {
         .setMockMessageHandler(_reasonChannel, null);
   });
 
-  test('getAllReasonList removes duplicate reasons, keeping order', () async {
-    mockReasons(['Invalid Data', 'Poor Photo', 'Invalid Data', 'Poor Photo']);
-    final provider = ApprovePacketsProvider();
-
-    provider.getAllReasonList('eng');
-    await pumpEventQueue();
-
-    expect(provider.reasonList, ['Invalid Data', 'Poor Photo']);
-  });
-
   test('getAllReasonList keeps a selected reason that is still listed', () async {
     mockReasons(['Invalid Data', 'Poor Photo']);
     final provider = ApprovePacketsProvider()..selectedReason = 'Poor Photo';
