@@ -14,7 +14,7 @@ import io.mosip.registration.clientmanager.entity.ReasonList;
 public abstract class ReasonListDao {
     // One row per code: older installs can still hold duplicates re-inserted by earlier syncs
     @Query("select * from reason_list WHERE lang_code = :langCode AND id IN " +
-            "(select min(id) from reason_list WHERE lang_code = :langCode group by code)")
+            "(select max(id) from reason_list WHERE lang_code = :langCode group by code)")
     public abstract List<ReasonList> getAllReasonList(String langCode);
 
     @Insert(entity = ReasonList.class, onConflict = OnConflictStrategy.REPLACE)
