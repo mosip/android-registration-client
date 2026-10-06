@@ -4,12 +4,25 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class TestDataReader {
+
+	// Guards saveData within this JVM (a FileLock cannot be taken twice by one JVM)
+	private static final Object SAVE_LOCK = new Object();
 
 	public static String readData(String key) {
 		return getValueFromJson(key);
@@ -46,30 +59,53 @@ public class TestDataReader {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void saveData(String key, String value) {
+		saveData(Collections.singletonMap(key, value));
+	}
 
-		JSONParser parser = new JSONParser();
+	// Saves all keys in one write. The read, merge and replace run under a lock (threads in
+	// this JVM and other test processes sharing the file), and the JSON goes to a unique temp
+	// file that then replaces testdata.json, so updates are never lost or half-written.
+	public static void saveData(Map<String, String> values) {
+
 		String filePath = getTestDataPath();
+		Path target = Paths.get(filePath);
+		Path lockFile = Paths.get(filePath + ".lock");
 
-		try {
-
-			JSONObject jsonObject;
-
-			try (FileReader reader = new FileReader(filePath)) {
-
-				Object obj = parser.parse(reader);
-				jsonObject = (JSONObject) obj;
+		synchronized (SAVE_LOCK) {
+			try (FileChannel channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+					FileLock lock = channel.lock()) {
+				mergeAndReplace(target, values);
+			} catch (IOException | ParseException e) {
+				throw new IllegalStateException("Failed to persist keys " + values.keySet() + " to file: " + filePath,
+						e);
 			}
+		}
+	}
 
-			jsonObject.put(key, value);
+	@SuppressWarnings("unchecked")
+	private static void mergeAndReplace(Path target, Map<String, String> values) throws IOException, ParseException {
 
-			try (FileWriter fw = new FileWriter(filePath)) {
+		JSONObject jsonObject;
+
+		try (FileReader reader = new FileReader(target.toFile())) {
+			jsonObject = (JSONObject) new JSONParser().parse(reader);
+		}
+
+		jsonObject.putAll(values);
+
+		Path temp = Files.createTempFile(target.toAbsolutePath().getParent(), "testdata", ".tmp");
+		try {
+			try (FileWriter fw = new FileWriter(temp.toFile())) {
 				fw.write(jsonObject.toJSONString());
 			}
-
-		} catch (IOException | ParseException e) {
-			throw new IllegalStateException("Failed to persist key '" + key + "' to file: " + filePath, e);
+			try {
+				Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+			} catch (AtomicMoveNotSupportedException e) {
+				Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING);
+			}
+		} finally {
+			Files.deleteIfExists(temp);
 		}
 	}
 

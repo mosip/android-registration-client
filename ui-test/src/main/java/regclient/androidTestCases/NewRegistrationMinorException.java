@@ -124,11 +124,14 @@ import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.utils.TestDataReader;
+import regclient.utils.UinRidGenerator;
 
 public class NewRegistrationMinorException extends AndroidBaseTest {
 
 	@Test(priority = 0, description = "Verify minor new registration exception")
 	public void newRegistrationMinorException() throws InterruptedException {
+
+		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
