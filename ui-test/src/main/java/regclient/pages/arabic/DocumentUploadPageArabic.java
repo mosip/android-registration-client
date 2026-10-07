@@ -74,6 +74,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 	public boolean isDoccumentUploadPageDisplayed() {
 		scrollToTop();
 		swipeRightUntilTabDisplayed("تحميل المستندات");
+
 		return driver.findElements(MobileBy.AccessibilityId(FetchUiSpec.getScreenTitle("Documents"))).size() > 0;
 	}
 
