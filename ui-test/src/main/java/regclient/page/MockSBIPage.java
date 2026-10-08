@@ -239,15 +239,14 @@ public class MockSBIPage extends BasePage {
 			percent = 100;
 
 		double actualPercent = -1;
-
 		for (int attempt = 1; attempt <= 2; attempt++) {
-			int startX = seekBar.getLocation().getX();
-			int width = seekBar.getSize().getWidth();
-			int y = seekBar.getLocation().getY() + (seekBar.getSize().getHeight() / 2);
+		int startX = seekBar.getLocation().getX();
+		int width = seekBar.getSize().getWidth();
+		int y = seekBar.getLocation().getY() + (seekBar.getSize().getHeight() / 2);
 
-			// 🔸 calibration offsets (approx 4–5% on both sides)
-			double leftOffset = 0.04; // skip a few px from start
-			double rightOffset = 0.96; // stop a bit before end
+		// 🔸 calibration offsets (approx 4–5% on both sides)
+		double leftOffset = 0.04; // skip a few px from start
+		double rightOffset = 0.96; // stop a bit before end
 
 			// Grab the thumb where it currently is, not at a fixed left edge — the
 			// widget may already be at a non-zero value left over from a previous run.
@@ -267,7 +266,7 @@ public class MockSBIPage extends BasePage {
 				drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 				driver.perform(Collections.singletonList(drag));
 				waitTime(1);
-			} catch (Exception ex) {
+			} catch (Exception ex){
 				logger.warn("Drag gesture failed, falling back to click at coordinates", ex);
 				clickAtCoordinates(targetX, y);
 			}

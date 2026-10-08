@@ -33,20 +33,17 @@ public class UinRidGenerator {
 			fetchAndPersistUin(rid);
 			return;
 		}
-		// Repair a stored UIN that does not belong to the stored AID
+
 		if (!uin.equals(TestDataReader.readData("UIN"))) {
 			persistIntroducer(existingRid, uin);
 			logger.info("Stored UIN did not match AID [" + mask(existingRid) + "], repaired");
 		}
 	}
 
-	// Valid only if the RID resolves to a UIN: introducer flows need a confirmed UIN
 	public static boolean isRidValidForEnvironment(String rid) {
 		return lookupUin(rid) != null;
 	}
 
-	// Returns the UIN for the RID, or null if IDREPO has no UIN for it. A failed lookup is
-	// retried and then fails the test, so a valid stored introducer is never discarded.
 	private static String lookupUin(String rid) {
 		IllegalStateException lastFailure = null;
 		for (int attempt = 1; attempt <= LOOKUP_ATTEMPTS; attempt++) {
@@ -115,8 +112,6 @@ public class UinRidGenerator {
 		return uin;
 	}
 
-	// Returns the UIN, or null if IDREPO answered without one (e.g. no record yet).
-	// Throws IllegalStateException when the lookup itself fails (network, HTTP, auth).
 	private static String fetchUinByRid(String rid, String token) {
 		Response response;
 		JSONObject responseJson;

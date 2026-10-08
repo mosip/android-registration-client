@@ -20,13 +20,6 @@ import io.mosip.testrig.apirig.otp.Root;
 import io.mosip.testrig.apirig.testrunner.OTPListener;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 
-/**
- * Replacement for {@link OTPListener#run()} that keeps the mock-SMTP websocket alive.
- * The library version connects once without keep-alive, so an idle proxy timeout silently
- * drops the connection and later notifications (e.g. AdditionalInfoRequestId) are lost.
- * Received notifications are still stored in {@link OTPListener#emailNotificationMapS},
- * so {@link OTPListener#getOtp} and {@link OTPListener#getAdditionalReqId} work unchanged.
- */
 public final class NotificationListener {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationListener.class);

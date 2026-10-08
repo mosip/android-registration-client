@@ -117,7 +117,6 @@ public class Settings extends AndroidBaseTest {
 
 		assertTrue(settingsPage.isDeviceSettingsLabelDisplayedInLoggedLanguage(),
 				"Verify if device settings label displayed in logged language");
-
 		assertTrue(settingsPage.isScanNowButtonDisplayed(), "Verify if scan now button displayed");
 
 		settingsPage.clickOnScanNowButton();
@@ -190,5 +189,4 @@ public class Settings extends AndroidBaseTest {
 				"Verify if global config settings search box is displayed");
 
 	}
-
 }

@@ -21,7 +21,6 @@ import org.json.simple.parser.ParseException;
 
 public class TestDataReader {
 
-	// Guards saveData within this JVM (a FileLock cannot be taken twice by one JVM)
 	private static final Object SAVE_LOCK = new Object();
 
 	public static String readData(String key) {
@@ -59,13 +58,11 @@ public class TestDataReader {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void saveData(String key, String value) {
 		saveData(Collections.singletonMap(key, value));
 	}
 
-	// Saves all keys in one write. The read, merge and replace run under a lock (threads in
-	// this JVM and other test processes sharing the file), and the JSON goes to a unique temp
-	// file that then replaces testdata.json, so updates are never lost or half-written.
 	public static void saveData(Map<String, String> values) {
 
 		String filePath = getTestDataPath();
@@ -86,9 +83,9 @@ public class TestDataReader {
 	@SuppressWarnings("unchecked")
 	private static void mergeAndReplace(Path target, Map<String, String> values) throws IOException, ParseException {
 
-		JSONObject jsonObject;
+			JSONObject jsonObject;
 
-		try (FileReader reader = new FileReader(target.toFile())) {
+			try (FileReader reader = new FileReader(target.toFile())) {
 			jsonObject = (JSONObject) new JSONParser().parse(reader);
 		}
 

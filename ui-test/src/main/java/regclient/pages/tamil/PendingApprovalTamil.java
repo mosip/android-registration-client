@@ -221,7 +221,7 @@ public class PendingApprovalTamil extends PendingApproval {
 	public boolean isAuthenticateButtonEnabled() {
 		return isElementEnabled(authenticateButton);
 	}
-
+	
 	public boolean isSubmitButtonDisabledWithEmptyUsername() {
 		return isElementDisabled(submitButton);
 	}
