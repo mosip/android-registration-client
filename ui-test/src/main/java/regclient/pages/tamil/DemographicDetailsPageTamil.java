@@ -26,6 +26,8 @@ import regclient.utils.TestDataReader;
 
 public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 
+	private static final int MAX_HEADER_SWIPES = 10;
+
 	@AndroidFindBy(accessibility = "ஆண்")
 	private WebElement maleButton;
 
@@ -124,8 +126,10 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(3);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
@@ -254,7 +258,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -346,7 +350,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -419,7 +423,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 			}
 		}
 	}
-	
+
 	public void fetchPreregApplicationId(String age) {
 		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
 		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
@@ -661,8 +665,10 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 				  if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(3);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
@@ -704,16 +710,16 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 
 			                if (isElementDisplayed(By.className("android.view.View"))) {
 			                    clickOnElement(findElement(By.className("android.view.View")));
-			                    System.out.println("Postal dropdown handled successfully");
+			                    logger.info("Postal dropdown handled successfully");
 			                    break; // success
 			                } else {
-			                    System.out.println("Postal options not visible yet, retrying...");
+			                    logger.info("Postal options not visible yet, retrying...");
 			                }
 			            } else {
 							swipeUp();
 			            }
 			        } catch (org.openqa.selenium.StaleElementReferenceException e) {
-			            System.out.println("Postal element went stale, retrying...");
+			            logger.info("Postal element went stale, retrying...");
 			        }
 			        waitTime(2);
 			        attempts++;
@@ -747,7 +753,7 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");

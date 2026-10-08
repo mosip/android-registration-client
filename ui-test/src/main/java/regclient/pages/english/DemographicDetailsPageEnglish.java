@@ -37,6 +37,8 @@ import regclient.utils.TestDataReader;
 
 public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 
+	private static final int MAX_HEADER_SWIPES = 10;
+
 	@AndroidFindBy(accessibility = "Male")
 	private WebElement maleButton;
 
@@ -67,7 +69,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 	@AndroidFindBy(xpath = "//android.widget.Button[@content-desc='FETCH DATA']/following-sibling::android.widget.Button")
 	private WebElement scanButton;
 
-	@AndroidFindBy(accessibility = "Non-Foreigner / غير أجنبي")
+	@AndroidFindBy(uiAutomator = "new UiSelector().descriptionContains(\"Non-Foreigner\")")
 	private WebElement nonForeignerOption;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc,'Application ID does not exist')]")
@@ -135,14 +137,6 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 		clickOnElement(scanButton);
 	}
 
-	public boolean isApplicationIdDoesNotExistMessageDisplay() {
-		return isElementDisplayed(applicationIdDoesNotExistMsg);
-	}
-
-	public void clickOnOkayButton() {
-		clickOnElement(okayButton);
-	}
-
 	public void fillDemographicDetailsPage(String age) {
 		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("DemographicDetails");
@@ -162,17 +156,17 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					if (FetchUiSpec.getTransliterateTypeUsingId(id))
 						assertTrue(checkSecondLanguageTextBoxNotNull(id),
 								"Verify if " + id + " is enter in second language text box");
-					
+
 				}else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
-					        && FetchUiSpec.getFormatUsingId(id).equals("none")) {
-
-					    waitTime(1);
-
-					    By dropdownLocator = By.xpath(
-					            "//android.widget.Button[.//android.view.View[contains(@content-desc,'"
-					                    + FetchUiSpec.getValueUsingId(id) + "')]]");
-
-					    scrollUntilElementVisible(dropdownLocator);
+							&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
+					waitTime(1);
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
+						 swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
+						swipeUp();
+					}
 
 					    boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
 					            "new UiSelector().descriptionContains(\""
@@ -180,19 +174,11 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 
 					    assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
 
-					    WebElement dropdownElement = findElement(dropdownLocator);
+						WebElement dropdownElement = findElement(By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
+									+ FetchUiSpec.getValueUsingId(id) + "')]]"));
 
 					    clickOnElement(dropdownElement);
 					    waitTime(1);
-
-					    // Special handling for Residence Status
-					    if (id.equals("residenceStatus")) {
-					        clickOnElement(nonForeignerOption);
-					        waitTime(1);
-					    }
-
-					    // Generic handling for all other dropdowns
-					    else {
 
 					        if (!isElementDisplayed(dropdownElement)) {
 					            clickOnElement(findElement(By.className("android.view.View")));
@@ -216,7 +202,6 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					            clickOnElement(dropdownElement);
 					            waitTime(1);
 					            clickOnElement(findElement(By.className("android.view.View")));
-					        }
 					    }
 					} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("")) {
@@ -321,7 +306,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -413,7 +398,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -485,19 +470,6 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				}
 			}
 		}
-	}
-
-	public void fetchInvalidPreregApplicationId(String prid) {
-		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
-		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
-		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
-
-		boolean isDisplayed = isElementDisplayed(appIdLabel);
-		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
-
-		applicationIdTextBox = findElementWithRetry(appIdTextbox);
-		clickAndsendKeysToTextBox(applicationIdTextBox, (prid));
-		clickOnElement(fetchDataButton);
 	}
 
 	public void fetchPreregApplicationId(String age) {
@@ -627,8 +599,10 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(3);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
@@ -714,7 +688,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -722,6 +696,27 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				}
 			}
 		}
+	}
+
+	public boolean isApplicationIdDoesNotExistMessageDisplay() {
+		return isElementDisplayed(applicationIdDoesNotExistMsg);
+	}
+
+	public void clickOnOkayButton() {
+		clickOnElement(okayButton);
+	}
+
+	public void fetchInvalidPreregApplicationId(String prid) {
+		assertTrue(prid != null && !prid.trim().isEmpty(), "Invalid prereg application ID must be non-empty");
+		By appIdLabel = By.xpath("//android.widget.EditText[contains(@hint,'Application ID')]");
+		By appIdTextbox = By.xpath("//android.widget.EditText[contains(@hint,'Please Enter Application ID')]");
+
+		boolean isDisplayed = isElementDisplayed(appIdLabel);
+		assertTrue(isDisplayed, "Verify if Application ID label is displayed");
+
+		applicationIdTextBox = findElementWithRetry(appIdTextbox);
+		clickAndsendKeysToTextBox(applicationIdTextBox, (prid));
+		clickOnElement(fetchDataButton);
 	}
 
 }
