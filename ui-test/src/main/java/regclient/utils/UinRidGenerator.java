@@ -85,6 +85,9 @@ public class UinRidGenerator {
 			try {
 				String token = new KernelAuthentication().getTokenByRole("idrepo");
 				uin = fetchUinByRid(rid, token);
+			} catch (IdRepoRejectedException e) {
+				// Auth or client errors will not fix themselves, so stop polling
+				throw e;
 			} catch (IllegalStateException e) {
 				// A failed lookup while polling just means "not available yet"
 				logger.warn("IDREPO lookup failed for RID [" + mask(rid) + "]: " + e.getMessage());
@@ -125,7 +128,10 @@ public class UinRidGenerator {
 		}
 
 		int status = response.getStatusCode();
-		if (status == 401 || status == 403 || status >= 500) {
+		if (status >= 400 && status < 500 && status != 404) {
+			throw new IdRepoRejectedException("IDREPO returned HTTP " + status);
+		}
+		if (status >= 500) {
 			throw new IllegalStateException("IDREPO returned HTTP " + status);
 		}
 
@@ -135,7 +141,7 @@ public class UinRidGenerator {
 				JSONObject error = errors.optJSONObject(i);
 				String code = error == null ? "" : error.optString("errorCode", "");
 				if (code.startsWith("KER-ATH")) {
-					throw new IllegalStateException("IDREPO authentication failed: " + code);
+					throw new IdRepoRejectedException("IDREPO authentication failed: " + code);
 				}
 			}
 			return null;
@@ -154,5 +160,15 @@ public class UinRidGenerator {
 			return "****";
 		}
 		return "*".repeat(value.length() - 4) + value.substring(value.length() - 4);
+	}
+
+	// Permanent IDREPO failure (auth or client error) that retrying will not fix
+	private static final class IdRepoRejectedException extends IllegalStateException {
+
+		private static final long serialVersionUID = 1L;
+
+		IdRepoRejectedException(String message) {
+			super(message);
+		}
 	}
 }

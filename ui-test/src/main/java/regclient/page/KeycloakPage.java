@@ -145,13 +145,16 @@ public class KeycloakPage extends BasePage {
 				}
 				return;
 			}
-			for (String handle : driver.getWindowHandles()) {
-				if (!handle.equals(visibleTab)) {
-					driver.switchTo().window(handle);
-					driver.close();
+			try {
+				for (String handle : driver.getWindowHandles()) {
+					if (!handle.equals(visibleTab)) {
+						driver.switchTo().window(handle);
+						driver.close();
+					}
 				}
+			} finally {
+				driver.switchTo().window(visibleTab);
 			}
-			driver.switchTo().window(visibleTab);
 		} catch (Exception e) {
 			logger.warn("Could not select visible Chrome tab: {}", e.getMessage());
 		}

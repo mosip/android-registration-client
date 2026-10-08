@@ -710,16 +710,16 @@ public class DemographicDetailsPageTamil extends DemographicDetailsPage {
 
 			                if (isElementDisplayed(By.className("android.view.View"))) {
 			                    clickOnElement(findElement(By.className("android.view.View")));
-			                    System.out.println("Postal dropdown handled successfully");
+			                    logger.info("Postal dropdown handled successfully");
 			                    break; // success
 			                } else {
-			                    System.out.println("Postal options not visible yet, retrying...");
+			                    logger.info("Postal options not visible yet, retrying...");
 			                }
 			            } else {
 							swipeUp();
 			            }
 			        } catch (org.openqa.selenium.StaleElementReferenceException e) {
-			            System.out.println("Postal element went stale, retrying...");
+			            logger.info("Postal element went stale, retrying...");
 			        }
 			        waitTime(2);
 			        attempts++;

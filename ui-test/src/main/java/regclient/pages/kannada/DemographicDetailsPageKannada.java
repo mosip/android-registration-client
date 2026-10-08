@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -22,6 +24,8 @@ import regclient.page.DocumentUploadPage;
 import regclient.utils.TestDataReader;
 
 public class DemographicDetailsPageKannada extends DemographicDetailsPage {
+
+	private static final Logger logger = LoggerFactory.getLogger(DemographicDetailsPageKannada.class);
 
 	private static final int MAX_HEADER_SWIPES = 10;
 
@@ -707,16 +711,16 @@ public class DemographicDetailsPageKannada extends DemographicDetailsPage {
 
 			                if (isElementDisplayed(By.className("android.view.View"))) {
 			                    clickOnElement(findElement(By.className("android.view.View")));
-			                    System.out.println("✅ Postal dropdown handled successfully");
+			                    logger.info("Postal dropdown handled successfully");
 			                    break; // success
 			                } else {
-			                    System.out.println("⏳ Postal options not visible yet, retrying...");
+			                    logger.info("Postal options not visible yet, retrying...");
 			                }
 			            } else {
 							swipeUp();
 			            }
 			        } catch (org.openqa.selenium.StaleElementReferenceException e) {
-			            System.out.println("🔄 Postal element went stale, retrying...");
+			            logger.info("Postal element went stale, retrying...");
 			        }
 			        waitTime(2);
 			        attempts++;

@@ -521,13 +521,13 @@ public class RidGenerator {
 		boolean uploadSuccess = false;
 		for (int i = 0; i < 3; i++) {
 			manageApplicationsPage.clickOnUploadButton();
-			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+			uploadSuccess = manageApplicationsPage.isPacketUploadDone(Aid);
 			if (uploadSuccess) {
 				break;
 			}
 		}
 
-		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
+		assertTrue(uploadSuccess, "Verify if packet " + Aid + " is uploaded after retries");
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 		if ("eng".equalsIgnoreCase(language)) {

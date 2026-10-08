@@ -120,7 +120,7 @@ public final class NotificationListener {
 			}
 			if (!OTPListener.parseOtp(message).isEmpty() || !OTPListener.parseAdditionalReqId(message).isEmpty()) {
 				OTPListener.emailNotificationMapS.put(address, message);
-				LOGGER.info("Stored notification for {}", address);
+				LOGGER.info("Stored {} notification", root.type);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Failed to process mock SMTP notification: {}", e.getMessage());
