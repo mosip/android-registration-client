@@ -11,6 +11,8 @@ import 'package:registration_client/utils/constants.dart';
 import '../platform_spi/packet_service.dart';
 
 class ExportPacketsProvider with ChangeNotifier {
+  static const String notUploadedServerStatusFilter = "__not_uploaded__";
+
   List<Registration> packetsList = [];
 
   List<Registration> matchingPackets = [];
@@ -87,15 +89,7 @@ class ExportPacketsProvider with ChangeNotifier {
     matchingPackets.clear();
     for (int i = 0; i < packetsList.length; i++) {
       matchingSelected[i] = false;
-      if (packetsList[i].packetId.contains(searchList)) {
-        if (clientStatus != null &&
-            clientStatus != packetsList[i].clientStatus) {
-          continue;
-        }
-        if (serverStatus != null &&
-            serverStatus != packetsList[i].serverStatus) {
-          continue;
-        }
+      if (_matchesFilters(packetsList[i])) {
         matchingPackets.add(packetsList[i]);
       }
     }
@@ -107,20 +101,28 @@ class ExportPacketsProvider with ChangeNotifier {
     matchingPackets.clear();
     for (int i = 0; i < packetsList.length; i++) {
       matchingSelected[i] = false;
-      if (packetsList[i].packetId.contains(searchList)) {
-        if (clientStatus != null &&
-            clientStatus != packetsList[i].clientStatus) {
-          continue;
-        }
-        if (serverStatus != null &&
-            serverStatus != packetsList[i].serverStatus) {
-          continue;
-        }
+      if (_matchesFilters(packetsList[i])) {
         matchingPackets.add(packetsList[i]);
       }
     }
     countSelected = 0;
     notifyListeners();
+  }
+
+  bool _matchesFilters(Registration packet) {
+    if (!packet.packetId.contains(searchList)) {
+      return false;
+    }
+    if (clientStatus != null && clientStatus != packet.clientStatus) {
+      return false;
+    }
+    if (serverStatus == notUploadedServerStatusFilter) {
+      return packet.serverStatus == null || packet.serverStatus!.trim().isEmpty;
+    }
+    if (serverStatus != null && serverStatus != packet.serverStatus) {
+      return false;
+    }
+    return true;
   }
 
   Future<void> uploadSelected() async {
