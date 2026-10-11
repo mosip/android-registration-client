@@ -1,0 +1,1 @@
+# This document outlines the structured JSON communication schemas established between the Flutter client application and the streaming backend ingest framework.
