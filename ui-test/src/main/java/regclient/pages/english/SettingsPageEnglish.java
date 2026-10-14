@@ -38,6 +38,8 @@ import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.StartsActivity;
@@ -55,6 +57,8 @@ import regclient.page.BasePage;
 import regclient.page.SettingsPage;
 
 public class SettingsPageEnglish extends SettingsPage {
+
+	private static final Logger logger = LoggerFactory.getLogger(SettingsPageEnglish.class);
 
 	private final AppiumDriver driver;
 
@@ -237,7 +241,7 @@ public class SettingsPageEnglish extends SettingsPage {
 		WebElement card = wait.until(ExpectedConditions.presenceOfElementLocated(
 				MobileBy.AndroidUIAutomator("new UiSelector().descriptionContains(\"" + deviceName + "\")")));
 		String desc = card.getAttribute("content-desc");
-		System.out.println("Card text: " + desc);
+		logger.info("Card text: {}", desc);
 		assertTrue(desc.contains(deviceName), "Device name not found");
 		assertTrue(desc.toLowerCase().contains("ready"), "Device status not Ready");
 		Pattern p = Pattern.compile("\\b[a-f0-9]{10,}\\b");

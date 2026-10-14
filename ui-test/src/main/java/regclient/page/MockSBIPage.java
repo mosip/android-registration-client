@@ -110,7 +110,7 @@ public class MockSBIPage extends BasePage {
 				driver.startActivity(new Activity(mainPackage, mainActivity));
 			}
 		} catch (Exception e) {
-			System.err.println("Failed to switch back to ARC app: " + e.getMessage());
+			logger.error("Failed to switch back to ARC app", e);
 		}
 	}
 

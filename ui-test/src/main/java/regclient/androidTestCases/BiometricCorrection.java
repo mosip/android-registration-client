@@ -126,6 +126,7 @@ import regclient.pages.tamil.ProfilePageTamil;
 import regclient.pages.tamil.RegistrationTasksPageTamil;
 import regclient.pages.tamil.SelectLanguagePageTamil;
 import regclient.utils.TestDataReader;
+import regclient.utils.UinRidGenerator;
 
 public class BiometricCorrection extends AndroidBaseTest {
 
@@ -989,6 +990,7 @@ public class BiometricCorrection extends AndroidBaseTest {
 	@Test(priority = 1, description = "Verify minor biometric correction")
 	public void minorBiometricCorrection() throws InterruptedException {
 
+		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();

@@ -23,6 +23,8 @@ import regclient.utils.TestDataReader;
 
 public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 
+	private static final int MAX_HEADER_SWIPES = 10;
+
 	@AndroidFindBy(accessibility = "Mâle")
 	private WebElement maleButton;
 
@@ -124,8 +126,10 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(1);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
@@ -255,7 +259,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -347,7 +351,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
@@ -660,8 +664,10 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 				if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(3);
-					while (!isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"))) {
+					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+						assertTrue(swipes < MAX_HEADER_SWIPES,
+								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
@@ -747,7 +753,7 @@ public class DemographicDetailsPageFrench extends DemographicDetailsPage {
 								findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
 										+ FetchUiSpec.getValueUsingId(id)
 										+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[1]")),
-								TestDataReader.readData("RID"));
+								TestDataReader.readData("AID"));
 						if (FetchUiSpec.getTransliterateTypeUsingId(id))
 							assertTrue(checkSecondLanguageTextBoxNotNull(id),
 									"Verify if " + id + " is enter in second language text box");
