@@ -1,5 +1,7 @@
 package regclient.pages.arabic;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -85,14 +87,7 @@ public class OperationalTaskPageArabic extends OperationalTaskPage {
 	}
 
 	public void handleIfSyncPopUpDisplayed() {
-		for (int i = 0; i < 120; i++) {
-			if (isElementDisplayed(syncCompletedPopup)) {
-				clickOnElement(restartButton);
-				return;
-			}
-			waitTime(5);
-		}
-		throw new RuntimeException("Sync popup not displayed");
+		waitForSyncPopupAndRestart(syncCompletedPopup, restartButton, Duration.ofMinutes(10));
 	}
 
 }

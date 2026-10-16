@@ -87,6 +87,7 @@ public class MockSBIPage extends BasePage {
 		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/iris_device_status"));
 		setAllToNotReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
+		scrollUntilElementVisible(AppiumBy.id("io.mosip.mock.sbi:id/button12"));
 		clickOnElement(mockSbiSaveButton);
 	}
 
@@ -122,6 +123,7 @@ public class MockSBIPage extends BasePage {
 		scrollUntilElementVisible(By.id("io.mosip.mock.sbi:id/iris_device_status"));
 		setAllToReady("Iris", "io.mosip.mock.sbi:id/iris_device_status");
 
+		scrollUntilElementVisible(AppiumBy.id("io.mosip.mock.sbi:id/button12"));
 		clickOnElement(mockSbiSaveButton);
 	}
 

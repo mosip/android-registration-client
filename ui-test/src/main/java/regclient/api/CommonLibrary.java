@@ -10,6 +10,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -18,28 +19,29 @@ import static io.restassured.RestAssured.given;
 
 public class CommonLibrary extends BaseTestCase {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CommonLibrary.class);
-	private final ApplicationLibrary applicationLibrary = new ApplicationLibrary();
 
 	public boolean isValidToken(String cookie) {
 
 		logger.info("========= Revalidating the token =========");
-		Response response = applicationLibrary.getWithoutParams("/v1/authmanager/authorize/admin/validateToken",
-				cookie);
-		JSONObject responseJson = null;
-		try {
-			responseJson = (JSONObject) ((JSONObject) new JSONParser().parse(response.asString())).get("response");
-		} catch (ParseException | NullPointerException e) {
-			logger.info(e.getMessage());
-		}
-
-		if (responseJson != null && responseJson.get("errors") == null) {
-			logger.info("========= Valid Token =========");
-			return true;
-		} else {
-
+		if (cookie == null || cookie.trim().isEmpty()) {
 			logger.info("========= InValid Token =========");
 			return false;
 		}
+		try {
+			// Keycloak access tokens are JWTs: check the "exp" claim of the payload
+			String[] parts = cookie.split("\\.");
+			String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+			long expirationTime = new org.json.JSONObject(payload).getLong("exp") * 1000L;
+			if (expirationTime > System.currentTimeMillis()) {
+				logger.info("========= Valid Token =========");
+				return true;
+			}
+			logger.info("The token is expired");
+		} catch (RuntimeException e) {
+			logger.info("The token is invalid: " + e.getMessage());
+		}
+		logger.info("========= InValid Token =========");
+		return false;
 
 	}
 
