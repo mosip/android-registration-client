@@ -36,7 +36,7 @@ public class SelectLanguagePageTamil extends SelectLanguagePage{
 	private WebElement spanishLanguageButton;
 
 	@AndroidFindBy(xpath = "//*[contains(@content-desc, 'விருப்பமான தொடர்பு மொழி')]")
-	private WebElement notificationLanguageHeaderInEnglish;
+	private WebElement notificationLanguageHeaderInTamil;
 
 	@AndroidFindBy(xpath = "(//android.view.View[@content-desc=\"English\"])[1]")
 	private WebElement englishLanguageButton;
@@ -131,8 +131,8 @@ public class SelectLanguagePageTamil extends SelectLanguagePage{
 		return new ConsentPageTamil(driver);
 	}
 
-	public boolean isNotificationLanguageEnglishDisplayed() {
-		return isElementDisplayed(notificationLanguageHeaderInEnglish);
+	public boolean isNotificationLanguageDisplayed() {
+		return isElementDisplayed(notificationLanguageHeaderInTamil);
 	}
 
 }

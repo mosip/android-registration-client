@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.appium.java_client.appmanagement.ApplicationState;
+
 import static java.time.Duration.ofSeconds;
 
 import java.awt.Toolkit;
@@ -692,6 +694,39 @@ public class BasePage {
 		switchToNativeContext();
 	}
 
+	protected boolean isArcAppInForeground() {
+		try {
+			return ((AndroidDriver) driver)
+					.queryAppState("io.mosip.registration_client") == ApplicationState.RUNNING_IN_FOREGROUND;
+		} catch (Exception e) {
+			// Can't tell (e.g. session hiccup); don't fail the wait on this alone
+			return true;
+		}
+	}
+
+	// Waits for the sync-completed popup and taps restart. The total time is capped by a deadline,
+	// and it stops early if the app is no longer on screen (crashed or sent to the home screen),
+	// so the run fails instead of polling an empty home screen.
+	protected void waitForSyncPopupAndRestart(WebElement syncCompletedPopup, WebElement restartButton,
+			Duration maxWait) {
+		long deadline = System.currentTimeMillis() + maxWait.toMillis();
+		int backgroundChecks = 0;
+		while (System.currentTimeMillis() < deadline) {
+			if (isElementDisplayed(syncCompletedPopup, 5)) {
+				clickOnElement(restartButton);
+				return;
+			}
+			// Two checks in a row so a brief transition isn't treated as a crash
+			backgroundChecks = isArcAppInForeground() ? 0 : backgroundChecks + 1;
+			if (backgroundChecks >= 2) {
+				throw new IllegalStateException(
+						"ARC app is not in the foreground while waiting for the sync popup (crashed or on home screen)");
+			}
+			waitTime(5);
+		}
+		throw new RuntimeException("Sync popup not displayed within " + maxWait.toMinutes() + " min");
+	}
+
 	public void switchToNativeContext() {
 		SupportsContextSwitching ctx = (SupportsContextSwitching) driver;
 		if (!"NATIVE_APP".equals(ctx.getContext())) {
@@ -802,6 +837,31 @@ public class BasePage {
 			swipeDown();
 		}
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
+	}
+
+	// scrollIntoView stops as soon as a sliver of the job card shows; its sync Button is only in the
+	// layout once the card is fully on screen, so swipe a bit more and retry when it is missing
+	protected void clickSyncButtonInJobCard(String jobName) {
+		By job = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+				+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
+		for (int attempt = 0; attempt < 4; attempt++) {
+			List<WebElement> buttons = driver.findElement(job).findElements(By.xpath(".//android.widget.Button"));
+			if (!buttons.isEmpty()) {
+				buttons.get(0).click();
+				return;
+			}
+			swipeUp();
+		}
+		java.nio.file.Path dump = java.nio.file.Paths.get(System.getProperty("user.dir"), "testng-report",
+				"settings-sync-button-pagesource.xml");
+		try {
+			java.nio.file.Files.createDirectories(dump.getParent());
+			java.nio.file.Files.writeString(dump, driver.getPageSource(), java.nio.charset.StandardCharsets.UTF_8);
+		} catch (Exception e) {
+			// best effort only
+		}
+		throw new NoSuchElementException(
+				"Sync button not found for job card: " + jobName + " (layout saved to " + dump + ")");
 	}
 
 	public boolean isElementEnabled(By locator) {

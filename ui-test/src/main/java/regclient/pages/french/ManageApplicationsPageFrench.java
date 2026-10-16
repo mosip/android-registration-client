@@ -1,5 +1,7 @@
 package regclient.pages.french;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -124,17 +126,15 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 	}
 
 	public boolean isPacketUploadDone(String AID) {
-		waitTime(2);
-		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-		if (element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
-			waitTime(10);
-			element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-			if (element.getAttribute("contentDescription").contains("NOT UPLOADED"))
-				return false;
-			else
+		By packetRow = By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]");
+		for (int attempt = 0; attempt < 2; attempt++) {
+			waitTime(attempt == 0 ? 2 : 10);
+			List<WebElement> rows = driver.findElements(packetRow);
+			// An uploaded packet drops out of the "Approved" client-status filter, so a missing row means it was uploaded
+			if (rows.isEmpty() || !rows.get(0).getAttribute("contentDescription").contains("NOT UPLOADED"))
 				return true;
-		} else
-			return true;
+		}
+		return false;
 	}
 
 	public boolean isPacketApproved(String AID) {

@@ -167,6 +167,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 		assertTrue(profilePage.isResetPasswordButtonDisplayed(),
 				"Verify if reset password button displayed in profile page");
+		new KeycloakPage(driver).clearChromeTabs();
 		profilePage.clickOnResetPasswordButton();
 
 		if ("eng".equalsIgnoreCase(language)) {
@@ -391,6 +392,7 @@ public class ResetPassword extends AndroidBaseTest {
 
 		assertTrue(profilePage.isResetPasswordButtonDisplayed(),
 				"Verify if reset password button displayed in profile page");
+		new KeycloakPage(driver).clearChromeTabs();
 		profilePage.clickOnResetPasswordButton();
 
 		if ("eng".equalsIgnoreCase(language)) {

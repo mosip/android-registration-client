@@ -1,5 +1,7 @@
 package regclient.pages.english;
 
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -73,14 +75,7 @@ public class OperationalTaskPageEnglish extends OperationalTaskPage {
 	}
 	
 	public void handleIfSyncPopUpDisplayed() {
-	    for (int i = 0; i < 120; i++) {
-	        if (isElementDisplayed(syncCompletedPopup)) {
-	            clickOnElement(restartButton);
-	            return;
-	        }
-	        waitTime(5);
-	    }
-	    throw new RuntimeException("Sync popup not displayed");
+		waitForSyncPopupAndRestart(syncCompletedPopup, restartButton, Duration.ofMinutes(10));
 	}
 
 }

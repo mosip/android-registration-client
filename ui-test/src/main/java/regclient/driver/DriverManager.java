@@ -36,6 +36,9 @@ public class DriverManager {
 
 		RuntimeException lastFailure = null;
 		for (int attempt = 1; attempt <= MAX_SESSION_ATTEMPTS; attempt++) {
+			// A UiAutomator2 server left over from a previous run still answers on port 6790, so Appium
+			// creates the session on it and the new instrumentation then kills it ("socket hang up")
+			prepareDeviceForSession(udid);
 			try {
 				appiumDriver.set(new AndroidDriver(service.getUrl(), desiredCapabilities));
 				return appiumDriver.get();
@@ -44,7 +47,6 @@ public class DriverManager {
 				if (attempt < MAX_SESSION_ATTEMPTS) {
 					logger.warn("Appium session creation failed (attempt {}/{}), cleaning up device state and retrying: {}",
 							attempt, MAX_SESSION_ATTEMPTS, e.getMessage());
-					prepareDeviceForSession(udid);
 				}
 			}
 		}
@@ -52,8 +54,11 @@ public class DriverManager {
 	}
 
 	private static void prepareDeviceForSession(String udid) {
+		// The HTTP server runs in the .server package; stopping only .server.test leaves it alive
 		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.uiautomator2.server.test");
+		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.uiautomator2.server");
 		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.settings");
+		runAdbQuietly(udid, "forward", "--remove-all");
 		runAdbQuietly(udid, "shell", "input", "keyevent", "224"); // KEYCODE_WAKEUP
 		runAdbQuietly(udid, "shell", "wm", "dismiss-keyguard");
 		try {
