@@ -1,7 +1,6 @@
 package regclient.pages.arabic;
 
 import java.util.List;
-
 import java.time.Duration;
 
 import org.openqa.selenium.By;
@@ -134,7 +133,6 @@ public class ManageApplicationsPageArabic extends ManageApplicationsPage {
 		for (int attempt = 0; attempt < 2; attempt++) {
 			waitTime(attempt == 0 ? 2 : 10);
 			List<WebElement> rows = driver.findElements(packetRow);
-			// An uploaded packet drops out of the "Approved" client-status filter, so a missing row means it was uploaded
 			if (rows.isEmpty() || !rows.get(0).getAttribute("contentDescription").contains("NOT UPLOADED"))
 				return true;
 		}

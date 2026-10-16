@@ -75,7 +75,7 @@ public class KernelAuthentication extends BaseTestCase {
 
 	public String getAuthForAdmin() {
 		return getAuthTokenFromKeyCloakPassword(ArcConfigManager.getAdminClientId(),
-				ArcConfigManager.getAdminClientSecret(), BaseTestCase.currentModule + "-" + admin_userName,
+				ArcConfigManager.getAdminClientSecret(),BaseTestCase.currentModule + "-" + admin_userName,
 				admin_password);
 	}
 

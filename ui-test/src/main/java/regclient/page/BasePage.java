@@ -41,7 +41,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.appium.java_client.appmanagement.ApplicationState;
-
 import static java.time.Duration.ofSeconds;
 
 import java.awt.Toolkit;
@@ -699,14 +698,10 @@ public class BasePage {
 			return ((AndroidDriver) driver)
 					.queryAppState("io.mosip.registration_client") == ApplicationState.RUNNING_IN_FOREGROUND;
 		} catch (Exception e) {
-			// Can't tell (e.g. session hiccup); don't fail the wait on this alone
 			return true;
 		}
 	}
 
-	// Waits for the sync-completed popup and taps restart. The total time is capped by a deadline,
-	// and it stops early if the app is no longer on screen (crashed or sent to the home screen),
-	// so the run fails instead of polling an empty home screen.
 	protected void waitForSyncPopupAndRestart(WebElement syncCompletedPopup, WebElement restartButton,
 			Duration maxWait) {
 		long deadline = System.currentTimeMillis() + maxWait.toMillis();
@@ -839,8 +834,6 @@ public class BasePage {
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
 	}
 
-	// scrollIntoView stops as soon as a sliver of the job card shows; its sync Button is only in the
-	// layout once the card is fully on screen, so swipe a bit more and retry when it is missing
 	protected void clickSyncButtonInJobCard(String jobName) {
 		By job = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
 				+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
@@ -858,7 +851,6 @@ public class BasePage {
 			java.nio.file.Files.createDirectories(dump.getParent());
 			java.nio.file.Files.writeString(dump, driver.getPageSource(), java.nio.charset.StandardCharsets.UTF_8);
 		} catch (Exception e) {
-			// best effort only
 		}
 		throw new NoSuchElementException(
 				"Sync button not found for job card: " + jobName + " (layout saved to " + dump + ")");

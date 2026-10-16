@@ -125,7 +125,6 @@ public class KeycloakPage extends BasePage {
 			}
 		}
 
-		// ChromeDriver rejects the raw "id" strategy that @FindBy(id) sends, so use the CSS locator in the webview
 		WebElement title = isInWebView() ? webLoginTitle : keycloakPageTitle;
 		retryFindElement(title, Duration.ofSeconds(10));
 		return isElementDisplayed(title);
@@ -353,8 +352,6 @@ public class KeycloakPage extends BasePage {
 		typeInLoginField("password", password);
 	}
 
-	// ChromeDriver rejects the raw "id" strategy, so use CSS in the webview; fall back to the native EditText
-	// (resource-id is the same as the HTML id, as seen in Appium Inspector)
 	private void typeInLoginField(String fieldId, String value) {
 		if (isInWebView()) {
 			try {
@@ -602,9 +599,6 @@ public class KeycloakPage extends BasePage {
 
 	private static final String CHROME_PACKAGE = "com.android.chrome";
 
-	// ChromeDriver only sees tabs Chrome keeps loaded; the rest pile up across runs (and leave the
-	// new tab stuck loading), so close all of them through Chrome's own tab switcher menu, then
-	// stop Chrome and bring the ARC app back to the front
 	public void clearChromeTabs() {
 		AndroidDriver android = (AndroidDriver) driver;
 		try {
@@ -628,7 +622,6 @@ public class KeycloakPage extends BasePage {
 		if (!clickIfShown(By.id("com.android.chrome:id/tab_switcher_button"), 5)) {
 			return false;
 		}
-		// Let the tab grid finish animating, otherwise the toolbar's own menu opens (it has no "Close all tabs")
 		waitTime(2);
 		By closeAll = MobileBy.AndroidUIAutomator(
 				"new UiSelector().textMatches(\"(?i).*close all tabs.*\")");
@@ -636,7 +629,6 @@ public class KeycloakPage extends BasePage {
 				"new UiSelector().descriptionMatches(\"(?i).*close all tabs.*\")");
 		if (clickIfShown(By.id("com.android.chrome:id/menu_button"), 5)
 				&& (clickIfShown(closeAll, 4) || clickIfShown(closeAllDesc, 1))) {
-			// Newer Chrome asks "Close all tabs?" and confirms with "Close all tabs and groups"
 			if (!clickIfShown(By.id("com.android.chrome:id/positive_button"), 3)) {
 				clickIfShown(MobileBy.AndroidUIAutomator(
 						"new UiSelector().className(\"android.widget.Button\").textMatches(\"(?i)close( all)?.*\")"), 2);
@@ -727,7 +719,6 @@ public class KeycloakPage extends BasePage {
 	public void waitForLoginPage() {
 		for (int i = 0; i < 15; i++) {
 			try {
-				// ChromeDriver rejects the raw "id" strategy, so use CSS in the webview
 				driver.findElement(isInWebView() ? By.cssSelector("#username") : By.id("username"));
 				return;
 			} catch (Exception e) {

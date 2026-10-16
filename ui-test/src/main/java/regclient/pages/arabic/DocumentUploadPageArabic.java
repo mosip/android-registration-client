@@ -92,7 +92,6 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 	}
 
 	public void uploadDoccuments(String age, String type) {
-		// Start from the top like the English page; the retry search only scrolls a limited distance
 		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("Documents");
 		for (String id : idList) {

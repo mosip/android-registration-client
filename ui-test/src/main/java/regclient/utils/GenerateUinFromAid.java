@@ -125,8 +125,6 @@ public class GenerateUinFromAid extends AdminTestUtil implements ITest {
 		}
 	}
 
-	// Same as AdminTestUtil.postWithBodyAndCookie, but with a token from the local (Keycloak-based)
-	// KernelAuthentication instead of apirig's role-based authmanager token.
 	private Response postWithBodyAndToken(String url, String inputJson, String token, String testCaseName)
 			throws SecurityXSSException {
 		inputJson = inputJsonKeyWordHandeler(inputJson, testCaseName);

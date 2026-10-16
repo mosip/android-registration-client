@@ -36,8 +36,6 @@ public class DriverManager {
 
 		RuntimeException lastFailure = null;
 		for (int attempt = 1; attempt <= MAX_SESSION_ATTEMPTS; attempt++) {
-			// A UiAutomator2 server left over from a previous run still answers on port 6790, so Appium
-			// creates the session on it and the new instrumentation then kills it ("socket hang up")
 			prepareDeviceForSession(udid);
 			try {
 				appiumDriver.set(new AndroidDriver(service.getUrl(), desiredCapabilities));
@@ -54,7 +52,6 @@ public class DriverManager {
 	}
 
 	private static void prepareDeviceForSession(String udid) {
-		// The HTTP server runs in the .server package; stopping only .server.test leaves it alive
 		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.uiautomator2.server.test");
 		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.uiautomator2.server");
 		runAdbQuietly(udid, "shell", "am", "force-stop", "io.appium.settings");
