@@ -160,10 +160,23 @@ public class PreviewPageArabic extends PreviewPage {
 		return isElementDisplayed(fingerExceptionText);
 	}
 
+	// Reads the same element isApplicationIDPreviewPageDisplayed() found, so the label fallback works here too
 	public String getAID() {
-		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*",
-				"$1");
-		return applicationID;
+		WebElement element = findApplicationIdElement();
+		if (element == null) {
+			return getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
+		}
+		for (String source : new String[] { element.getText(), element.getAttribute("content-desc") }) {
+			if (source == null) {
+				continue;
+			}
+			java.util.regex.Matcher m = java.util.regex.Pattern.compile("Application ID\\D*(\\d+)|(\\d{14,})")
+					.matcher(source);
+			if (m.find()) {
+				return m.group(1) != null ? m.group(1) : m.group(2);
+			}
+		}
+		throw new IllegalStateException("Application ID not found in preview page element");
 	}
 
 	public void validatePreRegAndApplicationIdMatch(String age) {

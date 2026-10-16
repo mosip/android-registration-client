@@ -362,7 +362,8 @@ public class KeycloakPage extends BasePage {
 				switchToNativeContext();
 			}
 		}
-		sendKeys(By.id(fieldId), value);
+		// Chrome's EditText resource-id has no package prefix, so By.id may not match it; use XPath like nativeUsernameField
+		sendKeys(By.xpath("//android.widget.EditText[@resource-id='" + fieldId + "']"), value);
 	}
 
 	public void clickOnLoginButton() {
@@ -593,7 +594,7 @@ public class KeycloakPage extends BasePage {
 	}
 
 	public void resumeArcApplication() {
-		closeAllChromeTabs();
+		// clearChromeTabs() closes the tabs itself (via closeChrome()), so no separate pass is needed
 		clearChromeTabs();
 	}
 

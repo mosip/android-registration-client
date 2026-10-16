@@ -45,7 +45,7 @@ public class TestDataReader {
 
 	public static String readData(String key, String defaultValue) {
 		try {
-			String val = getValueFromJson(key);
+			String val = readData(key);
 			return (val == null || val.trim().isEmpty()) ? defaultValue : val;
 		} catch (Exception e) {
 			return defaultValue;
@@ -160,10 +160,22 @@ public class TestDataReader {
 					if (!replaced) {
 						lines.add(newLine);
 					}
-					BaseTestCase.propsKernel.setProperty(entry.getKey(), entry.getValue());
 				}
 
-				Files.write(target, String.join(lineSeparator, lines).getBytes(StandardCharsets.UTF_8));
+				// Write to a temp file and swap it in, so a failed write never leaves a partial Kernel.properties
+				Path temp = Files.createTempFile(target.toAbsolutePath().getParent(), "Kernel", ".tmp");
+				try {
+					Files.write(temp, String.join(lineSeparator, lines).getBytes(StandardCharsets.UTF_8));
+					try {
+						Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+					} catch (AtomicMoveNotSupportedException e) {
+						Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING);
+					}
+				} finally {
+					Files.deleteIfExists(temp);
+				}
+				// Only update memory once the file is safely written
+				values.forEach(BaseTestCase.propsKernel::setProperty);
 			} catch (IOException e) {
 				throw new IllegalStateException("Failed to persist keys " + values.keySet() + " to file: " + target, e);
 			}
