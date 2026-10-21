@@ -4,6 +4,10 @@ package regclient.page;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -659,9 +663,9 @@ public class KeycloakPage extends BasePage {
 
 	private void saveChromePageSource() {
 		try {
-			java.nio.file.Path out = java.nio.file.Paths.get("testng-report", "chrome-tab-switcher-pagesource.xml");
-			java.nio.file.Files.createDirectories(out.getParent());
-			java.nio.file.Files.write(out, driver.getPageSource().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+			Path out = Paths.get("testng-report", "chrome-tab-switcher-pagesource.xml");
+			Files.createDirectories(out.getParent());
+			Files.write(out, driver.getPageSource().getBytes(StandardCharsets.UTF_8));
 			logger.info("Saved Chrome tab switcher page source to {}", out.toAbsolutePath());
 		} catch (Exception e) {
 			logger.warn("Could not save Chrome page source: {}", firstLine(e));

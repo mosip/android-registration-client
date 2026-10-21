@@ -138,6 +138,8 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify minor UIN update")
 	public void updateMyUinMinor() throws InterruptedException {
 
+		// Fail fast (skip) before any UI steps if the manually-added UIN is missing
+		TestDataReader.requireData("UINminor");
 		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("updateProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
@@ -254,11 +256,11 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 
 		assertTrue(updateUINPage.isUpdateMyUINTitleDisplayed(),
 				"verify if the update my uin page is still displayed after clicking continue button ");
-		updateUINPage.enterUIN(TestDataReader.readData("UINminor") + "123");
+		updateUINPage.enterUIN(TestDataReader.requireData("UINminor") + "123");
 
 		assertTrue(updateUINPage.isInvalidUINErrorMessageDisplayed(),
 				"verify if after enter invalid uin it should give error message  ");
-		updateUINPage.enterUIN(TestDataReader.readData("UINminor"));
+		updateUINPage.enterUIN(TestDataReader.requireData("UINminor"));
 
 		updateUINPage.selectUpdateValue("consentdet");
 		updateUINPage.selectUpdateValue("DemographicDetails");

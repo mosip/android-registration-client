@@ -138,6 +138,8 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify infant UIN update")
 	public void updateMyUinInfant() throws InterruptedException {
 
+		// Fail fast (skip) before any UI steps if the manually-added UIN is missing
+		TestDataReader.requireData("UINinfant");
 		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("updateProcess");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
@@ -240,7 +242,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 		updateUINPage.clickOnContinueButton();
 
-		updateUINPage.enterUIN(TestDataReader.readData("UINinfant"));
+		updateUINPage.enterUIN(TestDataReader.requireData("UINinfant"));
 
 		updateUINPage.selectUpdateValue("consentdet");
 		updateUINPage.selectUpdateValue("DemographicDetails");

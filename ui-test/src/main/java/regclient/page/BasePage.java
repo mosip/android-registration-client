@@ -63,6 +63,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 public class BasePage {
@@ -687,16 +691,28 @@ public class BasePage {
 		return null;
 	}
 
+	// ARC package comes from the session's appPackage capability (set in DriverManager), not a hardcoded value
+	protected String getArcAppPackage() {
+		Object pkg = driver.getCapabilities().getCapability("appium:appPackage");
+		if (pkg == null) {
+			pkg = driver.getCapabilities().getCapability("appPackage");
+		}
+		if (pkg == null || pkg.toString().trim().isEmpty()) {
+			throw new IllegalStateException("appPackage capability is not set on the Appium session");
+		}
+		return pkg.toString().trim();
+	}
+
 	protected void openArcApplication() {
 		AndroidDriver driver = (AndroidDriver) this.driver;
-		driver.activateApp("io.mosip.registration_client");
+		driver.activateApp(getArcAppPackage());
 		switchToNativeContext();
 	}
 
 	protected boolean isArcAppInForeground() {
 		try {
 			return ((AndroidDriver) driver)
-					.queryAppState("io.mosip.registration_client") == ApplicationState.RUNNING_IN_FOREGROUND;
+					.queryAppState(getArcAppPackage()) == ApplicationState.RUNNING_IN_FOREGROUND;
 		} catch (Exception e) {
 			return true;
 		}
@@ -845,11 +861,11 @@ public class BasePage {
 			}
 			swipeUp();
 		}
-		java.nio.file.Path dump = java.nio.file.Paths.get(System.getProperty("user.dir"), "testng-report",
+		Path dump = Paths.get(System.getProperty("user.dir"), "testng-report",
 				"settings-sync-button-pagesource.xml");
 		try {
-			java.nio.file.Files.createDirectories(dump.getParent());
-			java.nio.file.Files.writeString(dump, driver.getPageSource(), java.nio.charset.StandardCharsets.UTF_8);
+			Files.createDirectories(dump.getParent());
+			Files.writeString(dump, driver.getPageSource(), StandardCharsets.UTF_8);
 		} catch (Exception e) {
 		}
 		throw new NoSuchElementException(

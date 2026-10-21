@@ -1,6 +1,8 @@
 package regclient.pages.arabic;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -170,7 +172,7 @@ public class PreviewPageArabic extends PreviewPage {
 			if (source == null) {
 				continue;
 			}
-			java.util.regex.Matcher m = java.util.regex.Pattern.compile("Application ID\\D*(\\d+)|(\\d{14,})")
+			Matcher m = Pattern.compile("Application ID\\D*(\\d+)|(\\d{14,})")
 					.matcher(source);
 			if (m.find()) {
 				return m.group(1) != null ? m.group(1) : m.group(2);

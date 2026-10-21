@@ -1,15 +1,15 @@
 package regclient.api;
 
-import static io.restassured.RestAssured.given;
-
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class KernelAuthentication extends BaseTestCase {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(KernelAuthentication.class);
+	private static final Logger logger = LoggerFactory.getLogger(KernelAuthentication.class);
 	private static final String CLIENT_ID = "client_id";
 	private static final String CLIENT_SECRET = "client_secret";
 	private static final String GRANT_TYPE_KEY = "grant_type";
@@ -25,7 +25,12 @@ public class KernelAuthentication extends BaseTestCase {
 	private final String admin_password = props.get("admin_password");
 	private final String admin_userName = props.get("admin_userName");
 
+	// keycloakTokenUrl in Kernel.properties overrides the URL built from keycloak-external-url and the realm
 	private static String getKeycloakTokenUrl() {
+		String configured = ArcConfigManager.getKeycloakTokenUrl();
+		if (!configured.isEmpty()) {
+			return configured;
+		}
 		return ArcConfigManager.getIAMUrl() + "/realms/" + ArcConfigManager.getIAMRealmId()
 				+ "/protocol/openid-connect/token";
 	}
@@ -107,8 +112,7 @@ public class KernelAuthentication extends BaseTestCase {
 		String tokenUrl = getKeycloakTokenUrl();
 		Response response;
 		try {
-			response = given().relaxedHTTPSValidation().contentType(ContentType.URLENC).formParams(params).when()
-					.post(tokenUrl);
+			response = RestClient.postRequestWithFormParams(tokenUrl, params);
 		} catch (Exception e) {
 			logger.error("Error sending POST request to Keycloak token URL: " + tokenUrl, e);
 			return "";

@@ -3,6 +3,7 @@ package regclient.api;
 import io.restassured.RestAssured;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import org.json.JSONArray;
@@ -53,7 +54,17 @@ public class RestClient {
 		RESTCLIENT_LOGGER.info("REST-ASSURED: The response Time is: " + postResponse.time());
 		return postResponse;
 	}
-//	
+	// Form-encoded POST (e.g. Keycloak token). No .log().all(): the form carries client secrets and passwords
+	public static Response postRequestWithFormParams(String url, Map<String, String> formParams) {
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a form POST request to " + url);
+		Response postResponse = given().config(config).relaxedHTTPSValidation()
+				.contentType(ContentType.URLENC).formParams(formParams).when().post(url);
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Form POST status " + postResponse.getStatusCode() + " in "
+				+ postResponse.time() + " ms");
+		return postResponse;
+	}
+
+//
 	public static Response postReqestWithCookiesAndBody(String url, String body, String token, String opsToLog) {
 		Response posttResponse = null;
 		if (ArcConfigManager.IsDebugEnabled()) {

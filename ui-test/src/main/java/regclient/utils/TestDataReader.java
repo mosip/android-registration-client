@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.testng.SkipException;
 
 import regclient.api.BaseTestCase;
 
@@ -41,6 +42,15 @@ public class TestDataReader {
 			return (val == null || val.trim().isEmpty()) ? null : val.trim();
 		}
 		return getValueFromJson(key);
+	}
+
+	// For values that must be filled in manually (e.g. UINminor/UINinfant): skip the test with a clear message if empty
+	public static String requireData(String key) {
+		String val = readData(key);
+		if (val == null || val.trim().isEmpty()) {
+			throw new SkipException(key + " is not set in Kernel.properties; add it manually to run this test");
+		}
+		return val;
 	}
 
 	public static String readData(String key, String defaultValue) {
