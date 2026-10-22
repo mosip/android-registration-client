@@ -116,9 +116,18 @@ public class PreviewPageArabic extends PreviewPage {
 	private static final By APPLICATION_ID_DESC_LOCATOR = MobileBy.AndroidUIAutomator(
 			"new UiSelector().descriptionMatches(\"(?s).*\\\\d{14,}.*\")");
 
+	private static final Pattern APPLICATION_ID_DIGITS = Pattern.compile("\\d{14,}");
+
+	// Prefer the labelled element, but only when it carries the ID itself; a standalone label has no digits,
+	// so fall back to the numeric matches
 	private WebElement findApplicationIdElement() {
-		for (By locator : new By[] { APPLICATION_ID_LABEL_LOCATOR, APPLICATION_ID_LOCATOR,
-				APPLICATION_ID_DESC_LOCATOR }) {
+		for (WebElement label : driver.findElements(APPLICATION_ID_LABEL_LOCATOR)) {
+			String text = label.getText();
+			if (label.isDisplayed() && text != null && APPLICATION_ID_DIGITS.matcher(text).find()) {
+				return label;
+			}
+		}
+		for (By locator : new By[] { APPLICATION_ID_LOCATOR, APPLICATION_ID_DESC_LOCATOR }) {
 			List<WebElement> found = driver.findElements(locator);
 			if (!found.isEmpty() && found.get(0).isDisplayed()) {
 				return found.get(0);
