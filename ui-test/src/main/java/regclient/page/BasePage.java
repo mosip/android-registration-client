@@ -728,8 +728,6 @@ public class BasePage {
 				clickOnElement(restartButton);
 				return;
 			}
-			// Tolerate a single transient Appium failure (UiAutomator2 resets happen on device),
-			// but surface the real cause if the state query keeps failing
 			Boolean foreground = null;
 			try {
 				foreground = isArcAppInForeground();
