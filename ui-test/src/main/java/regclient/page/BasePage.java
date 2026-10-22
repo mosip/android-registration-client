@@ -714,7 +714,7 @@ public class BasePage {
 			return ((AndroidDriver) driver)
 					.queryAppState(getArcAppPackage()) == ApplicationState.RUNNING_IN_FOREGROUND;
 		} catch (Exception e) {
-			return true;
+			throw new IllegalStateException("Unable to query ARC app state", e);
 		}
 	}
 
@@ -722,13 +722,30 @@ public class BasePage {
 			Duration maxWait) {
 		long deadline = System.currentTimeMillis() + maxWait.toMillis();
 		int backgroundChecks = 0;
+		int stateQueryFailures = 0;
 		while (System.currentTimeMillis() < deadline) {
 			if (isElementDisplayed(syncCompletedPopup, 5)) {
 				clickOnElement(restartButton);
 				return;
 			}
+			// Tolerate a single transient Appium failure (UiAutomator2 resets happen on device),
+			// but surface the real cause if the state query keeps failing
+			Boolean foreground = null;
+			try {
+				foreground = isArcAppInForeground();
+				stateQueryFailures = 0;
+			} catch (IllegalStateException e) {
+				stateQueryFailures++;
+				logger.warn("ARC app state check failed ({} in a row): {}", stateQueryFailures,
+						e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+				if (stateQueryFailures >= 3) {
+					throw e;
+				}
+			}
 			// Two checks in a row so a brief transition isn't treated as a crash
-			backgroundChecks = isArcAppInForeground() ? 0 : backgroundChecks + 1;
+			if (foreground != null) {
+				backgroundChecks = foreground ? 0 : backgroundChecks + 1;
+			}
 			if (backgroundChecks >= 2) {
 				throw new IllegalStateException(
 						"ARC app is not in the foreground while waiting for the sync popup (crashed or on home screen)");
