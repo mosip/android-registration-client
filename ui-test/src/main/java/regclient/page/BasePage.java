@@ -734,6 +734,8 @@ public class BasePage {
 				stateQueryFailures = 0;
 			} catch (IllegalStateException e) {
 				stateQueryFailures++;
+				// A failed query breaks the "two background results in a row" sequence
+				backgroundChecks = 0;
 				logger.warn("ARC app state check failed ({} in a row): {}", stateQueryFailures,
 						e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
 				if (stateQueryFailures >= 3) {
