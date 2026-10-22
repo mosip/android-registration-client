@@ -152,7 +152,8 @@ run_regclient.bat
 Update these files before execution:
 
 * `resources/config/kernal.properties` — Environment details
-* `resources/testdata.json` — Test data (uin, language, rid, camera id)
+* `resources/testdata.json` — Test data (language, camera id)
+* `resources/config/Kernel.properties` — `UIN`, `AID`, `UINminor`, `UINinfant` and `generateUinAidPrerequisite` (true: auto-generate UIN/AID when empty; false: must be filled manually)
 * `resources/config.properties` — `nodePath`, `appiumServerExecutable`
 * `resources/DesiredCapabilies.json` — `udid`, app path
 * `camera.java` — Update camera & retake button coordinates [If camera id not available use camera button coordinates] 

@@ -15,6 +15,7 @@
       "appium:newCommandTimeout": 7600,
       "appium:dontStopAppOnReset": true,
       "appium:appWaitForLaunch": false,
+      "appium:forceAppLaunch": true,
 
       "appium:adbExecTimeout": 300000,
       "appium:uiautomator2ServerInstallTimeout": 200000,

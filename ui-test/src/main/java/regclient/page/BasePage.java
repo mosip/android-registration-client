@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.appium.java_client.appmanagement.ApplicationState;
 import static java.time.Duration.ofSeconds;
 
 import java.awt.Toolkit;
@@ -62,6 +63,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 public class BasePage {
@@ -686,10 +691,68 @@ public class BasePage {
 		return null;
 	}
 
+	// ARC package comes from the session's appPackage capability (set in DriverManager), not a hardcoded value
+	protected String getArcAppPackage() {
+		Object pkg = driver.getCapabilities().getCapability("appium:appPackage");
+		if (pkg == null) {
+			pkg = driver.getCapabilities().getCapability("appPackage");
+		}
+		if (pkg == null || pkg.toString().trim().isEmpty()) {
+			throw new IllegalStateException("appPackage capability is not set on the Appium session");
+		}
+		return pkg.toString().trim();
+	}
+
 	protected void openArcApplication() {
 		AndroidDriver driver = (AndroidDriver) this.driver;
-		driver.activateApp("io.mosip.registration_client");
+		driver.activateApp(getArcAppPackage());
 		switchToNativeContext();
+	}
+
+	protected boolean isArcAppInForeground() {
+		try {
+			return ((AndroidDriver) driver)
+					.queryAppState(getArcAppPackage()) == ApplicationState.RUNNING_IN_FOREGROUND;
+		} catch (Exception e) {
+			throw new IllegalStateException("Unable to query ARC app state", e);
+		}
+	}
+
+	protected void waitForSyncPopupAndRestart(WebElement syncCompletedPopup, WebElement restartButton,
+			Duration maxWait) {
+		long deadline = System.currentTimeMillis() + maxWait.toMillis();
+		int backgroundChecks = 0;
+		int stateQueryFailures = 0;
+		while (System.currentTimeMillis() < deadline) {
+			if (isElementDisplayed(syncCompletedPopup, 5)) {
+				clickOnElement(restartButton);
+				return;
+			}
+			Boolean foreground = null;
+			try {
+				foreground = isArcAppInForeground();
+				stateQueryFailures = 0;
+			} catch (IllegalStateException e) {
+				stateQueryFailures++;
+				// A failed query breaks the "two background results in a row" sequence
+				backgroundChecks = 0;
+				logger.warn("ARC app state check failed ({} in a row): {}", stateQueryFailures,
+						e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+				if (stateQueryFailures >= 3) {
+					throw e;
+				}
+			}
+			// Two checks in a row so a brief transition isn't treated as a crash
+			if (foreground != null) {
+				backgroundChecks = foreground ? 0 : backgroundChecks + 1;
+			}
+			if (backgroundChecks >= 2) {
+				throw new IllegalStateException(
+						"ARC app is not in the foreground while waiting for the sync popup (crashed or on home screen)");
+			}
+			waitTime(5);
+		}
+		throw new RuntimeException("Sync popup not displayed within " + maxWait.toMinutes() + " min");
 	}
 
 	public void switchToNativeContext() {
@@ -802,6 +865,32 @@ public class BasePage {
 			swipeDown();
 		}
 		throw new NoSuchElementException("Element not visible after scrolling: " + locator);
+	}
+
+	protected void clickSyncButtonInJobCard(String jobName) {
+		By job = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
+				+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
+		for (int attempt = 0; attempt < 4; attempt++) {
+			List<WebElement> buttons = driver.findElement(job).findElements(By.xpath(".//android.widget.Button"));
+			if (!buttons.isEmpty()) {
+				buttons.get(0).click();
+				return;
+			}
+			swipeUp();
+		}
+		Path dump = Paths.get(System.getProperty("user.dir"), "testng-report",
+				"settings-sync-button-pagesource.xml");
+		boolean pageSourceSaved = false;
+		try {
+			Files.createDirectories(dump.getParent());
+			Files.writeString(dump, driver.getPageSource(), StandardCharsets.UTF_8);
+			pageSourceSaved = true;
+		} catch (Exception e) {
+			logger.warn("Unable to save settings sync page source to {}", dump, e);
+		}
+		String dumpStatus = pageSourceSaved ? " (layout saved to " + dump + ")"
+				: " (layout was not saved to " + dump + ")";
+		throw new NoSuchElementException("Sync button not found for job card: " + jobName + dumpStatus);
 	}
 
 	public boolean isElementEnabled(By locator) {

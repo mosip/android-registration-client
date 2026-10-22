@@ -1,5 +1,9 @@
 package regclient.pages.arabic;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
@@ -105,14 +109,40 @@ public class PreviewPageArabic extends PreviewPage {
 						+ FetchUiSpec.getTitleUsingId("UPDATE") + "\"))")));
 	}
 
+	// The preview renders the label in English even on the Arabic UI; an ID-number match (14-digit pre-reg ID or 29-digit RID) is a fallback
+	private static final By APPLICATION_ID_LABEL_LOCATOR = By.xpath("//android.view.View[contains(@text,'Application ID')]");
+	private static final By APPLICATION_ID_LOCATOR = MobileBy.AndroidUIAutomator(
+			"new UiSelector().textMatches(\"(?s).*\\\\d{14,}.*\")");
+	private static final By APPLICATION_ID_DESC_LOCATOR = MobileBy.AndroidUIAutomator(
+			"new UiSelector().descriptionMatches(\"(?s).*\\\\d{14,}.*\")");
+
+	private static final Pattern APPLICATION_ID_DIGITS = Pattern.compile("\\d{14,}");
+
+	// Prefer the labelled element, but only when it carries the ID itself; a standalone label has no digits,
+	// so fall back to the numeric matches
+	private WebElement findApplicationIdElement() {
+		for (WebElement label : driver.findElements(APPLICATION_ID_LABEL_LOCATOR)) {
+			String text = label.getText();
+			if (label.isDisplayed() && text != null && APPLICATION_ID_DIGITS.matcher(text).find()) {
+				return label;
+			}
+		}
+		for (By locator : new By[] { APPLICATION_ID_LOCATOR, APPLICATION_ID_DESC_LOCATOR }) {
+			List<WebElement> found = driver.findElements(locator);
+			if (!found.isEmpty() && found.get(0).isDisplayed()) {
+				return found.get(0);
+			}
+		}
+		return null;
+	}
+
 	public boolean isApplicationIDPreviewPageDisplayed() {
-		By applicationIdLocator = By.xpath("//android.view.View[contains(@text,'Application ID')]");
 		for (int i = 0; i < 5; i++) {
 			try {
 				waitTime(1);
 				tapScreenCenter();
 				waitTime(1);
-				if (driver.findElement(applicationIdLocator).isDisplayed()) {
+				if (findApplicationIdElement() != null) {
 					return true;
 				}
 			} catch (Exception e) {
@@ -141,10 +171,23 @@ public class PreviewPageArabic extends PreviewPage {
 		return isElementDisplayed(fingerExceptionText);
 	}
 
+	// Reads the same element isApplicationIDPreviewPageDisplayed() found, so the label fallback works here too
 	public String getAID() {
-		String applicationID = getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*",
-				"$1");
-		return applicationID;
+		WebElement element = findApplicationIdElement();
+		if (element == null) {
+			return getTextFromLocator(applicationIDPreviewPage).replaceAll(".*Application ID (\\d+).*", "$1");
+		}
+		for (String source : new String[] { element.getText(), element.getAttribute("content-desc") }) {
+			if (source == null) {
+				continue;
+			}
+			Matcher m = Pattern.compile("Application ID\\D*(\\d+)|(\\d{14,})")
+					.matcher(source);
+			if (m.find()) {
+				return m.group(1) != null ? m.group(1) : m.group(2);
+			}
+		}
+		throw new IllegalStateException("Application ID not found in preview page element");
 	}
 
 	public void validatePreRegAndApplicationIdMatch(String age) {

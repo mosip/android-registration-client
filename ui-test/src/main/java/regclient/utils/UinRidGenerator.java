@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.testng.SkipException;
 
 import io.appium.java_client.AppiumDriver;
 import io.restassured.response.Response;
@@ -26,15 +27,34 @@ public class UinRidGenerator {
 	}
 
 	public static void ensureValidIntroducer(AppiumDriver driver) throws InterruptedException {
+		boolean prerequisite = Boolean.parseBoolean(
+				BaseTestCase.propsKernel.getProperty("generateUinAidPrerequisite", "false").trim());
 		String existingRid = TestDataReader.readData("AID");
-		String uin = (existingRid == null || existingRid.isBlank()) ? null : lookupUin(existingRid);
+		String existingUin = TestDataReader.readData("UIN");
+
+		// An AID alone is enough: its UIN is looked up from IDREPO below
+		if (existingRid == null) {
+			if (!prerequisite) {
+				throw new SkipException("UIN/AID not set in Kernel.properties and generateUinAidPrerequisite=false. "
+						+ "Add UIN and AID manually in Kernel.properties or set generateUinAidPrerequisite=true");
+			}
+			logger.info("UIN/AID empty in Kernel.properties, generating a new introducer");
+			fetchAndPersistUin(RidGenerator.generateNewRid(driver));
+			return;
+		}
+
+		String uin = lookupUin(existingRid);
 		if (uin == null) {
+			if (!prerequisite) {
+				throw new SkipException("AID [" + mask(existingRid) + "] from Kernel.properties has no UIN in IDREPO. "
+						+ "Update UIN and AID manually or set generateUinAidPrerequisite=true");
+			}
 			String rid = RidGenerator.generateNewRid(driver);
 			fetchAndPersistUin(rid);
 			return;
 		}
 
-		if (!uin.equals(TestDataReader.readData("UIN"))) {
+		if (!uin.equals(existingUin)) {
 			persistIntroducer(existingRid, uin);
 			logger.info("Stored UIN did not match AID [" + mask(existingRid) + "], repaired");
 		}
@@ -68,7 +88,7 @@ public class UinRidGenerator {
 		throw new IllegalStateException("Could not verify introducer RID [" + mask(rid) + "] in IDREPO", lastFailure);
 	}
 
-	// AID and UIN are saved in one write so testdata.json never holds a mismatched pair
+	// AID and UIN are saved in one write so Kernel.properties never holds a mismatched pair
 	private static void persistIntroducer(String rid, String uin) {
 		Map<String, String> introducer = new LinkedHashMap<>();
 		introducer.put("AID", rid);
@@ -110,7 +130,7 @@ public class UinRidGenerator {
 		}
 
 		persistIntroducer(rid, uin);
-		logger.info("Persisted fresh introducer for RID [" + mask(rid) + "] to testdata.json");
+		logger.info("Persisted fresh introducer for RID [" + mask(rid) + "] to Kernel.properties");
 
 		return uin;
 	}
