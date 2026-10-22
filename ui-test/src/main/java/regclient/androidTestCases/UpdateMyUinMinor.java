@@ -138,8 +138,6 @@ public class UpdateMyUinMinor extends AndroidBaseTest {
 	@Test(priority = 0, description = "Verify minor UIN update")
 	public void updateMyUinMinor() throws InterruptedException {
 
-		// Fail fast (skip) before any UI steps if the manually-added UIN is missing
-		TestDataReader.requireData("UINminor");
 		UinRidGenerator.ensureValidIntroducer(driver);
 		FetchUiSpec.getUiSpec("updateProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");

@@ -880,13 +880,17 @@ public class BasePage {
 		}
 		Path dump = Paths.get(System.getProperty("user.dir"), "testng-report",
 				"settings-sync-button-pagesource.xml");
+		boolean pageSourceSaved = false;
 		try {
 			Files.createDirectories(dump.getParent());
 			Files.writeString(dump, driver.getPageSource(), StandardCharsets.UTF_8);
+			pageSourceSaved = true;
 		} catch (Exception e) {
+			logger.warn("Unable to save settings sync page source to {}", dump, e);
 		}
-		throw new NoSuchElementException(
-				"Sync button not found for job card: " + jobName + " (layout saved to " + dump + ")");
+		String dumpStatus = pageSourceSaved ? " (layout saved to " + dump + ")"
+				: " (layout was not saved to " + dump + ")";
+		throw new NoSuchElementException("Sync button not found for job card: " + jobName + dumpStatus);
 	}
 
 	public boolean isElementEnabled(By locator) {
