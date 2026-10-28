@@ -41,10 +41,13 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
 
         Runnable timeoutRunnable = () -> {
             if (completed.compareAndSet(false, true)) {
+                delegate.cancel();
                 callback.onFailure(
                         OcrError.ErrorCode.TIMEOUT.name(),
                         "OCR provider did not respond within " + timeoutMs + "ms",
                         true);
+                // Safety fallback: if delegate never calls back after cancel, recycle bitmap after grace period
+                handler.postDelayed(() -> recycleBitmapSafely(bitmap), 3000);
             }
         };
         handler.postDelayed(timeoutRunnable, timeoutMs);
@@ -52,33 +55,58 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
         delegate.extract(bitmap, spec, new OcrProviderCallback() {
             @Override
             public void onSuccess(@NonNull String documentType, float confidence, @NonNull Map<String, String> data) {
+                handler.removeCallbacks(timeoutRunnable);
                 if (completed.compareAndSet(false, true)) {
-                    handler.removeCallbacks(timeoutRunnable);
                     callback.onSuccess(documentType, confidence, data);
+                } else {
+                    // Late completion after timeout: clean up the retained bitmap safely
+                    recycleBitmapSafely(bitmap);
                 }
             }
 
             @Override
             public void onProviderError(@NonNull String errorCode, @Nullable String errorInfo) {
+                handler.removeCallbacks(timeoutRunnable);
                 if (completed.compareAndSet(false, true)) {
-                    handler.removeCallbacks(timeoutRunnable);
                     callback.onProviderError(errorCode, errorInfo);
+                } else {
+                    recycleBitmapSafely(bitmap);
                 }
             }
 
             @Override
             public void onFailure(@NonNull String errorCode, @NonNull String message, boolean isRetryable) {
+                handler.removeCallbacks(timeoutRunnable);
                 if (completed.compareAndSet(false, true)) {
-                    handler.removeCallbacks(timeoutRunnable);
                     callback.onFailure(errorCode, message, isRetryable);
+                } else {
+                    recycleBitmapSafely(bitmap);
                 }
             }
         });
     }
 
+    private void recycleBitmapSafely(@Nullable Bitmap bitmap) {
+        if (bitmap != null) {
+            handler.post(() -> {
+                try {
+                    if (!bitmap.isRecycled()) {
+                        bitmap.recycle();
+                    }
+                } catch (Exception ignored) { }
+            });
+        }
+    }
+
+    @Override
+    public void cancel() {
+        handler.removeCallbacksAndMessages(null);
+        delegate.cancel();
+    }
+
     @Override
     public void release() {
-        handler.removeCallbacksAndMessages(null);
+        cancel();
         delegate.release();
     }
 }

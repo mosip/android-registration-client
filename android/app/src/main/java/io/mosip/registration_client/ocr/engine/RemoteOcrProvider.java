@@ -52,6 +52,8 @@ public class RemoteOcrProvider implements OcrProvider {
     @Nullable
     private final AuthTokenProvider authTokenProvider;
     private final ExecutorService executor;
+    private volatile HttpURLConnection activeConnection;
+    private volatile java.util.concurrent.Future<?> activeTask;
 
     public RemoteOcrProvider(
             @NonNull String serviceUrl,
@@ -76,7 +78,7 @@ public class RemoteOcrProvider implements OcrProvider {
             @NonNull List<FieldSpec> spec,
             @NonNull OcrProviderCallback callback) {
 
-        executor.execute(() -> {
+        activeTask = executor.submit(() -> {
             try {
                 // Validate configuration and auth before touching resident bitmap
                 validatePreconditions();
@@ -116,7 +118,24 @@ public class RemoteOcrProvider implements OcrProvider {
     }
 
     @Override
+    public void cancel() {
+        HttpURLConnection conn = activeConnection;
+        if (conn != null) {
+            try {
+                conn.disconnect();
+            } catch (Exception ignored) { }
+            activeConnection = null;
+        }
+        java.util.concurrent.Future<?> task = activeTask;
+        if (task != null) {
+            task.cancel(true);
+            activeTask = null;
+        }
+    }
+
+    @Override
     public void release() {
+        cancel();
         executor.shutdownNow();
     }
 
@@ -325,6 +344,7 @@ public class RemoteOcrProvider implements OcrProvider {
         try {
             URL url = URI.create(serviceUrl).toURL();
             connection = (HttpURLConnection) url.openConnection();
+            activeConnection = connection;
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
@@ -359,6 +379,7 @@ public class RemoteOcrProvider implements OcrProvider {
                 return scanner.hasNext() ? scanner.next() : "";
             }
         } finally {
+            activeConnection = null;
             if (connection != null) connection.disconnect();
         }
     }

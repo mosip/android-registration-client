@@ -254,6 +254,15 @@ public class OcrPluginImpl implements OcrHostApi {
 
     @Override
     public void cancelScan() {
+        int cancelledGen = scanGeneration.incrementAndGet();
+        Log.d(TAG, "cancelScan: invalidated scan generation to " + cancelledGen);
+        if (provider != null) {
+            try {
+                provider.cancel();
+            } catch (Exception e) {
+                Log.w(TAG, "Error cancelling active OCR provider", e);
+            }
+        }
         if (activeScanner != null) {
             activeScanner.stop();
             activeScanner = null;
@@ -262,6 +271,10 @@ public class OcrPluginImpl implements OcrHostApi {
             textureEntry.release();
             textureEntry = null;
         }
+    }
+
+    public int getScanGeneration() {
+        return scanGeneration.get();
     }
 
     @Override

@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:registration_client/core/bridge/ocr_api.g.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/biometrics_pigeon.dart';
 import 'package:registration_client/pigeon/global_config_settings_pigeon.dart';
 import 'package:registration_client/pigeon/transliteration_pigeon.dart';
 import 'package:registration_client/platform_android/transliteration_service_impl.dart';
@@ -351,6 +352,10 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
 
   @override
   void onOcrSuccess(OcrResultMessage result) {
+    if (_state == OcrScanState.idle) {
+      log('OcrScanProvider: dropping onOcrSuccess callback in cancelled/idle state');
+      return;
+    }
     _state = OcrScanState.success;
     _documentType = result.documentType;
     _confidence = result.confidence;
@@ -375,6 +380,10 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
 
   @override
   void onOcrError(OcrErrorMessage error) {
+    if (_state == OcrScanState.idle) {
+      log('OcrScanProvider: dropping onOcrError callback in cancelled/idle state');
+      return;
+    }
     _state = OcrScanState.error;
     _errorMessage = error.message ?? 'An unknown error occurred.';
     _errorCode = error.errorCode;
@@ -459,11 +468,33 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
           final fieldSpec = _findFieldSpec(fieldId, screenFields);
           final bool isSimpleType = fieldSpec?.type == 'simpleType';
 
-          // Format date if this is an ageDate/date field
-          if (fieldSpec?.controlType == 'ageDate' ||
+          final isPhoneField = fieldSpec?.subType == 'phone' ||
+              fieldSpec?.subType == 'mobile' ||
+              fieldId.toLowerCase().contains('phone') ||
+              fieldId.toLowerCase().contains('mobile');
+
+          if (isPhoneField) {
+            final cleaned = value.replaceAll(RegExp(r'^[:;—–/|\s]+'), '').replaceAll(RegExp(r'[:;—–/|\s]+$'), '').trim();
+            final hasPlus = cleaned.startsWith('+');
+            final digits = cleaned.replaceAll(RegExp(r'\D'), '');
+            if (digits.length < 7 || digits.length > 15) {
+              continue;
+            }
+            value = hasPlus ? '+$digits' : digits;
+          }
+
+          final isDateField = fieldSpec?.controlType == 'ageDate' ||
               fieldSpec?.controlType == 'date' ||
               fieldId.toLowerCase().contains('dob') ||
-              fieldId.toLowerCase().contains('dateofbirth')) {
+              fieldId.toLowerCase().contains('dateofbirth');
+
+          DateTime? validDate;
+          int? parsedDay;
+          int? parsedMonth;
+          int? parsedYear;
+
+          // Format date if this is an ageDate/date field
+          if (isDateField) {
             try {
               final cleanVal = value.replaceAll('-', '/').replaceAll('.', '/');
               final parts = cleanVal.split('/');
@@ -483,16 +514,42 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
                     y = p2;
                   }
                   if (m >= 1 && m <= 12 && d >= 1 && d <= 31 && y > 1900) {
-                    final targetFormat = (fieldSpec?.format == null ||
-                            fieldSpec!.format!.toLowerCase() == "none")
-                        ? "yyyy/MM/dd"
-                        : fieldSpec.format!;
                     final dt = DateTime(y, m, d);
-                    value = DateFormat(targetFormat).format(dt);
+                    // Strict calendar date validation (leap year, days per month)
+                    if (dt.year == y && dt.month == m && dt.day == d) {
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
+                      // Reject dates of birth in the future
+                      if (!dt.isAfter(today)) {
+                        validDate = dt;
+                        parsedDay = d;
+                        parsedMonth = m;
+                        parsedYear = y;
+                        final targetFormat = (fieldSpec?.format == null ||
+                                fieldSpec!.format!.toLowerCase() == "none")
+                            ? "yyyy/MM/dd"
+                            : fieldSpec.format!;
+                        value = DateFormat(targetFormat).format(dt);
+                      } else {
+                        // Future date rejected
+                        continue;
+                      }
+                    } else {
+                      // Impossible calendar date rejected
+                      continue;
+                    }
+                  } else {
+                    continue;
                   }
+                } else {
+                  continue;
                 }
+              } else {
+                continue;
               }
-            } catch (_) {}
+            } catch (_) {
+              continue;
+            }
           }
 
           // Handle gender field resolution
@@ -528,7 +585,31 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
             }
           }
 
-          if (isSimpleType) {
+          if (isDateField) {
+            if (validDate == null || parsedDay == null || parsedMonth == null || parsedYear == null) {
+              continue;
+            }
+            globalProvider.setInputMapValue(
+              fieldId,
+              value,
+              globalProvider.fieldInputValue,
+            );
+            final subType = (fieldSpec?.subType != null && fieldSpec!.subType!.isNotEmpty)
+                ? fieldSpec.subType!
+                : 'dateOfBirth';
+            regTaskProvider.setDateField(
+              fieldId,
+              subType,
+              parsedDay.toString().padLeft(2, '0'),
+              parsedMonth.toString().padLeft(2, '0'),
+              parsedYear.toString(),
+            );
+            try {
+              BiometricsApi().getAgeGroup().then((ageGroupVal) {
+                globalProvider.ageGroup = ageGroupVal;
+              }).catchError((_) {});
+            } catch (_) {}
+          } else if (isSimpleType) {
             // Immediately populate all chosen languages so widgets display instantly
             for (final target in globalProvider.chosenLang) {
               final targetCode = globalProvider.langToCode(target);

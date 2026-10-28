@@ -25,6 +25,8 @@ public interface OcrProvider {
 
     void release();
 
+    default void cancel() { }
+
     interface OcrProviderCallback {
 
         void onSuccess(@NonNull String documentType, float confidence, @NonNull Map<String, String> data);

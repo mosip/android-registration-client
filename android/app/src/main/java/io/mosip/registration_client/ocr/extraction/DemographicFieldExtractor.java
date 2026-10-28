@@ -33,7 +33,7 @@ public final class DemographicFieldExtractor {
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}");
 
-    private static final Pattern PHONE_NOISE = Pattern.compile("[^\\d+]");
+
     private static final Pattern NON_DIGIT   = Pattern.compile("\\D");
     private static final Pattern LABEL_TOKEN_BOUNDARY =
             Pattern.compile("(?<![\\p{L}\\p{N}])%s(?![\\p{L}\\p{N}])");
@@ -868,10 +868,13 @@ public final class DemographicFieldExtractor {
     }
 
     @Nullable
-    private static String normalizePhone(@NonNull String raw) {
-        boolean hasPlus = raw.startsWith("+");
-        String digits   = PHONE_NOISE.matcher(raw).replaceAll("");
-        if (digits.isEmpty()) return null;
+    public static String normalizePhone(@Nullable String raw) {
+        if (raw == null) return null;
+        String cleaned = raw.replaceAll("^[:;—–/|\\s]+", "").replaceAll("[:;—–/|\\s]+$", "").trim();
+        if (cleaned.isEmpty()) return null;
+        boolean hasPlus = cleaned.startsWith("+");
+        String digits   = cleaned.replaceAll("\\D", "");
+        if (digits.length() < 7 || digits.length() > 15) return null;
         return hasPlus ? "+" + digits : digits;
     }
 }

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -25,18 +26,18 @@ public final class DateNormalizer {
             DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     private static final List<DateTimeFormatter> CANDIDATE_FORMATS = Arrays.asList(
-            DateTimeFormatter.ofPattern("dd/MM/yyyy"),
-            DateTimeFormatter.ofPattern("dd-MM-yyyy"),
-            DateTimeFormatter.ofPattern("dd.MM.yyyy"),
-            DateTimeFormatter.ofPattern("d/M/yyyy"),
-            DateTimeFormatter.ofPattern("d-M-yyyy"),
-            DateTimeFormatter.ofPattern("MM/dd/yyyy"),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-            DateTimeFormatter.ofPattern("yyyy/MM/dd"),
-            DateTimeFormatter.ofPattern("yyyyMMdd")
+            DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("dd-MM-uuuu").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("dd.MM.uuuu").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("d/M/uuuu").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("d-M-uuuu").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("MM/dd/uuuu").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("uuuu/MM/dd").withResolverStyle(ResolverStyle.STRICT),
+            DateTimeFormatter.ofPattern("uuuuMMdd").withResolverStyle(ResolverStyle.STRICT)
     );
     private static final Pattern THREE_DIGIT_GROUPS =
-            Pattern.compile("(\\d{1,4})[\\-/. ](\\d{1,2})[\\-/. ](\\d{2,4})");
+            Pattern.compile("(\\d{1,4})[\\-/. ](\\d{1,2})[\\-/. ](\\d{1,4})");
     private static final char[][] OCR_SUBS = {
             {'O', '0'}, {'o', '0'},
             {'I', '1'}, {'l', '1'},
@@ -86,7 +87,11 @@ public final class DateNormalizer {
     private static String tryFormats(@NonNull String value) {
         for (DateTimeFormatter fmt : CANDIDATE_FORMATS) {
             try {
-                return LocalDate.parse(value, fmt).format(OUTPUT_FORMAT);
+                LocalDate date = LocalDate.parse(value, fmt);
+                if (date.getYear() < 1900 || date.getYear() > 2100) {
+                    continue;
+                }
+                return date.format(OUTPUT_FORMAT);
             } catch (DateTimeParseException ignored) { }
         }
         return null;
@@ -110,7 +115,7 @@ public final class DateNormalizer {
 
     @Nullable
     private static String tryMonthNameFormat(@NonNull String value,
-                                              @NonNull Set<String> monthNames) {
+                                             @NonNull Set<String> monthNames) {
         String[] parts = value.trim().split("[\\s\\-/.,]+");
         if (parts.length != 3) return null;
 
@@ -123,16 +128,19 @@ public final class DateNormalizer {
             if (monthNum < 0) continue;
 
             try {
+                int day = -1;
+                int year = -1;
                 if (monthPos == 1) {
-                    int day  = Integer.parseInt(applyOcrSubstitutions(parts[0]));
-                    int year = Integer.parseInt(applyOcrSubstitutions(parts[2]));
-                    return LocalDate.of(year, monthNum, day).format(OUTPUT_FORMAT);
+                    day  = Integer.parseInt(applyOcrSubstitutions(parts[0]));
+                    year = Integer.parseInt(applyOcrSubstitutions(parts[2]));
                 } else if (monthPos == 0) {
-                    int day  = Integer.parseInt(applyOcrSubstitutions(parts[1]));
-                    int year = Integer.parseInt(applyOcrSubstitutions(parts[2]));
+                    day  = Integer.parseInt(applyOcrSubstitutions(parts[1]));
+                    year = Integer.parseInt(applyOcrSubstitutions(parts[2]));
+                }
+                // Reject ambiguous 2-digit years (< 1900); strict calendar validation in LocalDate.of
+                if (day > 0 && year >= 1900 && year <= 2100) {
                     return LocalDate.of(year, monthNum, day).format(OUTPUT_FORMAT);
                 }
-                // monthPos == 2 (unusual) — skip
             } catch (Exception ignored) { }
         }
         return null;
@@ -147,12 +155,31 @@ public final class DateNormalizer {
             int b = Integer.parseInt(m.group(2));
             int c = Integer.parseInt(m.group(3));
 
-            if (a > 31) {
-                return LocalDate.of(a, b, c).format(OUTPUT_FORMAT);
-            } else if (c > 31) {
-                return LocalDate.of(c, b, a).format(OUTPUT_FORMAT);
+            int year;
+            int month;
+            int day;
+
+            if (a >= 1900 && a <= 2100) {
+                // Year is first (e.g. YYYY/MM/DD)
+                year = a;
+                month = b;
+                day = c;
+            } else if (c >= 1900 && c <= 2100) {
+                // Year is last (e.g. DD/MM/YYYY)
+                year = c;
+                month = b;
+                day = a;
+            } else {
+                // Ambiguous 2-digit year (< 1900) or out-of-range year — reject per policy
+                return null;
             }
-            return LocalDate.of(c, b, a).format(OUTPUT_FORMAT);
+
+            if (month < 1 || month > 12) {
+                return null;
+            }
+
+            // Strict calendar validation via LocalDate.of (e.g. rejects Feb 29 on non-leap years, Feb 30/31, Apr 31)
+            return LocalDate.of(year, month, day).format(OUTPUT_FORMAT);
         } catch (Exception ignored) {
             return null;
         }
