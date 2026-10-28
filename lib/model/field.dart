@@ -30,7 +30,6 @@ class Field with _$Field {
     String? controlType,
     String? fieldType,
     String? format,
-    String? ocrKey,
     Map<String, String>? visible,
     List<ConditionalBioAttributes?>? conditionalBioAttributes,
     String? alignmentGroup,

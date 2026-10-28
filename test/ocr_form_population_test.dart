@@ -172,15 +172,15 @@ void main() {
       expect(globalProvider.fieldInputValue['gender'], 'Other');
     });
 
-    test('resolves OCR keys with custom mapping from FieldSpec.ocrKey', () {
+    test('resolves OCR keys with field subType and id mapping', () {
       final p = createActiveProvider({
-        'national_id_name': 'Jane Smith',
-        'dob_extracted': '1992/08/14',
+        'name': 'Jane Smith',
+        'dateOfBirth': '1992/08/14',
       });
 
       final screenFields = [
-        Field(id: 'fullName', ocrKey: 'national_id_name', controlType: 'textbox', subType: 'name', type: 'simpleType'),
-        Field(id: 'dateOfBirth', ocrKey: 'dob_extracted', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
+        Field(id: 'fullName', controlType: 'textbox', subType: 'name', type: 'simpleType'),
+        Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
       final applied = p.applyExtractedFields(

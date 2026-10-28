@@ -403,8 +403,8 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
       if (f != null &&
           (f.id == fieldId ||
               f.id?.toLowerCase() == fieldId.toLowerCase() ||
-              f.ocrKey == fieldId ||
-              f.ocrKey?.toLowerCase() == fieldId.toLowerCase())) {
+              f.subType == fieldId ||
+              f.subType?.toLowerCase() == fieldId.toLowerCase())) {
         return f;
       }
     }
@@ -426,16 +426,16 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
       int appliedCount = 0;
       debugPrint('Applying ${data.length} OCR extracted fields to registration form');
 
-      // Build reverse map: ocrKey -> fieldId
+      // Build reverse map: ocrKey / subType -> fieldId
       final Map<String, String> ocrKeyToFieldId = {};
       if (screenFields != null) {
         for (final f in screenFields) {
           if (f != null && f.id != null) {
             ocrKeyToFieldId[f.id!] = f.id!;
             ocrKeyToFieldId[f.id!.toLowerCase()] = f.id!;
-            if (f.ocrKey != null && f.ocrKey!.isNotEmpty) {
-              ocrKeyToFieldId[f.ocrKey!] = f.id!;
-              ocrKeyToFieldId[f.ocrKey!.toLowerCase()] = f.id!;
+            if (f.subType != null && f.subType!.isNotEmpty) {
+              ocrKeyToFieldId[f.subType!] = f.id!;
+              ocrKeyToFieldId[f.subType!.toLowerCase()] = f.id!;
             }
           }
         }
