@@ -6,12 +6,15 @@ import io.mosip.registration.transliterationmanager.spi.TransliterationService;
 
 public class TransliterationServiceImpl implements TransliterationService {
     @Override
-    public String transliterate(String inputCode,String outputCode, String input) {
-        if(inputCode.equals(outputCode)){
+    public String transliterate(String inputCode, String outputCode, String input) {
+        if (input == null || input.isEmpty() || inputCode == null || outputCode == null || inputCode.equalsIgnoreCase(outputCode)) {
             return input;
         }
-        Transliterator transliterator = Transliterator.getInstance(inputCode+"-"+outputCode);
-        String transliteratedResult = transliterator.transliterate(input);
-        return transliteratedResult;
+        try {
+            Transliterator transliterator = Transliterator.getInstance(inputCode + "-" + outputCode);
+            return transliterator.transliterate(input);
+        } catch (Exception e) {
+            return input;
+        }
     }
 }

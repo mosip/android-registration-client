@@ -30,6 +30,11 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
   late GlobalProvider globalProvider;
   late RegistrationTaskProvider registrationTaskProvider;
 
+  // Stable future — avoids FutureBuilder every rebuild
+  late Future<List<DynamicFieldData?>> _fieldValuesFuture;
+
+  String? _pendingFieldVal;
+
   Future<List<DynamicFieldData?>> _getFieldValues(
       String fieldName, String langCode) async {
     return await registrationTaskProvider
@@ -69,31 +74,106 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     registrationTaskProvider =
         Provider.of<RegistrationTaskProvider>(context, listen: false);
-    String lang = globalProvider.mandatoryLanguages[0]!;
-    if (globalProvider
-        .fieldInputValue
-        .containsKey(widget.field.id)) {
-      _getSelectedValueFromMap(lang);
+    _fieldValuesFuture =
+        _getFieldValues(widget.field.subType!, globalProvider.selectedLanguage);
+    if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
+      _getSelectedValueFromMap(globalProvider.selectedLanguage);
     }
+    globalProvider.addListener(_onPreRegAutoFill);
     super.initState();
   }
 
-  void _getSelectedValueFromMap(String lang) async {
-    String response = "";
-    String updatedValue = "";
-    response =
-        globalProvider.fieldInputValue[widget.field.id];
-    List<DynamicFieldData?> data = await _getFieldValues(widget.field.subType!, lang);
-    for (var element in data) {
-      if(element!.code == response){
+  @override
+  void dispose() {
+    globalProvider.removeListener(_onPreRegAutoFill);
+    super.dispose();
+  }
+
+  void _onPreRegAutoFill() {
+    if (!mounted) {
+      globalProvider.removeListener(_onPreRegAutoFill);
+      return;
+    }
+
+    final dynamic fieldVal =
+        globalProvider.fieldInputValue[widget.field.id ?? ""];
+
+    if (fieldVal == null) {
+      if (selectedOption != null) {
         setState(() {
-          updatedValue = element.name;
+          selectedOption = null;
         });
       }
+      _pendingFieldVal = null;
+      return;
     }
-    setState(() {
-      selectedOption = updatedValue.toLowerCase();
-    });
+
+    String resolvedValue = "";
+    if (fieldVal is String) {
+      resolvedValue = fieldVal;
+    } else if (fieldVal is Map) {
+      final String lang = globalProvider.selectedLanguage;
+      final dynamic langVal = fieldVal[lang] ?? (fieldVal.isNotEmpty ? fieldVal.values.first : null);
+      if (langVal != null) resolvedValue = langVal.toString();
+    }
+    if (resolvedValue.isEmpty) return;
+
+    if (selectedOption != null && selectedOption == resolvedValue.toLowerCase()) return;
+    if (resolvedValue == _pendingFieldVal) return;
+
+    _pendingFieldVal = resolvedValue;
+    _applyPreRegValue(resolvedValue);
+  }
+
+
+  void _applyPreRegValue(String fieldVal) async {
+    final String lang = globalProvider.selectedLanguage;
+    final List<DynamicFieldData?> data =
+        await _getFieldValues(widget.field.subType!, lang);
+
+    // Guard against stale async result (e.g. second fetch arrived first)
+    if (!mounted || fieldVal != _pendingFieldVal) return;
+
+    for (final element in data) {
+      if (element != null &&
+          (element.code.toLowerCase() == fieldVal.toLowerCase() ||
+              element.name.toLowerCase() == fieldVal.toLowerCase())) {
+        handleOptionChange(element.code, element.name);
+        break;
+      }
+    }
+  }
+
+  void _getSelectedValueFromMap(String lang) async {
+    final dynamic raw = globalProvider.fieldInputValue[widget.field.id];
+    String response = "";
+    if (raw is String) {
+      response = raw;
+    } else if (raw is Map) {
+      final dynamic langVal = raw[lang] ?? (raw.isNotEmpty ? raw.values.first : null);
+      if (langVal != null) response = langVal.toString();
+    } else if (raw != null) {
+      response = raw.toString();
+    }
+    if (response.isEmpty) return;
+
+    final List<DynamicFieldData?> data =
+        await _getFieldValues(widget.field.subType!, lang);
+    String updatedValue = "";
+    for (final element in data) {
+      if (element != null &&
+          (element.code.toLowerCase() == response.toLowerCase() ||
+              element.name.toLowerCase() == response.toLowerCase())) {
+        updatedValue = element.name;
+        break;
+      }
+    }
+    if (mounted) {
+      setState(() {
+        selectedOption =
+            updatedValue.isEmpty ? null : updatedValue.toLowerCase();
+      });
+    }
   }
 
   String? selectedOption;
@@ -117,9 +197,9 @@ class _RadioFormFieldState extends State<RadioButtonControl> {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return FutureBuilder(
-      future: _getFieldValues(widget.field.subType!,
-          globalProvider.selectedLanguage),
-      builder: (BuildContext context, AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
+      future: _fieldValuesFuture,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<DynamicFieldData?>> snapshot) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Card(
