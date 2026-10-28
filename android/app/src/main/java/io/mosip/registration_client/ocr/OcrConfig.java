@@ -11,6 +11,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
 public final class OcrConfig {
 
@@ -27,6 +31,7 @@ public final class OcrConfig {
     @NonNull public final String provider;
     public final int responseTimeoutMs;
     @Nullable public final String serviceUrl;
+    @NonNull public final List<String> allowedEndpoints;
 
     public final int qualityMaxRetries;
     public final float qualityBrightnessMin;
@@ -35,11 +40,13 @@ public final class OcrConfig {
 
     private OcrConfig(
             boolean enabled, @NonNull String provider, int responseTimeoutMs, @Nullable String serviceUrl,
+            @NonNull List<String> allowedEndpoints,
             int qualityMaxRetries, float qualityBrightnessMin, float qualityBrightnessMax, double qualityBlurVariance) {
         this.enabled = enabled;
         this.provider = provider;
         this.responseTimeoutMs = responseTimeoutMs;
         this.serviceUrl = serviceUrl;
+        this.allowedEndpoints = allowedEndpoints;
         this.qualityMaxRetries = qualityMaxRetries;
         this.qualityBrightnessMin = qualityBrightnessMin;
         this.qualityBrightnessMax = qualityBrightnessMax;
@@ -61,6 +68,9 @@ public final class OcrConfig {
 
         String serviceUrl = safeGet(globalParamRepository, OcrParamKeys.OCR_SERVICE_URL);
 
+        List<String> allowedEndpoints = parseList(
+                safeGet(globalParamRepository, OcrParamKeys.OCR_ALLOWED_ENDPOINTS));
+
         int qualityMaxRetries = parseInt(
                 safeGet(globalParamRepository, OcrParamKeys.OCR_QUALITY_MAX_RETRIES), DEFAULT_QUALITY_MAX_RETRIES);
 
@@ -72,7 +82,7 @@ public final class OcrConfig {
                 safeGet(globalParamRepository, OcrParamKeys.OCR_QUALITY_THRESHOLD_BLUR_VARIANCE), DEFAULT_BLUR_VARIANCE);
 
         return new OcrConfig(
-                enabled, provider.trim(), timeout, serviceUrl,
+                enabled, provider.trim(), timeout, serviceUrl, allowedEndpoints,
                 qualityMaxRetries, brightnessMin, brightnessMax, blurVariance);
     }
 
@@ -119,5 +129,21 @@ public final class OcrConfig {
             Log.w(TAG, "Invalid double for OCR param, using default " + fallback, e);
             return fallback;
         }
+    }
+
+    @NonNull
+    private static List<String> parseList(@Nullable String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        String[] parts = value.split(",");
+        List<String> list = new ArrayList<>();
+        for (String part : parts) {
+            String trimmed = part.trim();
+            if (!trimmed.isEmpty()) {
+                list.add(trimmed);
+            }
+        }
+        return Collections.unmodifiableList(list);
     }
 }

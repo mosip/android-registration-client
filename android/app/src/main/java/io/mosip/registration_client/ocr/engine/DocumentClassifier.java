@@ -127,6 +127,10 @@ public class DocumentClassifier {
         }
     }
 
+    public boolean isClosed() {
+        return interpreter == null;
+    }
+
     public void close() {
         if (interpreter != null) {
             interpreter.close();

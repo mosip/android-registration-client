@@ -53,7 +53,7 @@ public class OcrPluginImpl implements OcrHostApi {
     private final OcrFlutterApi            flutterApi;
     private final GlobalParamRepository    globalParamRepository;
     @Nullable
-    private final DocumentClassifier       documentClassifier;
+    private DocumentClassifier             documentClassifier;
     private volatile OcrProvider           provider;
     private final Handler                  mainThreadHandler;
     private volatile OcrConfig             config;
@@ -135,7 +135,11 @@ public class OcrPluginImpl implements OcrHostApi {
                         Log.w(TAG, "Error releasing previous OCR provider", e);
                     }
                 }
-                this.provider = OcrProviderFactory.create(this.config, documentClassifier, this.extractionConfig);
+                this.provider = OcrProviderFactory.create(
+                        activity.getApplicationContext(),
+                        this.config,
+                        getOrCreateDocumentClassifier(),
+                        this.extractionConfig);
                 Log.i(TAG, "OCR provider initialized: " + this.config.provider
                         + " (timeout=" + this.config.responseTimeoutMs + "ms)");
             } else {
@@ -151,6 +155,33 @@ public class OcrPluginImpl implements OcrHostApi {
             }
         } catch (Exception e) {
             Log.e(TAG, "Failed refreshing OCR config and provider", e);
+        }
+    }
+
+    @Nullable
+    private synchronized DocumentClassifier getOrCreateDocumentClassifier() {
+        if (documentClassifier == null || documentClassifier.isClosed()) {
+            if (activity != null) {
+                try {
+                    documentClassifier = new DocumentClassifier(activity.getApplicationContext());
+                    Log.i(TAG, "Initialized shared DocumentClassifier");
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed initializing DocumentClassifier", e);
+                    documentClassifier = null;
+                }
+            }
+        }
+        return documentClassifier;
+    }
+
+    public synchronized void destroy() {
+        if (this.provider != null) {
+            this.provider.release();
+            this.provider = null;
+        }
+        if (this.documentClassifier != null) {
+            this.documentClassifier.close();
+            this.documentClassifier = null;
         }
     }
 

@@ -134,9 +134,6 @@ public class MlKitOcrProvider implements OcrProvider {
     @Override
     public void release() {
         mlKitEngine.release();
-        if (documentClassifier != null) {
-            documentClassifier.close();
-        }
     }
 
     private static int mapMlKitFailureToProviderCode(@NonNull String mlKitErrorCode) {

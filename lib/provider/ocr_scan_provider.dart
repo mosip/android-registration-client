@@ -415,7 +415,7 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
       if (data.isEmpty) return 0;
 
       int appliedCount = 0;
-      debugPrint('OCR_KEY_VALUE: ${data.entries.map((e) => '${e.key}=${e.value}').join(', ')}');
+      debugPrint('Applying ${data.length} OCR extracted fields to registration form');
 
       // Build reverse map: ocrKey -> fieldId
       final Map<String, String> ocrKeyToFieldId = {};
@@ -581,7 +581,7 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
 
           appliedCount++;
         } catch (fieldError) {
-          debugPrint('Error applying field ${entry.key}: $fieldError');
+          debugPrint('Error applying extracted field: $fieldError');
         }
       }
 

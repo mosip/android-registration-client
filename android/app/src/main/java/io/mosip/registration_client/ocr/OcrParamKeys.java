@@ -12,6 +12,7 @@ public final class OcrParamKeys {
     public static final String OCR_PROVIDER = "mosip.registration.ocr.provider";
     public static final String OCR_RESPONSE_TIMEOUT = "mosip.registration.ocr.response.timeout";
     public static final String OCR_SERVICE_URL = "mosip.registration.ocr.service.url";
+    public static final String OCR_ALLOWED_ENDPOINTS = "mosip.registration.ocr.allowed.endpoints";
 
     public static final String OCR_QUALITY_MAX_RETRIES = "mosip.registration.ocr.quality.max_retries";
 

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,12 +23,15 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.mosip.registration_client.BuildConfig;
 import io.mosip.registration_client.ocr.models.FieldSpec;
 import io.mosip.registration_client.ocr.models.OcrError;
 import io.mosip.registration_client.ocr.models.OcrErrorCode;
@@ -36,14 +40,34 @@ public class RemoteOcrProvider implements OcrProvider {
 
     private static final String SCREEN_NAME = "DemographicDetails";
 
+    public interface AuthTokenProvider {
+        @Nullable
+        String getAuthToken();
+    }
+
     private final String serviceUrl;
     private final int    socketTimeoutMs;
+    @NonNull
+    private final List<String> allowedEndpoints;
+    @Nullable
+    private final AuthTokenProvider authTokenProvider;
     private final ExecutorService executor;
 
-    public RemoteOcrProvider(@NonNull String serviceUrl, int socketTimeoutMs) {
+    public RemoteOcrProvider(
+            @NonNull String serviceUrl,
+            int socketTimeoutMs,
+            @Nullable List<String> allowedEndpoints,
+            @Nullable AuthTokenProvider authTokenProvider) {
         this.serviceUrl = serviceUrl;
         this.socketTimeoutMs = socketTimeoutMs;
+        this.allowedEndpoints = allowedEndpoints != null ? allowedEndpoints : Collections.emptyList();
+        this.authTokenProvider = authTokenProvider;
         this.executor = Executors.newSingleThreadExecutor();
+        validateServiceUrl(serviceUrl);
+    }
+
+    public RemoteOcrProvider(@NonNull String serviceUrl, int socketTimeoutMs) {
+        this(serviceUrl, socketTimeoutMs, null, null);
     }
 
     @Override
@@ -54,6 +78,9 @@ public class RemoteOcrProvider implements OcrProvider {
 
         executor.execute(() -> {
             try {
+                // Validate configuration and auth before touching resident bitmap
+                validatePreconditions();
+
                 String requestBody = buildRequestJson(bitmap, spec);
                 String responseBody = postToServer(requestBody);
 
@@ -67,6 +94,11 @@ public class RemoteOcrProvider implements OcrProvider {
 
                 parseResponse(responseBody, callback);
 
+            } catch (SecurityException e) {
+                callback.onFailure(
+                        OcrError.ErrorCode.NETWORK_ERROR.name(),
+                        "Security validation failed for remote OCR: " + e.getMessage(),
+                        false);
             } catch (IOException e) {
                 boolean isTimeout = e.getMessage() != null
                         && e.getMessage().toLowerCase().contains("timeout");
@@ -86,6 +118,81 @@ public class RemoteOcrProvider implements OcrProvider {
     @Override
     public void release() {
         executor.shutdownNow();
+    }
+
+    public void validatePreconditions() {
+        validateServiceUrl(serviceUrl);
+        if (authTokenProvider == null) {
+            throw new SecurityException("MOSIP authentication required: No auth token provider configured.");
+        }
+        String token = authTokenProvider.getAuthToken();
+        if (token == null || token.trim().isEmpty()) {
+            throw new SecurityException("MOSIP authentication required: No active session auth token available.");
+        }
+    }
+
+    public void validateServiceUrl(@NonNull String urlString) {
+        if (urlString == null || urlString.trim().isEmpty()) {
+            throw new SecurityException("OCR service URL cannot be empty");
+        }
+        URI uri;
+        try {
+            uri = URI.create(urlString.trim());
+        } catch (IllegalArgumentException e) {
+            throw new SecurityException("Malformed OCR service URL: " + urlString, e);
+        }
+
+        String scheme = uri.getScheme();
+        if (scheme == null || !"https".equalsIgnoreCase(scheme)) {
+            throw new SecurityException("Insecure URL scheme '" + scheme + "'. Only HTTPS is permitted for remote OCR.");
+        }
+
+        String host = uri.getHost();
+        if (host == null || host.trim().isEmpty()) {
+            throw new SecurityException("OCR service URL missing valid host: " + urlString);
+        }
+
+        if (!isHostAllowlisted(host)) {
+            throw new SecurityException("OCR service endpoint '" + host + "' is not in the approved endpoint allowlist.");
+        }
+    }
+
+    public boolean isHostAllowlisted(@NonNull String host) {
+        String normalizedHost = host.toLowerCase(Locale.ROOT);
+
+        // Check against BuildConfig.BASE_URL host
+        String baseMosipUrl = BuildConfig.BASE_URL;
+        if (baseMosipUrl != null && !baseMosipUrl.trim().isEmpty()) {
+            try {
+                URI baseUri = URI.create(baseMosipUrl.trim());
+                String baseHost = baseUri.getHost();
+                if (baseHost != null && !baseHost.trim().isEmpty()) {
+                    baseHost = baseHost.toLowerCase(Locale.ROOT);
+                    if (normalizedHost.equals(baseHost) || normalizedHost.endsWith("." + baseHost)) {
+                        return true;
+                    }
+                }
+            } catch (Exception ignored) { }
+        }
+
+        // Check against explicit allowedEndpoints
+        for (String allowed : allowedEndpoints) {
+            if (allowed == null || allowed.trim().isEmpty()) continue;
+            String allowedHost = allowed.trim().toLowerCase(Locale.ROOT);
+            if (allowedHost.startsWith("http://") || allowedHost.startsWith("https://")) {
+                try {
+                    URI uri = URI.create(allowedHost);
+                    if (uri.getHost() != null) {
+                        allowedHost = uri.getHost().toLowerCase(Locale.ROOT);
+                    }
+                } catch (Exception ignored) { }
+            }
+            if (normalizedHost.equals(allowedHost) || normalizedHost.endsWith("." + allowedHost)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void parseResponse(@NonNull String responseBody, @NonNull OcrProviderCallback callback) {
@@ -212,6 +319,8 @@ public class RemoteOcrProvider implements OcrProvider {
 
     @NonNull
     private String postToServer(@NonNull String requestBody) throws IOException {
+        validatePreconditions();
+
         HttpURLConnection connection = null;
         try {
             URL url = URI.create(serviceUrl).toURL();
@@ -219,6 +328,16 @@ public class RemoteOcrProvider implements OcrProvider {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
+
+            // Attach MOSIP authentication credentials
+            if (authTokenProvider != null) {
+                String token = authTokenProvider.getAuthToken();
+                if (token != null && !token.trim().isEmpty()) {
+                    connection.setRequestProperty("Cookie", "Authorization=" + token);
+                    connection.setRequestProperty("Authorization", "Bearer " + token);
+                }
+            }
+
             connection.setDoOutput(true);
             connection.setConnectTimeout(socketTimeoutMs);
             connection.setReadTimeout(socketTimeoutMs);
@@ -230,15 +349,8 @@ public class RemoteOcrProvider implements OcrProvider {
 
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                String errorBody = "";
-                java.io.InputStream es = connection.getErrorStream();
-                if (es != null) {
-                    try (java.util.Scanner scanner = new java.util.Scanner(es, StandardCharsets.UTF_8.name())) {
-                        scanner.useDelimiter("\\A");
-                        errorBody = scanner.hasNext() ? scanner.next() : "";
-                    }
-                }
-                throw new IOException("OCR server returned HTTP " + responseCode + " - " + errorBody);
+                // Ensure sensitive request body and error response containing resident data are never logged or leaked
+                throw new IOException("OCR server returned HTTP " + responseCode);
             }
 
             try (java.io.InputStream is = connection.getInputStream();

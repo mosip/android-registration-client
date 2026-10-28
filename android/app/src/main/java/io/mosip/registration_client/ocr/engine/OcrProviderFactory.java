@@ -6,11 +6,13 @@
 
 package io.mosip.registration_client.ocr.engine;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import io.mosip.registration.clientmanager.config.SessionManager;
 import io.mosip.registration_client.ocr.OcrConfig;
 import io.mosip.registration_client.ocr.extraction.ExtractionConfig;
 
@@ -31,6 +33,7 @@ public final class OcrProviderFactory {
 
     @NonNull
     public static OcrProvider create(
+            @Nullable Context context,
             @NonNull OcrConfig config,
             @Nullable DocumentClassifier documentClassifier,
             @NonNull ExtractionConfig extractionConfig) {
@@ -41,7 +44,19 @@ public final class OcrProviderFactory {
                 Log.w(TAG, "mosip.registration.ocr.service.url is empty but ocr.provider=remote; falling back to mlkit");
                 provider = new MlKitOcrProvider(documentClassifier, extractionConfig);
             } else {
-                provider = new RemoteOcrProvider(config.serviceUrl, config.responseTimeoutMs);
+                try {
+                    RemoteOcrProvider.AuthTokenProvider tokenProvider = context != null
+                            ? () -> SessionManager.getSessionManager(context.getApplicationContext()).fetchAuthToken()
+                            : null;
+                    provider = new RemoteOcrProvider(
+                            config.serviceUrl,
+                            config.responseTimeoutMs,
+                            config.allowedEndpoints,
+                            tokenProvider);
+                } catch (SecurityException e) {
+                    Log.e(TAG, "Remote OCR configuration failed security validation; falling back to mlkit", e);
+                    provider = new MlKitOcrProvider(documentClassifier, extractionConfig);
+                }
             }
         } else {
             if (!PROVIDER_MLKIT.equalsIgnoreCase(config.provider)) {
@@ -51,5 +66,13 @@ public final class OcrProviderFactory {
         }
 
         return new TimeoutEnforcingOcrProvider(provider, config.responseTimeoutMs);
+    }
+
+    @NonNull
+    public static OcrProvider create(
+            @NonNull OcrConfig config,
+            @Nullable DocumentClassifier documentClassifier,
+            @NonNull ExtractionConfig extractionConfig) {
+        return create(null, config, documentClassifier, extractionConfig);
     }
 }
