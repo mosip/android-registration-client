@@ -163,7 +163,7 @@ regclientScenariosToExecute=LoginTest,NewRegistrationAdult,UpdateMyUinUpdateDocu
 
 ## Important Configuration Files
 
-Update these files before execution:
+Update these files before execution. Paths below are relative to `src/main/resources` (IDE run) or to the `resources/` folder next to the JAR (packaged JAR run):
 
 * `resources/config/Kernel.properties` — Environment details; also `UIN`, `AID`, `UINminor`, `UINinfant` and `generateUinAidPrerequisite` (true: auto-generate UIN/AID when empty; false: must be filled manually)
 * `resources/testdata.json` — Test data (language, camera id)

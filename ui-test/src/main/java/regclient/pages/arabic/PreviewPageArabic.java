@@ -116,7 +116,8 @@ public class PreviewPageArabic extends PreviewPage {
 	private static final By APPLICATION_ID_DESC_LOCATOR = MobileBy.AndroidUIAutomator(
 			"new UiSelector().descriptionMatches(\"(?s).*\\\\d{14,}.*\")");
 
-	private static final Pattern APPLICATION_ID_DIGITS = Pattern.compile("\\d{14,}");
+	// Label followed by the ID; any length, since mosip.kernel.prid.length is configurable (14 is only the default)
+	private static final Pattern APPLICATION_ID_DIGITS = Pattern.compile("Application ID\\D*\\d+");
 
 	// Prefer the labelled element, but only when it carries the ID itself; a standalone label has no digits,
 	// so fall back to the numeric matches
