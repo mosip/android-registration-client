@@ -135,6 +135,8 @@ Import the project into **Eclipse / IntelliJ** if needed.
 
 ### From Packaged JAR
 
+The build does not copy the suite file or the config files next to the JAR. Before running, copy `../testng.xml` into `target`, and `../src/main/resources` into `target` as `resources`.
+
 ```bash
 cd android-registration-client/ui-test/target
 java -jar uitest-regclient-1.2.0.jar
@@ -154,7 +156,7 @@ regclientScenariosToExecute=ResetPassword
 regclientScenariosToExecute=LoginTest,NewRegistrationAdult,UpdateMyUinUpdateDocuments
 ```
 
-* Leave it empty to run the full suite from `testng.xml`.
+* Leave it empty to run the full suite from `testng.xml` (for a packaged JAR run, copy it into `target` first; see above).
 * Misspelled names are silently skipped; use the class names from `regclient.androidTestCases`.
 * On a fresh install or a new environment, run `AddMachineDetails,InitialLaunch,LoginTest` first.
 * Some scenarios need test data first; see [UIN / AID Generation Flow](#uin--aid-generation-flow).
@@ -190,7 +192,7 @@ Several scenarios need an existing identity: the **introducer** for Minor/Infant
 | `UINminor`, `UINinfant` | UINs of existing minor/infant identities (UpdateMyUinMinor/Infant) | **Always added manually**; these scenarios are skipped if empty |
 | `generateUinAidPrerequisite` | `true`: generate a new `AID`/`UIN` when missing or invalid. `false`: never generate; skip the scenario instead | Set manually |
 
-**Environment dependent:** a UIN/AID exists only in the environment where it was created. Values from another environment (e.g. qa-base vs 131ga) will not work, so clear `UIN`/`AID` (or keep `generateUinAidPrerequisite=true`) when switching environments. `UINminor`/`UINinfant` must also come from the target environment.
+**Environment dependent:** a UIN/AID exists only in the environment where it was created. Values from another environment (e.g. qa-base vs 131ga) will not work. When switching environments, clear `UIN`/`AID`. Before running the direct update scenarios (see the note below), run a scenario that generates them (e.g. NewRegistrationAdult) or enter a valid UIN from the target environment. `UINminor`/`UINinfant` must also come from the target environment.
 
 ### How it works
 

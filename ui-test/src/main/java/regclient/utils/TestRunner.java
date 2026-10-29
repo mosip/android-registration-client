@@ -151,7 +151,9 @@ public class TestRunner {
 				if (Scenarioname.equalsIgnoreCase("exportPacket"))
 					classes.add(exportPacket);
 
-				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDocuments"))
+				// Old misspelled name still accepted so existing configurations keep working
+				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDocuments")
+						|| Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDoccuments"))
 					classes.add(newRegistrationAdultUploadMultipleDocuments);
 				
 				if (Scenarioname.equalsIgnoreCase("createPacketWithoutNetwork"))
