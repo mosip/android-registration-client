@@ -2,6 +2,12 @@
 package regclient.page;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -14,7 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.remote.SupportsContextSwitching;
 
 public class KeycloakPage extends BasePage {
@@ -120,43 +129,78 @@ public class KeycloakPage extends BasePage {
 			}
 		}
 
-		retryFindElement(keycloakPageTitle, Duration.ofSeconds(10));
-		return isElementDisplayed(keycloakPageTitle);
+		WebElement title = isInWebView() ? webLoginTitle : keycloakPageTitle;
+		retryFindElement(title, Duration.ofSeconds(10));
+		return isElementDisplayed(title);
+	}
+
+	private boolean isInWebView() {
+		try {
+			return String.valueOf(((SupportsContextSwitching) driver).getContext()).startsWith("WEBVIEW");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private void switchToVisibleTabAndCloseOthers() {
 		switchToVisibleTab(true);
 	}
 
+	// Picks the tab by URL, never by running JavaScript: Chrome freezes background tabs, and a script
+	// sent to a frozen tab blocks ChromeDriver for its full 240s timeout
 	private void switchToVisibleTab(boolean closeOthers) {
 		try {
-			String visibleTab = null;
-			for (String handle : driver.getWindowHandles()) {
-				driver.switchTo().window(handle);
-				Object state = ((JavascriptExecutor) driver).executeScript("return document.visibilityState;");
-				if ("visible".equals(state)) {
-					visibleTab = handle;
-					break;
-				}
-			}
-			if (visibleTab == null || !closeOthers) {
-				if (visibleTab != null) {
-					driver.switchTo().window(visibleTab);
-				}
+			List<String> handles = new ArrayList<>(driver.getWindowHandles());
+			if (handles.isEmpty()) {
 				return;
 			}
-			try {
-				for (String handle : driver.getWindowHandles()) {
-					if (!handle.equals(visibleTab)) {
-						driver.switchTo().window(handle);
-						driver.close();
+			String keycloakTab = null;
+			String fallbackTab = null;
+			for (String handle : handles) {
+				driver.switchTo().window(handle);
+				String url = String.valueOf(driver.getCurrentUrl());
+				if (url.contains("/auth/") || url.contains("/realms/")) {
+					keycloakTab = handle;
+				} else if (fallbackTab == null && !url.startsWith("about:")) {
+					fallbackTab = handle;
+				}
+			}
+			String chosen = keycloakTab != null ? keycloakTab : fallbackTab != null ? fallbackTab : handles.get(0);
+			if (closeOthers) {
+				for (String handle : handles) {
+					if (!handle.equals(chosen)) {
+						closeTab(handle);
 					}
 				}
-			} finally {
-				driver.switchTo().window(visibleTab);
+			}
+			driver.switchTo().window(chosen);
+			logger.info("Using Chrome tab {} of {}", handles.indexOf(chosen) + 1, handles.size());
+		} catch (Exception e) {
+			logger.warn("Could not select Chrome tab: {}", firstLine(e));
+		}
+	}
+
+	private void closeTab(String handle) {
+		try {
+			driver.switchTo().window(handle);
+			driver.close();
+		} catch (Exception e) {
+			logger.debug("Could not close Chrome tab: {}", firstLine(e));
+		}
+	}
+
+	// Closes every Chrome tab so the next run starts with only the tab the app opens
+	private void closeAllChromeTabs() {
+		try {
+			String webCtx = findWebViewContext(Duration.ofSeconds(3));
+			if (webCtx != null) {
+				((SupportsContextSwitching) driver).context(webCtx);
+				for (String handle : new ArrayList<>(driver.getWindowHandles())) {
+					closeTab(handle);
+				}
 			}
 		} catch (Exception e) {
-			logger.warn("Could not select visible Chrome tab: {}", e.getMessage());
+			logger.debug("Could not close Chrome tabs: {}", firstLine(e));
 		}
 	}
 
@@ -289,7 +333,7 @@ public class KeycloakPage extends BasePage {
 	}
 
 	public String getPageTitle() {
-		return keycloakPageTitle.getText();
+		return (isInWebView() ? webLoginTitle : keycloakPageTitle).getText();
 	}
 
 	public void clickOnLanguageDropdown() {
@@ -303,17 +347,35 @@ public class KeycloakPage extends BasePage {
 	By usernameTextBox1 = By.id("username");
 
 	public void enterUserName(String username) {
-		sendKeys(usernameTextBox1, username);
+		typeInLoginField("username", username);
 	}
 
 	By passwordTextBox1 = By.id("password");
 
 	public void enterPassword(String password) {
-		sendKeys(passwordTextBox1, password);
+		typeInLoginField("password", password);
+	}
+
+	private void typeInLoginField(String fieldId, String value) {
+		if (isInWebView()) {
+			try {
+				sendKeys(By.cssSelector("#" + fieldId), value);
+				return;
+			} catch (Exception e) {
+				logger.info("Webview entry for '{}' failed, falling back to native: {}", fieldId, e.getMessage());
+				switchToNativeContext();
+			}
+		}
+		// Chrome's EditText resource-id has no package prefix, so By.id may not match it; use XPath like nativeUsernameField
+		sendKeys(By.xpath("//android.widget.EditText[@resource-id='" + fieldId + "']"), value);
 	}
 
 	public void clickOnLoginButton() {
-		clickOnElement(loginButton);
+		if (isInWebView()) {
+			driver.findElement(By.cssSelector("#kc-login")).click();
+		} else {
+			clickOnElement(loginButton);
+		}
 	}
 
 	public void clickOnPasswordOption() {
@@ -536,14 +598,95 @@ public class KeycloakPage extends BasePage {
 	}
 
 	public void resumeArcApplication() {
-		closeChrome();
-		openArcApplication();
+		// clearChromeTabs() closes the tabs itself (via closeChrome()), so no separate pass is needed
+		clearChromeTabs();
+	}
+
+	private static final String CHROME_PACKAGE = "com.android.chrome";
+
+	public void clearChromeTabs() {
+		AndroidDriver android = (AndroidDriver) driver;
+		try {
+			switchToNativeContext();
+			android.activateApp(CHROME_PACKAGE);
+			waitTime(2);
+			if (closeAllTabsFromTabSwitcher()) {
+				logger.info("Closed all Chrome tabs.");
+			} else {
+				logger.warn("Could not close Chrome tabs from the tab switcher.");
+			}
+		} catch (Exception e) {
+			logger.warn("Chrome tab cleanup skipped: {}", firstLine(e));
+		} finally {
+			closeChrome();
+			openArcApplication();
+		}
+	}
+
+	private boolean closeAllTabsFromTabSwitcher() {
+		if (!clickIfShown(By.id("com.android.chrome:id/tab_switcher_button"), 5)) {
+			return false;
+		}
+		waitTime(2);
+		By closeAll = MobileBy.AndroidUIAutomator(
+				"new UiSelector().textMatches(\"(?i).*close all tabs.*\")");
+		By closeAllDesc = MobileBy.AndroidUIAutomator(
+				"new UiSelector().descriptionMatches(\"(?i).*close all tabs.*\")");
+		if (clickIfShown(By.id("com.android.chrome:id/menu_button"), 5)
+				&& (clickIfShown(closeAll, 4) || clickIfShown(closeAllDesc, 1))) {
+			if (!clickIfShown(By.id("com.android.chrome:id/positive_button"), 3)) {
+				clickIfShown(MobileBy.AndroidUIAutomator(
+						"new UiSelector().className(\"android.widget.Button\").textMatches(\"(?i)close( all)?.*\")"), 2);
+			}
+			return true;
+		}
+		saveChromePageSource();
+		((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.BACK));
+		waitTime(1);
+		return closeTabsOneByOne();
+	}
+
+	// Fallback: tap each tab card's close (X) button in the tab grid
+	private boolean closeTabsOneByOne() {
+		By tabClose = MobileBy.AndroidUIAutomator(
+				"new UiSelector().packageName(\"com.android.chrome\").descriptionMatches(\"(?i)close .*tab.*\")");
+		int closed = 0;
+		for (int i = 0; i < 100; i++) {
+			if (!clickIfShown(tabClose, i == 0 ? 3 : 1)) {
+				break;
+			}
+			closed++;
+		}
+		logger.info("Closed {} Chrome tabs one by one", closed);
+		return closed > 0;
+	}
+
+	private void saveChromePageSource() {
+		try {
+			Path out = Paths.get("testng-report", "chrome-tab-switcher-pagesource.xml");
+			Files.createDirectories(out.getParent());
+			Files.write(out, driver.getPageSource().getBytes(StandardCharsets.UTF_8));
+			logger.info("Saved Chrome tab switcher page source to {}", out.toAbsolutePath());
+		} catch (Exception e) {
+			logger.warn("Could not save Chrome page source: {}", firstLine(e));
+		}
+	}
+
+	private boolean clickIfShown(By locator, int seconds) {
+		try {
+			new WebDriverWait(driver, Duration.ofSeconds(seconds))
+					.until(ExpectedConditions.visibilityOfElementLocated(locator)).click();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private void closeChrome() {
+		closeAllChromeTabs();
 		try {
 			switchToNativeContext();
-			((AndroidDriver) driver).terminateApp("com.android.chrome");
+			((AndroidDriver) driver).terminateApp(CHROME_PACKAGE);
 		} catch (Exception e) {
 			logger.warn("Could not terminate Chrome: {}", e.getMessage());
 		}
@@ -581,7 +724,7 @@ public class KeycloakPage extends BasePage {
 	public void waitForLoginPage() {
 		for (int i = 0; i < 15; i++) {
 			try {
-				driver.findElement(By.id("username"));
+				driver.findElement(isInWebView() ? By.cssSelector("#username") : By.id("username"));
 				return;
 			} catch (Exception e) {
 				try {

@@ -16,9 +16,9 @@
 				</methods>
 			</class>
 			<class
-				name="regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments">
+				name="regclient.androidTestCases.NewRegistrationAdultUploadMultipleDocuments">
 				<methods>
-					<include name="newRegistrationAdultUploadMultipleDoccuments" />
+					<include name="newRegistrationAdultUploadMultipleDocuments" />
 				</methods>
 			</class>
 			<class

@@ -1,5 +1,7 @@
 package regclient.pages.english;
 
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -185,18 +187,7 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 	}
 	
 	public void handleIfSyncPopUpDisplayed() {
-
-	    for (int i = 0; i < 120; i++) { // 120 * 5 sec = 10 min
-
-	        if (isElementDisplayed(syncCompletedPopup)) {
-	            clickOnElement(restartButton);
-	            return;
-	        }
-
-	        waitTime(5); // wait 5 seconds
-	    }
-
-	    throw new RuntimeException("Sync popup not displayed");
+		waitForSyncPopupAndRestart(syncCompletedPopup, restartButton, Duration.ofMinutes(10));
 	}
 	
 	public boolean isClientVersionDisplayed() {

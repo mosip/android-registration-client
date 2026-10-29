@@ -240,7 +240,7 @@ public class UpdateMyUinInfant extends AndroidBaseTest {
 
 		updateUINPage.clickOnContinueButton();
 
-		updateUINPage.enterUIN(TestDataReader.readData("UINinfant"));
+		updateUINPage.enterUIN(TestDataReader.requireData("UINinfant"));
 
 		updateUINPage.selectUpdateValue("consentdet");
 		updateUINPage.selectUpdateValue("DemographicDetails");

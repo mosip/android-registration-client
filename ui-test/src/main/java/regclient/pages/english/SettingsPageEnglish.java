@@ -289,11 +289,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	}
 
 	public void clickOnSyncButton(String jobName) {
-		By job = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
-				+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
-		WebElement jobElement = driver.findElement(job);
-		WebElement syncBtn = jobElement.findElement(By.xpath(".//android.widget.Button[1]"));
-		syncBtn.click();
+		clickSyncButtonInJobCard(jobName);
 	}
 	
 	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
