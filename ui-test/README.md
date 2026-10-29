@@ -165,6 +165,63 @@ src/main/resources/config
 
 ---
 
+## UIN / AID Generation Flow
+
+Several scenarios need an existing identity: the **introducer** for Minor/Infant registrations and the **UIN** used by the Update My UIN scenarios. These are kept in `resources/config/Kernel.properties`:
+
+| Key | Purpose | How it is set |
+|---|---|---|
+| `AID` | RID of an identity whose UIN is used as the introducer | Generated automatically, or added manually |
+| `UIN` | UIN belonging to that `AID` | Generated automatically, or added manually |
+| `UINminor`, `UINinfant` | UINs of existing minor/infant identities (UpdateMyUinMinor/Infant) | **Always added manually**; these scenarios are skipped if empty |
+| `generateUinAidPrerequisite` | `true`: generate a new `AID`/`UIN` when missing or invalid. `false`: never generate; skip the scenario instead | Set manually |
+
+**Environment dependent:** a UIN/AID exists only in the environment where it was created. Values from another environment (e.g. qa-base vs 131ga) will not work, so clear `UIN`/`AID` (or keep `generateUinAidPrerequisite=true`) when switching environments. `UINminor`/`UINinfant` must also come from the target environment.
+
+### How it works
+
+Before the introducer-dependent scenarios (NewRegistrationMinor, NewRegistrationMinorException, NewRegistrationInfant, NewRegistrationAdultUploadMultipleDoccuments, UpdateMyUinMinor, UpdateMyUinInfant, BiometricCorrection) run, the framework checks the introducer:
+
+1. **`AID` is empty**
+   - `generateUinAidPrerequisite=true` → a new adult registration is created through the app (see below) and its `AID`/`UIN` are saved to `Kernel.properties`.
+   - `generateUinAidPrerequisite=false` → the scenario is **skipped**.
+2. **`AID` is set** → its UIN is looked up in IDREPO of the current environment.
+   - Found → used. If `UIN` in `Kernel.properties` does not match, it is corrected automatically.
+   - Not found (e.g. AID from another environment) → regenerated if `generateUinAidPrerequisite=true`, otherwise **skipped**.
+
+`NewRegistrationAdult` also saves its newly generated `AID`/`UIN` at the end, so later scenarios in the same run can reuse them.
+
+> **Note:** UpdateMyUinUpdateBiometrics, UpdateMyUinUpdateDemographicDetails and UpdateMyUinUpdateDocuments read `UIN` directly without this check. Run them after a scenario that sets `UIN` (e.g. NewRegistrationAdult) or add a valid `UIN` for the target environment manually.
+
+### Generating a new AID/UIN
+
+When generation is needed, the framework:
+
+1. Creates a new adult registration in the ARC app (demographics, documents, biometrics via Mock MDS).
+2. Approves it as supervisor and uploads the packet.
+3. Polls IDREPO (`/idrepository/v1/identity/idvid/<RID>`) until the UIN is issued.
+4. Saves `AID` and `UIN` together to `Kernel.properties`.
+
+Polling is controlled in `resources/config/application.properties`:
+
+* `uinGenDelayTime` — wait between checks in ms (currently `10000` = 10 s)
+* `uinGenMaxLoopCount` — maximum number of checks (currently `60`)
+
+Polling stops as soon as the UIN is available. The maximum wait is `uinGenMaxLoopCount × uinGenDelayTime` (60 × 10 s = **10 minutes**); after that the scenario fails with `UIN not generated for RID ...`.
+
+### Dependencies
+
+Generation only works when the target environment can process a packet end to end:
+
+* **Backend:** packet upload, registration processing and IDREPO must be working, otherwise no UIN is issued and polling times out.
+* **Keycloak:** `keycloak-external-url` and the IDREPO client (`mosip_idrepo_client_id`, `mosip_idrepo_client_secret`) in `Kernel.properties`, used to query IDREPO.
+* **Operator user:** the auto-created test user (`iam-users-to-create`, `iam-users-password`) logs in and approves the packet as supervisor.
+* **Device:** Mock MDS running for biometric capture, and network access for the packet upload.
+
+> `Kernel.properties` is updated at runtime with the generated values. Do not commit these local changes.
+
+---
+
 ## Reports
 
 After execution, reports are generated at:
