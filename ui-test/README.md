@@ -194,7 +194,7 @@ Several scenarios need an existing identity: the **introducer** for Minor/Infant
 
 ### How it works
 
-Before the introducer-dependent scenarios (NewRegistrationMinor, NewRegistrationMinorException, NewRegistrationInfant, NewRegistrationAdultUploadMultipleDoccuments, UpdateMyUinMinor, UpdateMyUinInfant, BiometricCorrection) run, the framework checks the introducer:
+Before the introducer-dependent scenarios (NewRegistrationMinor, NewRegistrationMinorException, NewRegistrationInfant, NewRegistrationAdultUploadMultipleDocuments, UpdateMyUinMinor, UpdateMyUinInfant, BiometricCorrection) run, the framework checks the introducer:
 
 1. **`AID` is empty**
    - `generateUinAidPrerequisite=true` → a new adult registration is created through the app (see below) and its `AID`/`UIN` are saved to `Kernel.properties`.

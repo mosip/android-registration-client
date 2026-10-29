@@ -81,8 +81,8 @@ public class TestRunner {
 			XmlClass biometricCorrection = new XmlClass("regclient.androidTestCases.BiometricCorrection");
 			XmlClass preRegFetchingPacket = new XmlClass("regclient.androidTestCases.PreRegFetchingPacket");
 			XmlClass exportPacket = new XmlClass("regclient.androidTestCases.ExportPacket");
-			XmlClass newRegistrationAdultUploadMultipleDoccuments = new XmlClass(
-					"regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments");
+			XmlClass newRegistrationAdultUploadMultipleDocuments = new XmlClass(
+					"regclient.androidTestCases.NewRegistrationAdultUploadMultipleDocuments");
 			XmlClass createPacketWithoutNetwork = new XmlClass(
 					"regclient.androidTestCases.CreatePacketWithoutNetwork");
 
@@ -151,8 +151,8 @@ public class TestRunner {
 				if (Scenarioname.equalsIgnoreCase("exportPacket"))
 					classes.add(exportPacket);
 
-				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDoccuments"))
-					classes.add(newRegistrationAdultUploadMultipleDoccuments);
+				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDocuments"))
+					classes.add(newRegistrationAdultUploadMultipleDocuments);
 				
 				if (Scenarioname.equalsIgnoreCase("createPacketWithoutNetwork"))
 					classes.add(createPacketWithoutNetwork);
