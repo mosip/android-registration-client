@@ -145,6 +145,20 @@ Alternatively, run the provided batch script (if present):
 run_regclient.bat
 ```
 
+### Run Specific Scenarios
+
+Set `regclientScenariosToExecute` in `resources/config/Kernel.properties` to one or more scenario names (comma-separated, no spaces, not case-sensitive). They run in the order listed:
+
+```properties
+regclientScenariosToExecute=ResetPassword
+regclientScenariosToExecute=LoginTest,NewRegistrationAdult,UpdateMyUinUpdateDocuments
+```
+
+* Leave it empty to run the full suite from `testng.xml`.
+* Misspelled names are silently skipped; use the class names from `regclient.androidTestCases`.
+* On a fresh install or a new environment, run `AddMachineDetails,InitialLaunch,LoginTest` first.
+* Some scenarios need test data first; see [UIN / AID Generation Flow](#uin--aid-generation-flow).
+
 ---
 
 ## Important Configuration Files
