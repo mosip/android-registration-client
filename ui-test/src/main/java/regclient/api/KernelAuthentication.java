@@ -24,6 +24,7 @@ public class KernelAuthentication extends BaseTestCase {
 	public final Map<String, String> props = clib.readProperty("Kernel");
 	private final String admin_password = props.get("admin_password");
 	private final String admin_userName = props.get("admin_userName");
+	private final String admin_zone_password = props.get("admin_zone_password");
 
 	// keycloakTokenUrl in Kernel.properties overrides the URL built from keycloak-external-url and the realm
 	private static String getKeycloakTokenUrl() {
@@ -86,7 +87,7 @@ public class KernelAuthentication extends BaseTestCase {
 
 	public String getAuthForzoneMap() {
 		return getAuthTokenFromKeyCloakPassword(ArcConfigManager.getAdminClientId(),
-				ArcConfigManager.getAdminClientSecret(), props.get("admin_zone_userName"), admin_password);
+				ArcConfigManager.getAdminClientSecret(), props.get("admin_zone_userName"), admin_zone_password);
 	}
 
 	public static String getAuthTokenFromKeyCloak(String clientId, String clientSecret) {

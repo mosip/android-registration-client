@@ -142,17 +142,23 @@ public class UinRidGenerator {
 			response = RestClient.getRequestWithCookie(
 					BaseTestCase.ApplnURI + BaseTestCase.props.getProperty("retrieveIdByUin") + rid,
 					MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, BaseTestCase.COOKIENAME, token);
-			responseJson = new JSONObject(response.asString());
 		} catch (Exception e) {
 			throw new IllegalStateException("IDREPO request failed: " + e.getMessage(), e);
 		}
 
+		// Check the status first: a 401/403 body may not be JSON
 		int status = response.getStatusCode();
 		if (status >= 400 && status < 500 && status != 404) {
 			throw new IdRepoRejectedException("IDREPO returned HTTP " + status);
 		}
 		if (status >= 500) {
 			throw new IllegalStateException("IDREPO returned HTTP " + status);
+		}
+
+		try {
+			responseJson = new JSONObject(response.asString());
+		} catch (Exception e) {
+			throw new IllegalStateException("IDREPO returned an unreadable response: " + e.getMessage(), e);
 		}
 
 		JSONArray errors = responseJson.optJSONArray("errors");

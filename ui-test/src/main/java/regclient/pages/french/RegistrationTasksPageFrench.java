@@ -1,5 +1,8 @@
 package regclient.pages.french;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 
 import org.openqa.selenium.WebElement;
@@ -13,6 +16,7 @@ import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
 
 public class RegistrationTasksPageFrench extends RegistrationTasksPage {
+	private static final Logger logger = LoggerFactory.getLogger(RegistrationTasksPageFrench.class);
 
 	public RegistrationTasksPageFrench(AppiumDriver driver) {
 		super(driver);
@@ -175,6 +179,7 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 				clickOnElement(allowWhileUsingButton);
 			}
 		} catch (Exception e) {
+			logger.warn("Location permission prompt could not be handled", e);
 		}
 	}
 

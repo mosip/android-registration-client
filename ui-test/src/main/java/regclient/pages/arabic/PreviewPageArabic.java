@@ -129,9 +129,10 @@ public class PreviewPageArabic extends PreviewPage {
 			}
 		}
 		for (By locator : new By[] { APPLICATION_ID_LOCATOR, APPLICATION_ID_DESC_LOCATOR }) {
-			List<WebElement> found = driver.findElements(locator);
-			if (!found.isEmpty() && found.get(0).isDisplayed()) {
-				return found.get(0);
+			for (WebElement element : driver.findElements(locator)) {
+				if (element.isDisplayed()) {
+					return element;
+				}
 			}
 		}
 		return null;

@@ -123,7 +123,7 @@ public final class NotificationListener {
 				LOGGER.info("Stored {} notification", root.type);
 			}
 		} catch (Exception e) {
-			LOGGER.error("Failed to process mock SMTP notification: {}", e.getMessage());
+			LOGGER.error("Failed to process mock SMTP notification ({})", e.getClass().getSimpleName());
 		}
 	}
 

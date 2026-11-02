@@ -1,5 +1,8 @@
 package regclient.pages.english;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 
 import org.openqa.selenium.WebElement;
@@ -13,6 +16,7 @@ import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
 
 public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
+	private static final Logger logger = LoggerFactory.getLogger(RegistrationTasksPageEnglish.class);
 
 	@AndroidFindBy(accessibility = "Registration Tasks")
 	private WebElement registrationTasksTitle;
@@ -175,6 +179,7 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 				clickOnElement(allowWhileUsingButton);
 			}
 		} catch (Exception e) {
+			logger.warn("Location permission prompt could not be handled", e);
 		}
 	}
 

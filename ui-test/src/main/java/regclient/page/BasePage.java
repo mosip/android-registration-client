@@ -871,10 +871,13 @@ public class BasePage {
 		By job = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
 				+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
 		for (int attempt = 0; attempt < 4; attempt++) {
-			List<WebElement> buttons = driver.findElement(job).findElements(By.xpath(".//android.widget.Button"));
-			if (!buttons.isEmpty()) {
-				buttons.get(0).click();
-				return;
+			List<WebElement> cards = driver.findElements(job);
+			if (!cards.isEmpty()) {
+				List<WebElement> buttons = cards.get(0).findElements(By.xpath(".//android.widget.Button"));
+				if (!buttons.isEmpty()) {
+					buttons.get(0).click();
+					return;
+				}
 			}
 			swipeUp();
 		}

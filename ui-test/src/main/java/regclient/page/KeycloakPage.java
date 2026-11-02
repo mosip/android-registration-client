@@ -138,6 +138,7 @@ public class KeycloakPage extends BasePage {
 		try {
 			return String.valueOf(((SupportsContextSwitching) driver).getContext()).startsWith("WEBVIEW");
 		} catch (Exception e) {
+			logger.debug("Could not read the driver context, assuming native view", e);
 			return false;
 		}
 	}
@@ -678,6 +679,7 @@ public class KeycloakPage extends BasePage {
 					.until(ExpectedConditions.visibilityOfElementLocated(locator)).click();
 			return true;
 		} catch (Exception e) {
+			logger.debug("{} not clicked within {}s", locator, seconds, e);
 			return false;
 		}
 	}
