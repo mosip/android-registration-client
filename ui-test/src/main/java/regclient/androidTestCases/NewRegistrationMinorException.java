@@ -566,7 +566,8 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 				"Verify if Demographic Information In PreviewPage is displayed");
 		assertTrue(previewPage.isDocumentsInformationInPreviewPageDisplayed(),
 				"Verify if Documents Information In PreviewPage is displayed");
-		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),"Verify if Biometrics Information In PreviewPage is displayed");
+		assertTrue(previewPage.isBiometricsInformationInPreviewPageDisplayed(),
+				"Verify if Biometrics Information In PreviewPage is displayed");
 		String Aid = previewPage.getAID();
 		if ("eng".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageEnglish(driver);
@@ -596,7 +597,7 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		}
 
 		assertTrue(isAuthenticationPageDisplayed, "Authentication page not displayed after retries");
-		
+
 		authenticationPage.enterUserName(KeycloakUserManager.moduleSpecificUser);
 		authenticationPage.enterPassword(ArcConfigManager.getIAMUsersPassword());
 		authenticationPage.clickOnAuthenticatenButton();
@@ -670,12 +671,12 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		boolean isPageDisplayed = false;
 
 		for (int i = 0; i < 3; i++) {
-		    pendingApproval.clickOnAuthenticateButton();
+			pendingApproval.clickOnAuthenticateButton();
 
-		    if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
-		        isPageDisplayed = true;
-		        break;
-		    }
+			if (pendingApproval.isSupervisorAuthenticationTitleDisplayed()) {
+				isPageDisplayed = true;
+				break;
+			}
 		}
 
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
@@ -714,12 +715,12 @@ public class NewRegistrationMinorException extends AndroidBaseTest {
 		boolean uploadSuccess = false;
 
 		for (int i = 0; i < 3; i++) {
-		    manageApplicationsPage.clickOnUploadButton();
+			manageApplicationsPage.clickOnUploadButton();
 
-		    if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
-		        uploadSuccess = true;
-		        break;
-		    }
+			if (!manageApplicationsPage.isNoNetworkFoundDisplayed()) {
+				uploadSuccess = true;
+				break;
+			}
 		}
 
 		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");

@@ -267,3 +267,4 @@ Reports include:
 
 * **Class name mismatch**  
   Java class names are **case-sensitive** — ensure TestNG XML matches compiled class names
+

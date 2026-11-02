@@ -123,9 +123,9 @@ public class TestDataReader {
 	@SuppressWarnings("unchecked")
 	private static void mergeAndReplace(Path target, Map<String, String> values) throws IOException, ParseException {
 
-			JSONObject jsonObject;
+		JSONObject jsonObject;
 
-			try (FileReader reader = new FileReader(target.toFile())) {
+		try (FileReader reader = new FileReader(target.toFile())) {
 			jsonObject = (JSONObject) new JSONParser().parse(reader);
 		}
 

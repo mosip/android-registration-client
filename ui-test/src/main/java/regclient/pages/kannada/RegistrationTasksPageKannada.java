@@ -64,10 +64,10 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
 	private WebElement dontAllowButton;
-	
+
 	@AndroidFindBy(accessibility = "Sync Completed Successfully")
 	private WebElement syncCompletedPopup;
-	
+
 	@AndroidFindBy(accessibility = "Restart")
 	private WebElement restartButton;
 
@@ -185,7 +185,7 @@ public class RegistrationTasksPageKannada extends RegistrationTasksPage {
 	public boolean isSettingsButtonDisplayed() {
 		return isElementDisplayed(settingsButton);
 	}
-	
+
 	public void handleIfSyncPopUpDisplayed() {
 		waitForSyncPopupAndRestart(syncCompletedPopup, restartButton, Duration.ofMinutes(10));
 	}

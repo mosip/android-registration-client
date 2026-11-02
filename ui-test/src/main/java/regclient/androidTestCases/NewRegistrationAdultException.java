@@ -124,7 +124,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		FetchUiSpec.getUiSpec("newProcess");
 		FetchUiSpec.getBiometricDetails("individualBiometrics");
 		List<String> screenOrder = FetchUiSpec.getAllScreenOrder();
-	
+
 		LoginPage loginPage = null;
 		RegistrationTasksPage registrationTasksPage = null;
 		SelectLanguagePage selectLanguagePage = null;
@@ -621,7 +621,6 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 
 		assertTrue(uploadSuccess, "Upload failed after retries: No Network Found still displayed");
 
-
 		manageApplicationsPage.clickOnBackButton();
 
 		assertTrue(registrationTasksPage.isProfileTitleDisplayed(), "Verify if profile title display on homepage");
@@ -646,6 +645,7 @@ public class NewRegistrationAdultException extends AndroidBaseTest {
 		profilePage.clickOnLogoutButton();
 
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayed in Selected language");
+
 
 	}
 }

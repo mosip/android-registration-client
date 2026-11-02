@@ -72,7 +72,7 @@ public class KernelAuthentication extends BaseTestCase {
 		return getAuthTokenFromKeyCloak(ArcConfigManager.getidRepoClientId(),
 				ArcConfigManager.getIdRepoClientSecret());
 	}
-
+	
 	public String getAuthForRegproc() {
 		return getAuthTokenFromKeyCloak(ArcConfigManager.getRegprocClientId(),
 				ArcConfigManager.getRegprocClientSecret());

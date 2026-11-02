@@ -148,4 +148,6 @@ public class SelectLanguagePageEnglish extends SelectLanguagePage {
 	public boolean isNotificationLanguageDisplayed() {
 	    return isElementDisplayed(notificationLanguageHeaderInEnglish);
 	}
+	
+	
 }

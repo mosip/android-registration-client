@@ -170,8 +170,8 @@ public class KeycloakPage extends BasePage {
 				for (String handle : handles) {
 					if (!handle.equals(chosen)) {
 						closeTab(handle);
-					}
 				}
+			}
 			}
 			driver.switchTo().window(chosen);
 			logger.info("Using Chrome tab {} of {}", handles.indexOf(chosen) + 1, handles.size());
@@ -182,12 +182,12 @@ public class KeycloakPage extends BasePage {
 
 	private void closeTab(String handle) {
 		try {
-			driver.switchTo().window(handle);
-			driver.close();
+					driver.switchTo().window(handle);
+					driver.close();
 		} catch (Exception e) {
 			logger.debug("Could not close Chrome tab: {}", firstLine(e));
-		}
-	}
+				}
+			}
 
 	// Closes every Chrome tab so the next run starts with only the tab the app opens
 	private void closeAllChromeTabs() {
@@ -374,7 +374,7 @@ public class KeycloakPage extends BasePage {
 		if (isInWebView()) {
 			driver.findElement(By.cssSelector("#kc-login")).click();
 		} else {
-			clickOnElement(loginButton);
+		clickOnElement(loginButton);
 		}
 	}
 
@@ -618,9 +618,9 @@ public class KeycloakPage extends BasePage {
 		} catch (Exception e) {
 			logger.warn("Chrome tab cleanup skipped: {}", firstLine(e));
 		} finally {
-			closeChrome();
-			openArcApplication();
-		}
+		closeChrome();
+		openArcApplication();
+	}
 	}
 
 	private boolean closeAllTabsFromTabSwitcher() {

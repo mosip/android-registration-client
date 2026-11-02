@@ -821,6 +821,7 @@ public class NewRegistrationAdultUploadMultipleDocuments extends AndroidBaseTest
 
 		assertTrue(manageApplicationsPage.isSearchAIDDisplayed(Aid), "Verify if  Search Aid should  displayed");
 		manageApplicationsPage.clickOnSearchCheckBox();
+
 		boolean uploadSuccess = false;
 
 		for (int i = 0; i < 3; i++) {
@@ -859,4 +860,3 @@ public class NewRegistrationAdultUploadMultipleDocuments extends AndroidBaseTest
 	}
 
 }
-

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 
@@ -220,6 +221,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(selectLanguagePage.isNotificationLanguageDisplayed(),
 				"verify if the notification language displayed");
+
 		selectLanguagePage.selectNotificationlanguage(TestDataReader.readData("notificationLanguage"));
 
 		assertTrue(selectLanguagePage.isSubmitButtonEnabled(), "verify if the submit  button enabled");
@@ -359,6 +361,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 					assertTrue(applicantBiometricsPage.isRightHandScan(), "Verify if right hand scan 1st attempt");
 					applicantBiometricsPage.closeScanCapturePopUp();
 					biometricDetailsPage = applicantBiometricsPage.clickOnBiometricsMenuButton();
+
 				}
 				// lefthand
 				if (FetchUiSpec.leftHand.equals("yes")) {
@@ -487,9 +490,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
 				"Verify if registration tasks page is loaded");
-		
+
 		registrationTasksPage.clickOnOperationalTasksTitle();
-		
+
 		if ("eng".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageEnglish(driver);
 		} else if ("hin".equalsIgnoreCase(language)) {
@@ -551,7 +554,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				break;
 			}
 		}
-		
+
 		assertTrue(isPageDisplayed, "Supervisor Authentication page not displayed after retries");
 
 		pendingApproval.enterUserName(KeycloakUserManager.moduleSpecificUser + "123");
@@ -630,7 +633,9 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");
 
 		String generatedUIN = UinRidGenerator.fetchAndPersistUin(Aid);
+
 		assertTrue(generatedUIN != null && !generatedUIN.isEmpty(), "Verify if UIN is generated successfully");
+
 		logger.info("UIN generation validation completed successfully");
 	}
 

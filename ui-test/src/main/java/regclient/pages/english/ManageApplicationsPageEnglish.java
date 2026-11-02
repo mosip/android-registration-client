@@ -138,7 +138,7 @@ public class ManageApplicationsPageEnglish extends ManageApplicationsPage {
 			if (rows.isEmpty() || !rows.get(0).getAttribute("contentDescription").contains("NOT UPLOADED"))
 				return true;
 		}
-		return false;
+				return false;
 	}
 
 	public boolean isPacketApproved(String AID) {

@@ -291,7 +291,7 @@ public class SettingsPageEnglish extends SettingsPage {
 	public void clickOnSyncButton(String jobName) {
 		clickSyncButtonInJobCard(jobName);
 	}
-	
+
 	public boolean isGlobalConfigSettingsSearchBoxDisplayed() {
 		return isElementDisplayed(searchBox);
 	}
@@ -327,4 +327,5 @@ public class SettingsPageEnglish extends SettingsPage {
 	public boolean isLocalValueBoxDisplayed() {
 		return isElementDisplayed(localValueBox);
 	}
+
 }
