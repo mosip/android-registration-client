@@ -156,42 +156,54 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 					if (FetchUiSpec.getTransliterateTypeUsingId(id))
 						assertTrue(checkSecondLanguageTextBoxNotNull(id),
 								"Verify if " + id + " is enter in second language text box");
-				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
-						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
+
+				}else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
+							&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(1);
 					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
+						 swipes++) {
 						assertTrue(swipes < MAX_HEADER_SWIPES,
 								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();
 					}
 
-					boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));
-					assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
-					WebElement dropdownElement = findElement(
-							By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
+					    boolean isdisplayed = isElementDisplayed(MobileBy.AndroidUIAutomator(
+					            "new UiSelector().descriptionContains(\""
+					                    + FetchUiSpec.getValueUsingId(id) + "\")"));
+
+					    assertTrue(isdisplayed, "Verify if " + id + " header is displayed");
+
+						WebElement dropdownElement = findElement(By.xpath("//android.widget.Button[.//android.view.View[contains(@content-desc,'"
 									+ FetchUiSpec.getValueUsingId(id) + "')]]"));
 
-					clickOnElement(dropdownElement);
-					waitTime(1);
-					if (!isElementDisplayed(dropdownElement)) {
-						clickOnElement(findElement(By.className("android.view.View")));
-					} else if (isElementDisplayed(dropdownElement)) {
-						swipeUp();
-						clickOnElement(dropdownElement);
-						waitTime(1);
-						clickOnElement(findElement(By.className("android.view.View")));
-					}
-					waitTime(1);
-					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
-							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
-						clickOnElement(dropdownElement);
-						waitTime(1);
-						clickOnElement(findElement(By.className("android.view.View")));
-					}
-				} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
+					    clickOnElement(dropdownElement);
+					    waitTime(1);
+
+					        if (!isElementDisplayed(dropdownElement)) {
+					            clickOnElement(findElement(By.className("android.view.View")));
+
+					        } else if (isElementDisplayed(dropdownElement)) {
+
+					            swipeUp();
+					            clickOnElement(dropdownElement);
+					            waitTime(1);
+
+					            clickOnElement(findElement(By.className("android.view.View")));
+					        }
+
+					        waitTime(1);
+
+					        if (isElementDisplayed(By.xpath(
+					                "//android.view.View[contains(@content-desc,\""
+					                        + FetchUiSpec.getValueUsingId(id)
+					                        + "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc,\"Select Option\")]"))) {
+
+					            clickOnElement(dropdownElement);
+					            waitTime(1);
+					            clickOnElement(findElement(By.className("android.view.View")));
+					    }
+					} else if (FetchUiSpec.getControlTypeUsingId(id).equals("dropdown")
 						&& FetchUiSpec.getFormatUsingId(id).equals("")) {
 					if (!isElementDisplayed(maleButton)) {
 						swipeUp();
@@ -401,8 +413,8 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 				+ FetchUiSpec.getValueUsingId(id)
 				+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]"))) == null
 				|| getTextFromLocator(findElementWithRetry(By.xpath("//android.view.View[contains(@content-desc, \""
-				+ FetchUiSpec.getValueUsingId(id)
-				+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]"))) == "")
+						+ FetchUiSpec.getValueUsingId(id)
+						+ "\")]/parent::android.view.View/following-sibling::android.view.View/descendant::android.widget.EditText[2]"))) == "")
 			return false;
 		else
 			return true;
@@ -588,7 +600,7 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 						&& FetchUiSpec.getFormatUsingId(id).equals("none")) {
 					waitTime(3);
 					for (int swipes = 0; !isElementDisplayed(MobileBy.AndroidUIAutomator(
-							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")")); swipes++) {
+							"new UiSelector().descriptionContains(\"" + FetchUiSpec.getValueUsingId(id) + "\")"));swipes++) {
 						assertTrue(swipes < MAX_HEADER_SWIPES,
 								"Verify if " + id + " header is displayed within " + MAX_HEADER_SWIPES + " swipes");
 						swipeUp();

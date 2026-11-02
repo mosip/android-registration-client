@@ -22,7 +22,8 @@ It automates **positive and negative scenarios** and supports both **emulators a
 
 3. **For running tests on a device**:  
    Use the shaded JAR with dependencies:
-   ```
+
+   ```text
    uitest-regclient-1.2.0.jar
    ```
 
@@ -134,6 +135,8 @@ Import the project into **Eclipse / IntelliJ** if needed.
 
 ### From Packaged JAR
 
+The build does not copy the suite file or the config files next to the JAR. Before running, copy `../testng.xml` into `target`, and `../src/main/resources` into `target` as `resources`.
+
 ```bash
 cd android-registration-client/ui-test/target
 java -jar uitest-regclient-1.2.0.jar
@@ -144,17 +147,31 @@ Alternatively, run the provided batch script (if present):
 run_regclient.bat
 ```
 
+### Run Specific Scenarios
+
+Set `regclientScenariosToExecute` in `resources/config/Kernel.properties` to one or more scenario names (comma-separated, no spaces, not case-sensitive). They run in the order listed:
+
+```properties
+regclientScenariosToExecute=ResetPassword
+regclientScenariosToExecute=LoginTest,NewRegistrationAdult,UpdateMyUinUpdateDocuments
+```
+
+* Leave it empty to run the full suite from `testng.xml` (for a packaged JAR run, copy it into `target` first; see above).
+* Misspelled names are silently skipped; use the class names from `regclient.androidTestCases`.
+* On a fresh install or a new environment, run `AddMachineDetails,InitialLaunch,LoginTest` first.
+* Some scenarios need test data first; see [UIN / AID Generation Flow](#uin--aid-generation-flow).
+
 ---
 
 ## Important Configuration Files
 
-Update these files before execution:
+Update these files before execution. Paths below are relative to `src/main/resources` (IDE run) or to the `resources/` folder next to the JAR (packaged JAR run):
 
-* `resources/config/kernal.properties` — Environment details
-* `resources/testdata.json` — Test data (uin, language, aid, camera id). The `AID` and `UIN` values are managed automatically — see [Introducer AID Handling](#introducer-aid-handling) below; you don't need to maintain them by hand.
+* `resources/config/Kernel.properties` — Environment details; also `UIN`, `AID`, `UINminor`, `UINinfant` and `generateUinAidPrerequisite` (true: auto-generate UIN/AID when empty; false: must be filled manually)
+* `resources/testdata.json` — Test data (language, camera id)
 * `resources/config.properties` — `nodePath`, `appiumServerExecutable`
-* `resources/DesiredCapabilies.json` — `udid`, app path
-* `camera.java` — Update camera & retake button coordinates
+* `resources/DesiredCapabilities.json` — `udid`, app path
+* `camera.java` — Update camera & retake button coordinates [If camera id not available use camera button coordinates] 
 
 📌 Any runtime properties (e.g. `bioValue.properties`) must be placed under:
 ```
@@ -164,31 +181,60 @@ src/main/resources/config
 
 ---
 
-## Introducer AID Handling
+## UIN / AID Generation Flow
 
-Infant/minor registration (and biometric correction, UIN update) flows need an existing, real identity with a confirmed UIN to enter as the **introducer**. This is managed automatically — no manual RID/AID lookup required.
+Several scenarios need an existing identity: the **introducer** for Minor/Infant registrations and the **UIN** used by the Update My UIN scenarios. These are kept in `resources/config/Kernel.properties`:
 
-**How it works:**
+| Key | Purpose | How it is set |
+|---|---|---|
+| `AID` | RID of an identity whose UIN is used as the introducer | Generated automatically, or added manually |
+| `UIN` | UIN belonging to that `AID` | Generated automatically, or added manually |
+| `UINminor`, `UINinfant` | UINs of existing minor/infant identities (UpdateMyUinMinor/Infant) | **Always added manually**; these scenarios are skipped if empty |
+| `generateUinAidPrerequisite` | `true`: generate a new `AID`/`UIN` when missing or invalid. `false`: never generate; skip the scenario instead | Set manually |
 
-1. At the start of these flows, `UinRidGenerator.ensureValidIntroducer(driver)` runs:
-   * `regclient.androidTestCases.NewRegistrationInfant`
-   * `regclient.androidTestCases.NewRegistrationMinor`
-   * `regclient.androidTestCases.NewRegistrationMinorException`
-   * `regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments`
-   * `regclient.androidTestCases.BiometricCorrection`
-   * `regclient.androidTestCases.UpdateMyUinInfant`
-   * `regclient.androidTestCases.UpdateMyUinMinor`
+**Environment dependent:** a UIN/AID exists only in the environment where it was created. Values from another environment (e.g. qa-base vs 131ga) will not work. When switching environments, clear `UIN`/`AID`. Before running the direct update scenarios (see the note below), run a scenario that generates them (e.g. NewRegistrationAdult) or enter a valid UIN from the target environment. `UINminor`/`UINinfant` must also come from the target environment.
 
-2. It reads the `AID` value already saved in `testdata.json` and checks whether it's still valid **for the current environment** (`UinRidGenerator.isRidValidForEnvironment`, which queries idrepo).
-   * **Valid** → reused as-is. No new registration is performed.
-   * **Missing / blank / invalid** (e.g. first run, or `testdata.json` pointed at a different environment) → `RidGenerator.generateNewRid(driver)` runs a full new-adult-registration flow end to end (login → demographic details → biometrics → submit → supervisor approval → upload) to create a fresh identity.
+### How it works
 
-3. Once a fresh identity is created, `UinRidGenerator.fetchAndPersistUin(rid)` polls idrepo until the UIN is actually generated, then persists **both** `AID` and `UIN` back to `testdata.json`. This is also the same method `NewRegistrationAdult` calls after every successful adult registration, so whichever adult registration most recently succeeded in a run becomes the introducer candidate for later infant/minor tests.
+Before the introducer-dependent scenarios (NewRegistrationMinor, NewRegistrationMinorException, NewRegistrationInfant, NewRegistrationAdultUploadMultipleDocuments, UpdateMyUinMinor, UpdateMyUinInfant, BiometricCorrection) run, the framework checks the introducer:
 
-4. The six language-specific `DemographicDetailsPage*.java` classes (`English`, `Hindi`, `Arabic`, `French`, `Tamil`, `Kannada`) read `testdata.json`'s `AID` value and type it into the introducer-RID field during infant/minor registration.
+1. **`AID` is empty**
+   - `generateUinAidPrerequisite=true` → a new adult registration is created through the app (see below) and its `AID`/`UIN` are saved to `Kernel.properties`.
+   - `generateUinAidPrerequisite=false` → the scenario is **skipped**.
+2. **`AID` is set** → its UIN is looked up in IDREPO of the current environment.
+   - Found → used. If `UIN` in `Kernel.properties` does not match, it is corrected automatically.
+   - Not found (e.g. AID from another environment) → regenerated if `generateUinAidPrerequisite=true`, otherwise **skipped**.
 
-**Config knobs** (`resources/config/application.properties`):
-* `uinGenMaxLoopCount` / `uinGenDelayTime` — how many times, and how far apart, to poll idrepo before giving up on UIN generation. Increase these if your environment's registration-processor pause/resume rules (e.g. non-resident applicant auto-pause) add extra latency beyond steady-state processing time.
+`NewRegistrationAdult` also saves its newly generated `AID`/`UIN` at the end, so later scenarios in the same run can reuse them.
+
+> **Note:** UpdateMyUinUpdateBiometrics, UpdateMyUinUpdateDemographicDetails and UpdateMyUinUpdateDocuments read `UIN` directly without this check. Run them after a scenario that sets `UIN` (e.g. NewRegistrationAdult) or add a valid `UIN` for the target environment manually.
+
+### Generating a new AID/UIN
+
+When generation is needed, the framework:
+
+1. Creates a new adult registration in the ARC app (demographics, documents, biometrics via Mock MDS).
+2. Approves it as supervisor and uploads the packet.
+3. Polls IDREPO (`/idrepository/v1/identity/idvid/<RID>`) until the UIN is issued.
+4. Saves `AID` and `UIN` together to `Kernel.properties`.
+
+Polling is controlled in `resources/config/application.properties`:
+
+* `uinGenDelayTime` — wait between checks in ms (currently `10000` = 10 s)
+* `uinGenMaxLoopCount` — maximum number of checks (currently `60`)
+
+Polling stops as soon as the UIN is available. The maximum wait is `uinGenMaxLoopCount × uinGenDelayTime` (60 × 10 s = **10 minutes**); after that the scenario fails with `UIN not generated for RID ...`.
+
+### Dependencies
+
+Generation only works when the target environment can process a packet end to end:
+
+* **Backend:** packet upload, registration processing and IDREPO must be working, otherwise no UIN is issued and polling times out.
+* **Keycloak:** `keycloak-external-url` and the IDREPO client (`mosip_idrepo_client_id`, `mosip_idrepo_client_secret`) in `Kernel.properties`, used to query IDREPO.
+* **Operator user:** the auto-created test user (`iam-users-to-create`, `iam-users-password`) logs in and approves the packet as supervisor.
+* **Device:** Mock MDS running for biometric capture, and network access for the packet upload.
+
+> `Kernel.properties` is updated at runtime with the generated values. Do not commit these local changes.
 
 ---
 
@@ -221,4 +267,3 @@ Reports include:
 
 * **Class name mismatch**  
   Java class names are **case-sensitive** — ensure TestNG XML matches compiled class names
-

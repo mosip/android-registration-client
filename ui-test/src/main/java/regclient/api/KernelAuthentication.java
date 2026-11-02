@@ -1,22 +1,39 @@
 package regclient.api;
 
 import io.restassured.response.Response;
-import org.json.simple.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class KernelAuthentication extends BaseTestCase {
-	private final String authRequest = "/config/Authorization/request.json";
-	private final String authInternalRequest = "/config/Authorization/internalAuthRequest.json";
-	String cookie;
+	private static final Logger logger = LoggerFactory.getLogger(KernelAuthentication.class);
+	private static final String CLIENT_ID = "client_id";
+	private static final String CLIENT_SECRET = "client_secret";
+	private static final String GRANT_TYPE_KEY = "grant_type";
+	private static final String GRANT_TYPE = "client_credentials";
+	private static final String GRANT_TYPE_PASSWORD = "password";
+	private static final String USERNAME_KEY = "username";
+	private static final String PASSWORD_KEY = "password";
+	private static final String ACCESS_TOKEN = "access_token";
+
 	public String zonemapCookie = null;
-	static String dataKey = "response";
 	CommonLibrary clib = new CommonLibrary();
 	public final Map<String, String> props = clib.readProperty("Kernel");
 	private final String admin_password = props.get("admin_password");
 	private final String admin_userName = props.get("admin_userName");
-	private final String authenticationInternalEndpoint = props.get("authenticationInternal");
-	private final ApplicationLibrary appl = new ApplicationLibrary();
+
+	// keycloakTokenUrl in Kernel.properties overrides the URL built from keycloak-external-url and the realm
+	private static String getKeycloakTokenUrl() {
+		String configured = ArcConfigManager.getKeycloakTokenUrl();
+		if (!configured.isEmpty()) {
+			return configured;
+		}
+		return ArcConfigManager.getIAMUrl() + "/realms/" + ArcConfigManager.getIAMRealmId()
+				+ "/protocol/openid-connect/token";
+	}
 
 	public String getTokenByRole(String role) {
 		return getTokenByRole(role, null);
@@ -51,74 +68,67 @@ public class KernelAuthentication extends BaseTestCase {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getAuthForIDREPO() {
-		JSONObject actualrequest = getRequestJson(authRequest);
-
-		JSONObject request = new JSONObject();
-		request.put("appId", ArcConfigManager.getidRepoAppId());
-		request.put("clientId", ArcConfigManager.getidRepoClientId());
-		request.put("secretKey", ArcConfigManager.getIdRepoClientSecret());
-		actualrequest.put("request", request);
-
-		Response reponse = appl.postWithJson(props.get("authclientidsecretkeyURL"), actualrequest);
-		cookie = reponse.getCookie("Authorization");
-		return cookie;
+		return getAuthTokenFromKeyCloak(ArcConfigManager.getidRepoClientId(),
+				ArcConfigManager.getIdRepoClientSecret());
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public String getAuthForRegproc() {
-		JSONObject actualrequest = getRequestJson(authRequest);
-
-		JSONObject request = new JSONObject();
-		request.put("appId", ArcConfigManager.getRegprocAppId());
-		request.put("clientId", ArcConfigManager.getRegprocClientId());
-		request.put("secretKey", ArcConfigManager.getRegprocClientSecret());
-		actualrequest.put("request", request);
-
-		Response reponse = appl.postWithJson(props.get("authclientidsecretkeyURL"), actualrequest);
-		cookie = reponse.getCookie("Authorization");
-		return cookie;
+		return getAuthTokenFromKeyCloak(ArcConfigManager.getRegprocClientId(),
+				ArcConfigManager.getRegprocClientSecret());
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getAuthForAdmin() {
-
-		JSONObject actualrequest = getRequestJson(authInternalRequest);
-
-		JSONObject request = new JSONObject();
-		request.put("appId", ArcConfigManager.getAdminAppId());
-		request.put("password", admin_password);
-
-		// if(BaseTestCase.currentModule==null) admin_userName=
-		request.put("userName", BaseTestCase.currentModule + "-" + admin_userName);
-
-		request.put("clientId", ArcConfigManager.getAdminClientId());
-		request.put("clientSecret", ArcConfigManager.getAdminClientSecret());
-		actualrequest.put("request", request);
-
-		Response reponse = appl.postWithJson(authenticationInternalEndpoint, actualrequest);
-		String responseBody = reponse.getBody().asString();
-		String token = new org.json.JSONObject(responseBody).getJSONObject(dataKey).getString("token");
-		return token;
+		return getAuthTokenFromKeyCloakPassword(ArcConfigManager.getAdminClientId(),
+				ArcConfigManager.getAdminClientSecret(),BaseTestCase.currentModule + "-" + admin_userName,
+				admin_password);
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getAuthForzoneMap() {
+		return getAuthTokenFromKeyCloakPassword(ArcConfigManager.getAdminClientId(),
+				ArcConfigManager.getAdminClientSecret(), props.get("admin_zone_userName"), admin_password);
+	}
 
-		JSONObject actualrequest = getRequestJson(authInternalRequest);
+	public static String getAuthTokenFromKeyCloak(String clientId, String clientSecret) {
+		Map<String, String> params = new HashMap<>();
+		params.put(CLIENT_ID, clientId);
+		params.put(CLIENT_SECRET, clientSecret);
+		params.put(GRANT_TYPE_KEY, GRANT_TYPE);
+		return requestKeycloakToken(params);
+	}
 
-		JSONObject request = new JSONObject();
-		request.put("appId", ArcConfigManager.getAdminAppId());
-		request.put("password", admin_password);
-		request.put("userName", props.get("admin_zone_userName"));
-		request.put("clientId", ArcConfigManager.getAdminClientId());
-		request.put("clientSecret", ArcConfigManager.getAdminClientSecret());
-		actualrequest.put("request", request);
+	public static String getAuthTokenFromKeyCloakPassword(String clientId, String clientSecret, String username,
+			String password) {
+		Map<String, String> params = new HashMap<>();
+		params.put(CLIENT_ID, clientId);
+		params.put(CLIENT_SECRET, clientSecret);
+		params.put(GRANT_TYPE_KEY, GRANT_TYPE_PASSWORD);
+		params.put(USERNAME_KEY, username);
+		params.put(PASSWORD_KEY, password);
+		return requestKeycloakToken(params);
+	}
 
-		Response reponse = appl.postWithJson(authenticationInternalEndpoint, actualrequest);
-		String responseBody = reponse.getBody().asString();
-		String token = new org.json.JSONObject(responseBody).getJSONObject(dataKey).getString("token");
-		return token;
+	private static String requestKeycloakToken(Map<String, String> params) {
+		String tokenUrl = getKeycloakTokenUrl();
+		Response response;
+		try {
+			response = RestClient.postRequestWithFormParams(tokenUrl, params);
+		} catch (Exception e) {
+			logger.error("Error sending POST request to Keycloak token URL: " + tokenUrl, e);
+			return "";
+		}
+
+		if (response == null) {
+			logger.error("Keycloak token request returned null response");
+			return "";
+		}
+		int statusCode = response.getStatusCode();
+		if (statusCode < 200 || statusCode >= 300) {
+			logger.error("Keycloak token request failed with status code: " + statusCode);
+			return "";
+		}
+		logger.info("Keycloak token request successful");
+
+		return new org.json.JSONObject(response.getBody().asString()).optString(ACCESS_TOKEN, "");
 	}
 }

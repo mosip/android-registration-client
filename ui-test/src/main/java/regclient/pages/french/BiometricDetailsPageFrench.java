@@ -170,8 +170,7 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	public void enterAdditionalInfoUsingEmail(String emailId) {
 		logger.info(emailId);
 		String additionalInfoReqId = waitForAdditionalReqId(emailId, 20, 10) + "-BIOMETRIC_CORRECTION-1";
-
-		try {
+	    try {
 			if (typeAndVerify(additionalInfoRequestIdTextbox, additionalInfoReqId)) {
 				logger.info("typeAndVerify succeeded.");
 				return; // SUCCESS → exit method
@@ -189,12 +188,12 @@ public class BiometricDetailsPageFrench extends BiometricDetailsPage {
 	}
 
 	private boolean typeAndVerify(WebElement el, String value) {
-		el.click();
-		el.clear();
-		el.sendKeys(value);
-		waitTime(1);
-		String curr = readElementValue(el);
-		return value.equals(curr);
+	    el.click();
+	    el.clear();
+	    el.sendKeys(value);
+	    waitTime(1);
+	    String curr = readElementValue(el);
+	    return value.equals(curr);
 	}
 
 	private String readElementValue(WebElement el) {

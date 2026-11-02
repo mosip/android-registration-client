@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.testng.SkipException;
 
 import io.appium.java_client.AppiumDriver;
 import io.restassured.response.Response;
@@ -26,27 +27,43 @@ public class UinRidGenerator {
 	}
 
 	public static void ensureValidIntroducer(AppiumDriver driver) throws InterruptedException {
+		boolean prerequisite = Boolean.parseBoolean(
+				BaseTestCase.propsKernel.getProperty("generateUinAidPrerequisite", "false").trim());
 		String existingRid = TestDataReader.readData("AID");
-		String uin = (existingRid == null || existingRid.isBlank()) ? null : lookupUin(existingRid);
+		String existingUin = TestDataReader.readData("UIN");
+
+		// An AID alone is enough: its UIN is looked up from IDREPO below
+		if (existingRid == null) {
+			if (!prerequisite) {
+				throw new SkipException("UIN/AID not set in Kernel.properties and generateUinAidPrerequisite=false. "
+						+ "Add UIN and AID manually in Kernel.properties or set generateUinAidPrerequisite=true");
+			}
+			logger.info("UIN/AID empty in Kernel.properties, generating a new introducer");
+			fetchAndPersistUin(RidGenerator.generateNewRid(driver));
+			return;
+		}
+
+		String uin = lookupUin(existingRid);
 		if (uin == null) {
+			if (!prerequisite) {
+				throw new SkipException("AID [" + mask(existingRid) + "] from Kernel.properties has no UIN in IDREPO. "
+						+ "Update UIN and AID manually or set generateUinAidPrerequisite=true");
+			}
 			String rid = RidGenerator.generateNewRid(driver);
 			fetchAndPersistUin(rid);
 			return;
 		}
-		// Repair a stored UIN that does not belong to the stored AID
-		if (!uin.equals(TestDataReader.readData("UIN"))) {
+
+		if (!uin.equals(existingUin)) {
 			persistIntroducer(existingRid, uin);
 			logger.info("Stored UIN did not match AID [" + mask(existingRid) + "], repaired");
 		}
 	}
 
-	// Valid only if the RID resolves to a UIN: introducer flows need a confirmed UIN
 	public static boolean isRidValidForEnvironment(String rid) {
 		return lookupUin(rid) != null;
 	}
 
-	// Returns the UIN for the RID, or null if IDREPO has no UIN for it. A failed lookup is
-	// retried and then fails the test, so a valid stored introducer is never discarded.
 	private static String lookupUin(String rid) {
 		IllegalStateException lastFailure = null;
 		for (int attempt = 1; attempt <= LOOKUP_ATTEMPTS; attempt++) {
@@ -71,7 +88,7 @@ public class UinRidGenerator {
 		throw new IllegalStateException("Could not verify introducer RID [" + mask(rid) + "] in IDREPO", lastFailure);
 	}
 
-	// AID and UIN are saved in one write so testdata.json never holds a mismatched pair
+	// AID and UIN are saved in one write so Kernel.properties never holds a mismatched pair
 	private static void persistIntroducer(String rid, String uin) {
 		Map<String, String> introducer = new LinkedHashMap<>();
 		introducer.put("AID", rid);
@@ -88,6 +105,9 @@ public class UinRidGenerator {
 			try {
 				String token = new KernelAuthentication().getTokenByRole("idrepo");
 				uin = fetchUinByRid(rid, token);
+			} catch (IdRepoRejectedException e) {
+				// Auth or client errors will not fix themselves, so stop polling
+				throw e;
 			} catch (IllegalStateException e) {
 				// A failed lookup while polling just means "not available yet"
 				logger.warn("IDREPO lookup failed for RID [" + mask(rid) + "]: " + e.getMessage());
@@ -110,13 +130,11 @@ public class UinRidGenerator {
 		}
 
 		persistIntroducer(rid, uin);
-		logger.info("Persisted fresh introducer for RID [" + mask(rid) + "] to testdata.json");
+		logger.info("Persisted fresh introducer for RID [" + mask(rid) + "] to Kernel.properties");
 
 		return uin;
 	}
 
-	// Returns the UIN, or null if IDREPO answered without one (e.g. no record yet).
-	// Throws IllegalStateException when the lookup itself fails (network, HTTP, auth).
 	private static String fetchUinByRid(String rid, String token) {
 		Response response;
 		JSONObject responseJson;
@@ -130,7 +148,10 @@ public class UinRidGenerator {
 		}
 
 		int status = response.getStatusCode();
-		if (status == 401 || status == 403 || status >= 500) {
+		if (status >= 400 && status < 500 && status != 404) {
+			throw new IdRepoRejectedException("IDREPO returned HTTP " + status);
+		}
+		if (status >= 500) {
 			throw new IllegalStateException("IDREPO returned HTTP " + status);
 		}
 
@@ -140,7 +161,7 @@ public class UinRidGenerator {
 				JSONObject error = errors.optJSONObject(i);
 				String code = error == null ? "" : error.optString("errorCode", "");
 				if (code.startsWith("KER-ATH")) {
-					throw new IllegalStateException("IDREPO authentication failed: " + code);
+					throw new IdRepoRejectedException("IDREPO authentication failed: " + code);
 				}
 			}
 			return null;
@@ -159,5 +180,15 @@ public class UinRidGenerator {
 			return "****";
 		}
 		return "*".repeat(value.length() - 4) + value.substring(value.length() - 4);
+	}
+
+	// Permanent IDREPO failure (auth or client error) that retrying will not fix
+	private static final class IdRepoRejectedException extends IllegalStateException {
+
+		private static final long serialVersionUID = 1L;
+
+		IdRepoRejectedException(String message) {
+			super(message);
+		}
 	}
 }

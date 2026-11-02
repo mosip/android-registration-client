@@ -12,25 +12,50 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.testng.SkipException;
+
+import regclient.api.BaseTestCase;
 
 public class TestDataReader {
 
-	// Guards saveData within this JVM (a FileLock cannot be taken twice by one JVM)
 	private static final Object SAVE_LOCK = new Object();
 
+	// UINs/AID are environment specific, so they live in Kernel.properties instead of testdata.json
+	private static final Set<String> KERNEL_KEYS = Set.of("UIN", "AID", "UINminor", "UINinfant");
+
 	public static String readData(String key) {
+		if (KERNEL_KEYS.contains(key)) {
+			String val = BaseTestCase.propsKernel.getProperty(key);
+			return (val == null || val.trim().isEmpty()) ? null : val.trim();
+		}
 		return getValueFromJson(key);
+	}
+
+	// For values that must be filled in manually (e.g. UINminor/UINinfant): skip the test with a clear message if empty
+	public static String requireData(String key) {
+		String val = readData(key);
+		if (val == null || val.trim().isEmpty()) {
+			throw new SkipException(key + " is not set in Kernel.properties; add it manually to run this test");
+		}
+		return val;
 	}
 
 	public static String readData(String key, String defaultValue) {
 		try {
-			String val = getValueFromJson(key);
+			String val = readData(key);
 			return (val == null || val.trim().isEmpty()) ? defaultValue : val;
 		} catch (Exception e) {
 			return defaultValue;
@@ -59,14 +84,26 @@ public class TestDataReader {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void saveData(String key, String value) {
 		saveData(Collections.singletonMap(key, value));
 	}
 
-	// Saves all keys in one write. The read, merge and replace run under a lock (threads in
-	// this JVM and other test processes sharing the file), and the JSON goes to a unique temp
-	// file that then replaces testdata.json, so updates are never lost or half-written.
 	public static void saveData(Map<String, String> values) {
+
+		Map<String, String> kernelValues = new HashMap<>();
+		Map<String, String> jsonValues = new HashMap<>();
+		values.forEach((k, v) -> (KERNEL_KEYS.contains(k) ? kernelValues : jsonValues).put(k, v));
+
+		if (!kernelValues.isEmpty()) {
+			saveKernelData(kernelValues);
+		}
+		if (!jsonValues.isEmpty()) {
+			saveJsonData(jsonValues);
+		}
+	}
+
+	private static void saveJsonData(Map<String, String> values) {
 
 		String filePath = getTestDataPath();
 		Path target = Paths.get(filePath);
@@ -86,9 +123,9 @@ public class TestDataReader {
 	@SuppressWarnings("unchecked")
 	private static void mergeAndReplace(Path target, Map<String, String> values) throws IOException, ParseException {
 
-		JSONObject jsonObject;
+			JSONObject jsonObject;
 
-		try (FileReader reader = new FileReader(target.toFile())) {
+			try (FileReader reader = new FileReader(target.toFile())) {
 			jsonObject = (JSONObject) new JSONParser().parse(reader);
 		}
 
@@ -107,6 +144,56 @@ public class TestDataReader {
 		} finally {
 			Files.deleteIfExists(temp);
 		}
+	}
+
+	// Updates the key lines in place so the rest of Kernel.properties (comments, order) is untouched
+	private static void saveKernelData(Map<String, String> values) {
+
+		Path target = Paths.get(getKernelPropertiesPath());
+
+		synchronized (SAVE_LOCK) {
+			try {
+				String content = new String(Files.readAllBytes(target), StandardCharsets.UTF_8);
+				String lineSeparator = content.contains("\r\n") ? "\r\n" : "\n";
+				List<String> lines = new ArrayList<>(Arrays.asList(content.split("\\r?\\n", -1)));
+
+				for (Map.Entry<String, String> entry : values.entrySet()) {
+					String newLine = entry.getKey() + "=" + entry.getValue();
+					boolean replaced = false;
+					for (int i = 0; i < lines.size(); i++) {
+						if (lines.get(i).matches("\\s*" + Pattern.quote(entry.getKey()) + "\\s*[=:].*")) {
+							lines.set(i, newLine);
+							replaced = true;
+							break;
+						}
+					}
+					if (!replaced) {
+						lines.add(newLine);
+					}
+				}
+
+				// Write to a temp file and swap it in, so a failed write never leaves a partial Kernel.properties
+				Path temp = Files.createTempFile(target.toAbsolutePath().getParent(), "Kernel", ".tmp");
+				try {
+					Files.write(temp, String.join(lineSeparator, lines).getBytes(StandardCharsets.UTF_8));
+					try {
+						Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+					} catch (AtomicMoveNotSupportedException e) {
+						Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING);
+					}
+				} finally {
+					Files.deleteIfExists(temp);
+				}
+				// Only update memory once the file is safely written
+				values.forEach(BaseTestCase.propsKernel::setProperty);
+			} catch (IOException e) {
+				throw new IllegalStateException("Failed to persist keys " + values.keySet() + " to file: " + target, e);
+			}
+		}
+	}
+
+	private static String getKernelPropertiesPath() {
+		return TestRunner.getResourcePath() + "/config/Kernel.properties";
 	}
 
 	private static String getTestDataPath() {

@@ -38,3 +38,5 @@ test-output/
 testng-report/
 /reg
 ./reg
+# Lock file TestDataReader creates while saving testdata.json
+*.json.lock

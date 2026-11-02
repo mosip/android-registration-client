@@ -1,5 +1,7 @@
 package regclient.pages.french;
 
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -54,7 +56,7 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 
 	@AndroidFindBy(accessibility = "Paramètres\nOnglet 2 sur 4")
 	private WebElement settingsButton;
-
+	
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_message")
 	private WebElement locationPermissionMessage;
 
@@ -66,10 +68,10 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 
 	@AndroidFindBy(id = "com.android.permissioncontroller:id/permission_deny_button")
 	private WebElement dontAllowButton;
-
+	
 	@AndroidFindBy(accessibility = "Synchro. Complété avec succès")
 	private WebElement syncCompletedPopup;
-
+	
 	@AndroidFindBy(accessibility = "Redémarrer")
 	private WebElement restartButton;
 
@@ -162,37 +164,30 @@ public class RegistrationTasksPageFrench extends RegistrationTasksPage {
 		clickOnElement(settingsButton);
 	}
 
-	public SelectLanguagePage clickOnBiometricCorrectionButton() {
+	public  SelectLanguagePage clickOnBiometricCorrectionButton() {
 		clickOnElement(biometricCorrectionButton);
 		return new SelectLanguagePageFrench(driver);
 	}
-
+	
 	public void handleLocationPermission() {
-		try {
-			if (isElementDisplayed(locationPermissionMessage)) {
-				clickOnElement(allowWhileUsingButton);
-			}
-		} catch (Exception e) {
-		}
+	    try {
+	        if (isElementDisplayed(locationPermissionMessage)) {
+	            clickOnElement(allowWhileUsingButton);
+	        }
+	    } catch (Exception e) {
+	    }
 	}
 
-	public void clickOnRegistrationTasksTab() {
+	public  void clickOnRegistrationTasksTab() {
 		clickOnElement(registrationTasksTitle);
 	}
-
+	
 	public boolean isSettingsButtonDisplayed() {
 		return isElementDisplayed(settingsButton);
 	}
-
+	
 	public void handleIfSyncPopUpDisplayed() {
-		for (int i = 0; i < 120; i++) {
-			if (isElementDisplayed(syncCompletedPopup)) {
-				clickOnElement(restartButton);
-				return;
-			}
-			waitTime(5);
-		}
-		throw new RuntimeException("Sync popup not displayed");
+		waitForSyncPopupAndRestart(syncCompletedPopup, restartButton, Duration.ofMinutes(10));
 	}
 
 	public boolean isClientVersionDisplayed() {

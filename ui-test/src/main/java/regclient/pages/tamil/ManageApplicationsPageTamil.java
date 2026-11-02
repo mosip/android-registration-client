@@ -1,5 +1,7 @@
 package regclient.pages.tamil;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -8,7 +10,7 @@ import io.appium.java_client.MobileBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import regclient.page.ManageApplicationsPage;
 
-public class ManageApplicationsPageTamil extends ManageApplicationsPage {
+public class ManageApplicationsPageTamil extends ManageApplicationsPage{
 
 	@AndroidFindBy(accessibility = "Manage Applications")
 	private WebElement manageApplicationsTitle;
@@ -45,28 +47,28 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage {
 
 	@AndroidFindBy(accessibility = "Exported")
 	private WebElement exportedsOption;
-
+	
 	@AndroidFindBy(accessibility = "Dismiss")
 	private WebElement dismissButton;
-
+	
 	@AndroidFindBy(accessibility = "Displaying 0 Applications")
 	private WebElement displayZeroApplication;
-
+	
 	@AndroidFindBy(uiAutomator = "UiSelector().className(\"android.widget.CheckBox\").instance(0)")
 	private WebElement searchCheckBoxButton;
-
+	
 	@AndroidFindBy(accessibility = "Received")
 	private WebElement receivedValueDropdown;
-
+	
 	@AndroidFindBy(accessibility = "Processing")
 	private WebElement processingValueDropdown;
-
+	
 	@AndroidFindBy(accessibility = "Accepted")
 	private WebElement acceptedValueDropdown;
-
+	
 	@AndroidFindBy(accessibility = "Dismiss")
 	private WebElement deletionValueDropdown;
-
+	
 	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Documents'][2]")
 	private WebElement documentsHeader;
 
@@ -75,10 +77,10 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage {
 
 	@AndroidFindBy(id = "android:id/button1")
 	private WebElement allowButton;
-
+	
 	@AndroidFindBy(xpath = "//android.widget.TextView[@resource-id='android:id/title' and @text='Documents']")
 	private WebElement documentsFolder;
-
+	
 	@AndroidFindBy(accessibility = "No network found!")
 	private WebElement noNetworkFound;
 
@@ -96,18 +98,17 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage {
 		return isElementDisplayed(manageApplicationsTitle);
 	}
 
-	public void enterAID(String AID) {
-		clickAndsendKeysToTextBox(ApplicationIDTextBox, AID);
+	public  void enterAID(String AID) {
+		clickAndsendKeysToTextBox(ApplicationIDTextBox,AID);
 	}
 
-	public void enterWrongAID(String AID) {
-		clickAndsendKeysToTextBox(ApplicationIDTextBox, AID);
-	}
+	public  void enterWrongAID(String AID) {
+		clickAndsendKeysToTextBox(ApplicationIDTextBox,AID);
+	} 
 
 	public boolean isSearchAIDDisplayed(String AID) {
 		waitTime(2);
-		return isElementDisplayed(
-				driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]")));
+		return isElementDisplayed(driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]")));
 	}
 
 	public boolean isZeroApplicationDisplayed() {
@@ -115,29 +116,27 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage {
 		return isElementDisplayed(displayZeroApplication);
 	}
 
-	public void clickOnUploadButton() {
+	public  void clickOnUploadButton() {
 		clickOnElement(uploadButton);
 		waitTime(10);
 	}
 
 	public boolean isPacketUploadDone(String AID) {
-		waitTime(2);
-		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-		if (element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
-			waitTime(10);
-			element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-			if (element.getAttribute("contentDescription").contains("NOT UPLOADED"))
-				return false;
-			else
+		By packetRow = By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]");
+		for (int attempt = 0; attempt < 2; attempt++) {
+			waitTime(attempt == 0 ? 2 : 10);
+			List<WebElement> rows = driver.findElements(packetRow);
+			// An uploaded packet drops out of the "Approved" client-status filter, so a missing row means it was uploaded
+			if (rows.isEmpty() || !rows.get(0).getAttribute("contentDescription").contains("NOT UPLOADED"))
 				return true;
-		} else
-			return true;
+		}
+		return false;
 	}
 
 	public boolean isPacketApproved(String AID) {
 		waitTime(2);
-		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-		if (element.getAttribute("contentDescription").contains("APPROVED"))
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("APPROVED"))
 			return true;
 		else
 			return false;
@@ -145,27 +144,27 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage {
 
 	public boolean isPacketSynned(String AID) {
 		waitTime(2);
-		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-		if (element.getAttribute("contentDescription").contains("SYNCED"))
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("SYNCED"))
 			return true;
 		else
 			return false;
 	}
-
+	
 	public boolean isPacketRejected(String AID) {
 		waitTime(2);
-		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-		if (element.getAttribute("contentDescription").contains("REJECTED"))
+		WebElement element =driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'"+AID+"')]"));
+		if(element.getAttribute("contentDescription").contains("REJECTED"))
 			return true;
 		else
 			return false;
 	}
 
-	public void clickClientStatusDropdown() {
+	public  void clickClientStatusDropdown() {
 		clickOnElement(clientStatusDropdown);
 	}
 
-	public void clickServerStatusDropdown() {
+	public  void clickServerStatusDropdown() {
 		clickOnElement(serverStatusDropdown);
 	}
 
@@ -193,25 +192,25 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage {
 		return isElementDisplayed(exportedsOption);
 	}
 
-	public void clickDismissButton() {
+	public  void clickDismissButton() {
 		clickOnElement(dismissButton);
 	}
 
-	public void clickOnSearchCheckBox() {
+	public  void clickOnSearchCheckBox() {
 		clickOnElement(searchCheckBoxButton);
 	}
 
-	public void selectApprovedValueDropdown() {
+	public  void selectApprovedValueDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(approvedOption);
-	}
+	}	
 
-	public void selectSyncedOptionDropdown() {
+	public  void selectSyncedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(syncedOption);
 	}
 
-	public void selectUploadedOptionDropdown() {
+	public  void selectUploadedOptionDropdown() {
 		clickOnElement(clientStatusDropdown);
 		clickOnElement(uploadedOption);
 
@@ -258,15 +257,15 @@ public class ManageApplicationsPageTamil extends ManageApplicationsPage {
 			throw new RuntimeException("Documents folder or header not found on screen");
 		}
 	}
-
+	
 	public boolean isNoNetworkFoundDisplayed() {
 		return isElementDisplayed(noNetworkFound);
 	}
-
+	
 	public void selectLatestAidCheckBox() {
 		clickOnElement(latestAidCheckBox);
 	}
-
+	
 	public void clickCheckboxByAID(String aid) {
 		By checkbox = By
 				.xpath("//android.view.View[contains(@content-desc,'" + aid + "')]" + "//android.widget.CheckBox");

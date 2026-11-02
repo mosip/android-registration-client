@@ -216,11 +216,11 @@ public class PendingApprovalFrench extends PendingApproval {
 	public boolean isNoNetworkFoundDisplayed() {
 		return isElementEnabled(noNetworkFound);
 	}
-
+	
 	public void clickOnAuthenticateButton() {
 		clickOnElement(authenticateButton);
 	}
-
+	
 	public boolean isAuthenticateButtonEnabled() {
 		return isElementEnabled(authenticateButton);
 	}

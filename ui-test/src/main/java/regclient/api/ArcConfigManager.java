@@ -85,6 +85,10 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		return getProperty("apiInternalEndPoint", "");
 	}
 
+	public static String getKeycloakTokenUrl() {
+		return getProperty("keycloakTokenUrl", "").trim();
+	}
+
 	public static String getProperty(String key, String defaultValue) {
 		String value = propertiesMap.get(key) == null ? "" : propertiesMap.get(key).toString();
 		return (value != null && !value.trim().isEmpty()) ? value : defaultValue;

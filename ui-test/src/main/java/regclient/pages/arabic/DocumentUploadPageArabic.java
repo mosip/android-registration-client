@@ -74,7 +74,6 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 	public boolean isDoccumentUploadPageDisplayed() {
 		scrollToTop();
 		swipeRightUntilTabDisplayed("تحميل المستندات");
-
 		return driver.findElements(MobileBy.AccessibilityId(FetchUiSpec.getScreenTitle("Documents"))).size() > 0;
 	}
 
@@ -93,6 +92,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 	}
 
 	public void uploadDoccuments(String age, String type) {
+		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("Documents");
 		for (String id : idList) {
 			if (FetchUiSpec.getRequiredTypeUsingId(id)) {
@@ -211,6 +211,7 @@ public class DocumentUploadPageArabic extends DocumentUploadPage {
 	}
 
 	public void uploadDoccumentsUpdate(String age, String type) {
+		scrollToTop();
 		List<String> idList = FetchUiSpec.getAllIds("Documents");
 		for (String id : idList) {
 			if (type.equals("all") && !id.equals("proofOfException") && !id.equals("proofOfRelationship")) {
