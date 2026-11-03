@@ -64,6 +64,26 @@ public class RestClient {
 		return postResponse;
 	}
 
+	public static Response getRequestWithCookieNoLog(String url, String contentHeader, String acceptHeader,
+			String cookieName, String cookieValue) {
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a GET request to " + url);
+		Response getResponse = given().config(config).relaxedHTTPSValidation().contentType(contentHeader)
+				.accept(acceptHeader).cookie(cookieName, cookieValue).when().get(url);
+		RESTCLIENT_LOGGER.info("REST-ASSURED: GET status " + getResponse.getStatusCode() + " in "
+				+ getResponse.time() + " ms");
+		return getResponse;
+	}
+
+	public static Response postRequestWithCookieNoLog(String url, Object body, String contentHeader,
+			String acceptHeader, String cookieName, String cookieValue) {
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a POST request to " + url);
+		Response postResponse = given().config(config).relaxedHTTPSValidation().body(body).contentType(contentHeader)
+				.accept(acceptHeader).cookie(cookieName, cookieValue).when().post(url);
+		RESTCLIENT_LOGGER.info("REST-ASSURED: POST status " + postResponse.getStatusCode() + " in "
+				+ postResponse.time() + " ms");
+		return postResponse;
+	}
+
 //	
 	public static Response postReqestWithCookiesAndBody(String url, String body, String token, String opsToLog) {
 		Response posttResponse = null;

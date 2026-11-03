@@ -25,6 +25,7 @@ public final class NotificationListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationListener.class);
 
 	private static final long PING_INTERVAL_SECONDS = 30;
+	private static final long PONG_TIMEOUT_SECONDS = 10;
 	private static final long MAX_RECONNECT_DELAY_SECONDS = 60;
 
 	private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -42,6 +43,7 @@ public final class NotificationListener {
 	private static volatile URI uri;
 	private static volatile long reconnectDelaySeconds = 1;
 	private static volatile boolean started = false;
+	private static volatile boolean awaitingPong = false;
 
 	private NotificationListener() {
 	}
@@ -93,14 +95,43 @@ public final class NotificationListener {
 
 	private static void ping() {
 		WebSocket ws = webSocket;
-		if (ws == null || ws.isOutputClosed() || ws.isInputClosed()) {
+		if (ws == null) {
 			return;
 		}
+		if (ws.isOutputClosed() || ws.isInputClosed()) {
+			disconnect(ws);
+			return;
+		}
+		awaitingPong = true;
 		try {
-			ws.sendPing(ByteBuffer.allocate(0));
+			ws.sendPing(ByteBuffer.allocate(0)).whenComplete((sent, error) -> {
+				if (error != null) {
+					LOGGER.warn("Mock SMTP websocket ping failed: {}", error.getMessage());
+					disconnect(ws);
+				}
+			});
 		} catch (Exception e) {
 			LOGGER.warn("Mock SMTP websocket ping failed: {}", e.getMessage());
+			disconnect(ws);
+			return;
 		}
+		SCHEDULER.schedule(() -> {
+			if (awaitingPong && webSocket == ws) {
+				LOGGER.warn("No Pong from mock SMTP websocket within {} s", PONG_TIMEOUT_SECONDS);
+				disconnect(ws);
+			}
+		}, PONG_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+	}
+
+	private static void disconnect(WebSocket ws) {
+		synchronized (NotificationListener.class) {
+			if (webSocket != ws) {
+				return;
+			}
+			webSocket = null;
+		}
+		ws.abort();
+		scheduleReconnect();
 	}
 
 	private static void handleMessage(String data) {
@@ -144,16 +175,23 @@ public final class NotificationListener {
 		}
 
 		@Override
+		public CompletionStage<?> onPong(WebSocket ws, ByteBuffer message) {
+			awaitingPong = false;
+			ws.request(1);
+			return null;
+		}
+
+		@Override
 		public CompletionStage<?> onClose(WebSocket ws, int statusCode, String reason) {
 			LOGGER.warn("Mock SMTP websocket closed: status={} reason={}", statusCode, reason);
-			scheduleReconnect();
+			disconnect(ws);
 			return null;
 		}
 
 		@Override
 		public void onError(WebSocket ws, Throwable error) {
 			LOGGER.warn("Mock SMTP websocket error: {}", error.getMessage());
-			scheduleReconnect();
+			disconnect(ws);
 		}
 	}
 }

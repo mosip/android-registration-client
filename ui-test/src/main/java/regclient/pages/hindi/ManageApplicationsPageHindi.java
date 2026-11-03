@@ -122,18 +122,6 @@ public class ManageApplicationsPageHindi extends ManageApplicationsPage {
 		waitTime(10);
 	}
 
-	public boolean isPacketUploadDone(String AID) {
-		By packetRow = By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]");
-		for (int attempt = 0; attempt < 2; attempt++) {
-			waitTime(attempt == 0 ? 2 : 10);
-			List<WebElement> rows = driver.findElements(packetRow);
-			// An uploaded packet drops out of the "Approved" client-status filter, so a missing row means it was uploaded
-			if (rows.isEmpty() || !rows.get(0).getAttribute("contentDescription").contains("NOT UPLOADED"))
-				return true;
-		}
-				return false;
-	}
-
 	public boolean isPacketApproved(String AID) {
 		waitTime(2);
 		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));

@@ -520,6 +520,9 @@ public class RidGenerator {
 		manageApplicationsPage.clickOnSearchCheckBox();
 		boolean uploadSuccess = false;
 		for (int i = 0; i < 3; i++) {
+			if (i > 0) {
+				manageApplicationsPage.clickCheckboxByAID(Aid);
+			}
 			manageApplicationsPage.clickOnUploadButton();
 			uploadSuccess = manageApplicationsPage.isPacketUploadDone(Aid);
 			if (uploadSuccess) {
