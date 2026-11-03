@@ -604,6 +604,8 @@ public class KeycloakPage extends BasePage {
 	}
 
 	private static final String CHROME_PACKAGE = "com.android.chrome";
+	private static final By CHROME_TAB_CLOSE = MobileBy.AndroidUIAutomator(
+			"new UiSelector().packageName(\"com.android.chrome\").descriptionMatches(\"(?i)close .*tab.*\")");
 
 	public void clearChromeTabs() {
 		AndroidDriver android = (AndroidDriver) driver;
@@ -639,7 +641,12 @@ public class KeycloakPage extends BasePage {
 				clickIfShown(MobileBy.AndroidUIAutomator(
 						"new UiSelector().className(\"android.widget.Button\").textMatches(\"(?i)close( all)?.*\")"), 2);
 			}
-			return true;
+			waitTime(1);
+			if (driver.findElements(CHROME_TAB_CLOSE).isEmpty()) {
+				return true;
+			}
+			logger.warn("Chrome tabs still open after Close all tabs");
+			return closeTabsOneByOne();
 		}
 		saveChromePageSource();
 		((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.BACK));
@@ -649,11 +656,9 @@ public class KeycloakPage extends BasePage {
 
 	// Fallback: tap each tab card's close (X) button in the tab grid
 	private boolean closeTabsOneByOne() {
-		By tabClose = MobileBy.AndroidUIAutomator(
-				"new UiSelector().packageName(\"com.android.chrome\").descriptionMatches(\"(?i)close .*tab.*\")");
 		int closed = 0;
 		for (int i = 0; i < 100; i++) {
-			if (!clickIfShown(tabClose, i == 0 ? 3 : 1)) {
+			if (!clickIfShown(CHROME_TAB_CLOSE, i == 0 ? 3 : 1)) {
 				break;
 			}
 			closed++;
