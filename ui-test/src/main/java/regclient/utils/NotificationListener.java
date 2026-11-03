@@ -73,8 +73,14 @@ public final class NotificationListener {
 			return;
 		}
 		try {
-			webSocket = HTTP_CLIENT.newWebSocketBuilder().connectTimeout(Duration.ofSeconds(30))
+			WebSocket ws = HTTP_CLIENT.newWebSocketBuilder().connectTimeout(Duration.ofSeconds(30))
 					.buildAsync(uri, new Client()).join();
+			webSocket = ws;
+			if (ws.isInputClosed() || ws.isOutputClosed()) {
+				LOGGER.warn("Mock SMTP websocket closed right after connecting");
+				disconnect(ws);
+				return;
+			}
 			reconnectDelaySeconds = 1;
 			LOGGER.info("Connected to mock SMTP websocket {}", uri);
 		} catch (Exception e) {
