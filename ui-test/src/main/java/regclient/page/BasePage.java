@@ -956,7 +956,7 @@ public class BasePage {
 				finalOrientation = ScreenOrientation.valueOf(orientation.trim().toUpperCase());
 			} catch (IllegalArgumentException e) {
 				logger.info(
-						"Invalid orientation value in testdata.json: " + orientation + ". Falling back to PORTRAIT.");
+						"Invalid orientation value in Kernel.properties: " + orientation + ". Falling back to PORTRAIT.");
 			}
 
 		} else {

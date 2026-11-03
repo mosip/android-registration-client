@@ -167,8 +167,7 @@ regclientScenariosToExecute=LoginTest,NewRegistrationAdult,UpdateMyUinUpdateDocu
 
 Update these files before execution. Paths below are relative to `src/main/resources` (IDE run) or to the `resources/` folder next to the JAR (packaged JAR run):
 
-* `resources/config/Kernel.properties` — Environment details; also `UIN`, `AID`, `UINminor`, `UINinfant` and `generateUinAidPrerequisite` (true: auto-generate UIN/AID when empty; false: must be filled manually)
-* `resources/testdata.json` — Test data (language, camera id)
+* `resources/config/Kernel.properties` — Environment details; test data (`language`, `notificationLanguage`, `defaultlanguage`, `orientation`); also `UIN`, `AID`, `UINminor`, `UINinfant` and `generateUinAidPrerequisite` (true: auto-generate UIN/AID when empty; false: must be filled manually)
 * `resources/config.properties` — `nodePath`, `appiumServerExecutable`
 * `resources/DesiredCapabilities.json` — `udid`, app path
 * `camera.java` — Update camera & retake button coordinates [If camera id not available use camera button coordinates] 

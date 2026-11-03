@@ -1,8 +1,0 @@
-{
-  "notificationLanguage": "eng",
-  "orientation": "portrait",
-  "defaultlanguage": "eng",
-  "language": "eng",
-  "id": "com.motorola.camera3:id/capture_bar_shutter_button",
-  "fingerprint_threshold": "45"
-}
