@@ -664,7 +664,7 @@ public class KeycloakPage extends BasePage {
 			closed++;
 		}
 		logger.info("Closed {} Chrome tabs one by one", closed);
-		return closed > 0;
+		return driver.findElements(CHROME_TAB_CLOSE).isEmpty();
 	}
 
 	private void saveChromePageSource() {

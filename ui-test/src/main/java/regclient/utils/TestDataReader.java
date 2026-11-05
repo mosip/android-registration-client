@@ -60,7 +60,7 @@ public class TestDataReader {
 
 		synchronized (SAVE_LOCK) {
 			try {
-				String content = new String(Files.readAllBytes(target), StandardCharsets.UTF_8);
+				String content = new String(Files.readAllBytes(target), StandardCharsets.ISO_8859_1);
 				String lineSeparator = content.contains("\r\n") ? "\r\n" : "\n";
 				List<String> lines = new ArrayList<>(Arrays.asList(content.split("\\r?\\n", -1)));
 
@@ -71,7 +71,6 @@ public class TestDataReader {
 						if (lines.get(i).matches("\\s*" + Pattern.quote(entry.getKey()) + "\\s*[=:].*")) {
 							lines.set(i, newLine);
 							replaced = true;
-							break;
 						}
 					}
 					if (!replaced) {
@@ -82,7 +81,7 @@ public class TestDataReader {
 				// Write to a temp file and swap it in, so a failed write never leaves a partial Kernel.properties
 				Path temp = Files.createTempFile(target.toAbsolutePath().getParent(), "Kernel", ".tmp");
 				try {
-					Files.write(temp, String.join(lineSeparator, lines).getBytes(StandardCharsets.UTF_8));
+					Files.write(temp, String.join(lineSeparator, lines).getBytes(StandardCharsets.ISO_8859_1));
 					try {
 						Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
 					} catch (AtomicMoveNotSupportedException e) {
