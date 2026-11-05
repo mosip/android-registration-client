@@ -83,8 +83,8 @@ public class TestRunner {
 			XmlClass biometricCorrection = new XmlClass("regclient.androidTestCases.BiometricCorrection");
 			XmlClass preRegFetchingPacket = new XmlClass("regclient.androidTestCases.PreRegFetchingPacket");
 			XmlClass exportPacket = new XmlClass("regclient.androidTestCases.ExportPacket");
-			XmlClass newRegistrationAdultUploadMultipleDoccuments = new XmlClass(
-					"regclient.androidTestCases.NewRegistrationAdultUploadMultipleDoccuments");
+			XmlClass newRegistrationAdultUploadMultipleDocuments = new XmlClass(
+					"regclient.androidTestCases.NewRegistrationAdultUploadMultipleDocuments");
 			XmlClass createPacketWithoutNetwork = new XmlClass(
 					"regclient.androidTestCases.CreatePacketWithoutNetwork");
 
@@ -153,8 +153,10 @@ public class TestRunner {
 				if (Scenarioname.equalsIgnoreCase("exportPacket"))
 					classes.add(exportPacket);
 
-				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDoccuments"))
-					classes.add(newRegistrationAdultUploadMultipleDoccuments);
+				// Old misspelled name still accepted so existing configurations keep working
+				if (Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDocuments")
+						|| Scenarioname.equalsIgnoreCase("newRegistrationAdultUploadMultipleDoccuments"))
+					classes.add(newRegistrationAdultUploadMultipleDocuments);
 				
 				if (Scenarioname.equalsIgnoreCase("createPacketWithoutNetwork"))
 					classes.add(createPacketWithoutNetwork);
@@ -181,7 +183,7 @@ public class TestRunner {
 		System.getProperties().setProperty("emailable.report2.name",
 				"AndroidRegClient-" + BaseTestCase.environment + "-run-" + System.currentTimeMillis() + "-report.html");
 		runner.run();
-		otpListener.bTerminate = true;
+		io.mosip.testrig.apirig.testrunner.OTPListener.bTerminate = true;
 		System.exit(0);
 	}
 

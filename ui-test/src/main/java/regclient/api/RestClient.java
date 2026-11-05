@@ -3,6 +3,7 @@ package regclient.api;
 import io.restassured.RestAssured;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import org.json.JSONArray;
@@ -53,6 +54,36 @@ public class RestClient {
 		RESTCLIENT_LOGGER.info("REST-ASSURED: The response Time is: " + postResponse.time());
 		return postResponse;
 	}
+	// Form-encoded POST (e.g. Keycloak token). No .log().all(): the form carries client secrets and passwords
+	public static Response postRequestWithFormParams(String url, Map<String, String> formParams) {
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a form POST request to " + url);
+		Response postResponse = given().config(config).relaxedHTTPSValidation()
+				.contentType(ContentType.URLENC).formParams(formParams).when().post(url);
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Form POST status " + postResponse.getStatusCode() + " in "
+				+ postResponse.time() + " ms");
+		return postResponse;
+	}
+
+	public static Response getRequestWithCookieNoLog(String url, String contentHeader, String acceptHeader,
+			String cookieName, String cookieValue) {
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a GET request to " + url);
+		Response getResponse = given().config(config).relaxedHTTPSValidation().contentType(contentHeader)
+				.accept(acceptHeader).cookie(cookieName, cookieValue).when().get(url);
+		RESTCLIENT_LOGGER.info("REST-ASSURED: GET status " + getResponse.getStatusCode() + " in "
+				+ getResponse.time() + " ms");
+		return getResponse;
+	}
+
+	public static Response postRequestWithCookieNoLog(String url, Object body, String contentHeader,
+			String acceptHeader, String cookieName, String cookieValue) {
+		RESTCLIENT_LOGGER.info("REST-ASSURED: Sending a POST request to " + url);
+		Response postResponse = given().config(config).relaxedHTTPSValidation().body(body).contentType(contentHeader)
+				.accept(acceptHeader).cookie(cookieName, cookieValue).when().post(url);
+		RESTCLIENT_LOGGER.info("REST-ASSURED: POST status " + postResponse.getStatusCode() + " in "
+				+ postResponse.time() + " ms");
+		return postResponse;
+	}
+
 //	
 	public static Response postReqestWithCookiesAndBody(String url, String body, String token, String opsToLog) {
 		Response posttResponse = null;

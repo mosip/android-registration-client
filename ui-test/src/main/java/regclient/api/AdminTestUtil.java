@@ -1,6 +1,6 @@
 package regclient.api;
 
-import io.mosip.testrig.apirig.testrunner.OTPListener;
+import io.mosip.testrig.apirig.utils.NotificationListener;
 import io.restassured.response.Response;
 import regclient.utils.TestDataReader;
 
@@ -411,7 +411,7 @@ public class AdminTestUtil extends BaseTestCase {
 		Faker faker = new Faker();
 		String userId = faker.internet().emailAddress();
 		sendOtp(userId, TestDataReader.readData("language"));
-		validateOtp(userId, OTPListener.getOtp(userId));
+		validateOtp(userId, NotificationListener.getOtp(userId));
 		String preRegId = createPreRegistration(userId, age);
 		return preRegId;
 	}
