@@ -65,7 +65,7 @@ public class TestDataReader {
 				List<String> lines = new ArrayList<>(Arrays.asList(content.split("\\r?\\n", -1)));
 
 				for (Map.Entry<String, String> entry : values.entrySet()) {
-					String newLine = entry.getKey() + "=" + entry.getValue();
+					String newLine = entry.getKey() + "=" + escapeNonLatin1(entry.getValue());
 					boolean replaced = false;
 					for (int i = 0; i < lines.size(); i++) {
 						if (lines.get(i).matches("\\s*" + Pattern.quote(entry.getKey()) + "\\s*[=:].*")) {
@@ -96,6 +96,18 @@ public class TestDataReader {
 				throw new IllegalStateException("Failed to persist keys " + values.keySet() + " to file: " + target, e);
 			}
 		}
+	}
+
+	private static String escapeNonLatin1(String value) {
+		StringBuilder escaped = new StringBuilder(value.length());
+		for (char c : value.toCharArray()) {
+			if (c > 0xFF) {
+				escaped.append(String.format("\\u%04x", (int) c));
+			} else {
+				escaped.append(c);
+			}
+		}
+		return escaped.toString();
 	}
 
 	private static String getKernelPropertiesPath() {
