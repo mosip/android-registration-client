@@ -13,7 +13,7 @@ import io.appium.java_client.remote.SupportsContextSwitching;
 import io.appium.java_client.remote.SupportsRotation;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
-import io.mosip.testrig.apirig.testrunner.OTPListener;
+import io.mosip.testrig.apirig.utils.NotificationListener;
 import regclient.api.FetchUiSpec;
 import regclient.pages.english.BiometricDetailsPageEnglish;
 import regclient.utils.TestDataReader;
@@ -1150,13 +1150,13 @@ public class BasePage {
 						+ pattern + ").*\"))")));
 	}
 
-	// Sentinel returned by OTPListener.getAdditionalReqId while packet creation hasn't produced an id yet.
+	// Sentinel returned by NotificationListener.getAdditionalReqId while packet creation hasn't produced an id yet.
 	protected static final String Additional_Req_Id_Failed = "{Failed}";
 
 	protected static String waitForAdditionalReqId(String emailId, int maxOuterAttempts, int waitSecondsBetweenAttempts) {
 		String additionalInfoReqId = "";
 		for (int attempt = 1; attempt <= maxOuterAttempts; attempt++) {
-			additionalInfoReqId = OTPListener.getAdditionalReqId(emailId);
+			additionalInfoReqId = NotificationListener.getAdditionalReqId(emailId);
 			if (additionalInfoReqId != null && !additionalInfoReqId.trim().isEmpty()
 					&& !additionalInfoReqId.equals(Additional_Req_Id_Failed)) {
 				return additionalInfoReqId.trim();
