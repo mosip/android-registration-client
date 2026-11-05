@@ -20,6 +20,7 @@ import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
 import io.mosip.testrig.apirig.testrunner.BaseTestCase;
+import io.mosip.testrig.apirig.testrunner.OTPListener;
 import regclient.api.AdminTestUtil;
 import regclient.api.ArcConfigManager;
 import regclient.api.FetchUiSpec;
@@ -35,7 +36,8 @@ public class TestRunner {
 		io.mosip.testrig.apirig.testrunner.BaseTestCase.currentModule = "androidregclient";
 		AdminTestUtil.initialize();
 		BaseTestCase.ApplnURI = ArcConfigManager.getiam_apiinternalendpoint();
-		NotificationListener.start();
+		OTPListener otpListener = new OTPListener();
+		otpListener.run();
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
