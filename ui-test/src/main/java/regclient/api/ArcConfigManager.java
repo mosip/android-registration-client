@@ -103,6 +103,21 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		}
 	}
 
+	// Fail fast with a readable message instead of "Target host is not specified" from the HTTP client
+	public static void validateRequiredProperties() {
+		String[] requiredKeys = { "apiInternalEndPoint", "keycloak-external-url" };
+		StringBuilder missing = new StringBuilder();
+		for (String key : requiredKeys) {
+			if (getProperty(key, "").trim().isEmpty()) {
+				missing.append(missing.length() == 0 ? "" : ", ").append(key);
+			}
+		}
+		if (missing.length() > 0) {
+			throw new IllegalStateException("Missing required properties in config/Kernel.properties: " + missing
+					+ " (e.g. apiInternalEndPoint=https://api-internal.<env>.mosip.net, keycloak-external-url=https://iam.<env>.mosip.net)");
+		}
+	}
+
 	public static String getIAMUrl() {
 		return getProperty("keycloak-external-url", "") + "/auth";
 	}

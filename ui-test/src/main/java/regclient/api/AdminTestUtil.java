@@ -109,6 +109,7 @@ public class AdminTestUtil extends BaseTestCase {
 	public static void initialize() {
 		if (!initialized) {
 			ArcConfigManager.init();
+			ArcConfigManager.validateRequiredProperties();
 			BaseTestCase.initialize();
 			// user zone and center mapping
 			KeycloakUserManager.createUsers();
@@ -244,8 +245,8 @@ public class AdminTestUtil extends BaseTestCase {
 				MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON, BaseTestCase.COOKIENAME, token);
 		JSONObject responseJson = new JSONObject(response.asString());
 		System.out.println("Response JSON = " + responseJson);
-		if (responseJson.has("response") && responseJson.getJSONObject("response").has("status")
-				&& "success".equalsIgnoreCase(responseJson.getJSONObject("response").getString("status"))) {
+		JSONObject responseBody = responseJson.optJSONObject("response");
+		if (responseBody != null && "success".equalsIgnoreCase(responseBody.optString("status"))) {
 			System.out.println("OTP request sent successfully.");
 		} else {
 			throw new RuntimeException("OTP request failed. Response: " + responseJson.toString());
@@ -283,8 +284,8 @@ public class AdminTestUtil extends BaseTestCase {
 		} catch (Exception e) {
 			throw new RuntimeException("Invalid JSON returned from validateOtp API: " + response.asString(), e);
 		}
-		if (responseJson.has("response") && responseJson.getJSONObject("response").has("status")
-				&& "success".equalsIgnoreCase(responseJson.getJSONObject("response").getString("status"))) {
+		JSONObject responseBody = responseJson.optJSONObject("response");
+		if (responseBody != null && "success".equalsIgnoreCase(responseBody.optString("status"))) {
 			System.out.println("OTP validation successful.");
 			return response;
 		} else {
@@ -343,17 +344,15 @@ public class AdminTestUtil extends BaseTestCase {
 			}
 		}
 
-		if (!identity.has("dateOfBirth") || identity.get("dateOfBirth").toString().contains("{{")) {
+		if (isPlaceholder(identity, "dateOfBirth")) {
 			identity.put("dateOfBirth", dob);
 		}
 
-		if (!identity.has("phone") || identity.get("phone").toString().contains("{{")) {
+		if (isPlaceholder(identity, "phone")) {
 			identity.put("phone", phone);
 		}
 
-		if (!identity.has("email") || identity.get("email").toString().contains("{{")) {
-			identity.put("email", email);
-		}
+		identity.put("email", (userId != null && !userId.isEmpty()) ? userId : email);
 
 		if (identity.optJSONArray("addressLine1") != null) {
 			for (int i = 0; i < identity.getJSONArray("addressLine1").length(); i++) {
@@ -373,7 +372,7 @@ public class AdminTestUtil extends BaseTestCase {
 			}
 		}
 
-		if (!identity.has("postalCode") || identity.get("postalCode").toString().contains("{{")) {
+		if (isPlaceholder(identity, "postalCode")) {
 			identity.put("postalCode", propsKernel.getProperty("regCenterId"));
 		}
 
@@ -398,13 +397,22 @@ public class AdminTestUtil extends BaseTestCase {
 
 		String preRegId = null;
 		JSONObject responseJson = new JSONObject(response.asString());
-		if (responseJson.has("response") && responseJson.getJSONObject("response").has("preRegistrationId")) {
-			preRegId = responseJson.getJSONObject("response").getString("preRegistrationId");
+		JSONObject responseBody = responseJson.optJSONObject("response");
+		if (responseBody != null && responseBody.has("preRegistrationId")) {
+			preRegId = responseBody.getString("preRegistrationId");
 			System.out.println("preRegistrationId = " + preRegId);
 		} else {
 			throw new RuntimeException("preRegistrationId not found in response: " + responseJson.toString());
 		}
 		return preRegId;
+	}
+
+	private static boolean isPlaceholder(JSONObject identity, String key) {
+		if (!identity.has(key)) {
+			return true;
+		}
+		String value = identity.get(key).toString();
+		return value.contains("{{") || value.matches(".*\\$[A-Za-z_]+\\$.*");
 	}
 
 	public static String getPreRegistrationFlow(String age) {

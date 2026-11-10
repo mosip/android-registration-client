@@ -181,7 +181,7 @@ public class TestRunner {
 		System.getProperties().setProperty("testng.outpur.dir", "testng-report");
 		runner.setOutputDirectory("testng-report");
 		System.getProperties().setProperty("emailable.report2.name",
-				"AndroidRegClient-" + BaseTestCase.environment + "-run-" + System.currentTimeMillis() + "-report.html");
+				"AndroidRegClient-" + regclient.api.BaseTestCase.environment + "-run-" + System.currentTimeMillis() + "-report.html");
 		runner.run();
 		io.mosip.testrig.apirig.testrunner.OTPListener.bTerminate = true;
 		System.exit(0);

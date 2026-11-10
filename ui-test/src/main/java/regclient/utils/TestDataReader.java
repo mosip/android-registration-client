@@ -1,11 +1,9 @@
 package regclient.utils;
 
 import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,19 +76,8 @@ public class TestDataReader {
 					}
 				}
 
-				// Write to a temp file and swap it in, so a failed write never leaves a partial Kernel.properties
-				Path temp = Files.createTempFile(target.toAbsolutePath().getParent(), "Kernel", ".tmp");
-				try {
-					Files.write(temp, String.join(lineSeparator, lines).getBytes(StandardCharsets.ISO_8859_1));
-					try {
-						Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-					} catch (AtomicMoveNotSupportedException e) {
-						Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING);
-					}
-				} finally {
-					Files.deleteIfExists(temp);
-				}
-				// Only update memory once the file is safely written
+				Files.write(target, String.join(lineSeparator, lines).getBytes(StandardCharsets.ISO_8859_1));
+				// Only update memory once the file is written
 				values.forEach(BaseTestCase.propsKernel::setProperty);
 			} catch (IOException e) {
 				throw new IllegalStateException("Failed to persist keys " + values.keySet() + " to file: " + target, e);
