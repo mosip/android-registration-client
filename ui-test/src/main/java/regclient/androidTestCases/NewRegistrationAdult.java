@@ -161,7 +161,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		loginPage.selectLanguage();
@@ -187,7 +187,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		registrationTasksPage.handleLocationPermission();
@@ -210,7 +210,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(), "Verify if select language page  is loaded");
 		selectLanguagePage.clickOnSubmitButtonWithoutSelectingLanguage();
@@ -241,7 +241,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(consentPage.isPageDisplayed("consentdet"), "Verify if Consent page is loaded");
 				assertTrue(consentPage.isCheckBoxReadable(), "Verify if the check box in readable");
@@ -263,7 +263,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(demographicPage.isPageDisplayed("DemographicDetails"),
 						"Verify if demographic details page is displayed");
@@ -285,7 +285,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
@@ -308,7 +308,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				if ("eng".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageEnglish(driver);
@@ -323,7 +323,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
 						"Verify if biometric details page is displayed");
@@ -423,7 +423,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
@@ -449,7 +449,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		boolean isAuthenticationPageDisplayed = false;
@@ -481,7 +481,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
@@ -506,7 +506,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 		assertTrue(operationalTaskPage.isPendingApprovalTitleDisplayed(), "Verify if pending approval tite displayed");
@@ -525,7 +525,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 		pendingApproval.enterAID(Aid);
@@ -583,7 +583,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
@@ -626,7 +626,7 @@ public class NewRegistrationAdult extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		profilePage.clickOnLogoutButton();

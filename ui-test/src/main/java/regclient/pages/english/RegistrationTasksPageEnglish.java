@@ -1,5 +1,10 @@
 package regclient.pages.english;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -11,6 +16,7 @@ import regclient.page.RegistrationTasksPage;
 import regclient.page.SelectLanguagePage;
 
 public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
+	private static final Logger logger = LoggerFactory.getLogger(RegistrationTasksPageEnglish.class);
 
 	@AndroidFindBy(accessibility = "Registration Tasks")
 	private WebElement registrationTasksTitle;
@@ -173,6 +179,7 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 				clickOnElement(allowWhileUsingButton);
 			}
 		} catch (Exception e) {
+			logger.warn("Location permission prompt could not be handled", e);
 		}
 	}
 
@@ -185,18 +192,7 @@ public class RegistrationTasksPageEnglish extends RegistrationTasksPage {
 	}
 	
 	public void handleIfSyncPopUpDisplayed() {
-
-	    for (int i = 0; i < 120; i++) { // 120 * 5 sec = 10 min
-
-	        if (isElementDisplayed(syncCompletedPopup)) {
-	            clickOnElement(restartButton);
-	            return;
-	        }
-
-	        waitTime(5); // wait 5 seconds
-	    }
-
-	    throw new RuntimeException("Sync popup not displayed");
+		waitForSyncPopupAndRestart(syncCompletedPopup, restartButton, Duration.ofMinutes(10));
 	}
 	
 	public boolean isClientVersionDisplayed() {
