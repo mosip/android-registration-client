@@ -1,5 +1,7 @@
 package regclient.api;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import io.mosip.testrig.apirig.utils.ConfigManager;
+import regclient.utils.TestRunner;
 
 public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManager {
 
@@ -22,6 +25,18 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		configManagerLogger.setLevel(Level.WARN);
 
 		Map<String, Object> moduleSpecificPropertiesMap = new HashMap<>();
+		File runtimeKernel = new File(TestRunner.getResourcePath() + "/config/Kernel.properties");
+		if (runtimeKernel.isFile()) {
+			Properties kernelProps = new Properties();
+			try (InputStream in = new FileInputStream(runtimeKernel)) {
+				kernelProps.load(in);
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to load " + runtimeKernel.getAbsolutePath(), e);
+			}
+			for (String key : kernelProps.stringPropertyNames()) {
+				moduleSpecificPropertiesMap.put(key, kernelProps.getProperty(key));
+			}
+		}
 		// Load scope specific properties
 		try {
 			Properties configProps = new Properties();

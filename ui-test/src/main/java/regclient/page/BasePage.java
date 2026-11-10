@@ -67,6 +67,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class BasePage {
@@ -1153,9 +1154,14 @@ public class BasePage {
 	// Sentinel returned by NotificationListener.getAdditionalReqId while packet creation hasn't produced an id yet.
 	protected static final String Additional_Req_Id_Failed = "{Failed}";
 
+	private static final long ADDITIONAL_REQ_ID_MAX_WAIT_MS = TimeUnit.MINUTES.toMillis(15);
+
 	protected static String waitForAdditionalReqId(String emailId, int maxOuterAttempts, int waitSecondsBetweenAttempts) {
+		long deadline = System.currentTimeMillis() + ADDITIONAL_REQ_ID_MAX_WAIT_MS;
 		String additionalInfoReqId = "";
-		for (int attempt = 1; attempt <= maxOuterAttempts; attempt++) {
+		int attempt = 0;
+		while (attempt < maxOuterAttempts && System.currentTimeMillis() < deadline) {
+			attempt++;
 			additionalInfoReqId = NotificationListener.getAdditionalReqId(emailId);
 			if (additionalInfoReqId != null && !additionalInfoReqId.trim().isEmpty()
 					&& !additionalInfoReqId.equals(Additional_Req_Id_Failed)) {
@@ -1163,12 +1169,12 @@ public class BasePage {
 			}
 			logger.info("AdditionalInfoRequestId not ready for {}, attempt {}/{}. Retrying...", emailId, attempt,
 					maxOuterAttempts);
-			if (attempt < maxOuterAttempts) {
+			if (attempt < maxOuterAttempts && System.currentTimeMillis() < deadline) {
 				waitTime(waitSecondsBetweenAttempts);
 			}
 		}
-		throw new IllegalStateException(
-				"AdditionalInfoRequestId not available for " + emailId + " after " + maxOuterAttempts + " attempts");
+		throw new IllegalStateException("AdditionalInfoRequestId not available for " + emailId + " after " + attempt
+				+ " attempts / " + TimeUnit.MILLISECONDS.toMinutes(ADDITIONAL_REQ_ID_MAX_WAIT_MS) + " minutes");
 	}
 
 }
