@@ -46,8 +46,7 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
                         OcrError.ErrorCode.TIMEOUT.name(),
                         "OCR provider did not respond within " + timeoutMs + "ms",
                         true);
-                // Safety fallback: if delegate never calls back after cancel, recycle bitmap after grace period
-                handler.postDelayed(() -> recycleBitmapSafely(bitmap), 3000);
+                // Do not recycle bitmap on a timer; recycle only after delegate reports it has stopped
             }
         };
         handler.postDelayed(timeoutRunnable, timeoutMs);

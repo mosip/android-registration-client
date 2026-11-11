@@ -89,9 +89,6 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
   bool _showForceCapture = false;
   bool get showForceCapture => _showForceCapture;
 
-  int _qualityRetryCount = 0;
-  static const int _maxQualityRetries = 8;
-
   // ---------------------------------------------------------------------------
   // Result data
   // ---------------------------------------------------------------------------
@@ -182,7 +179,6 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
     _guidanceMessage = '';
     _isQualityAcceptable = false;
     _showForceCapture = false;
-    _qualityRetryCount = 0;
     _extractedData = {};
     _documentType = null;
     _confidence = null;
@@ -269,7 +265,6 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
     _guidanceMessage = '';
     _isQualityAcceptable = false;
     _showForceCapture = false;
-    _qualityRetryCount = 0;
     _extractedData = {};
     _documentType = null;
     _confidence = null;
@@ -333,12 +328,6 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
       if (_state == OcrScanState.processing) {
         // If quality updates continue during camera scan, ensure we stay in scanning state
         _state = OcrScanState.scanning;
-      }
-      if (!_isQualityAcceptable) {
-        _qualityRetryCount++;
-        if (_qualityRetryCount >= _maxQualityRetries) {
-          _showForceCapture = true;
-        }
       }
     }
 
@@ -414,11 +403,11 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
   /// Applies OCR-extracted fields into the registration form.
   ///
   /// Returns the number of fields successfully applied.
-  int applyExtractedFields({
+  Future<int> applyExtractedFields({
     required List<Field?>? screenFields,
     required GlobalProvider globalProvider,
     required RegistrationTaskProvider regTaskProvider,
-  }) {
+  }) async {
     try {
       final data = extractedData;
       if (data.isEmpty) return 0;
@@ -556,29 +545,73 @@ class OcrScanProvider extends ChangeNotifier implements OcrFlutterApi {
           if (fieldSpec?.subType == 'gender' || fieldId.toLowerCase() == 'gender') {
             try {
               final upperVal = value.toUpperCase().trim();
-              if (upperVal == 'F' ||
-                  upperVal == 'FEM' ||
-                  upperVal == 'FEMALE' ||
-                  upperVal.contains('FEMALE') ||
-                  upperVal.startsWith('FEM') ||
-                  upperVal.contains('WOMAN')) {
-                value = 'Female';
-                regTaskProvider.addSelectedCode(fieldId, 'FEM');
-              } else if (upperVal == 'M' ||
-                  upperVal == 'MLE' ||
-                  upperVal == 'MALE' ||
-                  (upperVal.contains('MALE') && !upperVal.contains('FEMALE')) ||
-                  upperVal.startsWith('MAL') ||
-                  upperVal.contains('MAN')) {
-                value = 'Male';
-                regTaskProvider.addSelectedCode(fieldId, 'MLE');
-              } else if (upperVal == 'O' ||
-                  upperVal == 'OTH' ||
-                  upperVal == 'OTHER' ||
-                  upperVal.contains('OTHER') ||
-                  upperVal.contains('TRANS')) {
-                value = 'Other';
-                regTaskProvider.addSelectedCode(fieldId, 'OTH');
+              final fieldSubtype = fieldSpec?.subType ?? 'gender';
+              String? matchedCode;
+              String? matchedName;
+
+              // Dynamically resolve gender codes/names from RegistrationTaskProvider.getFieldValues
+              try {
+                final fieldOptions = await regTaskProvider.getFieldValues(
+                  fieldSubtype,
+                  primaryLang,
+                  globalProvider.chosenLang,
+                );
+                if (fieldOptions != null && fieldOptions.isNotEmpty) {
+                  for (final opt in fieldOptions) {
+                    if (opt == null) continue;
+                    final optCode = opt.code ?? '';
+                    final optName = opt.name ?? '';
+                    final optCodeUpper = optCode.toUpperCase();
+                    final optNameUpper = optName.toUpperCase();
+
+                    if (optCodeUpper == upperVal || optNameUpper == upperVal) {
+                      matchedCode = optCode;
+                      matchedName = optName;
+                      break;
+                    }
+                    if ((upperVal.startsWith('F') || upperVal.contains('FEMALE') || upperVal.contains('WOMAN')) &&
+                        (optCodeUpper.startsWith('F') || optNameUpper.contains('FEMALE') || optNameUpper.contains('WOMAN'))) {
+                      matchedCode = optCode;
+                      matchedName = optName;
+                      break;
+                    }
+                    if ((upperVal.startsWith('M') || upperVal.contains('MALE') || upperVal.contains('MAN')) &&
+                        !upperVal.contains('FEMALE') &&
+                        (optCodeUpper.startsWith('M') || optNameUpper.contains('MALE') || optNameUpper.contains('MAN')) &&
+                        !optNameUpper.contains('FEMALE')) {
+                      matchedCode = optCode;
+                      matchedName = optName;
+                      break;
+                    }
+                    if ((upperVal.startsWith('O') || upperVal.contains('OTHER') || upperVal.contains('TRANS')) &&
+                        (optCodeUpper.startsWith('O') || optNameUpper.contains('OTHER') || optNameUpper.contains('TRANS'))) {
+                      matchedCode = optCode;
+                      matchedName = optName;
+                      break;
+                    }
+                  }
+                }
+              } catch (e) {
+                debugPrint('Dynamic gender lookup failed, falling back: $e');
+              }
+
+              // Fallback to standard codes if dynamic query was empty
+              if (matchedCode == null) {
+                if (upperVal == 'F' || upperVal.startsWith('FEM') || upperVal.contains('WOMAN')) {
+                  matchedCode = 'FEM';
+                  matchedName = 'Female';
+                } else if (upperVal == 'M' || upperVal.startsWith('MAL') || upperVal.contains('MAN')) {
+                  matchedCode = 'MLE';
+                  matchedName = 'Male';
+                } else if (upperVal == 'O' || upperVal.startsWith('OTH') || upperVal.contains('TRANS')) {
+                  matchedCode = 'OTH';
+                  matchedName = 'Other';
+                }
+              }
+
+              if (matchedCode != null) {
+                value = matchedName ?? value;
+                regTaskProvider.addSelectedCode(fieldId, matchedCode);
               }
             } catch (e) {
               debugPrint('Gender resolution error: $e');

@@ -357,16 +357,49 @@ public class OcrPluginImpl implements OcrHostApi {
      * Decodes a file-system path or content:// URI to a Bitmap.
      * Handles both SAF URIs and absolute file paths.
      */
+    private static final int MAX_GALLERY_DECODE_PX = 2048;
+
     private Bitmap decodeImagePath(@NonNull String filePath) throws IOException {
+        BitmapFactory.Options boundsOpts = new BitmapFactory.Options();
+        boundsOpts.inJustDecodeBounds = true;
+
+        if (filePath.startsWith("content://")) {
+            ContentResolver cr = activity.getContentResolver();
+            Uri uri = Uri.parse(filePath);
+            try (InputStream is = cr.openInputStream(uri)) {
+                if (is == null) throw new IOException("ContentResolver returned null stream for: " + filePath);
+                BitmapFactory.decodeStream(is, null, boundsOpts);
+            }
+        } else {
+            BitmapFactory.decodeFile(filePath, boundsOpts);
+        }
+
+        int origWidth = boundsOpts.outWidth;
+        int origHeight = boundsOpts.outHeight;
+        if (origWidth <= 0 || origHeight <= 0) {
+            return null;
+        }
+
+        int sampleSize = 1;
+        int maxDimension = Math.max(origWidth, origHeight);
+        while ((maxDimension / sampleSize) > MAX_GALLERY_DECODE_PX) {
+            sampleSize *= 2;
+        }
+
+        BitmapFactory.Options decodeOpts = new BitmapFactory.Options();
+        decodeOpts.inSampleSize = sampleSize;
+        decodeOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
         Bitmap bitmap;
         if (filePath.startsWith("content://")) {
             ContentResolver cr = activity.getContentResolver();
-            try (InputStream is = cr.openInputStream(Uri.parse(filePath))) {
+            Uri uri = Uri.parse(filePath);
+            try (InputStream is = cr.openInputStream(uri)) {
                 if (is == null) throw new IOException("ContentResolver returned null stream for: " + filePath);
-                bitmap = BitmapFactory.decodeStream(is);
+                bitmap = BitmapFactory.decodeStream(is, null, decodeOpts);
             }
         } else {
-            bitmap = BitmapFactory.decodeFile(filePath);
+            bitmap = BitmapFactory.decodeFile(filePath, decodeOpts);
         }
 
         if (bitmap == null) return null;

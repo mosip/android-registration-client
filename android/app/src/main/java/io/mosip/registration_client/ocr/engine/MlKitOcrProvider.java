@@ -48,6 +48,7 @@ public class MlKitOcrProvider implements OcrProvider {
             @NonNull Bitmap bitmap,
             @NonNull List<FieldSpec> spec,
             @NonNull OcrProviderCallback callback) {
+        isCancelled = false;
 
         // Document classification on the ORIGINAL color bitmap (TFLite model expects RGB)
         String documentType           = "UNKNOWN";
@@ -85,6 +86,10 @@ public class MlKitOcrProvider implements OcrProvider {
             @Override
             public void onSuccess(@NonNull Text visionText, float avgConfidence) {
                 try {
+                    if (isCancelled) {
+                        callback.onFailure(OcrError.ErrorCode.UNKNOWN.name(), "OCR was cancelled", true);
+                        return;
+                    }
                     Map<String, String> data;
                     try {
                         data = fieldExtractor.extract(visionText, finalDocumentType, spec);
@@ -131,8 +136,16 @@ public class MlKitOcrProvider implements OcrProvider {
     }
 
 
+    private volatile boolean isCancelled = false;
+
+    @Override
+    public void cancel() {
+        isCancelled = true;
+    }
+
     @Override
     public void release() {
+        cancel();
         mlKitEngine.release();
     }
 

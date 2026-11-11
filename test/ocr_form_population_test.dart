@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:registration_client/core/bridge/ocr_api.g.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/ocr_scan_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -37,10 +38,16 @@ class MockRegistrationTaskProvider extends Mock implements RegistrationTaskProvi
   final Map<String, String> simpleTypeFields = {};
   final Map<String, String> selectedCodes = {};
   final List<Map<String, String>> setDateCalls = [];
+  List<DynamicFieldData?> mockFieldValues = [];
 
   @override
   void addDemographicField(String fieldId, String value) {
     addedDemographicFields[fieldId] = value;
+  }
+
+  @override
+  Future<List<DynamicFieldData?>> getFieldValues(String fieldName, String langCode, List<String> languages) {
+    return Future.value(mockFieldValues);
   }
 
   @override
@@ -95,7 +102,7 @@ void main() {
       return p;
     }
 
-    test('populates multi-language simpleType fields across all chosen languages', () {
+    test('populates multi-language simpleType fields across all chosen languages', () async {
       final p = createActiveProvider({
         'fullName': 'John Doe',
         'addressLine1': '123 Main Street',
@@ -106,7 +113,7 @@ void main() {
         Field(id: 'addressLine1', controlType: 'textbox', subType: 'address', type: 'simpleType'),
       ];
 
-      final applied = p.applyExtractedFields(
+      final applied = await p.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -121,13 +128,13 @@ void main() {
       expect(globalProvider.fieldInputValue['addressLine1'], '123 Main Street');
     });
 
-    test('resolves female gender variations to Female with FEM code', () {
+    test('resolves female gender variations to Female with FEM code', () async {
       final p = createActiveProvider({'gender': 'FEMALE'});
       final screenFields = [
         Field(id: 'gender', controlType: 'dropdown', subType: 'gender', type: 'simpleType'),
       ];
 
-      final applied = p.applyExtractedFields(
+      final applied = await p.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -138,13 +145,13 @@ void main() {
       expect(globalProvider.fieldInputValue['gender'], 'Female');
     });
 
-    test('resolves male gender variations to Male with MLE code', () {
+    test('resolves male gender variations to Male with MLE code', () async {
       final p = createActiveProvider({'gender': 'M'});
       final screenFields = [
         Field(id: 'gender', controlType: 'dropdown', subType: 'gender', type: 'simpleType'),
       ];
 
-      final applied = p.applyExtractedFields(
+      final applied = await p.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -155,13 +162,13 @@ void main() {
       expect(globalProvider.fieldInputValue['gender'], 'Male');
     });
 
-    test('resolves other gender variations to Other with OTH code', () {
+    test('resolves other gender variations to Other with OTH code', () async {
       final p = createActiveProvider({'gender': 'TRANSGENDER'});
       final screenFields = [
         Field(id: 'gender', controlType: 'dropdown', subType: 'gender', type: 'simpleType'),
       ];
 
-      final applied = p.applyExtractedFields(
+      final applied = await p.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -172,7 +179,39 @@ void main() {
       expect(globalProvider.fieldInputValue['gender'], 'Other');
     });
 
-    test('resolves OCR keys with field subType and id mapping', () {
+    test('resolves dynamic gender codes from registration task provider getFieldValues', () async {
+      regTaskProvider.mockFieldValues = [
+        DynamicFieldData(
+          code: 'F_CUSTOM',
+          name: 'Female Custom',
+          langCode: 'eng',
+          concatenatedName: 'Female Custom',
+        ),
+        DynamicFieldData(
+          code: 'M_CUSTOM',
+          name: 'Male Custom',
+          langCode: 'eng',
+          concatenatedName: 'Male Custom',
+        ),
+      ];
+
+      final p = createActiveProvider({'gender': 'Female'});
+      final screenFields = [
+        Field(id: 'gender', controlType: 'dropdown', subType: 'gender', type: 'simpleType'),
+      ];
+
+      final applied = await p.applyExtractedFields(
+        screenFields: screenFields,
+        globalProvider: globalProvider,
+        regTaskProvider: regTaskProvider,
+      );
+
+      expect(applied, 1);
+      expect(regTaskProvider.selectedCodes['gender'], 'F_CUSTOM');
+      expect(globalProvider.fieldInputValue['gender'], 'Female Custom');
+    });
+
+    test('resolves OCR keys with field subType and id mapping', () async {
       final p = createActiveProvider({
         'name': 'Jane Smith',
         'dateOfBirth': '1992/08/14',
@@ -183,7 +222,7 @@ void main() {
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = p.applyExtractedFields(
+      final applied = await p.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -198,7 +237,7 @@ void main() {
       expect(regTaskProvider.setDateCalls.first['day'], '14');
     });
 
-    test('skips empty and whitespace-only extracted values', () {
+    test('skips empty and whitespace-only extracted values', () async {
       final p = createActiveProvider({
         'fullName': '   ',
         'city': '',
@@ -211,7 +250,7 @@ void main() {
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = p.applyExtractedFields(
+      final applied = await p.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -221,7 +260,7 @@ void main() {
       expect(globalProvider.fieldInputValue, isEmpty);
     });
 
-    test('partially invalid payload applies valid fields and rejects invalid ones', () {
+    test('partially invalid payload applies valid fields and rejects invalid ones', () async {
       final p = createActiveProvider({
         'fullName': 'Alice Wonderland',
         'dateOfBirth': '31/02/2023', // Invalid calendar date
@@ -234,7 +273,7 @@ void main() {
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = p.applyExtractedFields(
+      final applied = await p.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,

@@ -84,12 +84,12 @@ class _OcrScanPageState extends State<OcrScanPage>
   }
 
   /// Apply OCR-extracted fields into the registration form via the shared provider method.
-  void _applyExtractedFields() {
+  Future<bool> _applyExtractedFields() async {
     final ocrProvider = context.read<OcrScanProvider>();
     final globalProvider = context.read<GlobalProvider>();
     final regTaskProvider = context.read<RegistrationTaskProvider>();
 
-    final appliedCount = ocrProvider.applyExtractedFields(
+    final appliedCount = await ocrProvider.applyExtractedFields(
       screenFields: widget.screenFields,
       globalProvider: globalProvider,
       regTaskProvider: regTaskProvider,
@@ -125,17 +125,45 @@ class _OcrScanPageState extends State<OcrScanPage>
           duration: const Duration(seconds: 3),
         ),
       );
+      return true;
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.white, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: const Text(
+                  'No matching registration fields found in scanned document.',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return false;
     }
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<OcrScanProvider>(
       builder: (context, provider, _) {
-        // Auto-pop on success
+        // Auto-pop on success only if fields were mapped
         if (provider.state == OcrScanState.success && !_hasPopped) {
-          _hasPopped = true;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            if (_hasPopped) return;
             try {
               context.read<GlobalProvider>().getAudit(
                     "REG-EVT-117",
@@ -148,14 +176,19 @@ class _OcrScanPageState extends State<OcrScanPage>
                   );
             } catch (_) {}
 
+            bool appliedSuccess = false;
             try {
-              _applyExtractedFields();
+              appliedSuccess = await _applyExtractedFields();
             } catch (_) {}
 
-            provider.reset();
-
-            if (mounted) {
-              Navigator.of(context).pop();
+            if (appliedSuccess) {
+              _hasPopped = true;
+              provider.reset();
+              if (mounted) {
+                Navigator.of(context).pop();
+              }
+            } else {
+              provider.reset();
             }
           });
         }

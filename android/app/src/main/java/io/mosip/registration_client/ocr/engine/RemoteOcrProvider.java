@@ -36,6 +36,23 @@ import io.mosip.registration_client.ocr.models.FieldSpec;
 import io.mosip.registration_client.ocr.models.OcrError;
 import io.mosip.registration_client.ocr.models.OcrErrorCode;
 
+/**
+ * Remote (server-side) OCR engine provider.
+ * <p>
+ * <b>Security & Architecture Controls (v1):</b>
+ * <ul>
+ *   <li>Enforces HTTPS scheme check (plain HTTP is rejected).</li>
+ *   <li>Validates endpoints against an approved host allowlist and {@code BuildConfig.BASE_URL}.</li>
+ *   <li><b>Host / Subdomain Policy:</b> Subdomains of {@code BuildConfig.BASE_URL} (e.g.
+ *       {@code subdomain.api.mosip.io}) are treated as co-hosted and permitted. For v1 deployments,
+ *       the OCR endpoint resides on the same MOSIP host infrastructure.</li>
+ *   <li><b>MOSIP Session Authentication:</b> Requests transmit active MOSIP session tokens in both
+ *       {@code Cookie: Authorization=<token>} and {@code Authorization: Bearer <token>} headers.</li>
+ *   <li><b>Redirect Security:</b> Automatic HTTP redirects are explicitly disabled
+ *       ({@code setInstanceFollowRedirects(false)}) to prevent token leakage and SSRF.</li>
+ *   <li><b>Future Roadmap (v2):</b> Centralized MOSIP RestAuthClient / kernel network stack integration.</li>
+ * </ul>
+ */
 public class RemoteOcrProvider implements OcrProvider {
 
     private static final String SCREEN_NAME = "DemographicDetails";
@@ -346,6 +363,7 @@ public class RemoteOcrProvider implements OcrProvider {
             connection = (HttpURLConnection) url.openConnection();
             activeConnection = connection;
             connection.setRequestMethod("POST");
+            connection.setInstanceFollowRedirects(false);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
 

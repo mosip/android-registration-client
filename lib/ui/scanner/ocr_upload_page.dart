@@ -218,12 +218,12 @@ class _OcrUploadPageState extends State<OcrUploadPage>
   }
 
   /// Apply OCR-extracted fields into the registration form via the shared provider method.
-  void _applyExtractedFields() {
+  Future<bool> _applyExtractedFields() async {
     final ocrProvider = context.read<OcrScanProvider>();
     final globalProvider = context.read<GlobalProvider>();
     final regTaskProvider = context.read<RegistrationTaskProvider>();
 
-    final appliedCount = ocrProvider.applyExtractedFields(
+    final appliedCount = await ocrProvider.applyExtractedFields(
       screenFields: widget.screenFields,
       globalProvider: globalProvider,
       regTaskProvider: regTaskProvider,
@@ -262,7 +262,38 @@ class _OcrUploadPageState extends State<OcrUploadPage>
           duration: const Duration(seconds: 3),
         ),
       );
+      return true;
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline,
+                  color: Colors.white, size: 18),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  'No matching registration fields could be recognized from the uploaded document.',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13.sp,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+          margin:
+              EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return false;
     }
+    return false;
   }
 
   // ---------------------------------------------------------------------------
@@ -273,8 +304,8 @@ class _OcrUploadPageState extends State<OcrUploadPage>
     return Consumer<OcrScanProvider>(
       builder: (context, provider, _) {
         if (provider.state == OcrScanState.success && !_hasPopped) {
-          _hasPopped = true;
           WidgetsBinding.instance.addPostFrameCallback((_) async {
+            if (_hasPopped) return;
             try {
               context.read<GlobalProvider>().getAudit(
                     "REG-EVT-117",
@@ -287,17 +318,22 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                   );
             } catch (_) {}
 
+            bool appliedSuccess = false;
             try {
-              _applyExtractedFields();
+              appliedSuccess = await _applyExtractedFields();
             } catch (_) {}
 
             // AC7: Clean up cached ID document after successful processing
             await _cleanupSelectedFile();
 
-            provider.reset();
-
-            if (mounted) {
-              Navigator.of(context).pop();
+            if (appliedSuccess) {
+              _hasPopped = true;
+              provider.reset();
+              if (mounted) {
+                Navigator.of(context).pop();
+              }
+            } else {
+              provider.reset();
             }
           });
         }

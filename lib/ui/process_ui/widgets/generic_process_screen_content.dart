@@ -233,8 +233,31 @@ class _GenericProcessScreenContentState extends State<GenericProcessScreenConten
         // OCR action row — only on Demographics screen when OCR is enabled
         Consumer<OcrScanProvider>(
           builder: (context, ocrProvider, _) {
-            final isDemographicsScreen =
-                widget.screen.preRegFetchRequired == true;
+            final screenName = widget.screen.name?.toLowerCase() ?? '';
+            final bool hasOcrMappedFields = widget.screen.fields != null &&
+                widget.screen.fields!.any((f) {
+                  if (f == null) return false;
+                  final controlType = f.controlType?.toLowerCase() ?? '';
+                  final subType = f.subType?.toLowerCase() ?? '';
+                  final fieldId = f.id?.toLowerCase() ?? '';
+                  return controlType == 'agedate' ||
+                      controlType == 'date' ||
+                      subType == 'name' ||
+                      subType == 'dateofbirth' ||
+                      subType == 'gender' ||
+                      subType == 'phone' ||
+                      subType == 'mobile' ||
+                      subType == 'address' ||
+                      fieldId.contains('name') ||
+                      fieldId.contains('dob') ||
+                      fieldId.contains('gender') ||
+                      fieldId.contains('phone') ||
+                      fieldId.contains('address');
+                });
+
+            final isDemographicsScreen = screenName == 'demographicdetails' ||
+                screenName.contains('demographic') ||
+                hasOcrMappedFields;
             if (ocrProvider.isOcrEnabled && isDemographicsScreen) {
               return _buildOcrActionRow(context);
             }

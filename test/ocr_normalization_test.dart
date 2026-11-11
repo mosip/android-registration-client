@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:registration_client/core/bridge/ocr_api.g.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/ocr_scan_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -45,6 +46,11 @@ class MockRegistrationTaskProvider extends Mock implements RegistrationTaskProvi
   }
 
   @override
+  Future<List<DynamicFieldData?>> getFieldValues(String fieldName, String langCode, List<String> languages) {
+    return Future.value([]);
+  }
+
+  @override
   dynamic setDateField(String fieldId, String subType, String day, String month, String year) {
     setDateCalls.add({
       'fieldId': fieldId,
@@ -80,13 +86,13 @@ void main() {
       return provider;
     }
 
-    test('phone with hyphens and international prefix is normalized', () {
+    test('phone with hyphens and international prefix is normalized', () async {
       final provider = createActiveProviderWithData({'phone': '+91-9876543210'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -96,13 +102,13 @@ void main() {
       expect(globalProvider.fieldInputValue['phone'], '+919876543210');
     });
 
-    test('already normalized phone number with + is idempotent and does not produce ++', () {
+    test('already normalized phone number with + is idempotent and does not produce ++', () async {
       final provider = createActiveProviderWithData({'phone': '+919876543210'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -113,13 +119,13 @@ void main() {
       expect(globalProvider.fieldInputValue['phone'].toString().startsWith('++'), isFalse);
     });
 
-    test('phone number with corrupted duplicate ++ is normalized to single +', () {
+    test('phone number with corrupted duplicate ++ is normalized to single +', () async {
       final provider = createActiveProviderWithData({'phone': '++919876543210'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -129,13 +135,13 @@ void main() {
       expect(globalProvider.fieldInputValue['phone'], '+919876543210');
     });
 
-    test('local phone number without + preserves digits without adding +', () {
+    test('local phone number without + preserves digits without adding +', () async {
       final provider = createActiveProviderWithData({'phone': '0712345678'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -145,13 +151,13 @@ void main() {
       expect(globalProvider.fieldInputValue['phone'], '0712345678');
     });
 
-    test('phone number with brackets and spaces is cleanly normalized', () {
+    test('phone number with brackets and spaces is cleanly normalized', () async {
       final provider = createActiveProviderWithData({'phone': '+1 (555) 123-4567'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -161,13 +167,13 @@ void main() {
       expect(globalProvider.fieldInputValue['phone'], '+15551234567');
     });
 
-    test('phone number with colon noise is cleanly normalized', () {
+    test('phone number with colon noise is cleanly normalized', () async {
       final provider = createActiveProviderWithData({'phone': ': +91 9876543210'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -177,13 +183,13 @@ void main() {
       expect(globalProvider.fieldInputValue['phone'], '+919876543210');
     });
 
-    test('too short phone number (< 7 digits) is rejected', () {
+    test('too short phone number (< 7 digits) is rejected', () async {
       final provider = createActiveProviderWithData({'phone': '12345'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -193,13 +199,13 @@ void main() {
       expect(globalProvider.fieldInputValue.containsKey('phone'), isFalse);
     });
 
-    test('too long phone number (> 15 digits) is rejected', () {
+    test('too long phone number (> 15 digits) is rejected', () async {
       final provider = createActiveProviderWithData({'phone': '1234567890123456'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -209,13 +215,13 @@ void main() {
       expect(globalProvider.fieldInputValue.containsKey('phone'), isFalse);
     });
 
-    test('non-numeric phone noise is rejected', () {
+    test('non-numeric phone noise is rejected', () async {
       final provider = createActiveProviderWithData({'phone': '+++'});
       final screenFields = [
         Field(id: 'phone', controlType: 'textbox', subType: 'phone', type: 'simpleType'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -246,13 +252,13 @@ void main() {
       return provider;
     }
 
-    test('ambiguous two-digit year (12/05/23) is rejected', () {
+    test('ambiguous two-digit year (12/05/23) is rejected', () async {
       final provider = createActiveProviderWithData({'dateOfBirth': '12/05/23'});
       final screenFields = [
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -262,13 +268,13 @@ void main() {
       expect(regTaskProvider.setDateCalls, isEmpty);
     });
 
-    test('ambiguous two-digit year (12/05/85) is rejected', () {
+    test('ambiguous two-digit year (12/05/85) is rejected', () async {
       final provider = createActiveProviderWithData({'dateOfBirth': '12/05/85'});
       final screenFields = [
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -278,13 +284,13 @@ void main() {
       expect(regTaskProvider.setDateCalls, isEmpty);
     });
 
-    test('impossible calendar date (31/02/2023) is rejected', () {
+    test('impossible calendar date (31/02/2023) is rejected', () async {
       final provider = createActiveProviderWithData({'dateOfBirth': '31/02/2023'});
       final screenFields = [
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -294,13 +300,13 @@ void main() {
       expect(regTaskProvider.setDateCalls, isEmpty);
     });
 
-    test('non-leap day (29/02/2023) is rejected', () {
+    test('non-leap day (29/02/2023) is rejected', () async {
       final provider = createActiveProviderWithData({'dateOfBirth': '29/02/2023'});
       final screenFields = [
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -310,13 +316,13 @@ void main() {
       expect(regTaskProvider.setDateCalls, isEmpty);
     });
 
-    test('valid leap day (29/02/2024) is accepted', () {
+    test('valid leap day (29/02/2024) is accepted', () async {
       final provider = createActiveProviderWithData({'dateOfBirth': '2024/02/29'});
       final screenFields = [
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -329,13 +335,13 @@ void main() {
       expect(regTaskProvider.setDateCalls.first['day'], '29');
     });
 
-    test('future date (15/10/2035) is rejected', () {
+    test('future date (15/10/2035) is rejected', () async {
       final provider = createActiveProviderWithData({'dateOfBirth': '2035/10/15'});
       final screenFields = [
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,

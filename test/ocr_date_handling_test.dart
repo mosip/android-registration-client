@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:registration_client/core/bridge/ocr_api.g.dart';
 import 'package:registration_client/model/field.dart';
+import 'package:registration_client/pigeon/dynamic_response_pigeon.dart';
 import 'package:registration_client/provider/global_provider.dart';
 import 'package:registration_client/provider/ocr_scan_provider.dart';
 import 'package:registration_client/provider/registration_task_provider.dart';
@@ -35,6 +36,11 @@ class MockRegistrationTaskProvider extends Mock implements RegistrationTaskProvi
   }
 
   @override
+  Future<List<DynamicFieldData?>> getFieldValues(String fieldName, String langCode, List<String> languages) {
+    return Future.value([]);
+  }
+
+  @override
   dynamic setDateField(String fieldId, String subType, String day, String month, String year) {
     setDateCalls.add({
       'fieldId': fieldId,
@@ -59,7 +65,7 @@ void main() {
       regTaskProvider = MockRegistrationTaskProvider();
     });
 
-    test('valid past date is routed through setDateField, not addDemographicField', () {
+    test('valid past date is routed through setDateField, not addDemographicField', () async {
       final provider = OcrScanProvider();
       // Set extracted data via simulate or internal helper
       provider.onQualityUpdate(ImageQualityMessage(guidanceMessage: 'Reading document...'));
@@ -73,7 +79,7 @@ void main() {
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -90,7 +96,7 @@ void main() {
       expect(globalProvider.fieldInputValue['dateOfBirth'], '1995/05/20');
     });
 
-    test('valid leap day (2024/02/29) is accepted', () {
+    test('valid leap day (2024/02/29) is accepted', () async {
       final provider = OcrScanProvider();
       provider.onQualityUpdate(ImageQualityMessage(guidanceMessage: 'Reading document...'));
       provider.onOcrSuccess(OcrResultMessage(
@@ -103,7 +109,7 @@ void main() {
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -116,7 +122,7 @@ void main() {
       expect(regTaskProvider.setDateCalls.first['year'], '2024');
     });
 
-    test('invalid leap day in non-leap year (2023/02/29) is rejected', () {
+    test('invalid leap day in non-leap year (2023/02/29) is rejected', () async {
       final provider = OcrScanProvider();
       provider.onQualityUpdate(ImageQualityMessage(guidanceMessage: 'Reading document...'));
       provider.onOcrSuccess(OcrResultMessage(
@@ -129,7 +135,7 @@ void main() {
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -141,7 +147,7 @@ void main() {
       expect(globalProvider.fieldInputValue.containsKey('dateOfBirth'), isFalse);
     });
 
-    test('impossible calendar date (2023/04/31) is rejected', () {
+    test('impossible calendar date (2023/04/31) is rejected', () async {
       final provider = OcrScanProvider();
       provider.onQualityUpdate(ImageQualityMessage(guidanceMessage: 'Reading document...'));
       provider.onOcrSuccess(OcrResultMessage(
@@ -154,7 +160,7 @@ void main() {
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
@@ -164,7 +170,7 @@ void main() {
       expect(regTaskProvider.setDateCalls.isEmpty, isTrue);
     });
 
-    test('future date of birth (2035/10/15) is rejected', () {
+    test('future date of birth (2035/10/15) is rejected', () async {
       final provider = OcrScanProvider();
       provider.onQualityUpdate(ImageQualityMessage(guidanceMessage: 'Reading document...'));
       provider.onOcrSuccess(OcrResultMessage(
@@ -177,7 +183,7 @@ void main() {
         Field(id: 'dateOfBirth', controlType: 'ageDate', subType: 'dateOfBirth', type: 'string'),
       ];
 
-      final applied = provider.applyExtractedFields(
+      final applied = await provider.applyExtractedFields(
         screenFields: screenFields,
         globalProvider: globalProvider,
         regTaskProvider: regTaskProvider,
