@@ -40,6 +40,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
 
   bool _pickerActive = false;
   bool _hasPopped = false;
+  bool _isApplying = false;
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -163,6 +164,8 @@ class _OcrUploadPageState extends State<OcrUploadPage>
         _fileSize = _formatBytes(bytes);
         _pickerActive = false;
         _hasAuditedError = false;
+        _isApplying = false;
+        _hasPopped = false;
       });
 
       _fadeController.forward(from: 0);
@@ -303,9 +306,10 @@ class _OcrUploadPageState extends State<OcrUploadPage>
   Widget build(BuildContext context) {
     return Consumer<OcrScanProvider>(
       builder: (context, provider, _) {
-        if (provider.state == OcrScanState.success && !_hasPopped) {
+        if (provider.state == OcrScanState.success && !_hasPopped && !_isApplying) {
+          _isApplying = true;
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            if (_hasPopped) return;
+            if (_hasPopped || !mounted) return;
             try {
               context.read<GlobalProvider>().getAudit(
                     "REG-EVT-117",
@@ -333,6 +337,7 @@ class _OcrUploadPageState extends State<OcrUploadPage>
                 Navigator.of(context).pop();
               }
             } else {
+              _isApplying = false;
               provider.reset();
             }
           });

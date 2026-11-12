@@ -32,6 +32,7 @@ class OcrScanPage extends StatefulWidget {
 class _OcrScanPageState extends State<OcrScanPage>
     with SingleTickerProviderStateMixin {
   bool _hasPopped = false;
+  bool _isApplying = false;
   bool _hasAuditedError = false;
   bool _wasQualityGood = false;
   bool _isAlignmentPhase = true;
@@ -161,9 +162,10 @@ class _OcrScanPageState extends State<OcrScanPage>
     return Consumer<OcrScanProvider>(
       builder: (context, provider, _) {
         // Auto-pop on success only if fields were mapped
-        if (provider.state == OcrScanState.success && !_hasPopped) {
+        if (provider.state == OcrScanState.success && !_hasPopped && !_isApplying) {
+          _isApplying = true;
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            if (_hasPopped) return;
+            if (_hasPopped || !mounted) return;
             try {
               context.read<GlobalProvider>().getAudit(
                     "REG-EVT-117",
@@ -188,6 +190,7 @@ class _OcrScanPageState extends State<OcrScanPage>
                 Navigator.of(context).pop();
               }
             } else {
+              _isApplying = false;
               provider.reset();
             }
           });
