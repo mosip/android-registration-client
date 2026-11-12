@@ -107,6 +107,7 @@ import io.mosip.registration_client.model.UserPigeon;
 import io.mosip.registration_client.model.DocumentDataPigeon;
 import io.mosip.registration_client.utils.BatchJob;
 import io.mosip.registration_client.utils.CustomToast;
+import io.mosip.registration_client.ocr.OcrPluginImpl;
 
 import android.net.Uri;
 
@@ -420,6 +421,7 @@ public class MainActivity extends FlutterActivity {
         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
         SecureScreenPigeon.SecureScreenApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), secureScreenApi);
         secureScreenApi.setCallbackActivity(this);
+        OcrPluginImpl.register(flutterEngine, this, globalParamRepository);
     }
 
     @Override

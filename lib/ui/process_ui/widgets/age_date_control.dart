@@ -66,17 +66,26 @@ class _AgeDateControlState extends State<AgeDateControl> {
       return;
     }
     String dateString = dateController.text;
-    DateTime date = DateFormat(widget.field.format == null ||
-                widget.field.format!.toLowerCase() == "none"
-            ? "yyyy/MM/dd"
-            : widget.field.format)
-        .parse(dateString);
+    try {
+      DateTime date = DateFormat(widget.field.format == null ||
+                  widget.field.format!.toLowerCase() == "none"
+              ? "yyyy/MM/dd"
+              : widget.field.format)
+          .parse(dateString);
 
-    DateTime currentDate = DateTime.now();
-    if (date.compareTo(currentDate) < 0) {
-      ageController.text =
-          calculateYearDifference(date, currentDate).abs().toString();
-    } else {
+      DateTime currentDate = DateTime.now();
+      DateTime today = DateTime(currentDate.year, currentDate.month, currentDate.day);
+      if (date.isAfter(today)) {
+        ageController.text = "";
+        return;
+      }
+      final diff = calculateYearDifference(date, currentDate);
+      if (diff >= 0) {
+        ageController.text = diff.toString();
+      } else {
+        ageController.text = "";
+      }
+    } catch (_) {
       ageController.text = "";
     }
   }
@@ -128,20 +137,27 @@ class _AgeDateControlState extends State<AgeDateControl> {
     globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     if (globalProvider.fieldInputValue.containsKey(widget.field.id)) {
       String savedDate = globalProvider.fieldInputValue[widget.field.id];
-      DateTime parsedDate = DateFormat(widget.field.format == null ||
-                  widget.field.format!.toLowerCase() == "none"
-              ? "yyyy/MM/dd"
-              : widget.field.format)
-          .parse(savedDate);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          dateController.text = savedDate;
-          ageController.text =
-              calculateYearDifference(parsedDate, DateTime.now())
-                  .abs()
-                  .toString();
+      try {
+        DateTime parsedDate = DateFormat(widget.field.format == null ||
+                    widget.field.format!.toLowerCase() == "none"
+                ? "yyyy/MM/dd"
+                : widget.field.format)
+            .parse(savedDate);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() {
+            dateController.text = savedDate;
+            DateTime now = DateTime.now();
+            DateTime today = DateTime(now.year, now.month, now.day);
+            if (parsedDate.isAfter(today)) {
+              ageController.text = "";
+            } else {
+              final diff = calculateYearDifference(parsedDate, now);
+              ageController.text = diff >= 0 ? diff.toString() : "";
+            }
+          });
         });
-      });
+      } catch (_) {}
     }
   }
 
@@ -260,6 +276,39 @@ class _AgeDateControlState extends State<AgeDateControl> {
   Widget build(BuildContext context) {
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+
+    // Re-sync date from fieldInputValue (handles external updates like OCR)
+    if (globalProvider.fieldInputValue.containsKey(widget.field.id) &&
+        dateController.text !=
+            globalProvider.fieldInputValue[widget.field.id].toString()) {
+      String savedDate =
+          globalProvider.fieldInputValue[widget.field.id].toString();
+      try {
+        DateTime parsedDate = DateFormat(widget.field.format == null ||
+                    widget.field.format!.toLowerCase() == "none"
+                ? "yyyy/MM/dd"
+                : widget.field.format)
+            .parse(savedDate);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              dateController.text = savedDate;
+              DateTime now = DateTime.now();
+              DateTime today = DateTime(now.year, now.month, now.day);
+              if (parsedDate.isAfter(today)) {
+                ageController.text = "";
+              } else {
+                final diff = calculateYearDifference(parsedDate, now);
+                ageController.text = diff >= 0 ? diff.toString() : "";
+              }
+            });
+          }
+        });
+      } catch (_) {
+        // Date parsing failed, skip sync
+      }
+    }
+
     return Card(
       elevation: 5,
       color: pureWhite,
@@ -302,9 +351,15 @@ class _AgeDateControlState extends State<AgeDateControl> {
                                           ? "yyyy/MM/dd"
                                           : widget.field.format)
                                   .parse(value);
-                              int age = calculateYearDifference(
-                                      date, DateTime.now())
-                                  .abs();
+                              DateTime now = DateTime.now();
+                              DateTime today = DateTime(now.year, now.month, now.day);
+                              if (date.isAfter(today)) {
+                                return "Date of birth cannot be in the future";
+                              }
+                              int age = calculateYearDifference(date, now);
+                              if (age < 0) {
+                                return "Date of birth cannot be in the future";
+                              }
                               if (age > maxAge) {
                                 return AppLocalizations.of(context)!.age_should_not_be_greater(maxAge);
                               }

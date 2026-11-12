@@ -27,12 +27,16 @@ public class TransliterationApi implements TransliterationPigeon.Transliteration
 
     @Override
     public void transliterate(@NonNull TransliterationPigeon.TransliterationOptions options, @NonNull TransliterationPigeon.Result<String> result) {
-        String input = options.getInput();
-        String inputLang = options.getSourceLanguage();
-        String outputLang = options.getTargetLanguage();
+        try {
+            String input = options.getInput();
+            String inputLang = options.getSourceLanguage();
+            String outputLang = options.getTargetLanguage();
 
-        String transliteratedResult = transliterationService.transliterate(inputLang,outputLang,input);
-        result.success(transliteratedResult);
+            String transliteratedResult = transliterationService.transliterate(inputLang, outputLang, input);
+            result.success(transliteratedResult != null ? transliteratedResult : input);
+        } catch (Exception e) {
+            result.success(options.getInput() != null ? options.getInput() : "");
+        }
     }
 }
 

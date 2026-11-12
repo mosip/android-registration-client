@@ -80,6 +80,13 @@ public enum AuditEvent {
     DOCUMENT_SCAN("REG-EVT-106", USER_EVENT.getCode(), "DOCUMENT_SCAN", "Scan document button clicked"),
     DOCUMENT_SCAN_FAILED("REG-EVT-050", USER_EVENT.getCode(), "DOCUMENT_SCAN_FAILED", "Document scan failed"),
     DOCUMENT_PREVIEW("REG-EVT-006", USER_EVENT.getCode(), "DOCUMENT_PREVIEW", "Document preview button clicked"),
+
+    // OCR Document Scan & Auto-fill
+    OCR_SCAN_INITIATED("REG-EVT-115", USER_EVENT.getCode(), "OCR_SCAN_INITIATED", "OCR scan page opened for document capture"),
+    OCR_UPLOAD_INITIATED("REG-EVT-116", USER_EVENT.getCode(), "OCR_UPLOAD_INITIATED", "OCR upload page opened for document image selection"),
+    OCR_SCAN_SUCCESS("REG-EVT-117", USER_EVENT.getCode(), "OCR_SCAN_SUCCESS", "OCR extraction completed successfully"),
+    OCR_FIELDS_APPLIED("REG-EVT-118", USER_EVENT.getCode(), "OCR_FIELDS_APPLIED", "OCR extracted fields auto-filled into registration form"),
+
     BIOMETRIC_CAPTURE("REG-EVT-107", USER_EVENT.getCode(), "BIOMETRIC_CAPTURE_INITIATED", "Biometric capture initiated"),
     LOADED_REGISTRATION_PREVIEW("REG-EVT-108", USER_EVENT.getCode(), "LOADED_REGISTRATION_PREVIEW", "Registration preview loaded"),
     CREATE_PACKET_AUTH("REG-EVT-109", USER_EVENT.getCode(), "CREATE_PACKET_AUTH", "Packet create authentication clicked"),
