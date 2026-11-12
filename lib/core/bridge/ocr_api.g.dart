@@ -96,29 +96,6 @@ class ImageQualityMessage {
   }
 }
 
-class _OcrHostApiCodec extends StandardMessageCodec {
-  const _OcrHostApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ImageQualityMessage) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128: 
-        return ImageQualityMessage.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 class OcrHostApi {
   /// Constructor for [OcrHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -127,7 +104,7 @@ class OcrHostApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _OcrHostApiCodec();
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<int> startDocumentScan() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -197,33 +174,6 @@ class OcrHostApi {
       );
     } else {
       return;
-    }
-  }
-
-  Future<ImageQualityMessage> checkImageQuality() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.registration_client.OcrHostApi.checkImageQuality', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (replyList[0] as ImageQualityMessage?)!;
     }
   }
 

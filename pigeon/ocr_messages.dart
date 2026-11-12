@@ -28,7 +28,6 @@ abstract class OcrHostApi {
   int startDocumentScan();
   void cancelScan();
   void forceCapture();
-  ImageQualityMessage checkImageQuality();
   void processImageFile(String filePath);
 }
 

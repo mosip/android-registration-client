@@ -13,8 +13,11 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.mosip.registration_client.ocr.models.FieldSpec;
@@ -22,9 +25,12 @@ import io.mosip.registration_client.ocr.models.OcrError;
 
 public class TimeoutEnforcingOcrProvider implements OcrProvider {
 
+    private static final long LEAK_PREVENTION_DELAY_MS = 10000L;
+
     private final OcrProvider delegate;
     private final int timeoutMs;
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Set<Bitmap> retainedBitmaps = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public TimeoutEnforcingOcrProvider(@NonNull OcrProvider delegate, int timeoutMs) {
         this.delegate = delegate;
@@ -37,6 +43,7 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
             @NonNull List<FieldSpec> spec,
             @NonNull OcrProviderCallback callback) {
 
+        retainedBitmaps.add(bitmap);
         AtomicBoolean completed = new AtomicBoolean(false);
 
         Runnable timeoutRunnable = () -> {
@@ -46,7 +53,13 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
                         OcrError.ErrorCode.TIMEOUT.name(),
                         "OCR provider did not respond within " + timeoutMs + "ms",
                         true);
-                // Do not recycle bitmap on a timer; recycle only after delegate reports it has stopped
+
+                // Backstop against hung work: if delegate never reports stopping, recycle after grace period
+                handler.postDelayed(() -> {
+                    if (retainedBitmaps.remove(bitmap)) {
+                        recycleBitmapSafely(bitmap);
+                    }
+                }, LEAK_PREVENTION_DELAY_MS);
             }
         };
         handler.postDelayed(timeoutRunnable, timeoutMs);
@@ -56,10 +69,13 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
             public void onSuccess(@NonNull String documentType, float confidence, @NonNull Map<String, String> data) {
                 handler.removeCallbacks(timeoutRunnable);
                 if (completed.compareAndSet(false, true)) {
+                    retainedBitmaps.remove(bitmap);
                     callback.onSuccess(documentType, confidence, data);
                 } else {
                     // Late completion after timeout: clean up the retained bitmap safely
-                    recycleBitmapSafely(bitmap);
+                    if (retainedBitmaps.remove(bitmap)) {
+                        recycleBitmapSafely(bitmap);
+                    }
                 }
             }
 
@@ -67,9 +83,12 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
             public void onProviderError(@NonNull String errorCode, @Nullable String errorInfo) {
                 handler.removeCallbacks(timeoutRunnable);
                 if (completed.compareAndSet(false, true)) {
+                    retainedBitmaps.remove(bitmap);
                     callback.onProviderError(errorCode, errorInfo);
                 } else {
-                    recycleBitmapSafely(bitmap);
+                    if (retainedBitmaps.remove(bitmap)) {
+                        recycleBitmapSafely(bitmap);
+                    }
                 }
             }
 
@@ -77,9 +96,12 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
             public void onFailure(@NonNull String errorCode, @NonNull String message, boolean isRetryable) {
                 handler.removeCallbacks(timeoutRunnable);
                 if (completed.compareAndSet(false, true)) {
+                    retainedBitmaps.remove(bitmap);
                     callback.onFailure(errorCode, message, isRetryable);
                 } else {
-                    recycleBitmapSafely(bitmap);
+                    if (retainedBitmaps.remove(bitmap)) {
+                        recycleBitmapSafely(bitmap);
+                    }
                 }
             }
         });
@@ -101,6 +123,10 @@ public class TimeoutEnforcingOcrProvider implements OcrProvider {
     public void cancel() {
         handler.removeCallbacksAndMessages(null);
         delegate.cancel();
+        for (Bitmap b : retainedBitmaps) {
+            recycleBitmapSafely(b);
+        }
+        retainedBitmaps.clear();
     }
 
     @Override

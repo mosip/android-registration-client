@@ -290,33 +290,6 @@ public class OcrPluginApi {
       return pigeonResult;
     }
   }
-
-  private static class OcrHostApiCodec extends StandardMessageCodec {
-    public static final OcrHostApiCodec INSTANCE = new OcrHostApiCodec();
-
-    private OcrHostApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return ImageQualityMessage.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ImageQualityMessage) {
-        stream.write(128);
-        writeValue(stream, ((ImageQualityMessage) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface OcrHostApi {
 
@@ -327,14 +300,11 @@ public class OcrPluginApi {
 
     void forceCapture();
 
-    @NonNull 
-    ImageQualityMessage checkImageQuality();
-
     void processImageFile(@NonNull String filePath);
 
     /** The codec used by OcrHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return OcrHostApiCodec.INSTANCE;
+      return new StandardMessageCodec();
     }
     /**Sets up an instance of `OcrHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable OcrHostApi api) {
@@ -393,28 +363,6 @@ public class OcrPluginApi {
                 try {
                   api.forceCapture();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.registration_client.OcrHostApi.checkImageQuality", getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  ImageQualityMessage output = api.checkImageQuality();
-                  wrapped.add(0, output);
                 }
  catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

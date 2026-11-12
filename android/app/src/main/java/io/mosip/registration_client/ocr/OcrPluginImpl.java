@@ -300,15 +300,6 @@ public class OcrPluginImpl implements OcrHostApi {
         }
     }
 
-    @NonNull
-    @Override
-    public ImageQualityMessage checkImageQuality() {
-        ImageQualityMessage msg = new ImageQualityMessage();
-        msg.setIsAcceptable(false);
-        msg.setGuidanceMessage("No active scan");
-        return msg;
-    }
-
     @Override
     public void processImageFile(@NonNull String filePath) {
         refreshConfigAndProvider();
