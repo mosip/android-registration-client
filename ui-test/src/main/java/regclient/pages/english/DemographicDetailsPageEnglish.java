@@ -184,9 +184,9 @@ public class DemographicDetailsPageEnglish extends DemographicDetailsPage {
 						clickOnElement(findElement(By.className("android.view.View")));
 					}
 					waitTime(1);
-					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc, \""
+					if (isElementDisplayed(By.xpath("//android.view.View[contains(@content-desc,\""
 							+ FetchUiSpec.getValueUsingId(id)
-							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc, \"Select Option\")]"))) {
+							+ "\")]/parent::android.view.View/parent::android.widget.Button[contains(@content-desc,\"Select Option\")]"))) {
 						clickOnElement(dropdownElement);
 						waitTime(1);
 						clickOnElement(findElement(By.className("android.view.View")));

@@ -1,5 +1,7 @@
 package regclient.pages.french;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -121,20 +123,6 @@ public class ManageApplicationsPageFrench extends ManageApplicationsPage {
 	public void clickOnUploadButton() {
 		clickOnElement(uploadButton);
 		waitTime(10);
-	}
-
-	public boolean isPacketUploadDone(String AID) {
-		waitTime(2);
-		WebElement element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-		if (element.getAttribute("contentDescription").contains("NOT UPLOADED")) {
-			waitTime(10);
-			element = driver.findElement(By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]"));
-			if (element.getAttribute("contentDescription").contains("NOT UPLOADED"))
-				return false;
-			else
-				return true;
-		} else
-			return true;
 	}
 
 	public boolean isPacketApproved(String AID) {

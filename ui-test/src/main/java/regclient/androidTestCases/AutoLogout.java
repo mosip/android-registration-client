@@ -56,7 +56,7 @@ public class AutoLogout extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		loginPage.selectLanguage();
@@ -82,7 +82,7 @@ public class AutoLogout extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
@@ -101,7 +101,7 @@ public class AutoLogout extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			autoLogoutPage = new AutoLogoutPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(), "Verify if auto-logout popup is displayed");
@@ -121,7 +121,7 @@ public class AutoLogout extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
@@ -140,7 +140,7 @@ public class AutoLogout extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			autoLogoutPage = new AutoLogoutPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(), "Verify if auto-logout popup is displayed");
@@ -160,7 +160,7 @@ public class AutoLogout extends AndroidBaseTest {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),
@@ -192,7 +192,7 @@ public class AutoLogout extends AndroidBaseTest {
 			} else if ("ara".equalsIgnoreCase(language)) {
 				loginPage = new LoginPageArabic(driver);
 			} else {
-				throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+				throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 			}
 
 			loginPage.selectLanguage();
@@ -218,7 +218,7 @@ public class AutoLogout extends AndroidBaseTest {
 			} else if ("ara".equalsIgnoreCase(language)) {
 				registrationTasksPage = new RegistrationTasksPageArabic(driver);
 			} else {
-				throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+				throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 			}
 			
 			assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
@@ -237,7 +237,7 @@ public class AutoLogout extends AndroidBaseTest {
 			} else if ("ara".equalsIgnoreCase(language)) {
 				autoLogoutPage = new AutoLogoutPageArabic(driver);
 			} else {
-				throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+				throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 			}
 
 			assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(), "Verify if auto-logout popup is displayed");
@@ -257,7 +257,7 @@ public class AutoLogout extends AndroidBaseTest {
 			} else if ("ara".equalsIgnoreCase(language)) {
 				registrationTasksPage = new RegistrationTasksPageArabic(driver);
 			} else {
-				throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+				throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 			}
 
 			assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
@@ -276,7 +276,7 @@ public class AutoLogout extends AndroidBaseTest {
 			} else if ("ara".equalsIgnoreCase(language)) {
 				autoLogoutPage = new AutoLogoutPageArabic(driver);
 			} else {
-				throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+				throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 			}
 
 			assertTrue(autoLogoutPage.isAutoLogoutPopupDisplayed(), "Verify if auto-logout popup is displayed");
@@ -296,7 +296,7 @@ public class AutoLogout extends AndroidBaseTest {
 			} else if ("ara".equalsIgnoreCase(language)) {
 				loginPage = new LoginPageArabic(driver);
 			} else {
-				throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+				throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 			}
 
 			assertTrue(loginPage.isWelcomeMessageInSelectedLanguageDisplayed(),

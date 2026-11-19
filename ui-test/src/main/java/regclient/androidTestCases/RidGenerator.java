@@ -156,7 +156,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			loginPage = new LoginPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		loginPage.selectLanguage();
@@ -179,7 +179,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			registrationTasksPage = new RegistrationTasksPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		registrationTasksPage.handleLocationPermission();
 		assertTrue(registrationTasksPage.isRegistrationTasksPageLoaded(),
@@ -198,7 +198,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			selectLanguagePage = new SelectLanguagePageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(selectLanguagePage.isSelectLanguagePageLoaded(), "Verify if select language page  is loaded");
 		selectLanguagePage.selectSecondLanguage();
@@ -219,7 +219,7 @@ public class RidGenerator {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					consentPage = new ConsentPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(consentPage.isPageDisplayed("consentdet"), "Verify if Consent page is loaded");
 				assertTrue(consentPage.isCheckBoxReadable(), "Verify if the check box in readable");
@@ -239,7 +239,7 @@ public class RidGenerator {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					demographicPage = new DemographicDetailsPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(demographicPage.isPageDisplayed("DemographicDetails"),
 						"Verify if demographic details page is displayed");
@@ -259,7 +259,7 @@ public class RidGenerator {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					documentuploadPage = new DocumentUploadPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(documentuploadPage.isDoccumentUploadPageDisplayed(),
 						"Verify if doccumentupload page is displayed");
@@ -279,7 +279,7 @@ public class RidGenerator {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					biometricDetailsPage = new BiometricDetailsPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				if ("eng".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageEnglish(driver);
@@ -294,7 +294,7 @@ public class RidGenerator {
 				} else if ("ara".equalsIgnoreCase(language)) {
 					applicantBiometricsPage = new ApplicantBiometricsPageArabic(driver);
 				} else {
-					throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+					throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 				}
 				assertTrue(biometricDetailsPage.isBiometricDetailsPageDisplayed(),
 						"Verify if biometric details page is displayed");
@@ -374,7 +374,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			previewPage = new PreviewPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 
 		assertTrue(previewPage.isNewRegistrationTitleDisplayed(), "Verify if new Registration title is displayed");
@@ -400,7 +400,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			authenticationPage = new AuthenticationPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		boolean isAuthenticationPageDisplayed = false;
 		for (int i = 0; i < 3; i++) {
@@ -429,7 +429,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			acknowledgementPage = new AcknowledgementPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(acknowledgementPage.isAcknowledgementPageDisplayed(),
 				"Verify if acknowledgement details page is displayed");
@@ -451,7 +451,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			operationalTaskPage = new OperationalTaskPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(operationalTaskPage.isOperationalTaskPageLoaded(), "Verify if operational Task Page is loaded");
 		assertTrue(operationalTaskPage.isPendingApprovalTitleDisplayed(), "Verify if pending approval tite displayed");
@@ -469,7 +469,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			pendingApproval = new PendingApprovalArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(pendingApproval.isPendingApprovalTitleDisplayed(), "Verify if pending approval page  displayed");
 		pendingApproval.enterAID(Aid);
@@ -509,7 +509,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			manageApplicationsPage = new ManageApplicationsPageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		assertTrue(manageApplicationsPage.isManageApplicationPageDisplayed(),
 				"Verify if manage Applications Page displayed");
@@ -520,14 +520,17 @@ public class RidGenerator {
 		manageApplicationsPage.clickOnSearchCheckBox();
 		boolean uploadSuccess = false;
 		for (int i = 0; i < 3; i++) {
+			if (i > 0) {
+				manageApplicationsPage.clickCheckboxByAID(Aid);
+			}
 			manageApplicationsPage.clickOnUploadButton();
-			uploadSuccess = manageApplicationsPage.isZeroApplicationDisplayed();
+			uploadSuccess = manageApplicationsPage.isPacketUploadDone(Aid);
 			if (uploadSuccess) {
 				break;
 			}
 		}
 
-		assertTrue(uploadSuccess, "Zero Application not displayed after retries");
+		assertTrue(uploadSuccess, "Verify if packet " + Aid + " is uploaded after retries");
 		manageApplicationsPage.clickOnBackButton();
 		registrationTasksPage.clickProfileButton();
 		if ("eng".equalsIgnoreCase(language)) {
@@ -543,7 +546,7 @@ public class RidGenerator {
 		} else if ("ara".equalsIgnoreCase(language)) {
 			profilePage = new ProfilePageArabic(driver);
 		} else {
-			throw new IllegalStateException("Unsupported language in testdata.json: " + language);
+			throw new IllegalStateException("Unsupported language in Kernel.properties: " + language);
 		}
 		profilePage.clickOnLogoutButton();
 		assertTrue(loginPage.isLoginPageLoaded(), "verify if login page is displayeded in Selected language");

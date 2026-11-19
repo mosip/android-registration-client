@@ -3,10 +3,16 @@ package regclient.pages.arabic;
 import static org.testng.Assert.assertTrue;
 
 import java.time.Duration;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
@@ -222,11 +228,7 @@ public class SettingsPageArabic extends SettingsPage {
 	}
 
 	public void clickOnSyncButton(String jobName) {
-		By job = MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))"
-				+ ".scrollIntoView(new UiSelector().descriptionContains(\"" + jobName + "\"))");
-		WebElement jobElement = driver.findElement(job);
-		WebElement syncBtn = jobElement.findElement(By.xpath(".//android.widget.Button[1]"));
-		syncBtn.click();
+		clickSyncButtonInJobCard(jobName);
 	}
 
 	public boolean isToastVisible(String toastMessage) {

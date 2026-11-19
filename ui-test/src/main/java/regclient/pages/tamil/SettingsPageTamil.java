@@ -12,6 +12,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
@@ -20,6 +22,8 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import regclient.page.SettingsPage;
 
 public class SettingsPageTamil extends SettingsPage {
+
+	private static final Logger logger = LoggerFactory.getLogger(SettingsPageTamil.class);
 
 	private final AppiumDriver driver;
 
@@ -199,7 +203,7 @@ public class SettingsPageTamil extends SettingsPage {
 				.presenceOfElementLocated(By.xpath("//*[contains(@content-desc,'" + deviceName + "')]")));
 
 		String desc = card.getAttribute("content-desc");
-		System.out.println("Card text: " + desc);
+		logger.info("Card text: {}", desc);
 
 		Pattern p = Pattern.compile("ID:\\s*([a-zA-Z0-9]+)");
 		Matcher m = p.matcher(desc);

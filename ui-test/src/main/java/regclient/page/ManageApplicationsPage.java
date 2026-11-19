@@ -1,5 +1,7 @@
 package regclient.page;
 
+import org.openqa.selenium.By;
+
 import io.appium.java_client.AppiumDriver;
 
 public abstract class ManageApplicationsPage extends BasePage {
@@ -20,7 +22,18 @@ public abstract class ManageApplicationsPage extends BasePage {
 
 	public abstract void clickOnUploadButton();
 
-	public abstract boolean isPacketUploadDone(String AID);
+	public boolean isPacketUploadDone(String AID) {
+		By packetRow = By.xpath("//android.view.View[contains(@content-desc,'" + AID + "')]");
+		for (int attempt = 0; attempt < 2; attempt++) {
+			waitTime(attempt == 0 ? 2 : 10);
+			if (driver.findElements(packetRow).isEmpty()) {
+				clickOnClearFilterButton();
+				waitTime(2);
+				return driver.findElements(packetRow).isEmpty();
+			}
+		}
+		return false;
+	}
 
 	public abstract boolean isPacketApproved(String AID);
 
@@ -69,11 +82,11 @@ public abstract class ManageApplicationsPage extends BasePage {
 	public abstract boolean isNoNetworkFoundDisplayed();
 
 	public abstract void clickCheckboxByAID(String aid);
-	
+
 	public abstract void clickOnClearFilterButton();
-	
+
 	public abstract boolean isClientStatusDropdownDisplayed();
-	
+
 	public abstract void scrollTillDisplayingApplicationCountVisible();
 
 }

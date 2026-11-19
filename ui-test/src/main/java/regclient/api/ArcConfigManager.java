@@ -1,5 +1,7 @@
 package regclient.api;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import io.mosip.testrig.apirig.utils.ConfigManager;
+import regclient.utils.TestRunner;
 
 public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManager {
 
@@ -22,6 +25,18 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		configManagerLogger.setLevel(Level.WARN);
 
 		Map<String, Object> moduleSpecificPropertiesMap = new HashMap<>();
+		File runtimeKernel = new File(TestRunner.getResourcePath() + "/config/Kernel.properties");
+		if (runtimeKernel.isFile()) {
+			Properties kernelProps = new Properties();
+			try (InputStream in = new FileInputStream(runtimeKernel)) {
+				kernelProps.load(in);
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to load " + runtimeKernel.getAbsolutePath(), e);
+			}
+			for (String key : kernelProps.stringPropertyNames()) {
+				moduleSpecificPropertiesMap.put(key, kernelProps.getProperty(key));
+			}
+		}
 		// Load scope specific properties
 		try {
 			Properties configProps = new Properties();
@@ -85,6 +100,10 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		return getProperty("apiInternalEndPoint", "");
 	}
 
+	public static String getKeycloakTokenUrl() {
+		return getProperty("keycloakTokenUrl", "").trim();
+	}
+
 	public static String getProperty(String key, String defaultValue) {
 		String value = propertiesMap.get(key) == null ? "" : propertiesMap.get(key).toString();
 		return (value != null && !value.trim().isEmpty()) ? value : defaultValue;
@@ -96,6 +115,21 @@ public class ArcConfigManager extends io.mosip.testrig.apirig.utils.ConfigManage
 		} catch (NumberFormatException e) {
 			LOGGER.error("Invalid explicitWaitTimeout value in config.properties. Using default 10 seconds.");
 			return 10;
+		}
+	}
+
+	// Fail fast with a readable message instead of "Target host is not specified" from the HTTP client
+	public static void validateRequiredProperties() {
+		String[] requiredKeys = { "apiInternalEndPoint", "keycloak-external-url" };
+		StringBuilder missing = new StringBuilder();
+		for (String key : requiredKeys) {
+			if (getProperty(key, "").trim().isEmpty()) {
+				missing.append(missing.length() == 0 ? "" : ", ").append(key);
+			}
+		}
+		if (missing.length() > 0) {
+			throw new IllegalStateException("Missing required properties in config/Kernel.properties: " + missing
+					+ " (e.g. apiInternalEndPoint=https://api-internal.<env>.mosip.net, keycloak-external-url=https://iam.<env>.mosip.net)");
 		}
 	}
 
