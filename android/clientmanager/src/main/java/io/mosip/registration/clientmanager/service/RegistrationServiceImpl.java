@@ -202,14 +202,17 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         this.registrationDto = new RegistrationDto(rid, flowType, process, version, languages, bioThresholds, rid);
 
-        this.registrationDto.setGeoLocation(longitude, latitude);
-
-        // Validate GPS location if flag is enabled (even if coordinates are null)
-        try {
+        if ((latitude == null) != (longitude == null)) {
+            throw new IllegalArgumentException("Latitude and longitude must be provided together");
+        }
+        if (latitude != null) {
+            this.registrationDto.setGeoLocation(longitude, latitude);
+            try {
                 preCheckValidatorService.validateCenterToMachineDistance(longitude, latitude);
             } catch (ClientCheckedException e) {
                 Log.e(TAG, "Location validation failed", e);
                 throw e;
+            }
         }
 
         SharedPreferences.Editor editor = this.context.getSharedPreferences(this.context.getString(R.string.app_name),

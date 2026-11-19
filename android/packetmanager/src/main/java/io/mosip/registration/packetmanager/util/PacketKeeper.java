@@ -91,8 +91,9 @@ public class PacketKeeper {
         if (adapterName.equalsIgnoreCase("PosixAdapter"))
             return objectAdapterService;
         else {
-            Log.i(TAG, "getAdapter: " + adapterName + " Service not found");
-            return null;
+            Log.e(TAG, "getAdapter: " + adapterName + " Service not found");
+            throw new IllegalStateException(PacketManagerErrorCode.OS_ADAPTER_EXCEPTION.getErrorCode() + " : "
+                    + PacketManagerErrorCode.OS_ADAPTER_EXCEPTION.getErrorMessage() + " " + adapterName);
         }
     }
 
