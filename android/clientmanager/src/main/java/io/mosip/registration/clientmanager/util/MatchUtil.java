@@ -62,8 +62,10 @@ public class MatchUtil {
             Log.w("MatchUtil", "currentUserId missing; skipping operator dedupe");
             return false;
         }
-        BiometricType biometricType = BiometricType.fromValue(modality == Modality.EXCEPTION_PHOTO ?
-                modality.getSingleType().value() : captureDto.getBioType());
+        // An exception photo is a face image; no operator enrols type EXCEPTION_PHOTO
+        BiometricType biometricType = modality == Modality.EXCEPTION_PHOTO
+                ? BiometricType.FACE
+                : BiometricType.fromValue(captureDto.getBioType());
         List<UserBiometric> userBiometrics = userBiometricRepository
                 .findAllOperatorBiometricsExceptCurrent(biometricType.toString(), currentUserId);
         if(userBiometrics.isEmpty()){
@@ -84,8 +86,10 @@ public class MatchUtil {
      */
     public static boolean validateBiometricDataForRegistration(Modality modality, CaptureDto captureDto, List<BiometricsDto>
             biometricsDtoList, UserBiometricRepository userBiometricRepository, IBioApiV2 iBioApiV2) {
-        BiometricType biometricType = BiometricType.fromValue(modality == Modality.EXCEPTION_PHOTO ?
-                modality.getSingleType().value() : captureDto.getBioType());
+        // An exception photo is a face image; no operator enrols type EXCEPTION_PHOTO
+        BiometricType biometricType = modality == Modality.EXCEPTION_PHOTO
+                ? BiometricType.FACE
+                : BiometricType.fromValue(captureDto.getBioType());
         List<UserBiometric> userBiometrics = userBiometricRepository.findAllOperatorBiometrics(biometricType.toString());
         if(userBiometrics.isEmpty()){
             return false;

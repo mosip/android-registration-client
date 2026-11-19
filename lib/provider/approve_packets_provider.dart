@@ -30,7 +30,10 @@ class ApprovePacketsProvider with ChangeNotifier {
     List<String?> responseReasonList =
         await SyncResponseServiceImpl().getReasonList(langCode);
     reasonList = responseReasonList;
-    log(reasonList.toString());
+    // DropdownButton asserts if its value matches no item, e.g. a reason from another language
+    if (!reasonList.contains(selectedReason)) {
+      selectedReason = null;
+    }
     notifyListeners();
   }
 

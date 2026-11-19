@@ -28,7 +28,7 @@ class _OperatorBiometricsCaptureState
   late GlobalProvider globalProvider;
   bool isSavingBiometrics = false;
   late BiometricCaptureControlProvider biometricCaptureControlProvider;
- 
+
 
   @override
   void initState() {
@@ -146,8 +146,8 @@ class _OperatorBiometricsCaptureState
                           borderRadius: BorderRadius.circular(50)),
                       height: 40,
                       child: Text(
-                          "${(biometricAttributeData.qualityPercentage.isFinite 
-                              ? biometricAttributeData.qualityPercentage.clamp(0.0, 100.0).toInt() 
+                          "${(biometricAttributeData.qualityPercentage.isFinite
+                              ? biometricAttributeData.qualityPercentage.clamp(0.0, 100.0).toInt()
                               : 0)}%",
                           style: TextStyle(
                               fontSize: 20,

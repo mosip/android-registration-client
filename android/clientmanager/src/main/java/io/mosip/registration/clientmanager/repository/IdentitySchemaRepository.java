@@ -391,4 +391,18 @@ public class IdentitySchemaRepository {
         requiredDto.setExpr(expr);
         return requiredDto;
     }
+
+    public void deleteAll(Context context) {
+        List<IdentitySchema> schemas = identitySchemaDao.findAll();
+        for (IdentitySchema schema : schemas) {
+            if (schema.getFileName() != null) {
+                File file = new File(context.getFilesDir(), schema.getFileName());
+                if (file.exists() && !file.delete()) {
+                    Log.e(TAG, "Failed to delete remap schema file: " + file.getPath());
+                }
+            }
+        }
+        identitySchemaDao.deleteAll();
+        processSpecDao.deleteAll();
+    }
 }

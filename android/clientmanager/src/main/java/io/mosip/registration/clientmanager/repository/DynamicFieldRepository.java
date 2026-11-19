@@ -75,4 +75,8 @@ public class DynamicFieldRepository {
         dynamicField.setValueJson(fieldJson.getJSONArray("fieldVal").toString());
         dynamicFieldDao.insert(dynamicField);
     }
+
+    public void deleteAll() {
+        dynamicFieldDao.deleteAll();
+    }
 }

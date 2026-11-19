@@ -36,4 +36,8 @@ public class RegistrationCenterRepository {
         //TODO
         registrationCenterDao.insert(registrationCenter);
     }
+
+    public void deleteAll() {
+        registrationCenterDao.deleteAll();
+    }
 }
