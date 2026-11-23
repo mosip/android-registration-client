@@ -19,4 +19,7 @@ public interface TemplateDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Template template);
+
+    @Query("DELETE FROM template")
+    void deleteAll();
 }

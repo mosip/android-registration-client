@@ -14,4 +14,7 @@ public interface KeyStoreDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(KeyStore keyStore);
+
+    @Query("DELETE FROM key_store")
+    void deleteAll();
 }

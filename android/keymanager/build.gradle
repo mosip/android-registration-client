@@ -5,12 +5,17 @@ plugins {
 apply from: '../jacoco.gradle'
 
 android {
+    namespace 'io.mosip.registration.keymanager'
     lintOptions {
         abortOnError false
         ignoreWarnings true
     }
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
+
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -30,8 +35,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     libraryVariants.every { variant ->
@@ -46,46 +51,38 @@ android {
 
 dependencies {
 
-    implementation 'com.google.dagger:dagger:2.41'
-    implementation 'com.google.dagger:dagger-android-support:2.41'
+    implementation "com.google.dagger:dagger:${rootProject.ext.daggerVersion}"
+    implementation "com.google.dagger:dagger-android-support:${rootProject.ext.daggerVersion}"
     testImplementation project(':clientmanager')
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.41'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.41'
+    annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${rootProject.ext.daggerVersion}"
 
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly "org.projectlombok:lombok:${rootProject.ext.lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${rootProject.ext.lombokVersion}"
 
-    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation "javax.validation:validation-api:${rootProject.ext.validationApiVersion}"
 
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+    androidTestImplementation "androidx.test.ext:junit:${rootProject.ext.androidxJunitVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
 
+    testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoCoreVersion}"
 
-    testImplementation 'org.mockito:mockito-inline:4.8.0'
-    testImplementation 'org.mockito:mockito-core:4.11.0'
+    implementation "org.apache.commons:commons-lang3:${rootProject.ext.commonsLang3Version}"
+    implementation "commons-codec:commons-codec:${rootProject.ext.commonsCodecVersion}"
 
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    // https://mvnrepository.com/artifact/commons-codec/commons-codec
-    implementation 'commons-codec:commons-codec:1.15'
+    implementation "androidx.room:room-common:${rootProject.ext.roomVersion}"
+    implementation group: 'commons-io', name: 'commons-io', version: "${rootProject.ext.commonsIoVersion}"
 
-    implementation "androidx.room:room-common:2.4.2"
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    implementation "org.bouncycastle:bcprov-jdk18on:${rootProject.ext.bouncycastleVersion}"
+    implementation "org.bouncycastle:bcpkix-jdk18on:${rootProject.ext.bouncycastleVersion}"
 
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.47'
+    implementation "com.fasterxml.jackson.core:jackson-core:${rootProject.ext.jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${rootProject.ext.jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${rootProject.ext.jacksonVersion}"
+    implementation "org.bitbucket.b_c:jose4j:${rootProject.ext.jose4jVersion}"
 
-    implementation 'com.madgag.spongycastle:core:1.58.0.0'
-
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
-    implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.13.3'
-    implementation 'org.bitbucket.b_c:jose4j:0.6.5'
-
-    testImplementation 'net.bytebuddy:byte-buddy:1.14.0'
-    testImplementation 'org.objenesis:objenesis:3.3'
+    testImplementation "net.bytebuddy:byte-buddy:${rootProject.ext.byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${rootProject.ext.objenesisVersion}"
 
 }

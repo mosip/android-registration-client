@@ -136,4 +136,11 @@ public class DynamicFieldRepositoryTest {
 
         dynamicFieldRepository.saveDynamicField(jsonObject);
     }
+
+    @Test
+    public void deleteAll_called_delegatesToDao() {
+        dynamicFieldRepository.deleteAll();
+
+        verify(dynamicFieldDao, times(1)).deleteAll();
+    }
 }

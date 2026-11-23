@@ -154,4 +154,56 @@ public class RegistrationRepositoryTest {
 
         verify(registrationDao, times(1)).updateSupervisorReview("10001155851003120250220055513", "APPROVED", "All good");
     }
+
+    // Center remap methods
+
+    @Test
+    public void getAllPendingForProcessing_pendingPacketsExist_returnsNonEmptyList() {
+        Registration reg = new Registration("10001155851003120250220055513");
+        when(registrationDao.findAllPendingForProcessing()).thenReturn(Arrays.asList(reg));
+
+        List<Registration> result = registrationRepository.getAllPendingForProcessing();
+
+        assertEquals(1, result.size());
+        verify(registrationDao, times(1)).findAllPendingForProcessing();
+    }
+
+    @Test
+    public void getAllPendingForProcessing_noPacketsPending_returnsEmptyList() {
+        when(registrationDao.findAllPendingForProcessing()).thenReturn(Arrays.asList());
+
+        List<Registration> result = registrationRepository.getAllPendingForProcessing();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void countByCreatedStatus_packetsExistInCreatedStatus_returnsCount() {
+        when(registrationDao.countByCreatedStatus()).thenReturn(3);
+
+        assertEquals(3, registrationRepository.countByCreatedStatus());
+        verify(registrationDao, times(1)).countByCreatedStatus();
+    }
+
+    @Test
+    public void countByCreatedStatus_noPacketsInCreatedStatus_returnsZero() {
+        when(registrationDao.countByCreatedStatus()).thenReturn(0);
+
+        assertEquals(0, registrationRepository.countByCreatedStatus());
+    }
+
+    @Test
+    public void countReRegisterPending_packetsAwaitingReRegister_returnsCount() {
+        when(registrationDao.countReRegisterPending()).thenReturn(2);
+
+        assertEquals(2, registrationRepository.countReRegisterPending());
+        verify(registrationDao, times(1)).countReRegisterPending();
+    }
+
+    @Test
+    public void countReRegisterPending_noPacketsAwaitingReRegister_returnsZero() {
+        when(registrationDao.countReRegisterPending()).thenReturn(0);
+
+        assertEquals(0, registrationRepository.countReRegisterPending());
+    }
 }

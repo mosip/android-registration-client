@@ -188,6 +188,41 @@
   "appliction_upload": "Téléchargement d'application",
   "check_updates": "Vérifier les mises à jour",
   "center_remap_sync": "Synchronisation du remappage central.",
+  "center_remap_notification": "Votre machine a été réaffectée à un autre centre. Veuillez compléter les activités en attente.",
+  "remap_operation_blocked": "Opération non autorisée. La machine a été réaffectée à un autre centre, veuillez compléter les activités en attente.",
+  "no_center_remap_detected": "Aucun changement détecté. Cette machine reste affectée au centre actuel.",
+  "complete_pending_activities": "Activités en attente nécessitant une complétion",
+  "pending_activities_before_remap": "Les activités suivantes doivent être complétées avant d'initier la synchronisation de réaffectation du centre:",
+  "pending_packets_awaiting_approval": "Paquets en attente d'approbation",
+  "packets_require_supervisor_approval": "{count} paquets sont en attente d'approbation du superviseur et doivent être approuvés avant de procéder à la synchronisation.",
+  "@packets_require_supervisor_approval": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pending_packets_awaiting_upload": "Paquets en attente de synchronisation et de téléchargement",
+  "packets_queued_locally": "{count} paquets restent en attente de synchronisation locale et doivent être téléchargés vers le serveur avant d'initier la synchronisation de réaffectation du centre.",
+  "@packets_queued_locally": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sync_button_auto_enabled": "Le bouton de synchronisation sera activé automatiquement une fois les deux activités terminées.",
+  "okay_got_it": "OK",
+  "center_remap_sync_subtitle": "Appuyez pour initier le nettoyage de réaffectation du centre",
+  "remap_sync_screen_title": "Synchronisation de réaffectation du centre",
+  "remap_syncing_message": "Synchronisation du centre réaffecté",
+  "remap_sync_in_progress_warning": "Synchronisation en cours. Veuillez ne pas fermer l'application.",
+  "remap_sync_completed_title": "Synchronisation de réaffectation du centre terminée avec succès",
+  "remap_sync_completed_subtitle": "Veuillez cliquer sur le bouton Redémarrer ci-dessous. La synchronisation se terminera automatiquement après le redémarrage, et vous pourrez ensuite continuer le processus d'enregistrement.",
+  "remap_synced_at": "Synchronisé à",
+  "remap_sync_failed_title": "Échec de la synchronisation !",
+  "remap_sync_failed_subtitle": "La synchronisation a échoué en raison d'un problème réseau. Cliquez sur Réessayer pour continuer.",
+  "restart": "REDÉMARRER",
   "sync_activities": "Synchronisation. Activités",
   "pending_approval": "En attente de validation",
   "dashboard": "Tableau de bord",
@@ -326,7 +361,7 @@
   "okay": "D'ACCORD",
   "no_internet_connection": "Pas de connexion Internet!",
   "connect_and_retry": "Veuillez vous connecter à Internet et réessayer.",
-  "retry": "RECOMMENCEZ",
+  "retry": "RÉESSAYER",
   "key": "Clé",
   "server_value": "Valeur du serveur",
   "local_value": "Valeur locale",
@@ -361,13 +396,30 @@
   "search_for_key": "Rechercher une clé",
   "no_devices_found": "Aucun appareil trouvé",
   "connect_devices_and_scan": "Veuillez connecter vos appareils et appuyer sur 'ANALYSE' pour les détecter",
-  "search_for_key": "Rechercher une clé",
   "sync_restart_dialog_message": "L'application redémarrera une fois que vous aurez cliqué sur Redémarrer, et vous serez redirigé vers la page de connexion.",
   "sync_restart_button": "Redémarrer",
   "app_restart_message": "Configuration enregistrée avec succès. Redémarrage de l'application...",
   "select_option": "Sélectionner une option",
   "cron_expression": "Expression Cron",
   "id": "IDENTIFIANT",
-  "name": "Nom"
+  "name": "Nom",
+  "last_sync_time_not_found": "Heure de dernière synchronisation introuvable",
+  "not_downloaded_yet": "Pas encore téléchargé",
+  "syncing_progress": "Synchronisation... {progress}%",
+  "@syncing_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "downloading_progress": "Téléchargement... {progress}%",
+  "@downloading_progress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  }
 }
 

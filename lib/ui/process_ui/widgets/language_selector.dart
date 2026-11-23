@@ -110,6 +110,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         globalProvider.fieldInputValue["preferredLang"].toString());
     String registrationStartError =
         registrationTaskProvider.registrationStartError;
+
     _navigateBack();
     if (registrationStartError.isEmpty) {
       _triggerNavigation();

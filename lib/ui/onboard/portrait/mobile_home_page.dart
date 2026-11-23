@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:registration_client/model/process.dart';
 import 'package:registration_client/model/settings.dart';
 import 'package:registration_client/provider/global_provider.dart';
+import 'package:registration_client/provider/sync_provider.dart';
 import 'package:registration_client/ui/dashboard/user_dashboard.dart';
 import 'package:registration_client/ui/onboard/portrait/tasks_page.dart';
 import 'package:registration_client/ui/onboard/widgets/bottom_navbar_widget.dart';
@@ -41,6 +42,12 @@ class _MobileHomePageState extends State<MobileHomePage> {
   int selectedTab = 2;
 
   changeTab(int index) {
+    if (index == 1 && context.read<SyncProvider>().isCenterRemapped) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(AppLocalizations.of(context)!.remap_operation_blocked),
+      ));
+      return;
+    }
     if (index == 0 || index == 1 || index == 2 || index == 3) {
       setState(() {
         selectedTab = index;

@@ -11,7 +11,7 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
-import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.util.encoders.Hex;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -175,7 +175,7 @@ public class CertificateManagerUtil {
 
     public static String getPEMFormatedData(Object anyObject){
         StringWriter stringWriter = new StringWriter();
-        try (PEMWriter pemWriter = new PEMWriter(stringWriter)) {
+        try (JcaPEMWriter pemWriter = new JcaPEMWriter(stringWriter)) {
             pemWriter.writeObject(anyObject);
             pemWriter.flush();
             return stringWriter.toString();
